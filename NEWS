@@ -1,0 +1,6 @@
+RstoxBase v1.0 (Release date: 2019-10-16)
+==============
+
+Changes:
+
+* Created the package, which will be a library for StoX functions used for survey estimation, including defining resolution and calculating density, abundance and super individual data.

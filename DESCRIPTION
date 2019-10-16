@@ -1,0 +1,19 @@
+Package: RstoxBase
+Title: Title of the package
+Version: 1.0
+Authors@R: c(
+  person(given = "Given Name", family = "Family Name", role = c("cre", "aut"), email = "arnejh@hi.no"))
+Depends: R (>= 3.6)
+Description: Description of the package
+URL: https://github.com/StoXProject/RstoxBase
+BugReports: https://github.com/StoXProject/RstoxBase/issues
+License: LGPL-3
+LazyData: true
+RoxygenNote: 6.1.1
+Imports: 
+    data.table (>= 1.10.4-3),
+    rgdal,
+    rgeos,
+    sp
+Suggests: 
+    testthat
