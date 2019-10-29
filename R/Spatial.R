@@ -53,6 +53,9 @@ stoxMultipolygonWKT2SpatialPolygons <- function(FilePath) {
 }
 
 
+#' 
+#' @export
+#' 
 DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
     if(UseProcessData) {
         return(processData)
@@ -60,7 +63,10 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
     stoxMultipolygonWKT2SpatialPolygons(FileName)
 }
 
-    StratumArea <- function(StratumPolygon, AreaMethod = "Simple") {
+#' 
+#' @export
+#' 
+StratumArea <- function(StratumPolygon, AreaMethod = "Simple") {
     polygonAreaSP(StratumPolygon)
 }
 
