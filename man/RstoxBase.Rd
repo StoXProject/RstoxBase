@@ -4,12 +4,12 @@
 \name{RstoxBase}
 \alias{RstoxBase}
 \alias{RstoxBase-package}
-\title{Title of the package}
+\title{Base StoX functions}
 \description{
-Description of the package
+This package contains the base StoX functions used for survey estimation
 }
 \details{
-Details of the package
+The StoX functions defined in RstoxBase are those for defining resolution (e.g., PSUs and Layers), assignment, NASC data and StationLengthDistribution data, density, abundance and superindividual abundance
 }
 \seealso{
 Useful links:
@@ -20,6 +20,6 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Given Name Family Name \email{arnejh@hi.no}
+\strong{Maintainer}: Arne Johannes Holmin \email{arnejh@hi.no}
 
 }

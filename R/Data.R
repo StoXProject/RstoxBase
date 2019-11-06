@@ -20,7 +20,7 @@
 #' @export
 #' 
 DATRASConvert <- function() {
-	# Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
+    # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
 }
 
 
@@ -53,5 +53,61 @@ ReadBiotic <- function(FileNames) {
     names(out) <- basename(FileNames)
     out
 }
+
+
+
+
+
+
+##################################################
+##################################################
+#' Read biotic XML files
+#' 
+#' This function reads multiple biotic file to a list with a list of tables for each file.
+#' 
+#' @param FileNames     The paths of the biotic files.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type BioticData: A list of a list of data.tables of the different levels of the input biotic files.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link[RstoxData]{readXmlFile}}.
+#' 
+#' @export
+#' 
+StoxBiotic <- function(BioticData) {
+    
+}
+
+
+BioticList2GeneralLevels <- function(BioticList) {
+    
+    # Get the format of the input biotic data:
+    inputBioticFormat <- getInputBioticFormat(BioticList) # Using attributes or a list element
+    
+    
+    
+}
+
+NMDBiotic3.02GeneralLevels <- function(BioticList) {
+    
+    
+    
+    ######system.file("extdata", "NMDBiotic3.0_catchsample.txt", package = "RstoxBase")
+    
+    
+    
+    
+    
+}
+
+
+
+
 
 

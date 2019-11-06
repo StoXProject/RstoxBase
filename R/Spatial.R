@@ -66,7 +66,7 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
 #' 
 #' @export
 #' 
-StratumArea <- function(StratumPolygon, AreaMethod = "Simple") {
+StratumArea <- function(StratumPolygon, AreaMethod = c("Accurate", "Simple")) {
     polygonAreaSP(StratumPolygon)
 }
 

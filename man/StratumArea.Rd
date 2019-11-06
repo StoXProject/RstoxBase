@@ -4,7 +4,7 @@
 \alias{StratumArea}
 \title{Some title}
 \usage{
-StratumArea(StratumPolygon, AreaMethod = "Simple")
+StratumArea(StratumPolygon, AreaMethod = c("Accurate", "Simple"))
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}

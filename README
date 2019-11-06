@@ -1,8 +1,8 @@
-# RstoxBase version: 1.0 (latest beta, 2019-10-28)
+# RstoxBase version: 1.0 (latest beta, 2019-11-05)
 # R version: 3.6
 
 
-# Description of the package
+# This package contains the base StoX functions used for survey estimation
 
 
 # Install the latest developer version
