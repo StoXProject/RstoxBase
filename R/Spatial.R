@@ -53,6 +53,26 @@ stoxMultipolygonWKT2SpatialPolygons <- function(FilePath) {
 }
 
 
+##################################################
+##################################################
+#' Define stratum multipolygon
+#' 
+#' This function reads a goejson file, shape file or a Stox multipolygon WKT file and returns a SpatialPolygons object (sp package).
+#' 
+#' @param processData       The current data produced by a previous instance of the function.
+#' @param FileName          The path to a goejson file, shape file (folder) or a Stox multipolygon WKT file.
+#' @param UseProcessData    Logical: If TRUE use the existing funciton output in the process. 
+#' 
+#' @details
+#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file. 
+#' 
+#' @return
+#' An object of StoX data type StratumPolygon: A SpatialPolygons object (sp package).
+#' 
+#' @examples
+#' 
+#' 
+#' @seealso \code{\link[RstoxData]{StratumArea}} for calculating the area of the strata.
 #' 
 #' @export
 #' 
@@ -63,6 +83,25 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
     stoxMultipolygonWKT2SpatialPolygons(FileName)
 }
 
+##################################################
+##################################################
+#' Calculate area of each stratum
+#' 
+#' This function calculated the area of each stratum.
+#' 
+#' @param StratumPolygon    An object of StoX class StratumPolygon, which is s SpatialPolygons object (sp package).
+#' @param AreaMethod        The method to use for the area calculation, defaulted to "Accurate", which applied a lambert azimuthal equal area projection. 
+#' 
+#' @details
+#' The \code{AreaMethod} "Simple" is deprecated, but kept for backwards campatibility.
+#' 
+#' @return
+#' A table of stratum name and area.
+#' 
+#' @examples
+#' 
+#' 
+#' @seealso \code{\link[RstoxData]{DefineStrata}} for the \code{StratumPolygon} input to the function.
 #' 
 #' @export
 #' 
@@ -130,7 +169,7 @@ polygonAreaPolygonDF <- function(df) {
 # polygonAreaSP calculates simple GCD polygon area taking SpatialPolygons
 polygonAreaSP <- function(sp) {
     polygon2AreaDF <- function(polygon, ID) {
-        data.frame(
+        data.table::data.table(
             Area = polygonAreaPolygonXY(polygon@coords[, "x"], polygon@coords[, "y"]),
             IsHole = polygon@hole,
             ID = ID
