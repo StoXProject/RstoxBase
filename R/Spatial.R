@@ -13,6 +13,9 @@
 
 readStoxMultipolygonWKTFromFile <- function(FilePath) {
     # If the input is an existing file path instead of a data.table from the project.xml:
+    if(file.exists(FilePath) && isFALSE(file.info(FilePath)$isdir)) {
+        stop("The StoX multipolygon WKT file ", FilePath, " does not exist.")
+    }
     tab <- data.table::fread(FilePath, sep = "\t", header = FALSE, stringsAsFactors = FALSE)
     names(tab) <- c("Stratum", "Polygon")
     tab
