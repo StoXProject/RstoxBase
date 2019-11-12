@@ -49,8 +49,6 @@ DATRASConvert <- function() {
 ReadBiotic <- function(FileNames) {
     # NOTE: Fix the xsdobjects problem and remove the following line:
     library(RstoxData)
-    print("FileNames")
-    print(FileNames)
     out <- lapply(FileNames, RstoxData::readXmlFile)
     names(out) <- basename(FileNames)
     out
