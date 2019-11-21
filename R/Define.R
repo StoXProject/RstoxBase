@@ -152,7 +152,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"), Layers = numeric(), NumNayers = integer(), UseProcessData = FALSE) {
+DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"), Layers = double(), NumNayers = integer(), UseProcessData = FALSE) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
