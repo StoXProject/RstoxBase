@@ -6,7 +6,7 @@
 \usage{
 DefineAcousticLayer(processData, StoxAcousticData,
   DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"),
-  Layer = NULL, UseProcessData = FALSE)
+  Layers = numeric(), NumNayers = integer(), UseProcessData = FALSE)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}

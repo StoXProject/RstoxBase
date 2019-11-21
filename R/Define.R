@@ -152,7 +152,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"), Layer = NULL, UseProcessData = FALSE) {
+DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"), Layers = numeric(), NumNayers = integer(), UseProcessData = FALSE) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -173,6 +173,14 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
         Layers <- cbind(
             LayerID = seq_len(nrow(Layers)), 
             Layers
+        )
+    }
+    else if(length(Layers) == 1) {
+        Layers <- data.table::data.table(
+            LayerID = 1, 
+            LayerName = "L1", 
+            MinRange = 0, 
+            MaxRange = Inf
         )
     }
     # Otherwise detine an infinite layer:
