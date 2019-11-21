@@ -7,9 +7,188 @@
 # BioticStationAssignment
 # BioticStationWeigthing
 
+# Possible structure of the fundamental process data:
+# 
+# Stratum:
+#     StratumID    StratumName    Polygon 
+# 
+# AcousticPSU:
+#     StratumID      PSUID          PSUName   EDSU
+# 
+# SweptAreaPSU:
+#     StratumID      PSUID          PSUName   Station
+# 
+# AcousticLayer: 
+#     LayerID      LayerName      MinRange  MaxRange
+# 
+# SweptAreaLayer: 
+#     LayerID      LayerName      MinDepth  MaxDepth
+# 
+# Assignment: 
+#     AcousticPSU  AcousticLayer  Station   StationWeight  AssignmentID
+# 
+
+
+# AcousticPSU:
+#     Stratum_PSU [Stratum, PSUID (vector), PSUName (vector)]
+#     PSU_EDSU [PSUID, EDSU (vector)]
+# SweptAreaPSU:
+#     Stratum_PSU [Stratum, PSUID (vector), PSUName (vector)]
+#     PSU_Station [PSUID, Station (vector)]
+# Assignment:
+#     Assignment [PSUID, LayerID, Station (vector), StationWeight (vector)]
+# AcousticLayer:
+#     AcousticLayer [LayerID, LayerName, MinRange, MaxRange]
+# SweptAreaLayer:
+#     SweptAreaLayer [LayerID, LayerName, MinDepth, MaxDepth]
 
 
 
+
+
+
+
+##################################################
+##################################################
+#' Acoustic PSU
+#' 
+#' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
+#' 
+#' @inheritParams DefineStrata
+#' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
+#' @param StoxAcousticData  A list of \code{\link{StoxAcousticData}} data.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{AcousticPSU}}.
+#' 
+#' @export
+#' @import data.table
+#' 
+DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, DefinitionMethod = c("EDSUToPSU", "None"), UseProcessData = FALSE) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # For flexibility accept a list of the input data, named by the data type:
+    if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+        StratumPolygon <- StratumPolygon$StratumPolygon
+    }
+    if(is.list(StoxAcousticData) && "StoxAcousticData" %in% names(StoxAcousticData)) {
+        StoxAcousticData <- StoxAcousticData$StoxAcousticData
+    }
+    
+    # Use each EDSU as a PSU:
+    if(DefinitionMethod[1] == "EDSUToPSU") {
+        
+        # Define PSUIDs and PSUNames:
+        EDSU <- StoxAcousticData$Log$EDSU
+        PSUID <- seq_along(EDSU)
+        PSUName <- paste0("T", formatC(PSUID, width = nchar(max(PSUID)), format = "d", flag = "0"))
+        
+        # Set each EDSU as a PSU:
+        PSU_EDSU <- data.table::data.table(
+            PSUID = PSUID, 
+            EDSU = EDSU
+        )
+        
+        # Find the stratum of each PSU:
+        SpatialPSUs <- sp::SpatialPoints(StoxAcousticData$Log[, c("StartLongitude", "StartLatitude")])
+        Stratum <- sp::over(SpatialPSUs, StratumPolygon)
+        
+        # Create the Stratum_PSU data.table:
+        Stratum_PSU <- data.table::data.table(
+            Stratum = Stratum, 
+            PSUID = PSUID, 
+            PSUName = PSUName
+        )
+    }
+    # Otherwise return empry tables:
+    else {
+        PSU_EDSU <- data.table::data.table()
+        Stratum_PSU <- data.table::data.table()
+    }
+    
+    
+    list(
+        PSU_EDSU = PSU_EDSU, 
+        Stratum_PSU = Stratum_PSU
+    )
+}
+
+
+##################################################
+##################################################
+#' Acoustic PSU
+#' 
+#' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
+#' 
+#' @inheritParams DefineStrata
+#' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
+#' @param StoxAcousticData  A list of \code{\link{StoxAcousticData}} data.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{AcousticPSU}}.
+#' 
+#' @export
+#' @import data.table
+#' 
+DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"), Layer = NULL, UseProcessData = FALSE) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # For flexibility accept a list of the input data, named by the data type:
+    if(is.list(StoxAcousticData) && "StoxAcousticData" %in% names(StoxAcousticData)) {
+        StoxAcousticData <- StoxAcousticData$StoxAcousticData
+    }
+    
+    # If the layer definition data.table Layers is given, use this, and add the LayerID:
+    if(
+        length(Layers) && 
+        is.data.table(Layers) && 
+        all(c("LayerName", "MinRange", "MaxRange") %in% names(Layers))
+        ) {
+        Layers <- cbind(
+            LayerID = seq_len(nrow(Layers)), 
+            Layers
+        )
+    }
+    # Otherwise detine an infinite layer:
+    else {
+        Layers <- data.table::data.table(
+            LayerID = 1, 
+            LayerName = "L1", 
+            MinRange = 0, 
+            MaxRange = Inf
+        )
+    }
+    
+    list(
+        AcousticLayer = Layers
+    )
+}
 
 
 

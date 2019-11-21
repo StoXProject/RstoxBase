@@ -17,7 +17,20 @@ stoxFunctionAttributes <- list(
         functionArgumentHierarchy = list(), 
         functionAlias = list(), 
         functionParameterAlias = list(), 
-        functionParameterValueAilas = list()
+        functionParameterValueAlias = list()
+    ), 
+    
+    # Read input biotic data:
+    ReadAcoustic = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "AcousticData", 
+        functionParameterType = list(FileNames = "character"), 
+        functionParameterFormat = list(FileNames = "filePaths"), 
+        functionArgumentHierarchy = list(), 
+        functionAlias = list(), 
+        functionParameterAlias = list(), 
+        functionParameterValueAlias = list()
     ), 
     
     # Read strata polygons:
@@ -30,7 +43,7 @@ stoxFunctionAttributes <- list(
         functionParameterHierarchy = list(), 
         functionAlias = list(), 
         functionParameterAlias = list(), 
-        functionParameterValueAilas = list()
+        functionParameterValueAlias = list()
     ), 
     
     # Calculate areas of strata polygons:
@@ -43,6 +56,35 @@ stoxFunctionAttributes <- list(
         functionParameterHierarchy = list(), 
         functionAlias = list(), 
         functionParameterAlias = list(), 
-        functionParameterValueAilas = list()
+        functionParameterValueAlias = list()
+    ), 
+    
+    # Define acoustic PSUs:
+    DefineAcousticPSU = list(
+        functionType = "processData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "AcousticPSU", 
+        functionParameterType = list(
+            StratumPolygon = "character", 
+            StoxAcousticData = "character"), 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list(), 
+        functionAlias = list(), 
+        functionParameterAlias = list(), 
+        functionParameterValueAlias = list()
+    ), 
+    
+    # Define acoustic PSUs:
+    DefineAcousticLayer = list(
+        functionType = "processData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "AcousticLayer", 
+        functionParameterType = list(
+            StoxAcousticData = "character"), 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list(), 
+        functionAlias = list(), 
+        functionParameterAlias = list(), 
+        functionParameterValueAlias = list()
     )
 )

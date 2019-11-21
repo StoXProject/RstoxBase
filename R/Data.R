@@ -56,22 +56,19 @@ ReadBiotic <- function(FileNames) {
 
 
 
-
-
-
 ##################################################
 ##################################################
-#' Read biotic XML files
+#' Read acoustic XML files
 #' 
-#' This function reads multiple biotic file to a list with a list of tables for each file.
+#' This function reads multiple acoustic file to a list with a list of tables for each file.
 #' 
-#' @param FileNames     The paths of the biotic files.
+#' @param FileNames     The paths of the acoustic files.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' An object of StoX data type BioticData: A list of a list of data.tables of the different levels of the input biotic files.
+#' An object of StoX data type AcousticData: A list of a list of data.tables of the different levels of the input acoustic files.
 #' 
 #' @examples
 #' x <- 1
@@ -80,31 +77,21 @@ ReadBiotic <- function(FileNames) {
 #' 
 #' @export
 #' 
-StoxBiotic <- function(BioticData) {
+ReadAcoustic <- function(FileNames) {
+    browser()
+    # NOTE: Fix the xsdobjects problem and remove the following line:
     
+    #RstoxData::readXmlFile("~/workspace/stox/project/Test_Rstox3 copy/Input/Acoustic/libas_ListUserFile20__L40.0-2259.9.txt", stream = TRUE, useXsd="nmdechosounderv1")
+    
+    
+    
+    library(RstoxData)
+    warning("The ReadAcoustic in RstoxBase only works with nmdechosounderv1 due to testing.")
+    out <- lapply(FileNames, RstoxData::readXmlFile, stream = TRUE, useXsd = "nmdechosounderv1")
+    names(out) <- basename(FileNames)
+    out
 }
 
-
-BioticList2GeneralLevels <- function(BioticList) {
-    
-    # Get the format of the input biotic data:
-    inputBioticFormat <- getInputBioticFormat(BioticList) # Using attributes or a list element
-    
-    
-    
-}
-
-NMDBiotic3.02GeneralLevels <- function(BioticList) {
-    
-    
-    
-    ######system.file("extdata", "NMDBiotic3.0_catchsample.txt", package = "RstoxBase")
-    
-    
-    
-    
-    
-}
 
 
 

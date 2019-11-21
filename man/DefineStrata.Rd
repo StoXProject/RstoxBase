@@ -14,16 +14,15 @@ DefineStrata(processData, FileName, UseProcessData = FALSE)
 \item{UseProcessData}{Logical: If TRUE use the existing funciton output in the process.}
 }
 \value{
-An object of StoX data type StratumPolygon: A SpatialPolygons object (sp package).
+An object of StoX data type \code{\link{StratumPolygon}}.
 }
 \description{
-This function reads a goejson file, shape file or a Stox multipolygon WKT file and returns a SpatialPolygons object (sp package).
+This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
 }
 \details{
 The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file.
 }
 \examples{
-
 
 }
 \seealso{

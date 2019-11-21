@@ -60,7 +60,7 @@ stoxMultipolygonWKT2SpatialPolygons <- function(FilePath) {
 ##################################################
 #' Define stratum multipolygon
 #' 
-#' This function reads a goejson file, shape file or a Stox multipolygon WKT file and returns a SpatialPolygons object (sp package).
+#' This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
 #' 
 #' @param processData       The current data produced by a previous instance of the function.
 #' @param FileName          The path to a goejson file, shape file (folder) or a Stox multipolygon WKT file.
@@ -70,10 +70,9 @@ stoxMultipolygonWKT2SpatialPolygons <- function(FilePath) {
 #' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file. 
 #' 
 #' @return
-#' An object of StoX data type StratumPolygon: A SpatialPolygons object (sp package).
+#' An object of StoX data type \code{\link{StratumPolygon}}.
 #' 
 #' @examples
-#' 
 #' 
 #' @seealso \code{\link[RstoxData]{StratumArea}} for calculating the area of the strata.
 #' 
@@ -85,6 +84,21 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
     }
     stoxMultipolygonWKT2SpatialPolygons(FileName)
 }
+
+##################################################
+##################################################
+#' StratumPolygon
+#' 
+#' datatype.... \code{\link[sp]{SpatialPolygons}}
+#' 
+#' @details
+#' Bla bla. 
+#' 
+#' @seealso \code{\link[RstoxData]{DataTypes}} for a list of all StoX data types.
+#' 
+#' @name StratumPolygon
+#' 
+NULL
 
 ##################################################
 ##################################################
@@ -109,8 +123,15 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
 #' @export
 #' 
 StratumArea <- function(StratumPolygon, AreaMethod = c("Accurate", "Simple")) {
+    if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+        StratumPolygon <- StratumPolygon$StratumPolygon
+    }
     polygonAreaSP(StratumPolygon)
 }
+
+
+
+
 
 #DataTable <- readStoxMultipolygonWKTFromFile("~/../workspace/stox/reference/stratum/kolmule.txt")
 #
@@ -151,12 +172,12 @@ deg2rad <- function(deg) {
 # polygonAreaPolygonXY wraps x and y to dataframe and calls Polygon
 # this is a helper function
 polygonAreaPolygonXY <- function(x, y = NULL) {
-    polygonAreaPolygonDF(as.data.frame(xy.coords(x, y)[c("x", "y")], stringsAsFactors = FALSE))
+    polygonAreaPolygonDT(as.data.frame(xy.coords(x, y)[c("x", "y")], stringsAsFactors = FALSE))
 }
 
-# polygonAreaPolygonDF calculates simple GCD (great circle distance) polygon area 
+# polygonAreaPolygonDT calculates simple GCD (great circle distance) polygon area 
 # based on dataframe with 2 columns x and y
-polygonAreaPolygonDF <- function(df) {
+polygonAreaPolygonDT <- function(df) {
     area <- 0
     len <- nrow(df)
     for (i in seq_len(len - 1)) {
@@ -171,7 +192,9 @@ polygonAreaPolygonDF <- function(df) {
 
 # polygonAreaSP calculates simple GCD polygon area taking SpatialPolygons
 polygonAreaSP <- function(sp) {
-    polygon2AreaDF <- function(polygon, ID) {
+    
+    # Function to create a polygon area data table of polygon area, whether the polygon is a hole, and the ID:
+    polygon2AreaDT <- function(polygon, ID) {
         data.table::data.table(
             Area = polygonAreaPolygonXY(polygon@coords[, "x"], polygon@coords[, "y"]),
             IsHole = polygon@hole,
@@ -179,20 +202,22 @@ polygonAreaSP <- function(sp) {
         )
     }
     
-
-    stratumAreaDF <- function(stratum) {
-        data.table::rbindlist(lapply(stratum@Polygons, polygon2AreaDF, ID = stratum@ID))
+    # Function to rbind the polygon area data tables:
+    stratumAreaDT <- function(stratum) {
+        data.table::rbindlist(lapply(stratum@Polygons, polygon2AreaDT, ID = stratum@ID))
     }
-
-    stratumArea <- function(DF) {
-        areas <- as.list(by(DF$Area, DF$IsHole, sum))
-        data.frame(
-            Stratum = DF$ID,
+    # Function to calculate the area of the multipolygon, and output a data table of stratun name and area:
+    stratumArea <- function(DT) {
+        areas <- as.list(by(DT$Area, DT$IsHole, sum))
+        data.table(
+            Stratum = DT$ID,
             Area = if (length(areas) == 2) areas$"FALSE" - areas$"TRUE" else unlist(areas)
         )
     }
     
-    d <- lapply(sp@polygons, stratumAreaDF)
+    # Get the tables of areas of individual polygons in each multipolygon:
+    d <- lapply(sp@polygons, stratumAreaDT)
+    # Extract the multipolygon area and rbind to a data table:
     stratumAreas <- data.table::rbindlist(lapply(d, stratumArea))
     stratumAreas
 }
