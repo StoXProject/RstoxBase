@@ -54,7 +54,7 @@ AcousticDensity <- function() {
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
 #' @export
-NASC <- function(StoxAcousticData = NULL) {
+NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL) {
   # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
   
   
@@ -62,13 +62,15 @@ NASC <- function(StoxAcousticData = NULL) {
   #Add log distances in NASCData
   NASCData<- as.data.frame(StoxAcousticData$Log)[c('Log','Distance','EDSU','CruiseKey','LogKey')]
   
+  
+  
   #Add all AcousticCategory in NASCData
-  AcousticCategoryKey <- c(unique(StoxAcousticData$AcousticCategory$AcousticCategoryKey))
-  NASCData <-merge(NASCData,as.data.frame(AcousticCategoryKey))
+  AcousticCategory <- c(unique(StoxAcousticData$AcousticCategory))
+  NASCData <-merge(NASCData,as.data.frame(AcousticCategory))
 
+  
   #Add frequency to NASCData
   NASCData <-merge(NASCData,as.data.frame(StoxAcousticData$Beam),all = TRUE)
-  
   
   #Add NASC data to NASCData
   NASCData <- merge(NASCData,as.data.frame(StoxAcousticData$NASC),all = TRUE)
@@ -80,18 +82,6 @@ NASC <- function(StoxAcousticData = NULL) {
   NASCData$MinRange[is.na(NASCData$NASC)]<-0
   NASCData$MaxRange[is.na(NASCData$NASC)]<-Inf
   NASCData$NASC[is.na(NASCData$NASC)]<-0
-  # 
-  # 
-  # NASCData[NASCData$LogKey=='2017-02-13T21:00:54.000Z',]
-  # StoxAcousticData$NASC[StoxAcousticData$NASC$LogKey=='2017-02-13T21:00:54.000Z',]
-  # 
-  # 
-  # #Grab data from StoxAcoustic, and merge into one dataframe
-  # NASCData0 <- merge(merge(merge(as.data.frame(StoxAcousticData$NASC),
-  #                         as.data.frame(StoxAcousticData$Beam),all = TRUE),
-  #                   as.data.frame(StoxAcousticData$AcousticCategory)),
-  #                   as.data.frame(StoxAcousticData$Log)[c('Log','Distance','EDSU','CruiseKey','LogKey')],all = TRUE)
-  
   
   
   
@@ -99,14 +89,60 @@ NASC <- function(StoxAcousticData = NULL) {
   #Fiks missing stuff
   NASCData$SampleUnit <- paste(NASCData$CruiseKey,sprintf("%.1f",round(as.numeric(NASCData$Log),digits = 1)),NASCData$LogKey,sep='/')
   NASCData$SampleUnitType <- 'EDSU'
-  NASCData$SampleSize <- 1
-  NASCData$PosSampleSize <- 1
-  NASCData$Layer <- NASCData$ChannelKey
+  NASCData$Channel <- NASCData$ChannelKey
+  
+  NASCData$Layer<-NA
+  NASCData$PSU <- NA
+  NASCData$Stratum <- NA
+  NASCData$Survey <- NA
+  
+  
+  NASCData<-NASCData[c('AcousticCategory','Frequency','SampleUnitType','SampleUnit',
+             'Distance','NASC','MaxRange','MinRange',
+             'Channel','Layer','PSU','Stratum','Survey')]
+  
+  
+  
+  #Fill inn acoustic layer if avaliable
+  #TODO: 
+  # revisit this when this info is avaliable
+  if(!is.null(AcousticLayer)){
+    print('Add acoustic layer')
+    NASCData$MinRange<-NULL
+    NASCData$MaxRange<-NULL
+    NASCData$Layer<-NULL
+    NASCData<-merge(NASCData,unique(AcousticLayer),by.x=c('SampleUnit','Channel'))
+  }
+  
+  
+  
+  
+  
+    
+    
+    
+    
+  #Fill inn acousticPSU if avaliable
+  #TODO:
+  # revisit this when this info is avaliable
+  if(!is.null(AcousticPSU)){
+
+    print('Add acousticPSU')
+    NASCData$PSU <- NULL
+    NASCData$Stratum <- NULL
+    NASCData$Survey <- NULL
+    NASCData<-merge(NASCData,unique(AcousticPSU),all.x = TRUE)
+
+  }
+  
   
   
   #Remove that is not needed
-  NASCData<-NASCData[c('AcousticCategoryKey','SampleUnitType','SampleUnit','SampleSize','PosSampleSize',
-                       'Distance','MaxRange','MinRange','Frequency','Layer','NASC')]
+  NASCData<-NASCData[c('AcousticCategory','Frequency','SampleUnitType','SampleUnit',
+                       'Distance','NASC','MaxRange','MinRange',
+                       'Channel','Layer','PSU','Stratum','Survey')]
+  
+  
   
   
   #return data
@@ -138,69 +174,174 @@ NASC <- function(StoxAcousticData = NULL) {
 #' @export
 #' @import data.table
 #' 
-SumNASC <- function(NASCData) {
+SumNASC <- function(NASCData,TargetResolution='Layer',rm.na = FALSE,AcousticLayer=NULL) {
   # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
   
   
-   
-  
-  #Aggregate nasc data in cathegory
-  tmp <- aggregate(NASCData$NASC, 
-                           by=list(AcousticCategory=NASCData$AcousticCategory,
-                                   SampleUnit=NASCData$SampleUnit, 
-                                   SampleSize = NASCData$SampleSize,
-                                   PosSAmpleSize =NASCData$PosSampleSize, 
-                                   Distance = NASCData$Distance, 
-                                   Frequency = NASCData$Frequency, 
-                                   Layer = NASCData$Layer),
-                           FUN=sum)
-  
-  
-  #Add data
-  tmp$NASC <- tmp$x
-  tmp$x<-NULL
-  SumNASCData <- tmp  
-  
-  
-  
-  #Find minimum range
-  tmp <- aggregate(NASCData$MinRange, 
-                         by=list(AcousticCategory=NASCData$AcousticCategory,
-                                 SampleUnit=NASCData$SampleUnit, 
-                                 SampleSize = NASCData$SampleSize,
-                                 PosSAmpleSize =NASCData$PosSampleSize, 
-                                 Distance = NASCData$Distance, 
-                                 Frequency = NASCData$Frequency, 
-                                 Layer = NASCData$Layer),
-                         FUN=min)
-  
-  
-  #Add to data
-  SumNASCData$MinRange <- tmp$x
   
   
   
   
-  #Find maximum range
-  tmp <- aggregate(NASCData$MaxRange,
-                   by=list(AcousticCategory=NASCData$AcousticCategory,
-                           SampleUnit=NASCData$SampleUnit, 
-                           SampleSize = NASCData$SampleSize,
-                           PosSAmpleSize =NASCData$PosSampleSize, 
-                           Distance = NASCData$Distance, 
-                           Frequency = NASCData$Frequency, 
-                           Layer = NASCData$Layer), FUN=max)
+  
+  #Check if valid target Resolution
+  if(!TargetResolution%in%c('Channel','Layer','AllLayers'))stop('Error: Invalid TargetResolution.')
   
   
-  #Add to data
-  SumNASCData$MaxRange <- tmp$x
-  SumNASCData$SampleUnitType<-'EPSU'
+  
+  
+  #Fill inn acoustic layer if avaliable
+  #TODO: 
+  # revisit this when this info is avaliable
+  if(!is.null(AcousticLayer)){
+    print('Add acoustic layer')
+    NASCData$MinRange<-NULL
+    NASCData$MaxRange<-NULL
+    NASCData$Layer<-NULL
+    NASCData<-merge(NASCData,unique(AcousticLayer),by.x=c('SampleUnit','Channel'))
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  #Check if layer in NASCData when layer is selected
+  if(!TargetResolution =='Channel'){
+    if(nrow(NASCData[!is.na(NASCData$Layer),])==0)stop(paste0('Error: TargetResolution ',TargetResolution, 'is selected but there is no layer data in NASCData'))
+  }
+  
+  
+  
+  
+  
+  #If TargetResolution = Channel, skip
+  if(TargetResolution=='Channel') SumNASCData<-NASCData
+  
+  
+  
+  
+  #If TargetResolution = Lauer, sum nasc value per EDSU per Layer
+  if(TargetResolution=='Layer'){
+    
+    
+    
+    #A bug fix if we want to show layers equal to NA
+    if(rm.na == TRUE)NASCData$Layer[is.na(NASCData$Layer)]<-'NA'
+    
+    
+    
+    #Aggregate nasc data in cathegory
+    tmp <- aggregate(NASCData$NASC, 
+                             by=list(AcousticCategory=NASCData$AcousticCategory,
+                                     SampleUnitType=NASCData$SampleUnitType, 
+                                     SampleUnit=NASCData$SampleUnit, 
+                                     Distance = NASCData$Distance, 
+                                     Frequency = NASCData$Frequency, 
+                                     Layer = NASCData$Layer),
+                             FUN=sum)
+    
+    #Add data
+    tmp$NASC <- tmp$x
+    tmp$x<-NULL
+    
+    tmp <-((merge(tmp,unique(NASCData[c('AcousticCategory','SampleUnit','Frequency','Layer','PSU','Stratum','Survey')]))))
+    
+    
+    SumNASCData <- tmp  
+    SumNASCData$Channel<-NA
+    
+    
+    #Find minimum range
+    tmp <- aggregate(NASCData$MinRange, 
+                     by=list(AcousticCategory=NASCData$AcousticCategory,
+                             SampleUnitType=NASCData$SampleUnitType, 
+                             SampleUnit=NASCData$SampleUnit, 
+                             Distance = NASCData$Distance, 
+                             Frequency = NASCData$Frequency, 
+                             Layer = NASCData$Layer),
+                     FUN=min)
+    
+    
+    #Add to data
+    tmp$MinRange <- tmp$x
+    tmp$x<-NULL
+    
+    SumNASCData<-merge(SumNASCData,tmp)
+    
+    
+    #Find maximum range
+    tmp <- aggregate(NASCData$MaxRange,
+                     by=list(AcousticCategory=NASCData$AcousticCategory,
+                             SampleUnitType=NASCData$SampleUnitType, 
+                             SampleUnit=NASCData$SampleUnit, 
+                             Distance = NASCData$Distance, 
+                             Frequency = NASCData$Frequency, 
+                             Layer = NASCData$Layer),
+                     FUN=max)
+    
+    
+    #Add to data
+    tmp$MaxRange <- tmp$x
+    tmp$x<-NULL
+    SumNASCData<-merge(SumNASCData,tmp)
+    SumNASCData$SampleUnitType<-'EPSU'
+    
+    
+  }
+  
+  
+  
+  
+  if(TargetResolution=='AllLayers'){
+    
+    #Aggregate nasc data in cathegory
+    tmp <- aggregate(NASCData$NASC, 
+                     by=list(AcousticCategory=NASCData$AcousticCategory,
+                             SampleUnit=NASCData$SampleUnit, 
+                             Distance = NASCData$Distance, 
+                             Frequency = NASCData$Frequency), 
+                     FUN=sum)
+    
+    #Add data
+    tmp$NASC <- tmp$x
+    tmp$x<-NULL
+    
+    tmp <-((merge(tmp,unique(NASCData[c('AcousticCategory','SampleUnit','Frequency','PSU','Stratum','Survey')]))))
+    
+    SumNASCData <- tmp  
+    SumNASCData$Layer <- 'AllLayers'
+    SumNASCData$Channel <- NA
+    
+    
+    #Find minimum range
+    tmp <- aggregate(NASCData$MinRange, 
+                     by=list(AcousticCategory=NASCData$AcousticCategory,
+                             SampleUnit=NASCData$SampleUnit, 
+                             Distance = NASCData$Distance, 
+                             Frequency = NASCData$Frequency),
+                     FUN=min)
+    
+    
+    #Add to data
+    SumNASCData$MinRange <- 0
+    SumNASCData$MaxRange <- Inf
+    SumNASCData$SampleUnitType<-'EPSU'
+  }
+  
+  
+  #Sort SumNASCData
+  SumNASCData<-SumNASCData[c('AcousticCategory','Frequency','SampleUnitType','SampleUnit',
+                       'Distance','NASC','MaxRange','MinRange',
+                       'Channel','Layer','PSU','Stratum','Survey')]  
+  
+  head(SumNASCData)
   
   #Return
   return(SumNASCData)
   
 }
-
 
 
 
@@ -260,178 +401,309 @@ CombineNASC <- function(NASCData) {
 #' @export
 #' @import data.table
 #' 
-MeanNASC <- function(NASCData=NULL,inn) {
+MeanNASC <- function(NASCData=NULL,TargetResolution = 'PSU',AcousticPSU=NULL,rm.na = TRUE) {
 	# Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
   
+  NASCData<-droplevels(NASCData)
   
   
-  #TODO: 
-  #     - Ha med EDSU per PSU
-  #     - Aggreger NASC
-  #     - SampleSize er opptelling av antall EDSU
-  #     - PosSampleSize er antall EDSU med NASC >0
+  #Check if valid target Resolution
+  if(!TargetResolution%in%c('PSU','Stratum','Survey'))stop('Error: Invalid TargetResolution. Valid resolutions is Channel, Layer and AllLayers')
   
   
-  NASC_table <- NULL
   
-  #Loop through each PSU
-  for(psu in unique(inn$PSU)){
+  # NASCData = dl3
+  
+  #Fill inn acousticPSU if avaliable
+  #TODO:
+  # revisit this when this info is avaliable
+  if(!is.null(AcousticPSU)){
     
-    #Get EPSU id references for each PSU
-    epsu_id <- inn$EDSU[inn$PSU==psu]
+    if(length(unique(NASCData$SampleUnitType))>1)stop('Error: Several SampleUnitTypes is present in NASCData')
     
+    print('Add acousticPSU')
     
-    #For backwards compability
-    #TODO: 
-    #   - this has to be more accuratly checked
-    epsu_id<-lapply(epsu_id, function(x) if(!grepl('.000Z',x)){x=paste0(x,'.000Z')}else(x=x))
-    NASCData$SampleUnit<-gsub('T','/',NASCData$SampleUnit)
-    
-    
-    #Filter out the data per PSU
-    data <-NASCData[NASCData$SampleUnit%in%epsu_id,]
-    
-    
-    #Print warning msg if there is epsu id not in psu
-    if(sum(!epsu_id%in%NASCData$SampleUnit)>0)warning(paste0('EPSU not in PSU ', psu))
+    if(unique(NASCData$SampleUnitType)=='EDSU'){
+      NASCData$Stratum<-NULL
+      NASCData$Survey<-NULL
+      NASCData$PSU<-NULL
+      NASCData<-merge(NASCData,unique(AcousticPSU),all.x = TRUE)
+    }
+    if(unique(NASCData$SampleUnitType)=='PSU'){
+      AcousticPSU_sub <- unique(AcousticPSU[c('PSU','Stratum','Survey')])
+      NASCData$Survey<-NULL
+      NASCData$PSU<-NULL
+      NASCData<-merge(NASCData,AcousticPSU_sub,all.x = TRUE)
+    }
 
-    
-    
-    
-    
-    #Only allow psu with epsu
-    if(nrow(data)>0){
-      
-      
-      
-      #Distance of the PSU, used in the weighted mean
-      distance_PSU <- sum(unique(data[c('SampleUnit','Distance','Frequency','Layer')])$Distance)
-      sample_size <- nrow(unique(data[c('SampleUnit','Distance','Frequency','Layer')]))
-      
-      
-      
-      #Rename units 
-      data$SampleUnit<-psu
-      data$SampleUnitType<-'PSU'
-      
-      
-      #Get the sum NASC horisontally*distance each transect
-      out <-aggregate(x=data$NASC*data$Distance,
-                      by=list(AcousticCategory=data$AcousticCategory,
-                              SampleUnitType=data$SampleUnitType, 
-                              SampleUnit=data$SampleUnit, 
-                              Frequency = data$Frequency, 
-                              Layer = data$Layer, 
-                              SampleUnitType = data$SampleUnitType),
-                      FUN=sum)
-      
-      #Devide with length of transect to get weighted mean
-      out$NASC <- out$x/distance_PSU
-      out$x <- NULL
-      
-      NASC_table=rbind(NASC_table,out)
-    }else{}      
   }
   
   
-  return(NASC_table)  
+  
+  #If unallocated stuff should be visible, change the variable name
+  if(rm.na==FALSE)NASCData$Stratum[is.na(NASCData$Stratum)]<-'Unallocated'
+  if(rm.na==FALSE)NASCData$Survey[is.na(NASCData$Survey)]<-'Unallocated'
+  if(rm.na==FALSE)NASCData$PSU[is.na(NASCData$PSU)]<-'Unallocated'
+  
+
+  
+  #Remove channel info  
+  NASCData$Channel<-NA
   
   
-  # PSU <- 'T158'
   
-  # tagget <- inn$tagg[inn$PSU==PSU]
+  #Fix layer when they are missing
+  if(length(unique(NASCData$Layer))==1){
+    if(is.na(unique(NASCData$Layer))){
+      NASCData$Layer<-1
+      NASCData$MinRange<-0
+      NASCData$MaxRange<-Inf
+      }
+  }else{
+    NASCData$Layer[is.na(NASCData$Layer)]<-'Unallocated'
+  }
+  
+  
+  ##################################
+  #Test to see if the NASCData is ok
+  ##################################
+  
+  # if(TargetResolution=='PSU'){
+  #   if(nrow(NASCData[!is.na(NASCData$PSU),])==0)stop(paste0('Error: TargetResolution PSU is selected but no PSU data is within NASCData'))
+  #   
+  #   if(sum(table((unique(NASCData[!is.na(NASCData$PSU),][c('PSU','Layer','MaxRange','MinRange')])$PSU))>length(unique(NASCData$Layer)))>0)stop('Error: Vertical resolution is different within a psu')
+  # }
+  # 
+  # if(TargetResolution=='Stratum'){
+  #   if(nrow(NASCData[!is.na(NASCData$PSU),])==0)stop(paste0('Error: TargetResolution Stratum is selected but no Stratum data is within NASCData'))
+  # }
+  # 
+  # if(TargetResolution=='Survey'){
+  #   if(nrow(NASCData[!is.na(NASCData$PSU),])==0)stop(paste0('Error: TargetResolution Survey is selected but no Survey data is within NASCData'))
+  # }
+  # 
   
   
   
-  # 
-  # 
-  # #Filter out the data per PSU
-  # data <-NASCData[NASCData$SampleUnit%in%tagget,]
-  # tmp_data <- data
-  # tmp_data$NASC[tmp_data$NASC>0] <- 1
-  # 
-  # 
-  # 
-  # 
-  # #Temporarly step to get number of EPSU with data
-  # out4<-aggregate(x=tmp_data$NASC,
-  #                 by=list(AcousticCategory=tmp_data$AcousticCategory,
-  #                         Frequency = tmp_data$Frequency, 
-  #                         Layer = tmp_data$Layer),
-  #                 FUN=sum)
-  # out4$PosSampleSize <-out4$x
-  # out4$x<-NULL
-  # 
-  # 
-  # 
-  # 
-  # #Distance of the PSU, used in the weighted mean
-  # distance_PSU <- sum(unique(data[c('SampleUnit','Distance','Frequency','Layer')])$Distance)
-  # sample_size <- nrow(unique(data[c('SampleUnit','Distance','Frequency','Layer')]))
-  # 
-  # 
-  # #Fiks stuff 
-  # data$SampleUnit<-PSU
-  # data$SampleUnitType<-'PSU'
-  # 
-  # 
-  # 
-  # #Get the sum NASC horisontally*distance each transect
-  # out <-aggregate(x=data$NASC*data$Distance,
-  #           by=list(AcousticCategory=data$AcousticCategory,
-  #                   SampleUnit=data$SampleUnit, 
-  #                   Frequency = data$Frequency, 
-  #                   Layer = data$Layer, 
-  #                   SampleUnitType = data$SampleUnitType),
-  #           FUN=sum)
-  # 
-  # #Devide with length of transect to get weighted mean
-  # out$NASC <- out$x/distance_PSU
-  # 
-  # #Add data
-  # out$x<- NULL
-  # out$Distance <- distance_PSU
-  # out$SampleSize <- sample_size
-  # 
-  # 
-  # 
-  # 
-  # 
-  # 
-  # #Grab the minimum range
-  # out2 <-aggregate(x=data$MinRange,
-  #                  by=list(AcousticCategory=data$AcousticCategory,
-  #                          SampleUnit=data$SampleUnit, 
-  #                          Frequency = data$Frequency, 
-  #                          Layer = data$Layer, 
-  #                          SampleUnitType = data$SampleUnitType),
-  #                  FUN=min)
-  # 
-  # out <- merge(out,out2)
-  # out$MinRange <- out$x
-  # out$x=NULL
-  # 
-  # 
-  # 
-  # 
-  # #Gram the maximume range
-  # out2 <-aggregate(x=data$MaxRange,
-  #                  by=list(AcousticCategory=data$AcousticCategory,
-  #                          SampleUnit=data$SampleUnit, 
-  #                          Frequency = data$Frequency, 
-  #                          Layer = data$Layer, 
-  #                          SampleUnitType = data$SampleUnitType),
-  #                  FUN=max)
-  # 
-  # out <- merge(out,out2)
-  # out$MaxRange <- out$x
-  # out$x=NULL
-  # 
-  # 
-  # 
-  # 
-  # out<-merge(out,out4)
-  # return(out)
+  
+  
+  
+  
+  #########################################
+  #Find the mean nasc per Target Resolution
+  #########################################
+  
+  
+  if(TargetResolution=='PSU'){
+    NASCData[is.na(NASCData$Distance),]
+    
+    
+    #Find the total distance per PSU
+    distances_matrix <- unique(NASCData[c('SampleUnit','Distance','PSU')])
+    
+    
+    
+    #Aggregate distance data in each cathegory
+    tmp_distance <- aggregate(distances_matrix$Distance, 
+                     by=list(PSU = distances_matrix$PSU), 
+                     FUN=sum, na.rm=TRUE)
+    
+    
+    #Fix the variable name
+    tmp_distance$Distance <- tmp_distance$x
+    tmp_distance$x <- NULL
+    
+    
+    
+    #Aggregate nasc data in each cathegory
+    tmp <- aggregate(NASCData$NASC*NASCData$Distance, 
+                     by=list(AcousticCategory=NASCData$AcousticCategory,
+                             Frequency = NASCData$Frequency,
+                             Layer = NASCData$Layer,
+                             PSU = NASCData$PSU), 
+                     FUN=sum)
+    
+    
+    #Fix the variable name
+    tmp$NASC <- tmp$x
+    tmp$x<-NULL
+    
+    
+    
+    #Add distance and find mean NASC
+    tmp<-merge(tmp,tmp_distance,all.y = TRUE)
+    tmp$NASC <- tmp$NASC/tmp$Distance
+    
+    
+    
+    #Add species cathegory to PSU where they are missing
+    test <- unique(merge(tmp[c('PSU','Layer','Frequency','Distance')],unique(tmp$AcousticCategory)))
+    test$AcousticCategory<-test$y
+    test$y<-NULL  
+    tmp<-merge(test,tmp,by.x=c('PSU','Layer','Frequency','Distance','AcousticCategory'),all.x=TRUE)
+    
+
+    #Set NA in NASC to 0    
+    tmp$NASC[is.na(tmp$NASC)]=0
+    
+    
+    #Store data in MeanNASCData
+    MeanNASCData <- tmp
+    MeanNASCData$SampleUnit<-MeanNASCData$PSU
+    MeanNASCData$SampleUnitType<-'PSU'
+    
+    
+    #Add missing stuff from NASCData
+    MeanNASCData<-merge(MeanNASCData,unique(NASCData[c('PSU','Frequency','Layer','Channel','Stratum','Survey','MaxRange','MinRange')]),
+                        by=c('PSU','Frequency','Layer'))
+    
+  }
+  
+  
+  #If target resolution is equal to Stratum
+  if(TargetResolution=='Stratum'){
+    
+    
+    #Find the total distance per PSU
+    distances_matrix <- unique(NASCData[c('SampleUnit','Distance','PSU','Stratum')])
+    
+    
+    
+    #Aggregate distance data in each cathegory
+    tmp_distance <- aggregate(distances_matrix$Distance, 
+                              by=list(Stratum = distances_matrix$Stratum), 
+                              FUN=sum, na.rm=TRUE)
+    
+    
+    #Fix the variable name
+    tmp_distance$Distance <- tmp_distance$x
+    tmp_distance$x <- NULL
+    
+    
+    
+    
+    #Aggregate nasc data in each cathegory
+    tmp <- aggregate(NASCData$NASC*NASCData$Distance, 
+                     by=list(AcousticCategory=NASCData$AcousticCategory,
+                             Frequency = NASCData$Frequency,
+                             Layer = NASCData$Layer,
+                             Stratum = NASCData$Stratum), 
+                     FUN=sum)
+    
+    
+    
+    #Fix the variable name
+    tmp$NASC <- tmp$x
+    tmp$x<-NULL
+    
+    
+    #Add distance and find mean NASC
+    tmp<-merge(tmp,tmp_distance,all.y = TRUE)
+    tmp$NASC <- tmp$NASC/tmp$Distance
+    
+    
+    
+    #Add species cathegory to Stratum where they are missing
+    test <- unique(merge(tmp[c('Stratum','Layer','Frequency','Distance')],unique(tmp$AcousticCategory)))
+    test$AcousticCategory<-test$y
+    test$y<-NULL  
+    tmp<-merge(test,tmp,by.x=c('Stratum','Layer','Frequency','Distance','AcousticCategory'),all.x=TRUE)
+    
+    
+    #Set NA in NASC to 0    
+    tmp$NASC[is.na(tmp$NASC)]=0
+    
+    
+    #Store data in MeanNASCData
+    MeanNASCData <- tmp
+    MeanNASCData$SampleUnit<-MeanNASCData$Stratum
+    MeanNASCData$SampleUnitType<-'Stratum'
+    MeanNASCData$PSU<-NA
+    
+    
+    #Add missing stuff from NASCData
+    MeanNASCData<-merge(MeanNASCData,unique(NASCData[c('Frequency','Layer','Channel','Stratum','Survey','MaxRange','MinRange')]),
+                        by=c('Stratum','Frequency','Layer'))
+    
+  }
+  
+  
+  #If target resolution is equal to Stratum
+  if(TargetResolution=='Survey'){
+    
+    
+    #Find the total distance per PSU
+    distances_matrix <- unique(NASCData[c('SampleUnit','Distance','PSU','Stratum','Survey')])
+    
+    
+    
+    #Aggregate distance data in each cathegory
+    tmp_distance <- aggregate(distances_matrix$Distance, 
+                              by=list(Survey = distances_matrix$Survey), 
+                              FUN=sum, na.rm=TRUE)
+    
+    
+    #Fix the variable name
+    tmp_distance$Distance <- tmp_distance$x
+    tmp_distance$x <- NULL
+    
+    
+    
+    
+    #Aggregate nasc data in each cathegory
+    tmp <- aggregate(NASCData$NASC*NASCData$Distance, 
+                     by=list(AcousticCategory=NASCData$AcousticCategory,
+                             Frequency = NASCData$Frequency,
+                             Layer = NASCData$Layer,
+                             Survey = NASCData$Survey), 
+                     FUN=sum)
+    
+    
+    
+    #Fix the variable name
+    tmp$NASC <- tmp$x
+    tmp$x<-NULL
+    
+    
+    #Add distance and find mean NASC
+    tmp<-merge(tmp,tmp_distance,all.y = TRUE)
+    tmp$NASC <- tmp$NASC/tmp$Distance
+    
+    
+    
+    #Add species cathegory to Survey where they are missing
+    test <- unique(merge(tmp[c('Survey','Layer','Frequency','Distance')],unique(tmp$AcousticCategory)))
+    test$AcousticCategory<-test$y
+    test$y<-NULL  
+    tmp<-merge(test,tmp,by.x=c('Survey','Layer','Frequency','Distance','AcousticCategory'),all.x=TRUE)
+    
+    
+    #Set NA in NASC to 0    
+    tmp$NASC[is.na(tmp$NASC)]=0
+    
+    
+    #Store data in MeanNASCData
+    MeanNASCData <- tmp
+    MeanNASCData$SampleUnit<-MeanNASCData$Survey
+    MeanNASCData$SampleUnitType<-'Survey'
+    MeanNASCData$PSU<-NA
+    MeanNASCData$Stratum<-NA
+    
+    
+    #Add missing stuff from NASCData
+    MeanNASCData<-merge(MeanNASCData,unique(NASCData[c('Frequency','Layer','Channel','Survey','MaxRange','MinRange')]),
+                        by=c('Survey','Frequency','Layer'))
+    
+  }
+  
+  
+  #Regroup MeanNASCData
+  MeanNASCData<-MeanNASCData[c('AcousticCategory','Frequency','SampleUnitType','SampleUnit',
+                             'Distance','NASC','MaxRange','MinRange',
+                             'Channel','Layer','PSU','Stratum','Survey')]  
+  
+  #Return
+  return(MeanNASCData)
 }
 
 
