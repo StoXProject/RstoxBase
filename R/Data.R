@@ -78,13 +78,7 @@ ReadBiotic <- function(FileNames) {
 #' @export
 #' 
 ReadAcoustic <- function(FileNames) {
-    browser()
     # NOTE: Fix the xsdobjects problem and remove the following line:
-    
-    #RstoxData::readXmlFile("~/workspace/stox/project/Test_Rstox3 copy/Input/Acoustic/libas_ListUserFile20__L40.0-2259.9.txt", stream = TRUE, useXsd="nmdechosounderv1")
-    
-    
-    
     library(RstoxData)
     warning("The ReadAcoustic in RstoxBase only works with nmdechosounderv1 due to testing.")
     out <- lapply(FileNames, RstoxData::readXmlFile, stream = TRUE, useXsd = "nmdechosounderv1")

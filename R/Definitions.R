@@ -2,8 +2,8 @@
 # Define the variables of the main data types used in estimation models:
 ModelVariables <- list(
     NASCData = list(
-        horizontalResolution = c("Survey", "Stratum", "PSU", "EDSU"), 
-        vertictalResolution = c("AllLayers", "Layer", "Channel"), 
+        horizontalResolution = c("Stratum", "PSU", "EDSU"), 
+        vertictalResolution = c("Layer", "Channel"), 
         groupingVariables = c("AcousticCategory", "ChannelReference", "Frequency"), 
         verticalDimension = c("MinRange", "MaxRange"), 
         weight = "NASCWeight", 
@@ -11,8 +11,8 @@ ModelVariables <- list(
         other = "LogDistance"
     ), 
     LengthDistribution = list(
-        horizontalResolution = c("Survey", "Stratum", "PSU", "Station"), 
-        vertictalResolution = c("AllLayers", "Layer"), 
+        horizontalResolution = c("Stratum", "PSU", "Station"), 
+        vertictalResolution = c("Layer"), 
         groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
         verticalDimension = c("MinRange", "MaxRange"), 
         weight = "LengthDistributionWeight", 
@@ -20,16 +20,16 @@ ModelVariables <- list(
         other = c("TowedDistance", "VerticalTrawlOpening", "TrawlDoorSpread", "LengthDistributionType")
     ), 
     Density = list(
-        horizontalResolution = c("Survey", "Stratum", "PSU"), 
-        vertictalResolution = c("AllLayers", "Layer"), 
+        horizontalResolution = c("Stratum", "PSU"), 
+        vertictalResolution = c("Layer"), 
         groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
         verticalDimension = c("MinRange", "MaxRange"), 
         weight = "DensityWeight", 
         data = "Density"
     ), 
     Abundance = list(
-        horizontalResolution = c("Survey", "Stratum"), 
-        vertictalResolution = c("AllLayers", "Layer"), 
+        horizontalResolution = c("Stratum"), 
+        vertictalResolution = c("Layer"), 
         groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
         verticalDimension = c("MinRange", "MaxRange"), 
         weight = "AbundanceWeight", 
@@ -81,7 +81,7 @@ determineAggregationVariables <- function(data, TargetResolution, dataType = c("
 
 SumData <- function(data, TargetResolution, dataType = c("NASCData", "LengthDistribution", "Density", "Abundance")) {
     
-    aggregationVariables <- determineAggregationVariables(data, TargetResolution = TargetResolution, dataType = dataType, dimension = dimension)
+    aggregationVariables <- determineAggregationVariables(data, TargetResolution = TargetResolution, dataType = dataType, dimension = "vertical")
         
     # Return immediately if TargetResolution equals inputResolution:
     if(TargetResolution == aggregationVariables$finestResolution) {
@@ -90,13 +90,13 @@ SumData <- function(data, TargetResolution, dataType = c("NASCData", "LengthDist
     # Also return immediately if TargetResolution is not in presentResolutions:
     if(!TargetResolution %in% aggregationVariables$presentResolutions) {
         return(data)
-    }   
+    }
     
     # Sum the data, and update the range:
-    #data[, .(), by = aggregationVariables$by, with = FALSE]
+    data[, .(sum(x)), by = aggregationVariables$by, with = FALSE]
     
-    
-    
-    
-    
+  
 }
+
+
+

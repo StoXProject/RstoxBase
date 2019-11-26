@@ -98,7 +98,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
         
         # Set each EDSU as a PSU:
         PSU_EDSU <- data.table::data.table(
-            PSUID = PSUID, 
+            PSU = PSUName, 
             EDSU = EDSU
         )
         
@@ -109,8 +109,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
         # Create the Stratum_PSU data.table:
         Stratum_PSU <- data.table::data.table(
             Stratum = Stratum, 
-            PSUID = PSUID, 
-            PSUName = PSUName
+            PSU = PSUName
         )
     }
     # Otherwise return empry tables:
@@ -154,6 +153,8 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' 
 DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"), Layers = double(), NumNayers = integer(), UseProcessData = FALSE) {
     
+    message("This funcitons needs update!!!!!!!")
+    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         return(processData)
@@ -186,8 +187,7 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
     # Otherwise detine an infinite layer:
     else {
         Layers <- data.table::data.table(
-            LayerID = 1, 
-            LayerName = "L1", 
+            Layer = "L1", 
             MinRange = 0, 
             MaxRange = Inf
         )

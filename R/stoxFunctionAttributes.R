@@ -1,23 +1,19 @@
 # A list of the attributes of the exported StoX functions:
+# The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
+# The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
 #' 
 #' @export
 #' 
 stoxFunctionAttributes <- list(
-    
-    # The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
-    # The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
     
     # Read input biotic data:
     ReadBiotic = list(
         functionType = "modelData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "BioticData", 
-        functionParameterType = list(FileNames = "character"), 
+        #functionParameterType = list(FileNames = "character"), 
         functionParameterFormat = list(FileNames = "filePaths"), 
-        functionArgumentHierarchy = list(), 
-        functionAlias = list(), 
-        functionParameterAlias = list(), 
-        functionParameterValueAlias = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Read input biotic data:
@@ -25,12 +21,9 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "AcousticData", 
-        functionParameterType = list(FileNames = "character"), 
+        #functionParameterType = list(FileNames = "character"), 
         functionParameterFormat = list(FileNames = "filePaths"), 
-        functionArgumentHierarchy = list(), 
-        functionAlias = list(), 
-        functionParameterAlias = list(), 
-        functionParameterValueAlias = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Read strata polygons:
@@ -38,12 +31,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "StratumPolygon", 
-        functionParameterType = list(FileName = "character"), 
+        #functionParameterType = list(FileName = "character"), 
         functionParameterFormat = list(FileName = "filePath"), 
-        functionParameterHierarchy = list(), 
-        functionAlias = list(), 
-        functionParameterAlias = list(), 
-        functionParameterValueAlias = list()
+        functionParameterHierarchy = list()
     ), 
     
     # Calculate areas of strata polygons:
@@ -51,12 +41,9 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "StratumArea", 
-        functionParameterType = list(StratumPolygon = "character"), 
+        #functionParameterType = list(StratumPolygon = "character"), 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list(), 
-        functionAlias = list(), 
-        functionParameterAlias = list(), 
-        functionParameterValueAlias = list()
+        functionParameterHierarchy = list()
     ), 
     
     # Define acoustic PSUs:
@@ -64,14 +51,11 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "AcousticPSU", 
-        functionParameterType = list(
-            StratumPolygon = "character", 
-            StoxAcousticData = "character"), 
+        #functionParameterType = list(
+        #    StratumPolygon = "character", 
+        #    StoxAcousticData = "character"), 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list(), 
-        functionAlias = list(), 
-        functionParameterAlias = list(), 
-        functionParameterValueAlias = list()
+        functionParameterHierarchy = list()
     ), 
     
     # Define acoustic PSUs:
@@ -79,12 +63,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "AcousticLayer", 
-        functionParameterType = list(
-            StoxAcousticData = "character"), 
+        #functionParameterType = list(
+        #    StoxAcousticData = "character"), 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list(), 
-        functionAlias = list(), 
-        functionParameterAlias = list(), 
-        functionParameterValueAlias = list()
+        functionParameterHierarchy = list()
     )
 )
