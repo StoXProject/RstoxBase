@@ -298,7 +298,7 @@ StationLengthDist <- function(
     # Apply so called raising factors, which are total weight/count divided by sample weight/count:
     out[has_weight==TRUE, WeightedCount := WeightedCount * weight / lengthsampleweight]
     if(any(out$has_NOTweightBUTcount, na.rm=TRUE)) {
-        message("StoX: Here there seems to be bug, where count is not present, and this shoul also be catchcount")
+        message("StoX: Here there seems to be bug, where count is not present, and this should also be catchcount")
         out[has_NOTweightBUTcount==TRUE, WeightedCount := WeightedCount * count / lengthsamplecount]
     }
     

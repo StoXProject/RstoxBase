@@ -3,7 +3,7 @@ Title: Base StoX functions
 Version: 1.0
 Authors@R: c(
   person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "arnejh@hi.no"))
-Depends: R (>= 3.6)
+Depends: R (>= 3.5)
 Description: This package contains the base StoX functions used for survey estimation
 URL: https://github.com/StoXProject/RstoxBase
 BugReports: https://github.com/StoXProject/RstoxBase/issues

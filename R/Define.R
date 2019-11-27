@@ -75,6 +75,9 @@
 #' 
 DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, DefinitionMethod = c("EDSUToPSU", "None"), UseProcessData = FALSE) {
     
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         return(processData)
@@ -151,19 +154,73 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "Channel", "Table", "Thickness"), Layers = double(), NumNayers = integer(), UseProcessData = FALSE) {
-    
-    message("This funcitons needs update!!!!!!!")
+DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "UserDefined"), Resolution = double(), Breaks = double(), UseProcessData = FALSE) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         return(processData)
     }
     
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
     # For flexibility accept a list of the input data, named by the data type:
     if(is.list(StoxAcousticData) && "StoxAcousticData" %in% names(StoxAcousticData)) {
         StoxAcousticData <- StoxAcousticData$StoxAcousticData
     }
+    
+    #### Get the possible breaks defining the layers, as depths common for all channels: ####
+    numberOfEDSUs <- nrow(StoxAcousticData$Log)
+    # Accept only the ranges occurring 'numberOfEDSUs' times:
+    tableOfMinRange <- table(StoxAcousticData$NASC$MinRange)
+    tableOfMaxRange <- table(StoxAcousticData$NASC$MaxRange)
+    possibleMinRanges <- as.numeric(names(tableOfMinRange))[tableOfMinRange == numberOfEDSUs]
+    possibleMaxRanges <- as.numeric(names(tableOfMaxRange))[tableOfMaxRange == numberOfEDSUs]
+    # Include also the minimum and maximum range:
+    minMinRange <- min(StoxAcousticData$NASC$MinRange)
+    maxMaxRange <- max(StoxAcousticData$NASC$MaxRange)
+    possibleBreaks <- sort(
+        unique(
+            minMinRange, 
+            possibleMinRanges, 
+            possibleMaxRanges, 
+            maxMaxRange
+        )
+    )
+    
+    
+    
+    
+    # If "WaterColumn" is requested use the full range:
+    if(DefinitionMethod == "WaterColumn") {
+        Breaks <- range(possibleBreaks)
+    }
+    # If "HighestResolution" is requested use all possible breaks:
+    else if(DefinitionMethod == "HighestResolution") {
+        Breaks <- possibleBreaks
+    }
+    # If "Resolution" is requested find the possible common resolutions and match these against the Resolution parameter:
+    else if(DefinitionMethod == "Resolution") {
+        diffTable <- table(diff(possibleBreaks))
+        possibleResolutions <- getLeastCommonMultiple(diffTable, max = maxMaxRange)
+        
+        # Warning if possibleResolutions does not contain Resolution:
+        if(! Resolution %in% possibleResolutions) {
+            Resolution <- min(subset(possibleResolutions, possibleResolutions>Resolution))
+            warning("The specified Resolution is not a common multiplier of all range resolutions. The least higher than Resolution selected (", Resolution, ")")
+        }
+        
+        Breaks <- seq(minMinRange, maxMaxRangemaxMaxRange, by = Resolution)
+        
+    }
+    # If "UserDefined" is requested match the Breaks against the possible breaks:
+    else if(DefinitionMethod == "HighestResolution") {
+        # Warning if possibleResolutions does not contain Resolution:
+        if(! Resolution %in% possibleResolutions) {
+            stop("Some of the specified Breaks are not at common breaks of all Log(distance)s")
+        }
+    }
+    
     
     # If the layer definition data.table Layers is given, use this, and add the LayerID:
     if(

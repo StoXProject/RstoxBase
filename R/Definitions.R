@@ -98,5 +98,8 @@ SumData <- function(data, TargetResolution, dataType = c("NASCData", "LengthDist
   
 }
 
+MeanData <- function() {
+    
+}
 
 
