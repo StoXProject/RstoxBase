@@ -60,20 +60,21 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
   
   
   #Add log distances in NASCData
-  NASCData<- as.data.frame(StoxAcousticData$Log)[c('Log','Distance','EDSU','CruiseKey','LogKey')]
+  NASCData<- StoxAcousticData$Log[,c('Log','EffectiveDistance','EDSU','CruiseKey','LogKey')]
   
   
   
   #Add all AcousticCategory in NASCData
   AcousticCategory <- c(unique(StoxAcousticData$AcousticCategory))
-  NASCData <-merge(NASCData,as.data.frame(AcousticCategory))
+  NASCData <-merge(NASCData,AcousticCategory,by=c('LogKey','CruiseKey'),all.x=TRUE)
 
   
   #Add frequency to NASCData
-  NASCData <-merge(NASCData,as.data.frame(StoxAcousticData$Beam),all = TRUE)
+  NASCData <-merge(NASCData,StoxAcousticData$Beam,by=c('LogKey','CruiseKey','BeamKey'),all.x=TRUE)
+  
   
   #Add NASC data to NASCData
-  NASCData <- merge(NASCData,as.data.frame(StoxAcousticData$NASC),all = TRUE)
+  NASCData <- merge(NASCData,StoxAcousticData$NASC,by=c('LogKey','CruiseKey','BeamKey','AcousticCategoryKey'),all.x = TRUE)
   
   
   #Fix missing values in NASC
@@ -87,60 +88,66 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
   
   
   #Fiks missing stuff
-  NASCData$SampleUnit <- paste(NASCData$CruiseKey,sprintf("%.1f",round(as.numeric(NASCData$Log),digits = 1)),NASCData$LogKey,sep='/')
-  NASCData$SampleUnitType <- 'EDSU'
+  # NASCData$SampleUnit <- paste(NASCData$CruiseKey,sprintf("%.1f",round(as.numeric(NASCData$Log),digits = 1)),NASCData$LogKey,sep='/')
+  NASCData$EDSU <- paste(NASCData$CruiseKey,sprintf("%.1f",round(as.numeric(NASCData$Log),digits = 1)),NASCData$LogKey,sep='/')
   NASCData$Channel <- NASCData$ChannelKey
+  NASCData$ChannelReference <- NASCData$ChannelReferenceKey
+  NASCData$NASCWeight<-NASCData$EffectiveDistance
+  NASCData$EffectiveLogDistance<-NASCData$EffectiveDistance
   
   NASCData$Layer<-NA
   NASCData$PSU <- NA
   NASCData$Stratum <- NA
-  NASCData$Survey <- NA
-  
-  
-  NASCData<-NASCData[c('AcousticCategory','Frequency','SampleUnitType','SampleUnit',
-             'Distance','NASC','MaxRange','MinRange',
-             'Channel','Layer','PSU','Stratum','Survey')]
   
   
   
-  #Fill inn acoustic layer if avaliable
-  #TODO: 
-  # revisit this when this info is avaliable
-  if(!is.null(AcousticLayer)){
-    print('Add acoustic layer')
-    NASCData$MinRange<-NULL
-    NASCData$MaxRange<-NULL
-    NASCData$Layer<-NULL
-    NASCData<-merge(NASCData,unique(AcousticLayer),by.x=c('SampleUnit','Channel'))
-  }
+  #Reshape structure
+  NASCData<-NASCData[,c('Stratum','PSU','EDSU','Layer','Channel',
+             'AcousticCategory','ChannelReference','Frequency',
+             'NASC','MinRange','MaxRange','NASCWeight','EffectiveLogDistance')]
   
   
-  
-  
-  
-    
-    
-    
-    
-  #Fill inn acousticPSU if avaliable
-  #TODO:
-  # revisit this when this info is avaliable
-  if(!is.null(AcousticPSU)){
-
-    print('Add acousticPSU')
-    NASCData$PSU <- NULL
-    NASCData$Stratum <- NULL
-    NASCData$Survey <- NULL
-    NASCData<-merge(NASCData,unique(AcousticPSU),all.x = TRUE)
-
-  }
-  
+  # 
+  # #Fill inn acoustic layer if avaliable
+  # #TODO:
+  # # revisit this when this info is avaliable
+  # if(!is.null(AcousticLayer)){
+  #   print('Add acoustic layer')
+  #   NASCData$MinRange<-NULL
+  #   NASCData$MaxRange<-NULL
+  #   NASCData$Layer<-NULL
+  #   # NASCData<-merge(NASCData,unique(AcousticLayer),by.x=c('SampleUnit','Channel'))
+  # }
+  # 
+  # 
+  # 
+  # 
+  # 
+  #   
+  #   
+  #   
+  #   
+  # #Fill inn acousticPSU if avaliable
+  # #TODO:
+  # # revisit this when this info is avaliable
+  # if(!is.null(AcousticPSU)){
+  # 
+  #   print('Add acousticPSU')
+  #   NASCData$PSU <- NULL
+  #   NASCData$Stratum <- NULL
+  #   NASCData$Survey <- NULL
+  #   # NASCData<-merge(NASCData,unique(AcousticPSU),all.x = TRUE)
+  # 
+  # }
+  # 
   
   
   #Remove that is not needed
-  NASCData<-NASCData[c('AcousticCategory','Frequency','SampleUnitType','SampleUnit',
-                       'Distance','NASC','MaxRange','MinRange',
-                       'Channel','Layer','PSU','Stratum','Survey')]
+  # NASCData<-NASCData[c('AcousticCategory','Frequency')]
+  
+  # ,'SampleUnitType','SampleUnit',
+                       # 'Distance','NASC','MaxRange','MinRange',
+                       # 'Channel','Layer','PSU','Stratum','Survey')]
   
   
   
