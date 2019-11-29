@@ -5,7 +5,7 @@
 \title{Acoustic Layer}
 \usage{
 DefineAcousticLayer(processData, StoxAcousticData,
-  DefinitionMethod = c("WaterColumn", "MaximumResolution", "Resolution",
+  DefinitionMethod = c("WaterColumn", "HighestResolution",
   "UserDefined"), Resolution = double(),
   LayerTable = data.table::data.table(), UseProcessData = FALSE)
 }

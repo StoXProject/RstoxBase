@@ -154,7 +154,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "MaximumResolution", "Resolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -163,15 +163,31 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
     
     # Function to create a LayerTable from breaks:
     createLayerTable <- function(x) {
-        LayerTable <- data.table::data.table(
-            MinRange = x[-length(x)], 
-            MaxRange = x[-1]
-        )
-        LayerNames <- paste0("Layer", seq_len(nrow(LayerTable)))
-        LayerTable <- cbind(
+        # Create a data.table if a vector of breaks is given:
+        if(length(dim(x)) == 1) {
+            x <- data.table::data.table(
+                MinRange = x[-length(x)], 
+                MaxRange = x[-1]
+            )
+        }
+        # Create the Layer names:
+        LayerNames <- getDefaultLayerNames(x)
+        x <- cbind(
             Layer = LayerNames, 
-            LayerTable
+            x
         )
+        x
+    }
+    
+    
+    getDefaultLayerNames <- function(x) {
+        if(length(dim(x) == 2)) {
+            nlayers <- nrow(x)
+        }
+        else {
+            nlayers <- length(x)
+        }
+        paste0("Layer", formatC(seq_len(nlayers), width = nchar(nlayers), format = "d", flag = "0"))
     }
     
     # Get the DefinitionMethod:
@@ -184,66 +200,40 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
     
     # Check if there is only 
     
-    #### Get the possible breaks defining the layers, as depths common for all channels: ####
-    browser()
-    
-    numberOfEDSUs <- nrow(StoxAcousticData$Log)
-    # Accept only the ranges occurring 'numberOfEDSUs' times:
-    tableOfMinRange <- table(StoxAcousticData$NASC$MinRange)
-    tableOfMaxRange <- table(StoxAcousticData$NASC$MaxRange)
-    possibleMinRanges <- as.numeric(names(tableOfMinRange))[tableOfMinRange == numberOfEDSUs]
-    possibleMaxRanges <- as.numeric(names(tableOfMaxRange))[tableOfMaxRange == numberOfEDSUs]
-    # Include also the minimum and maximum range:
-    minMinRange <- min(StoxAcousticData$NASC$MinRange)
-    maxMaxRange <- max(StoxAcousticData$NASC$MaxRange)
-    possibleBreaks <- sort(
-        unique(
-            minMinRange, 
-            possibleMinRanges, 
-            possibleMaxRanges, 
-            maxMaxRange
-        )
+    # Get the common intervals:
+    possibleIntervals <- getCommonIntervals(
+        data = unique(StoxAcousticData$NASC[, c("MinRange", "MaxRange")]), 
+        varMin = "MinRange", 
+        varMax = "MaxRange"
     )
     
     # If "WaterColumn" is requested use the full range:
     if(DefinitionMethod == "WaterColumn") {
         AcousticLayer <- data.table::data.table(
             Layer = "WaterColumn", 
-            MinRange = min(possibleBreaks), 
-            MaxRange = max(possibleBreaks)
+            MinRange = possibleIntervals[1,1], 
+            MaxRange = possibleIntervals[nrow(possibleIntervals), 2]
         )
     }
     
     # If "HighestResolution" is requested use all possible breaks:
     else if(DefinitionMethod == "HighestResolution") {
-        AcousticLayer <- createLayerTable(possibleBreaks)
-    }
-    
-    # If "Resolution" is requested find the possible common resolutions and match these against the Resolution parameter:
-    else if(DefinitionMethod == "Resolution") {
-        diffTable <- table(diff(possibleBreaks))
-        possibleResolutions <- getLeastCommonMultiple(diffTable, max = maxMaxRange)
-        
-        # Warning if possibleResolutions does not contain Resolution:
-        if(! Resolution %in% possibleResolutions) {
-            Resolution <- min(subset(possibleResolutions, possibleResolutions>Resolution))
-            warning("The specified Resolution is not a common multiplier of all range resolutions. The least higher than Resolution selected (", Resolution, ")")
-        }
-        # Get the breaks of the layers:
-        breaks <- seq(minMinRange, maxMaxRangemaxMaxRange, by = Resolution)
-        # Create the output table
-        AcousticLayer <- createLayerTable(breaks)
+        AcousticLayer <- createLayerTable(possibleIntervals)
     }
     
     # If "UserDefined" is requested match the Breaks against the possible breaks:
     else if(DefinitionMethod == "UserDefined") {
         # Error if any of the specified breaks are invalid:
-        if(any(! unlist(LayerTable[, c("MinRange", "MaxRange")]) %in% possibleBreaks)) {
-            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(possibleBreaks, collapse = ", "), "]")
+        if(any(! unlist(LayerTable[, c("MinRange", "MaxRange")]) %in% unlist(possibleIntervals))) {
+            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
         }
         else {
             AcousticLayer <- LayerTable
         }
+    }
+    
+    else {
+        stop("Invalid DefinitionMethod")
     }
     
     
