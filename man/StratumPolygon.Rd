@@ -2,12 +2,12 @@
 % Please edit documentation in R/Spatial.R
 \name{StratumPolygon}
 \alias{StratumPolygon}
-\title{StratumPolygon}
+\title{StoX data type StratumPolygon}
 \description{
-datatype.... \code{\link[sp]{SpatialPolygons}}
+The StratumPolygon data type contains the polygons defining the strata of a survey, stored as an object of type \code{\link[sp]{SpatialPolygons}}.
 }
 \details{
-Bla bla.
+The polygons are stored
 }
 \seealso{
 \code{\link[RstoxData]{DataTypes}} for a list of all StoX data types.

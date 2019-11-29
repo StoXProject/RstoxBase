@@ -74,7 +74,7 @@ stoxMultipolygonWKT2SpatialPolygons <- function(FilePath) {
 #' 
 #' @examples
 #' 
-#' @seealso \code{\link[RstoxData]{StratumArea}} for calculating the area of the strata.
+#' @seealso \code{\link[RstoxBase]{StratumArea}} for calculating the area of the strata.
 #' 
 #' @export
 #' 
@@ -87,18 +87,54 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
 
 ##################################################
 ##################################################
-#' StratumPolygon
+#' StoX data type StratumPolygon
 #' 
-#' datatype.... \code{\link[sp]{SpatialPolygons}}
+#' The StratumPolygon data type contains the polygons defining the strata of a survey, stored as an object of type \code{\link[sp]{SpatialPolygons}}. 
 #' 
 #' @details
-#' Bla bla. 
+#' The polygons are stored 
 #' 
 #' @seealso \code{\link[RstoxData]{DataTypes}} for a list of all StoX data types.
 #' 
 #' @name StratumPolygon
 #' 
 NULL
+
+
+
+
+##################################################
+##################################################
+#' Convert StratumPolygon to list of polygon tables
+#' 
+#' This function extracts the polygons as a named list of tables of class \code{\link[data.table]{data.table}}
+#' 
+#' @inheritParams StratumArea
+#' 
+#' @return
+#' A table of stratum name and area.
+#' 
+#' @examples
+#' 
+#' @seealso \code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
+#' 
+#' @export
+#' 
+getStratumPolygonList <- function(StratumPolygon) {
+    # Accept StratumPolygon contained in a list:
+    if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+        StratumPolygon <- StratumPolygon$StratumPolygon
+    }
+    # Get the names of the polygons:
+    polygonNames <- names(StratumPolygon)
+    # Get a list of the coordinates:
+    stratumPolygonList <- lapply(StratumPolygon@polygons, function(x) data.table::as.data.table(x@Polygons[[1]]@coords))
+    # Set the names of the list:
+    names(stratumPolygonList) <- polygonNames
+    
+    stratumPolygonList
+}
+
 
 ##################################################
 ##################################################
@@ -117,15 +153,16 @@ NULL
 #' 
 #' @examples
 #' 
-#' 
-#' @seealso \code{\link[RstoxData]{DefineStrata}} for the \code{StratumPolygon} input to the function.
+#' @seealso \code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
 #' 
 #' @export
 #' 
 StratumArea <- function(StratumPolygon, AreaMethod = c("Accurate", "Simple")) {
+    # Accept StratumPolygon contained in a list:
     if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
         StratumPolygon <- StratumPolygon$StratumPolygon
     }
+    # Get the polygon areas:
     polygonAreaSP(StratumPolygon)
 }
 

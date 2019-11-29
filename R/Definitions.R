@@ -5,37 +5,43 @@ ModelVariables <- list(
         horizontalResolution = c("Stratum", "PSU", "EDSU"), 
         vertictalResolution = c("Layer", "Channel"), 
         groupingVariables = c("AcousticCategory", "ChannelReference", "Frequency"), 
+        data = "NASC", 
         verticalDimension = c("MinRange", "MaxRange"), 
         weight = "NASCWeight", 
-        data = "NASC", 
         other = "LogDistance"
     ), 
     LengthDistribution = list(
         horizontalResolution = c("Stratum", "PSU", "Station"), 
         vertictalResolution = c("Layer"), 
         groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
+        data = "WeightedCount",
         verticalDimension = c("MinRange", "MaxRange"), 
         weight = "LengthDistributionWeight", 
-        data = "WeightedCount",
         other = c("TowedDistance", "VerticalTrawlOpening", "TrawlDoorSpread", "LengthDistributionType")
     ), 
     Density = list(
         horizontalResolution = c("Stratum", "PSU"), 
         vertictalResolution = c("Layer"), 
         groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
+        data = "Density", 
         verticalDimension = c("MinRange", "MaxRange"), 
-        weight = "DensityWeight", 
-        data = "Density"
+        weight = "DensityWeight"
     ), 
     Abundance = list(
         horizontalResolution = c("Stratum"), 
         vertictalResolution = c("Layer"), 
         groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
+        data = "Abundance", 
         verticalDimension = c("MinRange", "MaxRange"), 
-        weight = "AbundanceWeight", 
-        data = "Abundance"
+        weight = "AbundanceWeight"
     )
 )
+
+
+getColumnOrder <- function(dataType = c("NASCData", "LengthDistribution", "Density", "Abundance")) {
+    dataType <- match.arg(dataType)
+    unlist(resolution <- ModelVariables[[dataType]])
+}
 
 
 
@@ -50,7 +56,7 @@ determineAggregationVariables <- function(data, TargetResolution, dataType = c("
     resolution <- ModelVariables[[dataType]][[resolutionName]]
     
     # Get the present resolution variables:
-    hasNAs <- data[, lapply(.SD, function(x) any(is.na(x))), .SDcols = resolution]
+    hasNAs <- names(data)[data[, lapply(.SD, function(x) any(is.na(x))), .SDcols = resolution]]
     presentResolution <- resolution[!hasNAs]
     # Get the finest resolution variable:
     finestResolution <- presentResolution[1]
@@ -95,11 +101,7 @@ SumData <- function(data, TargetResolution, dataType = c("NASCData", "LengthDist
     # Sum the data, and update the range:
     data[, .(sum(x)), by = aggregationVariables$by, with = FALSE]
     
-  
 }
 
-MeanData <- function() {
-    
-}
 
 

@@ -56,7 +56,7 @@
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxAcousticData  A list of \code{\link{StoxAcousticData}} data.
+#' @param StoxAcousticData  A list of \code{\link[roxygen2]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -131,13 +131,13 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 
 ##################################################
 ##################################################
-#' Acoustic PSU
+#' Acoustic Layer
 #' 
 #' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxAcousticData  A list of \code{\link{StoxAcousticData}} data.
+#' @param StoxAcousticData  A list of \code{\link[RstoxDatas]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -154,11 +154,24 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "UserDefined"), Resolution = double(), Breaks = double(), UseProcessData = FALSE) {
+DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "MaximumResolution", "Resolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         return(processData)
+    }
+    
+    # Function to create a LayerTable from breaks:
+    createLayerTable <- function(x) {
+        LayerTable <- data.table::data.table(
+            MinRange = x[-length(x)], 
+            MaxRange = x[-1]
+        )
+        LayerNames <- paste0("Layer", seq_len(nrow(LayerTable)))
+        LayerTable <- cbind(
+            Layer = LayerNames, 
+            LayerTable
+        )
     }
     
     # Get the DefinitionMethod:
@@ -169,7 +182,11 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
         StoxAcousticData <- StoxAcousticData$StoxAcousticData
     }
     
+    # Check if there is only 
+    
     #### Get the possible breaks defining the layers, as depths common for all channels: ####
+    browser()
+    
     numberOfEDSUs <- nrow(StoxAcousticData$Log)
     # Accept only the ranges occurring 'numberOfEDSUs' times:
     tableOfMinRange <- table(StoxAcousticData$NASC$MinRange)
@@ -188,17 +205,20 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
         )
     )
     
-    
-    
-    
     # If "WaterColumn" is requested use the full range:
     if(DefinitionMethod == "WaterColumn") {
-        Breaks <- range(possibleBreaks)
+        AcousticLayer <- data.table::data.table(
+            Layer = "WaterColumn", 
+            MinRange = min(possibleBreaks), 
+            MaxRange = max(possibleBreaks)
+        )
     }
+    
     # If "HighestResolution" is requested use all possible breaks:
     else if(DefinitionMethod == "HighestResolution") {
-        Breaks <- possibleBreaks
+        AcousticLayer <- createLayerTable(possibleBreaks)
     }
+    
     # If "Resolution" is requested find the possible common resolutions and match these against the Resolution parameter:
     else if(DefinitionMethod == "Resolution") {
         diffTable <- table(diff(possibleBreaks))
@@ -209,50 +229,25 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
             Resolution <- min(subset(possibleResolutions, possibleResolutions>Resolution))
             warning("The specified Resolution is not a common multiplier of all range resolutions. The least higher than Resolution selected (", Resolution, ")")
         }
-        
-        Breaks <- seq(minMinRange, maxMaxRangemaxMaxRange, by = Resolution)
-        
+        # Get the breaks of the layers:
+        breaks <- seq(minMinRange, maxMaxRangemaxMaxRange, by = Resolution)
+        # Create the output table
+        AcousticLayer <- createLayerTable(breaks)
     }
+    
     # If "UserDefined" is requested match the Breaks against the possible breaks:
-    else if(DefinitionMethod == "HighestResolution") {
-        # Warning if possibleResolutions does not contain Resolution:
-        if(! Resolution %in% possibleResolutions) {
-            stop("Some of the specified Breaks are not at common breaks of all Log(distance)s")
+    else if(DefinitionMethod == "UserDefined") {
+        # Error if any of the specified breaks are invalid:
+        if(any(! unlist(LayerTable[, c("MinRange", "MaxRange")]) %in% possibleBreaks)) {
+            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(possibleBreaks, collapse = ", "), "]")
+        }
+        else {
+            AcousticLayer <- LayerTable
         }
     }
     
     
-    # If the layer definition data.table Layers is given, use this, and add the LayerID:
-    if(
-        length(Layers) && 
-        is.data.table(Layers) && 
-        all(c("LayerName", "MinRange", "MaxRange") %in% names(Layers))
-        ) {
-        Layers <- cbind(
-            LayerID = seq_len(nrow(Layers)), 
-            Layers
-        )
-    }
-    else if(length(Layers) == 1) {
-        Layers <- data.table::data.table(
-            LayerID = 1, 
-            LayerName = "L1", 
-            MinRange = 0, 
-            MaxRange = Inf
-        )
-    }
-    # Otherwise detine an infinite layer:
-    else {
-        Layers <- data.table::data.table(
-            Layer = "L1", 
-            MinRange = 0, 
-            MaxRange = Inf
-        )
-    }
-    
-    list(
-        AcousticLayer = Layers
-    )
+    return(list(AcousticLayer = AcousticLayer))
 }
 
 

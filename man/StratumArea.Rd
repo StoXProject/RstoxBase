@@ -34,10 +34,9 @@ The \code{AreaMethod} "Simple" is deprecated, but kept for backwards campatibili
 x <- 1
 
 
-
 }
 \seealso{
 \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 
-\code{\link[RstoxData]{DefineStrata}} for the \code{StratumPolygon} input to the function.
+\code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
 }

@@ -26,5 +26,5 @@ The parameter \code{UseProcessData} is always set to TRUE when running a process
 
 }
 \seealso{
-\code{\link[RstoxData]{StratumArea}} for calculating the area of the strata.
+\code{\link[RstoxBase]{StratumArea}} for calculating the area of the strata.
 }

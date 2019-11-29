@@ -2,17 +2,17 @@
 % Please edit documentation in R/Define.R
 \name{DefineAcousticLayer}
 \alias{DefineAcousticLayer}
-\title{Acoustic PSU}
+\title{Acoustic Layer}
 \usage{
 DefineAcousticLayer(processData, StoxAcousticData,
-  DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution",
-  "UserDefined"), Resolution = double(), Breaks = double(),
-  UseProcessData = FALSE)
+  DefinitionMethod = c("WaterColumn", "MaximumResolution", "Resolution",
+  "UserDefined"), Resolution = double(),
+  LayerTable = data.table::data.table(), UseProcessData = FALSE)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{StoxAcousticData}{A list of \code{\link{StoxAcousticData}} data.}
+\item{StoxAcousticData}{A list of \code{\link[RstoxDatas]{StoxAcousticData}} data.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.}
 
