@@ -1,12 +1,3 @@
-# A list funcitons performing conversions of the projectDescription to ensure backward compatibility:
-#' 
-#' @export
-#' 
-backwardCompatibility <- list(
-    rename_DefineStrata_to_DefineStratum, 
-    split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic
-)
-
 # Rename DefineStrata to DefineStratum:
 rename_DefineStrata_to_DefineStratum <- function(projectDescription) {
     if(StoxVersion == 2.7) {
@@ -61,3 +52,11 @@ split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic <- function(projectDescription)
     return(projectDescription)
 }
 
+# A list funcitons performing conversions of the projectDescription to ensure backward compatibility:
+#' 
+#' @export
+#' 
+backwardCompatibility <- list(
+    rename_DefineStrata_to_DefineStratum, 
+    split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic
+)
