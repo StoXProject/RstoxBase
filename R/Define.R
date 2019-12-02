@@ -1,7 +1,7 @@
 # DefineAcousticPSU
 # DefineAcousticLayer
 # DefineSweptAreaPSU
-# DefineStrata
+# DefineStratum
 # DefineSurvey
 
 # BioticStationAssignment
@@ -54,7 +54,7 @@
 #' 
 #' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratum
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
 #' @param StoxAcousticData  A list of \code{\link[roxygen2]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
@@ -135,7 +135,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' 
 #' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratum
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
 #' @param StoxAcousticData  A list of \code{\link[RstoxDatas]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.

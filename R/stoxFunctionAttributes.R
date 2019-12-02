@@ -27,7 +27,7 @@ stoxFunctionAttributes <- list(
     ), 
     
     # Read strata polygons:
-    DefineStrata = list(
+    DefineStratum = list(
         functionType = "processData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "StratumPolygon", 

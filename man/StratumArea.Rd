@@ -38,5 +38,5 @@ x <- 1
 \seealso{
 \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 
-\code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
+\code{\link[RstoxBase]{DefineStratum}} for the \code{StratumPolygon} input to the function.
 }
