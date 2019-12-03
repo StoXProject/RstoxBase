@@ -4,7 +4,7 @@
 \alias{CombineNASC}
 \title{Some title}
 \usage{
-CombineNASC()
+CombineNASC(NASCData)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}

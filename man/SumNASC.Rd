@@ -4,7 +4,8 @@
 \alias{SumNASC}
 \title{Sum NASC}
 \usage{
-SumNASC()
+SumNASC(NASCData = NULL, TargetResolution = "Layer",
+  AcousticLayer = NULL)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}
@@ -13,7 +14,7 @@ SumNASC()
 A data.table is returned with awesome stuff.
 }
 \description{
-Some description
+This function sums all the vertical channels into layer per edsu
 }
 \details{
 This function is awesome and does excellent stuff.

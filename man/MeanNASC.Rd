@@ -2,9 +2,10 @@
 % Please edit documentation in R/Acoustic.R
 \name{MeanNASC}
 \alias{MeanNASC}
-\title{Average NASC for ecah acoustic PSU}
+\title{Average NASC for each acoustic PSU}
 \usage{
-MeanNASC()
+MeanNASC(NASCData = NULL, TargetResolution = "PSU",
+  AcousticPSU = NULL, rm.na = TRUE)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}
