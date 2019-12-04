@@ -4,14 +4,13 @@
 \alias{StationLengthDist}
 \title{Station length distribution}
 \usage{
-StationLengthDist(BioticData, LengthDistType = "PercentLengthDist",
-  allowMissingWeight = TRUE, fishstationName = "fishstation",
-  catchsampleName = "catchsample", individualName = "individual", ...)
+StationLengthDist(StoxBioticData, SweptAreaPSU,
+  LengthDistType = "PercentLengthDist")
 }
 \arguments{
-\item{BioticData}{The BioticData input, which is a list of data.tables as returned from \code{\link{ReadBioticXML}}.}
-
 \item{LengthDistType}{The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').}
+
+\item{BioticData}{The BioticData input, which is a list of data.tables as returned from \code{\link{ReadBioticXML}}.}
 
 \item{allowMissingWeight}{Logical: If TRUE and \code{LengthDistType} == "PercentLengthDist" accept stations with missing pairs of lengthsampleweight and (total) weight or lengthsamplecatch and (total) catch.}
 

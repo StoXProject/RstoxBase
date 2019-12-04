@@ -8,15 +8,11 @@ DefineAcousticPSU(processData, StratumPolygon, StoxAcousticData,
   DefinitionMethod = c("EDSUToPSU", "None"), UseProcessData = FALSE)
 }
 \arguments{
-\item{processData}{The current data produced by a previous instance of the function.}
-
 \item{StratumPolygon}{A list of \code{\link{StratumPolygon}} process data.}
 
 \item{StoxAcousticData}{A list of \code{\link[roxygen2]{StoxAcousticData}} data.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing funciton output in the process.}
 }
 \value{
 An object of StoX data type \code{\link{AcousticPSU}}.
