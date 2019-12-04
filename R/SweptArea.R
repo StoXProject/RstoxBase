@@ -143,6 +143,180 @@ RelLengthDist <- function() {
 #' @import data.table
 #' 
 StationLengthDist <- function(
+    StoxBioticData, 
+    SweptAreaPSU, 
+    LengthDistType = "PercentLengthDist"
+    # allowMissingWeight = TRUE
+    ) {
+    
+    # 1. Merge the Haul, SpeciesCategory, Sample and Individual level:
+    
+    
+    
+    
+    
+    
+    
+    
+    #### Functions: ####
+    # Fast table function for integer valued data:
+    tabulatePlusOne <- function(x, range) {
+        # Allow for double precision, which may occur when multiplying by a raising factor such as weight/lengthsampleweight:
+        out <- as.double(tabulate(x, range[2]))
+        out[seq(range[1], range[2])]
+    }
+    
+    # Take the sum of a number of length distributions, and return the input object subset to only the sum. This function is used in \code{getStationLengthDist} when summing over part samples, and is somewhat ad hoc:
+    psum <- function(y) {
+        y$WeightedCount <- rowSums(matrix(y$WeightedCount, nrow=numLengthIntervals), na.rm=TRUE)
+        y[seq_len(numLengthIntervals), ]
+    }
+    
+    # Function to get missing data and number of part samples
+    checkCatchsample <- function(x) {
+        has_SpecCat <- !is.na(x$SpecCat)
+        has_weight <- !is.na(x$catchweight)
+        has_lengthsampleweight <- !is.na(x$lengthsampleweight)
+        has_weight <- has_weight & has_lengthsampleweight
+        has_catchcount <- !is.na(x$catchcount)
+        has_lengthsamplecount <- !is.na(x$lengthsamplecount)
+        has_count <- has_catchcount & has_lengthsamplecount
+        
+        has_weightORcount <- has_weight | has_count
+        has_NOTweightBUTcount <- !has_weight & has_count
+        
+        numPartSamples <- x$catchpartnumber
+        has_onlyOnePartSample <- numPartSamples == 1
+        
+        out <- list(
+            has_SpecCat = has_SpecCat, 
+            has_weight = has_weight, 
+            has_weightORcount = has_weightORcount, 
+            has_NOTweightBUTcount = has_NOTweightBUTcount, 
+            has_onlyOnePartSample = has_onlyOnePartSample
+        )
+        
+        # Add the tests to the input data table and return:
+        out <- as.data.table(out)
+        cbind(x, out)
+    }
+    
+    
+    #### Names and definitions: ####
+    
+    # Define names of required variables:
+    var <- c("distance", "catchpartnumber", "catchweight", "lengthsampleweight", "catchcount", "lengthsamplecount", "length", "lengthresolution", "SpecCat")
+    bioticKeys <- getBioticKeys()
+    
+    #### First merge the fish station and catch sample data tables, to be sure to remove the entire station if none of the catch samples have e.g. weight and lengthsampleweight: ####
+    keys <- unlist(bioticKeys[c("mission", "fishstation", "catchsample")])
+    fishstation_catchsample <- merge2(BioticData[[fishstationName]], BioticData[[catchsampleName]], var=var, keys=keys)
+    
+    
+    #### Subset datasets given 'LengthDistType': ####
+    # Check validity of the data:
+    fishstation_catchsample <- checkCatchsample(fishstation_catchsample)
+    
+    # If LengthDistType="PercentLengthDist" there is a possibility to accept stations with missing weight and count, as long as there is only one sample:
+    if(LengthDistType == "PercentLengthDist" && allowMissingWeight) {
+        fishstation_catchsample <- subset(fishstation_catchsample, has_SpecCat & (has_weightORcount | has_onlyOnePartSample))
+    }
+    else {
+        fishstation_catchsample <- subset(fishstation_catchsample, has_SpecCat & has_weightORcount)
+    }
+    
+    # Merge fishstation with catchsample, and then the result with individual:
+    thisvar <- c(var, "has_weight", "has_NOTweightBUTcount", "has_onlyOnePartSample")
+    keys <- unlist(bioticKeys[c("mission", "fishstation", "catchsample", "individual")])
+    fishstation_catchsample_individual <- merge2(fishstation_catchsample, BioticData[[individualName]], var=thisvar, keys=keys)
+    
+    
+    #### Get length intervals: ####
+    
+    # Get largest length resolution:
+    # Round down all length measurements to the nearest length interval (add 1 to make the first interval start at 0, thus rounding down):
+    fishstation_catchsample_individual$lengthInt <- floor(fishstation_catchsample_individual$length / lengthResCM) + 1
+    rangeLengthInt <- range(fishstation_catchsample_individual$lengthInt, na.rm=TRUE)
+    # Get the range of the lengths:
+    rangeLengths <- (range(fishstation_catchsample_individual$lengthInt, na.rm=TRUE) - 1) * lengthResCM
+    # Create a vector of all length intervals:
+    lengthIntervals <- seq(rangeLengths[1], rangeLengths[2], by=lengthResCM)
+    numLengthIntervals <- length(lengthIntervals)
+    
+    
+    #### Generate length distributions per station and SpecCat: ####
+    # Set the keys used by the data.table package:
+    keys <- unlist(bioticKeys[c("mission", "fishstation", "catchsample")])
+    setkeyv(fishstation_catchsample_individual, cols=keys)
+    
+    # Declare the variables used in the fishstation_catchsample_individual[] expression below (this is done to avoid warnings when building the package):
+    . <- NULL
+    distance <- NULL
+    has_SpecCat <- NULL
+    has_weightORcount <- NULL
+    has_onlyOnePartSample <- NULL
+    lengthInt <- NULL
+    catchweight <- NULL
+    lengthsampleweight <- NULL
+    has_weight <- NULL
+    has_NOTweightBUTcount <- NULL
+    WeightedCount <- NULL
+    count <- NULL
+    lengthsamplecount <- NULL
+    serialnumber <- NULL
+    
+    # Use the data.table package to generate the length distributions:
+    out <- fishstation_catchsample_individual[,  .(
+        "WeightedCount" = tabulatePlusOne(lengthInt, rangeLengthInt), 
+        "LengthGroup (cm)" = lengthIntervals, 
+        "LengthInterval (cm)" = rep(lengthResCM[1], numLengthIntervals), 
+        "LengthDistType" = rep(LengthDistType[1], numLengthIntervals),
+        "distance" = rep(distance[1], numLengthIntervals),
+        "weight" = rep(catchweight[1], numLengthIntervals),
+        "lengthsampleweight" = rep(lengthsampleweight[1], numLengthIntervals), 
+        "has_weight" = rep(has_weight[1], numLengthIntervals),
+        "has_NOTweightBUTcount" = rep(has_NOTweightBUTcount[1], numLengthIntervals), 
+        "has_onlyOnePartSample" = rep(has_onlyOnePartSample[1], numLengthIntervals)
+    ), by=keys]
+    
+    
+    #### Sum over part samples: ####
+    # Apply so called raising factors, which are total weight/count divided by sample weight/count:
+    out[has_weight==TRUE, WeightedCount := WeightedCount * weight / lengthsampleweight]
+    if(any(out$has_NOTweightBUTcount, na.rm=TRUE)) {
+        message("StoX: Here there seems to be bug, where count is not present, and this should also be catchcount")
+        out[has_NOTweightBUTcount==TRUE, WeightedCount := WeightedCount * count / lengthsamplecount]
+    }
+    
+    # Set the keys to the StationID and SpecCat, which are introduced in ReadBioticXML():
+    keys <- c("StationID", "SpecCat")
+    setkeyv(out, cols=keys)
+    
+    # Sum over part samples only if there are stations with more than one part sample:
+    if(!all(out$has_onlyOnePartSample, na.rm=TRUE)) {
+        out <- out[has_onlyOnePartSample == TRUE, psum(.SD), by=keys]
+    }
+    
+    
+    ##### Output: #####
+    # Convert to percent:
+    if(LengthDistType == "PercentLengthDist") {
+        out[, WeightedCount := WeightedCount/sum(WeightedCount, na.rm=TRUE) * 100, by=thiskeys]
+    }
+    # Normalize by trawled distance:
+    else if(LengthDistType == "NormLengthDist") {
+        out[, WeightedCount := WeightedCount/distance, by=thiskeys]
+    }
+    
+    
+    # remove NA distrubitions 
+    
+    
+    out
+}
+
+
+StationLengthDistOld <- function(
     BioticData, 
     LengthDistType = "PercentLengthDist", 
     allowMissingWeight = TRUE, 
@@ -324,7 +498,6 @@ StationLengthDist <- function(
     
     out
 }
-
 
 ##################################################
 ##################################################

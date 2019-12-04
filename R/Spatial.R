@@ -78,7 +78,7 @@ stoxMultipolygonWKT2SpatialPolygons <- function(FilePath) {
 #' 
 #' @export
 #' 
-DefineStratum <- function(processData, FileName, UseProcessData = FALSE) {
+DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
     if(UseProcessData) {
         return(processData)
     }
@@ -116,7 +116,7 @@ NULL
 #' 
 #' @examples
 #' 
-#' @seealso \code{\link[RstoxBase]{DefineStratum}} for the \code{StratumPolygon} input to the function.
+#' @seealso \code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
 #' 
 #' @export
 #' 
@@ -153,7 +153,7 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' 
 #' @examples
 #' 
-#' @seealso \code{\link[RstoxBase]{DefineStratum}} for the \code{StratumPolygon} input to the function.
+#' @seealso \code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
 #' 
 #' @export
 #' 

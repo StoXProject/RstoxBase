@@ -1,18 +1,18 @@
 # Rename DefineStrata to DefineStratum:
-rename_DefineStrata_to_DefineStratum <- function(projectDescription) {
-    if(StoxVersion == 2.7) {
-        # Get the function names:
-        functionNames <- sapply(projectDescription$Baseline, "[[", "functionName")
-        # Get the position of the process using DefineStrata():
-        atDefineStrata <- which("DefineStrata" %in% functionNames)
-        if(length(atDefineStrata)) {
-            # Split the process:
-            projectDescription$Baseline[[atDefineStrata]]$functionName <- "DefineStratum"
-        }
-    }
-    
-    return(projectDescription)
-}
+#rename_DefineStrata_to_DefineStratum <- function(projectDescription) {
+#    if(StoxVersion == 2.7) {
+#        # Get the function names:
+#        functionNames <- sapply(projectDescription$Baseline, "[[", "functionName")
+#        # Get the position of the process using DefineStrata():
+#        atDefineStrata <- which("DefineStrata" %in% functionNames)
+#        if(length(atDefineStrata)) {
+#            # Split the process:
+#            projectDescription$Baseline[[atDefineStrata]]$functionName <- "DefineStratum"
+#        }
+#    }
+#    
+#    return(projectDescription)
+#}
 
 # Split ReadBioticXML into ReadBiotic and StoxBiotic:
 split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic <- function(projectDescription) {
@@ -57,6 +57,6 @@ split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic <- function(projectDescription)
 #' @export
 #' 
 backwardCompatibility <- list(
-    rename_DefineStrata_to_DefineStratum, 
+    # rename_DefineStrata_to_DefineStratum, 
     split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic
 )
