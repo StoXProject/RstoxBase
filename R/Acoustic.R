@@ -237,7 +237,9 @@ SumNASC <- function(NASCData=NULL,TargetResolution='Layer',AcousticLayer=NULL) {
   }
   
   #Test if layer information has been added
-  if(is.null(AcousticLayer))stop('AcousticLayer must be defined when summing to layer')
+  if(any(is.na(NASCData$Layer))) {
+      stop('AcousticLayer must be defined when summing to layer')
+  }
 
   
   #Sum
