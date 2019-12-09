@@ -150,7 +150,8 @@ StationLengthDist <- function(
     ) {
     
     # 1. Merge the Haul, SpeciesCategory, Sample and Individual level:
-    LengthDistributionData <- RstoxData::mergeDataTables(data, c("Haul", "SpeciesCategory", "Sample", "Individual"))
+    toMerge <- c("Haul", "SpeciesCategory", "Sample", "Individual")
+    LengthDistributionData <- RstoxData::mergeDataTables(data, toMerge)[[length(toMerge)]]
     
     
     

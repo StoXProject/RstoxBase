@@ -47,5 +47,42 @@ stoxFunctionAttributes <- list(
         #    StoxAcousticData = "character"), 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
+    ), 
+    
+    # Define acoustic PSUs:
+    BioticStationAssignment = list(
+        functionType = "processData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "Assignment", 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list(
+            StratumPolygon = list(
+                DefinitionMethod = "Stratum"
+            ), 
+            AcousticData = list(
+                DefinitionMethod = "Radius"
+            ), 
+            Radius = list(
+                DefinitionMethod = "Radius"
+            ), 
+            MinNumStations  = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            RefGCDistance  = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            RefTime  = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            RefBotDepth  = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            RefLatitude  = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            RefLongitude  = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            )
+        )
     )
 )
