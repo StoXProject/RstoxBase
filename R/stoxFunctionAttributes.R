@@ -6,26 +6,6 @@
 #' 
 stoxFunctionAttributes <- list(
     
-    # Read input biotic data:
-    ReadBiotic = list(
-        functionType = "modelData", 
-        functionCategory = "Baseline", 
-        functionOutputDataType = "BioticData", 
-        #functionParameterType = list(FileNames = "character"), 
-        functionParameterFormat = list(FileNames = "filePaths"), 
-        functionArgumentHierarchy = list()
-    ), 
-    
-    # Read input biotic data:
-    ReadAcoustic = list(
-        functionType = "modelData", 
-        functionCategory = "Baseline", 
-        functionOutputDataType = "AcousticData", 
-        #functionParameterType = list(FileNames = "character"), 
-        functionParameterFormat = list(FileNames = "filePaths"), 
-        functionArgumentHierarchy = list()
-    ), 
-    
     # Read strata polygons:
     DefineStrata = list(
         functionType = "processData", 
