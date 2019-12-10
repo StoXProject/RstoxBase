@@ -115,6 +115,13 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
             Stratum = Stratum, 
             PSU = PSUName
         )
+        
+        # Remove PSUs that do not have a stratum:
+        validPSUs <- Stratum_PSU$PSU[!is.na(Stratum_PSU$Stratum)]
+        Stratum_PSU <- Stratum_PSU[ PSU %in% validPSUs ]
+        PSU_EDSU <- PSU_EDSU[ PSU %in% validPSUs ]
+        
+            
     }
     # Otherwise return empty tables:
     else {
@@ -124,8 +131,8 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
     
     
     list(
-        PSU_EDSU = PSU_EDSU, 
-        Stratum_PSU = Stratum_PSU
+        Stratum_PSU = Stratum_PSU, 
+        PSU_EDSU = PSU_EDSU
     )
 }
 
@@ -171,6 +178,9 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
                 MaxRange = x[-1]
             )
         }
+        else {
+            names(x) <- c("MinRange", "MaxRange")
+        }
         # Create the Layer names:
         LayerNames <- getDefaultLayerNames(x)
         x <- cbind(
@@ -198,8 +208,6 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
     if(is.list(StoxAcousticData) && "StoxAcousticData" %in% names(StoxAcousticData)) {
         StoxAcousticData <- StoxAcousticData$StoxAcousticData
     }
-    
-    # Check if there is only 
     
     # Get the common intervals:
     possibleIntervals <- getCommonIntervals(
@@ -317,7 +325,8 @@ BioticStationAssignment <- function(
         Assignment <- cbind(
             Stratum_PSU[, "PSU"], 
             Layer = 1, 
-            Haul = haulList[Stratum_PSU$Stratum]
+            Haul = haulList[Stratum_PSU$Stratum], 
+            WeightingFactor = 1
         )
     }
     

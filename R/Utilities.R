@@ -19,7 +19,7 @@
 
 
 # Function to get the common intervals of possibly overlapping intervals:
-getCommonIntervals <- function(data, varMin = NULL, varMax = NULL) {
+getCommonIntervals <- function(data, varMin = NULL, varMax = NULL, lowerName = NULL, upperName = NULL) {
     
     # Function to get the first common interval of a table:
     getOneCommonInterval <- function(data) {
@@ -62,6 +62,15 @@ getCommonIntervals <- function(data, varMin = NULL, varMax = NULL) {
         varMax <- names(data)[2]
     }
     
+    # Set the names of the output "lower" and "upper" columns:
+    if(length(lowerName) == 0) {
+        lowerName <- varMin
+    }
+    if(length(upperName) == 0) {
+        upperNameupperName <- varMax
+    }
+    
+    
     # Order the input:
     data <- data[order(data[[varMin]]), ]
     
@@ -78,6 +87,10 @@ getCommonIntervals <- function(data, varMin = NULL, varMax = NULL) {
         data <- subset(data, !used)
     }
     intervals <- data.table::rbindlist(lapply(intervals, as.list))
+    
+    # Rename the "lower" and "upper" column:
+    intervals[, .(lower = lowerName)]
+    intervals[, .(upper = upperName)]
     
     intervals
 }
