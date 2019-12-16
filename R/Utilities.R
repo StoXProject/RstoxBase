@@ -95,3 +95,10 @@ getCommonIntervals <- function(data, varMin = NULL, varMax = NULL, lowerName = N
     intervals
 }
 
+# Function to generate StoxBiotic keys:
+getStoxBioticKeys <- function(levels = NULL) {
+    if(length(levels) == 0) {
+        levels <- RstoxData::getStoxBioticLevels()
+    }
+    paste0(levels, "Key")
+}

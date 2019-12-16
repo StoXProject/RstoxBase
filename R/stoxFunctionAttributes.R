@@ -50,7 +50,7 @@ stoxFunctionAttributes <- list(
     ), 
     
     # Define acoustic PSUs:
-    BioticStationAssignment = list(
+    DefineBioticAssignment = list(
         functionType = "processData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "Assignment", 
@@ -84,5 +84,14 @@ stoxFunctionAttributes <- list(
                 DefinitionMethod = "EllipsoidalDistance"
             )
         )
+    ), 
+    
+    # Calculate areas of strata polygons:
+    LengthDistribution = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "LengthDistribution", 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list()
     )
 )
