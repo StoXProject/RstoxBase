@@ -33,6 +33,11 @@
 #' 
 DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
     
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     # Get the DefinitionMethod:
@@ -42,36 +47,32 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
     if(modelType == "Acoustic") {
         SSULevel <- "Log"
         SSUName <- "EDSU"
+        prefix <- "T"
     }
     else if(modelType == "SweptArea") {
         SSULevel <- "Station"
         SSUName <- "Station"
+        prefix <- "S"
     }
     else {
         stop("Unknown model type")
     }
     
-    
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
-    
-    # For flexibility accept a list of the input data, named by the data type:
-    if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
-        StratumPolygon <- StratumPolygon$StratumPolygon
-    }
-    if(is.list(StoxData) && "StoxData" %in% names(StoxData)) {
-        StoxData <- StoxData$StoxData
-    }
+    ## For flexibility accept a list of the input data, named by the data type:
+    #if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+    #    StratumPolygon <- StratumPolygon$StratumPolygon
+    #}
+    #if(is.list(StoxData) && "StoxData" %in% names(StoxData)) {
+    #    StoxData <- StoxData$StoxData
+    #}
     
     # Use each SSU as a PSU:
-    if(DefinitionMethod == "Identity") {
+    if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
         # Define PSUIDs and PSUNames:
         SSU <- StoxData[[SSULevel]][[SSUName]]
         PSUID <- seq_along(SSU)
-        PSUName <- paste0("T", formatC(PSUID, width = nchar(max(PSUID)), format = "d", flag = "0"))
+        PSUName <- paste0(prefix, formatC(PSUID, width = nchar(max(PSUID)), format = "d", flag = "0"))
         
         # Set each SSU as a PSU:
         PSU_SSU <- data.table::data.table(
@@ -139,7 +140,7 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
-    if(DefinitionMethod == "StationToPSU") {
+    if(grepl("StationToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
     
@@ -183,7 +184,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
-    if(DefinitionMethod == "EDSUToPSU") {
+    if(grepl("EDSUToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
     
@@ -198,18 +199,147 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 }
 
 
-
-
+##################################################
+##################################################
+#' Define Layers
+#' 
+#' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
+#' 
+#' @inheritParams DefineStrata
+#' @inheritParams DefineAcousticLayer
+#' @param StoxBioticData  A list of \code{\link[RstoxDatas]{StoxBioticData}} data.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{SweptAreaLayer}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{SweptAreaPSU}}.
+#' 
+#' @export
+#' @import data.table
+#' 
+DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    # Get the DefinitionMethod:
+    modelType <- match.arg(modelType)
+    
+    # SSULevel
+    if(modelType == "Acoustic") {
+        VerticalResolutionLevel <- "NASC"
+        VerticalResolutionMin <- "MinRange"
+        VerticalResolutionMax <- "MaxRange"
+    }
+    else if(modelType == "SweptArea") {
+        VerticalResolutionLevel <- "Haul"
+        VerticalResolutionMin <- "MinHaulDepth"
+        VerticalResolutionMax <- "MaxHaulDepth"
+    }
+    else {
+        stop("Unknown model type")
+    }
+    
+    # Function to create a LayerTable from breaks:
+    createLayerTable <- function(x) {
+        # Create a data.table if a vector of breaks is given:
+        if(length(dim(x)) == 1) {
+            x <- data.table::data.table(
+                MinLayerRange = x[-length(x)], 
+                MaxLayerRange = x[-1]
+            )
+        }
+        else {
+            names(x) <- c("MinLayerRange", "MaxLayerRange")
+        }
+        # Create the Layer names:
+        LayerNames <- getDefaultLayerNames(x)
+        x <- cbind(
+            Layer = LayerNames, 
+            x
+        )
+        x
+    }
+    
+    # Function to get defaul Layer names:
+    getDefaultLayerNames <- function(x) {
+        if(length(dim(x) == 2)) {
+            nlayers <- nrow(x)
+        }
+        else {
+            nlayers <- length(x)
+        }
+        paste0("Layer", formatC(seq_len(nlayers), width = nchar(nlayers), format = "d", flag = "0"))
+    }
+    
+    ## For flexibility accept a list of the input data, named by the data type:
+    #if(is.list(StoxData) && "StoxData" %in% names(StoxData)) {
+    #    StoxData <- StoxData$StoxData
+    #}
+    
+    # Get the common intervals:
+    possibleIntervals <- getCommonIntervals(
+        data = unique(StoxData[[VerticalResolutionLevel]][, c(..VerticalResolutionMin, ..VerticalResolutionMax)]), 
+        varMin = VerticalResolutionMin, 
+        varMax = VerticalResolutionMax, 
+        lowerName = "MinLayerRange", 
+        upperName = "MaxLayerRange"
+    )
+    
+    # If "WaterColumn" is requested use the full range:
+    if(grepl("WaterColumn", DefinitionMethod, ignore.case = TRUE)) {
+        Layer <- data.table::data.table(
+            Layer = "WaterColumn", 
+            #MinLayerRange = possibleIntervals[1, 1], 
+            MinLayerRange = 0,
+            #MaxLayerRange = possibleIntervals[nrow(possibleIntervals), 2]
+            MaxLayerRange = Inf
+        )
+    }
+    
+    # If "HighestResolution" is requested use all possible breaks:
+    else if(grepl("HighestResolution", DefinitionMethod, ignore.case = TRUE)) {
+        Layer <- createLayerTable(possibleIntervals)
+    }
+    
+    # If "UserDefined" is requested match the Breaks against the possible breaks:
+    else if(grepl("UserDefined", DefinitionMethod, ignore.case = TRUE)) {
+        # Error if any of the specified breaks are invalid:
+        if(any(! unlist(LayerTable[, c("MinLayerRange", "MaxLayerRange")]) %in% unlist(possibleIntervals))) {
+            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
+        }
+        else {
+            Layer <- LayerTable
+        }
+    }
+    
+    else {
+        stop("Invalid DefinitionMethod")
+    }
+    
+    
+    return(Layer)
+}
 
 
 ##################################################
 ##################################################
 #' Acoustic Layer
 #' 
-#' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
+#' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
 #' @inheritParams DefineStrata
-#' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
 #' @param StoxAcousticData  A list of \code{\link[RstoxDatas]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
@@ -217,7 +347,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' An object of StoX data type \code{\link{AcousticLayer}}.
 #' 
 #' @examples
 #' x <- 1
@@ -229,94 +359,55 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' 
 DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
     
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
-    
-    # Function to create a LayerTable from breaks:
-    createLayerTable <- function(x) {
-        # Create a data.table if a vector of breaks is given:
-        if(length(dim(x)) == 1) {
-            x <- data.table::data.table(
-                MinRange = x[-length(x)], 
-                MaxRange = x[-1]
-            )
-        }
-        else {
-            names(x) <- c("MinRange", "MaxRange")
-        }
-        # Create the Layer names:
-        LayerNames <- getDefaultLayerNames(x)
-        x <- cbind(
-            Layer = LayerNames, 
-            x
-        )
-        x
-    }
-    
-    
-    getDefaultLayerNames <- function(x) {
-        if(length(dim(x) == 2)) {
-            nlayers <- nrow(x)
-        }
-        else {
-            nlayers <- length(x)
-        }
-        paste0("Layer", formatC(seq_len(nlayers), width = nchar(nlayers), format = "d", flag = "0"))
-    }
-    
-    # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
-    
-    # For flexibility accept a list of the input data, named by the data type:
-    if(is.list(StoxAcousticData) && "StoxAcousticData" %in% names(StoxAcousticData)) {
-        StoxAcousticData <- StoxAcousticData$StoxAcousticData
-    }
-    
-    # Get the common intervals:
-    possibleIntervals <- getCommonIntervals(
-        data = unique(StoxAcousticData$NASC[, c("MinRange", "MaxRange")]), 
-        varMin = "MinRange", 
-        varMax = "MaxRange"
+    DefineLayer(
+        processData = processData, 
+        StoxData = StoxAcousticData, 
+        DefinitionMethod = DefinitionMethod, 
+        Resolution = Resolution, 
+        LayerTable = LayerTable, 
+        UseProcessData = UseProcessData, 
+        modelType = "Acoustic"
     )
-    
-    # If "WaterColumn" is requested use the full range:
-    if(DefinitionMethod == "WaterColumn") {
-        AcousticLayer <- data.table::data.table(
-            Layer = "WaterColumn", 
-            MinRange = possibleIntervals[1,1], 
-            MaxRange = possibleIntervals[nrow(possibleIntervals), 2]
-        )
-    }
-    
-    # If "HighestResolution" is requested use all possible breaks:
-    else if(DefinitionMethod == "HighestResolution") {
-        AcousticLayer <- createLayerTable(possibleIntervals)
-    }
-    
-    # If "UserDefined" is requested match the Breaks against the possible breaks:
-    else if(DefinitionMethod == "UserDefined") {
-        # Error if any of the specified breaks are invalid:
-        if(any(! unlist(LayerTable[, c("MinRange", "MaxRange")]) %in% unlist(possibleIntervals))) {
-            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
-        }
-        else {
-            AcousticLayer <- LayerTable
-        }
-    }
-    
-    else {
-        stop("Invalid DefinitionMethod")
-    }
-    
-    
-    return(list(AcousticLayer = AcousticLayer))
 }
 
 
-
-
+##################################################
+##################################################
+#' Swept-area Layer
+#' 
+#' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
+#' 
+#' @inheritParams DefineStrata
+#' @inheritParams DefineAcousticLayer
+#' @param StoxBioticData  A list of \code{\link[RstoxDatas]{StoxBioticData}} data.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{SweptAreaLayer}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{SweptAreaPSU}}.
+#' 
+#' @export
+#' @import data.table
+#' 
+DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+    
+    DefineLayer(
+        processData = processData, 
+        StoxData = StoxBioticData, 
+        DefinitionMethod = DefinitionMethod, 
+        Resolution = Resolution, 
+        LayerTable = LayerTable, 
+        UseProcessData = UseProcessData, 
+        modelType = "SweptArea"
+    )
+}
 
 
 ##################################################
@@ -362,24 +453,24 @@ DefineBioticAssignment <- function(
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     
-    # For flexibility accept a list of the input data, named by the data type:
-    if(is.list(AcousticPSU) && "AcousticPSU" %in% names(AcousticPSU)) {
-        AcousticPSU <- AcousticPSU$AcousticPSU
-    }
-    if(is.list(AcousticLayer) && "AcousticLayer" %in% names(AcousticLayer)) {
-        AcousticLayer <- AcousticLayer$AcousticLayer
-    }
-    if(is.list(StoxBioticData) && "StoxBioticData" %in% names(StoxBioticData)) {
-        StoxBioticData <- StoxBioticData$StoxBioticData
-    }
+    ## For flexibility accept a list of the input data, named by the data type:
+    #if(is.list(AcousticPSU) && "AcousticPSU" %in% names(AcousticPSU)) {
+    #    AcousticPSU <- AcousticPSU$AcousticPSU
+    #}
+    #if(is.list(AcousticLayer) && "AcousticLayer" %in% names(AcousticLayer)) {
+    #    AcousticLayer <- AcousticLayer$AcousticLayer
+    #}
+    #if(is.list(StoxBioticData) && "StoxBioticData" %in% names(StoxBioticData)) {
+    #    StoxBioticData <- StoxBioticData$StoxBioticData
+    #}
     
     # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
-    if(DefinitionMethod == "Stratum") {
+    if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         
-        # For flexibility accept a list of the input data, named by the data type:
-        if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
-            StratumPolygon <- StratumPolygon$StratumPolygon
-        }
+        ## For flexibility accept a list of the input data, named by the data type:
+        #if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+        #    StratumPolygon <- StratumPolygon$StratumPolygon
+        #}
         
         # Create a spatial points object:
         SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
@@ -397,8 +488,8 @@ DefineBioticAssignment <- function(
             StoxBioticData$Haul, 
             by = intersect(names(StoxBioticData$Station), names(StoxBioticData$Haul))
         )
-        message("Remove the hack in BioticStationAssignment where Haul is generated")
-        Station_Haul$Haul <- paste(Station_Haul$CruiseKey, Station_Haul$StationKey, Station_Haul$HaulKey, sep = "/")
+        #message("Remove the hack in BioticStationAssignment where Haul is generated")
+        #Station_Haul$Haul <- paste(Station_Haul$CruiseKey, Station_Haul$StationKey, Station_Haul$HaulKey, sep = "/")
         
         # Small funciton to get the hauls of requested stations:
         getAllHaulsOfStations <- function(Station, Station_Haul) {
@@ -417,9 +508,7 @@ DefineBioticAssignment <- function(
         )
     }
     
-    
-    
-    return(list(Assignment = Assignment))
+    return(Assignment)
 }
 
 

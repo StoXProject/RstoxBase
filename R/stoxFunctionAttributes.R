@@ -39,12 +39,28 @@ stoxFunctionAttributes <- list(
     ), 
     
     # Define acoustic PSUs:
+    DefineSweptAreaPSU = list(
+        functionType = "processData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "SweptAreaPSU", 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list()
+    ), 
+    
+    # Define acoustic Layer:
     DefineAcousticLayer = list(
         functionType = "processData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "AcousticLayer", 
-        #functionParameterType = list(
-        #    StoxAcousticData = "character"), 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list()
+    ), 
+    
+    # Define swept-area Layer:
+    DefineSweptAreaLayer = list(
+        functionType = "processData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "SweptAreaLayer", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
     ), 
@@ -53,7 +69,7 @@ stoxFunctionAttributes <- list(
     DefineBioticAssignment = list(
         functionType = "processData", 
         functionCategory = "Baseline", 
-        functionOutputDataType = "Assignment", 
+        functionOutputDataType = "BioticAssignment", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list(
             StratumPolygon = list(

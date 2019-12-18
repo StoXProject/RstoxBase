@@ -35,7 +35,7 @@ getCommonIntervals <- function(data, varMin = NULL, varMax = NULL, lowerName = N
             inside <- lower < data[[varMin]] & data[[varMin]] < upper
             if(any(inside)) {
                 # Check whether the maximum of the upper values of the intervals that are inside the common interval exceeds the upper value:
-                maxOfInside <- max(data[[varMin]][inside])
+                maxOfInside <- max(data[[varMax]][inside])
                 if(maxOfInside > upper) {
                     upper <- maxOfInside
                 }
@@ -67,9 +67,14 @@ getCommonIntervals <- function(data, varMin = NULL, varMax = NULL, lowerName = N
         lowerName <- varMin
     }
     if(length(upperName) == 0) {
-        upperNameupperName <- varMax
+        upperName <- varMax
     }
     
+    # Remove rows with NAs:
+    hasNA <- rowSums(is.na(data)) > 0
+    if(any(hasNA)) {
+        data <- data[!hasNA, ]
+    }
     
     # Order the input:
     data <- data[order(data[[varMin]]), ]

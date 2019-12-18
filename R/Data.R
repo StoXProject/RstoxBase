@@ -1,31 +1,34 @@
 ##################################################
 ##################################################
-#' Some title
+#' StoX data types of the RstoxBase package
 #' 
-#' Some description
-#' 
-#' @param parameterName Parameter descrption.
+#' StoX data types are the data types used to transfer data and information between processes in a StoX estimation model.
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' This RstoxBase package produces the folliwing StoX data types:
+#' \itemize{
+#' \item{\code{\link{StratumPolygon}}}
+#' }
 #' 
-#' @return
-#' A data.table is returned with awesome stuff.
+#' @seealso \code{\link[RstoxData]{RstoxData}} and \code{\link[RstoxFDA]{RstoxFDA}} for a list of all StoX data types produced by the other official StoX function packages.
 #' 
-#' @examples
-#' x <- 1
+#' @name DataTypes
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+NULL
+
+
+##################################################
+##################################################
+#' StoX data type StratumPolygon
 #' 
-#' @export
+#' The StratumPolygon data type contains the polygons defining the strata of a survey, stored as an object of type \code{\link[sp]{SpatialPolygons}}. 
 #' 
-DATRASConvert <- function() {
-    # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
-}
-
-
-
-
-
-
+#' @details
+#' The polygons are stored 
+#' 
+#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name StratumPolygon
+#' 
+NULL
 

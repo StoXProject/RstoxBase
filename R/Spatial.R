@@ -16,7 +16,7 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
     if(!file.exists(FilePath) || (file.exists(FilePath) && isTRUE(file.info(FilePath)$isdir))) {
         stop("The StoX multipolygon WKT file ", FilePath, " does not exist or is a directory.")
     }
-    tab <- data.table::fread(FilePath, sep = "\t", header = FALSE, stringsAsFactors = FALSE)
+    tab <- data.table::fread(FilePath, sep = "\t", header = FALSE, stringsAsFactors = FALSE, colClasses = list(character=1:2))
     names(tab) <- c("Stratum", "Polygon")
     tab
 }
@@ -84,23 +84,6 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
     }
     stoxMultipolygonWKT2SpatialPolygons(FileName)
 }
-
-##################################################
-##################################################
-#' StoX data type StratumPolygon
-#' 
-#' The StratumPolygon data type contains the polygons defining the strata of a survey, stored as an object of type \code{\link[sp]{SpatialPolygons}}. 
-#' 
-#' @details
-#' The polygons are stored 
-#' 
-#' @seealso \code{\link[RstoxData]{DataTypes}} for a list of all StoX data types.
-#' 
-#' @name StratumPolygon
-#' 
-NULL
-
-
 
 
 ##################################################
