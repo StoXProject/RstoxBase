@@ -109,5 +109,12 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "LengthDistribution", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
+    ), 
+    
+    # Calculate areas of strata polygons:
+    NASC = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "NASCData"
     )
 )

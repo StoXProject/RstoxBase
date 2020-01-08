@@ -107,3 +107,25 @@ getStoxBioticKeys <- function(levels = NULL) {
     }
     paste0(levels, "Key")
 }
+
+# Function to get Layer indices:
+findLayer <- function(Data, Layer, varMin, varMax, acceptNA = TRUE) {
+    
+    layerRangeVector <- c(Layer$MinLayerRange, tail(Layer$MaxLayerRange, 1))
+    indMin <- findInterval(Data[[varMin]], layerRangeVector)
+    indMax <- findInterval(Data[[varMax]], layerRangeVector, rightmost.closed = TRUE)
+    LayerInd <- pmax(indMin, indMax, na.rm = acceptNA)
+    
+    if(acceptNA && nrow(Layer) == 1 && Layer$MinLayerRange == 0 && Layer$MaxLayerRange == Inf) {
+        LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
+    }
+    
+    LayerData <- data.table::data.table(
+        Layer = Layer$Layer[LayerInd], 
+        MinLayerRange = Layer$MinLayerRange[LayerInd], 
+        MaxLayerRange = Layer$MaxLayerRange[LayerInd]
+    )
+    
+    LayerData
+}
+

@@ -119,54 +119,25 @@ LengthDistribution <- function(
     # Get the DefinitionMethod:
     RaisingFactorPriority <- match.arg(RaisingFactorPriority)
     
-    ## Temporary hack to assure unique keys:
-    #StoxBioticData <- lapply(StoxBioticData, unique)
+    # Get specification of the data type:
+    modelVariables <- getRstoxBaseDefinitions("modelVariables")$LengthDistribution
     
     # 1. Merge the Haul, SpeciesCategory, Sample and Individual level:
     StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData)$Individual
     
     # Get the count in each length group, defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter:
     keys <- c(
-        getStoxBioticKeys(c("Cruise", "Station", "Haul", "SpeciesCategory", "Sample")), 
-        "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"
+        #getStoxBioticKeys(c("Cruise", "Station", "Haul", "SpeciesCategory", "Sample")), 
+        getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
+        #"IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"
+        modelVariables$groupingVariables
     )
+    print(keys)
     
     # Declare the variables used below:
     .N <- NULL
     LengthDistributionData <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
-    #Station <- NULL
-    #Haul <- NULL
-    #SpeciesCategory <- NULL
-    #TowedDistance <- NULL
-    #MinHaulDepth <- NULL
-    #MaxHaulDepth <- NULL
-    #VerticalNetOpening <- NULL
-    #HorizontalNetOpening <- NULL
-    #TrawlDoorSpread <- NULL
-    #CatchFractionWeightKilogram <- NULL
-    #CatchFractionCount  <- NULL
-    #SampleWeightKilogram <- NULL
-    #SampleCount <- NULL
-    
-    
-    # Count occurrences:
-    #LengthDistributionData <- StoxBioticDataMerged[, .(
-    #    WeightedCount = as.double(.N), 
-    #    Station = head(Station, 1), 
-    #    Haul = head(Haul, 1), 
-    #    SpeciesCategory = head(SpeciesCategory, 1), 
-    #    TowedDistance = head(TowedDistance, 1), 
-    #    MinHaulDepth = head(MinHaulDepth, 1), 
-    #    MaxHaulDepth = head(MaxHaulDepth, 1), 
-    #    VerticalNetOpening = head(VerticalNetOpening, 1), 
-    #    HorizontalNetOpening = head(HorizontalNetOpening, 1), 
-    #    TrawlDoorSpread = head(TrawlDoorSpread, 1), 
-    #    CatchFractionWeightKilogram = head(CatchFractionWeightKilogram, 1),
-    #    CatchFractionCount = head(CatchFractionCount, 1),
-    #    SampleWeightKilogram = head(SampleWeightKilogram, 1),
-    #    SampleCount = head(SampleCount, 1)
-    #), by = keys]
     
     # Order the length distribution data:
     data.table::setorder(LengthDistributionData)
@@ -182,29 +153,9 @@ LengthDistribution <- function(
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
     if(length(SweptAreaLayer)) {
-        # The following needs rework
-        #LayerInd <- apply(
-        #    outer(LengthDistributionData$MinHaulDepth, SweptAreaLayer$MinLayerRange, ">=")# &
-        #    #    outer(LengthDistributionData$MaxHaulDepth, SweptAreaLayer$MaxLayerRange, "<"), 
-        #    1, 
-        #    which
-        #)
-        layerRangeVector <- c(SweptAreaLayer$MinLayerRange, tail(SweptAreaLayer$MaxLayerRange, 1))
-        indMin <- findInterval(LengthDistributionData$MinHaulDepth, layerRangeVector)
-        indMax <- findInterval(LengthDistributionData$MaxHaulDepth, c(SweptAreaLayer$MinLayerRange, tail(SweptAreaLayer$MaxLayerRange, 1)), rightmost.closed = TRUE)
-        LayerInd <- pmax(indMin, indMax, na.rm = acceptNA)
+        LayerData <- findLayer(Data = SweptAreaLayer, Layer = SweptAreaLayer, varMin = "MinHaulDepth", varMax = "MaxHaulDepth")
         
-        # Accept hauls where both min and max haul depth is missing if there is only one interval identical to 0, Inf
-        if(acceptNA && nrow(SweptAreaLayer) == 1 && SweptAreaLayer$MinLayerRange == 0 && SweptAreaLayer$MaxLayerRange == Inf) {
-            LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
-        }
-        
-        LengthDistributionData <- data.table::data.table(
-            Layer = SweptAreaLayer$Layer[LayerInd], 
-            MinLayerRange = SweptAreaLayer$MinLayerRange[LayerInd], 
-            MaxLayerRange = SweptAreaLayer$MaxLayerRange[LayerInd], 
-            LengthDistributionData
-        )
+        LengthDistributionData <- data.table::data.table(LayerData, LengthDistributionData)
     }
     else {
         LengthDistributionData <- data.table::data.table(
@@ -244,10 +195,10 @@ LengthDistribution <- function(
     # Add the weights depending on LengthDistributionType:
     # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the TowedDistance, rendering the effective TowedDistance as 1:
     if(LengthDistributionType == "NormalizedLengthDistribution") {
-        LengthDistributionData$LengthDistributionWeight <- 1
+        LengthDistributionData$LengthDistributionWeight <- LengthDistributionData$TowedDistance
     }
     else if(LengthDistributionType == "LengthDistribution") {
-        LengthDistributionData$LengthDistributionWeight <- LengthDistributionData$TowedDistance
+        LengthDistributionData$LengthDistributionWeight <- 1
     }
     # For LengthDistributionType "PercentLengthDistribution" weights are not relevant, since length distributions are simply averaged, and are set to 1:
     else if(LengthDistributionType == "PercentLengthDistribution") {
@@ -257,32 +208,41 @@ LengthDistribution <- function(
         stop("Invalid LengthDistributionType. See ?RstoxBase::LengthDistributionType")
     }
     
+    # Divide by the weights:
+    LengthDistributionData[, WeightedCount := WeightedCount / LengthDistributionWeight]
+    
     # Add the LengthDistributionType to the LengthDistributionData:
     LengthDistributionData$LengthDistributionType <- LengthDistributionType
     
     # Extract only the relevant columns:
-    relevantColums <- c(
-        "Stratum", 
-        "PSU", 
-        "Station", 
-        "Layer", 
-        "Haul", 
-        "SpeciesCategory", 
-        "IndividualTotalLengthCentimeter", 
-        "LengthResolutionCentimeter", 
-        "WeightedCount", 
-        "MinHaulDepth", 
-        "MaxHaulDepth", 
-        "MinLayerRange", 
-        "MaxLayerRange", 
-        "LengthDistributionWeight", 
-        "TowedDistance", 
-        "VerticalNetOpening", 
-        "TrawlDoorSpread", 
-        "LengthDistributionType"
-    )
+    #relevantColums <- c(
+    #    "Stratum", 
+    #    "PSU", 
+    #    "Station", 
+    #    "Layer", 
+    #    "Haul", 
+    #    "SpeciesCategory", 
+    #    "IndividualTotalLengthCentimeter", 
+    #    "LengthResolutionCentimeter", 
+    #    "WeightedCount", 
+    #    "MinHaulDepth", 
+    #    "MaxHaulDepth", 
+    #    "MinLayerRange", 
+    #    "MaxLayerRange", 
+    #    "LengthDistributionWeight", 
+    #    "TowedDistance", 
+    #    "VerticalNetOpening", 
+    #    "TrawlDoorSpread", 
+    #    "LengthDistributionType"
+    #)
+    relevantColums <- unlist(modelVariables)
     LengthDistributionData <- LengthDistributionData[, ..relevantColums]
     data.table::setcolorder(LengthDistributionData, relevantColums)
+    
+    # Order the rows 
+    #orderBy <- c("Stratum", "PSU", "Station", "Layer", "Haul", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
+    orderBy <- unlist(modelVariables[c("horizontalResolution", "verticalResolution", "groupingVariables")])
+    setorderv(LengthDistributionData, cols = orderBy)
     
     return(LengthDistributionData)
 }
@@ -295,8 +255,7 @@ LengthDistribution <- function(
 #' 
 #' @param LengthDistribution    A list of \code{\link{LengthDistribution}} data.
 #' @param AcousticPSU           A list of \code{\link{AcousticPSU}} data.
-#' @param AcousticLayer         A list of \code{\link{AcousticLayer}} data.
-#' @param BioticAssignment         A list of \code{\link{BioticAssignment}} data.
+#' @param BioticAssignment      A list of \code{\link{BioticAssignment}} data.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -312,11 +271,52 @@ LengthDistribution <- function(
 #' @export
 #' @import data.table
 #' 
-AssignmentLengthDistribution <- function(LengthDistribution, AcousticPSU, AcousticLayer, BioticAssignment) {
+AssignmentLengthDistribution <- function(LengthDistribution, NASCData, BioticAssignment) {
     
-    # Replace the Stratum PSU and Layer columns of the LengthDistribution with those of 
+    # Function to add assignment IDs:
+    addAssignmentID <- function(BioticAssignment) {
+        assignmentID <- as.numeric(factor(sapply(Assignment$Haul, paste, collapse = "_")))
+        data.table::data.table(
+            BioticAssignment, 
+            assignmentID = assignmentID
+        )
+    }
+    
+    # Determine assignment IDs:
+    BioticAssignment <- addAssignmentID(BioticAssignment)
+    
+    # Calculate weighted average length distribution for each assignment ID:
+    
+    
     
     
 }
 
+
+
+meanData <- function(data, TargetResolution = "PSU") {
+    
+    browser()
+    aggregationVariables <- determineAggregationVariables(
+        data = data, 
+        TargetResolution = TargetResolution, 
+        dimension = "horizontal"
+    )
+    # Extract the 'by' element:
+    by <- aggregationVariables$by
+    
+    # Sum over the grouping variables:
+    dataVariable <- aggregationVariables$dataVariable
+    #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
+    data[, c(dataVariable) := sum(get(dataVariable)), by = by]
+    
+    # Set the resolution variables which were summed over to NA:
+    set(data, j = aggregationVariables$setToNA, value=NA)
+    
+    # Remove duplicated rows:
+    data <- subset(data, !duplicated(data[, ..by]))
+    
+    data
+    
+}
 

@@ -436,7 +436,7 @@ DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod =
 #' @export
 #' @import data.table
 #' 
-DefineBioticAssignment <- function(
+DefineBioticAssignment_temp <- function(
     processData, 
     AcousticPSU, AcousticLayer, StoxBioticData, 
     DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
@@ -498,12 +498,115 @@ DefineBioticAssignment <- function(
         }
         haulList <- lapply(stationList, getAllHaulsOfStations, Station_Haul = Station_Haul)
         
+        # Issue an error if there are strata to be used which do not contain any hauls:
+        uniqueStrata <- unique(AcousticPSU$Stratum_PSU$Stratum)
+        nHaulsOfUniqueStrata <- lengths(haulList[uniqueStrata])
+        hasNoHauls <- which(nHaulsOfUniqueStrata == 0)
+        if(length(hasNoHauls)) {
+            stop("The following strata containing acoustic PSUs have no biotic Hauls: ", paste(uniqueStrata[hasNoHauls], collapse = ", "))
+        }
+        
         # Link the stratum to PSU:
-        Stratum_PSU <- subset(AcousticPSU$Stratum_PSU, !is.na(AcousticPSU$Stratum_PSU$Stratum))
+        # why was this included????? Stratum should not be NA in AcousticPSU
+        #Stratum_PSU <- subset(AcousticPSU$Stratum_PSU, !is.na(AcousticPSU$Stratum_PSU$Stratum))
         Assignment <- cbind(
-            Stratum_PSU[, "PSU"], 
+            #Stratum_PSU[, "PSU"], 
+            AcousticPSU$Stratum_PSU[, "PSU"], 
             Layer = 1, 
-            Haul = haulList[Stratum_PSU$Stratum], 
+            #Haul = haulList[Stratum_PSU$Stratum], 
+            Haul = haulList[AcousticPSU$Stratum_PSU$Stratum], 
+            WeightingFactor = 1
+        )
+    }
+    
+    return(Assignment)
+}
+
+
+##################################################
+##################################################
+#' Assignnment of biotic hauls to acoustic PSUs
+#' 
+#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' 
+#' @inheritParams DefineStrata
+#' @inheritParams DefineSweptAreaPSU
+#' @param AcousticPSU    A list of \code{\link{AcousticPSU}} process data.
+#' @param AcousticLayer  A list of \code{\link{AcousticLayer}} process data.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", which assigns all Hauls to every PSU of each stratum; "Radius", which selects Hauls inside a radius around each PSU????; and "EllipsoidalDistance", which selects Hauls within an ellipsoid defined by axes in space, time, bottom depth *************.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{AcousticPSU}}.
+#' 
+#' @export
+#' @import data.table
+#' 
+DefineBioticAssignment <- function(
+    processData, 
+    NASCData, StoxBioticData, 
+    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
+    StratumPolygon, Radius = double(), 
+    MinNumStations = integer(), RefGCDistance = double(), RefTime = "", RefBotDepth = double(), RefLatitude = double(), RefLongitude = double(), 
+    UseProcessData = FALSE) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
+    if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
+        
+        # Create a spatial points object:
+        SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
+        # Get the stratum for each point:
+        StratumIndex <- sp::over(SpatialStations, StratumPolygon)
+        Stratum <- names(StratumPolygon)[StratumIndex]
+        
+        # Create a list of the stations of each stratum:
+        stationIndex <- as.numeric(names(StratumIndex))
+        stationList <- split(StoxBioticData$Station$Station[stationIndex], Stratum)
+        
+        # Use all hauls of each station in the automatic assignment method "Stratum":
+        Station_Haul <- merge(
+            StoxBioticData$Station, 
+            StoxBioticData$Haul, 
+            by = intersect(names(StoxBioticData$Station), names(StoxBioticData$Haul))
+        )
+        
+        # Small funciton to get the hauls of requested stations:
+        getAllHaulsOfStations <- function(Station, Station_Haul) {
+            requestedStations <- Station_Haul$Station %in% Station
+            Station_Haul$Haul[requestedStations]
+        }
+        haulList <- lapply(stationList, getAllHaulsOfStations, Station_Haul = Station_Haul)
+        
+        # Issue an error if there are strata to be used which do not contain any hauls:
+        uniqueStrata <- unique(NASCData$Stratum)
+        nHaulsOfUniqueStrata <- lengths(haulList[uniqueStrata])
+        hasNoHauls <- which(nHaulsOfUniqueStrata == 0)
+        if(length(hasNoHauls)) {
+            stop("The following strata containing acoustic PSUs have no biotic Hauls: ", paste(uniqueStrata[hasNoHauls], collapse = ", "))
+        }
+        
+        # Link the stratum to PSU:
+        dupRows <- duplicated(NASCData[, c("PSU", "Layer")])
+        NASCData <- NASCData[!dupRows, ]
+        Assignment <- cbind(
+            NASCData[, c("PSU", "Layer")], 
+            Haul = haulList[NASCData$Stratum], 
             WeightingFactor = 1
         )
     }

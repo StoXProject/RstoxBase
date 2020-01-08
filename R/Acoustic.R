@@ -86,6 +86,30 @@ AcousticDensity <- function(NASCData,m=20,a=-70,d=1) {
 #' 
 #' @export
 NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL) {
+    
+    # Merge the StoxAcousticData:
+    NASC <- mergeDataTables(StoxAcousticData)$NASC
+    # Add weights:
+    NASC[, NASCWeight := EffectiveLogDistance]
+    
+    # Add (acoustic) Layer:
+    LayerData <- findLayer(Data = NASC, Layer = AcousticLayer, varMin = "MinRange", varMax = "MaxRange")
+    NASC <- data.table::data.table(NASC, LayerData)
+    # Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
+    setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
+    
+    # Add (acoustic) PSU
+    if(length(AcousticPSU)) {
+        NASC <- RstoxData::mergeDataTables(c(AcousticPSU, list(NASC = NASC)))$NASC
+    }
+
+    # Extract the relevant variables:
+    NASC <- NASC[, c("Stratum", "PSU", "EDSU", "Layer", "Channel", "AcousticCategory", "ChannelReference", "Frequency", "NASC", "MinChannelRange", "MaxChannelRange", "MinLayerRange", "MaxLayerRange", "EffectiveLogDistance")]
+    
+    return(NASC)
+}
+
+NASC_sindre <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL) {
   # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
   
   
