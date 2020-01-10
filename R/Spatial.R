@@ -43,6 +43,7 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
         polygonName = polygonName
     )
     rownames(data) <- polygonName
+    browser()
     spatialPolygons = sp::SpatialPolygons(polygonsList)
     spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data)
     #plot(SpP, col = 1:5, pbg="white")

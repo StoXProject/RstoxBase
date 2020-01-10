@@ -129,7 +129,7 @@ findLayer <- function(data, layerDefinition, varMin, varMax, acceptNA = TRUE) {
     LayerData
 }
 
-
+# Function to add Stratum and PSU:
 addPSUDefinition <- function(data, PSUDefinition = NULL, ...) {
     
     # If present, add the PSUDefinition to the start of the data
@@ -154,6 +154,7 @@ addPSUDefinition <- function(data, PSUDefinition = NULL, ...) {
     return(data)
 }
 
+# Function to add Layer:
 addLayerDefinition <- function(data, layerDefinition = NULL, ...) {
     
     # Insert the Layer column from the layerDefinition input, and otherwise by NAs:
@@ -174,10 +175,5 @@ addLayerDefinition <- function(data, layerDefinition = NULL, ...) {
     
     return(data)
 }
-
-
-
-
-
 
 

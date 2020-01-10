@@ -114,6 +114,9 @@ LengthDistribution <- function(
     # allowMissingWeight = TRUE
 ) {
     
+    ####################################
+    ##### 0. Initial preparations: #####
+    ####################################
     # Get the DefinitionMethod:
     LengthDistributionType <- match.arg(LengthDistributionType)
     # Get the DefinitionMethod:
@@ -121,48 +124,48 @@ LengthDistribution <- function(
     
     # Get specification of the data type:
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")$LengthDistribution
+    ####################################
+
     
-    # 1. Merge the Haul, SpeciesCategory, Sample and Individual level:
+    ############################
+    ##### 1. Merge levels: #####
+    ############################
     StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData, output.only.last = TRUE)
+    ############################
     
-    # Get the count in each length group, defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter:
+    
+    ####################################################
+    ##### 2. Get the count in each length group: #######
+    ####################################################
     keys <- c(
-        #getStoxBioticKeys(c("Cruise", "Station", "Haul", "SpeciesCategory", "Sample")), 
         getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
-        #"IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"
+        # The length group is defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter. See 'dataTypeDefinition' in initiateRstoxBase(): 
         dataTypeDefinition$groupingVariables
     )
-    
     # Declare the variables used below:
     .N <- NULL
     LengthDistributionData <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
+    ####################################################
     
+    
+    ######################################################
+    ##### 3. Add horizontal and vertical resolution: #####
+    ######################################################
     # Order the length distribution data:
-    data.table::setorder(LengthDistributionData)
+    #data.table::setorder(LengthDistributionData)
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
     LengthDistributionData <- addPSUDefinition(LengthDistributionData, PSUDefinition = SweptAreaPSU)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
     LengthDistributionData <- addLayerDefinition(LengthDistributionData, layerDefinition = SweptAreaLayer)
+    ######################################################
     
     
-    # # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    # if(length(SweptAreaLayer)) {
-    #     LayerData <- findLayer(Data = SweptAreaLayer, Layer = SweptAreaLayer, varMin = "MinHaulDepth", varMax = "Max# HaulDepth")
-    #     
-    #     LengthDistributionData <- data.table::data.table(LayerData, LengthDistributionData)
-    # }
-    # else {
-    #     LengthDistributionData <- data.table::data.table(
-    #         Layer = NA, 
-    #         MinLayerRange = NA, 
-    #         MaxLayerRange = NA, 
-    #         LengthDistributionData
-    #     )
-    # }
-    
+    #######################################################
+    ##### 4. Aggregate multiple samples to each haul: #####
+    #######################################################
     # Create a data table of different raising factors in the columns:
     raisingFactorTable <- data.frame(
         Weight = LengthDistributionData$CatchFractionWeightKilogram / LengthDistributionData$SampleWeightKilogram, 
@@ -187,9 +190,12 @@ LengthDistribution <- function(
     keysSansSample <- setdiff(keys, getStoxBioticKeys("Sample"))
     LengthDistributionData <- LengthDistributionData[, WeightedCount := sum(WeightedCount * raisingFactor), by = keysSansSample]
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keysSansSample]))
+    #######################################################
     
     
-    # Add the weights depending on LengthDistributionType:
+    ###################################################################
+    ##### 5. Add the weights depending on LengthDistributionType: #####
+    ###################################################################
     # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the TowedDistance, rendering the effective TowedDistance as 1:
     if(LengthDistributionType == "NormalizedLengthDistribution") {
         LengthDistributionData$LengthDistributionWeight <- LengthDistributionData$TowedDistance
@@ -210,37 +216,20 @@ LengthDistribution <- function(
     
     # Add the LengthDistributionType to the LengthDistributionData:
     LengthDistributionData$LengthDistributionType <- LengthDistributionType
+    ###################################################################
     
+    
+    ########################
+    ##### 6. Clean up: #####
+    ########################
     # Extract only the relevant columns:
-    #relevantColums <- c(
-    #    "Stratum", 
-    #    "PSU", 
-    #    "Station", 
-    #    "Layer", 
-    #    "Haul", 
-    #    "SpeciesCategory", 
-    #    "IndividualTotalLengthCentimeter", 
-    #    "LengthResolutionCentimeter", 
-    #    "WeightedCount", 
-    #    "MinHaulDepth", 
-    #    "MaxHaulDepth", 
-    #    "MinLayerRange", 
-    #    "MaxLayerRange", 
-    #    "LengthDistributionWeight", 
-    #    "TowedDistance", 
-    #    "VerticalNetOpening", 
-    #    "TrawlDoorSpread", 
-    #    "LengthDistributionType"
-    #)
-    ###relevantColums <- unlist(dataTypeDefinition)
-    ###LengthDistributionData <- LengthDistributionData[, ..relevantColums]
-    ###data.table::setcolorder(LengthDistributionData, relevantColums)
     LengthDistributionData <- setColumnOrder(LengthDistributionData, dataType = "LengthDistribution", keep.all = FALSE)
     
     # Order the rows 
-    #orderBy <- c("Stratum", "PSU", "Station", "Layer", "Haul", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
     orderBy <- unlist(dataTypeDefinition[c("horizontalResolution", "verticalResolution", "groupingVariables")])
     setorderv(LengthDistributionData, cols = orderBy)
+    ########################
+    
     
     return(LengthDistributionData)
 }
