@@ -7,7 +7,7 @@
 getStratumPolygonList(StratumPolygon)
 }
 \arguments{
-\item{StratumPolygon}{An object of StoX class StratumPolygon, which is s SpatialPolygons object (sp package).}
+\item{StratumPolygon}{An object of StoX class StratumPolygon, which is s SpatialPolygonsDataFrame object (sp package).}
 }
 \value{
 A table of stratum name and area.

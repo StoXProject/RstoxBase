@@ -9,7 +9,7 @@ StratumArea(StratumPolygon, AreaMethod = c("Accurate", "Simple"))
 StratumArea(StratumPolygon, AreaMethod = c("Accurate", "Simple"))
 }
 \arguments{
-\item{StratumPolygon}{An object of StoX class StratumPolygon, which is s SpatialPolygons object (sp package).}
+\item{StratumPolygon}{An object of StoX class StratumPolygon, which is s SpatialPolygonsDataFrame object (sp package).}
 
 \item{AreaMethod}{The method to use for the area calculation, defaulted to "Accurate", which applied a lambert azimuthal equal area projection.}
 

@@ -58,14 +58,6 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         stop("Unknown model type")
     }
     
-    ## For flexibility accept a list of the input data, named by the data type:
-    #if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
-    #    StratumPolygon <- StratumPolygon$StratumPolygon
-    #}
-    #if(is.list(StoxData) && "StoxData" %in% names(StoxData)) {
-    #    StoxData <- StoxData$StoxData
-    #}
-    
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
@@ -83,7 +75,9 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         # Find the stratum of each PSU:
         SpatialPSUs <- sp::SpatialPoints(StoxData[[SSULevel]][, c("Longitude", "Latitude")])
         StratumIndex <- sp::over(SpatialPSUs, StratumPolygon)
-        Stratum <- names(StratumPolygon)[StratumIndex]
+        # Converting from data frame to character vector 
+        StratumIndex <- as.numeric(unlist(StratumIndex))
+        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
         
         # Create the Stratum_PSU data.table:
         Stratum_PSU <- data.table::data.table(
@@ -283,11 +277,6 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
         paste0("Layer", formatC(seq_len(nlayers), width = nchar(nlayers), format = "d", flag = "0"))
     }
     
-    ## For flexibility accept a list of the input data, named by the data type:
-    #if(is.list(StoxData) && "StoxData" %in% names(StoxData)) {
-    #    StoxData <- StoxData$StoxData
-    #}
-    
     # Get the common intervals:
     possibleIntervals <- getCommonIntervals(
         data = unique(StoxData[[VerticalResolutionLevel]][, c(..VerticalResolutionMin, ..VerticalResolutionMax)]), 
@@ -453,30 +442,15 @@ DefineBioticAssignment_temp <- function(
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     
-    ## For flexibility accept a list of the input data, named by the data type:
-    #if(is.list(AcousticPSU) && "AcousticPSU" %in% names(AcousticPSU)) {
-    #    AcousticPSU <- AcousticPSU$AcousticPSU
-    #}
-    #if(is.list(AcousticLayer) && "AcousticLayer" %in% names(AcousticLayer)) {
-    #    AcousticLayer <- AcousticLayer$AcousticLayer
-    #}
-    #if(is.list(StoxBioticData) && "StoxBioticData" %in% names(StoxBioticData)) {
-    #    StoxBioticData <- StoxBioticData$StoxBioticData
-    #}
-    
     # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
     if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
-        
-        ## For flexibility accept a list of the input data, named by the data type:
-        #if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
-        #    StratumPolygon <- StratumPolygon$StratumPolygon
-        #}
         
         # Create a spatial points object:
         SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
         # Get the stratum for each point:
         StratumIndex <- sp::over(SpatialStations, StratumPolygon)
-        Stratum <- names(StratumPolygon)[StratumIndex]
+        StratumIndex <- as.numeric(unlist(StratumIndex))
+        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
         
         # Create a list of the stations of each stratum:
         stationIndex <- as.numeric(names(StratumIndex))
@@ -573,7 +547,8 @@ DefineBioticAssignment <- function(
         SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
         # Get the stratum for each point:
         StratumIndex <- sp::over(SpatialStations, StratumPolygon)
-        Stratum <- names(StratumPolygon)[StratumIndex]
+        StratumIndex <- as.numeric(unlist(StratumIndex))
+        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
         
         # Create a list of the stations of each stratum:
         stationIndex <- as.numeric(names(StratumIndex))

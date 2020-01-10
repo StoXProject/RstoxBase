@@ -92,17 +92,31 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
     # Add weights:
     NASC[, NASCWeight := EffectiveLogDistance]
     
-    # Add (acoustic) Layer:
-    LayerData <- findLayer(Data = NASC, Layer = AcousticLayer, varMin = "MinRange", varMax = "MaxRange")
-    NASC <- data.table::data.table(NASC, LayerData)
+    # # Add (acoustic) Layer:
+    # LayerData <- findLayer(Data = NASC, Layer = AcousticLayer, varMin = "MinRange", varMax = "MaxRange")
+    # NASC <- data.table::data.table(NASC, LayerData)
+    # # Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
+    # setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
+    # 
+    # # Add (acoustic) PSU
+    # if(length(AcousticPSU)) {
+    #     NASC <- RstoxData::mergeDataTables(c(AcousticPSU, list(NASC = NASC)), output.only.last = TRUE)
+    # }
+
+    
+    
+    
+    # Insert the Stratum and PSU column by the AcousticPSU input, and otherwise by NAs:
+    NASC <- addPSUDefinition(NASC, PSUDefinition = AcousticPSU)
+    
+    # Insert the Layer column by the AcousticLayer input, and otherwise by NAs:
+    NASC <- addLayerDefinition(NASC, layerDefinition = AcousticLayer)
     # Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
     setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
     
-    # Add (acoustic) PSU
-    if(length(AcousticPSU)) {
-        NASC <- RstoxData::mergeDataTables(c(AcousticPSU, list(NASC = NASC)))$NASC
-    }
-
+    
+    
+    
     # Extract the relevant variables:
     NASC <- NASC[, c("Stratum", "PSU", "EDSU", "Layer", "Channel", "AcousticCategory", "ChannelReference", "Frequency", "NASC", "MinChannelRange", "MaxChannelRange", "MinLayerRange", "MaxLayerRange", "EffectiveLogDistance")]
     

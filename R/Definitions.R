@@ -13,7 +13,7 @@
 initiateRstoxBase <- function(){
     
     # Define the variables of the main data types used in estimation models:
-    modelVariables <- list(
+    dataTypeDefinition <- list(
         NASCData = list(
             horizontalResolution = c("Stratum", "PSU", "EDSU"), 
             verticalResolution = c("Layer", "Channel"), 
@@ -117,21 +117,49 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 
 
 
-getColumnOrder <- function(dataType = c("NASCData", "LengthDistribution", "Density", "Abundance")) {
-    dataType <- match.arg(dataType)
-    modelVariables <- getRstoxBaseDefinitions("modelVariables")
-    unlist(resolution <- modelVariables[[dataType]])
+getColumnOrder <- function(dataType) {
+    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    unlist(resolution <- dataTypeDefinition[[dataType]])
+}
+
+setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
+    # Get the column order:
+    columnOrder <- getColumnOrder(dataType)
+    
+    # Select only the column names present in the data:
+    if(allow.partial) {
+        columnOrder <- intersect(columnOrder, names(data))
+    }
+    
+    # Order the columns:
+    data.table::setcolorder(data, columnOrder)
+    
+    if(!keep.all) {
+        data <- data[, ..columnOrder]
+    }
+    
+    return(data)
 }
 
 
 
-detectDataType <- function(data) {
-    modelVariables <- getRstoxBaseDefinitions("modelVariables")
-    allPresent <- sapply(modelVariables, function(var) all(unlist(var) %in% names(data)))
-    if(!any(allPresent)) {
-        warning("The input data does not contain all the extected variables.")
+detectDataType <- function(data, only.data = FALSE) {
+    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    if(only.data) {
+        present <- sapply(dataTypeDefinition, function(var) all(var$data %in% names(data)))
     }
-    names(modelVariables)[allPresent]
+    else {
+        present <- sapply(dataTypeDefinition, function(var) all(unlist(var) %in% names(data)))
+    }
+    
+    if(!any(present)) {
+        warning("The input data does not contain all the expected variables.")
+    }
+    else if(sum(present) > 1) {
+        warning("More than one element of the input list contains the expected variables (", paste(names(dataTypeDefinition)[present], collapse = ","), "). The first selected:")
+    }
+    
+    output <- utils::head(names(dataTypeDefinition)[present], 1)
 }
 
 
@@ -144,11 +172,11 @@ determineAggregationVariables <- function(
     # Get the requested type:
     dimension <- match.arg(dimension)
     dataType <- detectDataType(data)
-    modelVariables <- getRstoxBaseDefinitions("modelVariables")
+    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
     
     # Get the relevant resolution variables:
     resolutionName <- paste0(dimension, "Resolution")
-    resolution <- modelVariables[[dataType]][[resolutionName]]
+    resolution <- dataTypeDefinition[[dataType]][[resolutionName]]
     # Get the present resolution variables:
     hasAnyNonNA <- unlist(data[, lapply(.SD, function(x) any(!is.na(x))), .SDcols = resolution])
     presentResolution <- resolution[hasAnyNonNA]
@@ -165,9 +193,9 @@ determineAggregationVariables <- function(
     # ... and diff these from all possigle grouping variables:
     aggregateBy <- setdiff(
         c(
-            modelVariables[[dataType]]$horizontalResolution, 
-            modelVariables[[dataType]]$verticalResolution, 
-            modelVariables[[dataType]]$groupingVariables
+            dataTypeDefinition[[dataType]]$horizontalResolution, 
+            dataTypeDefinition[[dataType]]$verticalResolution, 
+            dataTypeDefinition[[dataType]]$groupingVariables
         ), 
         setToNA
     )
@@ -178,9 +206,9 @@ determineAggregationVariables <- function(
         TargetResolution = TargetResolution, 
         presentResolution = presentResolution, 
         finestResolution = finestResolution, 
-        dataVariable = modelVariables[[dataType]]$data, 
-        verticalDimension = modelVariables[[dataType]]$verticalDimension, 
-        modelVariables = modelVariables
+        dataVariable = dataTypeDefinition[[dataType]]$data, 
+        verticalDimension = dataTypeDefinition[[dataType]]$verticalDimension, 
+        dataTypeDefinition = dataTypeDefinition
     )
     return(out)
 }

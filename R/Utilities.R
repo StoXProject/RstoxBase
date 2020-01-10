@@ -109,23 +109,75 @@ getStoxBioticKeys <- function(levels = NULL) {
 }
 
 # Function to get Layer indices:
-findLayer <- function(Data, Layer, varMin, varMax, acceptNA = TRUE) {
+findLayer <- function(data, layerDefinition, varMin, varMax, acceptNA = TRUE) {
     
-    layerRangeVector <- c(Layer$MinLayerRange, tail(Layer$MaxLayerRange, 1))
-    indMin <- findInterval(Data[[varMin]], layerRangeVector)
-    indMax <- findInterval(Data[[varMax]], layerRangeVector, rightmost.closed = TRUE)
+    layerRangeVector <- c(layerDefinition$MinLayerRange, tail(layerDefinition$MaxLayerRange, 1))
+    indMin <- findInterval(data[[varMin]], layerRangeVector)
+    indMax <- findInterval(data[[varMax]], layerRangeVector, rightmost.closed = TRUE)
     LayerInd <- pmax(indMin, indMax, na.rm = acceptNA)
     
-    if(acceptNA && nrow(Layer) == 1 && Layer$MinLayerRange == 0 && Layer$MaxLayerRange == Inf) {
+    if(acceptNA && nrow(layerDefinition) == 1 && layerDefinition$MinLayerRange == 0 && layerDefinition$MaxLayerRange == Inf) {
         LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
     }
     
     LayerData <- data.table::data.table(
-        Layer = Layer$Layer[LayerInd], 
-        MinLayerRange = Layer$MinLayerRange[LayerInd], 
-        MaxLayerRange = Layer$MaxLayerRange[LayerInd]
+        Layer = layerDefinition$Layer[LayerInd], 
+        MinLayerRange = layerDefinition$MinLayerRange[LayerInd], 
+        MaxLayerRange = layerDefinition$MaxLayerRange[LayerInd]
     )
     
     LayerData
 }
+
+
+addPSUDefinition <- function(data, PSUDefinition = NULL, ...) {
+    
+    # If present, add the PSUDefinition to the start of the data
+    if(length(PSUDefinition)) {
+        # Merge first the PSUDefinition:
+        PSUDefinition <- RstoxData::mergeDataTables(PSUDefinition, output.only.last = TRUE, ...)
+        # Then merge the result with the data:
+        by <- intersect(names(PSUDefinition), names(data))
+        data <- merge(PSUDefinition, data, by = by, ...)
+    }
+    # Otherwise add columns of NAs (by reference, thus applying the setDT() first):
+    else {
+        data.table::setDT(data)
+        toAdd <- c("Stratum", "PSU")
+        data.table::set(data, j = toAdd, value=NA)
+    }
+    
+    # Set the order of the columns:
+    dataType <- detectDataType(data, only.data = TRUE)
+    data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
+    
+    return(data)
+}
+
+addLayerDefinition <- function(data, layerDefinition = NULL, ...) {
+    
+    # Insert the Layer column from the layerDefinition input, and otherwise by NAs:
+    if(length(layerDefinition)) {
+        layerData <- findLayer(data = data, layerDefinition = layerDefinition, varMin = "MinHaulDepth", varMax = "MaxHaulDepth")
+        
+        data <- data.table::data.table(layerData, data)
+    }
+    else {
+        data.table::setDT(data)
+        toAdd <- c("Layer", "MinLayerRange", "MaxLayerRange")
+        data.table::set(data, j = toAdd, value=NA)
+    }
+    
+    # Set the order of the columns:
+    dataType <- detectDataType(data, only.data = TRUE)
+    data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
+    
+    return(data)
+}
+
+
+
+
+
+
 

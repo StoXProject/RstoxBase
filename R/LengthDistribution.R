@@ -120,19 +120,18 @@ LengthDistribution <- function(
     RaisingFactorPriority <- match.arg(RaisingFactorPriority)
     
     # Get specification of the data type:
-    modelVariables <- getRstoxBaseDefinitions("modelVariables")$LengthDistribution
+    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")$LengthDistribution
     
     # 1. Merge the Haul, SpeciesCategory, Sample and Individual level:
-    StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData)$Individual
+    StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData, output.only.last = TRUE)
     
     # Get the count in each length group, defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter:
     keys <- c(
         #getStoxBioticKeys(c("Cruise", "Station", "Haul", "SpeciesCategory", "Sample")), 
         getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
         #"IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"
-        modelVariables$groupingVariables
+        dataTypeDefinition$groupingVariables
     )
-    print(keys)
     
     # Declare the variables used below:
     .N <- NULL
@@ -143,28 +142,26 @@ LengthDistribution <- function(
     data.table::setorder(LengthDistributionData)
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    if(length(SweptAreaPSU)) {
-        Stratum_PSU_Station <- do.call(merge, unname(SweptAreaPSU))
-        LengthDistributionData <- merge(Stratum_PSU_Station, LengthDistributionData, by = "Station", all.y = TRUE)
-    }
-    else {
-        LengthDistributionData <- data.table::data.table(Stratum = NA, PSU = NA, LengthDistributionData)
-    }
+    LengthDistributionData <- addPSUDefinition(LengthDistributionData, PSUDefinition = SweptAreaPSU)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    if(length(SweptAreaLayer)) {
-        LayerData <- findLayer(Data = SweptAreaLayer, Layer = SweptAreaLayer, varMin = "MinHaulDepth", varMax = "MaxHaulDepth")
-        
-        LengthDistributionData <- data.table::data.table(LayerData, LengthDistributionData)
-    }
-    else {
-        LengthDistributionData <- data.table::data.table(
-            Layer = NA, 
-            MinLayerRange = NA, 
-            MaxLayerRange = NA, 
-            LengthDistributionData
-        )
-    }
+    LengthDistributionData <- addLayerDefinition(LengthDistributionData, layerDefinition = SweptAreaLayer)
+    
+    
+    # # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
+    # if(length(SweptAreaLayer)) {
+    #     LayerData <- findLayer(Data = SweptAreaLayer, Layer = SweptAreaLayer, varMin = "MinHaulDepth", varMax = "Max# HaulDepth")
+    #     
+    #     LengthDistributionData <- data.table::data.table(LayerData, LengthDistributionData)
+    # }
+    # else {
+    #     LengthDistributionData <- data.table::data.table(
+    #         Layer = NA, 
+    #         MinLayerRange = NA, 
+    #         MaxLayerRange = NA, 
+    #         LengthDistributionData
+    #     )
+    # }
     
     # Create a data table of different raising factors in the columns:
     raisingFactorTable <- data.frame(
@@ -235,13 +232,14 @@ LengthDistribution <- function(
     #    "TrawlDoorSpread", 
     #    "LengthDistributionType"
     #)
-    relevantColums <- unlist(modelVariables)
-    LengthDistributionData <- LengthDistributionData[, ..relevantColums]
-    data.table::setcolorder(LengthDistributionData, relevantColums)
+    ###relevantColums <- unlist(dataTypeDefinition)
+    ###LengthDistributionData <- LengthDistributionData[, ..relevantColums]
+    ###data.table::setcolorder(LengthDistributionData, relevantColums)
+    LengthDistributionData <- setColumnOrder(LengthDistributionData, dataType = "LengthDistribution", keep.all = FALSE)
     
     # Order the rows 
     #orderBy <- c("Stratum", "PSU", "Station", "Layer", "Haul", "SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter")
-    orderBy <- unlist(modelVariables[c("horizontalResolution", "verticalResolution", "groupingVariables")])
+    orderBy <- unlist(dataTypeDefinition[c("horizontalResolution", "verticalResolution", "groupingVariables")])
     setorderv(LengthDistributionData, cols = orderBy)
     
     return(LengthDistributionData)
