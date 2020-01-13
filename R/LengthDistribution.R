@@ -148,7 +148,6 @@ LengthDistribution <- function(
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
     ####################################################
     
-    
     ######################################################
     ##### 3. Add horizontal and vertical resolution: #####
     ######################################################
@@ -283,9 +282,11 @@ AssignmentLengthDistribution <- function(LengthDistribution, NASCData, BioticAss
 
 meanData <- function(data, TargetResolution = "PSU") {
     
-    browser()
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    dataCopy = copy(data)
+    
     aggregationVariables <- determineAggregationVariables(
-        data = data, 
+        data = dataCopy, 
         TargetResolution = TargetResolution, 
         dimension = "horizontal"
     )
@@ -295,15 +296,14 @@ meanData <- function(data, TargetResolution = "PSU") {
     # Sum over the grouping variables:
     dataVariable <- aggregationVariables$dataVariable
     #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
-    data[, c(dataVariable) := sum(get(dataVariable)), by = by]
+    dataCopy[, c(dataVariable) := sum(get(dataVariable)), by = by]
     
     # Set the resolution variables which were summed over to NA:
-    set(data, j = aggregationVariables$setToNA, value=NA)
+    set(dataCopy, j = aggregationVariables$setToNA, value=NA)
     
     # Remove duplicated rows:
-    data <- subset(data, !duplicated(data[, ..by]))
+    dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
     
-    data
-    
+    dataCopy
 }
 

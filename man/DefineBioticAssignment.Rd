@@ -4,12 +4,21 @@
 \alias{DefineBioticAssignment}
 \title{Assignnment of biotic hauls to acoustic PSUs}
 \usage{
-DefineBioticAssignment(processData, NASCData, StoxBioticData,
+DefineBioticAssignment(
+  processData,
+  NASCData,
+  StoxBioticData,
   DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"),
-  StratumPolygon, Radius = double(), MinNumStations = integer(),
-  RefGCDistance = double(), RefTime = "", RefBotDepth = double(),
-  RefLatitude = double(), RefLongitude = double(),
-  UseProcessData = FALSE)
+  StratumPolygon,
+  Radius = double(),
+  MinNumStations = integer(),
+  RefGCDistance = double(),
+  RefTime = "",
+  RefBotDepth = double(),
+  RefLatitude = double(),
+  RefLongitude = double(),
+  UseProcessData = FALSE
+)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}

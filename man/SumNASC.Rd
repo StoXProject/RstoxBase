@@ -4,8 +4,7 @@
 \alias{SumNASC}
 \title{Sum NASC}
 \usage{
-SumNASC(NASCData = NULL, TargetResolution = "Layer",
-  AcousticLayer = NULL)
+SumNASC(NASCData = NULL, TargetResolution = "Layer", AcousticLayer = NULL)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}

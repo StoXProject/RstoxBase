@@ -96,7 +96,8 @@ DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
 #' 
 getStratumNames <- function(stratum) {
     if("SpatialPolygonsDataFrame" %in% class(stratum)) {
-        sapply(slot(stratum, "polygons"), function(x) slot(x, "ID"))
+        as.character(stratum$polygonName)
+        #sapply(slot(stratum, "polygons"), function(x) slot(x, "ID"))
     }
     else {
         stop("Stratum polygon must be of class SpatialPolygonsDataFrame")

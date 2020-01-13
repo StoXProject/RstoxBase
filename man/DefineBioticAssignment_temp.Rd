@@ -4,13 +4,23 @@
 \alias{DefineBioticAssignment_temp}
 \title{Assignnment of biotic hauls to acoustic PSUs}
 \usage{
-DefineBioticAssignment_temp(processData, AcousticPSU, AcousticLayer,
-  StoxBioticData, DefinitionMethod = c("Stratum", "Radius",
-  "EllipsoidalDistance"), StratumPolygon, AcousticData,
-  Radius = double(), MinNumStations = integer(),
-  RefGCDistance = double(), RefTime = "", RefBotDepth = double(),
-  RefLatitude = double(), RefLongitude = double(),
-  UseProcessData = FALSE)
+DefineBioticAssignment_temp(
+  processData,
+  AcousticPSU,
+  AcousticLayer,
+  StoxBioticData,
+  DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"),
+  StratumPolygon,
+  AcousticData,
+  Radius = double(),
+  MinNumStations = integer(),
+  RefGCDistance = double(),
+  RefTime = "",
+  RefBotDepth = double(),
+  RefLatitude = double(),
+  RefLongitude = double(),
+  UseProcessData = FALSE
+)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}

@@ -4,8 +4,7 @@
 \alias{MeanNASC}
 \title{Average NASC for each acoustic PSU}
 \usage{
-MeanNASC(NASCData = NULL, TargetResolution = "PSU",
-  AcousticPSU = NULL)
+MeanNASC(NASCData = NULL, TargetResolution = "PSU", AcousticPSU = NULL)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}

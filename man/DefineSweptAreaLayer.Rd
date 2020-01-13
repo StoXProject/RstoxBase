@@ -4,10 +4,14 @@
 \alias{DefineSweptAreaLayer}
 \title{Swept-area Layer}
 \usage{
-DefineSweptAreaLayer(processData, StoxBioticData,
-  DefinitionMethod = c("WaterColumn", "HighestResolution",
-  "UserDefined"), Resolution = double(),
-  LayerTable = data.table::data.table(), UseProcessData = FALSE)
+DefineSweptAreaLayer(
+  processData,
+  StoxBioticData,
+  DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  UseProcessData = FALSE
+)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}

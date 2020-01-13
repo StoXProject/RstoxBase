@@ -4,11 +4,15 @@
 \alias{LengthDistribution}
 \title{Length distribution}
 \usage{
-LengthDistribution(StoxBioticData, SweptAreaPSU = NULL,
+LengthDistribution(
+  StoxBioticData,
+  SweptAreaPSU = NULL,
   SweptAreaLayer = NULL,
-  LengthDistributionType = c("NormalizedLengthDistribution",
-  "LengthDistribution", "PercentLengthDistribution"),
-  RaisingFactorPriority = c("Weight", "Count"), acceptNA = TRUE)
+  LengthDistributionType = c("NormalizedLengthDistribution", "LengthDistribution",
+    "PercentLengthDistribution"),
+  RaisingFactorPriority = c("Weight", "Count"),
+  acceptNA = TRUE
+)
 }
 \arguments{
 \item{StoxBioticData}{A list of \code{\link[roxygen2]{StoxBioticData}} data.}

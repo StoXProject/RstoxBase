@@ -4,8 +4,13 @@
 \alias{DefineAcousticPSU}
 \title{Acoustic PSU}
 \usage{
-DefineAcousticPSU(processData, StratumPolygon, StoxAcousticData,
-  DefinitionMethod = c("EDSUToPSU", "None"), UseProcessData = FALSE)
+DefineAcousticPSU(
+  processData,
+  StratumPolygon,
+  StoxAcousticData,
+  DefinitionMethod = c("EDSUToPSU", "None"),
+  UseProcessData = FALSE
+)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}

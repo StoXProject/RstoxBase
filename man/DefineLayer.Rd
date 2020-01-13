@@ -4,10 +4,15 @@
 \alias{DefineLayer}
 \title{Define Layers}
 \usage{
-DefineLayer(processData, StoxData, DefinitionMethod = c("WaterColumn",
-  "HighestResolution", "UserDefined"), Resolution = double(),
-  LayerTable = data.table::data.table(), UseProcessData = FALSE,
-  modelType = c("Acoustic", "SweptArea"))
+DefineLayer(
+  processData,
+  StoxData,
+  DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  UseProcessData = FALSE,
+  modelType = c("Acoustic", "SweptArea")
+)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}

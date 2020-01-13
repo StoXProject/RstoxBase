@@ -4,8 +4,13 @@
 \alias{DefineSweptAreaPSU}
 \title{SweptArea PSU}
 \usage{
-DefineSweptAreaPSU(processData, StratumPolygon, StoxBioticData,
-  DefinitionMethod = c("StationToPSU", "None"), UseProcessData = FALSE)
+DefineSweptAreaPSU(
+  processData,
+  StratumPolygon,
+  StoxBioticData,
+  DefinitionMethod = c("StationToPSU", "None"),
+  UseProcessData = FALSE
+)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}

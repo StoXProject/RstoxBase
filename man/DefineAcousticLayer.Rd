@@ -4,10 +4,14 @@
 \alias{DefineAcousticLayer}
 \title{Acoustic Layer}
 \usage{
-DefineAcousticLayer(processData, StoxAcousticData,
-  DefinitionMethod = c("WaterColumn", "HighestResolution",
-  "UserDefined"), Resolution = double(),
-  LayerTable = data.table::data.table(), UseProcessData = FALSE)
+DefineAcousticLayer(
+  processData,
+  StoxAcousticData,
+  DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  UseProcessData = FALSE
+)
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
