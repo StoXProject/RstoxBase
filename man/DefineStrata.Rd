@@ -4,23 +4,23 @@
 \alias{DefineStrata}
 \title{Define stratum multipolygon}
 \usage{
-DefineStrata(processData, FileName, UseProcessData = FALSE)
+DefineStrata(FileName, processData = NULL, UseProcessData = FALSE)
 }
 \arguments{
+\item{FileName}{The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.}
+
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{FileName}{The path to a goejson file, shape file (folder) or a Stox multipolygon WKT file.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing funciton output in the process.}
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }
 \value{
-An object of StoX data type \code{\link{StratumPolygon}}.
+A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
 }
 \description{
 This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
 }
 \details{
-The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file.
+The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
 }
 \examples{
 

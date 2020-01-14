@@ -25,11 +25,11 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
 
 
 dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
-
+    
     # 
     polygonName <- as.character(DataTable$Stratum)
     multipolygon <- DataTable$Polygon
-
+    
     # Convert each WKT strings to SpatialPolygonsDataFrame:
     spatialPolygonsList <- lapply(multipolygon, rgeos::readWKT)
     # Extract the Polygons objects to modify the IDs and merge to a SpatialPolygonsDataFrame:
@@ -46,14 +46,14 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
     spatialPolygons = sp::SpatialPolygons(polygonsList)
     spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data)
     #plot(SpP, col = 1:5, pbg="white")
-
+    
     return(spatialPolygonsDataFrame)
 }
 
 
 
 stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
-
+    
     # Read the file as data.table:
     dataTable <- readStoxMultipolygonWKTFromFile(FilePath)
     # Convert to SpatialPolygonsDataFrame:
@@ -68,14 +68,17 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
 #' 
 #' @param processData       The current data produced by a previous instance of the function.
-#' @param FileName          The path to a goejson file, shape file (folder) or a Stox multipolygon WKT file.
-#' @param UseProcessData    Logical: If TRUE use the existing funciton output in the process. 
+#' @param FileName          The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension. 
+#' @param UseProcessData    Logical: If TRUE use the existing function output in the process. 
 #' 
 #' @details
-#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file. 
+#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment). 
 #' 
 #' @return
-#' An object of StoX data type \code{\link{StratumPolygon}}.
+#' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
+#' 
+#' @import 
+#' rgdal sp
 #' 
 #' @examples
 #' 
@@ -83,11 +86,36 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' 
 #' @export
 #' 
-DefineStrata <- function(processData, FileName, UseProcessData = FALSE) {
-    if(UseProcessData) {
+DefineStrata <- function(FileName, processData = NULL, UseProcessData = FALSE) {
+    
+    if(!is.null(processData) & UseProcessData) {
         return(processData)
+        
+    } else {
+        
+        if(length(unlist(strsplit(FileName, "\\."))) < 2) {
+            stop("FileName must include file extension.")
+        } else {
+            FileExt <- unlist(strsplit(FileName, "\\."))[length(unlist(strsplit(FileName, "\\.")))]
+        }
+        
+        if(tolower(FileExt) %in% c("wkt", "txt")) {
+            stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
+        } else if(tolower(FileExt) == "shp") {
+            rgdal::readOGR(FileName, verbose = FALSE)
+        } else if(tolower(FileExt) == "json") {
+            if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
+                stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change file format.")
+            }
+            
+            rgdal::readOGR(FileName, "OGRGeoJSON")
+            
+        } else {
+            stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
+        }
+        
     }
-    stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
+
 }
 
 
@@ -226,7 +254,7 @@ polygonAreaPolygonDT <- function(df) {
         p1 <- df[i,]
         p2 <- df[i + 1,]
         area <- area + deg2rad(p1$x - p2$x) * (2 + sin(deg2rad(p1$y)) + sin(deg2rad(p2$y)))
-        }
+    }
     r <- 6371000.0 * 0.000539956803;
     abs(area * r ^ 2 / 2.0);
 }
@@ -269,7 +297,7 @@ polygonAreaSP <- function(sp) {
 
 #readShapeFilesToSpatialPolygons <- function(FilePath) {
 readShapeFilesToSpatialPolygonsDataFrame <- function(FilePath) {
-        shape <- rgdal::readOGR(dsn = FilePath)
+    shape <- rgdal::readOGR(dsn = FilePath)
     shape
 }
 

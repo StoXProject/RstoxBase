@@ -21,7 +21,7 @@ DefineAcousticPSU(
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.}
 
-\item{UseProcessData}{Logical: If TRUE use the existing funciton output in the process.}
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }
 \value{
 An object of StoX data type \code{\link{AcousticPSU}}.
