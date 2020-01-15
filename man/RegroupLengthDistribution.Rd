@@ -2,18 +2,20 @@
 % Please edit documentation in R/LengthDistribution.R
 \name{RegroupLengthDistribution}
 \alias{RegroupLengthDistribution}
-\title{Some title}
+\title{Regroup length distribution to common intervals}
 \usage{
-RegroupLengthDistribution(LengthDistributionData)
+RegroupLengthDistribution(LengthDistribution, LengthInterval)
 }
 \arguments{
-\item{parameterName}{Parameter descrption.}
+\item{LengthDistribution}{The length distribution data.}
+
+\item{LengthInterval}{The new length intervals, either given as a vector of interval breaks, or a single numeric value, in which case a vector of intervavl breaks is created covering the range of the original length interval breaks.}
 }
 \value{
 A data.table is returned with awesome stuff.
 }
 \description{
-Some description
+This function aggregates the \code{WeightedCount} of the LengthDistribution
 }
 \details{
 This function is awesome and does excellent stuff.

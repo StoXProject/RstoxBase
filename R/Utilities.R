@@ -17,12 +17,20 @@
 #}
 
 
-
-# Function to get the common intervals of possibly overlapping intervals:
+##################################################
+##################################################
+#' Get the common intervals of possibly overlapping intervals:
+#' 
+#' @param data A data.table/data.frame holding the columns representing lower and upper interval.
+#' @param varMin The name of the lower interval column. By default interpreted from the first column of \code{data}.
+#' @param varMax The name of the upper interval column. By default interpreted from the second column of \code{data}.
+#' @param lowerName The name of the lower interval column in the output table. By default set to \code{varMin}.
+#' @param upperName The name of the upper interval column in the output table. By default set to \code{varMax}.
+#' 
 getCommonIntervals <- function(data, varMin = NULL, varMax = NULL, lowerName = NULL, upperName = NULL) {
     
     # Function to get the first common interval of a table:
-    getOneCommonInterval <- function(data) {
+    getOneCommonInterval <- function(data, varMin, varMax) {
         # Start out with the first lower value:
         lower <- data[[varMin]][1]
         # Set an initial value of the first upper value:
@@ -85,7 +93,7 @@ getCommonIntervals <- function(data, varMin = NULL, varMax = NULL, lowerName = N
     # Get all common intervals:
     while(nrow(data)) {
         # Add the current interval:
-        thisInterval <- getOneCommonInterval(data)
+        thisInterval <- getOneCommonInterval(data, varMin, varMax)
         intervals <- c(intervals, list(thisInterval))
         # Shave off the data:
         used <- data[[varMax]] <= thisInterval["upper"]

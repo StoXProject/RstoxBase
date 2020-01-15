@@ -20,19 +20,21 @@
 #' @export
 #' @import data.table
 #' 
-Catchability <- function() {
-    # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
+Catchability <- function(LengthDistribution, CatchabilityMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"), LengthDependentSweepWidthParameters = NULL) {
+    
+    
 }
 
 
 
 ##################################################
 ##################################################
-#' Some title
+#' Regroup length distribution to common intervals
 #' 
-#' Some description
+#' This function aggregates the \code{WeightedCount} of the LengthDistribution
 #' 
-#' @param parameterName Parameter descrption.
+#' @param LengthDistribution The length distribution data.
+#' @param LengthInterval The new length intervals, either given as a vector of interval breaks, or a single numeric value, in which case a vector of intervavl breaks is created covering the range of the original length interval breaks.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -48,8 +50,64 @@ Catchability <- function() {
 #' @export
 #' @import data.table
 #' 
-RegroupLengthDistribution <- function(LengthDistributionData) {
+RegroupLengthDistribution <- function(LengthDistribution, LengthInterval) {
     
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    LengthDistributionCopy = data.table::copy(LengthDistribution)
+    
+    # Create a vector of breaks, if not given in the input 'LengthInterval':
+    if(length(LengthInterval) == 1) {
+        minLength <- min(LengthDistribution$IndividualTotalLengthCentimeter, na.rm = TRUE)
+        maxLength <- max(LengthDistribution$IndividualTotalLengthCentimeter + LengthDistribution$LengthResolutionCentimeter, na.rm = TRUE)
+        # 
+        minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
+        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval)
+        LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
+    }
+    
+    # Check that there are no existing length intervals that are inside one of the new intervals:
+    # Get the possible intervals:
+    lengthGroupMinMax <- unique(LengthDistributionCopy[, .(lengthIntervalMin = IndividualTotalLengthCentimeter, lengthIntervalMax = IndividualTotalLengthCentimeter + LengthResolutionCentimeter)])
+    #possibleIntervals <- getCommonIntervals(data = lengthGroupMinMax)
+    
+    strictlyInside <- function(x, table, margin = 1e-6) {
+        any(x - margin > table[, 1] & x + margin < table[, 2], na.rm=TRUE)
+    }
+        
+    invalidIntervalBreaks <- sapply(LengthInterval, strictlyInside, lengthGroupMinMax)
+
+    ## Check whether any of the new intervavl limits are inside the possible intervals:
+    #invalidIntervalBreaks <- ! (
+    #    LengthInterval >= min(possibleIntervals) & 
+    #    LengthInterval <= max(possibleIntervals) & 
+    #    !LengthInterval %in% unlist(possibleIntervals)
+    #)
+    if(any(invalidIntervalBreaks)) {
+        at <- which(invalidIntervalBreaks)
+        stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthInterval[at], LengthInterval[at + 1], sep = " - "), collapse = ", "))
+    }
+    
+    # Get the inteval widths, and replace LengthResolutionCentimeter with the appropriate widths:
+    LengthIntervalWidths <- diff(LengthInterval)
+    # Temporary add the index of the length intervals:
+    LengthDistributionCopy[, intervalIndex := findInterval(IndividualTotalLengthCentimeter, ..LengthInterval)]
+    
+    # Replace with the new LengthResolutionCentimeter:
+    LengthDistributionCopy[, LengthResolutionCentimeter := ..LengthIntervalWidths[intervalIndex]]
+    # Replace IndividualTotalLengthCentimeter with the new lower interval breaks:
+    LengthDistributionCopy[, IndividualTotalLengthCentimeter := ..LengthInterval[intervalIndex]]
+    
+    # Finally, aggregate the WeightedCount in the new length groups:
+    # Extract the 'by' element:
+    by <- getAllAggregationVariables(dataType="LengthDistribution")
+    LengthDistributionCopy[, WeightedCount := sum(WeightedCount), by = by]
+    # Delete duplicated rows:
+    LengthDistributionCopy <- unique(LengthDistributionCopy)
+    
+    # Remove the intervalIndex:
+    LengthDistributionCopy[, intervalIndex := NULL]
+    
+    return(LengthDistributionCopy)
 }
 
 
@@ -144,21 +202,21 @@ LengthDistribution <- function(
     )
     # Declare the variables used below:
     .N <- NULL
-    LengthDistributionData <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
-    LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
+    LengthDistribution <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
+    LengthDistribution <- subset(LengthDistribution, !duplicated(LengthDistribution[, ..keys]))
     ####################################################
     
     ######################################################
     ##### 3. Add horizontal and vertical resolution: #####
     ######################################################
     # Order the length distribution data:
-    #data.table::setorder(LengthDistributionData)
+    #data.table::setorder(LengthDistribution)
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    LengthDistributionData <- addPSUDefinition(LengthDistributionData, PSUDefinition = SweptAreaPSU)
+    LengthDistribution <- addPSUDefinition(LengthDistribution, PSUDefinition = SweptAreaPSU)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    LengthDistributionData <- addLayerDefinition(LengthDistributionData, layerDefinition = SweptAreaLayer)
+    LengthDistribution <- addLayerDefinition(LengthDistribution, layerDefinition = SweptAreaLayer)
     ######################################################
     
     
@@ -167,8 +225,8 @@ LengthDistribution <- function(
     #######################################################
     # Create a data table of different raising factors in the columns:
     raisingFactorTable <- data.frame(
-        Weight = LengthDistributionData$CatchFractionWeightKilogram / LengthDistributionData$SampleWeightKilogram, 
-        Count = LengthDistributionData$CatchFractionCount / LengthDistributionData$SampleCount, 
+        Weight = LengthDistribution$CatchFractionWeightKilogram / LengthDistribution$SampleWeightKilogram, 
+        Count = LengthDistribution$CatchFractionCount / LengthDistribution$SampleCount, 
         Percent = 1
     )
     
@@ -183,12 +241,12 @@ LengthDistribution <- function(
         min(n, which(!is.na(x)))
     }
     raisingFactorIndex <- apply(raisingFactorTable, 1, getIndexOfFirstNonNA, LengthDistributionType = LengthDistributionType)
-    LengthDistributionData$raisingFactor <- raisingFactorTable[cbind(seq_along(raisingFactorIndex), raisingFactorIndex)]
+    LengthDistribution$raisingFactor <- raisingFactorTable[cbind(seq_along(raisingFactorIndex), raisingFactorIndex)]
     
     # Apply the raising factor and sum over samples:
     keysSansSample <- setdiff(keys, getStoxBioticKeys("Sample"))
-    LengthDistributionData <- LengthDistributionData[, WeightedCount := sum(WeightedCount * raisingFactor), by = keysSansSample]
-    LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keysSansSample]))
+    LengthDistribution <- LengthDistribution[, WeightedCount := sum(WeightedCount * raisingFactor), by = keysSansSample]
+    LengthDistribution <- subset(LengthDistribution, !duplicated(LengthDistribution[, ..keysSansSample]))
     #######################################################
     
     
@@ -197,24 +255,24 @@ LengthDistribution <- function(
     ###################################################################
     # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the TowedDistance, rendering the effective TowedDistance as 1:
     if(LengthDistributionType == "NormalizedLengthDistribution") {
-        LengthDistributionData$LengthDistributionWeight <- LengthDistributionData$TowedDistance
+        LengthDistribution$LengthDistributionWeight <- LengthDistribution$TowedDistance
     }
     else if(LengthDistributionType == "LengthDistribution") {
-        LengthDistributionData$LengthDistributionWeight <- 1
+        LengthDistribution$LengthDistributionWeight <- 1
     }
     # For LengthDistributionType "PercentLengthDistribution" weights are not relevant, since length distributions are simply averaged, and are set to 1:
     else if(LengthDistributionType == "PercentLengthDistribution") {
-        LengthDistributionData$LengthDistributionWeight <- 1
+        LengthDistribution$LengthDistributionWeight <- 1
     }
     else {
         stop("Invalid LengthDistributionType. See ?RstoxBase::LengthDistributionType")
     }
     
     # Divide by the weights:
-    LengthDistributionData[, WeightedCount := WeightedCount / LengthDistributionWeight]
+    LengthDistribution[, WeightedCount := WeightedCount / LengthDistributionWeight]
     
-    # Add the LengthDistributionType to the LengthDistributionData:
-    LengthDistributionData$LengthDistributionType <- LengthDistributionType
+    # Add the LengthDistributionType to the LengthDistribution:
+    LengthDistribution$LengthDistributionType <- LengthDistributionType
     ###################################################################
     
     
@@ -222,15 +280,15 @@ LengthDistribution <- function(
     ##### 6. Clean up: #####
     ########################
     # Extract only the relevant columns:
-    LengthDistributionData <- setColumnOrder(LengthDistributionData, dataType = "LengthDistribution", keep.all = FALSE)
+    LengthDistribution <- setColumnOrder(LengthDistribution, dataType = "LengthDistribution", keep.all = FALSE)
     
     # Order the rows 
     orderBy <- unlist(dataTypeDefinition[c("horizontalResolution", "verticalResolution", "groupingVariables")])
-    setorderv(LengthDistributionData, cols = orderBy)
+    setorderv(LengthDistribution, cols = orderBy)
     ########################
     
     
-    return(LengthDistributionData)
+    return(LengthDistribution)
 }
 
 ##################################################
@@ -280,23 +338,41 @@ AssignmentLengthDistribution <- function(LengthDistribution, NASCData, BioticAss
 
 
 
-meanData <- function(data, TargetResolution = "PSU") {
+meanData <- function(data, targetResolution = "PSU") {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
-    dataCopy = copy(data)
+    dataCopy = data.table::copy(data)
     
+    # Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
+    checkVerticalResolution <- function(data, targetResolution = "PSU") {
+        
+        # Get the variables to aggregate by etc.:
+        aggregationVariables <- determineAggregationVariables(
+            data = dataCopy, 
+            targetResolution = targetResolution, 
+            dimension = "horizontal"
+        )
+        
+        
+        aggregationVariables$verticalRawDimension
+        
+        
+    }
+    
+    # Get the variables to aggregate by etc.:
     aggregationVariables <- determineAggregationVariables(
         data = dataCopy, 
-        TargetResolution = TargetResolution, 
+        targetResolution = targetResolution, 
         dimension = "horizontal"
     )
+    
+    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
+    dataVariable <- aggregationVariables$dataVariable
+    weightingVariable <- aggregationVariables$weightingVariable
     # Extract the 'by' element:
     by <- aggregationVariables$by
-    
-    # Sum over the grouping variables:
-    dataVariable <- aggregationVariables$dataVariable
-    #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
-    dataCopy[, c(dataVariable) := sum(get(dataVariable)), by = by]
+    #LengthDistribution[, WeightedCount := sum(WeightedCount), by = by]
+    dataCopy[, c(dataVariable) := weighted.mean(x = get(dataVariable), w = get(weightingVariable)), by = by]
     
     # Set the resolution variables which were summed over to NA:
     set(dataCopy, j = aggregationVariables$setToNA, value=NA)

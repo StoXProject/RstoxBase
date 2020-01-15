@@ -4,7 +4,11 @@
 \alias{Catchability}
 \title{Some title}
 \usage{
-Catchability()
+Catchability(
+  LengthDistribution,
+  CatchabilityMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"),
+  LengthDependentSweepWidthParameters = NULL
+)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}

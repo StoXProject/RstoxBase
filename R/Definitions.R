@@ -19,8 +19,10 @@ initiateRstoxBase <- function(){
             verticalResolution = c("Layer", "Channel"), 
             groupingVariables = c("AcousticCategory", "ChannelReference", "Frequency"), 
             data = "NASC", 
-            verticalDimension = c("MinChannelRange", "MaxChannelRange", "MinLayerRange", "MaxLayerRange"), 
-            weight = "NASCWeight", 
+            #verticalDimension = c("MinChannelRange", "MaxChannelRange", "MinLayerRange", "MaxLayerRange"), 
+            verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
+            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            weighting = "NASCWeight", 
             other = "EffectiveLogDistance"
         ), 
         LengthDistribution = list(
@@ -28,8 +30,10 @@ initiateRstoxBase <- function(){
             verticalResolution = c("Layer", "Haul"), 
             groupingVariables = c("SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            verticalDimension = c("MinHaulDepth", "MaxHaulDepth", "MinLayerRange", "MaxLayerRange"), 
-            weight = "LengthDistributionWeight", 
+            #verticalDimension = c("MinHaulDepth", "MaxHaulDepth", "MinLayerRange", "MaxLayerRange"), 
+            verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
+            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            weighting = "LengthDistributionWeight", 
             other = c("TowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread", "LengthDistributionType")
         ), 
         AssignmentLengthDistribution = list(
@@ -37,8 +41,8 @@ initiateRstoxBase <- function(){
             verticalResolution = c("Layer"), 
             groupingVariables = c("SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            verticalDimension = c("MinLayerRange", "MaxLayerRange"), 
-            weight = "AssignmentLengthDistributionWeight", 
+            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            weighting = "AssignmentLengthDistributionWeight", 
             other = NULL
         ), 
         Density = list(
@@ -46,8 +50,8 @@ initiateRstoxBase <- function(){
             verticalResolution = c("Layer"), 
             groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
             data = "Density",
-            verticalDimension = c("MinLayerRange", "MaxLayerRange"), 
-            weight = "DensityWeight", 
+            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            weighting = "DensityWeight", 
             other = NULL
         ), 
         Abundance = list(
@@ -55,8 +59,8 @@ initiateRstoxBase <- function(){
             verticalResolution = c("Layer"), 
             groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
             data = "Abundance", 
-            verticalDimension = c("MinLayerRange", "MaxLayerRange"), 
-            weight = NULL, 
+            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            weighting = NULL, 
             other = NULL
         )
     )
@@ -163,6 +167,25 @@ detectDataType <- function(data, only.data = FALSE) {
 }
 
 
+getAllAggregationVariables <- function(data, dataType = NULL) {
+    # Get the requested type:
+    if(length(dataType) == 0) {
+        dataType <- detectDataType(data)
+    }
+    
+    # Get the definitions:
+    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    
+    # Return the full vector of aggregation variables:
+    aggregateBy <- c(
+        dataTypeDefinition[[dataType]]$horizontalResolution, 
+        dataTypeDefinition[[dataType]]$verticalResolution, 
+        dataTypeDefinition[[dataType]]$groupingVariables
+    )
+    
+    return(aggregateBy)
+}
+
 determineAggregationVariables <- function(
         data, 
         TargetResolution, 
@@ -207,7 +230,9 @@ determineAggregationVariables <- function(
         presentResolution = presentResolution, 
         finestResolution = finestResolution, 
         dataVariable = dataTypeDefinition[[dataType]]$data, 
-        verticalDimension = dataTypeDefinition[[dataType]]$verticalDimension, 
+        weightingVariable = dataTypeDefinition[[dataType]]$weighting, 
+        verticalRawDimension = dataTypeDefinition[[dataType]]$verticalRawDimension, 
+        verticalLayerDimension = dataTypeDefinition[[dataType]]$verticalLayerDimension, 
         dataTypeDefinition = dataTypeDefinition
     )
     return(out)
