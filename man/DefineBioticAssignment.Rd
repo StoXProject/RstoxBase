@@ -29,7 +29,7 @@ DefineBioticAssignment(
 
 \item{StratumPolygon}{A list of \code{\link{StratumPolygon}} process data.}
 
-\item{UseProcessData}{Logical: If TRUE use the existing funciton output in the process.}
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{AcousticPSU}{A list of \code{\link{AcousticPSU}} process data.}
 

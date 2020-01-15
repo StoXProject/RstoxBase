@@ -35,7 +35,7 @@ DefineBioticAssignment_temp(
 
 \item{StratumPolygon}{A list of \code{\link{StratumPolygon}} process data.}
 
-\item{UseProcessData}{Logical: If TRUE use the existing funciton output in the process.}
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }
 \value{
 An object of StoX data type \code{\link{AcousticPSU}}.
