@@ -1,0 +1,70 @@
+language: R
+matrix:
+  include:
+  - os: linux
+    r: 3.5
+  - os: osx
+    r: 3.5
+addons:
+  apt:
+    packages:
+    - libproj-dev 
+    - libgdal-dev
+    - libgeos-dev
+    - libnode-dev
+    - libjq-dev
+    - libudunits2-dev
+    - libprotobuf-dev
+    - protobuf-compiler
+  homebrew:
+    packages:
+    - proj
+    - gdal
+    - geos
+if: tag IS blank
+sudo: false
+cache: packages
+warnings_are_errors: false
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then R -e 'source("https://install-github.me/r-lib/remotes")'; fi
+after_success:
+  # Get Package name and version from DESCRIPTION
+  - 'export PKGVER=$(sed -n "s/Version: *\([^ ]*\)/\1/p" DESCRIPTION)'
+  - 'export PKGNAME=$(sed -n "s/Package: *\([^ ]*\)/\1/p" DESCRIPTION)'
+  - 'export SRC_PKG_FILE=${PKGNAME}_${PKGVER}'
+  - "echo $SRC_PKG_FILE"
+  # Build binary and remove the source archive
+  - "R CMD INSTALL --build ${SRC_PKG_FILE}.tar.gz"
+  - "rm ${SRC_PKG_FILE}.tar.gz"
+  # Look for binary bundle (*.tgz for OSX and *.tar.gz for Linux)
+  - "export BIN_PKG_FILE=$(ls $PKGNAME*gz)"
+  - "echo Resulting binary: $BIN_PKG_FILE"
+  # Generate documentation pages
+  - Rscript -e 'remotes::install_cran("pkgdown")'
+  - Rscript -e 'pkgdown::build_site()'
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --global user.email "builds@travis-ci.com"
+  - git config --global user.name "Travis CI"
+  - export TRAVIS_TAG=$PKGNAME-v$PKGVER
+  - if git tag $TRAVIS_TAG > /dev/null 2>&1; then echo Successfully tagged; else echo Tag already exists; fi
+
+deploy:
+  - provider: releases
+    api_key: $API_KEY
+    file: $BIN_PKG_FILE
+    skip_cleanup: true
+    on:
+     branch: master
+  - provider: pages
+    skip-cleanup: true
+    github-token: $API_KEY
+    keep-history: true
+    local-dir: docs
+    on:
+     branch: master
+     condition: $TRAVIS_OS_NAME = linux
