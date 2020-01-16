@@ -1,4 +1,3 @@
 library(testthat)
-library(RstoxFramework)
 
-test_check("RstoxFramework")
+test_check("RstoxBase")
