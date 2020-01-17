@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Some title — Catchability • RstoxBase</title>
+<title>Catchability of trawls by fish length — LengthDependentCatchCompensation • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Some title — Catchability" />
-<meta property="og:description" content="Some description" />
+<meta property="og:title" content="Catchability of trawls by fish length — LengthDependentCatchCompensation" />
+<meta property="og:description" content="This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,51 +105,53 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Some title</h1>
+    <h1>Catchability of trawls by fish length</h1>
     <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
-    <div class="hidden name"><code>Catchability.Rd</code></div>
+    <div class="hidden name"><code>LengthDependentCatchCompensation.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Some description</p>
+    <p>This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Catchability</span>(
+    <pre class="usage"><span class='fu'>LengthDependentCatchCompensation</span>(
   <span class='no'>LengthDistribution</span>,
-  <span class='kw'>CatchabilityMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"LengthDependentSweepWidth"</span>, <span class='st'>"LengthDependentSelectivity"</span>),
-  <span class='kw'>LengthDependentSweepWidthParameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>CompensationMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"LengthDependentSweepWidth"</span>, <span class='st'>"LengthDependentSelectivity"</span>),
+  <span class='kw'>LengthDependentSweepWidthParameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>LengthDependentSelectivityParameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>parameterName</th>
+      <th>LengthDistribution</th>
+      <td><p>The length distribution data.</p></td>
+    </tr>
+    <tr>
+      <th>LengthDependentSweepWidthParameters</th>
+      <td><p>A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).</p></td>
+    </tr>
+    <tr>
+      <th>LengthDependentSelectivityParameters</th>
+      <td><p>A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).</p></td>
+    </tr>
+    <tr>
+      <th>CatchabilityMethod</th>
       <td><p>Parameter descrption.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.table is returned with awesome stuff.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <p>A <code><a href='LengthDistribution.html'>LengthDistribution</a></code> object.</p>
 
-    <p>This function is awesome and does excellent stuff.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
