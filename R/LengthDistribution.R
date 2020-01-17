@@ -1,30 +1,158 @@
 ##################################################
 ##################################################
-#' Some title
+#' Catchability of trawls by fish length
 #' 
-#' Some description
+#' This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.
 #' 
-#' @param parameterName Parameter descrption.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
+#' @inheritParams RegroupLengthDistribution
+#' @param CatchabilityMethod Parameter descrption.
+#' @param LengthDependentSweepWidthParameters A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
+#' @param LengthDependentSelectivityParameters A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
 #' 
 #' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' A \code{\link{LengthDistribution}} object.
 #' 
 #' @export
 #' @import data.table
 #' 
-Catchability <- function(LengthDistribution, CatchabilityMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"), LengthDependentSweepWidthParameters = NULL) {
+LengthDependentCatchCompensation <- function(LengthDistribution, CompensationMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"), LengthDependentSweepWidthParameters = NULL, LengthDependentSelectivityParameters = NULL) {
+    
+    # Get the catchability method:
+    CompensationMethod <- match.arg(CompensationMethod)
+    
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    LengthDistributionCopy = data.table::copy(LengthDistribution)
+    
+    # Function to apply the length dependent sweep width function.
+    #   w = w * 1852 / (Alpha * L^Beta), 
+    # where 
+    #   L = LMin if L < LMin 
+    # and 
+    #   L = LMax if L > LMax:
+    applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMin, LMax, Alpha, Beta) {
+        # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
+        if(any(is.na(LMin))) {
+            stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMin. Subset the rows before applying the function.")
+        }
+        
+        # Set the lengths lower than LMin to LMin: 
+        IndividualTotalLengthCentimeterMiddle <- pmax(IndividualTotalLengthCentimeterMiddle, LMin)
+        
+        # And the lengths larger than LMax to LMax: 
+        IndividualTotalLengthCentimeterMiddle <- pmin(IndividualTotalLengthCentimeterMiddle, LMax)
+        
+        # Calculate the factor to multiply the WeightedCount:
+        fact <- 1852 / (Alpha * IndividualTotalLengthCentimeterMiddle^Beta)
+        WeightedCount <- WeightedCount * fact
+        
+        return(WeightedCount)
+    }
+    
+    # Function to apply the length dependent selectivity function.
+    #   w = w * fact, 
+    # where 
+    #   fact = Alpha * exp(L * Beta)
+    # and 
+    #   fact = 1 if L > LMax:
+    applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMax, Alpha, Beta) {
+        # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
+        if(any(is.na(LMax))) {
+            stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
+        }
+        
+        # Calculate the factor to multiply the WeightedCount:
+        fact <- Alpha * exp(IndividualTotalLengthCentimeterMiddle * Beta)
+        # Set the factor to 1 outside of the range LMin to LMax. This is  questionable, and we do not turn on this functionality before this method is approved:
+        stop("CatchabilityMethod = \"LengthDependentSelectivity\" is not yet supported.")
+        fact[IndividualTotalLengthCentimeterMiddle > LMax] <- 1
+        WeightedCount <- WeightedCount * fact
+        
+        return(WeightedCount)
+    }
+    
+    # Run the appropriate method:
+    if(CompensationMethod == "LengthDependentSweepWidth") {
+        runLengthDependentCompensationFunction(
+            data = LengthDistributionCopy, 
+            compensationMethod = CompensationMethod, 
+            compensationFunction = applyLengthDependentSweepWidth, 
+            parametertable = LengthDependentSweepWidthParameters, 
+            requiredParameters = c("LMin", "LMax", "Alpha", "Beta"), 
+            groupingVariable = "SpeciesCategory"
+        )
+    }
+    else if(CompensationMethod == "LengthDependentSelectivity") {
+        runLengthDependentCompensationFunction(
+            data = LengthDistributionCopy, 
+            compensationMethod = CompensationMethod, 
+            compensationFunction = applyLengthDependentSelectivity, 
+            parametertable = LengthDependentSelectivityParameters, 
+            requiredParameters = c("LMax", "Alpha", "Beta"), 
+            groupingVariable = "SpeciesCategory"
+        )
+    }
     
     
+    return(LengthDistributionCopy)
 }
 
+# Function to run a length dependent compensation function, given its method name, parameter table, vector of required parameters and the specific grouping variable, which in all current cases is "SpeciesCategory":
+# It is possible to simplify this function to only take the method as input, requiring that the function is named apply<methodname>, the parameter table is named <methodname>Parameters, and the function has the parameters WeightedCount and IndividualTotalLengthCentimeterMiddle followed by the required parameters (then R would determine the required parameters from the formals of the function). We should discuss whether to proceed with this strategy:
+runLengthDependentCompensationFunction <- function(data, compensationMethod, compensationFunction, parametertable, requiredParameters, groupingVariable = "SpeciesCategory") {
+    
+    # Check that the parametertable is given:
+    if(length(parametertable) == 0) {
+        stop("The parameter table for ", compensationMethod, " must be given")
+    }
+    else if(!data.table::is.data.table(parametertable)) {
+        parametertable <- data.table::as.data.table(parametertable)
+    }
+    
+    # Check for presence of all required columns:
+    allRequiredParameters <- c(groupingVariable, requiredParameters)
+    if(!all(names(parametertable) %in% allRequiredParameters)) {
+        stop("The parameter table for ", compensationMethod, " must contain the following columns: ", paste(allRequiredParameters, collapse = ", "))
+    }
+    
+    # Check that none of the elements of the parameter table are NA:
+    if(any(is.na(parametertable))) {
+        stop("None og the elements of the parametertable can be missing")
+    }
+    
+    
+    # First add the columns LMin, LMax, Alpha, Beta and IndividualTotalLengthCentimeterMiddle:
+    data <- data.table::data.table(
+        data, 
+        extractColumnsBy(
+            values = data[[groupingVariable]], 
+            table = parametertable, 
+            refvar = groupingVariable, 
+            vars = requiredParameters
+        )
+    )
+    
+    # Add also the mid point of each length interval:
+    data[, IndividualTotalLengthCentimeterMiddle := IndividualTotalLengthCentimeter + LengthResolutionCentimeter / 2]
+    
+    # Apply the compensationFunction:
+    valid <- !is.na(data[[requiredParameters[1]]])
+    if(!all(valid)) {
+        warning("Length dependent compensation was not applied to all species categories in the length distribution data")
+    }
+    functionInputColumns <- c("WeightedCount", "IndividualTotalLengthCentimeterMiddle", requiredParameters)
+    data[valid, WeightedCount := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]
+    
+    # Remove the temporary columns:
+    data[, (allRequiredParameters) := vector("list", length(allRequiredParameters))]
+    
+    return(data)
+}
+
+# Function to extract the variables 'vars' from a data.table at the rows matching the input vector 'select' to the column 'refvar' of the table:
+extractColumnsBy <- function(values, table, refvar, vars) {
+    matchIndices <- match(values, table[, ..refvar])
+    table[matchIndices, ..vars]
+}
 
 
 ##################################################
@@ -57,11 +185,13 @@ RegroupLengthDistribution <- function(LengthDistribution, LengthInterval) {
     
     # Create a vector of breaks, if not given in the input 'LengthInterval':
     if(length(LengthInterval) == 1) {
+        # Get the minimum and maximum lower and upper length interval breaks:
         minLength <- min(LengthDistribution$IndividualTotalLengthCentimeter, na.rm = TRUE)
         maxLength <- max(LengthDistribution$IndividualTotalLengthCentimeter + LengthDistribution$LengthResolutionCentimeter, na.rm = TRUE)
-        # 
+        # Convert to indices:
         minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
         maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval)
+        # Create a vector of evenly spaced breaks:
         LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
     }
     
@@ -76,12 +206,7 @@ RegroupLengthDistribution <- function(LengthDistribution, LengthInterval) {
         
     invalidIntervalBreaks <- sapply(LengthInterval, strictlyInside, lengthGroupMinMax)
 
-    ## Check whether any of the new intervavl limits are inside the possible intervals:
-    #invalidIntervalBreaks <- ! (
-    #    LengthInterval >= min(possibleIntervals) & 
-    #    LengthInterval <= max(possibleIntervals) & 
-    #    !LengthInterval %in% unlist(possibleIntervals)
-    #)
+    # Check whether any of the new interval limits are inside the possible intervals:
     if(any(invalidIntervalBreaks)) {
         at <- which(invalidIntervalBreaks)
         stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthInterval[at], LengthInterval[at + 1], sep = " - "), collapse = ", "))
@@ -104,7 +229,7 @@ RegroupLengthDistribution <- function(LengthDistribution, LengthInterval) {
     # Delete duplicated rows:
     LengthDistributionCopy <- unique(LengthDistributionCopy)
     
-    # Remove the intervalIndex:
+    # Remove the temporary intervalIndex:
     LengthDistributionCopy[, intervalIndex := NULL]
     
     return(LengthDistributionCopy)

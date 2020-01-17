@@ -121,6 +121,23 @@ stoxFunctionAttributes <- list(
     ), 
     
     # Calculate areas of strata polygons:
+    LengthDependentCatchCompensation = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "LengthDistribution", 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list(), 
+        functionParameterHierarchy = list(
+            LengthDependentSweepWidthParameters = list(
+                CompensationMethod = "LengthDependentSweepWidth"
+            ), 
+            LengthDependentSelectivityParameters = list(
+                CompensationMethod = "LengthDependentSelectivity"
+            )
+        )
+    ), 
+    
+    # Calculate areas of strata polygons:
     NASC = list(
         functionType = "modelData", 
         functionCategory = "Baseline", 

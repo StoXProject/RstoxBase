@@ -40,7 +40,8 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
     }
     # Merge to a SpatialPolygonsDataFrame object:
     data <- data.frame(
-        polygonName = polygonName
+        polygonName = polygonName, 
+        stringsAsFactors = FALSE
     )
     rownames(data) <- polygonName
     spatialPolygons = sp::SpatialPolygons(polygonsList)
