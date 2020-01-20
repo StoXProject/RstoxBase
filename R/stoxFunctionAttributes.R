@@ -106,7 +106,7 @@ stoxFunctionAttributes <- list(
     LengthDistribution = list(
         functionType = "modelData", 
         functionCategory = "Baseline", 
-        functionOutputDataType = "LengthDistribution", 
+        functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
     ), 
@@ -115,7 +115,25 @@ stoxFunctionAttributes <- list(
     RegroupLengthDistribution = list(
         functionType = "modelData", 
         functionCategory = "Baseline", 
-        functionOutputDataType = "LengthDistribution", 
+        functionOutputDataType = "LengthDistributionData", 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list()
+    ), 
+    
+    # Calculate areas of strata polygons:
+    MeanLengthDistribution = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "LengthDistributionData", 
+        functionParameterFormat = list(), 
+        functionParameterHierarchy = list()
+    ), 
+    
+    # Calculate areas of strata polygons:
+    SumLengthDistribution = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
     ), 
@@ -124,7 +142,7 @@ stoxFunctionAttributes <- list(
     LengthDependentCatchCompensation = list(
         functionType = "modelData", 
         functionCategory = "Baseline", 
-        functionOutputDataType = "LengthDistribution", 
+        functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list(), 
         functionParameterHierarchy = list(
@@ -139,6 +157,20 @@ stoxFunctionAttributes <- list(
     
     # Calculate areas of strata polygons:
     NASC = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "NASCData"
+    ), 
+    
+    # Calculate areas of strata polygons:
+    SumNASC = list(
+        functionType = "modelData", 
+        functionCategory = "Baseline", 
+        functionOutputDataType = "NASCData"
+    ), 
+    
+    # Calculate areas of strata polygons:
+    MeanNASC = list(
         functionType = "modelData", 
         functionCategory = "Baseline", 
         functionOutputDataType = "NASCData"

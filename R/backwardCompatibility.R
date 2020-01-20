@@ -52,6 +52,24 @@ split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic <- function(projectDescription)
     return(projectDescription)
 }
 
+remove_ReadProcessData <- function(projectDescription) {
+    if(StoxVersion == 2.7) {
+        # Get the function names:
+        functionNames <- sapply(projectDescription$Baseline, "[[", "functionName")
+        # Get the position of the process using ReadBioticXML():
+        atReadProcessData <- which("ReadProcessData" %in% functionNames)
+        if(length(atReadProcessData)) {
+            
+            # Remove the process:
+            projectDescription$Baseline[[atReadProcessData]] <- NULL
+        }
+    }
+    
+    return(projectDescription)
+}
+
+
+
 # A list funcitons performing conversions of the projectDescription to ensure backward compatibility:
 #' 
 #' @export

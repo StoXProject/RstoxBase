@@ -80,7 +80,7 @@ AcousticDensity <- function(NASCData,m=20,a=-70,d=1) {
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' A data.frame are returned
+#' A \code{\link{NASCData}} object.
 #' 
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
@@ -92,33 +92,17 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
     # Add weights:
     NASC[, NASCWeight := EffectiveLogDistance]
     
-    # # Add (acoustic) Layer:
-    # LayerData <- findLayer(Data = NASC, Layer = AcousticLayer, varMin = "MinRange", varMax = "MaxRange")
-    # NASC <- data.table::data.table(NASC, LayerData)
-    # # Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
-    # setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
-    # 
-    # # Add (acoustic) PSU
-    # if(length(AcousticPSU)) {
-    #     NASC <- RstoxData::mergeDataTables(c(AcousticPSU, list(NASC = NASC)), output.only.last = TRUE)
-    # }
-
-    
-    
-    
     # Insert the Stratum and PSU column by the AcousticPSU input, and otherwise by NAs:
     NASC <- addPSUDefinition(NASC, PSUDefinition = AcousticPSU)
     
     # Insert the Layer column by the AcousticLayer input, and otherwise by NAs:
     NASC <- addLayerDefinition(NASC, layerDefinition = AcousticLayer)
-    # Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
-    setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
-    
-    
-    
+    ## Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
+    #setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
     
     # Extract the relevant variables:
-    NASC <- NASC[, c("Stratum", "PSU", "EDSU", "Layer", "Channel", "AcousticCategory", "ChannelReference", "Frequency", "NASC", "MinChannelRange", "MaxChannelRange", "MinLayerRange", "MaxLayerRange", "EffectiveLogDistance")]
+    validVariables <- getAllDataTypeVariables(dataType = "NASCData")
+    NASC <- NASC[, ..validVariables]
     
     return(NASC)
 }
@@ -216,6 +200,32 @@ NASC_sindre <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticP
 }
 
 
+##################################################
+#' Sum NASC 
+#' 
+#' This function sums NASC data vertically into layer resolution
+#' 
+#' @inheritParams SumLengthDistribution
+#' @param NASCData The NASC data.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A \code{\link{NASCData}} object.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{NASC}} and \code{\link{SumNASC}}.
+#' 
+#' @export
+#' @import data.table
+#' 
+SumNASC <- function(NASCData, TargetResolution = "Layer") {
+    sumData(NASCData, targetResolution = TargetResolution)
+}
+
 
 ##################################################
 ##################################################
@@ -239,7 +249,7 @@ NASC_sindre <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticP
 #' @export
 #' @import data.table
 #' 
-SumNASC <- function(NASCData=NULL,TargetResolution='Layer',AcousticLayer=NULL) {
+SumNASC_old <- function(NASCData=NULL,TargetResolution='Layer',AcousticLayer=NULL) {
   
   
   
@@ -345,7 +355,30 @@ CombineNASC <- function(NASCData) {
 
 
 
-
+##################################################
+#' (Weighted) Average NASC 
+#' 
+#' This function averages NASC data horizontally, weighted by the log distance.
+#' 
+#' @inheritParams MeanNASC
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A \code{\link{NASCData}} object.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{NASC}} and \code{\link{MeanNASC}}.
+#' 
+#' @export
+#' @import data.table
+#' 
+MeanNASC <- function(NASCData, TargetResolution = "PSU") {
+    meanData(NASCData, targetResolution = TargetResolution)
+}
 
 
 
@@ -371,7 +404,7 @@ CombineNASC <- function(NASCData) {
 #' @export
 #' @import data.table
 #' 
-MeanNASC <- function(NASCData=NULL,TargetResolution = 'PSU',AcousticPSU=NULL) {
+MeanNASC_old <- function(NASCData=NULL,TargetResolution = 'PSU',AcousticPSU=NULL) {
 
   
   #Check if valid target Resolution

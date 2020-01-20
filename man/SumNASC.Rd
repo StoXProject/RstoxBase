@@ -4,16 +4,18 @@
 \alias{SumNASC}
 \title{Sum NASC}
 \usage{
-SumNASC(NASCData = NULL, TargetResolution = "Layer", AcousticLayer = NULL)
+SumNASC(NASCData, TargetResolution = "Layer")
 }
 \arguments{
-\item{parameterName}{Parameter descrption.}
+\item{NASCData}{The NASC data.}
+
+\item{TargetResolution}{The vertical resolution of the output.}
 }
 \value{
-A data.table is returned with awesome stuff.
+A \code{\link{NASCData}} object.
 }
 \description{
-This function sums all the vertical channels into layer per edsu
+This function sums NASC data vertically into layer resolution
 }
 \details{
 This function is awesome and does excellent stuff.
@@ -23,5 +25,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+\code{\link{NASC}} and \code{\link{SumNASC}}.
 }

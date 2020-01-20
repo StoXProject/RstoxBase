@@ -25,7 +25,7 @@ initiateRstoxBase <- function(){
             weighting = "NASCWeight", 
             other = "EffectiveLogDistance"
         ), 
-        LengthDistribution = list(
+        LengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU", "Station"), 
             verticalResolution = c("Layer", "Haul"), 
             groupingVariables = c("SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
@@ -36,7 +36,7 @@ initiateRstoxBase <- function(){
             weighting = "LengthDistributionWeight", 
             other = c("TowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread", "LengthDistributionType")
         ), 
-        AssignmentLengthDistribution = list(
+        AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
             groupingVariables = c("SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
@@ -45,7 +45,7 @@ initiateRstoxBase <- function(){
             weighting = "AssignmentLengthDistributionWeight", 
             other = NULL
         ), 
-        Density = list(
+        DensityData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
             groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
@@ -54,7 +54,7 @@ initiateRstoxBase <- function(){
             weighting = "DensityWeight", 
             other = NULL
         ), 
-        Abundance = list(
+        AbundanceData = list(
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
             groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
@@ -64,6 +64,20 @@ initiateRstoxBase <- function(){
             other = NULL
         )
     )
+    
+    # Define the variables of the main data types used in estimation models:
+    getRequiredVariables <- function(x) {
+        c(
+            utils::tail(x$horizontalResolution, 1), 
+            utils::tail(x$verticalResolution, 1), 
+            x$groupingVariables, 
+            x$weighting
+            #utils::head(x$groupingVariables, 1), 
+            #x$data, 
+            #x$weighting
+        )
+    }
+    dataTypeRequiredVariables <- lapply(dataTypeDefinition, getRequiredVariables)
     
     #### Assign to RstoxEnv and return the definitions: ####
     definitionsNames <- ls()
@@ -147,23 +161,44 @@ setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE
 
 
 
-detectDataType <- function(data, only.data = FALSE) {
-    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    if(only.data) {
-        present <- sapply(dataTypeDefinition, function(var) all(var$data %in% names(data)))
-    }
-    else {
-        present <- sapply(dataTypeDefinition, function(var) all(unlist(var) %in% names(data)))
-    }
+detectDataType <- function(data) {
+    
+    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    #if(only.data) {
+    #    present <- sapply(dataTypeDefinition, function(var) all(var$data %in% names(data)))
+    #}
+    #else {
+    #    present <- sapply(dataTypeDefinition, function(var) all(unlist(var) %in% names(data)))
+    #}
+    
+    dataTypeRequiredVariables <- getRstoxBaseDefinitions("dataTypeRequiredVariables")
+    present <- sapply(dataTypeRequiredVariables, function(var) all(var %in% names(data)))
     
     if(!any(present)) {
         warning("The input data does not contain all the expected variables.")
     }
     else if(sum(present) > 1) {
-        warning("More than one element of the input list contains the expected variables (", paste(names(dataTypeDefinition)[present], collapse = ","), "). The first selected:")
+        warning("More than one element of the input list contains the expected variables (", paste(names(dataTypeRequiredVariables)[present], collapse = ","), "). The first selected:")
     }
     
-    output <- utils::head(names(dataTypeDefinition)[present], 1)
+    output <- utils::head(names(dataTypeRequiredVariables)[present], 1)
+    return(output)
+}
+
+
+getAllDataTypeVariables <- function(data, dataType = NULL) {
+    # Get the requested type:
+    if(length(dataType) == 0) {
+        dataType <- detectDataType(data)
+    }
+    
+    # Get the definitions:
+    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    
+    # Return the full vector of aggregation variables:
+    output <- unlist(dataTypeDefinition[[dataType]])
+    
+    return(output)
 }
 
 
@@ -186,9 +221,21 @@ getAllAggregationVariables <- function(data, dataType = NULL) {
     return(aggregateBy)
 }
 
+getDataTypeDefinition <- function(data, dataType = NULL) {
+    
+    # Get the requested type:
+    if(length(dataType) == 0) {
+        dataType <- detectDataType(data)
+    }
+    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
+    
+    return(thisDataTypeDefinition)
+}
+
 determineAggregationVariables <- function(
         data, 
-        TargetResolution, 
+        targetResolution, 
         dimension = c("vertical", "horizontal")
         ) {
     
@@ -196,10 +243,11 @@ determineAggregationVariables <- function(
     dimension <- match.arg(dimension)
     dataType <- detectDataType(data)
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
     
     # Get the relevant resolution variables:
     resolutionName <- paste0(dimension, "Resolution")
-    resolution <- dataTypeDefinition[[dataType]][[resolutionName]]
+    resolution <- thisDataTypeDefinition[[resolutionName]]
     # Get the present resolution variables:
     hasAnyNonNA <- unlist(data[, lapply(.SD, function(x) any(!is.na(x))), .SDcols = resolution])
     presentResolution <- resolution[hasAnyNonNA]
@@ -208,7 +256,12 @@ determineAggregationVariables <- function(
     finestResolution <- utils::tail(presentResolution,1)
     
     # And the resolution variables to aggregate by:
-    aggregationResolution <- presentResolution[seq_len(min(which(presentResolution == TargetResolution)))]
+    # If the target resolution is not in the presen resolution, abort:
+    presentIsTarget <- presentResolution == targetResolution
+    if(!any(presentIsTarget)) {
+        stop("The target resolution is not one of the columns of the present resolution")
+    }
+    aggregationResolution <- presentResolution[seq_len(min(which(presentIsTarget)))]
     
     # Get the variables NOT to aggregate by:
     setToNA <- setdiff(resolution, aggregationResolution)
@@ -216,9 +269,9 @@ determineAggregationVariables <- function(
     # ... and diff these from all possigle grouping variables:
     aggregateBy <- setdiff(
         c(
-            dataTypeDefinition[[dataType]]$horizontalResolution, 
-            dataTypeDefinition[[dataType]]$verticalResolution, 
-            dataTypeDefinition[[dataType]]$groupingVariables
+            thisDataTypeDefinition$horizontalResolution, 
+            thisDataTypeDefinition$verticalResolution, 
+            thisDataTypeDefinition$groupingVariables
         ), 
         setToNA
     )
@@ -226,13 +279,13 @@ determineAggregationVariables <- function(
     out <- list(
         by = aggregateBy, 
         setToNA = setToNA, 
-        TargetResolution = TargetResolution, 
+        targetResolution = targetResolution, 
         presentResolution = presentResolution, 
         finestResolution = finestResolution, 
-        dataVariable = dataTypeDefinition[[dataType]]$data, 
-        weightingVariable = dataTypeDefinition[[dataType]]$weighting, 
-        verticalRawDimension = dataTypeDefinition[[dataType]]$verticalRawDimension, 
-        verticalLayerDimension = dataTypeDefinition[[dataType]]$verticalLayerDimension, 
+        dataVariable = thisDataTypeDefinition$data, 
+        weightingVariable = thisDataTypeDefinition$weighting, 
+        verticalRawDimension = thisDataTypeDefinition$verticalRawDimension, 
+        verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension, 
         dataTypeDefinition = dataTypeDefinition
     )
     return(out)

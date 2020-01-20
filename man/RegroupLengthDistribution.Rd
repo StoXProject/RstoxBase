@@ -4,18 +4,18 @@
 \alias{RegroupLengthDistribution}
 \title{Regroup length distribution to common intervals}
 \usage{
-RegroupLengthDistribution(LengthDistribution, LengthInterval)
+RegroupLengthDistribution(LengthDistributionData, LengthInterval)
 }
 \arguments{
-\item{LengthDistribution}{The length distribution data.}
+\item{LengthDistributionData}{The length distribution data.}
 
 \item{LengthInterval}{The new length intervals, either given as a vector of interval breaks, or a single numeric value, in which case a vector of intervavl breaks is created covering the range of the original length interval breaks.}
 }
 \value{
-A data.table is returned with awesome stuff.
+A \code{\link{LengthDistributionData}} object.
 }
 \description{
-This function aggregates the \code{WeightedCount} of the LengthDistribution
+This function aggregates the \code{WeightedCount} of the LengthDistributionData
 }
 \details{
 This function is awesome and does excellent stuff.

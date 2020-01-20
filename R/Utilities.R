@@ -156,7 +156,7 @@ addPSUDefinition <- function(data, PSUDefinition = NULL, ...) {
     }
     
     # Set the order of the columns:
-    dataType <- detectDataType(data, only.data = TRUE)
+    dataType <- detectDataType(data)
     data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
@@ -167,7 +167,12 @@ addLayerDefinition <- function(data, layerDefinition = NULL, ...) {
     
     # Insert the Layer column from the layerDefinition input, and otherwise by NAs:
     if(length(layerDefinition)) {
-        layerData <- findLayer(data = data, layerDefinition = layerDefinition, varMin = "MinHaulDepth", varMax = "MaxHaulDepth")
+        # Get the variables to aggregate by etc.:
+        dataTypeDefinition <- getDataTypeDefinition(data = data)
+        varMin <- dataTypeDefinition$verticalRawDimension[1]
+        varMax <- dataTypeDefinition$verticalRawDimension[2]
+        
+        layerData <- findLayer(data = data, layerDefinition = layerDefinition, varMin = varMin, varMax = varMax)
         
         data <- data.table::data.table(layerData, data)
     }
@@ -178,10 +183,87 @@ addLayerDefinition <- function(data, layerDefinition = NULL, ...) {
     }
     
     # Set the order of the columns:
-    dataType <- detectDataType(data, only.data = TRUE)
+    dataType <- detectDataType(data)
     data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
 }
+
+
+
+
+# Stolen from https://stackoverflow.com/questions/4752275/test-for-equality-among-all-elements-of-a-single-vector:
+allEqual <- function(x, tol = .Machine$double.eps ^ 0.5) {
+    if (length(x) == 1) return(TRUE)
+    x <- range(x) / mean(x)
+    isTRUE(all.equal(x[1], x[2], tolerance = tol))
+}
+
+
+meanData <- function(data, targetResolution = "PSU") {
+    
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    dataCopy = data.table::copy(data)
+    
+    # Get the variables to aggregate by etc.:
+    aggregationVariables <- determineAggregationVariables(
+        data = dataCopy, 
+        targetResolution = targetResolution, 
+        dimension = "horizontal"
+    )
+    # Extract the 'by' element:
+    by <- aggregationVariables$by
+    
+    # Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
+    if(utils::tail(aggregationVariables$presentResolution, 1) == aggregationVariables$finestResolution) {
+        valid <- data[, lapply(aggregationVariables$verticalRawDimension, allEqual), by = by]
+        
+    }
+    
+    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
+    dataVariable <- aggregationVariables$dataVariable
+    weightingVariable <- aggregationVariables$weightingVariable
+    
+    #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
+    dataCopy[, c(dataVariable) := weighted.mean(x = get(dataVariable), w = get(weightingVariable)), by = by]
+    
+    # Set the resolution variables which were summed over to NA:
+    set(dataCopy, j = aggregationVariables$setToNA, value=NA)
+    
+    # Remove duplicated rows:
+    dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
+    
+    dataCopy
+}
+
+sumData <- function(data, targetResolution = "Layer") {
+    
+    # Make a copy of the input, since we are summing and setting values by reference:
+    dataCopy = data.table::copy(data)
+    
+    # Get the variables to aggregate by etc.:
+    aggregationVariables <- determineAggregationVariables(
+        data = dataCopy, 
+        targetResolution = targetResolution, 
+        dimension = "vertical"
+    )
+    # Extract the 'by' element:
+    by <- aggregationVariables$by
+    
+    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
+    dataVariable <- aggregationVariables$dataVariable
+    
+    #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
+    dataCopy[, c(dataVariable) := sum(x = get(dataVariable)), by = by]
+    
+    # Set the resolution variables which were summed over to NA:
+    set(dataCopy, j = aggregationVariables$setToNA, value=NA)
+    
+    # Remove duplicated rows:
+    dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
+    
+    dataCopy
+}
+
 
 

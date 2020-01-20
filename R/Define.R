@@ -230,11 +230,13 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
     # Get the DefinitionMethod:
     modelType <- match.arg(modelType)
     
+    
     # SSULevel
+    message("Change the DefineLayer function to use getDataTypeDefinition()")
     if(modelType == "Acoustic") {
         VerticalResolutionLevel <- "NASC"
-        VerticalResolutionMin <- "MinRange"
-        VerticalResolutionMax <- "MaxRange"
+        VerticalResolutionMin <- "MinChannelRange"
+        VerticalResolutionMax <- "MaxChannelRange"
     }
     else if(modelType == "SweptArea") {
         VerticalResolutionLevel <- "Haul"
@@ -513,12 +515,12 @@ DefineBioticAssignment_temp <- function(
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' An object of StoX data type \code{\link{BioticAssignment}}.
 #' 
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{AcousticPSU}}.
+#' @seealso \code{\link{BioticAssignment}}.
 #' 
 #' @export
 #' @import data.table

@@ -2,18 +2,15 @@
 % Please edit documentation in R/Acoustic.R
 \name{MeanNASC}
 \alias{MeanNASC}
-\title{Average NASC for each acoustic PSU}
+\title{(Weighted) Average NASC}
 \usage{
-MeanNASC(NASCData = NULL, TargetResolution = "PSU", AcousticPSU = NULL)
-}
-\arguments{
-\item{parameterName}{Parameter descrption.}
+MeanNASC(NASCData, TargetResolution = "PSU")
 }
 \value{
-A data.table is returned with awesome stuff.
+A \code{\link{NASCData}} object.
 }
 \description{
-Some description
+This function averages NASC data horizontally, weighted by the log distance.
 }
 \details{
 This function is awesome and does excellent stuff.
@@ -23,5 +20,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+\code{\link{NASC}} and \code{\link{MeanNASC}}.
 }
