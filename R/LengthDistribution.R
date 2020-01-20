@@ -346,14 +346,16 @@ RegroupLengthDistribution <- function(
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
     
+    # Get the minimum and maximum lower and upper length interval breaks:
+    minLength <- min(LengthDistributionDataCopy$IndividualTotalLengthCentimeter, na.rm = TRUE)
+    maxLength <- max(LengthDistributionDataCopy$IndividualTotalLengthCentimeter + LengthDistributionDataCopy$LengthResolutionCentimeter, na.rm = TRUE)
+    
     # Create a vector of breaks, if not given in the input 'LengthInterval':
     if(length(LengthInterval) == 1) {
-        # Get the minimum and maximum lower and upper length interval breaks:
-        minLength <- min(LengthDistributionDataCopy$IndividualTotalLengthCentimeter, na.rm = TRUE)
-        maxLength <- max(LengthDistributionDataCopy$IndividualTotalLengthCentimeter + LengthDistributionDataCopy$LengthResolutionCentimeter, na.rm = TRUE)
         # Convert to indices:
         minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
-        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval)
+        # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
+        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
         # Create a vector of evenly spaced breaks:
         LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
     }
@@ -377,8 +379,16 @@ RegroupLengthDistribution <- function(
     
     # Get the inteval widths, and replace LengthResolutionCentimeter with the appropriate widths:
     LengthIntervalWidths <- diff(LengthInterval)
+    numIntervals <- length(LengthIntervalWidths)
     # Temporary add the index of the length intervals:
     LengthDistributionDataCopy[, intervalIndex := findInterval(IndividualTotalLengthCentimeter, ..LengthInterval)]
+    
+    # Issue a warning if the intervalIndex is NA (values outside of the LengthInterval):
+    anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1)
+    anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals)
+    if(any(anyBelow, anyAbove)) {
+        warning("Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
+    }
     
     # Replace with the new LengthResolutionCentimeter:
     LengthDistributionDataCopy[, LengthResolutionCentimeter := ..LengthIntervalWidths[intervalIndex]]

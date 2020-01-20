@@ -79,6 +79,8 @@ initiateRstoxBase <- function(){
     }
     dataTypeRequiredVariables <- lapply(dataTypeDefinition, getRequiredVariables)
     
+    proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+    
     #### Assign to RstoxEnv and return the definitions: ####
     definitionsNames <- ls()
     definitions <- lapply(definitionsNames, get, pos = environment())

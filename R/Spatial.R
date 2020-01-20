@@ -44,7 +44,9 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
         stringsAsFactors = FALSE
     )
     rownames(data) <- polygonName
-    spatialPolygons = sp::SpatialPolygons(polygonsList)
+    # Create a SpatialPolygons object, adding default longitude-latitude projection:
+    spatialPolygons = sp::SpatialPolygons(polygonsList, proj4string = getRstoxBaseDefinitions("proj4string"))
+    # ... and convert to SpatialPolygonsDataFrame:
     spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data)
     #plot(SpP, col = 1:5, pbg="white")
     
