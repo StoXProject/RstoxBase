@@ -45,7 +45,9 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
     )
     rownames(data) <- polygonName
     # Create a SpatialPolygons object, adding default longitude-latitude projection:
-    spatialPolygons = sp::SpatialPolygons(polygonsList, proj4string = getRstoxBaseDefinitions("proj4string"))
+    # We decided on 2020-01-21 to skip proj4string, and always assume WGS84:
+    #spatialPolygons = sp::SpatialPolygons(polygonsList, proj4string = getRstoxBaseDefinitions("proj4string"))
+    spatialPolygons = sp::SpatialPolygons(polygonsList)
     # ... and convert to SpatialPolygonsDataFrame:
     spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data)
     #plot(SpP, col = 1:5, pbg="white")

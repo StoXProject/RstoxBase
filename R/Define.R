@@ -73,10 +73,8 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         )
         
         # Find the stratum of each PSU:
-        SpatialPSUs <- sp::SpatialPoints(
-            StoxData[[SSULevel]][, c("Longitude", "Latitude")], 
-            proj4string = getRstoxBaseDefinitions("proj4string")
-        )
+        SpatialPSUs <- sp::SpatialPoints(StoxData[[SSULevel]][, c("Longitude", "Latitude")])
+        
         StratumIndex <- sp::over(SpatialPSUs, StratumPolygon)
         # Converting from data frame to character vector 
         StratumIndex <- as.numeric(unlist(StratumIndex))
@@ -451,10 +449,8 @@ DefineBioticAssignment_temp <- function(
     if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         
         # Create a spatial points object:
-        SpatialStations <- sp::SpatialPoints(
-            StoxBioticData$Station[, c("Longitude", "Latitude")], 
-            proj4string = getRstoxBaseDefinitions("proj4string")
-        )
+        SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
+        
         # Get the stratum for each point:
         StratumIndex <- sp::over(SpatialStations, StratumPolygon)
         StratumIndex <- as.numeric(unlist(StratumIndex))
@@ -552,10 +548,8 @@ DefineBioticAssignment <- function(
     if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         
         # Create a spatial points object:
-        SpatialStations <- sp::SpatialPoints(
-            StoxBioticData$Station[, c("Longitude", "Latitude")], 
-            proj4string = getRstoxBaseDefinitions("proj4string")
-        )
+        SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
+        
         # Get the stratum for each point:
         StratumIndex <- sp::over(SpatialStations, StratumPolygon)
         StratumIndex <- as.numeric(unlist(StratumIndex))
