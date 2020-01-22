@@ -208,7 +208,7 @@ StratumArea <- function(StratumPolygon, AreaMethod = c("Accurate", "Simple")) {
     if(AreaMethod == "Accurate") {
         polygonAreaSP_accurate(StratumPolygon)
     }
-    else if(AreaMethod == "SimpleSimple") {
+    else if(AreaMethod == "Simple") {
         polygonAreaSP_simple(StratumPolygon)
     }
     else {
@@ -317,14 +317,25 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
     
     # Define the proj4 definition of Lambert Azimuthal Equal Area (laea) CRS with origo in wkt center:
     # Units: international nautical miles:
-    laea.CRS <- sp::CRS(paste0("+proj=laea +lat_0=",p@polygons[[1]]@labpt[2]," +lon_0=",p@polygons[[1]]@labpt[1],
-                               " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"))
+    laea.CRS <- sp::CRS(
+        paste0(
+            "+proj=laea +lat_0=", 
+            stratumPolygon@polygons[[1]]@labpt[2], 
+            " +lon_0=", 
+            stratumPolygon@polygons[[1]]@labpt[1], 
+            " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
+        )
+    )
     
     # Project data points from longlat to given laea
     stratumPolygon <- sp::spTransform(stratumPolygon, laea.CRS)
-    area <- sum(rgeos::gArea(stratumPolygon, byid = TRUE)) # Returns area
+    area <- rgeos::gArea(stratumPolygon, byid = TRUE)
     
-    return(area)
+    output <- data.table::data.table(
+        Stratum = stratumPolygon$polygonName,
+        Area = area
+    )
+    return(output)
 }
 
 
