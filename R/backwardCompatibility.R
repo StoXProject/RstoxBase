@@ -104,26 +104,12 @@ findProcessFromFunctionName <- function(functionName, projectDescription, modelN
     return(atProcess)
 }
 
-checkVersion <- function(projectDescription, resourceVersion = NULL, RstoxFrameworkVersion = NULL) {
-    # Get the StoxVersion from the attributes:
-    savedResourceVersion <- attr(projectDescription, "resourceversion")
-    savedRstoxFrameworkVersion <- attr(projectDescription, "RstoxFrameworkVersion")
-    
-    if(length(resourceVersion) && savedResourceVersion == resourceversion) {
-        return(TRUE)
-    }
-    else if(length(RstoxFrameworkVersion) && savedRstoxFrameworkVersion == RstoxFrameworkVersion) {
-        return(TRUE)
-    }
-    else {
-        return(FALSE)
-    }
-}
 
 
 
 
-# A list funcitons performing conversions of the projectDescription to ensure backward compatibility:
+
+# A list of functions performing conversions of the projectDescription to ensure backward compatibility:
 #' 
 #' @export
 #' 
