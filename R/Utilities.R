@@ -285,13 +285,24 @@ buildExpression <- function(expression) {
 
 
 
-recurseToDataTable <- function (L, fun) {
-    if(inherits(L, "data.table")) {
-        fun(L)
+
+recurseToDataTable <- function (L, fun, requiredNames = c("negate", "columnName", "operator", "value")) {
+    if(is.list(L)){
+        if(all(requiredNames %in% names(L))) {
+            fun(L)
+        }
+        else {
+            lapply(L, recurseToDataTable, fun)
+        }
     }
-    else if(is.list(L)){
-        lapply(L, recurseToDataTable, fun)
-    }
+        
+        
+    #if(inherits(L, "data.table")) {
+    #    fun(L)
+    #}
+    #else if(is.list(L)){
+    #    lapply(L, recurseToDataTable, fun)
+    #}
     else{
         L
     }
@@ -336,7 +347,7 @@ l <- list(
         linkOperator = "|", 
         negate = FALSE,
         group = list(
-            expression = data.table::data.table(
+            expression = list(
                 negate = FALSE,
                 columnName = "IndividualTotalLengthCentimeter", 
                 operator = "%in%", 
@@ -347,7 +358,7 @@ l <- list(
             linkOperator = "|", 
             negate = FALSE,
             group = list(
-                expression = data.table::data.table(
+                expression = list(
                     negate = FALSE,
                     columnName = "SpeciesCategoryKey", 
                     operator = "==", 
@@ -358,7 +369,7 @@ l <- list(
                 linkOperator = "&", 
                 negate = FALSE,
                 group = list(
-                    expression = data.table::data.table(
+                    expression = list(
                         negate = FALSE,
                         columnName = "SpeciesCategoryKey", 
                         operator = "==", 
@@ -366,7 +377,7 @@ l <- list(
                     )
                 ), 
                 group = list(
-                    expression = data.table::data.table(
+                    expression = list(
                         negate = TRUE,
                         columnName = "IndividualRoundWeightGram", 
                         operator = ">=", 
@@ -375,7 +386,7 @@ l <- list(
                 )
             ), 
             group = list(
-                expression = data.table::data.table(
+                expression = list(
                     negate = FALSE,
                     columnName = "SpeciesCategoryKey", 
                     operator = "==", 
