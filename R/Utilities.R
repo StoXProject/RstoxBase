@@ -267,3 +267,125 @@ sumData <- function(data, targetResolution = "Layer") {
 
 
 
+
+
+
+
+
+
+
+buildExpression <- function(expression) {
+    output <- paste(expression$columnName, expression$operator, if(is.character(expression$value)) deparse(paste(expression$value)) else paste(expression$value))
+    if(expression$negate) {
+        output <- paste("!(", output, ")")
+    }
+    
+    output
+}
+
+
+
+recurseToDataTable <- function (L, fun) {
+    if(inherits(L, "data.table")) {
+        fun(L)
+    }
+    else if(is.list(L)){
+        lapply(L, recurseToDataTable, fun)
+    }
+    else{
+        L
+    }
+}
+
+recurseToGroup <- function (L) {
+    # If there are still groups, continue:
+    if(is.list(L) && "group" %in% names(L)) {
+        if(any(unlist(lapply(L[names(L) == "group"], names)) == "group")) {
+            paste(
+                "( ", 
+                paste(
+                    unlist( lapply(L[names(L) == "group"], recurseToGroup) ), 
+                    collapse = paste0(
+                        ") ", 
+                        L$linkOperator, 
+                        " ("
+                    )
+                ), 
+                " )"
+            )
+        }
+        # If there are no groups, execute:
+        else if(all(unlist(lapply(L[names(L) == "group"], names) == "expression"))) {
+            paste(
+                "( ", 
+                paste(unlist(L[names(L) == "group"]), collapse = paste0(") ", L$linkOperator, " (")), 
+                " )"
+            )
+        }
+    }
+    else {
+        L
+    }
+}
+
+
+
+# Filter list structure:
+l <- list(
+    group = list(
+        linkOperator = "|", 
+        negate = FALSE,
+        group = list(
+            expression = data.table::data.table(
+                negate = FALSE,
+                columnName = "IndividualTotalLengthCentimeter", 
+                operator = "%in%", 
+                value = list(c(12,13,14))
+            )
+        ), 
+        group = list(
+            linkOperator = "|", 
+            negate = FALSE,
+            group = list(
+                expression = data.table::data.table(
+                    negate = FALSE,
+                    columnName = "SpeciesCategoryKey", 
+                    operator = "==", 
+                    value = "sild'G03/161722.G03/126417/NA"
+                )
+            ), 
+            group = list(
+                linkOperator = "&", 
+                negate = FALSE,
+                group = list(
+                    expression = data.table::data.table(
+                        negate = FALSE,
+                        columnName = "SpeciesCategoryKey", 
+                        operator = "==", 
+                        value = "torsk/164712/126436/NA"
+                    )
+                ), 
+                group = list(
+                    expression = data.table::data.table(
+                        negate = TRUE,
+                        columnName = "IndividualRoundWeightGram", 
+                        operator = ">=", 
+                        value = 200
+                    )
+                )
+            ), 
+            group = list(
+                expression = data.table::data.table(
+                    negate = FALSE,
+                    columnName = "SpeciesCategoryKey", 
+                    operator = "==", 
+                    value = "lodde/162035/126735/NA"
+                )
+            )
+        )
+    )
+)
+
+r <- recurseToDataTable(l, buildExpression)
+rr <- recurseToGroup(r)
+

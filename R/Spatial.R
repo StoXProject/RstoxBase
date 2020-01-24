@@ -49,7 +49,7 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
     #spatialPolygons = sp::SpatialPolygons(polygonsList, proj4string = getRstoxBaseDefinitions("proj4string"))
     spatialPolygons = sp::SpatialPolygons(polygonsList)
     # ... and convert to SpatialPolygonsDataFrame:
-    spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data)
+    spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data, match.ID = FALSE)
     #plot(SpP, col = 1:5, pbg="white")
     
     return(spatialPolygonsDataFrame)
