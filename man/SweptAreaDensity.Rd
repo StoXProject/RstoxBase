@@ -4,7 +4,13 @@
 \alias{SweptAreaDensity}
 \title{Some title}
 \usage{
-SweptAreaDensity()
+SweptAreaDensity(
+  LengthDistributionData,
+  SweptAreaMethod = c("LengthDependent", "TotalCatch"),
+  SweepWidthMethod = c("Constant", "CruiseDependent"),
+  SweepWidth = integer(),
+  SweepWidthExpr = character()
+)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}

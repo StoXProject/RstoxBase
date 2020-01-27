@@ -58,6 +58,7 @@ LengthDistribution <- function(
     keys <- c(
         getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
         # The length group is defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter. See 'dataTypeDefinition' in initiateRstoxBase(): 
+        dataTypeDefinition$categoryVariable, 
         dataTypeDefinition$groupingVariables
     )
     # Declare the variables used below:
@@ -70,14 +71,14 @@ LengthDistribution <- function(
     ###################################################################
     ##### 3. Add the weights depending on LengthDistributionType: #####
     ###################################################################
-    # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the TowedDistance, rendering the effective TowedDistance as 1:
+    # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the EffectiveTowedDistance, rendering the effective EffectiveTowedDistance as 1:
     if(LengthDistributionType == "NormalizedLengthDistribution") {
-        LengthDistributionData$LengthDistributionWeight <- LengthDistributionData$TowedDistance
+        LengthDistributionData$LengthDistributionWeight <- LengthDistributionData$EffectiveTowedDistance
     }
     else if(LengthDistributionType == "LengthDistribution") {
         LengthDistributionData$LengthDistributionWeight <- 1
     }
-    # For LengthDistributionType "PercentLengthDistribution" weights are not relevant, since length distributions are simply averaged, and are set to 1:
+    # For LengthDistributionType "PercentLengthDistribution" weights are not relevant, since length distributions are simply averaged, and are set to 1. This type is used in acoustic-trawl models, where the biotic station weighting is applied when averaging the length distributions within each biotic station assignment:
     else if(LengthDistributionType == "PercentLengthDistribution") {
         LengthDistributionData$LengthDistributionWeight <- 1
     }
@@ -143,17 +144,117 @@ LengthDistribution <- function(
     ########################
     ##### 7. Clean up: #####
     ########################
+    # Convert the PercentLengthDistribution to percent:
+    if(LengthDistributionType == "PercentLengthDistribution") {
+        LengthDistributionData <- RelativeLengthDistribution(LengthDistributionData)
+    }
+    
     # Extract only the relevant columns:
     LengthDistributionData <- setColumnOrder(LengthDistributionData, dataType = "LengthDistributionData", keep.all = FALSE)
     
     # Order the rows 
-    orderBy <- unlist(dataTypeDefinition[c("horizontalResolution", "verticalResolution", "groupingVariables")])
+    orderBy <- unlist(dataTypeDefinition[c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables")])
     setorderv(LengthDistributionData, cols = orderBy)
     ########################
     
     
     return(LengthDistributionData)
 }
+
+
+##################################################
+##################################################
+#' Regroup length distribution to common intervals
+#' 
+#' This function aggregates the \code{WeightedCount} of the LengthDistributionData
+#' 
+#' @param LengthDistributionData The length distribution data.
+#' @param LengthInterval Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A \code{\link{LengthDistributionData}} object.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' 
+#' @export
+#' @import data.table
+#' 
+RegroupLengthDistribution <- function(
+    LengthDistributionData, 
+    LengthInterval
+) {
+    
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
+    
+    # Get the minimum and maximum lower and upper length interval breaks:
+    minLength <- min(LengthDistributionDataCopy$IndividualTotalLengthCentimeter, na.rm = TRUE)
+    maxLength <- max(LengthDistributionDataCopy$IndividualTotalLengthCentimeter + LengthDistributionDataCopy$LengthResolutionCentimeter, na.rm = TRUE)
+    
+    # Create a vector of breaks, if not given in the input 'LengthInterval':
+    if(length(LengthInterval) == 1) {
+        # Convert to indices:
+        minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
+        # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
+        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
+        # Create a vector of evenly spaced breaks:
+        LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
+    }
+    
+    # Check that there are no existing length intervals that are inside one of the new intervals:
+    # Get the possible intervals:
+    lengthGroupMinMax <- unique(LengthDistributionDataCopy[, .(lengthIntervalMin = IndividualTotalLengthCentimeter, lengthIntervalMax = IndividualTotalLengthCentimeter + LengthResolutionCentimeter)])
+    #possibleIntervals <- getCommonIntervals(data = lengthGroupMinMax)
+    
+    strictlyInside <- function(x, table, margin = 1e-6) {
+        any(x - margin > table[, 1] & x + margin < table[, 2], na.rm=TRUE)
+    }
+    
+    invalidIntervalBreaks <- sapply(LengthInterval, strictlyInside, lengthGroupMinMax)
+    
+    # Check whether any of the new interval limits are inside the possible intervals:
+    if(any(invalidIntervalBreaks)) {
+        at <- which(invalidIntervalBreaks)
+        stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthInterval[at], LengthInterval[at + 1], sep = " - "), collapse = ", "))
+    }
+    
+    # Get the inteval widths, and replace LengthResolutionCentimeter with the appropriate widths:
+    LengthIntervalWidths <- diff(LengthInterval)
+    numIntervals <- length(LengthIntervalWidths)
+    # Temporary add the index of the length intervals:
+    LengthDistributionDataCopy[, intervalIndex := findInterval(IndividualTotalLengthCentimeter, ..LengthInterval)]
+    
+    # Issue a warning if the intervalIndex is NA (values outside of the LengthInterval):
+    anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1, na.rm = TRUE)
+    anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals, na.rm = TRUE)
+    if(any(anyBelow, anyAbove)) {
+        warning("Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
+    }
+    
+    # Replace with the new LengthResolutionCentimeter:
+    LengthDistributionDataCopy[, LengthResolutionCentimeter := ..LengthIntervalWidths[intervalIndex]]
+    # Replace IndividualTotalLengthCentimeter with the new lower interval breaks:
+    LengthDistributionDataCopy[, IndividualTotalLengthCentimeter := ..LengthInterval[intervalIndex]]
+    
+    # Finally, aggregate the WeightedCount in the new length groups:
+    # Extract the 'by' element:
+    by <- getAllAggregationVariables(dataType="LengthDistributionData")
+    LengthDistributionDataCopy[, WeightedCount := sum(WeightedCount), by = by]
+    # Delete duplicated rows:
+    LengthDistributionDataCopy <- unique(LengthDistributionDataCopy)
+    
+    # Remove the temporary intervalIndex:
+    LengthDistributionDataCopy[, intervalIndex := NULL]
+    
+    return(LengthDistributionDataCopy)
+}
+
 
 ##################################################
 ##################################################
@@ -162,7 +263,7 @@ LengthDistribution <- function(
 #' This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.
 #' 
 #' @inheritParams RegroupLengthDistribution
-#' @param CatchabilityMethod Parameter descrption.
+#' @param CompensationMethod Parameter descrption.
 #' @param LengthDependentSweepWidthParameters A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
 #' @param LengthDependentSelectivityParameters A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
 #' 
@@ -203,8 +304,8 @@ LengthDependentCatchCompensation <- function(
         IndividualTotalLengthCentimeterMiddle <- pmin(IndividualTotalLengthCentimeterMiddle, LMax)
         
         # Calculate the factor to multiply the WeightedCount:
-        fact <- 1852 / (Alpha * IndividualTotalLengthCentimeterMiddle^Beta)
-        WeightedCount <- WeightedCount * fact
+        sweepWidth <- Alpha * IndividualTotalLengthCentimeterMiddle^Beta
+        WeightedCount <- WeightedCount / sweepWidth
         
         return(WeightedCount)
     }
@@ -233,7 +334,7 @@ LengthDependentCatchCompensation <- function(
     
     # Run the appropriate method:
     if(CompensationMethod == "LengthDependentSweepWidth") {
-        runLengthDependentCompensationFunction(
+        LengthDistributionDataCopy <- runLengthDependentCompensationFunction(
             data = LengthDistributionDataCopy, 
             compensationMethod = CompensationMethod, 
             compensationFunction = applyLengthDependentSweepWidth, 
@@ -241,9 +342,12 @@ LengthDependentCatchCompensation <- function(
             requiredParameters = c("LMin", "LMax", "Alpha", "Beta"), 
             groupingVariable = "SpeciesCategory"
         )
+        
+        # Finally, set the LengthDistributionType:
+        LengthDistributionDataCopy[, LengthDistributionType := "SweepWidthCompensatedLengthDistribution"]
     }
     else if(CompensationMethod == "LengthDependentSelectivity") {
-        runLengthDependentCompensationFunction(
+        LengthDistributionDataCopy <- runLengthDependentCompensationFunction(
             data = LengthDistributionDataCopy, 
             compensationMethod = CompensationMethod, 
             compensationFunction = applyLengthDependentSelectivity, 
@@ -251,6 +355,9 @@ LengthDependentCatchCompensation <- function(
             requiredParameters = c("LMax", "Alpha", "Beta"), 
             groupingVariable = "SpeciesCategory"
         )
+        
+        # Finally, set the LengthDistributionType:
+        LengthDistributionDataCopy[, LengthDistributionType := "SelectivityCompensatedLengthDistribution"]
     }
     
     return(LengthDistributionDataCopy)
@@ -303,7 +410,7 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     data[valid, WeightedCount := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]
     
     # Remove the temporary columns:
-    data[, (allRequiredParameters) := vector("list", length(allRequiredParameters))]
+    data[, (requiredParameters) := vector("list", length(requiredParameters))]
     
     return(data)
 }
@@ -317,18 +424,17 @@ extractColumnsBy <- function(values, table, refvar, vars) {
 
 ##################################################
 ##################################################
-#' Regroup length distribution to common intervals
+#' Relative length distribution
 #' 
-#' This function aggregates the \code{WeightedCount} of the LengthDistributionData
+#' This function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and verticacl resolution.
 #' 
-#' @param LengthDistributionData The length distribution data.
-#' @param LengthInterval The new length intervals, either given as a vector of interval breaks, or a single numeric value, in which case a vector of intervavl breaks is created covering the range of the original length interval breaks.
+#' @inheritParams RegroupLengthDistribution
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' A \code{\link{LengthDistributionData}} object.
+#' A data.table is returned with awesome stuff.
 #' 
 #' @examples
 #' x <- 1
@@ -338,72 +444,15 @@ extractColumnsBy <- function(values, table, refvar, vars) {
 #' @export
 #' @import data.table
 #' 
-RegroupLengthDistribution <- function(
-    LengthDistributionData, 
-    LengthInterval
-) {
-    
+RelativeLengthDistribution <- function(LengthDistributionData) {
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
     
-    # Get the minimum and maximum lower and upper length interval breaks:
-    minLength <- min(LengthDistributionDataCopy$IndividualTotalLengthCentimeter, na.rm = TRUE)
-    maxLength <- max(LengthDistributionDataCopy$IndividualTotalLengthCentimeter + LengthDistributionDataCopy$LengthResolutionCentimeter, na.rm = TRUE)
+    # Get the columns to aggregate over, excluding the length groups (summing over these):
+    by <- getAllAggregationVariables(dataType="LengthDistributionData", exclude.groupingVariables = TRUE)
     
-    # Create a vector of breaks, if not given in the input 'LengthInterval':
-    if(length(LengthInterval) == 1) {
-        # Convert to indices:
-        minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
-        # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
-        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
-        # Create a vector of evenly spaced breaks:
-        LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
-    }
-    
-    # Check that there are no existing length intervals that are inside one of the new intervals:
-    # Get the possible intervals:
-    lengthGroupMinMax <- unique(LengthDistributionDataCopy[, .(lengthIntervalMin = IndividualTotalLengthCentimeter, lengthIntervalMax = IndividualTotalLengthCentimeter + LengthResolutionCentimeter)])
-    #possibleIntervals <- getCommonIntervals(data = lengthGroupMinMax)
-    
-    strictlyInside <- function(x, table, margin = 1e-6) {
-        any(x - margin > table[, 1] & x + margin < table[, 2], na.rm=TRUE)
-    }
-        
-    invalidIntervalBreaks <- sapply(LengthInterval, strictlyInside, lengthGroupMinMax)
-
-    # Check whether any of the new interval limits are inside the possible intervals:
-    if(any(invalidIntervalBreaks)) {
-        at <- which(invalidIntervalBreaks)
-        stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthInterval[at], LengthInterval[at + 1], sep = " - "), collapse = ", "))
-    }
-    
-    # Get the inteval widths, and replace LengthResolutionCentimeter with the appropriate widths:
-    LengthIntervalWidths <- diff(LengthInterval)
-    numIntervals <- length(LengthIntervalWidths)
-    # Temporary add the index of the length intervals:
-    LengthDistributionDataCopy[, intervalIndex := findInterval(IndividualTotalLengthCentimeter, ..LengthInterval)]
-    
-    # Issue a warning if the intervalIndex is NA (values outside of the LengthInterval):
-    anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1)
-    anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals)
-    if(any(anyBelow, anyAbove)) {
-        warning("Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
-    }
-    
-    # Replace with the new LengthResolutionCentimeter:
-    LengthDistributionDataCopy[, LengthResolutionCentimeter := ..LengthIntervalWidths[intervalIndex]]
-    # Replace IndividualTotalLengthCentimeter with the new lower interval breaks:
-    LengthDistributionDataCopy[, IndividualTotalLengthCentimeter := ..LengthInterval[intervalIndex]]
-    
-    # Finally, aggregate the WeightedCount in the new length groups:
-    # Extract the 'by' element:
-    by <- getAllAggregationVariables(dataType="LengthDistributionData")
-    LengthDistributionDataCopy[, WeightedCount := sum(WeightedCount), by = by]
-    # Delete duplicated rows:
-    LengthDistributionDataCopy <- unique(LengthDistributionDataCopy)
-    
-    # Remove the temporary intervalIndex:
-    LengthDistributionDataCopy[, intervalIndex := NULL]
+    # Apply the division by the sum:
+    LengthDistributionDataCopy[, WeightedCount := WeightedCount / sum(WeightedCount) * 100, by = by]
     
     return(LengthDistributionDataCopy)
 }
@@ -413,9 +462,9 @@ RegroupLengthDistribution <- function(
 ##################################################
 #' (Weighted) Average length distribution horizontally
 #' 
-#' This function calculates average length distribution, weighted by the TowedDistance for the case that LengthDistributionType = "NormalizedLengthDistribution".
+#' This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "NormalizedLengthDistribution".
 #' 
-#' @param LengthDistributionData The length distribution data.
+#' @inheritParams RegroupLengthDistribution
 #' @param TargetResolution The horizontal resolution of the output.
 #' 
 #' @details
@@ -435,14 +484,13 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 }
 
 
-
 ##################################################
 ##################################################
 #' Sum length distribution vertically
 #' 
 #' This function sums length distribution to swept area layers.
 #' 
-#' @param LengthDistributionData The length distribution data.
+#' @inheritParams RegroupLengthDistribution
 #' @param TargetResolution The vertical resolution of the output.
 #' 
 #' @details
@@ -460,35 +508,6 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "Layer") {
     sumData(LengthDistributionData, targetResolution = TargetResolution)
 }
-
-
-
-##################################################
-##################################################
-#' Some title
-#' 
-#' Some description
-#' 
-#' @param parameterName Parameter descrption.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-#' 
-#' @export
-#' @import data.table
-#' 
-RelLengthDist <- function() {
-    # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
-}
-
 
 
 ##################################################

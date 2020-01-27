@@ -17,7 +17,8 @@ initiateRstoxBase <- function(){
         NASCData = list(
             horizontalResolution = c("Stratum", "PSU", "EDSU"), 
             verticalResolution = c("Layer", "Channel"), 
-            groupingVariables = c("AcousticCategory", "ChannelReference", "Frequency"), 
+            categoryVariable = "AcousticCategory", 
+            groupingVariables = c("ChannelReference", "Frequency"), 
             data = "NASC", 
             #verticalDimension = c("MinChannelRange", "MaxChannelRange", "MinLayerRange", "MaxLayerRange"), 
             verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
@@ -28,7 +29,8 @@ initiateRstoxBase <- function(){
         LengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU", "Station"), 
             verticalResolution = c("Layer", "Haul"), 
-            groupingVariables = c("SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
             #verticalDimension = c("MinHaulDepth", "MaxHaulDepth", "MinLayerRange", "MaxLayerRange"), 
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
@@ -39,7 +41,8 @@ initiateRstoxBase <- function(){
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
-            groupingVariables = c("SpeciesCategory", "IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
             verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
             weighting = "AssignmentLengthDistributionWeight", 
@@ -48,7 +51,8 @@ initiateRstoxBase <- function(){
         DensityData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
-            groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Density",
             verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
             weighting = "DensityWeight", 
@@ -57,7 +61,8 @@ initiateRstoxBase <- function(){
         AbundanceData = list(
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
-            groupingVariables = c("SpeciesCategory", "LengthResolutionCentimeter", "LengthGroup"), 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Abundance", 
             verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
             weighting = NULL, 
@@ -70,6 +75,7 @@ initiateRstoxBase <- function(){
         c(
             utils::tail(x$horizontalResolution, 1), 
             utils::tail(x$verticalResolution, 1), 
+            x$categoryVariable, 
             x$groupingVariables, 
             x$weighting
             #utils::head(x$groupingVariables, 1), 
@@ -188,42 +194,48 @@ detectDataType <- function(data) {
 }
 
 
-getAllDataTypeVariables <- function(data, dataType = NULL) {
-    # Get the requested type:
-    if(length(dataType) == 0) {
-        dataType <- detectDataType(data)
-    }
-    
-    # Get the definitions:
-    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    
-    # Return the full vector of aggregation variables:
-    output <- unlist(dataTypeDefinition[[dataType]])
-    
-    return(output)
+getAllDataTypeVariables <- function(data, dataType = NULL, unlist = TRUE) {
+    aggregateBy <- getDataTypeDefinition(
+        data = data, 
+        dataType = dataType, 
+        unlist = unlist
+    )
 }
 
 
-getAllAggregationVariables <- function(data, dataType = NULL) {
-    # Get the requested type:
-    if(length(dataType) == 0) {
-        dataType <- detectDataType(data)
-    }
+getAllAggregationVariables <- function(data, dataType = NULL, exclude.groupingVariables = FALSE) {
+    
+    # Define the elements to return:
+    aggregationElements <- c("horizontalResolution", "verticalResolution", "categoryVariable", if(!exclude.groupingVariables) "groupingVariables")
     
     # Get the definitions:
-    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    
-    # Return the full vector of aggregation variables:
-    aggregateBy <- c(
-        dataTypeDefinition[[dataType]]$horizontalResolution, 
-        dataTypeDefinition[[dataType]]$verticalResolution, 
-        dataTypeDefinition[[dataType]]$groupingVariables
+    aggregateBy <- getDataTypeDefinition(
+        data = data, 
+        dataType = dataType, 
+        elements = aggregationElements, 
+        unlist = TRUE
     )
     
     return(aggregateBy)
 }
 
-getDataTypeDefinition <- function(data, dataType = NULL) {
+getAllResolutionVariables <- function(data, dataType = NULL) {
+    
+    # Define the elements to return:
+    resolutionElements <- c("horizontalResolution", "verticalResolution")
+    
+    # Get the definitions:
+    resolution <- getDataTypeDefinition(
+        data = data, 
+        dataType = dataType, 
+        elements = resolutionElements, 
+        unlist = TRUE
+    )
+    
+    return(resolution)
+}
+
+getDataTypeDefinition <- function(data, dataType = NULL, elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
     if(length(dataType) == 0) {
@@ -231,6 +243,15 @@ getDataTypeDefinition <- function(data, dataType = NULL) {
     }
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
     thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
+    
+    # Extract the elements to return:
+    if(length(elements)) {
+        thisDataTypeDefinition <- thisDataTypeDefinition[elements]
+    }
+    # Unlist if specified:
+    if(unlist) {
+        thisDataTypeDefinition <- unlist(thisDataTypeDefinition)
+    }
     
     return(thisDataTypeDefinition)
 }
@@ -273,6 +294,7 @@ determineAggregationVariables <- function(
         c(
             thisDataTypeDefinition$horizontalResolution, 
             thisDataTypeDefinition$verticalResolution, 
+            thisDataTypeDefinition$categoryVariable, 
             thisDataTypeDefinition$groupingVariables
         ), 
         setToNA

@@ -9,7 +9,7 @@ stoxFunctionAttributes <- list(
     # Read strata polygons:
     DefineStrata = list(
         functionType = "processData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "StratumPolygon", 
         #functionParameterType = list(FileName = "character"), 
         functionParameterFormat = list(FileName = "filePath"), 
@@ -19,7 +19,7 @@ stoxFunctionAttributes <- list(
     # Calculate areas of strata polygons:
     StratumArea = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "StratumArea", 
         #functionParameterType = list(StratumPolygon = "character"), 
         functionParameterFormat = list(), 
@@ -29,7 +29,7 @@ stoxFunctionAttributes <- list(
     # Define acoustic PSUs:
     DefineAcousticPSU = list(
         functionType = "processData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "AcousticPSU", 
         #functionParameterType = list(
         #    StratumPolygon = "character", 
@@ -41,7 +41,7 @@ stoxFunctionAttributes <- list(
     # Define acoustic PSUs:
     DefineSweptAreaPSU = list(
         functionType = "processData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaPSU", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
@@ -50,7 +50,7 @@ stoxFunctionAttributes <- list(
     # Define acoustic Layer:
     DefineAcousticLayer = list(
         functionType = "processData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "AcousticLayer", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
@@ -59,7 +59,7 @@ stoxFunctionAttributes <- list(
     # Define swept-area Layer:
     DefineSweptAreaLayer = list(
         functionType = "processData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaLayer", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
@@ -68,7 +68,7 @@ stoxFunctionAttributes <- list(
     # Define acoustic PSUs:
     DefineBioticAssignment = list(
         functionType = "processData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list(
@@ -105,7 +105,7 @@ stoxFunctionAttributes <- list(
     # Calculate areas of strata polygons:
     LengthDistribution = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
@@ -114,7 +114,7 @@ stoxFunctionAttributes <- list(
     # Calculate areas of strata polygons:
     RegroupLengthDistribution = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
@@ -123,7 +123,7 @@ stoxFunctionAttributes <- list(
     # Calculate areas of strata polygons:
     MeanLengthDistribution = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
@@ -132,7 +132,7 @@ stoxFunctionAttributes <- list(
     # Calculate areas of strata polygons:
     SumLengthDistribution = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list()
@@ -141,7 +141,7 @@ stoxFunctionAttributes <- list(
     # Calculate areas of strata polygons:
     LengthDependentCatchCompensation = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
         functionParameterHierarchy = list(), 
@@ -155,24 +155,45 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
+    # Convvert to percent length distribution:
+    RelativeLengthDistribution = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "LengthDistributionData"
+    ), 
+    
     # Calculate areas of strata polygons:
     NASC = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "NASCData"
     ), 
     
     # Calculate areas of strata polygons:
     SumNASC = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "NASCData"
     ), 
     
     # Calculate areas of strata polygons:
     MeanNASC = list(
         functionType = "modelData", 
-        functionCategory = "Baseline", 
+        functionCategory = "baseline", 
         functionOutputDataType = "NASCData"
+    ), 
+    
+    SweptAreaDensity = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "Density", 
+        functionParameterHierarchy = list(
+            SweepWidth = list(
+                SweepWidthMethod = "Constant"
+            ), 
+            SweepWidthExpr = list(
+                SweepWidthMethod = "CruiseDependent"
+            )
+        )
     )
 )

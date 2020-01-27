@@ -15,7 +15,7 @@ MeanLengthDistribution(LengthDistributionData, TargetResolution = "PSU")
 A \code{\link{LengthDistributionData}} object.
 }
 \description{
-This function calculates average length distribution, weighted by the TowedDistance for the case that LengthDistributionType = "NormalizedLengthDistribution".
+This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "NormalizedLengthDistribution".
 }
 \details{
 This function is awesome and does excellent stuff.

@@ -9,7 +9,7 @@ RegroupLengthDistribution(LengthDistributionData, LengthInterval)
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
 
-\item{LengthInterval}{The new length intervals, either given as a vector of interval breaks, or a single numeric value, in which case a vector of intervavl breaks is created covering the range of the original length interval breaks.}
+\item{LengthInterval}{Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.

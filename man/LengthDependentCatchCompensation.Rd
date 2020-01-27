@@ -14,11 +14,11 @@ LengthDependentCatchCompensation(
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
 
+\item{CompensationMethod}{Parameter descrption.}
+
 \item{LengthDependentSweepWidthParameters}{A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).}
 
 \item{LengthDependentSelectivityParameters}{A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).}
-
-\item{CatchabilityMethod}{Parameter descrption.}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.
