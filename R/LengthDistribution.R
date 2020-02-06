@@ -95,10 +95,10 @@ LengthDistribution <- function(
     #data.table::setorder(LengthDistributionData)
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    LengthDistributionData <- addPSUDefinition(LengthDistributionData, PSUDefinition = SweptAreaPSU)
+    LengthDistributionData <- addPSUDefinition(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = SweptAreaPSU)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    LengthDistributionData <- addLayerDefinition(LengthDistributionData, layerDefinition = SweptAreaLayer)
+    LengthDistributionData <- addLayerDefinition(LengthDistributionData, dataType = "LengthDistributionData", layerDefinition = SweptAreaLayer)
     ######################################################
     
     
@@ -480,7 +480,7 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' @import data.table
 #' 
 MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "PSU") {
-    meanData(LengthDistributionData, targetResolution = TargetResolution)
+    meanData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)
 }
 
 
@@ -506,7 +506,7 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 #' @import data.table
 #' 
 SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "Layer") {
-    sumData(LengthDistributionData, targetResolution = TargetResolution)
+    sumData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)
 }
 
 

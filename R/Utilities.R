@@ -138,7 +138,7 @@ findLayer <- function(data, layerDefinition, varMin, varMax, acceptNA = TRUE) {
 }
 
 # Function to add Stratum and PSU:
-addPSUDefinition <- function(data, PSUDefinition = NULL, ...) {
+addPSUDefinition <- function(data, dataType, PSUDefinition = NULL, ...) {
     
     # If present, add the PSUDefinition to the start of the data
     if(length(PSUDefinition)) {
@@ -156,19 +156,19 @@ addPSUDefinition <- function(data, PSUDefinition = NULL, ...) {
     }
     
     # Set the order of the columns:
-    dataType <- detectDataType(data)
+    #dataType <- detectDataType(data)
     data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
 }
 
 # Function to add Layer:
-addLayerDefinition <- function(data, layerDefinition = NULL, ...) {
+addLayerDefinition <- function(data, dataType, layerDefinition = NULL, ...) {
     
     # Insert the Layer column from the layerDefinition input, and otherwise by NAs:
     if(length(layerDefinition)) {
         # Get the variables to aggregate by etc.:
-        dataTypeDefinition <- getDataTypeDefinition(data = data)
+        dataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
         varMin <- dataTypeDefinition$verticalRawDimension[1]
         varMax <- dataTypeDefinition$verticalRawDimension[2]
         
@@ -183,7 +183,7 @@ addLayerDefinition <- function(data, layerDefinition = NULL, ...) {
     }
     
     # Set the order of the columns:
-    dataType <- detectDataType(data)
+    #dataType <- detectDataType(data)
     data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
@@ -200,7 +200,7 @@ allEqual <- function(x, tol = .Machine$double.eps ^ 0.5) {
 }
 
 
-meanData <- function(data, targetResolution = "PSU") {
+meanData <- function(data, dataType, targetResolution = "PSU") {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
     dataCopy = data.table::copy(data)
@@ -208,6 +208,7 @@ meanData <- function(data, targetResolution = "PSU") {
     # Get the variables to aggregate by etc.:
     aggregationVariables <- determineAggregationVariables(
         data = dataCopy, 
+        dataType = dataType, 
         targetResolution = targetResolution, 
         dimension = "horizontal"
     )
@@ -236,7 +237,7 @@ meanData <- function(data, targetResolution = "PSU") {
     dataCopy
 }
 
-sumData <- function(data, targetResolution = "Layer") {
+sumData <- function(data, dataType, targetResolution = "Layer") {
     
     # Make a copy of the input, since we are summing and setting values by reference:
     dataCopy = data.table::copy(data)
@@ -244,6 +245,7 @@ sumData <- function(data, targetResolution = "Layer") {
     # Get the variables to aggregate by etc.:
     aggregationVariables <- determineAggregationVariables(
         data = dataCopy, 
+        dataType = dataType, 
         targetResolution = targetResolution, 
         dimension = "vertical"
     )
@@ -265,138 +267,4 @@ sumData <- function(data, targetResolution = "Layer") {
     dataCopy
 }
 
-
-
-
-
-
-
-
-
-
-buildExpression <- function(expression) {
-    output <- paste(expression$columnName, expression$operator, if(is.character(expression$value)) deparse(paste(expression$value)) else paste(expression$value))
-    if(expression$negate) {
-        output <- paste("!(", output, ")")
-    }
-    
-    output
-}
-
-
-
-
-recurseToDataTable <- function (L, fun, requiredNames = c("negate", "columnName", "operator", "value")) {
-    if(is.list(L)){
-        if(all(requiredNames %in% names(L))) {
-            fun(L)
-        }
-        else {
-            lapply(L, recurseToDataTable, fun)
-        }
-    }
-        
-        
-    #if(inherits(L, "data.table")) {
-    #    fun(L)
-    #}
-    #else if(is.list(L)){
-    #    lapply(L, recurseToDataTable, fun)
-    #}
-    else{
-        L
-    }
-}
-
-recurseToGroup <- function (L) {
-    # If there are still groups, continue:
-    if(is.list(L) && "group" %in% names(L)) {
-        if(any(unlist(lapply(L[names(L) == "group"], names)) == "group")) {
-            paste(
-                "( ", 
-                paste(
-                    unlist( lapply(L[names(L) == "group"], recurseToGroup) ), 
-                    collapse = paste0(
-                        ") ", 
-                        L$linkOperator, 
-                        " ("
-                    )
-                ), 
-                " )"
-            )
-        }
-        # If there are no groups, execute:
-        else if(all(unlist(lapply(L[names(L) == "group"], names) == "expression"))) {
-            paste(
-                "( ", 
-                paste(unlist(L[names(L) == "group"]), collapse = paste0(") ", L$linkOperator, " (")), 
-                " )"
-            )
-        }
-    }
-    else {
-        L
-    }
-}
-
-
-
-# Filter list structure:
-l <- list(
-    group = list(
-        linkOperator = "|", 
-        negate = FALSE,
-        group = list(
-            expression = list(
-                negate = FALSE,
-                columnName = "IndividualTotalLengthCentimeter", 
-                operator = "%in%", 
-                value = list(c(12,13,14))
-            )
-        ), 
-        group = list(
-            linkOperator = "|", 
-            negate = FALSE,
-            group = list(
-                expression = list(
-                    negate = FALSE,
-                    columnName = "SpeciesCategoryKey", 
-                    operator = "==", 
-                    value = "sild'G03/161722.G03/126417/NA"
-                )
-            ), 
-            group = list(
-                linkOperator = "&", 
-                negate = FALSE,
-                group = list(
-                    expression = list(
-                        negate = FALSE,
-                        columnName = "SpeciesCategoryKey", 
-                        operator = "==", 
-                        value = "torsk/164712/126436/NA"
-                    )
-                ), 
-                group = list(
-                    expression = list(
-                        negate = TRUE,
-                        columnName = "IndividualRoundWeightGram", 
-                        operator = ">=", 
-                        value = 200
-                    )
-                )
-            ), 
-            group = list(
-                expression = list(
-                    negate = FALSE,
-                    columnName = "SpeciesCategoryKey", 
-                    operator = "==", 
-                    value = "lodde/162035/126735/NA"
-                )
-            )
-        )
-    )
-)
-
-r <- recurseToDataTable(l, buildExpression)
-rr <- recurseToGroup(r)
 

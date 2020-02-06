@@ -67,9 +67,9 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         PSUName <- paste0(prefix, formatC(PSUID, width = nchar(max(PSUID)), format = "d", flag = "0"))
         
         # Set each SSU as a PSU:
-        PSU_SSU <- data.table::data.table(
-            PSU = PSUName, 
-            SSU = SSU
+        SSU_PSU <- data.table::data.table(
+            SSU = SSU, 
+            PSU = PSUName
         )
         
         # Find the stratum of each PSU:
@@ -87,21 +87,26 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         )
         
         # Remove PSUs that do not have a stratum:
-        validPSUs <- Stratum_PSU$PSU[!is.na(Stratum_PSU$Stratum)]
+        validPSUs <- unique(Stratum_PSU$PSU[!is.na(Stratum_PSU$Stratum)])
         Stratum_PSU <- Stratum_PSU[ PSU %in% validPSUs ]
-        PSU_SSU <- PSU_SSU[ PSU %in% validPSUs ]
+        #SSU_PSU <- SSU_PSU[ PSU %in% validPSUs ]
+        SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
+        SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, NA)]
         
         
     }
-    # Otherwise return empty tables:
+    # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
     else {
-        PSU_SSU <- data.table::data.table()
+        SSU_PSU <- data.table::data.table(
+            SSU = SSU, 
+            PSU = ""
+        )
         Stratum_PSU <- data.table::data.table()
     }
     
     # Rename the data according to the model type:
-    data.table::setnames(PSU_SSU, "SSU", SSUName)
-    out <- structure(list(Stratum_PSU, PSU_SSU), names = c("Stratum_PSU", paste("PSU", SSUName, sep = "_")))
+    data.table::setnames(SSU_PSU, "SSU", SSUName)
+    out <- structure(list(Stratum_PSU, SSU_PSU), names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_")))
     return(out)
 }
 
@@ -233,7 +238,6 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
     
     
     # SSULevel
-    message("Change the DefineLayer function to use getDataTypeDefinition()")
     if(modelType == "Acoustic") {
         VerticalResolutionLevel <- "NASC"
         VerticalResolutionMin <- "MinChannelRange"
@@ -556,8 +560,9 @@ DefineBioticAssignment <- function(
         Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
         
         # Create a list of the stations of each stratum:
-        stationIndex <- as.numeric(names(StratumIndex))
-        stationList <- split(StoxBioticData$Station$Station[stationIndex], Stratum)
+        #stationIndex <- as.numeric(names(StratumIndex))
+        #stationList <- split(StoxBioticData$Station$Station[stationIndex], Stratum)
+        stationList <- split(StoxBioticData$Station$Station, Stratum)
         
         # Use all hauls of each station in the automatic assignment method "Stratum":
         Station_Haul <- merge(

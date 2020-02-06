@@ -1,4 +1,60 @@
 
+##################################################
+##################################################
+#' Calculate number density from NASC in length intervals
+#' 
+#' This function takes NASC and 
+#' 
+#' @param parameterName Parameter descrption.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A data.table is returned with awesome stuff.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' 
+#' @export
+#' @import data.table
+#' 
+AcousticDensity <- function(NASCData, m = 20, a = -70, d = double()) {
+    # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
+    
+    
+    
+    
+    # TS_l = m*log10(l) +a+d*log10(1+r_y/10)
+    #Where:
+    # TS_l = target strength (dB re 1 m2) of a fish with length l (cm)
+    # m = constant in the TS vs length relationship for the given species (user input)
+    # a = constant in the TS vs length relationship for the given species (user input)
+    # d = constant in the TS vs length relationship related to depth dependent TS (user input)
+    # l = length of the fish (cm). Typically, the center length of a length group (data input)
+    # ry = average depth (m) of the NASC channel y (data input)
+    
+    # depth_info <- NASCData[,c('Channel','MinRange','MaxRange')]
+    TS_l = c()
+    
+    
+    #In linear domain
+    sigma_bs_l = 10**(TS_l/10)
+    # where
+    #sigma_bs_l = acoustic backscattering cross-section (m2) for a fish of length l
+    
+    # NASC_l = NASC *(sigma_bs_l*p_l)/(sum(sigma_bs_l*p_l))
+    # where:
+    # NASC = the total NASC which is used to calculate densities by length
+    # NASCl = the proportion of the total NASC which can be attributed to length group l. The sum of
+    # NASCl for all length groups in the total length distribution is equal to NASC
+    # pl = proportion of fish of length l in the input length distribution. Sum of all pl is 1.
+    
+    
+}
+
 
 
 
@@ -31,11 +87,15 @@ StationSpecCatDensity <- function() {
 
 ##################################################
 ##################################################
-#' Some title
+#' Swept-area density
 #' 
-#' Some description
+#' This function calculates the area density of fish as number of individuals per square nautical mile.
 #' 
-#' @param parameterName Parameter descrption.
+#' @inheritParams RegroupLengthDistribution
+#' @param SweptAreaMethod The method used to calculate the density, one of "LengthDependent" and "TotalCatch" (the latter is not )
+#' @param SweepWidthMethod Parameter descrption.
+#' @param SweepWidthSweepWidth Parameter descrption.
+#' @param SweepWidthExpr Parameter descrption.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -56,8 +116,9 @@ SweptAreaDensity <- function(
     SweptAreaMethod = c("LengthDependent", "TotalCatch"), 
     SweepWidthMethod = c("Constant", "CruiseDependent"), 
     SweepWidth = integer(), 
-    SweepWidthExpr = character()
-    ) {
+    SweepWidthExpr = character(), 
+    CatchVariable = c("Weight", "Count")
+) {
 	
     # Get the DefinitionMethod:
     SweptAreaMethod <- match.arg(SweptAreaMethod)
@@ -136,4 +197,6 @@ SweptAreaDensity <- function(
     
     return(DensityData)
 }
+
+
 

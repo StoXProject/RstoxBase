@@ -145,7 +145,8 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 
 getColumnOrder <- function(dataType) {
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    unlist(resolution <- dataTypeDefinition[[dataType]])
+    columns <- unlist(dataTypeDefinition[[dataType]])
+    return(columns)
 }
 
 setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
@@ -183,10 +184,16 @@ detectDataType <- function(data) {
     present <- sapply(dataTypeRequiredVariables, function(var) all(var %in% names(data)))
     
     if(!any(present)) {
-        warning("The input data does not contain all the expected variables.")
+        missing <- lapply(dataTypeRequiredVariables, function(var) setdiff(var %in% names(data)))
+        
+        missing <- lapply(missing, paste, collapse = ", ")
+        missing <- paste(names(missing), missing, sep = ": ", collapse = ". ")
+        
+        
+        warning("The input data does not contain all the expected variables. The following are needed: ", missing)
     }
     else if(sum(present) > 1) {
-        warning("More than one element of the input list contains the expected variables (", paste(names(dataTypeRequiredVariables)[present], collapse = ","), "). The first selected:")
+        message("More than one element of the input list contains the expected variables (", paste(names(dataTypeRequiredVariables)[present], collapse = ", "), "). The first selected:")
     }
     
     output <- utils::head(names(dataTypeRequiredVariables)[present], 1)
@@ -194,23 +201,21 @@ detectDataType <- function(data) {
 }
 
 
-getAllDataTypeVariables <- function(data, dataType = NULL, unlist = TRUE) {
+getAllDataTypeVariables <- function(dataType, unlist = TRUE) {
     aggregateBy <- getDataTypeDefinition(
-        data = data, 
         dataType = dataType, 
         unlist = unlist
     )
 }
 
 
-getAllAggregationVariables <- function(data, dataType = NULL, exclude.groupingVariables = FALSE) {
+getAllAggregationVariables <- function(dataType, exclude.groupingVariables = FALSE) {
     
     # Define the elements to return:
     aggregationElements <- c("horizontalResolution", "verticalResolution", "categoryVariable", if(!exclude.groupingVariables) "groupingVariables")
     
     # Get the definitions:
     aggregateBy <- getDataTypeDefinition(
-        data = data, 
         dataType = dataType, 
         elements = aggregationElements, 
         unlist = TRUE
@@ -219,14 +224,13 @@ getAllAggregationVariables <- function(data, dataType = NULL, exclude.groupingVa
     return(aggregateBy)
 }
 
-getAllResolutionVariables <- function(data, dataType = NULL) {
+getAllResolutionVariables <- function(dataType) {
     
     # Define the elements to return:
     resolutionElements <- c("horizontalResolution", "verticalResolution")
     
     # Get the definitions:
     resolution <- getDataTypeDefinition(
-        data = data, 
         dataType = dataType, 
         elements = resolutionElements, 
         unlist = TRUE
@@ -235,7 +239,7 @@ getAllResolutionVariables <- function(data, dataType = NULL) {
     return(resolution)
 }
 
-getDataTypeDefinition <- function(data, dataType = NULL, elements = NULL, unlist = FALSE) {
+getDataTypeDefinition <- function(dataType, elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
     if(length(dataType) == 0) {
@@ -258,13 +262,14 @@ getDataTypeDefinition <- function(data, dataType = NULL, elements = NULL, unlist
 
 determineAggregationVariables <- function(
         data, 
+        dataType, 
         targetResolution, 
         dimension = c("vertical", "horizontal")
         ) {
     
     # Get the requested type:
     dimension <- match.arg(dimension)
-    dataType <- detectDataType(data)
+    #dataType <- detectDataType(data)
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
     thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
     
