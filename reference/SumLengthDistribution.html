@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Some title — SumDensity • RstoxBase</title>
+<title>Sum length distribution vertically — SumLengthDistribution • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Some title — SumDensity" />
-<meta property="og:description" content="Some description" />
+<meta property="og:title" content="Sum length distribution vertically — SumLengthDistribution" />
+<meta property="og:description" content="This function sums length distribution to swept area layers." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,35 +105,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Some title</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/ModelData.R'><code>R/ModelData.R</code></a></small>
-    <div class="hidden name"><code>SumDensity.Rd</code></div>
+    <h1>Sum length distribution vertically</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
+    <div class="hidden name"><code>SumLengthDistribution.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Some description</p>
+    <p>This function sums length distribution to swept area layers.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SumDensity</span>()</pre>
+    <pre class="usage"><span class='fu'>SumLengthDistribution</span>(<span class='no'>LengthDistributionData</span>, <span class='kw'>TargetResolution</span> <span class='kw'>=</span> <span class='st'>"Layer"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>parameterName</th>
-      <td><p>Parameter descrption.</p></td>
+      <th>LengthDistributionData</th>
+      <td><p>The length distribution data.</p></td>
+    </tr>
+    <tr>
+      <th>TargetResolution</th>
+      <td><p>The vertical resolution of the output.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.table is returned with awesome stuff.</p>
+    <p>A <code>LengthDistributionData</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function is awesome and does excellent stuff.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span></div></pre>
@@ -144,7 +145,6 @@
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

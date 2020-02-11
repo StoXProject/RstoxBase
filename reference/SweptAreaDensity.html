@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Some title — SweptAreaDensity • RstoxBase</title>
+<title>Swept-area density — SweptAreaDensity • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Some title — SweptAreaDensity" />
-<meta property="og:description" content="Some description" />
+<meta property="og:title" content="Swept-area density — SweptAreaDensity" />
+<meta property="og:description" content="This function calculates the area density of fish as number of individuals per square nautical mile." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,22 +105,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Some title</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/SweptArea.R'><code>R/SweptArea.R</code></a></small>
+    <h1>Swept-area density</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Density.R'><code>R/Density.R</code></a></small>
     <div class="hidden name"><code>SweptAreaDensity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Some description</p>
+    <p>This function calculates the area density of fish as number of individuals per square nautical mile.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SweptAreaDensity</span>()</pre>
+    <pre class="usage"><span class='fu'>SweptAreaDensity</span>(
+  <span class='no'>LengthDistributionData</span>,
+  <span class='kw'>SweptAreaMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"LengthDependent"</span>, <span class='st'>"TotalCatch"</span>),
+  <span class='kw'>SweepWidthMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Constant"</span>, <span class='st'>"CruiseDependent"</span>),
+  <span class='kw'>SweepWidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
+  <span class='kw'>SweepWidthExpr</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
+  <span class='kw'>CatchVariable</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Weight"</span>, <span class='st'>"Count"</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>parameterName</th>
+      <th>LengthDistributionData</th>
+      <td><p>The length distribution data.</p></td>
+    </tr>
+    <tr>
+      <th>SweptAreaMethod</th>
+      <td><p>The method used to calculate the density, one of "LengthDependent" and "TotalCatch" (the latter is not )</p></td>
+    </tr>
+    <tr>
+      <th>SweepWidthMethod</th>
+      <td><p>Parameter descrption.</p></td>
+    </tr>
+    <tr>
+      <th>SweepWidthExpr</th>
+      <td><p>Parameter descrption.</p></td>
+    </tr>
+    <tr>
+      <th>SweepWidthSweepWidth</th>
       <td><p>Parameter descrption.</p></td>
     </tr>
     </table>

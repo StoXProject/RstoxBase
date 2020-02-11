@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Regroup length distribution to common intervals — RegroupLengthDistribution" />
-<meta property="og:description" content="This function aggregates the WeightedCount of the LengthDistribution" />
+<meta property="og:description" content="This function aggregates the WeightedCount of the LengthDistributionData" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -111,27 +111,27 @@
     </div>
 
     <div class="ref-description">
-    <p>This function aggregates the <code>WeightedCount</code> of the LengthDistribution</p>
+    <p>This function aggregates the <code>WeightedCount</code> of the LengthDistributionData</p>
     </div>
 
-    <pre class="usage"><span class='fu'>RegroupLengthDistribution</span>(<span class='no'>LengthDistribution</span>, <span class='no'>LengthInterval</span>)</pre>
+    <pre class="usage"><span class='fu'>RegroupLengthDistribution</span>(<span class='no'>LengthDistributionData</span>, <span class='no'>LengthInterval</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>LengthDistribution</th>
+      <th>LengthDistributionData</th>
       <td><p>The length distribution data.</p></td>
     </tr>
     <tr>
       <th>LengthInterval</th>
-      <td><p>The new length intervals, either given as a vector of interval breaks, or a single numeric value, in which case a vector of intervavl breaks is created covering the range of the original length interval breaks.</p></td>
+      <td><p>Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.table is returned with awesome stuff.</p>
+    <p>A <code>LengthDistributionData</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function is awesome and does excellent stuff.</p>

@@ -115,7 +115,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>LengthDependentCatchCompensation</span>(
-  <span class='no'>LengthDistribution</span>,
+  <span class='no'>LengthDistributionData</span>,
   <span class='kw'>CompensationMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"LengthDependentSweepWidth"</span>, <span class='st'>"LengthDependentSelectivity"</span>),
   <span class='kw'>LengthDependentSweepWidthParameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>LengthDependentSelectivityParameters</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
@@ -125,8 +125,12 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>LengthDistribution</th>
+      <th>LengthDistributionData</th>
       <td><p>The length distribution data.</p></td>
+    </tr>
+    <tr>
+      <th>CompensationMethod</th>
+      <td><p>Parameter descrption.</p></td>
     </tr>
     <tr>
       <th>LengthDependentSweepWidthParameters</th>
@@ -136,15 +140,11 @@
       <th>LengthDependentSelectivityParameters</th>
       <td><p>A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).</p></td>
     </tr>
-    <tr>
-      <th>CatchabilityMethod</th>
-      <td><p>Parameter descrption.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='LengthDistribution.html'>LengthDistribution</a></code> object.</p>
+    <p>A <code>LengthDistributionData</code> object.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

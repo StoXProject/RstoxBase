@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Some title — MeanDensity • RstoxBase</title>
+<title>Mean density in each stratum — MeanDensity • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Some title — MeanDensity" />
-<meta property="og:description" content="Some description" />
+<meta property="og:title" content="Mean density in each stratum — MeanDensity" />
+<meta property="og:description" content="This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,23 +105,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Some title</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/ModelData.R'><code>R/ModelData.R</code></a></small>
+    <h1>Mean density in each stratum</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Density.R'><code>R/Density.R</code></a></small>
     <div class="hidden name"><code>MeanDensity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Some description</p>
+    <p>This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MeanDensity</span>()</pre>
+    <pre class="usage"><span class='fu'>MeanDensity</span>(<span class='no'>DensityData</span>, <span class='kw'>TargetResolution</span> <span class='kw'>=</span> <span class='st'>"Stratum"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>parameterName</th>
-      <td><p>Parameter descrption.</p></td>
+      <th>DensityData</th>
+      <td><p>An object of <code>DensityData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>TargetResolution</th>
+      <td><p>The vertical resolution of the output.</p></td>
     </tr>
     </table>
 
