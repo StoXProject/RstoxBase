@@ -13,7 +13,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "StratumPolygon", 
         #functionParameterType = list(FileName = "character"), 
         functionParameterFormat = list(FileName = "filePath"), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Calculate areas of strata polygons:
@@ -23,7 +23,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "StratumArea", 
         #functionParameterType = list(StratumPolygon = "character"), 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Define acoustic PSUs:
@@ -35,7 +35,7 @@ stoxFunctionAttributes <- list(
         #    StratumPolygon = "character", 
         #    StoxAcousticData = "character"), 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Define acoustic PSUs:
@@ -44,7 +44,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaPSU", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Define acoustic Layer:
@@ -53,7 +53,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "AcousticLayer", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Define swept-area Layer:
@@ -62,7 +62,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaLayer", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Define acoustic PSUs:
@@ -71,7 +71,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list(
+        functionArgumentHierarchy = list(
             StratumPolygon = list(
                 DefinitionMethod = "Stratum"
             ), 
@@ -108,7 +108,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Calculate areas of strata polygons:
@@ -117,7 +117,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Calculate areas of strata polygons:
@@ -126,7 +126,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Calculate areas of strata polygons:
@@ -135,7 +135,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list()
+        functionArgumentHierarchy = list()
     ), 
     
     # Calculate areas of strata polygons:
@@ -144,8 +144,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionParameterHierarchy = list(), 
-        functionParameterHierarchy = list(
+        functionArgumentHierarchy = list(
             LengthDependentSweepWidthParameters = list(
                 CompensationMethod = "LengthDependentSweepWidth"
             ), 
@@ -160,6 +159,13 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData"
+    ), 
+    
+    # Convvert to percent length distribution:
+    AssignmentLengthDistribution = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "AssignmentLengthDistributionData"
     ), 
     
     # Calculate areas of strata polygons:
@@ -186,8 +192,8 @@ stoxFunctionAttributes <- list(
     SweptAreaDensity = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "Density", 
-        functionParameterHierarchy = list(
+        functionOutputDataType = "DensityData", 
+        functionArgumentHierarchy = list(
             SweepWidth = list(
                 SweepWidthMethod = "Constant"
             ), 
@@ -195,5 +201,25 @@ stoxFunctionAttributes <- list(
                 SweepWidthMethod = "CruiseDependent"
             )
         )
+    ), 
+    
+    MeanDensity = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "DensityData"
+    ), 
+    
+    Abundance = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "AbundanceData"
+    ), 
+    
+    Individuals = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "IndividualsData"
     )
+    
+    
 )

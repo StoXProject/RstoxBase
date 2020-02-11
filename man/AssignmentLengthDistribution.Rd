@@ -4,18 +4,12 @@
 \alias{AssignmentLengthDistribution}
 \title{Length distribution assigned to each cell of acoustic PSU and Layer}
 \usage{
-AssignmentLengthDistribution(
-  LengthDistributionData,
-  NASCData,
-  BioticAssignment
-)
+AssignmentLengthDistribution(LengthDistributionData, BioticAssignment)
 }
 \arguments{
 \item{LengthDistributionData}{A list of \code{\link{LengthDistributionData}} data.}
 
 \item{BioticAssignment}{A list of \code{\link{BioticAssignment}} data.}
-
-\item{AcousticPSU}{A list of \code{\link{AcousticPSU}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.

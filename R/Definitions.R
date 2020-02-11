@@ -36,7 +36,7 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
             weighting = "LengthDistributionWeight", 
-            other = c("TowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread", "LengthDistributionType")
+            other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread", "LengthDistributionType")
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
@@ -206,6 +206,11 @@ getAllDataTypeVariables <- function(dataType, unlist = TRUE) {
         dataType = dataType, 
         unlist = unlist
     )
+}
+
+keepOnlyRelevantColumns <- function(data, dataType) {
+    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
+    data[, ..allDataTypeVariables]
 }
 
 

@@ -146,10 +146,10 @@ SweptAreaDensity <- function(
     # Get the length distribution type:
     LengthDistributionType <- utils::head(LengthDistributionData$LengthDistributionType, 1)
     
-    # Issue an error if the LengthDistributionType is "PercentLengthDistribution" or "LengthDistribution":
-    validLengthDistributionType <- c("NormalizedLengthDistribution", "SweepWidthCompensatedLengthDistribution")
+    # Issue an error if the LengthDistributionType is "Percent" or "Standard":
+    validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
     if(! LengthDistributionType %in% validLengthDistributionType) {
-        stop("The LengthDistributionType of the input LengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = " and "))
+        stop("The LengthDistributionType of the input LengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
     }
     
     
@@ -162,7 +162,7 @@ SweptAreaDensity <- function(
     
     
     # If LengthDistributionType is "NormalizedLengthDistribution", the effectivev towed distance has been accounted for, but there is still need to account for the sweep width:
-    if(LengthDistributionType == "NormalizedLengthDistribution") {
+    if(LengthDistributionType == "Normalized") {
         
         # Use a constant sweep width for all data by default:
         if(SweepWidthMethod == "Constant") {
@@ -181,10 +181,13 @@ SweptAreaDensity <- function(
         }
         
     }
-    # If LengthDistributionType == "SweepWidthCompensatedLengthDistribution" the sweep width is already accounted for, in meters, so multiplying with the length of one nautical mile is required:
-    else if(LengthDistributionType == "SweepWidthCompensatedLengthDistribution") {
+    # If LengthDistributionType == "SweepWidthCompensatedNormalized" the sweep width is already accounted for, in meters:
+    else if(LengthDistributionType == "SweepWidthCompensatedNormalized") {
         # Copy the WeightedCount to the Density:
         DensityData[, Density := WeightedCount]
+    }
+    else {
+        stop("Invalid LengthDistributionType. In StoX 2.7 and earlier, LengthDistType = \"LengthDist\" was allowed, where the distance was multiplied with the weighted count in SweptAreaDensity.")
     }
     
     # Convert to density per nautical mile atwarthship:
@@ -199,4 +202,31 @@ SweptAreaDensity <- function(
 }
 
 
+
+##################################################
+##################################################
+#' Mean density in each stratum
+#' 
+#' This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.
+#' 
+#' @param DensityData An object of \code{\link{DensityData}} data.
+#' @param TargetResolution The vertical resolution of the output.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A data.table is returned with awesome stuff.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' 
+#' @export
+#' @import data.table
+#' 
+MeanDensity <- function(DensityData, TargetResolution = "Stratum") {
+    meanData(DensityData, dataType = "DensityData", targetResolution = TargetResolution)
+}
 

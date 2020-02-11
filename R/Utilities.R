@@ -16,6 +16,36 @@
 #    
 #}
 
+#' 
+#' @export
+#' 
+# Function to expand a data table so that the cells that are vectors are transposed and the rest repeated to fill the gaps:
+expandDT <- function(DT, toExpand = NULL) {
+    # Set the columns to expand:
+    if(length(toExpand) == 0) {
+        lens <- lapply(DT, lengths)
+        lensLargerThan1 <- sapply(lens, function(l) any(l > 1))
+        toExpand <- names(DT)[lensLargerThan1]
+    }
+    
+    if(length(toExpand)) {
+        expanded <- lapply(toExpand, function(x) DT[, unlist(get(x))])
+        names(expanded) <- toExpand
+        DT <- do.call(
+            cbind, 
+            c(
+                list(
+                    DT[rep(1:.N, lengths(get(toExpand[1]))), !toExpand, with = FALSE]
+                ), 
+                #lapply(toExpand, function(x) DT[, unlist(get(x))])
+                expanded
+            )
+        )
+    }
+    
+    DT
+}
+
 
 ##################################################
 ##################################################
@@ -218,7 +248,6 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     # Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
     if(utils::tail(aggregationVariables$presentResolution, 1) == aggregationVariables$finestResolution) {
         valid <- data[, lapply(aggregationVariables$verticalRawDimension, allEqual), by = by]
-        
     }
     
     # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:

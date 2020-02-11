@@ -8,8 +8,7 @@ LengthDistribution(
   StoxBioticData,
   SweptAreaPSU = NULL,
   SweptAreaLayer = NULL,
-  LengthDistributionType = c("NormalizedLengthDistribution", "LengthDistribution",
-    "PercentLengthDistribution"),
+  LengthDistributionType = c("Normalized", "Standard", "Percent"),
   RaisingFactorPriority = c("Weight", "Count"),
   acceptNA = TRUE
 )

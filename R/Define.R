@@ -90,8 +90,8 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         validPSUs <- unique(Stratum_PSU$PSU[!is.na(Stratum_PSU$Stratum)])
         Stratum_PSU <- Stratum_PSU[ PSU %in% validPSUs ]
         #SSU_PSU <- SSU_PSU[ PSU %in% validPSUs ]
-        SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
-        SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, NA)]
+        #SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
+        SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, "")]
         
         
     }
@@ -589,14 +589,15 @@ DefineBioticAssignment <- function(
         # Link the stratum to PSU:
         dupRows <- duplicated(NASCData[, c("PSU", "Layer")])
         NASCData <- NASCData[!dupRows, ]
-        Assignment <- cbind(
-            NASCData[, c("PSU", "Layer")], 
-            Haul = haulList[NASCData$Stratum], 
-            WeightingFactor = 1
+        Haul <- haulList[NASCData$Stratum]
+        BioticAssignment <- cbind(
+            NASCData[, c("Stratum", "PSU", "Layer")], 
+            Haul = Haul, 
+            WeightingFactor = lapply(Haul, function(x) rep(1, length(x)))
         )
     }
     
-    return(Assignment)
+    return(BioticAssignment)
 }
 
 

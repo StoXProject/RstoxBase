@@ -26,7 +26,7 @@ LengthDistribution <- function(
     StoxBioticData, 
     SweptAreaPSU = NULL, 
     SweptAreaLayer = NULL, 
-    LengthDistributionType = c("NormalizedLengthDistribution", "LengthDistribution", "PercentLengthDistribution"), 
+    LengthDistributionType = c("Normalized", "Standard", "Percent"), 
     RaisingFactorPriority = c("Weight", "Count"), 
     acceptNA = TRUE
     # allowMissingWeight = TRUE
@@ -72,14 +72,14 @@ LengthDistribution <- function(
     ##### 3. Add the weights depending on LengthDistributionType: #####
     ###################################################################
     # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the EffectiveTowedDistance, rendering the effective EffectiveTowedDistance as 1:
-    if(LengthDistributionType == "NormalizedLengthDistribution") {
+    if(LengthDistributionType == "Normalized") {
         LengthDistributionData$LengthDistributionWeight <- LengthDistributionData$EffectiveTowedDistance
     }
-    else if(LengthDistributionType == "LengthDistribution") {
+    else if(LengthDistributionType == "Standard") {
         LengthDistributionData$LengthDistributionWeight <- 1
     }
     # For LengthDistributionType "PercentLengthDistribution" weights are not relevant, since length distributions are simply averaged, and are set to 1. This type is used in acoustic-trawl models, where the biotic station weighting is applied when averaging the length distributions within each biotic station assignment:
-    else if(LengthDistributionType == "PercentLengthDistribution") {
+    else if(LengthDistributionType == "Percent") {
         LengthDistributionData$LengthDistributionWeight <- 1
     }
     else {
@@ -119,7 +119,7 @@ LengthDistribution <- function(
     
     # Get the raisingFactor:
     getIndexOfFirstNonNA <- function(x, LengthDistributionType) {
-        n <- if(LengthDistributionType == "PercentLengthDistribution") 3 else 2
+        n <- if(LengthDistributionType == "Percent") 3 else 2
         min(n, which(!is.na(x)))
     }
     raisingFactorIndex <- apply(raisingFactorTable, 1, getIndexOfFirstNonNA, LengthDistributionType = LengthDistributionType)
@@ -145,7 +145,7 @@ LengthDistribution <- function(
     ##### 7. Clean up: #####
     ########################
     # Convert the PercentLengthDistribution to percent:
-    if(LengthDistributionType == "PercentLengthDistribution") {
+    if(LengthDistributionType == "Percent") {
         LengthDistributionData <- RelativeLengthDistribution(LengthDistributionData)
     }
     
@@ -344,7 +344,7 @@ LengthDependentCatchCompensation <- function(
         )
         
         # Finally, set the LengthDistributionType:
-        LengthDistributionDataCopy[, LengthDistributionType := "SweepWidthCompensatedLengthDistribution"]
+        LengthDistributionDataCopy[, LengthDistributionType := paste0("SweepWidthCompensated", LengthDistributionType)]
     }
     else if(CompensationMethod == "LengthDependentSelectivity") {
         LengthDistributionDataCopy <- runLengthDependentCompensationFunction(
@@ -357,7 +357,7 @@ LengthDependentCatchCompensation <- function(
         )
         
         # Finally, set the LengthDistributionType:
-        LengthDistributionDataCopy[, LengthDistributionType := "SelectivityCompensatedLengthDistribution"]
+        LengthDistributionDataCopy[, LengthDistributionType := paste0("SelectivityCompensated", LengthDistributionType)]
     }
     
     return(LengthDistributionDataCopy)
@@ -462,7 +462,7 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 ##################################################
 #' (Weighted) Average length distribution horizontally
 #' 
-#' This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "NormalizedLengthDistribution".
+#' This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "Normalized".
 #' 
 #' @inheritParams RegroupLengthDistribution
 #' @param TargetResolution The horizontal resolution of the output.
@@ -517,7 +517,6 @@ SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "La
 #' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
 #' 
 #' @param LengthDistributionData    A list of \code{\link{LengthDistributionData}} data.
-#' @param AcousticPSU           A list of \code{\link{AcousticPSU}} data.
 #' @param BioticAssignment      A list of \code{\link{BioticAssignment}} data.
 #' 
 #' @details
@@ -534,25 +533,73 @@ SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "La
 #' @export
 #' @import data.table
 #' 
-AssignmentLengthDistribution <- function(LengthDistributionData, NASCData, BioticAssignment) {
-    
-    # Function to add assignment IDs:
-    addAssignmentID <- function(BioticAssignment) {
-        assignmentID <- as.numeric(factor(sapply(Assignment$Haul, paste, collapse = "_")))
-        data.table::data.table(
-            BioticAssignment, 
-            assignmentID = assignmentID
-        )
-    }
+AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignment) {
     
     # Determine assignment IDs:
-    BioticAssignment <- addAssignmentID(BioticAssignment)
+    BioticAssignment[, assignmentID := mapply(paste, Haul, WeightingFactor, sep = "/", collapse = "_")]
     
-    # Calculate weighted average length distribution for each assignment ID:
+    # Function to get the assignment length distribution of one assignmentID, represented by one line in BioticAssignmentUnique:
+    getAssignmentLengthDistributionDataOne <- function(BioticAssignmentLine, LengthDistributionData) {
+        
+        # Average to length groups, define by the grouping variables:
+        by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+        # Define the data variable:
+        dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
+        
+        # Extract the subset of the data givevn by the hauls:
+        Hauls <- BioticAssignmentLine$Haul
+        WeightingFactors <- BioticAssignmentLine$WeightingFactor
+        thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
+        
+        # Overwrite the weights by those defined in the BioticAssignment object:
+        weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
+        thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
+        
+        #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
+        thisLengthDistributionData[, c(dataVariable) := weighted.mean(x = get(dataVariable), w = get(weightingVariable)), by = by]
+        
+        # Remove resolution columns:
+        toRemove <- getAllResolutionVariables("LengthDistributionData")
+        thisLengthDistributionData[, c(toRemove) := NULL]
+        # Keep only the valid columns:
+        toRemove <- setdiff(names(thisLengthDistributionData), getAllDataTypeVariables("AssignmentLengthDistributionData"))
+        thisLengthDistributionData[, c(toRemove) := NULL]
+        # Subset to the unique rows (since the weighted average was by reference):
+        thisLengthDistributionData <- unique(thisLengthDistributionData)
+        
+        # Add the assignmentID:
+        thisLengthDistributionData[, assignmentID := eval(BioticAssignmentLine$assignmentID)]
+        
+        return(thisLengthDistributionData)
+    }
     
     
+    # Get unique assignment IDs, and a list of the hauls per assignmentID:
+    atNonDuplicatedAssignmentID <- which(!duplicated(BioticAssignment$assignmentID))
+    #uniqueAssignmentIDs <- unique(BioticAssignment$assignmentID)
+    BioticAssignmentUnique <- BioticAssignment[atNonDuplicatedAssignmentID, ]
     
+    # Get the mean length distribution of each assignment ID in a list:
+    AssignmentLengthDistributionData <- apply(BioticAssignmentUnique, 1, getAssignmentLengthDistributionDataOne, LengthDistributionData = LengthDistributionData)
+    names(AssignmentLengthDistributionData) <- BioticAssignment$assignmentID[atNonDuplicatedAssignmentID]
     
+    # Repeat the AssignmentLengthDistributionData to all rows of the BioticAssignment:
+    AssignmentLengthDistributionData <- AssignmentLengthDistributionData[BioticAssignment$assignmentID]
+    
+    # Add resolution variables:
+    toAdd <- getAllResolutionVariables("AssignmentLengthDistributionData")
+    AssignmentLengthDistributionData <- lapply(
+        seq_along(AssignmentLengthDistributionData), 
+        function(ind) data.table::data.table(
+            BioticAssignment[ind, ..toAdd], 
+            AssignmentLengthDistributionData[[ind]]
+        )
+    )
+    
+    # Rbind to one table:
+    AssignmentLengthDistributionData <- data.table::rbindlist(AssignmentLengthDistributionData)
+    
+    return(AssignmentLengthDistributionData)
 }
 
 
