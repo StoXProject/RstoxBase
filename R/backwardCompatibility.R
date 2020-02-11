@@ -2,12 +2,12 @@
 #rename_DefineStrata_to_DefineStratum <- function(projectDescription) {
 #    if(StoxVersion == 2.7) {
 #        # Get the function names:
-#        functionNames <- sapply(projectDescription$Baseline, "[[", "functionName")
+#        functionNames <- sapply(projectDescription$baseline, "[[", "functionName")
 #        # Get the position of the process using DefineStrata():
 #        atDefineStrata <- which("DefineStrata" %in% functionNames)
 #        if(length(atDefineStrata)) {
 #            # Split the process:
-#            projectDescription$Baseline[[atDefineStrata]]$functionName <- "DefineStratum"
+#            projectDescription$baseline[[atDefineStrata]]$functionName <- "DefineStratum"
 #        }
 #    }
 #    
@@ -16,43 +16,100 @@
 
 # Split ReadBioticXML into ReadBiotic and StoxBiotic:
 split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic <- function(projectDescription) {
-    if(StoxVersion == 2.7) {
+    
+    # Get the StoxVersion from the attributes:
+    resourceVersion <- attr(projectDescription, "resourceversion")
+    RstoxFrameworkVersion <- attr(projectDescription, "RstoxFrameworkVersion")
+    
+    # Do not support backwards compatibility for versoins prior to StoX 2.7:
+    if(length(resourceVersion) && resourceversion == "1.92") {
         # Get the function names:
-        functionNames <- sapply(projectDescription$Baseline, "[[", "functionName")
+        functionNames <- sapply(projectDescription$baseline, "[[", "functionName")
         # Get the position of the process using ReadBioticXML():
         atReadBioticXML <- which("ReadBioticXML" %in% functionNames)
         if(length(atReadBioticXML)) {
             # Trick to make it possible to split the process:
-            projectDescription$Baseline <- lapply(projectDescription$Baseline, list)
+            projectDescription$baseline <- lapply(projectDescription$baseline, list)
             
             # Split the process:
-            projectDescription$Baseline[[atReadBioticXML]] <- list(
-                projectDescription$Baseline[[atReadBioticXML]], 
-                projectDescription$Baseline[[atReadBioticXML]]
+            projectDescription$baseline[[atReadBioticXML]] <- list(
+                projectDescription$baseline[[atReadBioticXML]], 
+                projectDescription$baseline[[atReadBioticXML]]
             )
             
             # ... into ReadBiotic:
-            projectDescription$Baseline[[atReadBioticXML]]$processName = "ReadBiotic"
-            projectDescription$Baseline[[atReadBioticXML]]$functionName = "RstoxBase::ReadBiotic"
-            projectDescription$Baseline[[atReadBioticXML]]$functionParameters = list(
-                FileNames = unlist(projectDescription$Baseline[[atReadBioticXML]]$functionParameters)
+            projectDescription$baseline[[atReadBioticXML]]$processName = "ReadBiotic"
+            projectDescription$baseline[[atReadBioticXML]]$functionName = "RstoxBase::ReadBiotic"
+            projectDescription$baseline[[atReadBioticXML]]$functionParameters = list(
+                FileNames = unlist(projectDescription$baseline[[atReadBioticXML]]$functionParameters)
             )
             
             # ... and StoxBiotic:
-            projectDescription$Baseline[[atReadBioticXML]]$processName = "StoxBiotic"
-            projectDescription$Baseline[[atReadBioticXML]]$functionName = "RstoxBase::StoxBiotic"
-            projectDescription$Baseline[[atReadBioticXML]]$functionParameters$SpeciesCategory = "commonname"
-            projectDescription$Baseline[[atReadBioticXML]]$functionInputs$BioticData = "ReadBiotic"
+            projectDescription$baseline[[atReadBioticXML]]$processName = "StoxBiotic"
+            projectDescription$baseline[[atReadBioticXML]]$functionName = "RstoxBase::StoxBiotic"
+            projectDescription$baseline[[atReadBioticXML]]$functionParameters$SpeciesCategory = "commonname"
+            projectDescription$baseline[[atReadBioticXML]]$functionInputs$BioticData = "ReadBiotic"
             
             # Flatten the list again:
-            projectDescription$Baseline <- unlist(projectDescription$Baseline, recursive = TRUE)
+            projectDescription$baseline <- unlist(projectDescription$baseline, recursive = TRUE)
         }
     }
     
     return(projectDescription)
 }
 
-# A list funcitons performing conversions of the projectDescription to ensure backward compatibility:
+remove_ReadProcessData <- function(projectDescription) {
+    if(length(resourceVersion) && resourceversion == "1.92") {
+        # Get the function names:
+        functionNames <- sapply(projectDescription$baseline, "[[", "functionName")
+        # Get the position of the process using ReadBioticXML():
+        atReadProcessData <- which("ReadProcessData" %in% functionNames)
+        if(length(atReadProcessData)) {
+            
+            # Remove the process:
+            projectDescription$baseline[[atReadProcessData]] <- NULL
+        }
+    }
+    
+    return(projectDescription)
+}
+
+modify_DefineStrata <- function(projectDescription) {
+    
+    # Run onl for StoX 2.7:
+    if(checkVersion(projectDescription, resourceversion == "1.92")) {
+        # Find the process using DefineStrata():
+        atProcess <- findProcessFromFunctionName(
+            functionName = "DefineStrata", 
+            projectDescription =projectDescription, 
+            modelName = "baseline"
+        )
+        if(length(atProcess)) {
+            projectDescription$baseline[[atProcess]]
+            
+            
+        }
+        
+    }
+        
+    
+    return(projectDescription)
+}
+
+findProcessFromFunctionName <- function(functionName, projectDescription, modelName = "baseline") {
+    # Get the function names:
+    functionNames <- sapply(projectDescription[[modelName]], "[[", "functionName")
+    # Get the position of the process:
+    atProcess <- which(functionName %in% functionNames)
+    return(atProcess)
+}
+
+
+
+
+
+
+# A list of functions performing conversions of the projectDescription to ensure backward compatibility:
 #' 
 #' @export
 #' 

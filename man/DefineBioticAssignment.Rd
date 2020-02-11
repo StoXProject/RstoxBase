@@ -36,7 +36,7 @@ DefineBioticAssignment(
 \item{AcousticLayer}{A list of \code{\link{AcousticLayer}} process data.}
 }
 \value{
-An object of StoX data type \code{\link{AcousticPSU}}.
+An object of StoX data type \code{\link{BioticAssignment}}.
 }
 \description{
 This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
@@ -49,5 +49,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{AcousticPSU}}.
+\code{\link{BioticAssignment}}.
 }

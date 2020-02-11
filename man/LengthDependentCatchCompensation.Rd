@@ -5,23 +5,23 @@
 \title{Catchability of trawls by fish length}
 \usage{
 LengthDependentCatchCompensation(
-  LengthDistribution,
+  LengthDistributionData,
   CompensationMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"),
   LengthDependentSweepWidthParameters = NULL,
   LengthDependentSelectivityParameters = NULL
 )
 }
 \arguments{
-\item{LengthDistribution}{The length distribution data.}
+\item{LengthDistributionData}{The length distribution data.}
+
+\item{CompensationMethod}{Parameter descrption.}
 
 \item{LengthDependentSweepWidthParameters}{A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).}
 
 \item{LengthDependentSelectivityParameters}{A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).}
-
-\item{CatchabilityMethod}{Parameter descrption.}
 }
 \value{
-A \code{\link{LengthDistribution}} object.
+A \code{\link{LengthDistributionData}} object.
 }
 \description{
 This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.

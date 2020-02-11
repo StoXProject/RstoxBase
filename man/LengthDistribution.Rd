@@ -8,8 +8,7 @@ LengthDistribution(
   StoxBioticData,
   SweptAreaPSU = NULL,
   SweptAreaLayer = NULL,
-  LengthDistributionType = c("NormalizedLengthDistribution", "LengthDistribution",
-    "PercentLengthDistribution"),
+  LengthDistributionType = c("Normalized", "Standard", "Percent"),
   RaisingFactorPriority = c("Weight", "Count"),
   acceptNA = TRUE
 )
@@ -26,7 +25,7 @@ LengthDistribution(
 \item{LengthDistType}{The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').}
 }
 \value{
-A data.table is returned with awesome stuff.
+A \code{\link{LengthDistributionData}} object.
 }
 \description{
 This function calculates length frequency distribution per Stratum, swept-area PSU, swept-area layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.

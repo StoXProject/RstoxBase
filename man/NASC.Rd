@@ -10,7 +10,7 @@ NASC(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL)
 \item{StoxAcousticData}{input in a StoxAcoustcdata format}
 }
 \value{
-A data.frame are returned
+A \code{\link{NASCData}} object.
 }
 \description{
 NASC function converts the StoxAcousticData into

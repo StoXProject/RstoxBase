@@ -44,8 +44,12 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
         stringsAsFactors = FALSE
     )
     rownames(data) <- polygonName
+    # Create a SpatialPolygons object, adding default longitude-latitude projection:
+    # We decided on 2020-01-21 to skip proj4string, and always assume WGS84:
+    #spatialPolygons = sp::SpatialPolygons(polygonsList, proj4string = getRstoxBaseDefinitions("proj4string"))
     spatialPolygons = sp::SpatialPolygons(polygonsList)
-    spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data)
+    # ... and convert to SpatialPolygonsDataFrame:
+    spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data, match.ID = FALSE)
     #plot(SpP, col = 1:5, pbg="white")
     
     return(spatialPolygonsDataFrame)
@@ -192,12 +196,25 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' @export
 #' 
 StratumArea <- function(StratumPolygon, AreaMethod = c("Accurate", "Simple")) {
+    
+    AreaMethod <- match.arg(AreaMethod)
+    
     # Accept StratumPolygon contained in a list:
     if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
         StratumPolygon <- StratumPolygon$StratumPolygon
     }
+    
     # Get the polygon areas:
-    polygonAreaSP(StratumPolygon)
+    if(AreaMethod == "Accurate") {
+        polygonAreaSP_accurate(StratumPolygon)
+    }
+    else if(AreaMethod == "Simple") {
+        polygonAreaSP_simple(StratumPolygon)
+    }
+    else {
+        stop("Invalid AreaMethod")
+    }
+    
 }
 
 
@@ -261,8 +278,8 @@ polygonAreaPolygonDT <- function(df) {
 }
 
 
-# polygonAreaSP calculates simple GCD polygon area taking SpatialPolygons or SpatialPolygonsDataFrame:
-polygonAreaSP <- function(sp) {
+# polygonAreaSP_simple calculates simple GCD polygon area taking SpatialPolygons or SpatialPolygonsDataFrame:
+polygonAreaSP_simple <- function(stratumPolygon) {
     
     # Function to create a polygon area data table of polygon area, whether the polygon is a hole, and the ID:
     polygon2AreaDT <- function(polygon, ID) {
@@ -287,11 +304,40 @@ polygonAreaSP <- function(sp) {
     }
     
     # Get the tables of areas of individual polygons in each multipolygon:
-    d <- lapply(sp@polygons, stratumAreaDT)
+    d <- lapply(stratumPolygon@polygons, stratumAreaDT)
     # Extract the multipolygon area and rbind to a data table:
     stratumAreas <- data.table::rbindlist(lapply(d, stratumArea))
     stratumAreas
 }
+
+polygonAreaSP_accurate <- function(stratumPolygon) {
+    
+    # Define projection:
+    sp::proj4string(stratumPolygon) <- sp::CRS("+proj=longlat +ellps=WGS84")	
+    
+    # Define the proj4 definition of Lambert Azimuthal Equal Area (laea) CRS with origo in wkt center:
+    # Units: international nautical miles:
+    laea.CRS <- sp::CRS(
+        paste0(
+            "+proj=laea +lat_0=", 
+            stratumPolygon@polygons[[1]]@labpt[2], 
+            " +lon_0=", 
+            stratumPolygon@polygons[[1]]@labpt[1], 
+            " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
+        )
+    )
+    
+    # Project data points from longlat to given laea
+    stratumPolygon <- sp::spTransform(stratumPolygon, laea.CRS)
+    area <- rgeos::gArea(stratumPolygon, byid = TRUE)
+    
+    output <- data.table::data.table(
+        Stratum = stratumPolygon$polygonName,
+        Area = area
+    )
+    return(output)
+}
+
 
 
 # Try this e.g. with the files downloaded from this link: https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_land.zip:
