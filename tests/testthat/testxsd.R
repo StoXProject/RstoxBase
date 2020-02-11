@@ -1,7 +1,0 @@
-context("stox process xsd")
-library(xml2)
-library(RstoxData)
-skip("skip")
-schema <- xml2::read_xml("../../inst/formats/stoxProject.xsd")
-expect_silent(processedschema <- RstoxData:::processXSD(schema))
-expect_true("project" %in% processedschema$rootInfo)
