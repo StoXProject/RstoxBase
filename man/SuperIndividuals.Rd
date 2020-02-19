@@ -7,7 +7,7 @@
 SuperIndividuals(
   IndividualsData,
   AbundanceData,
-  AbundWeightMethod = c("Equal", "StationDensity"),
+  AbundWeightMethod = c("Equal", "HaulDensity"),
   LengthDistributionData
 )
 }

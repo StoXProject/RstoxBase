@@ -297,3 +297,26 @@ sumData <- function(data, dataType, targetResolution = "Layer") {
 }
 
 
+# https://stackoverflow.com/questions/24833247/how-can-one-work-fully-generically-in-data-table-in-r-with-column-names-in-varia:
+quote.convert <- function(x) {
+    eval(
+        parse(
+            text = paste0('quote(', x ,')')
+        )
+    )
+}
+
+
+#keepOnlyRelevantColumns <- function(data, dataType) {
+#    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
+#    data[, ..allDataTypeVariables]
+#}
+
+
+keepOnlyRelevantColumns <- function(data, dataType) {
+    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
+    toRemove <- setdiff(names(data), allDataTypeVariables)
+    data[, (toRemove) := NULL]
+    setcolorder(data, allDataTypeVariables)
+}
+

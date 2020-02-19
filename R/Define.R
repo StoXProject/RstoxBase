@@ -188,7 +188,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
         DefinitionMethod <- "Identity"
     }
     
-    DefinePSU(
+    AcousticPSU <- DefinePSU(
         processData = processData, 
         StratumPolygon = StratumPolygon, 
         StoxData = StoxAcousticData, 
@@ -196,6 +196,8 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
         UseProcessData = UseProcessData, 
         modelType = "Acoustic"
     )
+    
+    return(AcousticPSU)
 }
 
 

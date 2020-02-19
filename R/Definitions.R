@@ -208,10 +208,7 @@ getAllDataTypeVariables <- function(dataType, unlist = TRUE) {
     )
 }
 
-keepOnlyRelevantColumns <- function(data, dataType) {
-    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
-    data[, ..allDataTypeVariables]
-}
+
 
 
 getAllAggregationVariables <- function(dataType, exclude.groupingVariables = FALSE) {
@@ -324,3 +321,7 @@ determineAggregationVariables <- function(
     )
     return(out)
 }
+
+
+# Add getPresentResolution(data)!!!!!!!!!
+

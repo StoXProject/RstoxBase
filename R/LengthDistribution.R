@@ -538,42 +538,6 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     # Determine assignment IDs:
     BioticAssignment[, assignmentID := mapply(paste, Haul, WeightingFactor, sep = "/", collapse = "_")]
     
-    # Function to get the assignment length distribution of one assignmentID, represented by one line in BioticAssignmentUnique:
-    getAssignmentLengthDistributionDataOne <- function(BioticAssignmentLine, LengthDistributionData) {
-        
-        # Average to length groups, define by the grouping variables:
-        by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
-        # Define the data variable:
-        dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
-        
-        # Extract the subset of the data givevn by the hauls:
-        Hauls <- BioticAssignmentLine$Haul
-        WeightingFactors <- BioticAssignmentLine$WeightingFactor
-        thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
-        
-        # Overwrite the weights by those defined in the BioticAssignment object:
-        weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
-        thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
-        
-        #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
-        thisLengthDistributionData[, c(dataVariable) := weighted.mean(x = get(dataVariable), w = get(weightingVariable)), by = by]
-        
-        # Remove resolution columns:
-        toRemove <- getAllResolutionVariables("LengthDistributionData")
-        thisLengthDistributionData[, c(toRemove) := NULL]
-        # Keep only the valid columns:
-        toRemove <- setdiff(names(thisLengthDistributionData), getAllDataTypeVariables("AssignmentLengthDistributionData"))
-        thisLengthDistributionData[, c(toRemove) := NULL]
-        # Subset to the unique rows (since the weighted average was by reference):
-        thisLengthDistributionData <- unique(thisLengthDistributionData)
-        
-        # Add the assignmentID:
-        thisLengthDistributionData[, assignmentID := eval(BioticAssignmentLine$assignmentID)]
-        
-        return(thisLengthDistributionData)
-    }
-    
-    
     # Get unique assignment IDs, and a list of the hauls per assignmentID:
     atNonDuplicatedAssignmentID <- which(!duplicated(BioticAssignment$assignmentID))
     #uniqueAssignmentIDs <- unique(BioticAssignment$assignmentID)
@@ -602,4 +566,44 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     return(AssignmentLengthDistributionData)
 }
 
+
+# Function to get the assignment length distribution of one assignmentID, represented by one line in BioticAssignmentUnique:
+getAssignmentLengthDistributionDataOne <- function(BioticAssignmentLine, LengthDistributionData) {
+    
+    # Average to length groups, define by the grouping variables:
+    by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+    # Define the data variable:
+    dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
+    
+    # Extract the subset of the data givevn by the hauls:
+    Hauls <- BioticAssignmentLine$Haul
+    WeightingFactors <- BioticAssignmentLine$WeightingFactor
+    thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
+    
+    # Overwrite the weights by those defined in the BioticAssignment object:
+    weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
+    thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
+    
+    #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
+    thisLengthDistributionData[, c(dataVariable) := weighted.mean(x = get(dataVariable), w = get(weightingVariable)), by = by]
+    
+    # Remove resolution columns:
+    toRemove <- getAllResolutionVariables("LengthDistributionData")
+    thisLengthDistributionData[, c(toRemove) := NULL]
+    
+    # Also remove the vertical resolution resolution vavriables, as these are defined for the biotic data in the LengthDistributionData, and not for the acoustic data, as is relevant for the AssignmentLengthDistributionData. These will be added below:
+    toRemove <- getDataTypeDefinition("LengthDistributionData", "verticalLayerDimension", unlist = TRUE)
+    thisLengthDistributionData[, c(toRemove) := NULL]
+    
+    # Keep only the valid columns:
+    toRemove <- setdiff(names(thisLengthDistributionData), getAllDataTypeVariables("AssignmentLengthDistributionData"))
+    thisLengthDistributionData[, c(toRemove) := NULL]
+    # Subset to the unique rows (since the weighted average was by reference):
+    thisLengthDistributionData <- unique(thisLengthDistributionData)
+    
+    # Add the assignmentID:
+    thisLengthDistributionData[, assignmentID := eval(BioticAssignmentLine$assignmentID)]
+    
+    return(thisLengthDistributionData)
+}
 

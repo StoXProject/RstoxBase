@@ -219,6 +219,12 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "IndividualsData"
+    ), 
+    
+    SuperIndividuals = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SuperIndividualsData"
     )
     
     
