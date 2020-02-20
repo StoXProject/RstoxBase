@@ -333,7 +333,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 
 ##################################################
 ##################################################
-#' Acoustic Layer
+#' Define Acoustic Layer
 #' 
 #' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
@@ -371,7 +371,7 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 
 ##################################################
 ##################################################
-#' Swept-area Layer
+#' Define Swept-area Layer
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 

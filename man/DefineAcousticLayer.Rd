@@ -2,7 +2,7 @@
 % Please edit documentation in R/Define.R
 \name{DefineAcousticLayer}
 \alias{DefineAcousticLayer}
-\title{Acoustic Layer}
+\title{Define Acoustic Layer}
 \usage{
 DefineAcousticLayer(
   processData,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Define.R
 \name{DefineSweptAreaLayer}
 \alias{DefineSweptAreaLayer}
-\title{Swept-area Layer}
+\title{Define Swept-area Layer}
 \usage{
 DefineSweptAreaLayer(
   processData,
