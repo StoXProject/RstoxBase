@@ -180,8 +180,6 @@ LengthDistribution <- function(
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-#' 
 #' @export
 #' @import data.table
 #' 
@@ -477,7 +475,6 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' x <- 1
 #' 
 #' @export
-#' @import data.table
 #' 
 MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "PSU") {
     meanData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)
@@ -503,7 +500,6 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 #' x <- 1
 #' 
 #' @export
-#' @import data.table
 #' 
 SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "Layer") {
     sumData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)

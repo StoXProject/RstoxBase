@@ -13,7 +13,7 @@
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxData  A list of \code{\link[roxygen2]{StoxAcousticData}} data.
+#' @param StoxData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -119,7 +119,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxBioticData    A list of \code{\link[roxygen2]{StoxBioticData}} data.
+#' @param StoxBioticData    A list of \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -163,7 +163,7 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxAcousticData  A list of \code{\link[roxygen2]{StoxAcousticData}} data.
+#' @param StoxAcousticData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -209,7 +209,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' 
 #' @inheritParams DefineStrata
 #' @inheritParams DefineAcousticLayer
-#' @param StoxBioticData  A list of \code{\link[RstoxDatas]{StoxBioticData}} data.
+#' @param StoxBioticData  A list of \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -338,7 +338,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 #' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
 #' @inheritParams DefineStrata
-#' @param StoxAcousticData  A list of \code{\link[RstoxDatas]{StoxAcousticData}} data.
+#' @param StoxAcousticData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -377,7 +377,7 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 #' 
 #' @inheritParams DefineStrata
 #' @inheritParams DefineAcousticLayer
-#' @param StoxBioticData  A list of \code{\link[RstoxDatas]{StoxBioticData}} data.
+#' @param StoxBioticData  A list of \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details

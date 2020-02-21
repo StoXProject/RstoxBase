@@ -140,11 +140,43 @@ NULL
 NULL
 
 
+##################################################
+##################################################
+#' Nautical area scattering coefficient (NASC) data
+#' 
+#' The NASCData model data gives the includes NASC for each acoustic channel or Layer, and ESDU, PSU or Stratum. 
+#' 
+#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name NASCData
+#' 
+NULL
+
+ 
+##################################################
+##################################################
+#' Biotic assignment data
+#' 
+#' The BioticAssignment process data is a table containing the columns Stratum, PSU, Layer, Haul and WeightingFactor, where Haul is a list of all Hauls assigned to each acoustic PSU of each acoustic layer. 
+#' 
+#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name BioticAssignment
+#' 
+NULL
 
 
-
-
-
+##################################################
+##################################################
+#' Density data
+#' 
+#' The DensityData model data gives the density of individuals as number per square nautical mile, by PSU or Stratum, and by Layer. 
+#' 
+#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name DensityData
+#' 
+NULL
 
 
 

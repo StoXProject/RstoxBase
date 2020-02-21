@@ -16,7 +16,7 @@ DefineSweptAreaLayer(
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{StoxBioticData}{A list of \code{\link[RstoxDatas]{StoxBioticData}} data.}
+\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.}
 

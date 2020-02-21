@@ -136,20 +136,6 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     # Add length groups also to the AbundanceData:
     addLengthGroupsByReference(data = AbundanceData, master = AbundanceData)
     
-    
-    #by <- getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE)
-    #SuperIndividualsData[, test2 := getLengthGroups(.SD, master = AbundanceData), by = by]
-
-    
-    
-    #addLengthGroups(
-    #    data = SuperIndividualsData, 
-    #    master = AbundanceData, 
-    #    lengthVar = "IndividualTotalLengthCentimeter", 
-    #    resolutionVar = "LengthResolutionCentimeter"
-    #)
-    
-    
     # Merge the abundance into the SuperIndividualsData, using the resolution and category variables of the AbundanceData, added the LengthGroup introduced in addLengthGroups():
     by <- getDataTypeDefinition("AbundanceData", c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE)
     by <- c(by, "LengthGroup")
@@ -214,7 +200,6 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     else{
         stop("Invalid AbundWeightMethod")
     }
-    
     
     # Multiply by abundance weighting factors:
     SuperIndividualsData[, Abundance := Abundance * abundanceWeightFactor]
@@ -347,67 +332,4 @@ addLengthGroupsByReference <- function(
     
     return(TRUE)
 }
-
-
-# Function to add length group IDs in two tables given the length groups in the second:
-getLengthGroups <- function(
-    data, 
-    master, 
-    lengthVar = "IndividualTotalLengthCentimeter", 
-    resolutionVar = "LengthResolutionCentimeter"
-) {
-    
-    # Get the unique length intervals of the master:
-    speciesVar <- getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE)
-    print(master[[speciesVar]])
-    print(data[[speciesVar]][1])
-    print(data)
-    atSpecies <- master[[speciesVar]] == data[[speciesVar]][1]
-    if(sum(atSpecies) == 0) {
-        warning("The species ", data[[speciesVar]][1], " is not present in the master data.")
-    }
-    uniqueLengthGroups <- unique(master[atSpecies, c(..lengthVar, ..resolutionVar)])
-    # Order the unique length intervals:
-    uniqueLengthGroups <- uniqueLengthGroups[order(uniqueLengthGroups[[lengthVar]]), ]
-    uniqueLengthGroups[, pasted := paste(get(lengthVar), get(resolutionVar))]
-    
-    # (1) Match the length groups exactly:
-    LengthGroup <- data[, match(
-        paste(get(lengthVar), get(resolutionVar)), 
-        eval(uniqueLengthGroups$pasted)
-    )]
-    
-    # (2) Match missing length:
-    missingLength <- is.na(data[[lengthVar]])
-    if(any(missingLength)) {
-        # The 'atMissingLengthGroup' is guaranteed to be of length 1:
-        atMissingLengthGroup <- which(is.na(uniqueLengthGroups[[lengthVar]]))
-        if(length(atMissingLengthGroup)) {
-            LengthGroup[missingLength] <- atMissingLengthGroup
-        }
-    }
-    
-    # (3) For the length intervals not exactly matched in the master, find the appropriate intervals. The intervalVector may contain intervals that are not present in the data (intervals between present intervals):
-    intervalVector <- sort(
-        unique(c(
-            uniqueLengthGroups[[lengthVar]], 
-            uniqueLengthGroups[[lengthVar]] + uniqueLengthGroups[[resolutionVar]]
-        ))
-    )
-    indexVector <- NA
-    present <- intervalVector %in% uniqueLengthGroups[[lengthVar]]
-    indexVector[present] <- seq_len(sum(present))
-    
-    # Get the LengthGroup using findInterval (and the quote.convert() function):
-    notExactlyMatched <- is.na(LengthGroup)
-    if(any(notExactlyMatched)) {
-        LengthGroup[notExactlyMatched] <- indexVector[data[notExactlyMatched, findInterval(
-            eval(quote.convert(lengthVar)), 
-            ..intervalVector
-        )]]
-    }
-    
-    return(LengthGroup)
-}
-
 
