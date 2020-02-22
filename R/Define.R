@@ -259,12 +259,12 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
         # Create a data.table if a vector of breaks is given:
         if(length(dim(x)) == 1) {
             x <- data.table::data.table(
-                MinLayerRange = x[-length(x)], 
-                MaxLayerRange = x[-1]
+                MinLayerDepth = x[-length(x)], 
+                MaxLayerDepth = x[-1]
             )
         }
         else {
-            names(x) <- c("MinLayerRange", "MaxLayerRange")
+            names(x) <- c("MinLayerDepth", "MaxLayerDepth")
         }
         # Create the Layer names:
         LayerNames <- getDefaultLayerNames(x)
@@ -291,18 +291,18 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
         data = unique(StoxData[[VerticalResolutionLevel]][, c(..VerticalResolutionMin, ..VerticalResolutionMax)]), 
         varMin = VerticalResolutionMin, 
         varMax = VerticalResolutionMax, 
-        lowerName = "MinLayerRange", 
-        upperName = "MaxLayerRange"
+        lowerName = "MinLayerDepth", 
+        upperName = "MaxLayerDepth"
     )
     
     # If "WaterColumn" is requested use the full range:
     if(grepl("WaterColumn", DefinitionMethod, ignore.case = TRUE)) {
         Layer <- data.table::data.table(
             Layer = "WaterColumn", 
-            #MinLayerRange = possibleIntervals[1, 1], 
-            MinLayerRange = 0,
-            #MaxLayerRange = possibleIntervals[nrow(possibleIntervals), 2]
-            MaxLayerRange = Inf
+            #MinLayerDepth = possibleIntervals[1, 1], 
+            MinLayerDepth = 0,
+            #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
+            MaxLayerDepth = Inf
         )
     }
     
@@ -314,7 +314,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
     # If "UserDefined" is requested match the Breaks against the possible breaks:
     else if(grepl("UserDefined", DefinitionMethod, ignore.case = TRUE)) {
         # Error if any of the specified breaks are invalid:
-        if(any(! unlist(LayerTable[, c("MinLayerRange", "MaxLayerRange")]) %in% unlist(possibleIntervals))) {
+        if(any(! unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]) %in% unlist(possibleIntervals))) {
             stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
         }
         else {

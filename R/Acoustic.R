@@ -21,6 +21,13 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
     
     # Merge the StoxAcousticData:
     NASC <- mergeDataTables(StoxAcousticData)$NASC
+    # Check that the input StoxAcousticData has the same ChannelReferenceType:
+    dataTypeDefinition <- getDataTypeDefinition(dataType = "NASCData")
+    ChannelReferenceType <- NASC[[dataTypeDefinition$type]]
+    if(!all(ChannelReferenceType == ChannelReferenceType[1])) {
+        stop("The StoxAcousticData must have only one ", dataTypeDefinition$type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
+    }
+    
     # Add weights:
     NASC[, NASCWeight := EffectiveLogDistance]
     

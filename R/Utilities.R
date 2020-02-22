@@ -147,21 +147,44 @@ getStoxBioticKeys <- function(levels = NULL) {
 }
 
 # Function to get Layer indices:
-findLayer <- function(data, layerDefinition, varMin, varMax, acceptNA = TRUE) {
+findLayer_old <- function(data, layerDefinition, varMin, varMax, acceptNA = TRUE) {
     
-    layerRangeVector <- c(layerDefinition$MinLayerRange, tail(layerDefinition$MaxLayerRange, 1))
+    # This needs to be verified!!!!!!!!!!!!!
+    layerRangeVector <- c(layerDefinition$MinLayerDepth, tail(layerDefinition$MaxLayerDepth, 1))
     indMin <- findInterval(data[[varMin]], layerRangeVector)
     indMax <- findInterval(data[[varMax]], layerRangeVector, rightmost.closed = TRUE)
     LayerInd <- pmax(indMin, indMax, na.rm = acceptNA)
     
-    if(acceptNA && nrow(layerDefinition) == 1 && layerDefinition$MinLayerRange == 0 && layerDefinition$MaxLayerRange == Inf) {
+    if(acceptNA && nrow(layerDefinition) == 1 && layerDefinition$MinLayerDepth == 0 && layerDefinition$MaxLayerDepth == Inf) {
         LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
     }
     
     LayerData <- data.table::data.table(
         Layer = layerDefinition$Layer[LayerInd], 
-        MinLayerRange = layerDefinition$MinLayerRange[LayerInd], 
-        MaxLayerRange = layerDefinition$MaxLayerRange[LayerInd]
+        MinLayerDepth = layerDefinition$MinLayerDepth[LayerInd], 
+        MaxLayerDepth = layerDefinition$MaxLayerDepth[LayerInd]
+    )
+    
+    LayerData
+}
+
+# Function to get Layer indices:
+findLayer <- function(minDepth, maxDepth, layerDefinition, acceptNA = TRUE) {
+    
+    # This needs to be verified!!!!!!!!!!!!!
+    layerRangeVector <- c(layerDefinition$MinLayerDepth, tail(layerDefinition$MaxLayerDepth, 1))
+    indMin <- findInterval(minDepth, layerRangeVector)
+    indMax <- findInterval(maxDepth, layerRangeVector, rightmost.closed = TRUE)
+    LayerInd <- pmin(indMin, indMax, na.rm = acceptNA)
+    
+    if(acceptNA && nrow(layerDefinition) == 1 && layerDefinition$MinLayerDepth == 0 && layerDefinition$MaxLayerDepth == Inf) {
+        LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
+    }
+    
+    LayerData <- data.table::data.table(
+        Layer = layerDefinition$Layer[LayerInd], 
+        MinLayerDepth = layerDefinition$MinLayerDepth[LayerInd], 
+        MaxLayerDepth = layerDefinition$MaxLayerDepth[LayerInd]
     )
     
     LayerData
@@ -193,7 +216,7 @@ addPSUDefinition <- function(data, dataType, PSUDefinition = NULL, ...) {
 }
 
 # Function to add Layer:
-addLayerDefinition <- function(data, dataType, layerDefinition = NULL, ...) {
+addLayerDefinition <- function(data, dataType, layerDefinition = NULL, acceptNA = TRUE) {
     
     # Insert the Layer column from the layerDefinition input, and otherwise by NAs:
     if(length(layerDefinition)) {
@@ -202,13 +225,33 @@ addLayerDefinition <- function(data, dataType, layerDefinition = NULL, ...) {
         varMin <- dataTypeDefinition$verticalRawDimension[1]
         varMax <- dataTypeDefinition$verticalRawDimension[2]
         
-        layerData <- findLayer(data = data, layerDefinition = layerDefinition, varMin = varMin, varMax = varMax)
+        #layerData <- findLayer(data = data, layerDefinition = layerDefinition, varMin = varMin, varMax = varMax)
+        
+        
+        # Get min and max depth of the raw vertical distribution, either as a copy of the depths, or a calculation of the depths given the depth and orientation of the coordinate system:
+        if(length(dataTypeDefinition$coordinateSystemOrigin)) {
+            minDepth <- data[[dataTypeDefinition$coordinateSystemOrigin]] - 
+                data[[varMin]] * cos(data[[dataTypeDefinition$coordinateSystemOrientation]] * pi/ 180)
+            maxDepth <- data[[dataTypeDefinition$coordinateSystemOrigin]] - 
+                data[[varMax]] * cos(data[[dataTypeDefinition$coordinateSystemOrientation]] * pi/ 180)
+        }
+        else {
+            minDepth <- data[[varMin]]
+            maxDepth <- data[[varMax]]
+        }
+        
+        layerData <- findLayer(
+            minDepth = minDepth, 
+            maxDepth = maxDepth, 
+            layerDefinition = layerDefinition, 
+            acceptNA = acceptNA
+        )
         
         data <- data.table::data.table(layerData, data)
     }
     else {
         data.table::setDT(data)
-        toAdd <- c("Layer", "MinLayerRange", "MaxLayerRange")
+        toAdd <- c("Layer", "MinLayerDepth", "MaxLayerDepth")
         data.table::set(data, j = toAdd, value=NA)
     }
     
@@ -255,10 +298,21 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     weightingVariable <- aggregationVariables$weightingVariable
     
     #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
-    dataCopy[, c(dataVariable) := weighted.mean(x = get(dataVariable), w = get(weightingVariable)), by = by]
+    dataCopy[, c(dataVariable, weightingVariable) := list(
+        weighted.mean(x = get(dataVariable), w = get(weightingVariable)), 
+        sum(get(weightingVariable))
+        ), by = by]
     
     # Set the resolution variables which were summed over to NA:
-    set(dataCopy, j = aggregationVariables$setToNA, value=NA)
+    set(
+        dataCopy, 
+        j = c(
+            aggregationVariables$setToNA, 
+            aggregationVariables$otherVariables
+        ), 
+        value=NA
+    )
+    
     
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
@@ -288,7 +342,14 @@ sumData <- function(data, dataType, targetResolution = "Layer") {
     dataCopy[, c(dataVariable) := sum(x = get(dataVariable)), by = by]
     
     # Set the resolution variables which were summed over to NA:
-    set(dataCopy, j = aggregationVariables$setToNA, value=NA)
+    set(
+        dataCopy, 
+        j = c(
+            aggregationVariables$setToNA, 
+            aggregationVariables$verticalRawDimension
+        ), 
+        value=NA
+    )
     
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
