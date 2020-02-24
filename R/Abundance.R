@@ -136,25 +136,29 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     # Add length groups also to the AbundanceData:
     addLengthGroupsByReference(data = AbundanceData, master = AbundanceData)
     
-    # Merge the abundance into the SuperIndividualsData, using the resolution and category variables of the AbundanceData, added the LengthGroup introduced in addLengthGroups():
-    by <- getDataTypeDefinition("AbundanceData", c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE)
-    by <- c(by, "LengthGroup")
+    # Merge the abundance into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups():
+    abundanceGrouping <- c(
+        getDataTypeDefinition("AbundanceData", c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
+        "LengthGroup"
+    )
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
-        AbundanceData[, c(..by, "Abundance")], 
-        by = by, 
+        AbundanceData[, c(..abundanceGrouping, "Abundance")], 
+        by = abundanceGrouping, 
         allow.cartesian = TRUE
     )
     
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     .N <- NULL
-    SuperIndividualsData[, individualCount := as.double(.N), by = by]
     
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(AbundWeightMethod == "Equal"){
+        SuperIndividualsData[, individualCount := as.double(.N), by = abundanceGrouping]
+        
         SuperIndividualsData[, abundanceWeightFactor := 1]
     }
     else if(AbundWeightMethod == "HaulDensity") {
+        
         # Give an error if the LengthDistributionType is "Percent" or "Standard":
         validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
         if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
@@ -174,25 +178,32 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         #    resolutionVar = "LengthResolutionCentimeter"
         #)
         # In case that the length resolution is higher in the LengthDistributionData than in the AbundanceData, uniquify the LengthDistributionData:
-        by <- c(
+        haulGrouping <- c(
             "Haul", 
             getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE), 
             "LengthGroup"
         )
-        LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
-        keep <- !duplicated(LengthDistributionData[, ..by])
+        LengthDistributionData[, WeightedCount := sum(WeightedCount), by = haulGrouping]
+        keep <- !duplicated(LengthDistributionData[, ..haulGrouping])
         LengthDistributionData <- subset(LengthDistributionData, keep)
         
         
         # Add the haul density as the WeightedCount to the SuperIndividualsData (requiring Normalized LengthDistributionType):
         SuperIndividualsData <- merge(
             SuperIndividualsData, 
-            LengthDistributionData[, c(..by, "WeightedCount")], 
-            by = by
+            LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
+            by = haulGrouping
         )
         
         # Multiply the equal abundanceWeightFactor by the haul density divided by its sum for each combination of Stratum, Layer, SpeciesCategory and LengthGroup:
-        SuperIndividualsData[, abundanceWeightFactor := WeightedCount / sum(WeightedCount) , by = by]
+        #sumBy <- c(
+        #    getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE), 
+        #    "LengthGroup"
+        #)
+        SuperIndividualsData[, abundanceWeightFactor := WeightedCount / sum(WeightedCount) , by = haulGrouping]
+        
+        # Get the number of individuals in each Haul:
+        SuperIndividualsData[, individualCount := as.double(.N), by = haulGrouping]
         
         # Remove "WeightedCount":
         SuperIndividualsData[, WeightedCount := NULL]
@@ -201,7 +212,12 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         stop("Invalid AbundWeightMethod")
     }
     
+    # Order by the grouping variables:
+    SuperIndividualsData <- setorderv(SuperIndividualsData, abundanceGrouping)
+    
     # Multiply by abundance weighting factors:
+    #print(SuperIndividualsData[, "abundanceWeightFactor"], 20)
+    #print(SuperIndividualsData[, "individualCount"], 20)
     SuperIndividualsData[, Abundance := Abundance * abundanceWeightFactor]
     
     # Divide by the number of individuals (regardless of AbundWeightMethod)
@@ -209,7 +225,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     
     # Remove the temporary columns:
     toRemove <- c("LengthGroup", "abundanceWeightFactor", "individualCount")
-    SuperIndividualsData[, c(toRemove) := NULL]
+    #SuperIndividualsData[, c(toRemove) := NULL]
     
     # Order 
     toOrderFirst <- c(

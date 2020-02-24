@@ -358,6 +358,10 @@ LengthDependentCatchCompensation <- function(
         LengthDistributionDataCopy[, LengthDistributionType := paste0("SelectivityCompensated", LengthDistributionType)]
     }
     
+    # Keep only the releavnt columns:
+    keepOnlyRelevantColumns(LengthDistributionDataCopy, "LengthDistributionData")
+    
+    
     return(LengthDistributionDataCopy)
 }
 
