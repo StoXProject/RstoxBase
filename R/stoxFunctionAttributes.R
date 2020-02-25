@@ -225,7 +225,12 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SuperIndividualsData"
-    )
+    ), 
     
+    DefineAcousticTargetStrength = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "AcousticTargetStrength"
+    )
     
 )

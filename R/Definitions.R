@@ -91,6 +91,11 @@ initiateRstoxBase <- function(){
     
     proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
     
+    targetStrengthParameters <- list(
+        Standard = c("m", "a"), 
+        DepthDependent = c("m", "a", "d")
+    )
+    
     #### Assign to RstoxEnv and return the definitions: ####
     definitionsNames <- ls()
     definitions <- lapply(definitionsNames, get, pos = environment())
@@ -328,5 +333,5 @@ determineAggregationVariables <- function(
 }
 
 
-# Add getPresentResolution(data)!!!!!!!!!
+
 

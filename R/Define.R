@@ -603,3 +603,97 @@ DefineBioticAssignment <- function(
 }
 
 
+##################################################
+#' Acoustic target strength definition
+#' 
+#' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
+#' 
+#' @inheritParams DefineStrata
+#' @param ParameterTable A table of target strength to length equation parameters, including the column \code{EquationType} and \code{m} and \code{a} for \code{EquationType = "Standard"} and \code{m}, \code{a} and \code{d} for \code{EquationType = "DepthDependent"}. Also allowed are columns representing variables in the \code{\link{NASCData}}, such as "SpeciesCategory" and "Frequency".
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A \code{\link{NASCData}} object.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @export
+#' 
+DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Table", "ResourceFile"), ParameterTable = data.table::data.table(), FileName, UseProcessData = FALSE) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    if(DefinitionMethod == "Table") {
+        if(length(ParameterTable) == 0) {
+            stop("ParameterTable must be given if DefinitionMethod = \"Table\"")
+        }
+    }
+    else if(DefinitionMethod == "ResourceFile") {
+        ParameterTable <- data.table::fread(FileName)
+    }
+    
+    # Check that the ParameterTable contains only valid columns:
+    checkAcousticTargetStrengthEquationType(ParameterTable)
+    
+    checkAcousticTargetStrengthPresentColumns(ParameterTable)
+    
+    return(ParameterTable)
+}
+
+
+checkAcousticTargetStrengthPresentColumns <- function(ParameterTable) {
+    
+    # Get the valid columns of the NASCData:
+    NASCDataDefinition <- RstoxBase:::getDataTypeDefinition("NASCData", unlist = TRUE)
+    
+    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
+    
+    validColumnNames <- c(
+        NASCDataDefinition, 
+        unique(unlist(targetStrengthParameters[ParameterTable$EquationType])), 
+        "EquationType"
+    )
+    invalidColumns <- setdiff(
+        names(ParameterTable), 
+        validColumnNames
+    )
+    
+    if(length(invalidColumns)) {
+        stop("The acoustic target strength parameter table containes the following inavlid columns: ", paste(invalidColumns, collapse = ", "))
+    }
+}
+
+checkAcousticTargetStrengthEquationType <- function(ParameterTable) {
+    
+    # Check that EquationType is given:
+    if(length(ParameterTable$EquationType) == 0) {
+        stop("EquationType must be gievn")
+    }
+    ## Check that all values are equal in the EquationType:
+    #if(! all(ParameterTable$EquationType == ParameterTable$EquationType[1])) {
+    #    stop("EquationType must be the same in all rows")
+    #}
+    
+    # EquationType:
+    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
+    for(type in names(targetStrengthParameters)) {
+        if(ParameterTable$EquationType[1] == type) {
+            if(! all(targetStrengthParameters[[type]] %in% names(ParameterTable))) {
+                stop("With EquationType = \"", type, "\" the columns ", paste(targetStrengthParameters[[type]], collapse = ", "), " must be given.")
+            }
+        }
+    }
+    if(! ParameterTable$EquationType[1] %in% names(targetStrengthParameters)) {
+        stop("Invalid EquationType.")
+    }
+}
+
+
