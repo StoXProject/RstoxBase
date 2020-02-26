@@ -58,11 +58,13 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         stop("Unknown model type")
     }
     
+    # Get SSUs:
+    SSU <- StoxData[[SSULevel]][[SSUName]]
+    
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
         # Define PSUIDs and PSUNames:
-        SSU <- StoxData[[SSULevel]][[SSUName]]
         PSUID <- seq_along(SSU)
         PSUName <- paste0(prefix, formatC(PSUID, width = nchar(max(PSUID)), format = "d", flag = "0"))
         
