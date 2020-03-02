@@ -96,6 +96,9 @@ initiateRstoxBase <- function(){
         DepthDependent = c("m", "a", "d")
     )
     
+    AcousticPSUPrefix <- "PSU"
+    SweptAreaPSUPrefix <- "PSU"
+    
     #### Assign to RstoxEnv and return the definitions: ####
     definitionsNames <- ls()
     definitions <- lapply(definitionsNames, get, pos = environment())

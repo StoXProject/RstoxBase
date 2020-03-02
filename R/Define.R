@@ -47,12 +47,14 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
     if(modelType == "Acoustic") {
         SSULevel <- "Log"
         SSUName <- "EDSU"
-        prefix <- "T"
+        #prefix <- "T"
+        prefix <- getRstoxBaseDefinitions("AcousticPSUPrefix")
     }
     else if(modelType == "SweptArea") {
         SSULevel <- "Station"
         SSUName <- "Station"
-        prefix <- "S"
+        #prefix <- "S"
+        prefix <- getRstoxBaseDefinitions("SweptAreaPSUPrefix")
     }
     else {
         stop("Unknown model type")
@@ -108,7 +110,13 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
     
     # Rename the data according to the model type:
     data.table::setnames(SSU_PSU, "SSU", SSUName)
-    out <- structure(list(Stratum_PSU, SSU_PSU), names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_")))
+    out <- structure(
+        list(
+            Stratum_PSU, 
+            SSU_PSU
+        ), 
+        names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
+    )
     return(out)
 }
 

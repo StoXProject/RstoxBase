@@ -75,7 +75,7 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 DefinitionMethod = "Stratum"
             ), 
-            AcousticData = list(
+            StoxAcousticData = list(
                 DefinitionMethod = "Radius"
             ), 
             Radius = list(
@@ -143,7 +143,10 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
-        functionParameterFormat = list(), 
+        functionParameterFormat = list(
+            LengthDependentSweepWidthParameters = "catchCompensationTable", 
+            LengthDependentSelectivityParameters = "selectivityTable"
+        ), 
         functionArgumentHierarchy = list(
             LengthDependentSweepWidthParameters = list(
                 CompensationMethod = "LengthDependentSweepWidth"
@@ -218,7 +221,15 @@ stoxFunctionAttributes <- list(
     Individuals = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "IndividualsData"
+        functionOutputDataType = "IndividualsData", 
+        functionArgumentHierarchy = list(
+            BioticAssignment = list(
+                DensityType = "Acoustic"
+            ), 
+            LengthDistributionData = list(
+                DensityType = "SweptArea"
+            )
+        )
     ), 
     
     SuperIndividuals = list(
