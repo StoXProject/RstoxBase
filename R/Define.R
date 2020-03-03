@@ -547,6 +547,7 @@ DefineBioticAssignment <- function(
     processData, 
     NASCData, StoxBioticData, 
     DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
+    StoxAcousticData, AcousticPSU, 
     StratumPolygon, Radius = double(), 
     MinNumStations = integer(), RefGCDistance = double(), RefTime = "", RefBotDepth = double(), RefLatitude = double(), RefLongitude = double(), 
     UseProcessData = FALSE) {
@@ -607,6 +608,9 @@ DefineBioticAssignment <- function(
             Haul = Haul, 
             WeightingFactor = lapply(Haul, function(x) rep(1, length(x)))
         )
+    }
+    else {
+        stop("Only DefinitionMethod = Stratum currently implemented")
     }
     
     return(BioticAssignment)

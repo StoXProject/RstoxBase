@@ -241,7 +241,18 @@ stoxFunctionAttributes <- list(
     DefineAcousticTargetStrength = list(
         functionType = "processData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "AcousticTargetStrength"
+        functionOutputDataType = "AcousticTargetStrength", 
+        functionParameterFormat = list(
+            ParameterTable = "acousticTargetStrengthTable"
+        ), 
+        functionArgumentHierarchy = list(
+            ParameterTable = list(
+                DefinitionMethod = "Table"
+            ), 
+            FileName = list(
+                DefinitionMethod = "ResourceFile"
+            )
+        )
     )
     
 )
