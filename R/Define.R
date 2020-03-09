@@ -117,6 +117,11 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         ), 
         names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
     )
+    # Add a list of all strata:
+    out$Stratum <- data.table::data.table(
+        Stratum = getStratumNames(StratumPolygon)
+    )
+    
     return(out)
 }
 
@@ -655,9 +660,9 @@ DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Tabl
     }
     
     # Check that the ParameterTable contains only valid columns:
-    checkAcousticTargetStrengthEquationType(ParameterTable)
-    
-    checkAcousticTargetStrengthPresentColumns(ParameterTable)
+    #checkAcousticTargetStrengthEquationType(ParameterTable)
+    #
+    #checkAcousticTargetStrengthPresentColumns(ParameterTable)
     
     return(ParameterTable)
 }
@@ -688,9 +693,9 @@ checkAcousticTargetStrengthPresentColumns <- function(ParameterTable) {
 checkAcousticTargetStrengthEquationType <- function(ParameterTable) {
     
     # Check that EquationType is given:
-    if(length(ParameterTable$EquationType) == 0) {
-        stop("EquationType must be gievn")
-    }
+    #if(length(ParameterTable$EquationType) == 0) {
+    #    stop("EquationType must be gievn")
+    #}
     ## Check that all values are equal in the EquationType:
     #if(! all(ParameterTable$EquationType == ParameterTable$EquationType[1])) {
     #    stop("EquationType must be the same in all rows")

@@ -201,7 +201,7 @@ CombineNASC <- function(NASCData) {
 #' 
 #' This function averages NASC data horizontally, weighted by the log distance.
 #' 
-#' @inheritParams MeanNASC
+#' @inheritParams SumNASC
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.

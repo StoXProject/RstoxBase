@@ -6,6 +6,11 @@
 \usage{
 MeanNASC(NASCData, TargetResolution = "PSU")
 }
+\arguments{
+\item{NASCData}{The NASC data.}
+
+\item{TargetResolution}{The vertical resolution of the output.}
+}
 \value{
 A \code{\link{NASCData}} object.
 }
