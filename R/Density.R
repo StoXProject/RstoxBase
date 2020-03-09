@@ -21,67 +21,150 @@
 #' @export
 #' @import data.table
 #' 
-AcousticDensity <- function(NASCData, m = 20, a = -70, d = double()) {
-    # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
+
+AcousticDensity <- function(NASCData,AssignedLengthDistributionData,
+                            TargetStrengthTable,SpeciesLinkTable,
+                            TargetStrengthMethod = c('StandardModel')){
     
     
-    #Grab the nasc data values
-    tmp<-NASCData[,c('Stratum','PSU','Layer','Channel',
-                     'AcousticCategory','Frequency','NASC',
-                     'MinChannelRange', 'MaxChannelRange', 
-                     'MinLayerRange', 'MaxLayerRange')]
     
-    
-    #Find the mean depth
-    if(all(is.na(tmp$MinChannelRange))){
-        tmp$MeanDepth <- rowMeans(tmp[,c('MinLayerRange','MaxLayerRange')])
-    }else{
-        tmp$MeanDepth <- rowMeans(tmp[,c('MinChannelRange','MaxChannelRange')])
-        tmp$Layer <- tmp$Channel
+    #################################################################
+    #   Define a function to add TS according to selected model     #
+    #################################################################
+    TargetStrengthFunctions <- function(TargetStrengthMethod,DensityData){
+        
+        #Check wich model is selected
+        if(TargetStrengthMethod=='StandardModel'){
+            
+            #Check if all parameters is avaliable
+            if(!all(c("d",'a','m') %in% colnames(DensityData),T)){
+                warning('mad parameters is not added')
+            }
+            
+            #Compute targetstrength
+            DensityData$TargetStrength<-apply(DensityData[,c('IndividualTotalLengthCentimeter','m','a','d','MaxLayerRange','MinLayerRange')],1,
+                                              function(x) x['m']*log10(x['IndividualTotalLengthCentimeter'])+x['a']+x['d']*log10(1+(mean(c(x['MaxLayerRange'],x['MinLayerRange']))/10)))
+            
+            
+        }ifelse(TargetStrengthMethod=='ReferenceTable'){
+            warning('Reference table is not implemented')
+        }
+        else{
+            warning('Selected model do not exist')
+        }
+        
+        
     }
+        
     
     
-    #Remove redundent stuff
-    tmp[,c('Channel','MinChannelRange','MaxChannelRange','MinLayerRange','MaxLayerRange')]<-NULL
+    #################################################################
+    #    Merge TargetStrengthTable with SpeciesLinkTable            #
+    #################################################################
+    # TargetStrengthTable <-c('AcousticCategory',m,a,d) #og evnt frequency,stratum, layer,
+    # SpeciesLinkTable <- c('SpeciesLink','AcousticCathegory')
+    TargetStrengthTable<-merge(TargetStrengthTable,SpeciesLinkTable)
+        
+        
+    # #If length is missing, grab from biology data
+    # if(is.null(TargetStrengthReferenceTable$IndividualTotalLengthCentimeter)){
+    #     TargetStrengthReferenceTable<-TargetStrengthReferenceTable[unique(AssignedLengthDistributionData[,c('SpeciesCategory','IndividualTotalLengthCentimeter','LengthResolutionCentimeter'),]),on=.(SpeciesCategory)]
+    # }
     
     
-    #Start making DensityData
-    DensityData <- AssignedLengthDistributionData
+    #################################################################
+    #         Join NASCData with species link                       #
+    #################################################################
+    # NASCData$Channel<-NULL
+    # NASCData$MinChannelRange<-NULL
+    # NASCData$MaxChannelRange<-NULL
+    # unique(NASCData)
+    DensityData<-NASCData[TargetStrengthReferenceTable[,c('AcousticCategory','SpeciesCategory')],on=.(AcousticCategory),SpeciesCategory:=SpeciesCategory]
     
     
-    #Merge DensityData with NASCData
-    DensityData<-merge(DensityData,tmp,by=c("PSU","Stratum","AcousticCategory","Frequency","Layer"),all=TRUE)
+    
+    
+    #################################################################
+    #         Remove horizontal resolution not in NASCData          #
+    ################################################################# 
+    rmo <- c(names((colSums(is.na(DensityData[,c('Stratum','PSU')])) == nrow(DensityData[,c('Stratum','PSU')])))[(colSums(is.na(DensityData[,c('Stratum','PSU')])) == nrow(DensityData[,c('Stratum','PSU')]))==T],'assignmentID')
+    tmp <-unique(AssignedLengthDistributionData[,!c('PSU','assignmentID')])
     
     
     
-    #Add species stuff to DensityData
-    #This is a temporaly stuff untill the process data is avaliable
-    DensityData$m = 20
-    DensityData$a = -72
-    DensityData$d = 0
     
     
-    #Add target strength to data
-    DensityData$TS<-apply(DensityData[,c('LengthGroup','m','a','d','MeanDepth')],1,
-                          function(x) x['m']*log10(x['LengthGroup'])+x['a']+x['d']*log10(1+(x['MeanDepth']/10)))
-    
-    #remove mad stuff
-    DensityData[,c('m','a','d')]<-NULL
-    
-    #Find the weigth per group
-    DensityData<-merge(DensityData,DensityData[, .(tmp=sum(10^(TS/10)*WeightedCount)), by = c('PSU','Stratum','AcousticCategory', 'Frequency', 'Layer')]  )
+    #################################################################
+    #         merge DensityData with biology info                   #
+    #################################################################
+    key <- c(names(DensityData)[names(DensityData)%in%names(tmp)])
+    DensityData<- merge(DensityData,tmp,by=key,all.x=T,allow.cartesian=TRUE)
     
     
-    #Find nasc per length group
-    DensityData$NASC <- apply(DensityData,1,function(x) as.numeric(x['NASC'])*(((10^(as.numeric(x['TS'])/10))*as.numeric(x['WeightedCount']))/as.numeric(x['tmp'])))
-    DensityData$tmp <- NULL
     
     
+    
+    #################################################################
+    #         merge DensityData with Target Strengt                 #
+    #################################################################
+    key <- c(names(DensityData)[names(DensityData)%in%names(TargetStrengthReferenceTable)])
+    DensityData<-merge(DensityData,TargetStrengthReferenceTable,by=c(key),all.x=T,allow.cartesian=TRUE)
+    
+    
+    
+    
+    
+    #################################################################
+    #         Compute Target strength when using model              #
+    #################################################################
+    DensityData<-TargetStrengthFunctions(TargetStrengthMethod,DensityData)
+
+    
+        
+    #################################################################
+    #         Compute the total weight                              #
+    #################################################################
+    tmp <- DensityData[, sum(10^(TargetStrength/10)*WeightedCount,na.rm = T), by=.(Stratum,Layer,SpeciesCategory)]
+    DensityData<-merge(DensityData,tmp,by=c(names(DensityData)[names(DensityData)%in%names(tmp)]))
+    
+    
+    
+    
+    
+    
+    #################################################################
+    #         Compute the mean nasc per length group                #
+    #################################################################
+    DensityData$NASC <- apply(DensityData,1,function(x) as.numeric(x['NASC'])*(((10^(as.numeric(x['TargetStrength'])/10))*as.numeric(x['WeightedCount']))/as.numeric(x['V1'])))
+    # DensityData$V1 <- NULL
+    # DensityData$m <- NULL
+    # DensityData$a <- NULL
+    # DensityData$d <- NULL
+    
+    # 
+    # sum(DensityData[(DensityData$Stratum==3)&(DensityData$Layer=='Layer03')]$WeightedCount,na.rm = T)
+    # NASCData[(NASCData$Stratum==3)&(NASCData$Layer=='Layer03')]
+    
+    
+    
+    
+    
+    #################################################################
+    #          Compute number of individs                           #
+    #################################################################
     #Compute the number of idivids per sqare nautical mile per length group
-    DensityData$Density <- apply(DensityData,1,function(x) as.numeric(x['NASC'])/(4*pi*10^(as.numeric(x['TS'])/10)))
+    DensityData$Density <- apply(DensityData,1,function(x) as.numeric(x['NASC'])/(4*pi*10^(as.numeric(x['TargetStrength'])/10)))
     
     
-    return(DensityData)
+    
+    
+    
+    #################################################################
+    #         Cleen DensityData output                              #
+    #################################################################
+    relevantVariables <- getAllDataTypeVariables(dataType = "DensityData")
+    DensityData <- DensityData[, ..relevantVariables]
+    
 }
 
 
