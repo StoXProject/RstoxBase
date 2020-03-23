@@ -18,12 +18,15 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum", "PSU", "EDSU"), 
             verticalResolution = c("Layer", "Channel"), 
             categoryVariable = "AcousticCategory", 
-            groupingVariables = c("ChannelReference", "Frequency"), 
+            groupingVariables = c("Frequency"), 
+            coordinateSystemOrigin = "ChannelReferenceDepth", 
+            coordinateSystemOrientation = "ChannelReferenceOrientation", 
             data = "NASC", 
-            #verticalDimension = c("MinChannelRange", "MaxChannelRange", "MinLayerRange", "MaxLayerRange"), 
+            #verticalDimension = c("MinChannelRange", "MaxChannelRange", "MinLayerDepth", "MaxLayerDepth"), 
             verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
-            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "NASCWeight", 
+            type = "ChannelReferenceType", 
             other = "EffectiveLogDistance"
         ), 
         LengthDistributionData = list(
@@ -32,11 +35,12 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            #verticalDimension = c("MinHaulDepth", "MaxHaulDepth", "MinLayerRange", "MaxLayerRange"), 
+            #verticalDimension = c("MinHaulDepth", "MaxHaulDepth", "MinLayerDepth", "MaxLayerDepth"), 
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
-            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "LengthDistributionWeight", 
-            other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread", "LengthDistributionType")
+            type = "LengthDistributionType", 
+            other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
@@ -44,7 +48,7 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "AssignmentLengthDistributionWeight", 
             other = NULL
         ), 
@@ -54,7 +58,7 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Density",
-            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "DensityWeight", 
             other = NULL
         ), 
@@ -64,7 +68,7 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Abundance", 
-            verticalLayerDimension = c("MinLayerRange", "MaxLayerRange"), 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = NULL, 
             other = NULL
         )
@@ -86,6 +90,14 @@ initiateRstoxBase <- function(){
     dataTypeRequiredVariables <- lapply(dataTypeDefinition, getRequiredVariables)
     
     proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+    
+    targetStrengthParameters <- list(
+        Standard = c("m", "a"), 
+        DepthDependent = c("m", "a", "d")
+    )
+    
+    AcousticPSUPrefix <- "PSU"
+    SweptAreaPSUPrefix <- "PSU"
     
     #### Assign to RstoxEnv and return the definitions: ####
     definitionsNames <- ls()
@@ -208,10 +220,7 @@ getAllDataTypeVariables <- function(dataType, unlist = TRUE) {
     )
 }
 
-keepOnlyRelevantColumns <- function(data, dataType) {
-    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
-    data[, ..allDataTypeVariables]
-}
+
 
 
 getAllAggregationVariables <- function(dataType, exclude.groupingVariables = FALSE) {
@@ -318,9 +327,14 @@ determineAggregationVariables <- function(
         finestResolution = finestResolution, 
         dataVariable = thisDataTypeDefinition$data, 
         weightingVariable = thisDataTypeDefinition$weighting, 
+        otherVariables = thisDataTypeDefinition$other, 
         verticalRawDimension = thisDataTypeDefinition$verticalRawDimension, 
         verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension, 
         dataTypeDefinition = dataTypeDefinition
     )
     return(out)
 }
+
+
+
+

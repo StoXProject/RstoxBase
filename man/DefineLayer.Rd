@@ -21,7 +21,7 @@ DefineLayer(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{StoxBioticData}{A list of \code{\link[RstoxDatas]{StoxBioticData}} data.}
+\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
 }
 \value{
 An object of StoX data type \code{\link{SweptAreaLayer}}.

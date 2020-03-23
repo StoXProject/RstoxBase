@@ -17,7 +17,7 @@ DefineSweptAreaPSU(
 
 \item{StratumPolygon}{A list of \code{\link{StratumPolygon}} process data.}
 
-\item{StoxBioticData}{A list of \code{\link[roxygen2]{StoxBioticData}} data.}
+\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.}
 

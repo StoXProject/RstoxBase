@@ -14,7 +14,7 @@ LengthDistribution(
 )
 }
 \arguments{
-\item{StoxBioticData}{A list of \code{\link[roxygen2]{StoxBioticData}} data.}
+\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
 
 \item{SweptAreaPSU}{A list of \code{\link{SweptAreaPSU}} data.}
 

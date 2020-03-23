@@ -2,7 +2,7 @@
 % Please edit documentation in R/Define.R
 \name{DefineAcousticLayer}
 \alias{DefineAcousticLayer}
-\title{Acoustic Layer}
+\title{Define Acoustic Layer}
 \usage{
 DefineAcousticLayer(
   processData,
@@ -16,7 +16,7 @@ DefineAcousticLayer(
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{StoxAcousticData}{A list of \code{\link[RstoxDatas]{StoxAcousticData}} data.}
+\item{StoxAcousticData}{A list of \code{\link[RstoxData]{StoxAcousticData}} data.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.}
 

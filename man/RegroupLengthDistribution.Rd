@@ -24,6 +24,3 @@ This function is awesome and does excellent stuff.
 x <- 1
 
 }
-\seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-}

@@ -21,6 +21,13 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
     
     # Merge the StoxAcousticData:
     NASC <- mergeDataTables(StoxAcousticData)$NASC
+    # Check that the input StoxAcousticData has the same ChannelReferenceType:
+    dataTypeDefinition <- getDataTypeDefinition(dataType = "NASCData")
+    ChannelReferenceType <- NASC[[dataTypeDefinition$type]]
+    if(!all(ChannelReferenceType == ChannelReferenceType[1])) {
+        stop("The StoxAcousticData must have only one ", dataTypeDefinition$type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
+    }
+    
     # Add weights:
     NASC[, NASCWeight := EffectiveLogDistance]
     
@@ -194,7 +201,7 @@ CombineNASC <- function(NASCData) {
 #' 
 #' This function averages NASC data horizontally, weighted by the log distance.
 #' 
-#' @inheritParams MeanNASC
+#' @inheritParams SumNASC
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -213,6 +220,7 @@ CombineNASC <- function(NASCData) {
 MeanNASC <- function(NASCData, TargetResolution = "PSU") {
     meanData(NASCData, dataType = "NASCData", targetResolution = TargetResolution)
 }
+
 
 
 

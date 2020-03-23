@@ -29,7 +29,7 @@ DefineBioticAssignment_temp(
 
 \item{AcousticLayer}{A list of \code{\link{AcousticLayer}} process data.}
 
-\item{StoxBioticData}{A list of \code{\link[roxygen2]{StoxBioticData}} data.}
+\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", which assigns all Hauls to every PSU of each stratum; "Radius", which selects Hauls inside a radius around each PSU????; and "EllipsoidalDistance", which selects Hauls within an ellipsoid defined by axes in space, time, bottom depth *************.}
 

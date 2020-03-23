@@ -13,7 +13,7 @@
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxData  A list of \code{\link[roxygen2]{StoxAcousticData}} data.
+#' @param StoxData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -47,22 +47,26 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
     if(modelType == "Acoustic") {
         SSULevel <- "Log"
         SSUName <- "EDSU"
-        prefix <- "T"
+        #prefix <- "T"
+        prefix <- getRstoxBaseDefinitions("AcousticPSUPrefix")
     }
     else if(modelType == "SweptArea") {
         SSULevel <- "Station"
         SSUName <- "Station"
-        prefix <- "S"
+        #prefix <- "S"
+        prefix <- getRstoxBaseDefinitions("SweptAreaPSUPrefix")
     }
     else {
         stop("Unknown model type")
     }
     
+    # Get SSUs:
+    SSU <- StoxData[[SSULevel]][[SSUName]]
+    
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
         # Define PSUIDs and PSUNames:
-        SSU <- StoxData[[SSULevel]][[SSUName]]
         PSUID <- seq_along(SSU)
         PSUName <- paste0(prefix, formatC(PSUID, width = nchar(max(PSUID)), format = "d", flag = "0"))
         
@@ -106,7 +110,18 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
     
     # Rename the data according to the model type:
     data.table::setnames(SSU_PSU, "SSU", SSUName)
-    out <- structure(list(Stratum_PSU, SSU_PSU), names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_")))
+    out <- structure(
+        list(
+            Stratum_PSU, 
+            SSU_PSU
+        ), 
+        names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
+    )
+    # Add a list of all strata:
+    out$Stratum <- data.table::data.table(
+        Stratum = getStratumNames(StratumPolygon)
+    )
+    
     return(out)
 }
 
@@ -119,7 +134,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxBioticData    A list of \code{\link[roxygen2]{StoxBioticData}} data.
+#' @param StoxBioticData    A list of \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -163,7 +178,7 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
 #' 
 #' @inheritParams DefineStrata
 #' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxAcousticData  A list of \code{\link[roxygen2]{StoxAcousticData}} data.
+#' @param StoxAcousticData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -188,7 +203,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
         DefinitionMethod <- "Identity"
     }
     
-    DefinePSU(
+    AcousticPSU <- DefinePSU(
         processData = processData, 
         StratumPolygon = StratumPolygon, 
         StoxData = StoxAcousticData, 
@@ -196,6 +211,8 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
         UseProcessData = UseProcessData, 
         modelType = "Acoustic"
     )
+    
+    return(AcousticPSU)
 }
 
 
@@ -207,7 +224,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' 
 #' @inheritParams DefineStrata
 #' @inheritParams DefineAcousticLayer
-#' @param StoxBioticData  A list of \code{\link[RstoxDatas]{StoxBioticData}} data.
+#' @param StoxBioticData  A list of \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -257,12 +274,12 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
         # Create a data.table if a vector of breaks is given:
         if(length(dim(x)) == 1) {
             x <- data.table::data.table(
-                MinLayerRange = x[-length(x)], 
-                MaxLayerRange = x[-1]
+                MinLayerDepth = x[-length(x)], 
+                MaxLayerDepth = x[-1]
             )
         }
         else {
-            names(x) <- c("MinLayerRange", "MaxLayerRange")
+            names(x) <- c("MinLayerDepth", "MaxLayerDepth")
         }
         # Create the Layer names:
         LayerNames <- getDefaultLayerNames(x)
@@ -289,18 +306,18 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
         data = unique(StoxData[[VerticalResolutionLevel]][, c(..VerticalResolutionMin, ..VerticalResolutionMax)]), 
         varMin = VerticalResolutionMin, 
         varMax = VerticalResolutionMax, 
-        lowerName = "MinLayerRange", 
-        upperName = "MaxLayerRange"
+        lowerName = "MinLayerDepth", 
+        upperName = "MaxLayerDepth"
     )
     
     # If "WaterColumn" is requested use the full range:
     if(grepl("WaterColumn", DefinitionMethod, ignore.case = TRUE)) {
         Layer <- data.table::data.table(
             Layer = "WaterColumn", 
-            #MinLayerRange = possibleIntervals[1, 1], 
-            MinLayerRange = 0,
-            #MaxLayerRange = possibleIntervals[nrow(possibleIntervals), 2]
-            MaxLayerRange = Inf
+            #MinLayerDepth = possibleIntervals[1, 1], 
+            MinLayerDepth = 0,
+            #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
+            MaxLayerDepth = Inf
         )
     }
     
@@ -312,7 +329,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
     # If "UserDefined" is requested match the Breaks against the possible breaks:
     else if(grepl("UserDefined", DefinitionMethod, ignore.case = TRUE)) {
         # Error if any of the specified breaks are invalid:
-        if(any(! unlist(LayerTable[, c("MinLayerRange", "MaxLayerRange")]) %in% unlist(possibleIntervals))) {
+        if(any(! unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]) %in% unlist(possibleIntervals))) {
             stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
         }
         else {
@@ -331,12 +348,12 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 
 ##################################################
 ##################################################
-#' Acoustic Layer
+#' Define Acoustic Layer
 #' 
 #' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
 #' @inheritParams DefineStrata
-#' @param StoxAcousticData  A list of \code{\link[RstoxDatas]{StoxAcousticData}} data.
+#' @param StoxAcousticData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -369,13 +386,13 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 
 ##################################################
 ##################################################
-#' Swept-area Layer
+#' Define Swept-area Layer
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
 #' @inheritParams DefineStrata
 #' @inheritParams DefineAcousticLayer
-#' @param StoxBioticData  A list of \code{\link[RstoxDatas]{StoxBioticData}} data.
+#' @param StoxBioticData  A list of \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -535,6 +552,7 @@ DefineBioticAssignment <- function(
     processData, 
     NASCData, StoxBioticData, 
     DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
+    StoxAcousticData, AcousticPSU, 
     StratumPolygon, Radius = double(), 
     MinNumStations = integer(), RefGCDistance = double(), RefTime = "", RefBotDepth = double(), RefLatitude = double(), RefLongitude = double(), 
     UseProcessData = FALSE) {
@@ -596,8 +614,105 @@ DefineBioticAssignment <- function(
             WeightingFactor = lapply(Haul, function(x) rep(1, length(x)))
         )
     }
+    else {
+        stop("Only DefinitionMethod = Stratum currently implemented")
+    }
     
     return(BioticAssignment)
+}
+
+
+##################################################
+#' Acoustic target strength definition
+#' 
+#' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
+#' 
+#' @inheritParams DefineStrata
+#' @param ParameterTable A table of target strength to length equation parameters, including the column \code{EquationType} and \code{m} and \code{a} for \code{EquationType = "Standard"} and \code{m}, \code{a} and \code{d} for \code{EquationType = "DepthDependent"}. Also allowed are columns representing variables in the \code{\link{NASCData}}, such as "SpeciesCategory" and "Frequency".
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A \code{\link{NASCData}} object.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @export
+#' 
+DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Table", "ResourceFile"), ParameterTable = data.table::data.table(), FileName, UseProcessData = FALSE) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    if(DefinitionMethod == "Table") {
+        if(length(ParameterTable) == 0) {
+            stop("ParameterTable must be given if DefinitionMethod = \"Table\"")
+        }
+    }
+    else if(DefinitionMethod == "ResourceFile") {
+        ParameterTable <- data.table::fread(FileName)
+    }
+    
+    # Check that the ParameterTable contains only valid columns:
+    #checkAcousticTargetStrengthEquationType(ParameterTable)
+    #
+    #checkAcousticTargetStrengthPresentColumns(ParameterTable)
+    
+    return(ParameterTable)
+}
+
+
+checkAcousticTargetStrengthPresentColumns <- function(ParameterTable) {
+    
+    # Get the valid columns of the NASCData:
+    NASCDataDefinition <- RstoxBase:::getDataTypeDefinition("NASCData", unlist = TRUE)
+    
+    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
+    
+    validColumnNames <- c(
+        NASCDataDefinition, 
+        unique(unlist(targetStrengthParameters[ParameterTable$EquationType])), 
+        "EquationType"
+    )
+    invalidColumns <- setdiff(
+        names(ParameterTable), 
+        validColumnNames
+    )
+    
+    if(length(invalidColumns)) {
+        stop("The acoustic target strength parameter table containes the following inavlid columns: ", paste(invalidColumns, collapse = ", "))
+    }
+}
+
+checkAcousticTargetStrengthEquationType <- function(ParameterTable) {
+    
+    # Check that EquationType is given:
+    #if(length(ParameterTable$EquationType) == 0) {
+    #    stop("EquationType must be gievn")
+    #}
+    ## Check that all values are equal in the EquationType:
+    #if(! all(ParameterTable$EquationType == ParameterTable$EquationType[1])) {
+    #    stop("EquationType must be the same in all rows")
+    #}
+    
+    # EquationType:
+    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
+    for(type in names(targetStrengthParameters)) {
+        if(ParameterTable$EquationType[1] == type) {
+            if(! all(targetStrengthParameters[[type]] %in% names(ParameterTable))) {
+                stop("With EquationType = \"", type, "\" the columns ", paste(targetStrengthParameters[[type]], collapse = ", "), " must be given.")
+            }
+        }
+    }
+    if(! ParameterTable$EquationType[1] %in% names(targetStrengthParameters)) {
+        stop("Invalid EquationType.")
+    }
 }
 
 
