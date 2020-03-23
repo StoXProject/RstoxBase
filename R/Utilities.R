@@ -381,3 +381,40 @@ keepOnlyRelevantColumns <- function(data, dataType) {
     setcolorder(data, allDataTypeVariables)
 }
 
+
+
+JavaJEXL2R <- function(x, eval=TRUE){
+    
+    if(length(x) == 0 || nchar(x) == 0) {
+        return("")
+    }
+    
+    # Define transformation from Java JEXL to R syntax:
+    pattern_replacement <- rbind(
+        c(" not", " !"), 
+        c(" and ", " && "), 
+        c(" or ", " || "), 
+        c(" eq ", " == "), 
+        c(" ne ", " != "), 
+        c(" lt ", " < "), 
+        c(" le ", " <= "), 
+        c(" gt ", " > "), 
+        c(" ge ", " >= "), 
+        c("true", "TRUE"),  
+        c("false", "FALSE"),  
+        c("null", "NULL")
+    )
+    
+    # Replace Jexl with R:
+    for(i in seq_len(nrow(pattern_replacement))){
+        x <- gsub(pattern_replacement[i,1], pattern_replacement[i,2], x)
+    }
+    
+    # Return the evaluated exprexsion:
+    if(eval){
+        x <- eval(parse(text = x))
+    }
+    
+    return(x)
+}
+

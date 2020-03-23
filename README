@@ -1,17 +1,17 @@
-# RstoxBase version: 1.0 (latest beta, 2020-03-09)
-# R version: 3.5
+# RstoxBase version: 1.1 (latest beta, 2020-03-23)
+# R version: 3.6
 
 
 # This package contains the base StoX functions used for survey estimation
 
 
 # Install the latest developer version
-devtools::install_github("StoXProject/RstoxBase")
+devtools::install_github("https://github.com//RstoxBase@v1.1")
 
 
-# Release notes for RstoxBase_1.0:
-# 1.  Created the package, which will be a library for StoX functions used for survey estimation, including defining resolution and calculating density, abundance and super individual data.
+# Release notes for RstoxBase_1.1:
+# . 
 
-# For historical release notes see https://github.com/StoXProject/RstoxBase/blob/master/NEWS
+# For historical release notes see https://github.com//RstoxBase/blob/master/NEWS
 
 

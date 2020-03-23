@@ -74,9 +74,65 @@ remove_ReadProcessData <- function(projectDescription) {
     return(projectDescription)
 }
 
+modifyFilterBiotic <- function(projectDescription) {
+    
+    # Run only for StoX 2.7:
+    if(checkVersion(projectDescription, resourceversion == "1.92")) {
+        # Find the process using DefineStrata():
+        atProcess <- findProcessFromFunctionName(
+            functionName = "FilterBiotic", 
+            projectDescription =projectDescription, 
+            modelName = "baseline"
+        )
+        if(length(atProcess)) {
+            # Get the filters:
+            filterNames <- c("FishStationExpr", "CatchExpr", "SampleExpr", "IndExpr")
+            
+            # Get the filters:
+            FilterExpression <- lapply(filterNames, function(x) projectDescription$baseline[[atProcess]][[x]])
+            
+            # Convert to R syntax:s
+            FilterExpression <- lapply(FilterExpression, JavaJEXL2R)
+            
+            
+            #FilterExpression <- list(
+            #    fishstation = projectDescription$baseline[[atProcess]]$
+            #)
+            
+            
+            # Backwards compatibility must happen in a separate package, maybe RstoxAPI, or possibly in RstoxFramework!
+            
+            # General conversions:
+            # 1. Get function inputs, by a list of data types in old StoX, except process data, which must be inserted from the last process returning the process data specified in the function inputs of the new function (moev from global to local process data).
+            # 2. Get function parameters, and use individual backwards compatibility functions to map to the new parameters.
+            # 3. Get function name
+            # 4. Get process name
+            # 5. Get process parameters
+            # 6. Get process data
+            
+            
+            
+            
+            
+            #FishStationExpr	fs.getLengthSampleCount('SILDG03') > 9
+            #CatchExpr	species == '161722.G03'
+            #SampleExpr	
+            #IndExpr	
+            #
+            #
+            #JavaJEXL2R
+            
+                
+        }
+    }
+    
+    return(projectDescription)
+}
+
+
 modify_DefineStrata <- function(projectDescription) {
     
-    # Run onl for StoX 2.7:
+    # Run only for StoX 2.7:
     if(checkVersion(projectDescription, resourceversion == "1.92")) {
         # Find the process using DefineStrata():
         atProcess <- findProcessFromFunctionName(
@@ -85,13 +141,13 @@ modify_DefineStrata <- function(projectDescription) {
             modelName = "baseline"
         )
         if(length(atProcess)) {
-            projectDescription$baseline[[atProcess]]
-            
-            
+            # Get the stratum multypolygon WKT table, and ocnvert to SpatialPolygonsDataFrame, and then to JSON
+            stratumpolygon_WKT <- projectDescription$processdata$stratumpolygon
+            stratumpolygon_sp <- RstoxBase:::dataTable2SpatialPolygonsDataFrame(stratumpolygon_WKT)
+            # Add the SpatialPolygonsDataFrame to the process data of the process:
+            projectDescription$baseline[[atProcess]]$processData <- stratumpolygon_sp
         }
-        
     }
-        
     
     return(projectDescription)
 }
