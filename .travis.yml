@@ -2,9 +2,9 @@ language: R
 matrix:
   include:
   - os: linux
-    r: 3.5
+    r: 3.6
   - os: osx
-    r: 3.5
+    r: 3.6
 addons:
   apt:
     packages:
