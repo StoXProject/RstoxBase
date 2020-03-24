@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sum NASC — SumNASC • RstoxBase</title>
+<title>Acoustic target strength definition — DefineAcousticTargetStrength • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Sum NASC — SumNASC" />
-<meta property="og:description" content="This function sums NASC data vertically into layer resolution" />
+<meta property="og:title" content="Acoustic target strength definition — DefineAcousticTargetStrength" />
+<meta property="og:description" content="This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,27 +105,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sum NASC</h1>
-    <small class="dont-index">Source: <a href='https://github.com/NA/NA/blob/master/R/Acoustic.R'><code>R/Acoustic.R</code></a></small>
-    <div class="hidden name"><code>SumNASC.Rd</code></div>
+    <h1>Acoustic target strength definition</h1>
+    <small class="dont-index">Source: <a href='https://github.com/NA/NA/blob/master/R/Define.R'><code>R/Define.R</code></a></small>
+    <div class="hidden name"><code>DefineAcousticTargetStrength.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function sums NASC data vertically into layer resolution</p>
+    <p>This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SumNASC</span>(<span class='no'>NASCData</span>, <span class='kw'>TargetResolution</span> <span class='kw'>=</span> <span class='st'>"Layer"</span>)</pre>
+    <pre class="usage"><span class='fu'>DefineAcousticTargetStrength</span>(
+  <span class='no'>processData</span>,
+  <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Table"</span>, <span class='st'>"ResourceFile"</span>),
+  <span class='kw'>ParameterTable</span> <span class='kw'>=</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
+  <span class='no'>FileName</span>,
+  <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>NASCData</th>
-      <td><p>The NASC data.</p></td>
+      <th>processData</th>
+      <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr>
     <tr>
-      <th>TargetResolution</th>
-      <td><p>The vertical resolution of the output.</p></td>
+      <th>ParameterTable</th>
+      <td><p>A table of target strength to length equation parameters, including the column <code>EquationType</code> and <code>m</code> and <code>a</code> for <code>EquationType = "Standard"</code> and <code>m</code>, <code>a</code> and <code>d</code> for <code>EquationType = "DepthDependent"</code>. Also allowed are columns representing variables in the <code><a href='NASCData.html'>NASCData</a></code>, such as "SpeciesCategory" and "Frequency".</p></td>
+    </tr>
+    <tr>
+      <th>FileName</th>
+      <td><p>The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.</p></td>
+    </tr>
+    <tr>
+      <th>UseProcessData</th>
+      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     </table>
 
@@ -135,9 +149,6 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function is awesome and does excellent stuff.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='NASC.html'>NASC</a></code> and <code>SumNASC</code>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span></div></pre>
@@ -148,7 +159,6 @@
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

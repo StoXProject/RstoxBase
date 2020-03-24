@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/StoXProject/RstoxBase">
+  <a href="https://github.com/NA/NA">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -106,7 +106,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get RstoxBase definitions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Definitions.R'><code>R/Definitions.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/NA/NA/blob/master/R/Definitions.R'><code>R/Definitions.R</code></a></small>
     <div class="hidden name"><code>getRstoxBaseDefinitions.Rd</code></div>
     </div>
 
@@ -134,7 +134,10 @@
     <p>A list of definitions.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span>()</div><div class='output co'>#&gt; $dataTypeDefinition
+    <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span>()</div><div class='output co'>#&gt; $AcousticPSUPrefix
+#&gt; [1] "PSU"
+#&gt; 
+#&gt; $dataTypeDefinition
 #&gt; $dataTypeDefinition$NASCData
 #&gt; $dataTypeDefinition$NASCData$horizontalResolution
 #&gt; [1] "Stratum" "PSU"     "EDSU"   
@@ -146,7 +149,13 @@
 #&gt; [1] "AcousticCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$groupingVariables
-#&gt; [1] "ChannelReference" "Frequency"       
+#&gt; [1] "Frequency"
+#&gt; 
+#&gt; $dataTypeDefinition$NASCData$coordinateSystemOrigin
+#&gt; [1] "ChannelReferenceDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$NASCData$coordinateSystemOrientation
+#&gt; [1] "ChannelReferenceOrientation"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$data
 #&gt; [1] "NASC"
@@ -155,10 +164,13 @@
 #&gt; [1] "MinChannelRange" "MaxChannelRange"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$verticalLayerDimension
-#&gt; [1] "MinLayerRange" "MaxLayerRange"
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$weighting
 #&gt; [1] "NASCWeight"
+#&gt; 
+#&gt; $dataTypeDefinition$NASCData$type
+#&gt; [1] "ChannelReferenceType"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$other
 #&gt; [1] "EffectiveLogDistance"
@@ -184,14 +196,17 @@
 #&gt; [1] "MinHaulDepth" "MaxHaulDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$verticalLayerDimension
-#&gt; [1] "MinLayerRange" "MaxLayerRange"
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$weighting
 #&gt; [1] "LengthDistributionWeight"
 #&gt; 
+#&gt; $dataTypeDefinition$LengthDistributionData$type
+#&gt; [1] "LengthDistributionType"
+#&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$other
 #&gt; [1] "EffectiveTowedDistance" "VerticalNetOpening"     "HorizontalNetOpening"  
-#&gt; [4] "TrawlDoorSpread"        "LengthDistributionType"
+#&gt; [4] "TrawlDoorSpread"       
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData
@@ -211,7 +226,7 @@
 #&gt; [1] "WeightedCount"
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData$verticalLayerDimension
-#&gt; [1] "MinLayerRange" "MaxLayerRange"
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData$weighting
 #&gt; [1] "AssignmentLengthDistributionWeight"
@@ -237,7 +252,7 @@
 #&gt; [1] "Density"
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData$verticalLayerDimension
-#&gt; [1] "MinLayerRange" "MaxLayerRange"
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData$weighting
 #&gt; [1] "DensityWeight"
@@ -263,7 +278,7 @@
 #&gt; [1] "Abundance"
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$verticalLayerDimension
-#&gt; [1] "MinLayerRange" "MaxLayerRange"
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$weighting
 #&gt; NULL
@@ -275,8 +290,8 @@
 #&gt; 
 #&gt; $dataTypeRequiredVariables
 #&gt; $dataTypeRequiredVariables$NASCData
-#&gt; [1] "EDSU"             "Channel"          "AcousticCategory" "ChannelReference"
-#&gt; [5] "Frequency"        "NASCWeight"      
+#&gt; [1] "EDSU"             "Channel"          "AcousticCategory" "Frequency"       
+#&gt; [5] "NASCWeight"      
 #&gt; 
 #&gt; $dataTypeRequiredVariables$LengthDistributionData
 #&gt; [1] "Station"                         "Haul"                           
@@ -305,12 +320,23 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x4ab7590&gt;
-#&gt; &lt;environment: 0x4ab66b0&gt;
+#&gt; &lt;bytecode: 0x3912630&gt;
+#&gt; &lt;environment: 0x3913548&gt;
 #&gt; 
 #&gt; $proj4string
 #&gt; CRS arguments:
 #&gt;  +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+#&gt; 
+#&gt; $SweptAreaPSUPrefix
+#&gt; [1] "PSU"
+#&gt; 
+#&gt; $targetStrengthParameters
+#&gt; $targetStrengthParameters$Standard
+#&gt; [1] "m" "a"
+#&gt; 
+#&gt; $targetStrengthParameters$DepthDependent
+#&gt; [1] "m" "a" "d"
+#&gt; 
 #&gt; </div><div class='input'>
 </div></pre>
   </div>
