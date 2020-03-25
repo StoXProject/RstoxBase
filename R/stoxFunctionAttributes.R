@@ -53,7 +53,14 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "AcousticLayer", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            Resolution = list(
+                DefinitionMethod = "Resolution"
+            ), 
+            LayerTable = list(
+                DefinitionMethod = "LayerTable"
+            )
+        )
     ), 
     
     # Define swept-area Layer:
@@ -62,7 +69,14 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaLayer", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            Resolution = list(
+                DefinitionMethod = "Resolution"
+            ), 
+            LayerTable = list(
+                DefinitionMethod = "LayerTable"
+            )
+        )
     ), 
     
     # Define acoustic PSUs:

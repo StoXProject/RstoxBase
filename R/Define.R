@@ -241,7 +241,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
+DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -326,8 +326,8 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
         Layer <- createLayerTable(possibleIntervals)
     }
     
-    # If "UserDefined" is requested match the Breaks against the possible breaks:
-    else if(grepl("UserDefined", DefinitionMethod, ignore.case = TRUE)) {
+    # If "LayerTable" is requested match the Breaks against the possible breaks:
+    else if(grepl("LayerTable", DefinitionMethod, ignore.case = TRUE)) {
         # Error if any of the specified breaks are invalid:
         if(any(! unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]) %in% unlist(possibleIntervals))) {
             stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
@@ -335,6 +335,10 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
         else {
             Layer <- LayerTable
         }
+    }
+    
+    else if(grepl("Resolution", DefinitionMethod, ignore.case = TRUE)) {
+        stop("DefinitionMethod \"Resolution\" not yet implemented")
     }
     
     else {
@@ -370,7 +374,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
     
     DefineLayer(
         processData = processData, 
@@ -409,7 +413,7 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 #' @export
 #' @import data.table
 #' 
-DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
     
     DefineLayer(
         processData = processData, 
