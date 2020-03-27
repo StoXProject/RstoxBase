@@ -7,7 +7,7 @@
 DefineAcousticLayer(
   processData,
   StoxAcousticData,
-  DefinitionMethod = c("WaterColumn", "HighestResolution", "UserDefined"),
+  DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"),
   Resolution = double(),
   LayerTable = data.table::data.table(),
   UseProcessData = FALSE

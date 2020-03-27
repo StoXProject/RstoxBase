@@ -21,6 +21,7 @@ addons:
     - proj
     - gdal
     - geos
+cran: https://cran.revolutionanalytics.com
 if: tag IS blank
 sudo: false
 cache: packages
