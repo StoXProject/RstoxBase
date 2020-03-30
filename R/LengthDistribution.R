@@ -301,9 +301,9 @@ LengthDependentCatchCompensation <- function(
         # And the lengths larger than LMax to LMax: 
         IndividualTotalLengthCentimeterMiddle <- pmin(IndividualTotalLengthCentimeterMiddle, LMax)
         
-        # Calculate the factor to multiply the WeightedCount:
+        # Calculate the factor to multiply the WeightedCount by:
         sweepWidth <- Alpha * IndividualTotalLengthCentimeterMiddle^Beta
-        WeightedCount <- WeightedCount / sweepWidth
+        WeightedCount <- WeightedCount * 1852 / sweepWidth
         
         return(WeightedCount)
     }
@@ -419,7 +419,7 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
 
 # Function to extract the variables 'vars' from a data.table at the rows matching the input vector 'select' to the column 'refvar' of the table:
 extractColumnsBy <- function(values, table, refvar, vars) {
-    matchIndices <- match(values, table[, ..refvar])
+    matchIndices <- match(values, unlist(table[, ..refvar]))
     table[matchIndices, ..vars]
 }
 
