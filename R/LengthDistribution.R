@@ -303,7 +303,8 @@ LengthDependentCatchCompensation <- function(
         
         # Calculate the factor to multiply the WeightedCount by:
         sweepWidth <- Alpha * IndividualTotalLengthCentimeterMiddle^Beta
-        WeightedCount <- WeightedCount * 1852 / sweepWidth
+        sweepWidthInNauticalMiles <- sweepWidth / 1852
+        WeightedCount <- WeightedCount / sweepWidthInNauticalMiles
         
         return(WeightedCount)
     }
@@ -317,7 +318,7 @@ LengthDependentCatchCompensation <- function(
     applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMax, Alpha, Beta) {
         # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
         if(any(is.na(LMax))) {
-            stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
+            stop("The function applyLengthDependentSelectivity() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
         }
         
         # Calculate the factor to multiply the WeightedCount:
