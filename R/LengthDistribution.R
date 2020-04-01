@@ -456,6 +456,7 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
     
     # Apply the division by the sum:
     LengthDistributionDataCopy[, WeightedCount := WeightedCount / sum(WeightedCount) * 100, by = by]
+    LengthDistributionDataCopy[, LengthDistributionType := "Percent"]
     
     return(LengthDistributionDataCopy)
 }

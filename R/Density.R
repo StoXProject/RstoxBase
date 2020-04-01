@@ -161,7 +161,7 @@ SweptAreaDensity <- function(
     DensityData[, DensityWeight := LengthDistributionWeight]
     
     # If LengthDistributionType is "NormalizedLengthDistribution", the effectivev towed distance has been accounted for, but there is still need to account for the sweep width:
-    if(LengthDistributionType %in% c("Normalized", "LengthDependentSelectivity")) {
+    if(LengthDistributionType %in% c("Normalized", "SelectivityCompensatedNormalized")) {
         
         # Use a constant sweep width for all data by default:
         if(SweepWidthMethod == "Constant") {
@@ -180,7 +180,7 @@ SweptAreaDensity <- function(
             }
         }
         else {
-            stop("SweepWidthMethod must be \"Constant\" or \"CruiseDependent\" if LengthDistributionType is \"Normalized\" or \"LengthDependentSelectivity\" in the LengthDistributionData")
+            stop("SweepWidthMethod must be \"Constant\" or \"CruiseDependent\" if LengthDistributionType is \"Normalized\" or \"SelectivityCompensatedNormalized\" in the LengthDistributionData")
         }
         
     }
