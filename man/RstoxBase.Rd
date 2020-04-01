@@ -14,8 +14,8 @@ The StoX functions defined in RstoxBase are those for defining resolution (e.g.,
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com//RstoxBase}
-  \item Report bugs at \url{https://github.com//RstoxBase/issues}
+  \item \url{https://github.com/StoXProject/RstoxBase}
+  \item Report bugs at \url{https://github.com/StoXProject/RstoxBase/issues}
 }
 
 }

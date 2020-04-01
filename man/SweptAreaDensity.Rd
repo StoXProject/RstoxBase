@@ -6,21 +6,19 @@
 \usage{
 SweptAreaDensity(
   LengthDistributionData,
-  SweptAreaMethod = c("LengthDependent", "TotalCatch"),
-  SweepWidthMethod = c("Constant", "CruiseDependent"),
+  SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"),
   SweepWidth = integer(),
-  SweepWidthExpr = character(),
-  CatchVariable = c("Weight", "Count")
+  SweepWidthExpr = character()
 )
 }
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
 
-\item{SweptAreaMethod}{The method used to calculate the density, one of "LengthDependent" and "TotalCatch" (the latter is not )}
-
 \item{SweepWidthMethod}{Parameter descrption.}
 
 \item{SweepWidthExpr}{Parameter descrption.}
+
+\item{SweptAreaMethod}{The method used to calculate the density, one of "LengthDependent" and "TotalCatch" (the latter is not )}
 
 \item{SweepWidthSweepWidth}{Parameter descrption.}
 }
