@@ -19,6 +19,11 @@ for:
 -
   skip_tags: true
 
+before_build:
+  - curl -fsSL -o checktag.sh https://github.com/StoXProject/repo/raw/master/scripts/checktag.sh
+  - curl -fsSL -o deploy.sh https://github.com/StoXProject/repo/raw/master/scripts/deploy.sh
+  - checktag.sh
+
 build_script:
   - travis-tool.sh install_deps
 
@@ -26,12 +31,29 @@ test_script:
   - travis-tool.sh run_tests
 
 before_deploy:
+  # Prepare to deploy DRAT
+  - travis-tool.sh install_r drat
+  - travis-tool.sh install_r git2r
+  - ps: new-item "drat" -itemtype directory
+  - ps: $env:BINSRC = Get-ChildItem -Path . | Where-Object { $_.Extension -eq ".zip" }
+  - ps: $env:PKG_REPO = Get-Location
+  - ps: $env:PKG_REPO = [regex]::escape($env:PKG_REPO)
+  - ps: copy $env:BINSRC .\drat
+  # Do drat deploy whenever it is not a pull request and only for the master branch
   - ps: |
+          if( !$env:APPVEYOR_PULL_REQUEST_NUMBER ) {
+            if( $env:APPVEYOR_REPO_BRANCH  -eq "master" ) {
+              .\deploy.sh
+            }
+          }
+  # Prepare for release deploy
+  - ps: |
+          $env:R_NUMVER = &"Rscript.exe" -e "cat(as.character(getRversion()))"
           $env:PKGVER = Select-String -Path .\DESCRIPTION -Pattern '^Version: ' | % {$_.line -replace "^Version: "}
           $env:PKGNAME = Select-String -Path .\DESCRIPTION -Pattern '^Package: ' | % {$_.line -replace "^Package: "}
-          $SRC_PKG_FILE = "${env:PKGNAME}_$env:PKGVER"
-          Write-Host "File is $SRC_PKG_FILE"
+          Get-ChildItem -Path . | Where-Object { $_.Extension -eq ".zip" }  | % { rename-item –path $_.Fullname –Newname ($_.basename + '-R' + $env:R_NUMVER + $_.extension) }
           $env:BIN_PKG_FILE = Get-ChildItem -Path . | Where-Object { $_.Extension -eq ".zip" }
+          Push-AppveyorArtifact $env:BIN_PKG_FILE
           Write-Host "Resulting binary: $env:BIN_PKG_FILE"
 
 deploy:
@@ -39,8 +61,7 @@ deploy:
   release: '$(PKGNAME)-v$(PKGVER)'
   description: ''
   provider: GitHub
-  auth_token:
-    secure: DH+SAcOLfr0THJKFwqo8rZocwIRYLfZuDE4RPV2mjYvNr5cYa4vo3dlVehRfX6Ce
+  auth_token: $(API_KEY)
   artifact: $(BIN_PKG_FILE)
   draft: false
   prerelease: false
@@ -53,9 +74,12 @@ on_failure:
   - appveyor PushArtifact failure.zip
 
 environment:
-  USE_RTOOLS: true
   NOT_CRAN: true
-  R_VERSION: 3.6.3
+  USE_RTOOLS: true
+  R_REMOTES_STANDALONE: true
+
+  matrix:
+  - R_VERSION: release
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
