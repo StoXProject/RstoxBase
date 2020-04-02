@@ -99,13 +99,14 @@ initiateRstoxBase <- function(){
     AcousticPSUPrefix <- "PSU"
     SweptAreaPSUPrefix <- "PSU"
     
-    #### Assign to RstoxEnv and return the definitions: ####
+    #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
     definitions <- lapply(definitionsNames, get, pos = environment())
     names(definitions) <- definitionsNames
     
     #### Create the RstoxBaseEnv environment, holding definitions on folder structure and all the projects. This environment cna be accesses using RstoxBase:::RstoxBaseEnv: ####
-    utils::globalVariables("RstoxBaseEnv")
+    #utils::globalVariables("RstoxBaseEnv")
+    utils::globalVariables(c("RstoxBaseEnv", ":=") )
     assign("RstoxBaseEnv", new.env(), parent.env(environment()))
     assign("definitions", definitions, envir=get("RstoxBaseEnv"))
     

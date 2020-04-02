@@ -417,4 +417,3 @@ JavaJEXL2R <- function(x, eval=TRUE){
     
     return(x)
 }
-

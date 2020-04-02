@@ -27,8 +27,7 @@ LengthDistribution <- function(
     SweptAreaPSU = NULL, 
     SweptAreaLayer = NULL, 
     LengthDistributionType = c("Normalized", "Standard", "Percent"), 
-    RaisingFactorPriority = c("Weight", "Count"), 
-    acceptNA = TRUE
+    RaisingFactorPriority = c("Weight", "Count")
     # allowMissingWeight = TRUE
 ) {
     
