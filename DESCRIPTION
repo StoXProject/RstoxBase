@@ -18,6 +18,6 @@ Imports:
     RstoxData (>= 0.8.1)
 Suggests: 
     testthat
-Remotes: 
-	StoXProject/RstoxData@RstoxData-v0.8.1
+Additional_repositories:
+    https://stoxproject.github.io/repo
 RoxygenNote: 7.0.2
