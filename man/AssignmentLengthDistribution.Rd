@@ -7,7 +7,7 @@
 AssignmentLengthDistribution(LengthDistributionData, BioticAssignment)
 }
 \arguments{
-\item{LengthDistributionData}{A list of \code{\link{LengthDistributionData}} data.}
+\item{LengthDistributionData}{The length distribution data.}
 
 \item{BioticAssignment}{A list of \code{\link{BioticAssignment}} data.}
 }

@@ -6,7 +6,7 @@
 \alias{RstoxBase-package}
 \title{Base StoX functions}
 \description{
-This package contains the base StoX functions used for survey estimation
+This package contains the base StoX functions used for survey estimation.
 }
 \details{
 The StoX functions defined in RstoxBase are those for defining resolution (e.g., PSUs and Layers), assignment, NASC data and StationLengthDistribution data, density, abundance and superindividual abundance

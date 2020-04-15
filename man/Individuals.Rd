@@ -12,7 +12,13 @@ Individuals(
 )
 }
 \arguments{
-\item{parameterName}{Parameter descrption.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+
+\item{DensityType}{The type of density, one of "Acoustic" and "SweptArea".}
+
+\item{BioticAssignment}{The \code{\link{BioticAssignment}} process data.}
+
+\item{LengthDistributionData}{The length distribution data.}
 }
 \value{
 A data.table is returned with awesome stuff.

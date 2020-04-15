@@ -12,9 +12,10 @@
 #' Underlying function for \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @inheritParams DefineStrata
-#' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' @param StratumPolygon    The \code{\link{StratumPolygon}} process data.
+#' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
+#' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @param modelType         Character: A string naming the type of model, either "Acoustic" or "SweptArea".
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -29,7 +30,6 @@
 #' 
 #' @export
 #' @import data.table
-#' @noRd
 #' 
 DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
     
@@ -133,8 +133,8 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
 #' This function defines the \code{\link{SweptAreaPSU}} process data, linking strata, swept-area PSUs and Stations 
 #' 
 #' @inheritParams DefineStrata
-#' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxBioticData    A list of \code{\link[RstoxData]{StoxBioticData}} data.
+#' @inheritParams DefinePSU
+#' @param StoxBioticData    The \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -177,8 +177,8 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
 #' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
 #' @inheritParams DefineStrata
-#' @param StratumPolygon    A list of \code{\link{StratumPolygon}} process data.
-#' @param StoxAcousticData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
+#' @inheritParams DefinePSU
+#' @param StoxAcousticData  The \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -223,9 +223,11 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
 #' @inheritParams DefineStrata
-#' @inheritParams DefineAcousticLayer
-#' @param StoxBioticData  A list of \code{\link[RstoxData]{StoxBioticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.
+#' @param Resolution  Numeric: A single numeric giving the thickness of the layers.
+#' @param LayerTable A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.
+#' @param modelType Character: A string naming the type of model, either "Acoustic" or "SweptArea".
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -357,8 +359,8 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 #' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
 #' @inheritParams DefineStrata
-#' @param StoxAcousticData  A list of \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' @inheritParams DefineLayer
+#' @inheritParams DefineAcousticPSU
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -395,9 +397,8 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
 #' @inheritParams DefineStrata
-#' @inheritParams DefineAcousticLayer
-#' @param StoxBioticData  A list of \code{\link[RstoxData]{StoxBioticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' @inheritParams DefineLayer
+#' @inheritParams DefineSweptAreaPSU
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -435,108 +436,13 @@ DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod =
 #' 
 #' @inheritParams DefineStrata
 #' @inheritParams DefineSweptAreaPSU
-#' @param AcousticPSU    A list of \code{\link{AcousticPSU}} process data.
-#' @param AcousticLayer  A list of \code{\link{AcousticLayer}} process data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", which assigns all Hauls to every PSU of each stratum; "Radius", which selects Hauls inside a radius around each PSU????; and "EllipsoidalDistance", which selects Hauls within an ellipsoid defined by axes in space, time, bottom depth *************.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' An object of StoX data type \code{\link{AcousticPSU}}.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link{AcousticPSU}}.
-#' 
-#' @export
-#' @import data.table
-#' 
-DefineBioticAssignment_temp <- function(
-    processData, 
-    AcousticPSU, AcousticLayer, StoxBioticData, 
-    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
-    StratumPolygon, 
-    AcousticData, Radius = double(), 
-    MinNumStations = integer(), RefGCDistance = double(), RefTime = "", RefBotDepth = double(), RefLatitude = double(), RefLongitude = double(), 
-    UseProcessData = FALSE) {
-    
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
-    
-    # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
-    
-    # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
-    if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
-        
-        # Create a spatial points object:
-        SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
-        
-        # Get the stratum for each point:
-        StratumIndex <- sp::over(SpatialStations, StratumPolygon)
-        StratumIndex <- as.numeric(unlist(StratumIndex))
-        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
-        
-        # Create a list of the stations of each stratum:
-        stationIndex <- as.numeric(names(StratumIndex))
-        stationList <- split(StoxBioticData$Station$Station[stationIndex], Stratum)
-        
-        # Use all hauls of each station in the automatic assignment method "Stratum":
-        Station_Haul <- merge(
-            StoxBioticData$Station, 
-            StoxBioticData$Haul, 
-            by = intersect(names(StoxBioticData$Station), names(StoxBioticData$Haul))
-        )
-        #message("Remove the hack in BioticStationAssignment where Haul is generated")
-        #Station_Haul$Haul <- paste(Station_Haul$CruiseKey, Station_Haul$StationKey, Station_Haul$HaulKey, sep = "/")
-        
-        # Small funciton to get the hauls of requested stations:
-        getAllHaulsOfStations <- function(Station, Station_Haul) {
-            requestedStations <- Station_Haul$Station %in% Station
-            Station_Haul$Haul[requestedStations]
-        }
-        haulList <- lapply(stationList, getAllHaulsOfStations, Station_Haul = Station_Haul)
-        
-        # Issue an error if there are strata to be used which do not contain any hauls:
-        uniqueStrata <- unique(AcousticPSU$Stratum_PSU$Stratum)
-        nHaulsOfUniqueStrata <- lengths(haulList[uniqueStrata])
-        hasNoHauls <- which(nHaulsOfUniqueStrata == 0)
-        if(length(hasNoHauls)) {
-            stop("The following strata containing acoustic PSUs have no biotic Hauls: ", paste(uniqueStrata[hasNoHauls], collapse = ", "))
-        }
-        
-        # Link the stratum to PSU:
-        # why was this included????? Stratum should not be NA in AcousticPSU
-        #Stratum_PSU <- subset(AcousticPSU$Stratum_PSU, !is.na(AcousticPSU$Stratum_PSU$Stratum))
-        Assignment <- cbind(
-            #Stratum_PSU[, "PSU"], 
-            AcousticPSU$Stratum_PSU[, "PSU"], 
-            Layer = 1, 
-            #Haul = haulList[Stratum_PSU$Stratum], 
-            Haul = haulList[AcousticPSU$Stratum_PSU$Stratum], 
-            WeightingFactor = 1
-        )
-    }
-    
-    return(Assignment)
-}
-
-
-##################################################
-##################################################
-#' Assignnment of biotic hauls to acoustic PSUs
-#' 
-#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
-#' 
-#' @inheritParams DefineStrata
-#' @inheritParams DefineSweptAreaPSU
-#' @param AcousticPSU    A list of \code{\link{AcousticPSU}} process data.
-#' @param AcousticLayer  A list of \code{\link{AcousticLayer}} process data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", which assigns all Hauls to every PSU of each stratum; "Radius", which selects Hauls inside a radius around each PSU????; and "EllipsoidalDistance", which selects Hauls within an ellipsoid defined by axes in space, time, bottom depth *************.
+#' @inheritParams DefineAcousticPSU
+#' @inheritParams SumNASC
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
+#' @param AcousticPSU       The \code{\link{AcousticPSU}} process data.
+#' @param AcousticLayer     The \code{\link{AcousticLayer}} process data.
+#' @param Radius            Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
+#' @param EllipsoidalDistanceTable     Not yet implemented.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -556,9 +462,11 @@ DefineBioticAssignment <- function(
     processData, 
     NASCData, StoxBioticData, 
     DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
-    StoxAcousticData, AcousticPSU, 
-    StratumPolygon, Radius = double(), 
-    MinNumStations = integer(), RefGCDistance = double(), RefTime = "", RefBotDepth = double(), RefLatitude = double(), RefLongitude = double(), 
+    StoxAcousticData, 
+    AcousticPSU, AcousticLayer, 
+    StratumPolygon, 
+    Radius = double(), EllipsoidalDistanceTable = data.table::data.table(), 
+    #MinNumStations = integer(), RefGCDistance = double(), RefTime = "", RefBotDepth = double(), RefLatitude = double(), RefLongitude = double(), 
     UseProcessData = FALSE) {
     
     # Return immediately if UseProcessData = TRUE:
@@ -632,7 +540,9 @@ DefineBioticAssignment <- function(
 #' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 #' 
 #' @inheritParams DefineStrata
-#' @param ParameterTable A table of target strength to length equation parameters, including the column \code{EquationType} and \code{m} and \code{a} for \code{EquationType = "Standard"} and \code{m}, \code{a} and \code{d} for \code{EquationType = "DepthDependent"}. Also allowed are columns representing variables in the \code{\link{NASCData}}, such as "SpeciesCategory" and "Frequency".
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
+#' @param ParameterTable A table of the columns AcousticCategory, Frequency, m, a and d.
+#' @param FileName A file from which to read the \code{ParameterTable}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -675,7 +585,7 @@ DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Tabl
 checkAcousticTargetStrengthPresentColumns <- function(ParameterTable) {
     
     # Get the valid columns of the NASCData:
-    NASCDataDefinition <- RstoxBase:::getDataTypeDefinition("NASCData", unlist = TRUE)
+    NASCDataDefinition <- getDataTypeDefinition("NASCData", unlist = TRUE)
     
     targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
     

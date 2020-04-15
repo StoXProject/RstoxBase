@@ -6,6 +6,7 @@
 #' NASC function converts the StoxAcousticData into
 #' a NASCData format
 #' 
+#' @inheritParams DefineBioticAssignment
 #' @param StoxAcousticData input in a StoxAcoustcdata format
 #' 
 #' @details
@@ -20,7 +21,7 @@
 NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL) {
     
     # Merge the StoxAcousticData:
-    NASC <- mergeDataTables(StoxAcousticData)$NASC
+    NASC <- RstoxData::mergeDataTables(StoxAcousticData)$NASC
     # Check that the input StoxAcousticData has the same ChannelReferenceType:
     dataTypeDefinition <- getDataTypeDefinition(dataType = "NASCData")
     ChannelReferenceType <- NASC[[dataTypeDefinition$type]]
@@ -28,16 +29,26 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
         stop("The StoxAcousticData must have only one ", dataTypeDefinition$type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
     }
     
-    # Add weights:
-    NASC[, NASCWeight := EffectiveLogDistance]
-    
     # Insert the Stratum and PSU column by the AcousticPSU input, and otherwise by NAs:
     NASC <- addPSUDefinition(NASC, PSUDefinition = AcousticPSU)
+    
+    ### # Add also the number of Stations in each PSU, and the number of PSUs in each Stratum:
+    ### PSUSize <- AcousticPSU$EDSU_PSU[, .(PSUSize = length(EDSU)), by = "PSU"]
+    ### StratumSize <- AcousticPSU$Stratum_PSU[, .(StratumSize = length(PSU)), by = "Stratum"]
+    ### # Merge the PSUSize and StratumSize into the LengthDistributionData:
+    ### NASC <- merge(NASC, PSUSize, by = "PSU")
+    ### NASC <- merge(NASC, StratumSize, by = "Stratum")
     
     # Insert the Layer column by the AcousticLayer input, and otherwise by NAs:
     NASC <- addLayerDefinition(NASC, dataType = "NASCData", layerDefinition = AcousticLayer)
     ## Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
     #setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
+    
+    # Add weights:
+    NASC[, NASCWeight := EffectiveLogDistance]
+    
+    # Add the sum of the weigths over the stations of each PSU:
+    NASC[, SummedWeights := sum(NASCWeight), by = "PSU"]
     
     # Extract the relevant variables:
     validVariables <- getAllDataTypeVariables(dataType = "NASCData")
@@ -47,13 +58,14 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
 }
 
 
+
 ##################################################
 #' Sum NASC 
 #' 
 #' This function sums NASC data vertically into layer resolution
 #' 
-#' @inheritParams SumLengthDistribution
-#' @param NASCData The NASC data.
+#' @param NASCData The \code{\link{NASC}} data.
+#' @param TargetResolution The vertical resolution of the output.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -82,7 +94,7 @@ SumNASC <- function(NASCData, TargetResolution = "Layer") {
 #' 
 #' Some description
 #' 
-#' @param parameterName Parameter descrption.
+#' @inheritParams SumNASC
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -109,7 +121,8 @@ CombineNASC <- function(NASCData) {
 #' 
 #' This function averages NASC data horizontally, weighted by the log distance.
 #' 
-#' @inheritParams SumNASC
+#' @param NASCData The \code{\link{NASC}} data.
+#' @param TargetResolution The vertical resolution of the output.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -134,85 +147,5 @@ MeanNASC <- function(NASCData, TargetResolution = "PSU") {
 
 
 
-
-##################################################
-##################################################
-#' Some title
-#' 
-#' Some description
-#' 
-#' @param parameterName Parameter descrption.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-#' 
-#' @export
-#' @import data.table
-#' 
-NASCToAcousticData <- function() {
-	# Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
-}
-
-
-##################################################
-##################################################
-#' Some title
-#' 
-#' Some description
-#' 
-#' @param parameterName Parameter descrption.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-#' 
-#' @export
-#' @import data.table
-#' 
-SplitNASC <- function() {
-	# Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
-}
-
-
-##################################################
-##################################################
-#' Some title
-#' 
-#' Some description
-#' 
-#' @param parameterName Parameter descrption.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-#' 
-#' @export
-#' @import data.table
-#' 
-SplitNASCAssignment <- function() {
-	# Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
-}
 
 

@@ -139,40 +139,32 @@ getCommonIntervals <- function(data, varMin = NULL, varMax = NULL, lowerName = N
 }
 
 # Function to generate StoxBiotic keys:
+#getStoxBioticKeys <- function(levels = NULL) {
+#    if(length(levels) == 0) {
+#        levels <- RstoxData::getStoxBioticLevels()
+#    }
+#    paste0(levels, "Key")
+#}
 getStoxBioticKeys <- function(levels = NULL) {
     if(length(levels) == 0) {
-        levels <- RstoxData::getStoxBioticLevels()
+        levels <- c(
+            "Cruise", 
+            "Station", 
+            "Haul", 
+            "SpeciesCategory", 
+            "Sample", 
+            "Individual"
+        )
     }
     paste0(levels, "Key")
 }
 
-# Function to get Layer indices:
-findLayer_old <- function(data, layerDefinition, varMin, varMax, acceptNA = TRUE) {
-    
-    # This needs to be verified!!!!!!!!!!!!!
-    layerRangeVector <- c(layerDefinition$MinLayerDepth, tail(layerDefinition$MaxLayerDepth, 1))
-    indMin <- findInterval(data[[varMin]], layerRangeVector)
-    indMax <- findInterval(data[[varMax]], layerRangeVector, rightmost.closed = TRUE)
-    LayerInd <- pmax(indMin, indMax, na.rm = acceptNA)
-    
-    if(acceptNA && nrow(layerDefinition) == 1 && layerDefinition$MinLayerDepth == 0 && layerDefinition$MaxLayerDepth == Inf) {
-        LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
-    }
-    
-    LayerData <- data.table::data.table(
-        Layer = layerDefinition$Layer[LayerInd], 
-        MinLayerDepth = layerDefinition$MinLayerDepth[LayerInd], 
-        MaxLayerDepth = layerDefinition$MaxLayerDepth[LayerInd]
-    )
-    
-    LayerData
-}
 
 # Function to get Layer indices:
 findLayer <- function(minDepth, maxDepth, layerDefinition, acceptNA = TRUE) {
     
     # This needs to be verified!!!!!!!!!!!!!
-    layerRangeVector <- c(layerDefinition$MinLayerDepth, tail(layerDefinition$MaxLayerDepth, 1))
+    layerRangeVector <- c(layerDefinition$MinLayerDepth, utils::tail(layerDefinition$MaxLayerDepth, 1))
     indMin <- findInterval(minDepth, layerRangeVector)
     indMax <- findInterval(maxDepth, layerRangeVector, rightmost.closed = TRUE)
     LayerInd <- pmin(indMin, indMax, na.rm = acceptNA)
@@ -296,12 +288,33 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
     dataVariable <- aggregationVariables$dataVariable
     weightingVariable <- aggregationVariables$weightingVariable
+    summedWeightingVariable <- aggregationVariables$summedWeightingVariable
     
     #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
+    #dataCopy[, c(dataVariable, weightingVariable) := list(
+    #    stats::weighted.mean(x = get(dataVariable), w = get(weightingVariable)), 
+    #    sum(get(weightingVariable))
+    #    ), by = by]
     dataCopy[, c(dataVariable, weightingVariable) := list(
-        weighted.mean(x = get(dataVariable), w = get(weightingVariable)), 
+        sum(get(dataVariable) * get(weightingVariable)) / get(summedWeightingVariable), 
         sum(get(weightingVariable))
-        ), by = by]
+    ), by = by]
+    
+    # Sum the summed weights:
+    dataCopy[, c(summedWeightingVariable) := sum(get(summedWeightingVariable)), by = eval(aggregationVariables$nextResolution)]
+    
+    ## Calculate the sum divided by the numner of rows:
+    #dataCopy[, c(dataVariable, weightingVariable) := list(
+    #    sum(get(dataVariable) * get(weightingVariable)) / length(get(dataVariable)), 
+    #    sum(get(weightingVariable))
+    #), 
+    #by = by]
+    #
+    #
+    #dataCopy[, c(dataVariable, weightingVariable) := list(
+    #    stats::weighted.mean(x = get(dataVariable), w = get(weightingVariable)), 
+    #    sum(get(weightingVariable))
+    #), by = by]
     
     # Set the resolution variables which were summed over to NA:
     set(

@@ -58,31 +58,6 @@ AcousticDensity <- function(NASCData, m = 20, a = -70, d = double()) {
 
 
 
-##################################################
-##################################################
-#' Some title
-#' 
-#' Some description
-#' 
-#' @param parameterName Parameter descrption.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-#' 
-#' @export
-#' @import data.table
-#' 
-StationSpecCatDensity <- function() {
-	# Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
-}
 
 
 ##################################################
@@ -92,10 +67,9 @@ StationSpecCatDensity <- function() {
 #' This function calculates the area density of fish as number of individuals per square nautical mile.
 #' 
 #' @inheritParams RegroupLengthDistribution
-#' @param SweptAreaMethod The method used to calculate the density, one of "LengthDependent" and "TotalCatch" (the latter is not )
-#' @param SweepWidthMethod Parameter descrption.
-#' @param SweepWidthSweepWidth Parameter descrption.
-#' @param SweepWidthExpr Parameter descrption.
+#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.
+#' @param SweepWidth The constant sweep width of the project.
+#' @param SweepWidthTable A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -116,7 +90,7 @@ SweptAreaDensity <- function(
     #SweptAreaMethod = c("LengthDependent", "TotalCatch"), 
     SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"), 
     SweepWidth = integer(), 
-    SweepWidthExpr = character()#, 
+    SweepWidthTable= data.table::data.table()#, 
     #CatchVariable = c("Weight", "Count")
 ) {
 	
@@ -175,8 +149,8 @@ SweptAreaDensity <- function(
         }
         else if(SweepWidthMethod == "CruiseDependent") {
             stop("SweepWidthMethod = \"CruiseDependent\" is not yet implemented")
-            if(length(SweepWidthExpr) == 0) {
-                stop("SweepWidthExpr must be given when SweepWidthMethod == \"CruiseDependent\"")
+            if(length(SweepWidthTable) == 0) {
+                stop("SweepWidthTable must be given when SweepWidthMethod == \"CruiseDependent\"")
             }
         }
         else {

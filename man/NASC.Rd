@@ -8,6 +8,10 @@ NASC(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL)
 }
 \arguments{
 \item{StoxAcousticData}{input in a StoxAcoustcdata format}
+
+\item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
+
+\item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 }
 \value{
 A \code{\link{NASCData}} object.

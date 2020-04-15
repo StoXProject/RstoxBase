@@ -8,19 +8,17 @@ SweptAreaDensity(
   LengthDistributionData,
   SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"),
   SweepWidth = integer(),
-  SweepWidthExpr = character()
+  SweepWidthTable = data.table::data.table()
 )
 }
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
 
-\item{SweepWidthMethod}{Parameter descrption.}
+\item{SweepWidthMethod}{The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.}
 
-\item{SweepWidthExpr}{Parameter descrption.}
+\item{SweepWidth}{The constant sweep width of the project.}
 
-\item{SweptAreaMethod}{The method used to calculate the density, one of "LengthDependent" and "TotalCatch" (the latter is not )}
-
-\item{SweepWidthSweepWidth}{Parameter descrption.}
+\item{SweepWidthTable}{A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.}
 }
 \value{
 A data.table is returned with awesome stuff.

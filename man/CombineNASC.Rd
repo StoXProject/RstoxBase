@@ -7,7 +7,7 @@
 CombineNASC(NASCData)
 }
 \arguments{
-\item{parameterName}{Parameter descrption.}
+\item{NASCData}{The \code{\link{NASC}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.

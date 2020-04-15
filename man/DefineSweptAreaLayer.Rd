@@ -16,9 +16,13 @@ DefineSweptAreaLayer(
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.}
+
+\item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
+
+\item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }

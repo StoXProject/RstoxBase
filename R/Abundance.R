@@ -4,7 +4,8 @@
 #' 
 #' Some description
 #' 
-#' @param parameterName Parameter descrption.
+#' @param DensityData The \code{\link{DensityData}} data.
+#' @param StratumArea The \code{\link{StratumArea}} data.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -41,7 +42,10 @@ Abundance <- function(DensityData, StratumArea) {
 #' 
 #' Some description
 #' 
-#' @param parameterName Parameter descrption.
+#' @inheritParams DefineSweptAreaPSU
+#' @inheritParams RegroupLengthDistribution
+#' @param DensityType The type of density, one of "Acoustic" and "SweptArea".
+#' @param BioticAssignment The \code{\link{BioticAssignment}} process data.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -97,7 +101,10 @@ Individuals <- function(StoxBioticData, DensityType = c("Acoustic", "SweptArea")
 #' 
 #' Some description
 #' 
-#' @param parameterName Parameter descrption.
+#' @inheritParams RegroupLengthDistribution
+#' @param IndividualsData   The 
+#' @param AbundanceData Parameter descrption.
+#' @param AbundWeightMethod Parameter descrption.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -138,7 +145,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     
     # Merge the abundance into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups():
     abundanceGrouping <- c(
-        getDataTypeDefinition("AbundanceData", c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "LengthGroup"
     )
     SuperIndividualsData <- merge(
@@ -149,12 +156,10 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     )
     
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
-    .N <- NULL
     
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(AbundWeightMethod == "Equal"){
         SuperIndividualsData[, individualCount := as.double(.N), by = abundanceGrouping]
-        
         SuperIndividualsData[, abundanceWeightFactor := 1]
     }
     else if(AbundWeightMethod == "HaulDensity") {
@@ -180,7 +185,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         # In case that the length resolution is higher in the LengthDistributionData than in the AbundanceData, uniquify the LengthDistributionData:
         haulGrouping <- c(
             "Haul", 
-            getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE), 
+            getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE), 
             "LengthGroup"
         )
         LengthDistributionData[, WeightedCount := sum(WeightedCount), by = haulGrouping]
@@ -197,7 +202,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         
         # Multiply the equal abundanceWeightFactor by the haul density divided by its sum for each combination of Stratum, Layer, SpeciesCategory and LengthGroup:
         #sumBy <- c(
-        #    getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE), 
+        #    getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE), 
         #    "LengthGroup"
         #)
         SuperIndividualsData[, abundanceWeightFactor := WeightedCount / sum(WeightedCount) , by = haulGrouping]
@@ -230,7 +235,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     
     # Order 
     toOrderFirst <- c(
-        getDataTypeDefinition("AbundanceData", c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "Haul"
     )
     data.table::setcolorder(SuperIndividualsData, toOrderFirst)
@@ -249,7 +254,7 @@ addLengthGroupsByReferenceOneSpecies <- function(
 ) {
     
     # Get the indices at the given species in 'data' and 'master':
-    speciesVar <- getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE)
+    speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
     atSpeciesInData <- which(data[[speciesVar]] == species)
     atSpeciesInMaster <- which(master[[speciesVar]] == species)
     if(length(atSpeciesInData) == 0 || length(atSpeciesInMaster) == 0) {
@@ -320,7 +325,7 @@ addLengthGroupsByReference <- function(
     resolutionVar = "LengthResolutionCentimeter"
 ) {
     # Run a for loop through the common species:
-    speciesVar <- getDataTypeDefinition("AbundanceData", "categoryVariable", unlist = TRUE)
+    speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
     speciesInData <- unique(data[[speciesVar]])
     speciesInMaster <- unique(master[[speciesVar]])
     

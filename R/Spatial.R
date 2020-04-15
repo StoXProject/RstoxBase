@@ -33,7 +33,7 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
     # Convert each WKT strings to SpatialPolygonsDataFrame:
     spatialPolygonsList <- lapply(multipolygon, rgeos::readWKT)
     # Extract the Polygons objects to modify the IDs and merge to a SpatialPolygonsDataFrame:
-    polygonsList <- lapply(spatialPolygonsList, function(x) slot(x, "polygons")[[1]])
+    polygonsList <- lapply(spatialPolygonsList, function(x) methods::slot(x, "polygons")[[1]])
     # Add the polygon names as IDs:
     for (ind in seq_along(polygonsList)) {
         polygonsList[[ind]]@ID <- polygonName[ind]
@@ -130,7 +130,7 @@ DefineStrata <- function(FileName, processData = NULL, UseProcessData = FALSE) {
 getStratumNames <- function(stratum) {
     if("SpatialPolygonsDataFrame" %in% class(stratum)) {
         as.character(stratum$polygonName)
-        #sapply(slot(stratum, "polygons"), function(x) slot(x, "ID"))
+        #sapply(slot(stratum, "polygons"), function(x) methods::slot(x, "ID"))
     }
     else {
         stop("Stratum polygon must be of class SpatialPolygonsDataFrame")
@@ -262,7 +262,11 @@ deg2rad <- function(deg) {
 # polygonAreaPolygonXY wraps x and y to dataframe and calls Polygon
 # this is a helper function
 polygonAreaPolygonXY <- function(x, y = NULL) {
-    polygonAreaPolygonDT(as.data.frame(xy.coords(x, y)[c("x", "y")], stringsAsFactors = FALSE))
+    polygonAreaPolygonDT(
+        as.data.table(
+            grDevices::xy.coords(x, y)[c("x", "y")]
+        )
+    )
 }
 
 # polygonAreaPolygonDT calculates simple GCD (great circle distance) polygon area 

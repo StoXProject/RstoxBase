@@ -11,31 +11,35 @@ DefineBioticAssignment(
   DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"),
   StoxAcousticData,
   AcousticPSU,
+  AcousticLayer,
   StratumPolygon,
   Radius = double(),
-  MinNumStations = integer(),
-  RefGCDistance = double(),
-  RefTime = "",
-  RefBotDepth = double(),
-  RefLatitude = double(),
-  RefLongitude = double(),
+  EllipsoidalDistanceTable = data.table::data.table(),
   UseProcessData = FALSE
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{NASCData}{The \code{\link{NASC}} data.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", which assigns all Hauls to every PSU of each stratum; "Radius", which selects Hauls inside a radius around each PSU????; and "EllipsoidalDistance", which selects Hauls within an ellipsoid defined by axes in space, time, bottom depth *************.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
 
-\item{AcousticPSU}{A list of \code{\link{AcousticPSU}} process data.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.}
 
-\item{StratumPolygon}{A list of \code{\link{StratumPolygon}} process data.}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
+
+\item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
+
+\item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
+
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+
+\item{Radius}{Numeric: The radius inside which to assign biotic stations to each acoustic PSU.}
+
+\item{EllipsoidalDistanceTable}{Not yet implemented.}
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
-
-\item{AcousticLayer}{A list of \code{\link{AcousticLayer}} process data.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.
