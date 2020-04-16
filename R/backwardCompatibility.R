@@ -22,7 +22,7 @@ split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic <- function(projectDescription)
     RstoxFrameworkVersion <- attr(projectDescription, "RstoxFrameworkVersion")
     
     # Do not support backwards compatibility for versoins prior to StoX 2.7:
-    if(length(resourceVersion) && resourceversion == "1.92") {
+    if(length(resourceVersion) && resourceVersion == "1.92") {
         # Get the function names:
         functionNames <- sapply(projectDescription$baseline, "[[", "functionName")
         # Get the position of the process using ReadBioticXML():
@@ -59,7 +59,10 @@ split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic <- function(projectDescription)
 }
 
 remove_ReadProcessData <- function(projectDescription) {
-    if(length(resourceVersion) && resourceversion == "1.92") {
+    # Get the StoxVersion from the attributes:
+    resourceVersion <- attr(projectDescription, "resourceversion")
+    
+    if(length(resourceVersion) && resourceVersion == "1.92") {
         # Get the function names:
         functionNames <- sapply(projectDescription$baseline, "[[", "functionName")
         # Get the position of the process using ReadBioticXML():
@@ -74,10 +77,17 @@ remove_ReadProcessData <- function(projectDescription) {
     return(projectDescription)
 }
 
+checkVersion <- function() {
+    
+}
+
 modifyFilterBiotic <- function(projectDescription) {
     
+    # Get the StoxVersion from the attributes:
+    resourceVersion <- attr(projectDescription, "resourceversion")
+    
     # Run only for StoX 2.7:
-    if(checkVersion(projectDescription, resourceversion == "1.92")) {
+    if(length(resourceVersion) && resourceVersion == "1.92") {
         # Find the process using DefineStrata():
         atProcess <- findProcessFromFunctionName(
             functionName = "FilterBiotic", 
@@ -132,8 +142,11 @@ modifyFilterBiotic <- function(projectDescription) {
 
 modify_DefineStrata <- function(projectDescription) {
     
+    # Get the StoxVersion from the attributes:
+    resourceVersion <- attr(projectDescription, "resourceversion")
+    
     # Run only for StoX 2.7:
-    if(checkVersion(projectDescription, resourceversion == "1.92")) {
+    if(length(resourceVersion) && resourceVersion == "1.92") {
         # Find the process using DefineStrata():
         atProcess <- findProcessFromFunctionName(
             functionName = "DefineStrata", 
@@ -143,7 +156,7 @@ modify_DefineStrata <- function(projectDescription) {
         if(length(atProcess)) {
             # Get the stratum multypolygon WKT table, and ocnvert to SpatialPolygonsDataFrame, and then to JSON
             stratumpolygon_WKT <- projectDescription$processdata$stratumpolygon
-            stratumpolygon_sp <- RstoxBase:::dataTable2SpatialPolygonsDataFrame(stratumpolygon_WKT)
+            stratumpolygon_sp <- dataTable2SpatialPolygonsDataFrame(stratumpolygon_WKT)
             # Add the SpatialPolygonsDataFrame to the process data of the process:
             projectDescription$baseline[[atProcess]]$processData <- stratumpolygon_sp
         }

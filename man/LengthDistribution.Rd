@@ -13,15 +13,15 @@ LengthDistribution(
 )
 }
 \arguments{
-\item{StoxBioticData}{A list of \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
 
 \item{SweptAreaPSU}{A list of \code{\link{SweptAreaPSU}} data.}
 
 \item{SweptAreaLayer}{A list of \code{\link{SweptAreaLayer}} data.}
 
-\item{RaisingFactorPriority}{A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".}
+\item{LengthDistributionType}{The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').}
 
-\item{LengthDistType}{The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').}
+\item{RaisingFactorPriority}{A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.

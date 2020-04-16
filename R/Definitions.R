@@ -17,6 +17,7 @@ initiateRstoxBase <- function(){
         NASCData = list(
             horizontalResolution = c("Stratum", "PSU", "EDSU"), 
             verticalResolution = c("Layer", "Channel"), 
+            #sampleSize = c("StratumSize", "PSUSize"), 
             categoryVariable = "AcousticCategory", 
             groupingVariables = c("Frequency"), 
             coordinateSystemOrigin = "ChannelReferenceDepth", 
@@ -26,12 +27,14 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "NASCWeight", 
+            summedWeighting = "SummedWeights", 
             type = "ChannelReferenceType", 
             other = "EffectiveLogDistance"
         ), 
         LengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU", "Station"), 
             verticalResolution = c("Layer", "Haul"), 
+            #sampleSize = c("StratumSize", "PSUSize"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
@@ -39,12 +42,14 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "LengthDistributionWeight", 
+            summedWeighting = "SummedWeights", 
             type = "LengthDistributionType", 
             other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
+            #sampleSize = NULL, 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
@@ -55,21 +60,25 @@ initiateRstoxBase <- function(){
         DensityData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
+            #sampleSize = c("StratumSize"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "DensityWeight", 
+            summedWeighting = "SummedWeights", 
             other = NULL
         ), 
         AbundanceData = list(
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
+            #sampleSize = NULL, 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Abundance", 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = NULL, 
+            summedWeighting = NULL, 
             other = NULL
         )
     )
@@ -106,7 +115,51 @@ initiateRstoxBase <- function(){
     
     #### Create the RstoxBaseEnv environment, holding definitions on folder structure and all the projects. This environment cna be accesses using RstoxBase:::RstoxBaseEnv: ####
     #utils::globalVariables("RstoxBaseEnv")
-    utils::globalVariables(c("RstoxBaseEnv", ":=") )
+    utils::globalVariables(c(
+        "RstoxBaseEnv", 
+        ":=", ".", ".N", 
+        "..abundanceGrouping", 
+        "..atMissingLengthGroup", 
+        "..by", 
+        "..columnOrder",
+        "..haulGrouping", 
+        "..Hauls", 
+        "..intervalVector", 
+        "..keys", 
+        "..keysSansSample", 
+        "..LengthInterval", 
+        "..LengthIntervalWidths", 
+        "..lengthVar", 
+        "..refvar", 
+        "..relevantVariables",
+        "..resolutionVar", 
+        "..toAdd", 
+        "..validVariables", 
+        "..vars", 
+        "..VerticalResolutionMax", 
+        "..VerticalResolutionMin", 
+        "..WeightingFactors", 
+        "abundanceWeightFactor", 
+        "Area", 
+        "assignmentID", 
+        "Density", 
+        "DensityWeight", 
+        "EffectiveLogDistance", 
+        "Haul", 
+        "individualCount", 
+        "IndividualTotalLengthCentimeter", 
+        "IndividualTotalLengthCentimeterMiddle", 
+        "intervalIndex", 
+        "LengthDistributionType", 
+        "LengthDistributionWeight", 
+        "LengthGroup", 
+        "LengthResolutionCentimeter", 
+        "NASCWeight", 
+        "PSU", 
+        "raisingFactor", 
+        "WeightedCount", 
+        "WeightingFactor"
+    ))
     assign("RstoxBaseEnv", new.env(), parent.env(environment()))
     assign("definitions", definitions, envir=get("RstoxBaseEnv"))
     
@@ -257,9 +310,6 @@ getAllResolutionVariables <- function(dataType) {
 getDataTypeDefinition <- function(dataType, elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
-    if(length(dataType) == 0) {
-        dataType <- detectDataType(data)
-    }
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
     thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
     
@@ -296,7 +346,10 @@ determineAggregationVariables <- function(
     presentResolution <- resolution[hasAnyNonNA]
     
     # Get the finest resolution variable:
-    finestResolution <- utils::tail(presentResolution,1)
+    finestResolution <- utils::tail(presentResolution, 1)
+    
+    # Get the next resolution, that is the resolution one level higher than the fines resolution:
+    nextResolution <- if(length(presentResolution) == 1) NA else presentResolution[length(presentResolution) - 1]
     
     # And the resolution variables to aggregate by:
     # If the target resolution is not in the presen resolution, abort:
@@ -326,8 +379,10 @@ determineAggregationVariables <- function(
         targetResolution = targetResolution, 
         presentResolution = presentResolution, 
         finestResolution = finestResolution, 
+        nextResolution = nextResolution, 
         dataVariable = thisDataTypeDefinition$data, 
         weightingVariable = thisDataTypeDefinition$weighting, 
+        summedWeightingVariable = thisDataTypeDefinition$summedWeighting, 
         otherVariables = thisDataTypeDefinition$other, 
         verticalRawDimension = thisDataTypeDefinition$verticalRawDimension, 
         verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension, 

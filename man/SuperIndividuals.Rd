@@ -12,7 +12,13 @@ SuperIndividuals(
 )
 }
 \arguments{
-\item{parameterName}{Parameter descrption.}
+\item{IndividualsData}{The}
+
+\item{AbundanceData}{Parameter descrption.}
+
+\item{AbundWeightMethod}{Parameter descrption.}
+
+\item{LengthDistributionData}{The length distribution data.}
 }
 \value{
 A data.table is returned with awesome stuff.

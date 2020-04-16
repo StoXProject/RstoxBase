@@ -15,9 +15,11 @@ DefineAcousticTargetStrength(
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{ParameterTable}{A table of target strength to length equation parameters, including the column \code{EquationType} and \code{m} and \code{a} for \code{EquationType = "Standard"} and \code{m}, \code{a} and \code{d} for \code{EquationType = "DepthDependent"}. Also allowed are columns representing variables in the \code{\link{NASCData}}, such as "SpeciesCategory" and "Frequency".}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.}
 
-\item{FileName}{The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.}
+\item{ParameterTable}{A table of the columns AcousticCategory, Frequency, m, a and d.}
+
+\item{FileName}{A file from which to read the \code{ParameterTable}.}
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }

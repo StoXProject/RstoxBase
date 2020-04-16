@@ -7,7 +7,9 @@
 Abundance(DensityData, StratumArea)
 }
 \arguments{
-\item{parameterName}{Parameter descrption.}
+\item{DensityData}{The \code{\link{DensityData}} data.}
+
+\item{StratumArea}{The \code{\link{StratumArea}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.

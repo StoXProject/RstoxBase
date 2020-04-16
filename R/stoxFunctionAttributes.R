@@ -214,7 +214,7 @@ stoxFunctionAttributes <- list(
             SweepWidth = list(
                 SweepWidthMethod = "Constant"
             ), 
-            SweepWidthExpr = list(
+            SweepWidthTable = list(
                 SweepWidthMethod = "CruiseDependent"
             )
         )

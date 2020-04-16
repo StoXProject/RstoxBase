@@ -1,10 +1,10 @@
 Package: RstoxBase
 Title: Base StoX functions
-Version: 1.2.3
+Version: 1.2.4
 Authors@R: c(
   person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "arnejh@hi.no"))
 Depends: R (>= 3.6)
-Description: This package contains the base StoX functions used for survey estimation
+Description: This package contains the base StoX functions used for survey estimation.
 URL: https://github.com/StoXProject/RstoxBase
 BugReports: https://github.com/StoXProject/RstoxBase/issues
 License: LGPL-3
@@ -15,11 +15,11 @@ Imports:
     rgdal (>= 1.4.7),
     rgeos (>= 0.5.2),
     sp (>= 1.3.2),
-    RstoxData (>= 0.8.2)
+    RstoxData (>= 0.8.3)
 Suggests: 
     testthat
-Additional_repositories:
-    https://stoxproject.github.io/repo
 Remotes: 
-	StoXProject/RstoxData@RstoxData-v0.8.2
+	StoXProject/RstoxData@RstoxData-v0.8.3
+Additional_repositories: 
+	https://stoxproject.github.io/repo
 RoxygenNote: 7.0.2
