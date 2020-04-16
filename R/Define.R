@@ -38,9 +38,8 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         return(processData)
     }
     
-    # Get the DefinitionMethod:
+    # Get the DefinitionMethod and modelType:
     DefinitionMethod <- match.arg(DefinitionMethod)
-    # Get the DefinitionMethod:
     modelType <- match.arg(modelType)
     
     # SSULevel

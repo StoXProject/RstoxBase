@@ -70,7 +70,7 @@ LengthDistribution <- function(
     ##### 3. Add the weights depending on LengthDistributionType: #####
     ###################################################################
     # For all swept-area estimates, LengthDistributionWeight should be 1 (and not EffectiveTowedDistance): 
-    LengthDistributionData$LengthDistributionWeight <- 1
+    #LengthDistributionData$LengthDistributionWeight <- 1
     
     ### # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the EffectiveTowedDistance, rend### ering the effective EffectiveTowedDistance as 1:
     ### if(LengthDistributionType == "Normalized") {
@@ -96,7 +96,7 @@ LengthDistribution <- function(
     #data.table::setorder(LengthDistributionData)
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    LengthDistributionData <- addPSUDefinition(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = SweptAreaPSU)
+    LengthDistributionData <- addPSUDefinition(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = SweptAreaPSU, all = TRUE)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
     LengthDistributionData <- addLayerDefinition(LengthDistributionData, dataType = "LengthDistributionData", layerDefinition = SweptAreaLayer)
