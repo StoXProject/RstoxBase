@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -124,14 +124,10 @@
   <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Stratum"</span>, <span class='st'>"Radius"</span>, <span class='st'>"EllipsoidalDistance"</span>),
   <span class='no'>StoxAcousticData</span>,
   <span class='no'>AcousticPSU</span>,
+  <span class='no'>AcousticLayer</span>,
   <span class='no'>StratumPolygon</span>,
   <span class='kw'>Radius</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  <span class='kw'>MinNumStations</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
-  <span class='kw'>RefGCDistance</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  <span class='kw'>RefTime</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>RefBotDepth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  <span class='kw'>RefLatitude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  <span class='kw'>RefLongitude</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
+  <span class='kw'>EllipsoidalDistanceTable</span> <span class='kw'>=</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
   <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</pre>
 
@@ -143,28 +139,44 @@
       <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr>
     <tr>
+      <th>NASCData</th>
+      <td><p>The <code><a href='NASC.html'>NASC</a></code> data.</p></td>
+    </tr>
+    <tr>
       <th>StoxBioticData</th>
-      <td><p>A list of <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
     </tr>
     <tr>
       <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "Stratum", which assigns all Hauls to every PSU of each stratum; "Radius", which selects Hauls inside a radius around each PSU????; and "EllipsoidalDistance", which selects Hauls within an ellipsoid defined by axes in space, time, bottom depth *************.</p></td>
+      <td><p>Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in <code>Radius</code> to each acoustic PSU; and "EllipsoidalDistance" to provide the <code>EllipsoidalDistanceTable</code> specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.</p></td>
+    </tr>
+    <tr>
+      <th>StoxAcousticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
     </tr>
     <tr>
       <th>AcousticPSU</th>
-      <td><p>A list of <code><a href='AcousticPSU.html'>AcousticPSU</a></code> process data.</p></td>
+      <td><p>The <code><a href='AcousticPSU.html'>AcousticPSU</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>AcousticLayer</th>
+      <td><p>The <code><a href='AcousticLayer.html'>AcousticLayer</a></code> process data.</p></td>
     </tr>
     <tr>
       <th>StratumPolygon</th>
-      <td><p>A list of <code><a href='StratumPolygon.html'>StratumPolygon</a></code> process data.</p></td>
+      <td><p>The <code><a href='StratumPolygon.html'>StratumPolygon</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>Radius</th>
+      <td><p>Numeric: The radius inside which to assign biotic stations to each acoustic PSU.</p></td>
+    </tr>
+    <tr>
+      <th>EllipsoidalDistanceTable</th>
+      <td><p>Not yet implemented.</p></td>
     </tr>
     <tr>
       <th>UseProcessData</th>
       <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
-    </tr>
-    <tr>
-      <th>AcousticLayer</th>
-      <td><p>A list of <code><a href='AcousticLayer.html'>AcousticLayer</a></code> process data.</p></td>
     </tr>
     </table>
 
@@ -195,7 +207,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

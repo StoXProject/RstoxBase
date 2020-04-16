@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -133,12 +133,16 @@
       <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr>
     <tr>
+      <th>DefinitionMethod</th>
+      <td><p>Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table <code>ParameterTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></td>
+    </tr>
+    <tr>
       <th>ParameterTable</th>
-      <td><p>A table of target strength to length equation parameters, including the column <code>EquationType</code> and <code>m</code> and <code>a</code> for <code>EquationType = "Standard"</code> and <code>m</code>, <code>a</code> and <code>d</code> for <code>EquationType = "DepthDependent"</code>. Also allowed are columns representing variables in the <code><a href='NASCData.html'>NASCData</a></code>, such as "SpeciesCategory" and "Frequency".</p></td>
+      <td><p>A table of the columns AcousticCategory, Frequency, m, a and d.</p></td>
     </tr>
     <tr>
       <th>FileName</th>
-      <td><p>The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.</p></td>
+      <td><p>A file from which to read the <code>ParameterTable</code>.</p></td>
     </tr>
     <tr>
       <th>UseProcessData</th>
@@ -170,7 +174,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

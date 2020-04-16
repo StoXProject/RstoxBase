@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -172,6 +172,9 @@
 #&gt; $dataTypeDefinition$NASCData$weighting
 #&gt; [1] "NASCWeight"
 #&gt; 
+#&gt; $dataTypeDefinition$NASCData$summedWeighting
+#&gt; [1] "SummedWeights"
+#&gt; 
 #&gt; $dataTypeDefinition$NASCData$type
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
@@ -203,6 +206,9 @@
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$weighting
 #&gt; [1] "LengthDistributionWeight"
+#&gt; 
+#&gt; $dataTypeDefinition$LengthDistributionData$summedWeighting
+#&gt; [1] "SummedWeights"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$type
 #&gt; [1] "LengthDistributionType"
@@ -260,6 +266,9 @@
 #&gt; $dataTypeDefinition$DensityData$weighting
 #&gt; [1] "DensityWeight"
 #&gt; 
+#&gt; $dataTypeDefinition$DensityData$summedWeighting
+#&gt; [1] "SummedWeights"
+#&gt; 
 #&gt; $dataTypeDefinition$DensityData$other
 #&gt; NULL
 #&gt; 
@@ -284,6 +293,9 @@
 #&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$weighting
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$AbundanceData$summedWeighting
 #&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$other
@@ -323,8 +335,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x4911098&gt;
-#&gt; &lt;environment: 0x4910148&gt;
+#&gt; &lt;bytecode: 0x65e1ac0&gt;
+#&gt; &lt;environment: 0x65e68c0&gt;
 #&gt; 
 #&gt; $proj4string
 #&gt; CRS arguments:
@@ -357,7 +369,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -121,7 +121,7 @@
   <span class='no'>LengthDistributionData</span>,
   <span class='kw'>SweepWidthMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Constant"</span>, <span class='st'>"PreDefined"</span>, <span class='st'>"CruiseDependent"</span>),
   <span class='kw'>SweepWidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
-  <span class='kw'>SweepWidthExpr</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>()
+  <span class='kw'>SweepWidthTable</span> <span class='kw'>=</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -133,19 +133,15 @@
     </tr>
     <tr>
       <th>SweepWidthMethod</th>
-      <td><p>Parameter descrption.</p></td>
+      <td><p>The method for calculating the sweep width to multiply the <code>WeightedCount</code> in the <code>LengthDistributionData</code> with. Possible options are (1) "Constant", which requires <code>SweepWidth</code> to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the <code>WeightedCount</code> in the <code>LengthDistributionData</code>, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function <code><a href='LengthDependentCatchCompensation.html'>LengthDependentCatchCompensation</a></code>, and (3) "CruiseDependent", which requires the <code>SweepWidthTable</code> to be given.</p></td>
     </tr>
     <tr>
-      <th>SweepWidthExpr</th>
-      <td><p>Parameter descrption.</p></td>
+      <th>SweepWidth</th>
+      <td><p>The constant sweep width of the project.</p></td>
     </tr>
     <tr>
-      <th>SweptAreaMethod</th>
-      <td><p>The method used to calculate the density, one of "LengthDependent" and "TotalCatch" (the latter is not )</p></td>
-    </tr>
-    <tr>
-      <th>SweepWidthSweepWidth</th>
-      <td><p>Parameter descrption.</p></td>
+      <th>SweepWidthTable</th>
+      <td><p>A table of two columns, <code>Cruise</code> and <code>SweepWidth</code>, giving the sweep width for each cruise.</p></td>
     </tr>
     </table>
 
@@ -176,7 +172,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

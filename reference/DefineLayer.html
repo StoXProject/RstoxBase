@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -135,16 +135,28 @@
       <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr>
     <tr>
+      <th>StoxData</th>
+      <td><p>Either <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> or <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
+    </tr>
+    <tr>
       <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.</p></td>
+      <td><p>Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the <code>LayerTable</code>.</p></td>
+    </tr>
+    <tr>
+      <th>Resolution</th>
+      <td><p>Numeric: A single numeric giving the thickness of the layers.</p></td>
+    </tr>
+    <tr>
+      <th>LayerTable</th>
+      <td><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></td>
     </tr>
     <tr>
       <th>UseProcessData</th>
       <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
-      <th>StoxBioticData</th>
-      <td><p>A list of <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
+      <th>modelType</th>
+      <td><p>Character: A string naming the type of model, either "Acoustic" or "SweptArea".</p></td>
     </tr>
     </table>
 
@@ -175,7 +187,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
