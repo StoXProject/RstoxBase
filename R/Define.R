@@ -34,9 +34,9 @@
 DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
+    #if(UseProcessData) {
+    #    return(processData)
+    #}
     
     # Get the DefinitionMethod and modelType:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -67,7 +67,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         
         # Define PSUIDs and PSUNames:
         PSUID <- seq_along(SSU)
-        PSUName <- paste0(prefix, formatC(PSUID, width = nchar(max(PSUID)), format = "d", flag = "0"))
+        PSUName <- paste0(prefix, formatC(PSUID, width = max(nchar(PSUID)), format = "d", flag = "0"))
         
         # Set each SSU as a PSU:
         SSU_PSU <- data.table::data.table(
@@ -94,7 +94,10 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         Stratum_PSU <- Stratum_PSU[ PSU %in% validPSUs ]
         #SSU_PSU <- SSU_PSU[ PSU %in% validPSUs ]
         #SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
-        SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, "")]
+        
+        SSU_PSU[! PSU %in% validPSUs, PSU := ""]
+        
+        #SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, "")]
         
         
     }
@@ -158,7 +161,7 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
         DefinitionMethod <- "Identity"
     }
     
-    DefinePSU(
+    SweptAreaPSU <- DefinePSU(
         processData = processData, 
         StratumPolygon = StratumPolygon, 
         StoxData = StoxBioticData, 
@@ -166,6 +169,8 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
         UseProcessData = UseProcessData, 
         modelType = "SweptArea"
     )
+    
+    return(SweptAreaPSU)
 }
 
 

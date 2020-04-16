@@ -151,7 +151,16 @@ LengthDistribution <- function(
     LengthDistributionData$LengthDistributionWeight <- 1
     
     # Add the sum of the weigths over the stations of each PSU:
-    LengthDistributionData[, SummedWeights := sum(LengthDistributionWeight), by = "PSU"]
+    
+    # Get the definitions:
+    aggregateBy <- getDataTypeDefinition(
+        dataType = "LengthDistributionData", 
+        elements = c("categoryVariable", "groupingVariables"), 
+        unlist = TRUE
+    )
+    by <- c("PSU", aggregateBy)
+    
+    LengthDistributionData[, SummedWeights := sum(LengthDistributionWeight), by = by]
     
     # Add the LengthDistributionType to the LengthDistributionData:
     LengthDistributionData[, LengthDistributionType := ..LengthDistributionType]

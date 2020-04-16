@@ -197,7 +197,7 @@ addPSUDefinition <- function(data, dataType, PSUDefinition = NULL, ...) {
     else {
         data.table::setDT(data)
         toAdd <- c("Stratum", "PSU")
-        data.table::set(data, j = toAdd, value=NA)
+        data.table::set(data, j = toAdd, value = NA)
     }
     
     # Set the order of the columns:
