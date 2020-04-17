@@ -1,4 +1,4 @@
-# RstoxBase version: 1.2.4 (latest alpha, 2020-04-16)
+# RstoxBase version: 1.2.5 (latest alpha, 2020-04-17)
 # R version: 3.6
 
 
@@ -6,10 +6,10 @@
 
 
 # Install the latest GitHub release
-devtools::install_github("https://github.com/StoXProject/RstoxBase", ref = "RstoxBase-v1.2.4")
+devtools::install_github("https://github.com/StoXProject/RstoxBase", ref = "RstoxBase-v1.2.5")
 
 
-# Release notes for RstoxBase_1.2.4:
+# Release notes for RstoxBase_1.2.5:
 # . 
 
 # For historical release notes see https://github.com/StoXProject/RstoxBase/blob/master/NEWS

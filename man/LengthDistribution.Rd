@@ -15,9 +15,9 @@ LengthDistribution(
 \arguments{
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
 
-\item{SweptAreaPSU}{A list of \code{\link{SweptAreaPSU}} data.}
+\item{SweptAreaPSU}{The  \code{\link{SweptAreaPSU}} data.}
 
-\item{SweptAreaLayer}{A list of \code{\link{SweptAreaLayer}} data.}
+\item{SweptAreaLayer}{The  \code{\link{SweptAreaLayer}} data.}
 
 \item{LengthDistributionType}{The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').}
 

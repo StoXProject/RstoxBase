@@ -5,8 +5,8 @@
 #' This function calculates length frequency distribution per Stratum, swept-area PSU, swept-area layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
 #' 
 #' @inheritParams DefineSweptAreaPSU
-#' @param SweptAreaPSU		A list of \code{\link{SweptAreaPSU}} data.
-#' @param SweptAreaLayer	A list of \code{\link{SweptAreaLayer}} data.
+#' @param SweptAreaPSU		The  \code{\link{SweptAreaPSU}} data.
+#' @param SweptAreaLayer	The  \code{\link{SweptAreaLayer}} data.
 #' @param LengthDistributionType	The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
 #' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".
 #'
@@ -49,7 +49,7 @@ LengthDistribution <- function(
     ############################
     StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData, output.only.last = TRUE, all = TRUE)
     ############################
-    
+    browser()
     
     ####################################################
     ##### 2. Get the count in each length group: #######
@@ -546,7 +546,7 @@ SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "La
 #' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
 #' 
 #' @inheritParams RegroupLengthDistribution
-#' @param BioticAssignment      A list of \code{\link{BioticAssignment}} data.
+#' @param BioticAssignment The  \code{\link{BioticAssignment}} data.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.

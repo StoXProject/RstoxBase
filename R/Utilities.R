@@ -186,19 +186,20 @@ findLayer <- function(minDepth, maxDepth, layerDefinition, acceptNA = TRUE) {
 addPSUDefinition <- function(data, dataType, PSUDefinition = NULL, ...) {
     
     # If present, add the PSUDefinition to the start of the data
-    if(length(PSUDefinition)) {
+    if(length(PSUDefinition) == 0 || length(PSUDefinition$Stratum_PSU) == 0) {
+        warning("PSUs not defined, possibly due to no data inside the any strata")
+        data.table::setDT(data)
+        toAdd <- c("Stratum", "PSU")
+        data.table::set(data, j = toAdd, value = NA)
+    }
+    else {
         # Merge first the PSUDefinition:
         PSUDefinition <- RstoxData::mergeDataTables(PSUDefinition, output.only.last = TRUE, ...)
         # Then merge the result with the data:
         by <- intersect(names(PSUDefinition), names(data))
         data <- merge(PSUDefinition, data, by = by, ...)
     }
-    # Otherwise add columns of NAs (by reference, thus applying the setDT() first):
-    else {
-        data.table::setDT(data)
-        toAdd <- c("Stratum", "PSU")
-        data.table::set(data, j = toAdd, value = NA)
-    }
+    
     
     # Set the order of the columns:
     #dataType <- detectDataType(data)
