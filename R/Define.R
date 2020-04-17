@@ -34,9 +34,9 @@
 DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
-    #if(UseProcessData) {
-    #    return(processData)
-    #}
+    if(UseProcessData) {
+        return(processData)
+    }
     
     # Get the DefinitionMethod and modelType:
     DefinitionMethod <- match.arg(DefinitionMethod)
