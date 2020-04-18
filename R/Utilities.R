@@ -296,13 +296,37 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     #    stats::weighted.mean(x = get(dataVariable), w = get(weightingVariable)), 
     #    sum(get(weightingVariable))
     #    ), by = by]
-    dataCopy[, c(dataVariable, weightingVariable) := list(
-        sum(get(dataVariable) * get(weightingVariable)) / get(summedWeightingVariable), 
-        sum(get(weightingVariable))
-    ), by = by]
+    ### dataCopy[, c(dataVariable, weightingVariable) := list(
+    ###     sum(get(dataVariable) * get(weightingVariable)) / get(summedWeightingVariable), 
+    ###     sum(get(weightingVariable))
+    ### ), by = by]
     
-    # Sum the summed weights:
-    dataCopy[, c(summedWeightingVariable) := sum(get(summedWeightingVariable)), by = eval(aggregationVariables$nextResolution)]
+    # Sum the weights:
+    browser()
+    
+    extract <- c(aggregationVariables$presentResolution, weightingVariable)
+    summedWeighting <- dataCopy[, ..extract]
+    summedWeighting <- unique(summedWeighting)
+    summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = eval(aggregationVariables$nextResolution)]
+    extract <- c(aggregationVariables$nextResolution, "SummedWeights")
+    summedWeighting <- summedWeighting[, ..extract]
+    summedWeighting <- unique(summedWeighting)
+    
+    by <- aggregationVariables$nextResolution
+    dataCopy <- merge(dataCopy, summedWeighting, by = by)
+    
+    dataCopy[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
+    
+    dataCopy[, c(weightingVariable) := SummedWeights]
+    dataCopy[, SummedWeights := NULL]
+    
+    
+    ### # Replace the SummedWeights:
+    ### dataCopy[, c(summedWeightingVariable) := NULL]
+    ### by <- aggregationVariables$nextResolution
+    ### dataCopy <- merge(dataCopy, summedWeighting, by = by)
+    
+    #dataCopy[, c(summedWeightingVariable) := sum(get(summedWeightingVariable)), by = eval(aggregationVariables$nextResolution)]
     
     ## Calculate the sum divided by the numner of rows:
     #dataCopy[, c(dataVariable, weightingVariable) := list(

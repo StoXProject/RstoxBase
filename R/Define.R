@@ -62,6 +62,9 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
     # Get SSUs:
     SSU <- StoxData[[SSULevel]][[SSUName]]
     
+    # Get the stratum names:
+    StratumNames = getStratumNames(StratumPolygon)
+    
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
@@ -81,11 +84,11 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         StratumIndex <- sp::over(SpatialPSUs, StratumPolygon)
         # Converting from data frame to character vector 
         StratumIndex <- as.numeric(unlist(StratumIndex))
-        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
+        NonEmptyStrata <- StratumNames[StratumIndex]
         
         # Create the Stratum_PSU data.table:
         Stratum_PSU <- data.table::data.table(
-            Stratum = Stratum, 
+            Stratum = NonEmptyStrata, 
             PSU = PSUName
         )
         
@@ -95,7 +98,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         #SSU_PSU <- SSU_PSU[ PSU %in% validPSUs ]
         #SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
         
-        SSU_PSU[! PSU %in% validPSUs, PSU := ""]
+        SSU_PSU[! PSU %in% validPSUs, PSU := NA]
         
         #SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, "")]
         

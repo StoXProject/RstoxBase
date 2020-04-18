@@ -27,7 +27,7 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "NASCWeight", 
-            summedWeighting = "SummedWeights", 
+            #summedWeighting = "SummedWeights", 
             type = "ChannelReferenceType", 
             other = "EffectiveLogDistance"
         ), 
@@ -42,7 +42,7 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "LengthDistributionWeight", 
-            summedWeighting = "SummedWeights", 
+            #summedWeighting = "SummedWeights", 
             type = "LengthDistributionType", 
             other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
@@ -66,7 +66,7 @@ initiateRstoxBase <- function(){
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "DensityWeight", 
-            summedWeighting = "SummedWeights", 
+            #summedWeighting = "SummedWeights", 
             other = NULL
         ), 
         AbundanceData = list(
@@ -78,7 +78,7 @@ initiateRstoxBase <- function(){
             data = "Abundance", 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = NULL, 
-            summedWeighting = NULL, 
+            #summedWeighting = NULL, 
             other = NULL
         )
     )
@@ -348,6 +348,9 @@ determineAggregationVariables <- function(
     # Get the finest resolution variable:
     finestResolution <- utils::tail(presentResolution, 1)
     
+    # Get the higher resolution than the finest:
+    allButFinestResolution <- setdiff(presentResolution, finestResolution)
+    
     # Get the next resolution, that is the resolution one level higher than the fines resolution:
     nextResolution <- if(length(presentResolution) == 1) NA else presentResolution[length(presentResolution) - 1]
     
@@ -379,6 +382,7 @@ determineAggregationVariables <- function(
         targetResolution = targetResolution, 
         presentResolution = presentResolution, 
         finestResolution = finestResolution, 
+        allButFinestResolution = allButFinestResolution, 
         nextResolution = nextResolution, 
         dataVariable = thisDataTypeDefinition$data, 
         weightingVariable = thisDataTypeDefinition$weighting, 

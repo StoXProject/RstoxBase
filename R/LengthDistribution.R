@@ -95,6 +95,9 @@ LengthDistribution <- function(
     # Order the length distribution data:
     #data.table::setorder(LengthDistributionData)
     
+    # Add the weights, which are 1 for all types of length distributions (other more advanced weights may come later). Add this here, before adding the PSU definition, since this will lead to NA for strata with no PSUs:
+    LengthDistributionData$LengthDistributionWeight <- 1
+    
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
     LengthDistributionData <- addPSUDefinition(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = SweptAreaPSU, all = TRUE)
     
@@ -147,20 +150,25 @@ LengthDistribution <- function(
         LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
     }
     
-    # Add the weights, which are 1 for all types of length distributions (other more advanced weights may come later):
-    LengthDistributionData$LengthDistributionWeight <- 1
-    
     # Add the sum of the weigths over the stations of each PSU:
-    
-    # Get the definitions:
-    aggregateBy <- getDataTypeDefinition(
-        dataType = "LengthDistributionData", 
-        elements = c("categoryVariable", "groupingVariables"), 
-        unlist = TRUE
-    )
-    by <- c("PSU", aggregateBy)
-    
-    LengthDistributionData[, SummedWeights := sum(LengthDistributionWeight), by = by]
+    ### 
+    ### SummedWeights <- LengthDistributionData[, c("PSU", "LengthDistributionWeight")]
+    ### SummedWeights <- unique(SummedWeights)
+    ### SummedWeights <- SummedWeights[, SummedWeights := sum(LengthDistributionWeight), by = PSU]
+    ### SummedWeights[, LengthDistributionWeight := NULL]
+    ### SummedWeights <- unique(SummedWeights)
+    ### 
+    ### LengthDistributionData <- merge(LengthDistributionData, SummedWeights, all = TRUE, by = "PSU")
+    ### 
+    ### # Get the definitions:
+    ### aggregateBy <- getDataTypeDefinition(
+    ###     dataType = "LengthDistributionData", 
+    ###     elements = c("categoryVariable", "groupingVariables"), 
+    ###     unlist = TRUE
+    ### )
+    ### by <- c("PSU", aggregateBy)
+    ### 
+    ### LengthDistributionData[, SummedWeights := sum(LengthDistributionWeight), by = by]
     
     # Add the LengthDistributionType to the LengthDistributionData:
     LengthDistributionData[, LengthDistributionType := ..LengthDistributionType]
