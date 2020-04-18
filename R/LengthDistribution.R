@@ -49,7 +49,6 @@ LengthDistribution <- function(
     ############################
     StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData, output.only.last = TRUE, all = TRUE)
     ############################
-    browser()
     
     ####################################################
     ##### 2. Get the count in each length group: #######

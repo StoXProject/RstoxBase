@@ -280,6 +280,7 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     )
     # Extract the 'by' element:
     by <- aggregationVariables$by
+    print(by)
     
     # Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
     if(utils::tail(aggregationVariables$presentResolution, 1) == aggregationVariables$finestResolution) {
@@ -302,8 +303,6 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     ### ), by = by]
     
     # Sum the weights:
-    browser()
-    
     extract <- c(aggregationVariables$presentResolution, weightingVariable)
     summedWeighting <- dataCopy[, ..extract]
     summedWeighting <- unique(summedWeighting)
@@ -312,13 +311,15 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     summedWeighting <- summedWeighting[, ..extract]
     summedWeighting <- unique(summedWeighting)
     
-    by <- aggregationVariables$nextResolution
-    dataCopy <- merge(dataCopy, summedWeighting, by = by)
+    summedWeightingBy <- aggregationVariables$nextResolution
+    dataCopy <- merge(dataCopy, summedWeighting, by = summedWeightingBy, all = TRUE)
     
     dataCopy[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
     
     dataCopy[, c(weightingVariable) := SummedWeights]
     dataCopy[, SummedWeights := NULL]
+    
+    
     
     
     ### # Replace the SummedWeights:
@@ -354,6 +355,9 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
+    
+    # Order by 'by':
+    setorderv(dataCopy, cols = by, order = 1L, na.last = TRUE)
     
     dataCopy
 }
