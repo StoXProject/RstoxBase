@@ -84,7 +84,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
-        functionParameterFormat = list(), 
+        functionParameterFormat = list(
+            EllipsoidalDistanceTable = "ellipsoidalDistanceTable"
+        ), 
         functionArgumentHierarchy = list(
             StratumPolygon = list(
                 DefinitionMethod = "Stratum"
@@ -95,22 +97,25 @@ stoxFunctionAttributes <- list(
             Radius = list(
                 DefinitionMethod = "Radius"
             ), 
-            MinNumStations  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefGCDistance  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefTime  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefBotDepth  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefLatitude  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefLongitude  = list(
+            #MinNumStations = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefGCDistance = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefTime = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefBotDepth = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefLatitude = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefLongitude = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            EllipsoidalDistanceTable = list(
                 DefinitionMethod = "EllipsoidalDistance"
             )
         )

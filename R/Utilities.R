@@ -280,7 +280,6 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     )
     # Extract the 'by' element:
     by <- aggregationVariables$by
-    print(by)
     
     # Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
     if(utils::tail(aggregationVariables$presentResolution, 1) == aggregationVariables$finestResolution) {

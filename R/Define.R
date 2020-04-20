@@ -105,12 +105,16 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         
     }
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
-    else {
+    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
         SSU_PSU <- data.table::data.table(
             SSU = SSU, 
-            PSU = ""
+            #PSU = ""
+            PSU = NA
         )
         Stratum_PSU <- data.table::data.table()
+    }
+    else {
+        stop("Inavlid DefinitionMethod")
     }
     
     # Rename the data according to the model type:
@@ -468,7 +472,7 @@ DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod =
 DefineBioticAssignment <- function(
     processData, 
     NASCData, StoxBioticData, 
-    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
+    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"), 
     StoxAcousticData, 
     AcousticPSU, AcousticLayer, 
     StratumPolygon, 
@@ -480,7 +484,6 @@ DefineBioticAssignment <- function(
     if(UseProcessData) {
         return(processData)
     }
-    
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -532,6 +535,9 @@ DefineBioticAssignment <- function(
             Haul = Haul, 
             WeightingFactor = lapply(Haul, function(x) rep(1, length(x)))
         )
+    }
+    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
+        BioticAssignment <- data.table::data.table()
     }
     else {
         stop("Only DefinitionMethod = Stratum currently implemented")

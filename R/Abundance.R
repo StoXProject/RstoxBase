@@ -208,7 +208,6 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         SuperIndividualsData[, abundanceWeightFactor := WeightedCount / sum(WeightedCount) , by = haulGrouping]
         
         # Get the number of individuals in each Haul:
-        print(haulGrouping)
         SuperIndividualsData[, individualCount := as.double(.N), by = haulGrouping]
         
         # Remove "WeightedCount":
