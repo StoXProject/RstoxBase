@@ -83,10 +83,10 @@ initiateRstoxBase <- function(){
         )
     )
     
-    ### emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
-    ###     sp::SpatialPolygons(list()), 
-    ###     data = data.frame()
-    ### )
+    emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
+        sp::SpatialPolygons(list()), 
+        data = data.frame()
+    )
     ### 
     ### # Define empty process data:
     ### empryProcessData <- list(

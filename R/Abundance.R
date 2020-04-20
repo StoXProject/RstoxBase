@@ -89,6 +89,10 @@ Individuals <- function(StoxBioticData, DensityType = c("Acoustic", "SweptArea")
     # Merge individuals into the Stratum, Layer, Haul table:
     IndividualsData <- merge(usedHauls, MergedStoxBioticData, by = "Haul", allow.cartesian = TRUE)
     
+    # Remove rows with SpeciesCategory NA (change added on 2020-04-20, since NAs in SpeciesCategory are vital for including all Stations, PSUs and Strata when using meanData(), but should not present when considering individuals):
+    IndividualsData <- IndividualsData[!is.na(SpeciesCategory), ]
+    
+    
     return(IndividualsData)
 }
 
@@ -254,10 +258,10 @@ addLengthGroupsByReferenceOneSpecies <- function(
     
     # Get the indices at the given species in 'data' and 'master':
     speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
-    atSpeciesInData <- which(data[[speciesVar]] == species)
-    atSpeciesInMaster <- which(master[[speciesVar]] == species)
+    atSpeciesInData <- which(data[[speciesVar]] %in% species)
+    atSpeciesInMaster <- which(master[[speciesVar]] %in% species)
     if(length(atSpeciesInData) == 0 || length(atSpeciesInMaster) == 0) {
-        stop("The species ", species, " is not present in bot data and master.")
+        stop("The species ", species, " is not present in both data and master.")
     }
     
     
@@ -323,6 +327,7 @@ addLengthGroupsByReference <- function(
     lengthVar = "IndividualTotalLengthCentimeter", 
     resolutionVar = "LengthResolutionCentimeter"
 ) {
+    
     # Run a for loop through the common species:
     speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
     speciesInData <- unique(data[[speciesVar]])
