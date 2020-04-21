@@ -336,12 +336,12 @@ addLengthGroupsByReference <- function(
     # If there are species in the master that are not in the data, report a warning:
     speciesOnlyInMaster <- setdiff(speciesInMaster, speciesInData)
     if(length(speciesOnlyInMaster)) {
-        warning("The species categories ", paste(speciesOnlyInMaster, collapse = ", "), " are present in the master but not in the data")
+        warning("StoX: The species categories ", paste(speciesOnlyInMaster, collapse = ", "), " are present in the master but not in the data")
     }
     # If there are species in the data that are not in the master, report a warning:
     speciesOnlyInData <- setdiff(speciesInMaster, speciesInData)
     if(length(speciesOnlyInMaster)) {
-        warning("The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
+        warning("StoX: The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
     }
 
     # Keep only the common species:    

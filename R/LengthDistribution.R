@@ -266,7 +266,7 @@ RegroupLengthDistribution <- function(
     anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1, na.rm = TRUE)
     anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals, na.rm = TRUE)
     if(any(anyBelow, anyAbove)) {
-        warning("Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
+        warning("StoX: Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
     }
     
     # Replace with the new LengthResolutionCentimeter:
@@ -441,7 +441,7 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     # Apply the compensationFunction:
     valid <- !is.na(data[[requiredParameters[1]]])
     if(!all(valid)) {
-        warning("Length dependent compensation was not applied to all species categories in the length distribution data")
+        warning("StoX: Length dependent compensation was not applied to all species categories in the length distribution data")
     }
     functionInputColumns <- c("WeightedCount", "IndividualTotalLengthCentimeterMiddle", requiredParameters)
     data[valid, WeightedCount := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]

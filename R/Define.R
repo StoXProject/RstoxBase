@@ -495,9 +495,10 @@ DefineBioticAssignment <- function(
         SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
         
         # Get the stratum for each point:
-        StratumIndex <- sp::over(SpatialStations, StratumPolygon)
-        StratumIndex <- as.numeric(unlist(StratumIndex))
-        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
+        #StratumIndex <- sp::over(SpatialStations, StratumPolygon)
+        #StratumIndex <- as.numeric(unlist(StratumIndex))
+        #Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
+        Stratum <- unname(unlist(sp::over(SpatialStations, StratumPolygon)))
         
         # Create a list of the stations of each stratum:
         #stationIndex <- as.numeric(names(StratumIndex))

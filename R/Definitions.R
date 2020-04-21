@@ -287,7 +287,7 @@ detectDataType <- function(data) {
         missing <- paste(names(missing), missing, sep = ": ", collapse = ". ")
         
         
-        warning("The input data does not contain all the expected variables. The following are needed: ", missing)
+        warning("StoX: The input data does not contain all the expected variables. The following are needed: ", missing)
     }
     else if(sum(present) > 1) {
         message("More than one element of the input list contains the expected variables (", paste(names(dataTypeRequiredVariables)[present], collapse = ", "), "). The first selected:")
