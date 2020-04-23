@@ -187,7 +187,7 @@ addPSUDefinition <- function(data, dataType, PSUDefinition = NULL, ...) {
     
     # If present, add the PSUDefinition to the start of the data
     if(length(PSUDefinition) == 0 || length(PSUDefinition$Stratum_PSU) == 0) {
-        warning("StoX: PSUs not defined, possibly due to no data inside the any strata")
+        #warning("StoX: PSUs not defined, possibly due to no data inside the any strata")
         data.table::setDT(data)
         toAdd <- c("Stratum", "PSU")
         data.table::set(data, j = toAdd, value = NA)
