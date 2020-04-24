@@ -6,6 +6,8 @@
 \usage{
 LengthDistribution(
   StoxBioticData,
+  IncludePSU = FALSE,
+  IncludeLayer = FALSE,
   SweptAreaPSU = NULL,
   SweptAreaLayer = NULL,
   LengthDistributionType = c("Normalized", "Standard", "Percent"),

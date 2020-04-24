@@ -91,6 +91,9 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 DefinitionMethod = "Stratum"
             ), 
+            StoxBioticData = list(
+                DefinitionMethod = "Stratum"
+            ), 
             StoxAcousticData = list(
                 DefinitionMethod = "Radius"
             ), 
@@ -127,7 +130,14 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            SweptAreaPSU = list(
+                IncludePSU = TRUE
+            ), 
+            SweptAreaLayer = list(
+                IncludeLayer = TRUE
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
@@ -145,7 +155,11 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            SweptAreaPSU = list(
+                PSUDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
@@ -154,7 +168,11 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            SweptAreaLayer = list(
+                LayerDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
@@ -194,21 +212,39 @@ stoxFunctionAttributes <- list(
     NASC = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "NASCData"
+        functionOutputDataType = "NASCData", 
+        functionArgumentHierarchy = list(
+            AcousticPSU = list(
+                IncludePSU = TRUE
+            ), 
+            AcousticLayer = list(
+                IncludeLayer = TRUE
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
     SumNASC = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "NASCData"
+        functionOutputDataType = "NASCData", 
+        functionArgumentHierarchy = list(
+            AcousticLayer = list(
+                LayerDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
     MeanNASC = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "NASCData"
+        functionOutputDataType = "NASCData", 
+        functionArgumentHierarchy = list(
+            AcousticPSU = list(
+                PSUDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     SweptAreaDensity = list(

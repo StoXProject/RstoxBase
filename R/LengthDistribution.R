@@ -24,6 +24,8 @@
 #' 
 LengthDistribution <- function(
     StoxBioticData, 
+    IncludePSU = FALSE, 
+    IncludeLayer = FALSE, 
     SweptAreaPSU = NULL, 
     SweptAreaLayer = NULL, 
     LengthDistributionType = c("Normalized", "Standard", "Percent"), 
@@ -64,30 +66,6 @@ LengthDistribution <- function(
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
     ####################################################
     
-    
-    ###################################################################
-    ##### 3. Add the weights depending on LengthDistributionType: #####
-    ###################################################################
-    # For all swept-area estimates, LengthDistributionWeight should be 1 (and not EffectiveTowedDistance): 
-    #LengthDistributionData$LengthDistributionWeight <- 1
-    
-    ### # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the EffectiveTowedDistance, rend### ering the effective EffectiveTowedDistance as 1:
-    ### if(LengthDistributionType == "Normalized") {
-    ###     LengthDistributionData$LengthDistributionWeight <- 1
-    ### }
-    ### else if(LengthDistributionType == "Standard") {
-    ###     LengthDistributionData$LengthDistributionWeight <- 1
-    ### }
-    ### # For LengthDistributionType "PercentLengthDistribution" weights are not relevant, since length distributions are ### simply averaged, and are set to 1. This type is used in acoustic-trawl models, where the biotic station weig### hting is applied when averaging the length distributions within each biotic station assignment:
-    ### else if(LengthDistributionType == "Percent") {
-    ###     LengthDistributionData$LengthDistributionWeight <- 1
-    ### }
-    ### else {
-    ###     stop("Invalid LengthDistributionType. See ?RstoxBase::LengthDistributionType")
-    ### }
-    ###################################################################
-    
-    
     ######################################################
     ##### 4. Add horizontal and vertical resolution: #####
     ######################################################
@@ -98,17 +76,10 @@ LengthDistribution <- function(
     LengthDistributionData$LengthDistributionWeight <- 1
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    LengthDistributionData <- addPSUDefinition(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = SweptAreaPSU, all = TRUE)
+    LengthDistributionData <- addPSUProcessData(LengthDistributionData, dataType = "LengthDistributionData", PSUProcessData = SweptAreaPSU, all = TRUE)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    LengthDistributionData <- addLayerDefinition(LengthDistributionData, dataType = "LengthDistributionData", layerDefinition = SweptAreaLayer)
-    
-    ### # Add also the number of Stations in each PSU, and the number of PSUs in each Stratum:
-    ### PSUSize <- SweptAreaPSU$Station_PSU[, .(PSUSize = length(Station)), by = "PSU"]
-    ### StratumSize <- SweptAreaPSU$Stratum_PSU[, .(StratumSize = length(PSU)), by = "Stratum"]
-    ### # Merge the PSUSize and StratumSize into the LengthDistributionData:
-    ### LengthDistributionData <- merge(LengthDistributionData, PSUSize, by = "PSU")
-    ### LengthDistributionData <- merge(LengthDistributionData, StratumSize, by = "Stratum")
+    LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
     ######################################################
     
     
@@ -148,26 +119,6 @@ LengthDistribution <- function(
     if(LengthDistributionType == "Normalized") {
         LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
     }
-    
-    # Add the sum of the weigths over the stations of each PSU:
-    ### 
-    ### SummedWeights <- LengthDistributionData[, c("PSU", "LengthDistributionWeight")]
-    ### SummedWeights <- unique(SummedWeights)
-    ### SummedWeights <- SummedWeights[, SummedWeights := sum(LengthDistributionWeight), by = PSU]
-    ### SummedWeights[, LengthDistributionWeight := NULL]
-    ### SummedWeights <- unique(SummedWeights)
-    ### 
-    ### LengthDistributionData <- merge(LengthDistributionData, SummedWeights, all = TRUE, by = "PSU")
-    ### 
-    ### # Get the definitions:
-    ### aggregateBy <- getDataTypeDefinition(
-    ###     dataType = "LengthDistributionData", 
-    ###     elements = c("categoryVariable", "groupingVariables"), 
-    ###     unlist = TRUE
-    ### )
-    ### by <- c("PSU", aggregateBy)
-    ### 
-    ### LengthDistributionData[, SummedWeights := sum(LengthDistributionWeight), by = by]
     
     # Add the LengthDistributionType to the LengthDistributionData:
     LengthDistributionData[, LengthDistributionType := ..LengthDistributionType]
@@ -396,7 +347,6 @@ LengthDependentCatchCompensation <- function(
     # Keep only the releavnt columns:
     keepOnlyRelevantColumns(LengthDistributionDataCopy, "LengthDistributionData")
     
-    
     return(LengthDistributionDataCopy)
 }
 
@@ -503,6 +453,8 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "Normalized".
 #' 
 #' @inheritParams RegroupLengthDistribution
+#' @param PSUDefinition A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the PSUs in the input \code{SweptAreaPSU}
+#' @param SweptAreaPSU \code{\link{SweptAreaPSU}} data.
 #' @param TargetResolution The horizontal resolution of the output.
 #' 
 #' @details
@@ -516,8 +468,8 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' 
 #' @export
 #' 
-MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "PSU") {
-    meanData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)
+MeanLengthDistribution <- function(LengthDistributionData, PSUDefinition = c("PreDefined", "FunctionInput"), SweptAreaPSU = NULL, TargetResolution = "PSU") {
+    meanData(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = PSUDefinition, PSUProcessData = SweptAreaPSU, targetResolution = TargetResolution)
 }
 
 
@@ -528,6 +480,8 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 #' This function sums length distribution to swept area layers.
 #' 
 #' @inheritParams RegroupLengthDistribution
+#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the Layers in the input \code{SweptAreaLayer}
+#' @param SweptAreaLayer \code{\link{SweptAreaLayer}} data.
 #' @param TargetResolution The vertical resolution of the output.
 #' 
 #' @details
@@ -541,8 +495,8 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 #' 
 #' @export
 #' 
-SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "Layer") {
-    sumData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)
+SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("PreDefined", "FunctionInput"), SweptAreaLayer = NULL, TargetResolution = "Layer") {
+    sumData(LengthDistributionData, dataType = "LengthDistributionData", LayerDefinition = LayerDefinition, LayerProcessData = SweptAreaLayer, targetResolution = TargetResolution)
 }
 
 

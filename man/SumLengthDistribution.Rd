@@ -4,10 +4,19 @@
 \alias{SumLengthDistribution}
 \title{Sum length distribution vertically}
 \usage{
-SumLengthDistribution(LengthDistributionData, TargetResolution = "Layer")
+SumLengthDistribution(
+  LengthDistributionData,
+  LayerDefinition = c("PreDefined", "FunctionInput"),
+  SweptAreaLayer = NULL,
+  TargetResolution = "Layer"
+)
 }
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
+
+\item{LayerDefinition}{A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the Layers in the input \code{SweptAreaLayer}}
+
+\item{SweptAreaLayer}{\code{\link{SweptAreaLayer}} data.}
 
 \item{TargetResolution}{The vertical resolution of the output.}
 }

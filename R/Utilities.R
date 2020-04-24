@@ -161,43 +161,43 @@ getStoxBioticKeys <- function(levels = NULL) {
 
 
 # Function to get Layer indices:
-findLayer <- function(minDepth, maxDepth, layerDefinition, acceptNA = TRUE) {
+findLayer <- function(minDepth, maxDepth, layerProcessData, acceptNA = TRUE) {
     
     # This needs to be verified!!!!!!!!!!!!!
-    layerRangeVector <- c(layerDefinition$MinLayerDepth, utils::tail(layerDefinition$MaxLayerDepth, 1))
+    layerRangeVector <- c(layerProcessData$MinLayerDepth, utils::tail(layerProcessData$MaxLayerDepth, 1))
     indMin <- findInterval(minDepth, layerRangeVector)
     indMax <- findInterval(maxDepth, layerRangeVector, rightmost.closed = TRUE)
     LayerInd <- pmin(indMin, indMax, na.rm = acceptNA)
     
-    if(acceptNA && nrow(layerDefinition) == 1 && layerDefinition$MinLayerDepth == 0 && layerDefinition$MaxLayerDepth == Inf) {
+    if(acceptNA && nrow(layerProcessData) == 1 && layerProcessData$MinLayerDepth == 0 && layerProcessData$MaxLayerDepth == Inf) {
         LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
     }
     
     LayerData <- data.table::data.table(
-        Layer = layerDefinition$Layer[LayerInd], 
-        MinLayerDepth = layerDefinition$MinLayerDepth[LayerInd], 
-        MaxLayerDepth = layerDefinition$MaxLayerDepth[LayerInd]
+        Layer = layerProcessData$Layer[LayerInd], 
+        MinLayerDepth = layerProcessData$MinLayerDepth[LayerInd], 
+        MaxLayerDepth = layerProcessData$MaxLayerDepth[LayerInd]
     )
     
     LayerData
 }
 
 # Function to add Stratum and PSU:
-addPSUDefinition <- function(data, dataType, PSUDefinition = NULL, ...) {
+addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
     
-    # If present, add the PSUDefinition to the start of the data
-    if(length(PSUDefinition) == 0 || length(PSUDefinition$Stratum_PSU) == 0) {
+    # If present, add the PSUProcessData to the start of the data
+    if(length(PSUProcessData) == 0 || length(PSUProcessData$Stratum_PSU) == 0) {
         #warning("StoX: PSUs not defined, possibly due to no data inside the any strata")
         data.table::setDT(data)
         toAdd <- c("Stratum", "PSU")
         data.table::set(data, j = toAdd, value = NA)
     }
     else {
-        # Merge first the PSUDefinition:
-        PSUDefinition <- RstoxData::mergeDataTables(PSUDefinition, output.only.last = TRUE, ...)
+        # Merge first the PSUProcessData:
+        PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData, output.only.last = TRUE, ...)
         # Then merge the result with the data:
-        by <- intersect(names(PSUDefinition), names(data))
-        data <- merge(PSUDefinition, data, by = by, ...)
+        by <- intersect(names(PSUProcessData), names(data))
+        data <- merge(PSUProcessData, data, by = by, ...)
     }
     
     
@@ -209,17 +209,14 @@ addPSUDefinition <- function(data, dataType, PSUDefinition = NULL, ...) {
 }
 
 # Function to add Layer:
-addLayerDefinition <- function(data, dataType, layerDefinition = NULL, acceptNA = TRUE) {
+addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptNA = TRUE) {
     
-    # Insert the Layer column from the layerDefinition input, and otherwise by NAs:
-    if(length(layerDefinition)) {
+    # Insert the Layer column from the layerProcessData input, and otherwise by NAs:
+    if(length(layerProcessData)) {
         # Get the variables to aggregate by etc.:
         dataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
         varMin <- dataTypeDefinition$verticalRawDimension[1]
         varMax <- dataTypeDefinition$verticalRawDimension[2]
-        
-        #layerData <- findLayer(data = data, layerDefinition = layerDefinition, varMin = varMin, varMax = varMax)
-        
         
         # Get min and max depth of the raw vertical distribution, either as a copy of the depths, or a calculation of the depths given the depth and orientation of the coordinate system:
         if(length(dataTypeDefinition$coordinateSystemOrigin)) {
@@ -236,7 +233,7 @@ addLayerDefinition <- function(data, dataType, layerDefinition = NULL, acceptNA 
         layerData <- findLayer(
             minDepth = minDepth, 
             maxDepth = maxDepth, 
-            layerDefinition = layerDefinition, 
+            layerProcessData = layerProcessData, 
             acceptNA = acceptNA
         )
         
@@ -266,10 +263,24 @@ allEqual <- function(x, tol = .Machine$double.eps ^ 0.5) {
 }
 
 
-meanData <- function(data, dataType, targetResolution = "PSU") {
+meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionInput"), PSUProcessData = NULL, targetResolution = "PSU") {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
     dataCopy = data.table::copy(data)
+    
+    # Add the PSUs if PSUDefinition is "FunctionInput" and PSUProcessData is given:
+    PSUDefinition <- match.arg(PSUDefinition)
+    if(identical(PSUDefinition, "FunctionInput")) {
+        dataCopy <- addPSUProcessData(dataCopy, dataType = dataType, PSUProcessData = PSUProcessData)
+    }
+    else if(identical(PSUDefinition, "PreDefined")) {
+        if(all(is.na(data$PSU))) {
+            stop("PSUs must be present in the data if PSUDefinition is \"PreDefined\"")
+        }
+    }
+    else {
+        stop("Invalid PSUDefinition, must be one of \"PreDefined\" and \"FunctionInput\"")
+    }
     
     # Get the variables to aggregate by etc.:
     aggregationVariables <- determineAggregationVariables(
@@ -291,55 +302,27 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
     weightingVariable <- aggregationVariables$weightingVariable
     summedWeightingVariable <- aggregationVariables$summedWeightingVariable
     
-    #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
-    #dataCopy[, c(dataVariable, weightingVariable) := list(
-    #    stats::weighted.mean(x = get(dataVariable), w = get(weightingVariable)), 
-    #    sum(get(weightingVariable))
-    #    ), by = by]
-    ### dataCopy[, c(dataVariable, weightingVariable) := list(
-    ###     sum(get(dataVariable) * get(weightingVariable)) / get(summedWeightingVariable), 
-    ###     sum(get(weightingVariable))
-    ### ), by = by]
-    
-    # Sum the weights:
+    # Extract the resolution and weighting variables, and uniquify:
     extract <- c(aggregationVariables$presentResolution, weightingVariable)
     summedWeighting <- dataCopy[, ..extract]
     summedWeighting <- unique(summedWeighting)
+    # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
     summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = eval(aggregationVariables$nextResolution)]
+    
+    # Extract the next resolution and the summed weights and uniquify:
     extract <- c(aggregationVariables$nextResolution, "SummedWeights")
     summedWeighting <- summedWeighting[, ..extract]
     summedWeighting <- unique(summedWeighting)
     
+    # Merge the resulting summed weights with the data, by the next resolution:
     summedWeightingBy <- aggregationVariables$nextResolution
     dataCopy <- merge(dataCopy, summedWeighting, by = summedWeightingBy, all = TRUE)
     
+    # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
     dataCopy[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
-    
+    # Replace the weights by the summed weights:
     dataCopy[, c(weightingVariable) := SummedWeights]
     dataCopy[, SummedWeights := NULL]
-    
-    
-    
-    
-    ### # Replace the SummedWeights:
-    ### dataCopy[, c(summedWeightingVariable) := NULL]
-    ### by <- aggregationVariables$nextResolution
-    ### dataCopy <- merge(dataCopy, summedWeighting, by = by)
-    
-    #dataCopy[, c(summedWeightingVariable) := sum(get(summedWeightingVariable)), by = eval(aggregationVariables$nextResolution)]
-    
-    ## Calculate the sum divided by the numner of rows:
-    #dataCopy[, c(dataVariable, weightingVariable) := list(
-    #    sum(get(dataVariable) * get(weightingVariable)) / length(get(dataVariable)), 
-    #    sum(get(weightingVariable))
-    #), 
-    #by = by]
-    #
-    #
-    #dataCopy[, c(dataVariable, weightingVariable) := list(
-    #    stats::weighted.mean(x = get(dataVariable), w = get(weightingVariable)), 
-    #    sum(get(weightingVariable))
-    #), by = by]
     
     # Set the resolution variables which were summed over to NA:
     set(
@@ -351,20 +334,36 @@ meanData <- function(data, dataType, targetResolution = "PSU") {
         value=NA
     )
     
-    
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
     
     # Order by 'by':
     setorderv(dataCopy, cols = by, order = 1L, na.last = TRUE)
     
-    dataCopy
+    # Keep only the releavnt columns:
+    keepOnlyRelevantColumns(dataCopy, dataType)
+    
+    return(dataCopy)
 }
 
-sumData <- function(data, dataType, targetResolution = "Layer") {
+sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionInput"), LayerProcessData = NULL, targetResolution = "Layer") {
     
     # Make a copy of the input, since we are summing and setting values by reference:
     dataCopy = data.table::copy(data)
+    
+    # Add the PSUs if PSUDefinition is "FunctionInput" and PSUProcessData is given:
+    LayerDefinition <- match.arg(LayerDefinition)
+    if(identical(LayerDefinition, "FunctionInput")) {
+        dataCopy <- addLayerProcessData(dataCopy, dataType = dataType, LayerProcessData = LayerProcessData)
+    }
+    else if(identical(LayerDefinition, "PreDefined")) {
+        if(all(is.na(data$Layer))) {
+            stop("Layers must be present in the data if LayerDefinition is \"PreDefined\"")
+        }
+    }
+    else {
+        stop("Invalid LayerDefinition, must be one of \"PreDefined\" and \"FunctionInput\"")
+    }
     
     # Get the variables to aggregate by etc.:
     aggregationVariables <- determineAggregationVariables(
@@ -395,7 +394,10 @@ sumData <- function(data, dataType, targetResolution = "Layer") {
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
     
-    dataCopy
+    # Keep only the releavnt columns:
+    keepOnlyRelevantColumns(dataCopy, dataType)
+    
+    return(dataCopy)
 }
 
 

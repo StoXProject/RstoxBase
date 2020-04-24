@@ -4,10 +4,19 @@
 \alias{MeanNASC}
 \title{(Weighted) Average NASC}
 \usage{
-MeanNASC(NASCData, TargetResolution = "PSU")
+MeanNASC(
+  NASCData,
+  PSUDefinition = c("PreDefined", "FunctionInput"),
+  AcousticPSU = NULL,
+  TargetResolution = "PSU"
+)
 }
 \arguments{
 \item{NASCData}{The \code{\link{NASC}} data.}
+
+\item{PSUDefinition}{A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{NASCData}, or "FunctionInput" to provide the PSUs in the input \code{AcousticPSU}}
+
+\item{AcousticPSU}{\code{\link{AcousticPSU}} data.}
 
 \item{TargetResolution}{The vertical resolution of the output.}
 }
