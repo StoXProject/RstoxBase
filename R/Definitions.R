@@ -247,6 +247,12 @@ getColumnOrder <- function(dataType) {
 }
 
 setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
+    
+    # Remove any duplicated columns:
+    if(any(duplicated(names(data)))) {
+        data[, which(duplicated(names(data))) := NULL]
+    }
+    
     # Get the column order:
     columnOrder <- getColumnOrder(dataType)
     

@@ -637,7 +637,7 @@ DefineBioticAssignment <- function(
         
         # Build a table with hauls as a vector in each cell of the Haul column.
         BioticAssignment <- cbind(
-            Stratum_PSU_Layer[, c("PSU", "Layer")], 
+            Stratum_PSU_Layer[, c("Stratum", "PSU", "Layer")], 
             Haul = Haul
         )
         
@@ -651,7 +651,7 @@ DefineBioticAssignment <- function(
         BioticAssignment <- data.table::data.table()
     }
     else {
-        stop("Only DefinitionMethod = Stratum currently implemented")
+        stop("Only DefinitionMethod = \"Stratum\" is currently implemented")
     }
     
     return(BioticAssignment)

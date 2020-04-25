@@ -197,6 +197,13 @@ addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
         PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData, output.only.last = TRUE, ...)
         # Then merge the result with the data:
         by <- intersect(names(PSUProcessData), names(data))
+        # Remove columns with only NAs in the data in 'by':
+        onlyNAs <- unlist(data[, lapply(.SD, function(x) all(is.na(x))), .SDcols = by])
+        if(any(onlyNAs)) {
+            toRemove <- by[onlyNAs]
+            by <- by[!onlyNAs]
+            data[, (toRemove):=NULL] 
+        }
         data <- merge(PSUProcessData, data, by = by, ...)
     }
     
@@ -346,7 +353,7 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
     return(dataCopy)
 }
 
-sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionInput"), LayerProcessData = NULL, targetResolution = "Layer") {
+sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionInput"), layerProcessData = NULL, targetResolution = "Layer") {
     
     # Make a copy of the input, since we are summing and setting values by reference:
     dataCopy = data.table::copy(data)
@@ -354,7 +361,7 @@ sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionI
     # Add the PSUs if PSUDefinition is "FunctionInput" and PSUProcessData is given:
     LayerDefinition <- match.arg(LayerDefinition)
     if(identical(LayerDefinition, "FunctionInput")) {
-        dataCopy <- addLayerProcessData(dataCopy, dataType = dataType, LayerProcessData = LayerProcessData)
+        dataCopy <- addLayerProcessData(dataCopy, dataType = dataType, layerProcessData = layerProcessData)
     }
     else if(identical(LayerDefinition, "PreDefined")) {
         if(all(is.na(data$Layer))) {

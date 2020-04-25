@@ -496,7 +496,7 @@ MeanLengthDistribution <- function(LengthDistributionData, PSUDefinition = c("Pr
 #' @export
 #' 
 SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("PreDefined", "FunctionInput"), SweptAreaLayer = NULL, TargetResolution = "Layer") {
-    sumData(LengthDistributionData, dataType = "LengthDistributionData", LayerDefinition = LayerDefinition, LayerProcessData = SweptAreaLayer, targetResolution = TargetResolution)
+    sumData(LengthDistributionData, dataType = "LengthDistributionData", LayerDefinition = LayerDefinition, layerProcessData = SweptAreaLayer, targetResolution = TargetResolution)
 }
 
 

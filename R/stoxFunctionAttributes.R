@@ -279,10 +279,13 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "IndividualsData", 
         functionArgumentHierarchy = list(
             BioticAssignment = list(
-                DensityType = "Acoustic"
+                AbundanceType = "Acoustic"
             ), 
-            LengthDistributionData = list(
-                DensityType = "SweptArea"
+            SweptAreaPSU = list(
+                AbundanceType = "SweptArea"
+            ), 
+            SweptAreaLayer = list(
+                AbundanceType = "SweptArea"
             )
         )
     ), 

@@ -90,7 +90,7 @@ NASC <- function(
 #' @import data.table
 #' 
 SumNASC <- function(NASCData, LayerDefinition = c("PreDefined", "FunctionInput"), AcousticLayer = NULL, TargetResolution = "Layer") {
-    sumData(NASCData, dataType = "NASCData", LayerDefinition = LayerDefinition, LayerProcessData = AcousticLayer, targetResolution = TargetResolution)
+    sumData(NASCData, dataType = "NASCData", LayerDefinition = LayerDefinition, layerProcessData = AcousticLayer, targetResolution = TargetResolution)
 }
 
 
