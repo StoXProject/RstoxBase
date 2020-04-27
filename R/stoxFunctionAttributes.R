@@ -261,6 +261,16 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
+    AcousticDensity = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "DensityData", 
+        functionParameterFormat = list(
+            SpeciesLinkTable = "speciesLinkTable"
+        ),
+        functionArgumentHierarchy = list()
+    ), 
+    
     MeanDensity = list(
         functionType = "modelData", 
         functionCategory = "baseline", 

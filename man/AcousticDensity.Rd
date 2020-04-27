@@ -4,7 +4,13 @@
 \alias{AcousticDensity}
 \title{Calculate number density from NASC in length intervals}
 \usage{
-AcousticDensity(NASCData, m = 20, a = -70, d = double())
+AcousticDensity(
+  NASCData,
+  AssignmentLengthDistributionData,
+  AcousticTargetStrength,
+  SpeciesLinkTable,
+  TargetStrengthMethod = "Foote1987"
+)
 }
 \arguments{
 \item{parameterName}{Parameter descrption.}

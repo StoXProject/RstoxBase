@@ -21,7 +21,141 @@
 #' @export
 #' @import data.table
 #' 
-AcousticDensity <- function(NASCData, m = 20, a = -70, d = double()) {
+AcousticDensity <- function(
+    NASCData,
+    AssignmentLengthDistributionData,
+    AcousticTargetStrength,
+    SpeciesLinkTable,
+    TargetStrengthMethod = "Foote1987"){
+    
+    browser()
+    #################################################################
+    #    Merge TargetStrengthTable with SpeciesLinkTable            #
+    #################################################################
+    TargetStrengthTable <- merge(AcousticTargetStrength, SpeciesLinkTable, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
+    
+    
+    #################################################################
+    #         Join NASCData with species link                       #
+    #################################################################
+    #key <- c(names(NASCData)[names(NASCData)%in%names(TargetStrengthTable)])
+    #if(nrow(TargetStrengthTable)>1){
+    #    warning('Several TargetStrength references is included. This has not yet been implemented')}
+    #
+    #
+    ##Small hack as there is different types in data
+    #TargetStrengthTable$Frequency<-as.integer(TargetStrengthTable$Frequency)
+    #TargetStrengthTable$AcousticCategory<-as.integer(TargetStrengthTable$AcousticCategory)
+    
+    mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+    DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all = TRUE)
+    
+    
+    
+    
+    #################################################################
+    #         Remove horizontal resolution not in NASCData          #
+    ################################################################# 
+    rmo <- c(names((colSums(is.na(DensityData[,c('Stratum','PSU')])) == nrow(DensityData[,c('Stratum','PSU')])))[(colSums(is.na(DensityData[,c('Stratum','PSU')])) == nrow(DensityData[,c('Stratum','PSU')]))==T],'assignmentID')
+    AssignedLengthDistributionData[,(rmo):=NULL]
+    AssignedLengthDistributionData<-unique(AssignedLengthDistributionData)
+    
+    
+    
+    
+    
+    #################################################################
+    #         merge DensityData with biology info                   #
+    #################################################################
+    key <- c(names(DensityData)[names(DensityData)%in%names(AssignedLengthDistributionData)])
+    DensityData <- merge(DensityData,AssignedLengthDistributionData,by=key,all.x = T)
+    
+    
+    
+    
+    
+    #################################################################
+    #         Compute Target strength when using model              #
+    #################################################################
+    DensityData<-TargetStrengthFunctions(TargetStrengthMethod,DensityData)
+    
+    
+    
+    #################################################################
+    #         Compute the total weight                              #
+    #################################################################
+    tmp <- DensityData[, sum(10^(TargetStrength/10)*WeightedCount,na.rm = T), by=.(Stratum,Layer,SpeciesCategory)]
+    DensityData<-merge(DensityData,tmp,by=c(names(DensityData)[names(DensityData)%in%names(tmp)]))
+    
+    
+    
+    
+    
+    
+    #################################################################
+    #         Compute the mean nasc per length group                #
+    #################################################################
+    DensityData$NASC <- apply(DensityData,1,function(x) as.numeric(x['NASC'])*(((10^(as.numeric(x['TargetStrength'])/10))*as.numeric(x['WeightedCount']))/as.numeric(x['V1'])))
+    
+    
+    
+    
+    
+    
+    #################################################################
+    #          Compute number of individs                           #
+    #################################################################
+    #Compute the number of idivids per sqare nautical mile per length group
+    DensityData$Density <- apply(DensityData,1,function(x) as.numeric(x['NASC'])/(4*pi*10^(as.numeric(x['TargetStrength'])/10)))
+    
+    
+    
+    
+    
+    #################################################################
+    #         Cleen DensityData output                              #
+    #################################################################
+    relevantVariables <- getAllDataTypeVariables(dataType = "DensityData")
+    DensityData <- DensityData[, ..relevantVariables]
+    
+}
+
+###########################################################
+# Define a function to add TS according to selected model #
+###########################################################
+getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote87", "Ona2003")){
+    
+    TargetStrengthMethod <- match.arg(TargetStrengthMethod)
+    
+    # Check wich model is selected
+    if(grepl("Foote1987", TargetStrengthMethod, ignore.case = TRUE)){
+        # Check that all parameters are present: 
+        if(!all(c("m", "a") %in% names(Data))){
+            stop("The columns \"m\" and \"a\" are required for TargetStrengthMethod \"Foote87\" (m * log10(L) + a, where L is length in centimeter)")
+        }
+        
+        # Apply the Foote1987 equation: 
+        Data[, TargetStrength := m * log10(IndividualTotalLengthCentimeter) + a]
+    }
+    else if(grepl("Ona2003", TargetStrengthMethod, ignore.case = TRUE)){
+        # Check that all parameters are present: 
+        if(!all(c("m", "a", "d") %in% names(Data))){
+            stop("The columns \"m\", \"a\" and \"d\" are required for TargetStrengthMethod \"Foote87\" (m * log10(L) + a, where L is length in centimeter)")
+        }
+        
+        # Apply the Ona2003 equation: 
+        verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
+        Data[, TargetStrength := m * log10(IndividualTotalLengthCentimeter) + a + d * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
+    }
+    else{
+        warning("Invalid TargetStrengthMethod (Foote1987 and Ona2003 currently implemented)")
+    }
+    
+    return(DensityData)
+}
+
+
+AcousticDensityOld <- function(NASCData, m = 20, a = -70, d = double()) {
     # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
     
     
