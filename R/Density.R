@@ -28,7 +28,9 @@ AcousticDensity <- function(
     SpeciesLinkTable,
     TargetStrengthMethod = "Foote1987"){
     
-    browser()
+    # Check that the input SpeciesLinkTable has the appropriate types:
+    checkTypes(table = SpeciesLinkTable)
+    
     #################################################################
     #    Merge TargetStrengthTable with SpeciesLinkTable            #
     #################################################################
@@ -48,9 +50,18 @@ AcousticDensity <- function(
     #TargetStrengthTable$AcousticCategory<-as.integer(TargetStrengthTable$AcousticCategory)
     
     mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
-    DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all = TRUE)
+    DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
     
     
+    mergeBy <- intersect(names(DensityData), names(AssignmentLengthDistributionData))
+    DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
+    
+    getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
+    
+    # Get backscatteringCrossSection:
+    DensityData[, backscatteringCrossSection := 10^(TargetStrength/10)]
+    
+    stop("To be finished")
     
     
     #################################################################
@@ -123,7 +134,7 @@ AcousticDensity <- function(
 ###########################################################
 # Define a function to add TS according to selected model #
 ###########################################################
-getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote87", "Ona2003")){
+getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona2003")){
     
     TargetStrengthMethod <- match.arg(TargetStrengthMethod)
     
@@ -131,7 +142,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote87", "Ona2003
     if(grepl("Foote1987", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
         if(!all(c("m", "a") %in% names(Data))){
-            stop("The columns \"m\" and \"a\" are required for TargetStrengthMethod \"Foote87\" (m * log10(L) + a, where L is length in centimeter)")
+            stop("The columns \"m\" and \"a\" are required for TargetStrengthMethod \"Foote1987\" (m * log10(L) + a, where L is length in centimeter)")
         }
         
         # Apply the Foote1987 equation: 
@@ -140,7 +151,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote87", "Ona2003
     else if(grepl("Ona2003", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
         if(!all(c("m", "a", "d") %in% names(Data))){
-            stop("The columns \"m\", \"a\" and \"d\" are required for TargetStrengthMethod \"Foote87\" (m * log10(L) + a, where L is length in centimeter)")
+            stop("The columns \"m\", \"a\" and \"d\" are required for TargetStrengthMethod \"Foote1987\" (m * log10(L) + a, where L is length in centimeter)")
         }
         
         # Apply the Ona2003 equation: 
@@ -150,8 +161,6 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote87", "Ona2003
     else{
         warning("Invalid TargetStrengthMethod (Foote1987 and Ona2003 currently implemented)")
     }
-    
-    return(DensityData)
 }
 
 

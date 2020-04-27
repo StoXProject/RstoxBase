@@ -467,3 +467,45 @@ JavaJEXL2R <- function(x, eval=TRUE){
     
     return(x)
 }
+
+# Check the types of the SpeciesLinkTable:
+checkTypes <- function(table) {
+    
+    # Get the name of the table and the function name:
+    parameterTableName <- deparse(substitute(table))
+    functionName <- sub("()", "", deparse(sys.call(-1)[1]), fixed = TRUE)
+    
+    # Get the format of the parameter table:
+    format <- stoxFunctionAttributes[[functionName]]$functionParameterFormat[[parameterTableName]]
+    # Get the parameter table info holding the types:
+    parameterTableInfo <- getRstoxBaseDefinitions("parameterTableInfo")[[format]]$info
+    
+    if(!all(names(table) %in% parameterTableInfo$name)) {
+        missing <- setdiff(parameterTableInfo$name, names(table))
+        stop("All columns must be present in the ", parameterTableName, " (", missing, " missing)")
+    }
+    
+    # Get a table of the column name and type of the input table:
+    types <- sapply(table, function(x) class(x)[1])
+    # numeric and double are identical in R, so we convert numeric to double, which is what is given by the functionParameterFormat:
+    types <- replace(types, types == "numeric", "double")
+    # Build a table similar to the parameterTableInfo:
+    types <- data.table::data.table(
+        name = names(table), 
+        type = types
+    )
+    
+    # Order both the expected and acutal table, and check for identity:
+    data.table::setorder(parameterTableInfo)
+    data.table::setorder(types)
+    
+    if(!identical(parameterTableInfo, types)) {
+        # Print error message for those different:
+        differs <- parameterTableInfo$type != types$type
+        stop("The input ", parameterTableName, " does contains columns of the wrong type (", paste0(parameterTableInfo$name[differs], ": ", parameterTableInfo$type[differs], " (was ", types$type[differs], ")", collapse = ", "), ")")
+    }
+    else {
+        return(TRUE)
+    }
+}
+

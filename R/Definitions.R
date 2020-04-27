@@ -131,6 +131,115 @@ initiateRstoxBase <- function(){
     
     proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
     
+    # Define the process property formats:
+    processPropertyFormats <- list(
+        single = list(
+            "filePath"
+        ), 
+        vector = list(), 
+        list = list(), 
+        table = list(
+            "catchCompensationTable", 
+            "selectivityTable", 
+            "ellipsoidalDistanceTable", 
+            "speciesLinkTable", 
+            "acousticTargetStrengthTable"
+        )
+    )
+    
+    # Define the column names of the different parameter tables:
+    parameterTableInfo <- list(
+        catchCompensationTable = list(
+            title = "Define parameters for length dependent catch compensation", 
+            info = data.table::data.table(
+                name = c(
+                    "SpeciesCategory", 
+                    "Alpha", 
+                    "Beta", 
+                    "LMin", 
+                    "LMax"
+                ), 
+                type = c(
+                    "character", 
+                    "double", 
+                    "double", 
+                    "double", 
+                    "double"
+                )
+            )
+        ),
+        selectivityTable = list(
+            title = "Define parameters for length dependent selectivity", 
+            info = data.table::data.table(
+                name = c(
+                    "SpeciesCategory", 
+                    "Alpha", 
+                    "Beta", 
+                    "LMax"
+                ), 
+                type = c(
+                    "character", 
+                    "double", 
+                    "double", 
+                    "double"
+                )
+            )
+        ),
+        ellipsoidalDistanceTable = list(
+            title = "Define semi asix lengths for an ellipsoid inside which biotic stations are assigned to acoustic PSUs", 
+            info = data.table::data.table(
+                name = c(
+                    "MinimumNumberOfStations",
+                    "DistanceNauticalMiles", 
+                    "TimeHours", 
+                    "BottomDepthMeters", 
+                    "LatitudeDecimalDegrees", 
+                    "LongitudeDecimalDegrees"
+                ), 
+                type = c(
+                    "integer", 
+                    "double", 
+                    "double", 
+                    "double", 
+                    "double", 
+                    "double"
+                )
+            )
+        ),
+        speciesLinkTable = list(
+            title = "Link acoustic categories and species categories", 
+            info = data.table::data.table(
+                name = c(
+                    "AcousticCategory",
+                    "SpeciesCategory"
+                ), 
+                type = c(
+                    "integer", # This is how it is defined in the XSD, see http://www.imr.no/formats/nmdechosounder/v1/nmdechosounderv1.xsd
+                    "character"
+                )
+            )
+        ),
+        acousticTargetStrengthTable = list(
+            title = "Define parameters of acoustic target strength by length", 
+            info = data.table::data.table(
+                name = c(
+                    "AcousticCategory", 
+                    "Frequency", 
+                    "m", 
+                    "a", 
+                    "d"
+                ), 
+                type = c(
+                    "integer",
+                    "double",
+                    "double",
+                    "double",
+                    "double"
+                )
+            )
+        )
+    )
+    
     targetStrengthParameters <- list(
         Standard = c("m", "a"), 
         DepthDependent = c("m", "a", "d")
