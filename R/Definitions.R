@@ -504,7 +504,7 @@ determineAggregationVariables <- function(
     # If the target resolution is not in the presen resolution, abort:
     presentIsTarget <- presentResolution == targetResolution
     if(!any(presentIsTarget)) {
-        stop("The target resolution is not one of the columns of the present resolution")
+        stop("TargetResolution (", targetResolution, ") is not one of the columns of the present resolution (", paste(presentResolution, collapse = ", "), "). Possibly, the specified TargetResolution has not been added to the data. In that case, specify the function inputs *PSU or *Layer, where * can be Acoustic or SweptArea.")
     }
     aggregationResolution <- presentResolution[seq_len(min(which(presentIsTarget)))]
     
