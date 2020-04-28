@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
       </span>
     </div>
 
@@ -117,7 +117,13 @@
     <p>This function takes NASC and</p>
     </div>
 
-    <pre class="usage"><span class='fu'>AcousticDensity</span>(<span class='no'>NASCData</span>, <span class='kw'>m</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>a</span> <span class='kw'>=</span> -<span class='fl'>70</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>())</pre>
+    <pre class="usage"><span class='fu'>AcousticDensity</span>(
+  <span class='no'>NASCData</span>,
+  <span class='no'>AssignmentLengthDistributionData</span>,
+  <span class='no'>AcousticTargetStrength</span>,
+  <span class='no'>SpeciesLinkTable</span>,
+  <span class='kw'>TargetStrengthMethod</span> <span class='kw'>=</span> <span class='st'>"Foote1987"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

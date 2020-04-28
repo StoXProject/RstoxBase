@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
       </span>
     </div>
 
@@ -117,7 +117,12 @@
     <p>This function sums NASC data vertically into layer resolution</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SumNASC</span>(<span class='no'>NASCData</span>, <span class='kw'>TargetResolution</span> <span class='kw'>=</span> <span class='st'>"Layer"</span>)</pre>
+    <pre class="usage"><span class='fu'>SumNASC</span>(
+  <span class='no'>NASCData</span>,
+  <span class='kw'>LayerDefinition</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PreDefined"</span>, <span class='st'>"FunctionInput"</span>),
+  <span class='kw'>AcousticLayer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>TargetResolution</span> <span class='kw'>=</span> <span class='st'>"Layer"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -125,6 +130,14 @@
     <tr>
       <th>NASCData</th>
       <td><p>The <code><a href='NASC.html'>NASC</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>LayerDefinition</th>
+      <td><p>A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the <code>NASCData</code>, or "FunctionInput" to provide the Layers in the input <code>AcousticLayer</code></p></td>
+    </tr>
+    <tr>
+      <th>AcousticLayer</th>
+      <td><p><code><a href='AcousticLayer.html'>AcousticLayer</a></code> data.</p></td>
     </tr>
     <tr>
       <th>TargetResolution</th>

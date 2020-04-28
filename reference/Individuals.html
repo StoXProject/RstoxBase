@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
       </span>
     </div>
 
@@ -119,9 +119,10 @@
 
     <pre class="usage"><span class='fu'>Individuals</span>(
   <span class='no'>StoxBioticData</span>,
-  <span class='kw'>DensityType</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Acoustic"</span>, <span class='st'>"SweptArea"</span>),
+  <span class='kw'>AbundanceType</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Acoustic"</span>, <span class='st'>"SweptArea"</span>),
   <span class='no'>BioticAssignment</span>,
-  <span class='no'>LengthDistributionData</span>
+  <span class='no'>SweptAreaPSU</span>,
+  <span class='no'>SweptAreaLayer</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -132,16 +133,12 @@
       <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>DensityType</th>
-      <td><p>The type of density, one of "Acoustic" and "SweptArea".</p></td>
-    </tr>
-    <tr>
       <th>BioticAssignment</th>
       <td><p>The <code><a href='BioticAssignment.html'>BioticAssignment</a></code> process data.</p></td>
     </tr>
     <tr>
-      <th>LengthDistributionData</th>
-      <td><p>The length distribution data.</p></td>
+      <th>DensityType</th>
+      <td><p>The type of density, one of "Acoustic" and "SweptArea".</p></td>
     </tr>
     </table>
 

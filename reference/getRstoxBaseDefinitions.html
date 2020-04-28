@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
       </span>
     </div>
 
@@ -172,9 +172,6 @@
 #&gt; $dataTypeDefinition$NASCData$weighting
 #&gt; [1] "NASCWeight"
 #&gt; 
-#&gt; $dataTypeDefinition$NASCData$summedWeighting
-#&gt; [1] "SummedWeights"
-#&gt; 
 #&gt; $dataTypeDefinition$NASCData$type
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
@@ -206,9 +203,6 @@
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$weighting
 #&gt; [1] "LengthDistributionWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$summedWeighting
-#&gt; [1] "SummedWeights"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$type
 #&gt; [1] "LengthDistributionType"
@@ -266,9 +260,6 @@
 #&gt; $dataTypeDefinition$DensityData$weighting
 #&gt; [1] "DensityWeight"
 #&gt; 
-#&gt; $dataTypeDefinition$DensityData$summedWeighting
-#&gt; [1] "SummedWeights"
-#&gt; 
 #&gt; $dataTypeDefinition$DensityData$other
 #&gt; NULL
 #&gt; 
@@ -293,9 +284,6 @@
 #&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$weighting
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$summedWeighting
 #&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$other
@@ -329,14 +317,128 @@
 #&gt; [5] "LengthResolutionCentimeter"     
 #&gt; 
 #&gt; 
+#&gt; $emptyStratumPolygon
+#&gt; An object of class "SpatialPolygonsDataFrame"
+#&gt; Slot "data":
+#&gt; data frame with 0 columns and 0 rows
+#&gt; 
+#&gt; Slot "polygons":
+#&gt; list()
+#&gt; 
+#&gt; Slot "plotOrder":
+#&gt; integer(0)
+#&gt; 
+#&gt; Slot "bbox":
+#&gt;              min           max
+#&gt; x -1.797693e+308 1.797693e+308
+#&gt; y -1.797693e+308 1.797693e+308
+#&gt; 
+#&gt; Slot "proj4string":
+#&gt; CRS arguments: NA 
+#&gt; 
+#&gt; 
 #&gt; $getRequiredVariables
 #&gt; function (x) 
 #&gt; {
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x65e1ac0&gt;
-#&gt; &lt;environment: 0x65e68c0&gt;
+#&gt; &lt;bytecode: 0x4d2e180&gt;
+#&gt; &lt;environment: 0x4d30c00&gt;
+#&gt; 
+#&gt; $parameterTableInfo
+#&gt; $parameterTableInfo$catchCompensationTable
+#&gt; $parameterTableInfo$catchCompensationTable$title
+#&gt; [1] "Define parameters for length dependent catch compensation"
+#&gt; 
+#&gt; $parameterTableInfo$catchCompensationTable$info
+#&gt;               name      type
+#&gt; 1: SpeciesCategory character
+#&gt; 2:           Alpha    double
+#&gt; 3:            Beta    double
+#&gt; 4:            LMin    double
+#&gt; 5:            LMax    double
+#&gt; 
+#&gt; 
+#&gt; $parameterTableInfo$selectivityTable
+#&gt; $parameterTableInfo$selectivityTable$title
+#&gt; [1] "Define parameters for length dependent selectivity"
+#&gt; 
+#&gt; $parameterTableInfo$selectivityTable$info
+#&gt;               name      type
+#&gt; 1: SpeciesCategory character
+#&gt; 2:           Alpha    double
+#&gt; 3:            Beta    double
+#&gt; 4:            LMax    double
+#&gt; 
+#&gt; 
+#&gt; $parameterTableInfo$ellipsoidalDistanceTable
+#&gt; $parameterTableInfo$ellipsoidalDistanceTable$title
+#&gt; [1] "Define semi asix lengths for an ellipsoid inside which biotic stations are assigned to acoustic PSUs"
+#&gt; 
+#&gt; $parameterTableInfo$ellipsoidalDistanceTable$info
+#&gt;                       name    type
+#&gt; 1: MinimumNumberOfStations integer
+#&gt; 2:   DistanceNauticalMiles  double
+#&gt; 3:               TimeHours  double
+#&gt; 4:       BottomDepthMeters  double
+#&gt; 5:  LatitudeDecimalDegrees  double
+#&gt; 6: LongitudeDecimalDegrees  double
+#&gt; 
+#&gt; 
+#&gt; $parameterTableInfo$speciesLinkTable
+#&gt; $parameterTableInfo$speciesLinkTable$title
+#&gt; [1] "Link acoustic categories and species categories"
+#&gt; 
+#&gt; $parameterTableInfo$speciesLinkTable$info
+#&gt;                name      type
+#&gt; 1: AcousticCategory   integer
+#&gt; 2:  SpeciesCategory character
+#&gt; 
+#&gt; 
+#&gt; $parameterTableInfo$acousticTargetStrengthTable
+#&gt; $parameterTableInfo$acousticTargetStrengthTable$title
+#&gt; [1] "Define parameters of acoustic target strength by length"
+#&gt; 
+#&gt; $parameterTableInfo$acousticTargetStrengthTable$info
+#&gt;                name    type
+#&gt; 1: AcousticCategory integer
+#&gt; 2:        Frequency  double
+#&gt; 3:                m  double
+#&gt; 4:                a  double
+#&gt; 5:                d  double
+#&gt; 
+#&gt; 
+#&gt; 
+#&gt; $processPropertyFormats
+#&gt; $processPropertyFormats$single
+#&gt; $processPropertyFormats$single[[1]]
+#&gt; [1] "filePath"
+#&gt; 
+#&gt; 
+#&gt; $processPropertyFormats$vector
+#&gt; list()
+#&gt; 
+#&gt; $processPropertyFormats$list
+#&gt; list()
+#&gt; 
+#&gt; $processPropertyFormats$table
+#&gt; $processPropertyFormats$table[[1]]
+#&gt; [1] "catchCompensationTable"
+#&gt; 
+#&gt; $processPropertyFormats$table[[2]]
+#&gt; [1] "selectivityTable"
+#&gt; 
+#&gt; $processPropertyFormats$table[[3]]
+#&gt; [1] "ellipsoidalDistanceTable"
+#&gt; 
+#&gt; $processPropertyFormats$table[[4]]
+#&gt; [1] "speciesLinkTable"
+#&gt; 
+#&gt; $processPropertyFormats$table[[5]]
+#&gt; [1] "acousticTargetStrengthTable"
+#&gt; 
+#&gt; 
 #&gt; 
 #&gt; $proj4string
 #&gt; CRS arguments:
