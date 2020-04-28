@@ -4,7 +4,13 @@
 \alias{NASC}
 \title{NASC}
 \usage{
-NASC(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL)
+NASC(
+  StoxAcousticData = NULL,
+  IncludePSU = FALSE,
+  IncludeLayer = FALSE,
+  AcousticLayer = NULL,
+  AcousticPSU = NULL
+)
 }
 \arguments{
 \item{StoxAcousticData}{input in a StoxAcoustcdata format}

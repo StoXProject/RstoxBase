@@ -34,9 +34,9 @@
 DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
-    #if(UseProcessData) {
-    #    return(processData)
-    #}
+    if(UseProcessData) {
+        return(processData)
+    }
     
     # Get the DefinitionMethod and modelType:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -62,6 +62,9 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
     # Get SSUs:
     SSU <- StoxData[[SSULevel]][[SSUName]]
     
+    # Get the stratum names:
+    StratumNames = getStratumNames(StratumPolygon)
+    
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
@@ -81,11 +84,11 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         StratumIndex <- sp::over(SpatialPSUs, StratumPolygon)
         # Converting from data frame to character vector 
         StratumIndex <- as.numeric(unlist(StratumIndex))
-        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
+        NonEmptyStrata <- StratumNames[StratumIndex]
         
         # Create the Stratum_PSU data.table:
         Stratum_PSU <- data.table::data.table(
-            Stratum = Stratum, 
+            Stratum = NonEmptyStrata, 
             PSU = PSUName
         )
         
@@ -95,19 +98,23 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         #SSU_PSU <- SSU_PSU[ PSU %in% validPSUs ]
         #SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
         
-        SSU_PSU[! PSU %in% validPSUs, PSU := ""]
+        SSU_PSU[! PSU %in% validPSUs, PSU := NA]
         
         #SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, "")]
         
         
     }
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
-    else {
+    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
         SSU_PSU <- data.table::data.table(
             SSU = SSU, 
-            PSU = ""
+            #PSU = ""
+            PSU = NA
         )
         Stratum_PSU <- data.table::data.table()
+    }
+    else {
+        stop("Inavlid DefinitionMethod")
     }
     
     # Rename the data according to the model type:
@@ -461,23 +468,21 @@ DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod =
 #' 
 #' @export
 #' @import data.table
-#' 
+#'
 DefineBioticAssignment <- function(
     processData, 
     NASCData, StoxBioticData, 
-    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"), 
+    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"), 
     StoxAcousticData, 
     AcousticPSU, AcousticLayer, 
     StratumPolygon, 
     Radius = double(), EllipsoidalDistanceTable = data.table::data.table(), 
-    #MinNumStations = integer(), RefGCDistance = double(), RefTime = "", RefBotDepth = double(), RefLatitude = double(), RefLongitude = double(), 
     UseProcessData = FALSE) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         return(processData)
     }
-    
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -489,13 +494,9 @@ DefineBioticAssignment <- function(
         SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
         
         # Get the stratum for each point:
-        StratumIndex <- sp::over(SpatialStations, StratumPolygon)
-        StratumIndex <- as.numeric(unlist(StratumIndex))
-        Stratum <- getStratumNames(StratumPolygon)[StratumIndex]
+        Stratum <- unname(unlist(sp::over(SpatialStations, StratumPolygon)))
         
         # Create a list of the stations of each stratum:
-        #stationIndex <- as.numeric(names(StratumIndex))
-        #stationList <- split(StoxBioticData$Station$Station[stationIndex], Stratum)
         stationList <- split(StoxBioticData$Station$Station, Stratum)
         
         # Use all hauls of each station in the automatic assignment method "Stratum":
@@ -521,17 +522,27 @@ DefineBioticAssignment <- function(
         }
         
         # Link the stratum to PSU:
-        dupRows <- duplicated(NASCData[, c("PSU", "Layer")])
-        NASCData <- NASCData[!dupRows, ]
-        Haul <- haulList[NASCData$Stratum]
+        Stratum_PSU_Layer <- unique(NASCData[, c("Stratum", "PSU", "Layer")])
+        # Get the hauls per PSU:
+        Haul <- haulList[Stratum_PSU_Layer$Stratum]
+        
+        # Build a table with hauls as a vector in each cell of the Haul column.
         BioticAssignment <- cbind(
-            NASCData[, c("Stratum", "PSU", "Layer")], 
-            Haul = Haul, 
-            WeightingFactor = lapply(Haul, function(x) rep(1, length(x)))
+            Stratum_PSU_Layer[, c("Stratum", "PSU", "Layer")], 
+            Haul = Haul
         )
+        
+        # Expand to a regular table:
+        BioticAssignment <- expandDT(BioticAssignment)
+        # Add weighting  = 1:
+        BioticAssignment[, WeightingFactor := 1]
+        
+    }
+    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
+        BioticAssignment <- data.table::data.table()
     }
     else {
-        stop("Only DefinitionMethod = Stratum currently implemented")
+        stop("Only DefinitionMethod = \"Stratum\" is currently implemented")
     }
     
     return(BioticAssignment)
@@ -576,6 +587,10 @@ DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Tabl
     else if(DefinitionMethod == "ResourceFile") {
         ParameterTable <- data.table::fread(FileName)
     }
+    
+    # Check that the input ParameterTable has the appropriate types:
+    checkTypes(table = ParameterTable)
+    
     
     # Check that the ParameterTable contains only valid columns:
     #checkAcousticTargetStrengthEquationType(ParameterTable)

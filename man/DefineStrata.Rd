@@ -4,12 +4,17 @@
 \alias{DefineStrata}
 \title{Define stratum multipolygon}
 \usage{
-DefineStrata(FileName, processData = NULL, UseProcessData = FALSE)
+DefineStrata(
+  processData = NULL,
+  DefinitionMethod = c("ResourceFile", "None"),
+  FileName,
+  UseProcessData = FALSE
+)
 }
 \arguments{
-\item{FileName}{The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.}
-
 \item{processData}{The current data produced by a previous instance of the function.}
+
+\item{FileName}{The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.}
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }

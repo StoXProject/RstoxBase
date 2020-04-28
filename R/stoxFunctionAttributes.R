@@ -84,9 +84,14 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
-        functionParameterFormat = list(), 
+        functionParameterFormat = list(
+            EllipsoidalDistanceTable = "ellipsoidalDistanceTable"
+        ), 
         functionArgumentHierarchy = list(
             StratumPolygon = list(
+                DefinitionMethod = "Stratum"
+            ), 
+            StoxBioticData = list(
                 DefinitionMethod = "Stratum"
             ), 
             StoxAcousticData = list(
@@ -95,22 +100,25 @@ stoxFunctionAttributes <- list(
             Radius = list(
                 DefinitionMethod = "Radius"
             ), 
-            MinNumStations  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefGCDistance  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefTime  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefBotDepth  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefLatitude  = list(
-                DefinitionMethod = "EllipsoidalDistance"
-            ), 
-            RefLongitude  = list(
+            #MinNumStations = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefGCDistance = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefTime = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefBotDepth = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefLatitude = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            #RefLongitude = list(
+            #    DefinitionMethod = "EllipsoidalDistance"
+            #), 
+            EllipsoidalDistanceTable = list(
                 DefinitionMethod = "EllipsoidalDistance"
             )
         )
@@ -122,7 +130,14 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            SweptAreaPSU = list(
+                IncludePSU = TRUE
+            ), 
+            SweptAreaLayer = list(
+                IncludeLayer = TRUE
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
@@ -140,7 +155,11 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            SweptAreaPSU = list(
+                PSUDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
@@ -149,7 +168,11 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            SweptAreaLayer = list(
+                LayerDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
@@ -189,21 +212,39 @@ stoxFunctionAttributes <- list(
     NASC = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "NASCData"
+        functionOutputDataType = "NASCData", 
+        functionArgumentHierarchy = list(
+            AcousticPSU = list(
+                IncludePSU = TRUE
+            ), 
+            AcousticLayer = list(
+                IncludeLayer = TRUE
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
     SumNASC = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "NASCData"
+        functionOutputDataType = "NASCData", 
+        functionArgumentHierarchy = list(
+            AcousticLayer = list(
+                LayerDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
     MeanNASC = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "NASCData"
+        functionOutputDataType = "NASCData", 
+        functionArgumentHierarchy = list(
+            AcousticPSU = list(
+                PSUDefinition = "FunctionInput"
+            )
+        )
     ), 
     
     SweptAreaDensity = list(
@@ -218,6 +259,16 @@ stoxFunctionAttributes <- list(
                 SweepWidthMethod = "CruiseDependent"
             )
         )
+    ), 
+    
+    AcousticDensity = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "DensityData", 
+        functionParameterFormat = list(
+            SpeciesLinkTable = "speciesLinkTable"
+        ),
+        functionArgumentHierarchy = list()
     ), 
     
     MeanDensity = list(
@@ -238,10 +289,13 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "IndividualsData", 
         functionArgumentHierarchy = list(
             BioticAssignment = list(
-                DensityType = "Acoustic"
+                AbundanceType = "Acoustic"
             ), 
-            LengthDistributionData = list(
-                DensityType = "SweptArea"
+            SweptAreaPSU = list(
+                AbundanceType = "SweptArea"
+            ), 
+            SweptAreaLayer = list(
+                AbundanceType = "SweptArea"
             )
         )
     ), 

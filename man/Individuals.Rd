@@ -6,19 +6,18 @@
 \usage{
 Individuals(
   StoxBioticData,
-  DensityType = c("Acoustic", "SweptArea"),
+  AbundanceType = c("Acoustic", "SweptArea"),
   BioticAssignment,
-  LengthDistributionData
+  SweptAreaPSU,
+  SweptAreaLayer
 )
 }
 \arguments{
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
 
-\item{DensityType}{The type of density, one of "Acoustic" and "SweptArea".}
-
 \item{BioticAssignment}{The \code{\link{BioticAssignment}} process data.}
 
-\item{LengthDistributionData}{The length distribution data.}
+\item{DensityType}{The type of density, one of "Acoustic" and "SweptArea".}
 }
 \value{
 A data.table is returned with awesome stuff.

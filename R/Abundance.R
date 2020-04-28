@@ -61,10 +61,10 @@ Abundance <- function(DensityData, StratumArea) {
 #' @export
 #' @import data.table
 #' 
-Individuals <- function(StoxBioticData, DensityType = c("Acoustic", "SweptArea"), BioticAssignment, LengthDistributionData) {
+Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea"), BioticAssignment, SweptAreaPSU, SweptAreaLayer) {
     
     # Get the DefinitionMethod:
-    DensityType <- match.arg(DensityType)
+    AbundanceType <- match.arg(AbundanceType)
     
     # Merge StoxBtiotic:
     MergedStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
@@ -73,21 +73,40 @@ Individuals <- function(StoxBioticData, DensityType = c("Acoustic", "SweptArea")
     abundanceResolutionVariables <- getAllResolutionVariables("AbundanceData")
     
     # Get all hauls of each Stratum and Layer:
-    if(DensityType == "Acoustic") {
+    if(AbundanceType == "Acoustic") {
         usedHauls <- BioticAssignment[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
-    else if(DensityType == "SweptArea") {
-        usedHauls <- LengthDistributionData[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
+    else if(AbundanceType == "SweptArea") {
+        
+        # Add PSUs and Layers:
+        usedHauls <- addPSUProcessData(MergedStoxBioticData, dataType = "LengthDistributionData", PSUProcessData = SweptAreaPSU, all = TRUE)
+        usedHauls <- addLayerProcessData(usedHauls, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
+        
+        # get the unique rows, while extracting only the Haul and abundance resolution columns:
+        usedHauls <- usedHauls[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
+        
+        # Remove rows with any NAs:
+        usedHauls <- na.omit(usedHauls)
+        ## Extract only the Haul column:
+        #usedHauls <- usedHauls$Haul
+        
+        #usedHauls <- LengthDistributionData[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
     else {
         stop("Invalid DensityType")
     }
     
     # Expand the vectors of hauls:
-    usedHauls <- expandDT(usedHauls)
+    #usedHauls <- expandDT(usedHauls)
     
     # Merge individuals into the Stratum, Layer, Haul table:
     IndividualsData <- merge(usedHauls, MergedStoxBioticData, by = "Haul", allow.cartesian = TRUE)
+    
+    ## Remove rows with SpeciesCategory NA (change added on 2020-04-20, since NAs in SpeciesCategory are vital for including all Stations, PSUs# and Strata when using meanData(), but should not present when considering individuals):
+    #IndividualsData <- IndividualsData[!is.na(SpeciesCategory), ]
+    
+    # Remove rows with missing IndividualKey, indicating they are not individuals but merely rows for Hauls included in the PSU/Layer:
+    IndividualsData <- IndividualsData[!is.na(IndividualKey), ]
     
     return(IndividualsData)
 }
@@ -208,7 +227,6 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         SuperIndividualsData[, abundanceWeightFactor := WeightedCount / sum(WeightedCount) , by = haulGrouping]
         
         # Get the number of individuals in each Haul:
-        print(haulGrouping)
         SuperIndividualsData[, individualCount := as.double(.N), by = haulGrouping]
         
         # Remove "WeightedCount":
@@ -255,10 +273,10 @@ addLengthGroupsByReferenceOneSpecies <- function(
     
     # Get the indices at the given species in 'data' and 'master':
     speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
-    atSpeciesInData <- which(data[[speciesVar]] == species)
-    atSpeciesInMaster <- which(master[[speciesVar]] == species)
+    atSpeciesInData <- which(data[[speciesVar]] %in% species)
+    atSpeciesInMaster <- which(master[[speciesVar]] %in% species)
     if(length(atSpeciesInData) == 0 || length(atSpeciesInMaster) == 0) {
-        stop("The species ", species, " is not present in bot data and master.")
+        stop("The species ", species, " is not present in both data and master.")
     }
     
     
@@ -324,6 +342,7 @@ addLengthGroupsByReference <- function(
     lengthVar = "IndividualTotalLengthCentimeter", 
     resolutionVar = "LengthResolutionCentimeter"
 ) {
+    
     # Run a for loop through the common species:
     speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
     speciesInData <- unique(data[[speciesVar]])
@@ -332,12 +351,12 @@ addLengthGroupsByReference <- function(
     # If there are species in the master that are not in the data, report a warning:
     speciesOnlyInMaster <- setdiff(speciesInMaster, speciesInData)
     if(length(speciesOnlyInMaster)) {
-        warning("The species categories ", paste(speciesOnlyInMaster, collapse = ", "), " are present in the master but not in the data")
+        warning("StoX: The species categories ", paste(speciesOnlyInMaster, collapse = ", "), " are present in the master but not in the data")
     }
     # If there are species in the data that are not in the master, report a warning:
     speciesOnlyInData <- setdiff(speciesInMaster, speciesInData)
     if(length(speciesOnlyInMaster)) {
-        warning("The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
+        warning("StoX: The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
     }
 
     # Keep only the common species:    

@@ -91,36 +91,51 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' 
 #' @export
 #' 
-DefineStrata <- function(FileName, processData = NULL, UseProcessData = FALSE) {
+DefineStrata <- function(processData = NULL, DefinitionMethod = c("ResourceFile", "None"), FileName, UseProcessData = FALSE) {
     
     if(!is.null(processData) & UseProcessData) {
         return(processData)
         
-    } else {
+    } 
+        
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    
+    if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
         
         if(length(unlist(strsplit(FileName, "\\."))) < 2) {
             stop("FileName must include file extension.")
-        } else {
+        }
+        else {
             FileExt <- unlist(strsplit(FileName, "\\."))[length(unlist(strsplit(FileName, "\\.")))]
         }
         
         if(tolower(FileExt) %in% c("wkt", "txt")) {
-            stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
-        } else if(tolower(FileExt) == "shp") {
-            rgdal::readOGR(FileName, verbose = FALSE)
-        } else if(tolower(FileExt) == "json") {
+            StratumPolygon <- stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
+        }
+        else if(tolower(FileExt) == "shp") {
+            StratumPolygon <- rgdal::readOGR(FileName, verbose = FALSE)
+        }
+        else if(tolower(FileExt) == "json") {
             if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
                 stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change file format.")
             }
             
-            rgdal::readOGR(FileName, "OGRGeoJSON")
+            StratumPolygon <- rgdal::readOGR(FileName, "OGRGeoJSON")
             
-        } else {
+        }
+        else {
             stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
         }
-        
+    }
+    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
+        StratumPolygon <- emptyStratumPolygon()
+    }
+    else {
+        stop("Inavlid DefinitionMethod")
     }
 
+    return(StratumPolygon)
 }
 
 

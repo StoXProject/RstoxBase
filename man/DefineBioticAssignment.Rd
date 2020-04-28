@@ -8,7 +8,7 @@ DefineBioticAssignment(
   processData,
   NASCData,
   StoxBioticData,
-  DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance"),
+  DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"),
   StoxAcousticData,
   AcousticPSU,
   AcousticLayer,

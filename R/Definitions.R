@@ -27,7 +27,7 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "NASCWeight", 
-            summedWeighting = "SummedWeights", 
+            #summedWeighting = "SummedWeights", 
             type = "ChannelReferenceType", 
             other = "EffectiveLogDistance"
         ), 
@@ -42,7 +42,7 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "LengthDistributionWeight", 
-            summedWeighting = "SummedWeights", 
+            #summedWeighting = "SummedWeights", 
             type = "LengthDistributionType", 
             other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
@@ -66,7 +66,7 @@ initiateRstoxBase <- function(){
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "DensityWeight", 
-            summedWeighting = "SummedWeights", 
+            #summedWeighting = "SummedWeights", 
             other = NULL
         ), 
         AbundanceData = list(
@@ -78,10 +78,41 @@ initiateRstoxBase <- function(){
             data = "Abundance", 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = NULL, 
-            summedWeighting = NULL, 
+            #summedWeighting = NULL, 
             other = NULL
         )
     )
+    
+    emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
+        sp::SpatialPolygons(list()), 
+        data = data.frame()
+    )
+    ### 
+    ### # Define empty process data:
+    ### empryProcessData <- list(
+    ###     DefineSweptAreaPSU = list(
+    ###         Stratum_PSU = data.table::data.table(), 
+    ###         Station_PSU = data.table::data.table(), 
+    ###         Stratum = data.table::data.table()
+    ###     ), 
+    ###     DefineAcousticPSU = list(
+    ###         Stratum_PSU = data.table::data.table(), 
+    ###         Station_PSU = data.table::data.table(), 
+    ###         Stratum = data.table::data.table()
+    ###     ),
+    ###     DefineSweptAreaLayer = list(
+    ###         DefineSweptAreaLayer = data.table::data.table()
+    ###     ), 
+    ###     DefineAcousticLayer = list(
+    ###         DefineAcousticLayer = data.table::data.table()
+    ###     ),
+    ###     DefineStrata = list(
+    ###         DefineStrata = emptyStratumPolygon()
+    ###     ), 
+    ###     DefineBioticAssignment = list(
+    ###         DefineBioticAssignment = data.table::data.table()
+    ###     )
+    ### )
     
     # Define the variables of the main data types used in estimation models:
     getRequiredVariables <- function(x) {
@@ -99,6 +130,115 @@ initiateRstoxBase <- function(){
     dataTypeRequiredVariables <- lapply(dataTypeDefinition, getRequiredVariables)
     
     proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+    
+    # Define the process property formats:
+    processPropertyFormats <- list(
+        single = list(
+            "filePath"
+        ), 
+        vector = list(), 
+        list = list(), 
+        table = list(
+            "catchCompensationTable", 
+            "selectivityTable", 
+            "ellipsoidalDistanceTable", 
+            "speciesLinkTable", 
+            "acousticTargetStrengthTable"
+        )
+    )
+    
+    # Define the column names of the different parameter tables:
+    parameterTableInfo <- list(
+        catchCompensationTable = list(
+            title = "Define parameters for length dependent catch compensation", 
+            info = data.table::data.table(
+                name = c(
+                    "SpeciesCategory", 
+                    "Alpha", 
+                    "Beta", 
+                    "LMin", 
+                    "LMax"
+                ), 
+                type = c(
+                    "character", 
+                    "double", 
+                    "double", 
+                    "double", 
+                    "double"
+                )
+            )
+        ),
+        selectivityTable = list(
+            title = "Define parameters for length dependent selectivity", 
+            info = data.table::data.table(
+                name = c(
+                    "SpeciesCategory", 
+                    "Alpha", 
+                    "Beta", 
+                    "LMax"
+                ), 
+                type = c(
+                    "character", 
+                    "double", 
+                    "double", 
+                    "double"
+                )
+            )
+        ),
+        ellipsoidalDistanceTable = list(
+            title = "Define semi asix lengths for an ellipsoid inside which biotic stations are assigned to acoustic PSUs", 
+            info = data.table::data.table(
+                name = c(
+                    "MinimumNumberOfStations",
+                    "DistanceNauticalMiles", 
+                    "TimeHours", 
+                    "BottomDepthMeters", 
+                    "LatitudeDecimalDegrees", 
+                    "LongitudeDecimalDegrees"
+                ), 
+                type = c(
+                    "integer", 
+                    "double", 
+                    "double", 
+                    "double", 
+                    "double", 
+                    "double"
+                )
+            )
+        ),
+        speciesLinkTable = list(
+            title = "Link acoustic categories and species categories", 
+            info = data.table::data.table(
+                name = c(
+                    "AcousticCategory",
+                    "SpeciesCategory"
+                ), 
+                type = c(
+                    "integer", # This is how it is defined in the XSD, see http://www.imr.no/formats/nmdechosounder/v1/nmdechosounderv1.xsd
+                    "character"
+                )
+            )
+        ),
+        acousticTargetStrengthTable = list(
+            title = "Define parameters of acoustic target strength by length", 
+            info = data.table::data.table(
+                name = c(
+                    "AcousticCategory", 
+                    "Frequency", 
+                    "m", 
+                    "a", 
+                    "d"
+                ), 
+                type = c(
+                    "integer",
+                    "double",
+                    "double",
+                    "double",
+                    "double"
+                )
+            )
+        )
+    )
     
     targetStrengthParameters <- list(
         Standard = c("m", "a"), 
@@ -216,6 +356,12 @@ getColumnOrder <- function(dataType) {
 }
 
 setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
+    
+    # Remove any duplicated columns:
+    if(any(duplicated(names(data)))) {
+        data[, which(duplicated(names(data))) := NULL]
+    }
+    
     # Get the column order:
     columnOrder <- getColumnOrder(dataType)
     
@@ -256,7 +402,7 @@ detectDataType <- function(data) {
         missing <- paste(names(missing), missing, sep = ": ", collapse = ". ")
         
         
-        warning("The input data does not contain all the expected variables. The following are needed: ", missing)
+        warning("StoX: The input data does not contain all the expected variables. The following are needed: ", missing)
     }
     else if(sum(present) > 1) {
         message("More than one element of the input list contains the expected variables (", paste(names(dataTypeRequiredVariables)[present], collapse = ", "), "). The first selected:")
@@ -348,6 +494,9 @@ determineAggregationVariables <- function(
     # Get the finest resolution variable:
     finestResolution <- utils::tail(presentResolution, 1)
     
+    # Get the higher resolution than the finest:
+    allButFinestResolution <- setdiff(presentResolution, finestResolution)
+    
     # Get the next resolution, that is the resolution one level higher than the fines resolution:
     nextResolution <- if(length(presentResolution) == 1) NA else presentResolution[length(presentResolution) - 1]
     
@@ -379,6 +528,7 @@ determineAggregationVariables <- function(
         targetResolution = targetResolution, 
         presentResolution = presentResolution, 
         finestResolution = finestResolution, 
+        allButFinestResolution = allButFinestResolution, 
         nextResolution = nextResolution, 
         dataVariable = thisDataTypeDefinition$data, 
         weightingVariable = thisDataTypeDefinition$weighting, 

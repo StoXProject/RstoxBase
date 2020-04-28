@@ -5,8 +5,8 @@
 #' This function calculates length frequency distribution per Stratum, swept-area PSU, swept-area layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
 #' 
 #' @inheritParams DefineSweptAreaPSU
-#' @param SweptAreaPSU		A list of \code{\link{SweptAreaPSU}} data.
-#' @param SweptAreaLayer	A list of \code{\link{SweptAreaLayer}} data.
+#' @param SweptAreaPSU		The  \code{\link{SweptAreaPSU}} data.
+#' @param SweptAreaLayer	The  \code{\link{SweptAreaLayer}} data.
 #' @param LengthDistributionType	The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
 #' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".
 #'
@@ -24,6 +24,8 @@
 #' 
 LengthDistribution <- function(
     StoxBioticData, 
+    IncludePSU = FALSE, 
+    IncludeLayer = FALSE, 
     SweptAreaPSU = NULL, 
     SweptAreaLayer = NULL, 
     LengthDistributionType = c("Normalized", "Standard", "Percent"), 
@@ -50,7 +52,6 @@ LengthDistribution <- function(
     StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData, output.only.last = TRUE, all = TRUE)
     ############################
     
-    
     ####################################################
     ##### 2. Get the count in each length group: #######
     ####################################################
@@ -65,48 +66,20 @@ LengthDistribution <- function(
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
     ####################################################
     
-    
-    ###################################################################
-    ##### 3. Add the weights depending on LengthDistributionType: #####
-    ###################################################################
-    # For all swept-area estimates, LengthDistributionWeight should be 1 (and not EffectiveTowedDistance): 
-    #LengthDistributionData$LengthDistributionWeight <- 1
-    
-    ### # LengthDistributionType "NormalizedLengthDistribution" implies to normalize by the EffectiveTowedDistance, rend### ering the effective EffectiveTowedDistance as 1:
-    ### if(LengthDistributionType == "Normalized") {
-    ###     LengthDistributionData$LengthDistributionWeight <- 1
-    ### }
-    ### else if(LengthDistributionType == "Standard") {
-    ###     LengthDistributionData$LengthDistributionWeight <- 1
-    ### }
-    ### # For LengthDistributionType "PercentLengthDistribution" weights are not relevant, since length distributions are ### simply averaged, and are set to 1. This type is used in acoustic-trawl models, where the biotic station weig### hting is applied when averaging the length distributions within each biotic station assignment:
-    ### else if(LengthDistributionType == "Percent") {
-    ###     LengthDistributionData$LengthDistributionWeight <- 1
-    ### }
-    ### else {
-    ###     stop("Invalid LengthDistributionType. See ?RstoxBase::LengthDistributionType")
-    ### }
-    ###################################################################
-    
-    
     ######################################################
     ##### 4. Add horizontal and vertical resolution: #####
     ######################################################
     # Order the length distribution data:
     #data.table::setorder(LengthDistributionData)
     
+    # Add the weights, which are 1 for all types of length distributions (other more advanced weights may come later). Add this here, before adding the PSU definition, since this will lead to NA for strata with no PSUs:
+    LengthDistributionData$LengthDistributionWeight <- 1
+    
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    LengthDistributionData <- addPSUDefinition(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = SweptAreaPSU, all = TRUE)
+    LengthDistributionData <- addPSUProcessData(LengthDistributionData, dataType = "LengthDistributionData", PSUProcessData = SweptAreaPSU, all = TRUE)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    LengthDistributionData <- addLayerDefinition(LengthDistributionData, dataType = "LengthDistributionData", layerDefinition = SweptAreaLayer)
-    
-    ### # Add also the number of Stations in each PSU, and the number of PSUs in each Stratum:
-    ### PSUSize <- SweptAreaPSU$Station_PSU[, .(PSUSize = length(Station)), by = "PSU"]
-    ### StratumSize <- SweptAreaPSU$Stratum_PSU[, .(StratumSize = length(PSU)), by = "Stratum"]
-    ### # Merge the PSUSize and StratumSize into the LengthDistributionData:
-    ### LengthDistributionData <- merge(LengthDistributionData, PSUSize, by = "PSU")
-    ### LengthDistributionData <- merge(LengthDistributionData, StratumSize, by = "Stratum")
+    LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
     ######################################################
     
     
@@ -146,21 +119,6 @@ LengthDistribution <- function(
     if(LengthDistributionType == "Normalized") {
         LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
     }
-    
-    # Add the weights, which are 1 for all types of length distributions (other more advanced weights may come later):
-    LengthDistributionData$LengthDistributionWeight <- 1
-    
-    # Add the sum of the weigths over the stations of each PSU:
-    
-    # Get the definitions:
-    aggregateBy <- getDataTypeDefinition(
-        dataType = "LengthDistributionData", 
-        elements = c("categoryVariable", "groupingVariables"), 
-        unlist = TRUE
-    )
-    by <- c("PSU", aggregateBy)
-    
-    LengthDistributionData[, SummedWeights := sum(LengthDistributionWeight), by = by]
     
     # Add the LengthDistributionType to the LengthDistributionData:
     LengthDistributionData[, LengthDistributionType := ..LengthDistributionType]
@@ -259,7 +217,7 @@ RegroupLengthDistribution <- function(
     anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1, na.rm = TRUE)
     anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals, na.rm = TRUE)
     if(any(anyBelow, anyAbove)) {
-        warning("Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
+        warning("StoX: Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
     }
     
     # Replace with the new LengthResolutionCentimeter:
@@ -389,7 +347,6 @@ LengthDependentCatchCompensation <- function(
     # Keep only the releavnt columns:
     keepOnlyRelevantColumns(LengthDistributionDataCopy, "LengthDistributionData")
     
-    
     return(LengthDistributionDataCopy)
 }
 
@@ -434,7 +391,7 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     # Apply the compensationFunction:
     valid <- !is.na(data[[requiredParameters[1]]])
     if(!all(valid)) {
-        warning("Length dependent compensation was not applied to all species categories in the length distribution data")
+        warning("StoX: Length dependent compensation was not applied to all species categories in the length distribution data")
     }
     functionInputColumns <- c("WeightedCount", "IndividualTotalLengthCentimeterMiddle", requiredParameters)
     data[valid, WeightedCount := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]
@@ -496,6 +453,8 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "Normalized".
 #' 
 #' @inheritParams RegroupLengthDistribution
+#' @param PSUDefinition A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the PSUs in the input \code{SweptAreaPSU}
+#' @param SweptAreaPSU \code{\link{SweptAreaPSU}} data.
 #' @param TargetResolution The horizontal resolution of the output.
 #' 
 #' @details
@@ -509,8 +468,8 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' 
 #' @export
 #' 
-MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "PSU") {
-    meanData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)
+MeanLengthDistribution <- function(LengthDistributionData, PSUDefinition = c("PreDefined", "FunctionInput"), SweptAreaPSU = NULL, TargetResolution = "PSU") {
+    meanData(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = PSUDefinition, PSUProcessData = SweptAreaPSU, targetResolution = TargetResolution)
 }
 
 
@@ -521,6 +480,8 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 #' This function sums length distribution to swept area layers.
 #' 
 #' @inheritParams RegroupLengthDistribution
+#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the Layers in the input \code{SweptAreaLayer}
+#' @param SweptAreaLayer \code{\link{SweptAreaLayer}} data.
 #' @param TargetResolution The vertical resolution of the output.
 #' 
 #' @details
@@ -534,8 +495,8 @@ MeanLengthDistribution <- function(LengthDistributionData, TargetResolution = "P
 #' 
 #' @export
 #' 
-SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "Layer") {
-    sumData(LengthDistributionData, dataType = "LengthDistributionData", targetResolution = TargetResolution)
+SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("PreDefined", "FunctionInput"), SweptAreaLayer = NULL, TargetResolution = "Layer") {
+    sumData(LengthDistributionData, dataType = "LengthDistributionData", LayerDefinition = LayerDefinition, layerProcessData = SweptAreaLayer, targetResolution = TargetResolution)
 }
 
 
@@ -546,7 +507,7 @@ SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "La
 #' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
 #' 
 #' @inheritParams RegroupLengthDistribution
-#' @param BioticAssignment      A list of \code{\link{BioticAssignment}} data.
+#' @param BioticAssignment The  \code{\link{BioticAssignment}} data.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -565,7 +526,29 @@ SumLengthDistribution <- function(LengthDistributionData, TargetResolution = "La
 AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignment) {
     
     # Determine assignment IDs:
-    BioticAssignment[, assignmentID := mapply(paste, Haul, WeightingFactor, sep = "/", collapse = "_")]
+    BioticAssignmentCollapsed <- BioticAssignment[, .(assignmentPasted = paste0(paste(Haul, WeightingFactor, sep = ",", collapse = "\n"), "\n")), by = c("Stratum", "PSU", "Layer")]
+    uniqueAssignmentPasted <- unique(BioticAssignmentCollapsed$assignmentPasted)
+    BioticAssignmentCollapsed[, assignmentID := match(assignmentPasted, uniqueAssignmentPasted)]
+    
+        
+    # Get the assignment length distribution of each unique assignment ID:
+    uniqueAssignmentPastedDT <- data.table::data.table(
+        assignmentID = seq_along(uniqueAssignmentPasted), 
+        assignmentPasted = uniqueAssignmentPasted)
+    uniqueAssignmentLengthDistributionData <- uniqueAssignmentPastedDT[, getAssignmentLengthDistributionDataOne(assignmentPasted, LengthDistributionData = LengthDistributionData), by = "assignmentID"]
+    
+    # Merge the mean length distribution of each assignment with the BioticAssignmentCollapsed extracted "assignmentPasted":
+    BioticAssignmentCollapsed[, assignmentPasted := NULL]
+    AssignmentLengthDistributionData <- merge(BioticAssignmentCollapsed, uniqueAssignmentLengthDistributionData, by = "assignmentID", allow.cartesian = TRUE)
+    
+    # Extract only the relevant columns:
+    AssignmentLengthDistributionData <- setColumnOrder(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
+    
+    return(AssignmentLengthDistributionData)
+    stop(3)
+    
+    
+    BioticAssignment[, assignmentID := paste(Haul, WeightingFactor, sep = ":", collapse = ","), by = c("Stratum", "PSU", "Layer")]
     
     # Get unique assignment IDs, and a list of the hauls per assignmentID:
     atNonDuplicatedAssignmentID <- which(!duplicated(BioticAssignment$assignmentID))
@@ -592,21 +575,25 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     # Rbind to one table:
     AssignmentLengthDistributionData <- data.table::rbindlist(AssignmentLengthDistributionData)
     
+    # Extract only the relevant columns:
+    AssignmentLengthDistributionData <- setColumnOrder(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
+    
     return(AssignmentLengthDistributionData)
 }
 
 
 # Function to get the assignment length distribution of one assignmentID, represented by one line in BioticAssignmentUnique:
-getAssignmentLengthDistributionDataOne <- function(BioticAssignmentLine, LengthDistributionData) {
+getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistributionData) {
     
-    # Average to length groups, define by the grouping variables:
+    # Average to length groups, defined by the grouping variables:
     by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     # Define the data variable:
     dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
     
     # Extract the subset of the data givevn by the hauls:
-    Hauls <- BioticAssignmentLine$Haul
-    WeightingFactors <- BioticAssignmentLine$WeightingFactor
+    BioticAssignment <- data.table::fread(text = assignmentPasted, col.names = c("Haul", "WeightingFactor"))
+    Hauls <- BioticAssignment$Haul
+    WeightingFactors <- BioticAssignment$WeightingFactor
     thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
     
     # Overwrite the weights by those defined in the BioticAssignment object:
@@ -630,9 +617,13 @@ getAssignmentLengthDistributionDataOne <- function(BioticAssignmentLine, LengthD
     # Subset to the unique rows (since the weighted average was by reference):
     thisLengthDistributionData <- unique(thisLengthDistributionData)
     
-    # Add the assignmentID:
-    thisLengthDistributionData[, assignmentID := eval(BioticAssignmentLine$assignmentID)]
+    # Order by the category and grouping variables:
+    orderBy <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+    setorderv(thisLengthDistributionData, cols = orderBy)
     
+    ## Add the assignmentID:
+    #thisLengthDistributionData[, assignmentID := eval(BioticAssignment$assignmentID)]
+    #
     return(thisLengthDistributionData)
 }
 

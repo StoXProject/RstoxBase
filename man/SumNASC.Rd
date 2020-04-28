@@ -4,10 +4,19 @@
 \alias{SumNASC}
 \title{Sum NASC}
 \usage{
-SumNASC(NASCData, TargetResolution = "Layer")
+SumNASC(
+  NASCData,
+  LayerDefinition = c("PreDefined", "FunctionInput"),
+  AcousticLayer = NULL,
+  TargetResolution = "Layer"
+)
 }
 \arguments{
 \item{NASCData}{The \code{\link{NASC}} data.}
+
+\item{LayerDefinition}{A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the \code{NASCData}, or "FunctionInput" to provide the Layers in the input \code{AcousticLayer}}
+
+\item{AcousticLayer}{\code{\link{AcousticLayer}} data.}
 
 \item{TargetResolution}{The vertical resolution of the output.}
 }

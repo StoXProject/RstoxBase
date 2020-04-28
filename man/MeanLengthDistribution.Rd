@@ -4,10 +4,19 @@
 \alias{MeanLengthDistribution}
 \title{(Weighted) Average length distribution horizontally}
 \usage{
-MeanLengthDistribution(LengthDistributionData, TargetResolution = "PSU")
+MeanLengthDistribution(
+  LengthDistributionData,
+  PSUDefinition = c("PreDefined", "FunctionInput"),
+  SweptAreaPSU = NULL,
+  TargetResolution = "PSU"
+)
 }
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
+
+\item{PSUDefinition}{A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the PSUs in the input \code{SweptAreaPSU}}
+
+\item{SweptAreaPSU}{\code{\link{SweptAreaPSU}} data.}
 
 \item{TargetResolution}{The horizontal resolution of the output.}
 }

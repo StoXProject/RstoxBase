@@ -18,7 +18,13 @@
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
 #' @export
-NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NULL) {
+NASC <- function(
+    StoxAcousticData = NULL, 
+    IncludePSU = FALSE, 
+    IncludeLayer = FALSE, 
+    AcousticLayer = NULL, 
+    AcousticPSU = NULL
+    ) {
     
     # Merge the StoxAcousticData:
     NASC <- RstoxData::mergeDataTables(StoxAcousticData)$NASC
@@ -30,7 +36,7 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
     }
     
     # Insert the Stratum and PSU column by the AcousticPSU input, and otherwise by NAs:
-    NASC <- addPSUDefinition(NASC, PSUDefinition = AcousticPSU)
+    NASC <- addPSUProcessData(NASC, dataType = "NASCData", PSUProcessData = AcousticPSU)
     
     ### # Add also the number of Stations in each PSU, and the number of PSUs in each Stratum:
     ### PSUSize <- AcousticPSU$EDSU_PSU[, .(PSUSize = length(EDSU)), by = "PSU"]
@@ -40,7 +46,7 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
     ### NASC <- merge(NASC, StratumSize, by = "Stratum")
     
     # Insert the Layer column by the AcousticLayer input, and otherwise by NAs:
-    NASC <- addLayerDefinition(NASC, dataType = "NASCData", layerDefinition = AcousticLayer)
+    NASC <- addLayerProcessData(NASC, dataType = "NASCData", layerProcessData = AcousticLayer)
     ## Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
     #setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
     
@@ -65,6 +71,8 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
 #' This function sums NASC data vertically into layer resolution
 #' 
 #' @param NASCData The \code{\link{NASC}} data.
+#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the \code{NASCData}, or "FunctionInput" to provide the Layers in the input \code{AcousticLayer}
+#' @param AcousticLayer \code{\link{AcousticLayer}} data.
 #' @param TargetResolution The vertical resolution of the output.
 #' 
 #' @details
@@ -81,8 +89,8 @@ NASC <- function(StoxAcousticData = NULL, AcousticLayer = NULL, AcousticPSU = NU
 #' @export
 #' @import data.table
 #' 
-SumNASC <- function(NASCData, TargetResolution = "Layer") {
-    sumData(NASCData, dataType = "NASCData", targetResolution = TargetResolution)
+SumNASC <- function(NASCData, LayerDefinition = c("PreDefined", "FunctionInput"), AcousticLayer = NULL, TargetResolution = "Layer") {
+    sumData(NASCData, dataType = "NASCData", LayerDefinition = LayerDefinition, layerProcessData = AcousticLayer, targetResolution = TargetResolution)
 }
 
 
@@ -122,6 +130,8 @@ CombineNASC <- function(NASCData) {
 #' This function averages NASC data horizontally, weighted by the log distance.
 #' 
 #' @param NASCData The \code{\link{NASC}} data.
+#' @param PSUDefinition A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{NASCData}, or "FunctionInput" to provide the PSUs in the input \code{AcousticPSU}
+#' @param AcousticPSU \code{\link{AcousticPSU}} data.
 #' @param TargetResolution The vertical resolution of the output.
 #' 
 #' @details
@@ -138,8 +148,8 @@ CombineNASC <- function(NASCData) {
 #' @export
 #' @import data.table
 #' 
-MeanNASC <- function(NASCData, TargetResolution = "PSU") {
-    meanData(NASCData, dataType = "NASCData", targetResolution = TargetResolution)
+MeanNASC <- function(NASCData, PSUDefinition = c("PreDefined", "FunctionInput"), AcousticPSU = NULL, TargetResolution = "PSU") {
+    meanData(NASCData, dataType = "NASCData", PSUDefinition = PSUDefinition, PSUProcessData = AcousticPSU, targetResolution = TargetResolution)
 }
 
 
