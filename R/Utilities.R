@@ -186,13 +186,7 @@ findLayer <- function(minDepth, maxDepth, layerProcessData, acceptNA = TRUE) {
 addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
     
     # If present, add the PSUProcessData to the start of the data
-    if(length(PSUProcessData) == 0 || length(PSUProcessData$Stratum_PSU) == 0) {
-        #warning("StoX: PSUs not defined, possibly due to no data inside the any strata")
-        data.table::setDT(data)
-        toAdd <- c("Stratum", "PSU")
-        data.table::set(data, j = toAdd, value = NA)
-    }
-    else {
+    if(length(PSUProcessData) && length(PSUProcessData$Stratum_PSU)) {
         # Merge first the PSUProcessData:
         PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData, output.only.last = TRUE, ...)
         # Then merge the result with the data:
@@ -205,6 +199,12 @@ addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
             data[, (toRemove):=NULL] 
         }
         data <- merge(PSUProcessData, data, by = by, ...)
+    }
+    else if(! "PSU" %in% names(data)) {
+        #warning("StoX: PSUs not defined, possibly due to no data inside the any strata")
+        data.table::setDT(data)
+        toAdd <- c("Stratum", "PSU")
+        data.table::set(data, j = toAdd, value = NA)
     }
     
     
@@ -246,7 +246,7 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
         
         data <- data.table::data.table(layerData, data)
     }
-    else {
+    else if(! "Layer" %in% names(data)){
         data.table::setDT(data)
         toAdd <- c("Layer", "MinLayerDepth", "MaxLayerDepth")
         data.table::set(data, j = toAdd, value=NA)
