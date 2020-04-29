@@ -303,7 +303,12 @@ stoxFunctionAttributes <- list(
     SuperIndividuals = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "SuperIndividualsData"
+        functionOutputDataType = "SuperIndividualsData", 
+        functionArgumentHierarchy = list(
+            LengthDistributionData = list(
+                AbundWeightMethod = "HaulDensity"
+            )
+        )
     ), 
     
     DefineAcousticTargetStrength = list(

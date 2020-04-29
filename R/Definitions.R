@@ -17,7 +17,6 @@ initiateRstoxBase <- function(){
         NASCData = list(
             horizontalResolution = c("Stratum", "PSU", "EDSU"), 
             verticalResolution = c("Layer", "Channel"), 
-            #sampleSize = c("StratumSize", "PSUSize"), 
             categoryVariable = "AcousticCategory", 
             groupingVariables = c("Frequency"), 
             coordinateSystemOrigin = "ChannelReferenceDepth", 
@@ -27,14 +26,12 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "NASCWeight", 
-            #summedWeighting = "SummedWeights", 
             type = "ChannelReferenceType", 
             other = "EffectiveLogDistance"
         ), 
         LengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU", "Station"), 
             verticalResolution = c("Layer", "Haul"), 
-            #sampleSize = c("StratumSize", "PSUSize"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
@@ -42,14 +39,12 @@ initiateRstoxBase <- function(){
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "LengthDistributionWeight", 
-            #summedWeighting = "SummedWeights", 
             type = "LengthDistributionType", 
             other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
-            #sampleSize = NULL, 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
@@ -60,25 +55,41 @@ initiateRstoxBase <- function(){
         DensityData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
-            #sampleSize = c("StratumSize"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "DensityWeight", 
-            #summedWeighting = "SummedWeights", 
             other = NULL
         ), 
         AbundanceData = list(
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
-            #sampleSize = NULL, 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Abundance", 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = NULL, 
-            #summedWeighting = NULL, 
+            other = NULL
+        ), 
+        IndividualsData = list(
+            horizontalResolution = c("Stratum"), 
+            verticalResolution = c("Layer", "Haul"), 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            data = NULL, 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            weighting = NULL, 
+            other = NULL
+        ), 
+        SuperIndividualsData = list(
+            horizontalResolution = c("Stratum"), 
+            verticalResolution = c("Layer", "Haul"), 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            data = "Abundance", 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            weighting = NULL, 
             other = NULL
         )
     )

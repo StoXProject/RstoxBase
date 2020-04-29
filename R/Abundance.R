@@ -108,6 +108,10 @@ Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea
     # Remove rows with missing IndividualKey, indicating they are not individuals but merely rows for Hauls included in the PSU/Layer:
     IndividualsData <- IndividualsData[!is.na(IndividualKey), ]
     
+    # Order the columns, but keep all columns:
+    IndividualsData <- setColumnOrder(IndividualsData, dataType = "IndividualsData", keep.all = TRUE)
+    
+    
     return(IndividualsData)
 }
 
@@ -156,7 +160,6 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     #)
     
     #print(head(AbundanceData, 2))
-    
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the AbundanceData:
     addLengthGroupsByReference(data = SuperIndividualsData, master = AbundanceData)
     # Add length groups also to the AbundanceData:
@@ -247,16 +250,26 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     # Divide by the number of individuals (regardless of AbundWeightMethod)
     SuperIndividualsData[, Abundance := Abundance / individualCount]
     
-    # Remove the temporary columns:
-    toRemove <- c("LengthGroup", "abundanceWeightFactor", "individualCount")
-    #SuperIndividualsData[, c(toRemove) := NULL]
+    # Order the columns, but keep all columns:
+    SuperIndividualsData <- setColumnOrder(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
     
-    # Order 
-    toOrderFirst <- c(
-        getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
-        "Haul"
-    )
-    data.table::setcolorder(SuperIndividualsData, toOrderFirst)
+    # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
+    SuperIndividualsData[, individualCount := NULL]
+    SuperIndividualsData[, abundanceWeightFactor := NULL]
+    SuperIndividualsData[, LengthGroup := NULL]
+    
+    
+    
+    ### # Remove the temporary columns:
+    ### toRemove <- c("LengthGroup", "abundanceWeightFactor", "individualCount")
+    ### #SuperIndividualsData[, c(toRemove) := NULL]
+    ### 
+    ### # Order 
+    ### toOrderFirst <- c(
+    ###     getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TR### UE), 
+    ###     "Haul"
+    ### )
+    ### data.table::setcolorder(SuperIndividualsData, toOrderFirst)
 
     return(SuperIndividualsData)
 }
