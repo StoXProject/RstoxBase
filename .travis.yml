@@ -3,6 +3,7 @@ os:
 - linux
 - osx
 r:
+- oldrel
 - release
 if: tag IS blank
 cache: packages
