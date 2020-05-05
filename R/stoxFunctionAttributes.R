@@ -11,9 +11,19 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "StratumPolygon", 
-        #functionParameterType = list(FileName = "character"), 
         functionParameterFormat = list(FileName = "filePath"), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
+            # These two are joined with AND, and must both be funlilled:
+            FileName = list(
+                DefinitionMethod = "ResourceFile"
+            ), 
+            FileName = list(
+                UseProcessData = FALSE
+            )
+        )
     ), 
     
     # Calculate areas of strata polygons:
@@ -21,7 +31,6 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "StratumArea", 
-        #functionParameterType = list(StratumPolygon = "character"), 
         functionParameterFormat = list(), 
         functionArgumentHierarchy = list()
     ), 
@@ -31,11 +40,12 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "AcousticPSU", 
-        #functionParameterType = list(
-        #    StratumPolygon = "character", 
-        #    StoxAcousticData = "character"), 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            )
+        )
     ), 
     
     # Define acoustic PSUs:
@@ -44,7 +54,11 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaPSU", 
         functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            )
+        )
     ), 
     
     # Define acoustic Layer:
@@ -54,6 +68,9 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "AcousticLayer", 
         functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
             Resolution = list(
                 DefinitionMethod = "Resolution"
             ), 
@@ -70,6 +87,9 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "SweptAreaLayer", 
         functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
             Resolution = list(
                 DefinitionMethod = "Resolution"
             ), 
@@ -88,6 +108,9 @@ stoxFunctionAttributes <- list(
             EllipsoidalDistanceTable = "ellipsoidalDistanceTable"
         ), 
         functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
             StratumPolygon = list(
                 DefinitionMethod = "Stratum"
             ), 
@@ -100,24 +123,6 @@ stoxFunctionAttributes <- list(
             Radius = list(
                 DefinitionMethod = "Radius"
             ), 
-            #MinNumStations = list(
-            #    DefinitionMethod = "EllipsoidalDistance"
-            #), 
-            #RefGCDistance = list(
-            #    DefinitionMethod = "EllipsoidalDistance"
-            #), 
-            #RefTime = list(
-            #    DefinitionMethod = "EllipsoidalDistance"
-            #), 
-            #RefBotDepth = list(
-            #    DefinitionMethod = "EllipsoidalDistance"
-            #), 
-            #RefLatitude = list(
-            #    DefinitionMethod = "EllipsoidalDistance"
-            #), 
-            #RefLongitude = list(
-            #    DefinitionMethod = "EllipsoidalDistance"
-            #), 
             EllipsoidalDistanceTable = list(
                 DefinitionMethod = "EllipsoidalDistance"
             )
@@ -319,6 +324,9 @@ stoxFunctionAttributes <- list(
             ParameterTable = "acousticTargetStrengthTable"
         ), 
         functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
             ParameterTable = list(
                 DefinitionMethod = "Table"
             ), 
