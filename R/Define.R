@@ -130,10 +130,12 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         ), 
         names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
     )
+    
+    # No longer neede, as the GUI gets stratum names from DefineStrata instead:
     # Add a list of all strata:
-    out$Stratum <- data.table::data.table(
-        Stratum = getStratumNames(StratumPolygon)
-    )
+    #out$Stratum <- data.table::data.table(
+    #    Stratum = getStratumNames(StratumPolygon)
+    #)
     
     return(out)
 }
