@@ -81,14 +81,18 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         # Find the stratum of each PSU:
         SpatialPSUs <- sp::SpatialPoints(StoxData[[SSULevel]][, c("Longitude", "Latitude")])
         
-        StratumIndex <- sp::over(SpatialPSUs, StratumPolygon)
-        # Converting from data frame to character vector 
-        StratumIndex <- as.numeric(unlist(StratumIndex))
-        NonEmptyStrata <- StratumNames[StratumIndex]
+        StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
+        
+        
+        #StratumIndex <- sp::over(SpatialPSUs, StratumPolygon)
+        ## Converting from data frame to character vector 
+        #StratumIndex <- as.numeric(unlist(StratumIndex))
+        #NonEmptyStrata <- StratumNames[StratumIndex]
         
         # Create the Stratum_PSU data.table:
         Stratum_PSU <- data.table::data.table(
-            Stratum = NonEmptyStrata, 
+            #Stratum = NonEmptyStrata, 
+            Stratum = unlist(StratumNames), 
             PSU = PSUName
         )
         
@@ -126,10 +130,12 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         ), 
         names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
     )
+    
+    # No longer neede, as the GUI gets stratum names from DefineStrata instead:
     # Add a list of all strata:
-    out$Stratum <- data.table::data.table(
-        Stratum = getStratumNames(StratumPolygon)
-    )
+    #out$Stratum <- data.table::data.table(
+    #    Stratum = getStratumNames(StratumPolygon)
+    #)
     
     return(out)
 }

@@ -1,0 +1,48 @@
+
+
+
+
+
+"definitions_processData_DefineStrata": {
+    "DefineStrata": {
+        "type": "string"
+    }
+},
+
+"definitions_processData_AcousticPSU": {
+    "AcousticPSU": {
+        "type": "object", 
+        "properties": {
+            "Stratum_PSU": {
+                "type": "array",
+                "items": [
+                    {
+                        "name": "Stratum", 
+                        "type": "string"
+                    },
+                    {
+                        "name": "PSU", 
+                        "type": "string"
+                    }
+                    ]
+            }, 
+            "EDSU_PSU": {
+                "type": "array",
+                "items": [
+                    {
+                        "name": "EDSU", 
+                        "type": "string"
+                    },
+                    {
+                        "name": "PSU", 
+                        "type": "string"
+                    }
+                    ]
+            }
+        },
+        "required": [
+            "Stratum_PSU",
+            "EDSU_PSU"
+            ]
+    }
+}
