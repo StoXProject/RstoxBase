@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
       </span>
     </div>
 
@@ -290,6 +290,58 @@
 #&gt; NULL
 #&gt; 
 #&gt; 
+#&gt; $dataTypeDefinition$IndividualsData
+#&gt; $dataTypeDefinition$IndividualsData$horizontalResolution
+#&gt; [1] "Stratum"
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$verticalResolution
+#&gt; [1] "Layer" "Haul" 
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$categoryVariable
+#&gt; [1] "SpeciesCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$groupingVariables
+#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$data
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$weighting
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$other
+#&gt; NULL
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData
+#&gt; $dataTypeDefinition$SuperIndividualsData$horizontalResolution
+#&gt; [1] "Stratum"
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$verticalResolution
+#&gt; [1] "Layer" "Haul" 
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$categoryVariable
+#&gt; [1] "SpeciesCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$groupingVariables
+#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$data
+#&gt; [1] "Abundance"
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$weighting
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$other
+#&gt; NULL
+#&gt; 
+#&gt; 
 #&gt; 
 #&gt; $dataTypeRequiredVariables
 #&gt; $dataTypeRequiredVariables$NASCData
@@ -313,6 +365,16 @@
 #&gt; 
 #&gt; $dataTypeRequiredVariables$AbundanceData
 #&gt; [1] "Stratum"                         "Layer"                          
+#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
+#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeRequiredVariables$IndividualsData
+#&gt; [1] "Stratum"                         "Haul"                           
+#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
+#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeRequiredVariables$SuperIndividualsData
+#&gt; [1] "Stratum"                         "Haul"                           
 #&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
 #&gt; [5] "LengthResolutionCentimeter"     
 #&gt; 
@@ -343,8 +405,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x58b1518&gt;
-#&gt; &lt;environment: 0x58b3f98&gt;
+#&gt; &lt;bytecode: 0x44ac118&gt;
+#&gt; &lt;environment: 0x44aad68&gt;
 #&gt; 
 #&gt; $parameterTableInfo
 #&gt; $parameterTableInfo$catchCompensationTable
