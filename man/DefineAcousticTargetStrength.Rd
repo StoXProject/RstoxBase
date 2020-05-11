@@ -6,22 +6,22 @@
 \usage{
 DefineAcousticTargetStrength(
   processData,
+  UseProcessData = FALSE,
   DefinitionMethod = c("Table", "ResourceFile"),
   ParameterTable = data.table::data.table(),
-  FileName,
-  UseProcessData = FALSE
+  FileName
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
+
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.}
 
 \item{ParameterTable}{A table of the columns AcousticCategory, Frequency, m, a and d.}
 
 \item{FileName}{A file from which to read the \code{ParameterTable}.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }
 \value{
 A \code{\link{NASCData}} object.

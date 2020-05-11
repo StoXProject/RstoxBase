@@ -31,7 +31,7 @@
 #' @export
 #' @import data.table
 #' 
-DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
+DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -99,21 +99,13 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         # Remove PSUs that do not have a stratum:
         validPSUs <- unique(Stratum_PSU$PSU[!is.na(Stratum_PSU$Stratum)])
         Stratum_PSU <- Stratum_PSU[ PSU %in% validPSUs ]
-        #SSU_PSU <- SSU_PSU[ PSU %in% validPSUs ]
-        #SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
-        
-        SSU_PSU[! PSU %in% validPSUs, PSU := NA]
-        
-        #SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, "")]
-        
-        
+        SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
     }
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
     else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
         SSU_PSU <- data.table::data.table(
             SSU = SSU, 
-            #PSU = ""
-            PSU = NA
+            PSU = NA_character_
         )
         Stratum_PSU <- data.table::data.table()
     }
@@ -166,7 +158,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
 #' @export
 #' @import data.table
 #' 
-DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, DefinitionMethod = c("StationToPSU", "None"), UseProcessData = FALSE) {
+DefineSweptAreaPSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxBioticData, DefinitionMethod = c("StationToPSU", "None")) {
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -212,7 +204,7 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
 #' @export
 #' @import data.table
 #' 
-DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, DefinitionMethod = c("EDSUToPSU", "None"), UseProcessData = FALSE) {
+DefineAcousticPSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxAcousticData, DefinitionMethod = c("EDSUToPSU", "None")) {
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -260,7 +252,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
+DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -393,7 +385,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+DefineAcousticLayer <- function(processData, UseProcessData = FALSE, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table()) {
     
     DefineLayer(
         processData = processData, 
@@ -431,7 +423,7 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 #' @export
 #' @import data.table
 #' 
-DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table()) {
     
     DefineLayer(
         processData = processData, 
@@ -476,14 +468,13 @@ DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod =
 #' @import data.table
 #'
 DefineBioticAssignment <- function(
-    processData, 
+    processData, UseProcessData = FALSE, 
     NASCData, StoxBioticData, 
     DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"), 
     StoxAcousticData, 
     AcousticPSU, AcousticLayer, 
     StratumPolygon, 
-    Radius = double(), EllipsoidalDistanceTable = data.table::data.table(), 
-    UseProcessData = FALSE) {
+    Radius = double(), EllipsoidalDistanceTable = data.table::data.table()) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -576,7 +567,7 @@ DefineBioticAssignment <- function(
 #' 
 #' @export
 #' 
-DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Table", "ResourceFile"), ParameterTable = data.table::data.table(), FileName, UseProcessData = FALSE) {
+DefineAcousticTargetStrength <- function(processData, UseProcessData = FALSE, DefinitionMethod = c("Table", "ResourceFile"), ParameterTable = data.table::data.table(), FileName) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {

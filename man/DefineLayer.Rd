@@ -6,16 +6,18 @@
 \usage{
 DefineLayer(
   processData,
+  UseProcessData = FALSE,
   StoxData,
   DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"),
   Resolution = double(),
   LayerTable = data.table::data.table(),
-  UseProcessData = FALSE,
   modelType = c("Acoustic", "SweptArea")
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
+
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{StoxData}{Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.}
 
@@ -24,8 +26,6 @@ DefineLayer(
 \item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
 
 \item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{modelType}{Character: A string naming the type of model, either "Acoustic" or "SweptArea".}
 }

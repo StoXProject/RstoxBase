@@ -6,6 +6,7 @@
 \usage{
 DefineBioticAssignment(
   processData,
+  UseProcessData = FALSE,
   NASCData,
   StoxBioticData,
   DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"),
@@ -14,12 +15,13 @@ DefineBioticAssignment(
   AcousticLayer,
   StratumPolygon,
   Radius = double(),
-  EllipsoidalDistanceTable = data.table::data.table(),
-  UseProcessData = FALSE
+  EllipsoidalDistanceTable = data.table::data.table()
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
+
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{NASCData}{The \code{\link{NASC}} data.}
 
@@ -38,8 +40,6 @@ DefineBioticAssignment(
 \item{Radius}{Numeric: The radius inside which to assign biotic stations to each acoustic PSU.}
 
 \item{EllipsoidalDistanceTable}{Not yet implemented.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.

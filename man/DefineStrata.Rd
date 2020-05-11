@@ -5,18 +5,18 @@
 \title{Define stratum multipolygon}
 \usage{
 DefineStrata(
-  processData = NULL,
+  processData,
+  UseProcessData = FALSE,
   DefinitionMethod = c("ResourceFile", "None"),
-  FileName,
-  UseProcessData = FALSE
+  FileName
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{FileName}{The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.}
-
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
+
+\item{FileName}{The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.}
 }
 \value{
 A \code{\link[sp]{SpatialPolygonsDataFrame}} object.

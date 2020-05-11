@@ -91,7 +91,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' 
 #' @export
 #' 
-DefineStrata <- function(processData = NULL, DefinitionMethod = c("ResourceFile", "None"), FileName, UseProcessData = FALSE) {
+DefineStrata <- function(processData, UseProcessData = FALSE, DefinitionMethod = c("ResourceFile", "None"), FileName) {
     #if(!is.null(processData) & UseProcessData) {
     if(UseProcessData) {
         return(processData)

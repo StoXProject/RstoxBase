@@ -6,15 +6,17 @@
 \usage{
 DefineAcousticLayer(
   processData,
+  UseProcessData = FALSE,
   StoxAcousticData,
   DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"),
   Resolution = double(),
-  LayerTable = data.table::data.table(),
-  UseProcessData = FALSE
+  LayerTable = data.table::data.table()
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
+
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
 
@@ -23,8 +25,6 @@ DefineAcousticLayer(
 \item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
 
 \item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }
 \value{
 An object of StoX data type \code{\link{AcousticLayer}}.

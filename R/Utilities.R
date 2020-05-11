@@ -204,7 +204,7 @@ addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
         #warning("StoX: PSUs not defined, possibly due to no data inside the any strata")
         data.table::setDT(data)
         toAdd <- c("Stratum", "PSU")
-        data.table::set(data, j = toAdd, value = NA)
+        data.table::set(data, j = toAdd, value = NA_character_)
     }
     
     
@@ -249,7 +249,7 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
     else if(! "Layer" %in% names(data)){
         data.table::setDT(data)
         toAdd <- c("Layer", "MinLayerDepth", "MaxLayerDepth")
-        data.table::set(data, j = toAdd, value=NA)
+        data.table::set(data, j = toAdd, value = NA_character_)
     }
     
     # Set the order of the columns:
@@ -338,7 +338,7 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
             aggregationVariables$setToNA, 
             aggregationVariables$otherVariables
         ), 
-        value=NA
+        value = NA
     )
     
     # Remove duplicated rows:
@@ -395,7 +395,7 @@ sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionI
             aggregationVariables$setToNA, 
             aggregationVariables$verticalRawDimension
         ), 
-        value=NA
+        value = NA
     )
     
     # Remove duplicated rows:
