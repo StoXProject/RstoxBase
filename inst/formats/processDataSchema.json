@@ -1,48 +1,210 @@
-
-
-
-
-
-"definitions_processData_DefineStrata": {
+{
+    
     "DefineStrata": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "string"
-    }
-},
+    },
 
-"definitions_processData_AcousticPSU": {
-    "AcousticPSU": {
-        "type": "object", 
+    "DefineAcousticPSU": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
         "properties": {
             "Stratum_PSU": {
                 "type": "array",
-                "items": [
+                "items": [ 
                     {
-                        "name": "Stratum", 
-                        "type": "string"
-                    },
-                    {
-                        "name": "PSU", 
-                        "type": "string"
+                        "type": "object",
+                        "properties": {
+                            "Stratum": { "type": "string" },
+                            "PSU": { "type": "string" }
+                        },
+                        "required": [
+                            "Stratum",
+                            "PSU"
+                        ]
                     }
-                    ]
-            }, 
+                ]
+            },
             "EDSU_PSU": {
                 "type": "array",
-                "items": [
+                "items": [ 
                     {
-                        "name": "EDSU", 
-                        "type": "string"
-                    },
-                    {
-                        "name": "PSU", 
-                        "type": "string"
+                        "type": "object",
+                        "properties": {
+                            "EDSU": { "type": "string" },
+                            "PSU": { "type": "string" }
+                        },
+                        "required": [
+                            "EDSU",
+                            "PSU"
+                        ]
                     }
-                    ]
+                ]
             }
         },
         "required": [
             "Stratum_PSU",
             "EDSU_PSU"
-            ]
-    }
+        ]
+    }, 
+    
+    "DefineSweptAreaPSU": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+            "Stratum_PSU": {
+                "type": "array",
+                "items": [ 
+                    {
+                        "type": "object",
+                        "properties": {
+                            "Stratum": { "type": "string" },
+                            "PSU": { "type": "string" }
+                        },
+                        "required": [
+                            "Stratum",
+                            "PSU"
+                        ]
+                    }
+                ]
+            },
+            "Station_PSU": {
+                "type": "array",
+                "items": [ 
+                    {
+                        "type": "object",
+                        "properties": {
+                            "Station": { "type": "string" },
+                            "PSU": { "type": "string" }
+                        },
+                        "required": [
+                            "Station",
+                            "PSU"
+                        ]
+                    }
+                ]
+            }
+        },
+        "required": [
+            "Stratum_PSU",
+            "Station_PSU"
+        ]
+    }, 
+    
+    "DefineSweptAreaLayer": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "array",
+		"items": [
+			{
+				"type": "object",
+				"properties": {
+					"AcousticCategory": {
+						"type": "integer"
+					},
+					"Frequency": {
+						"type": "integer"
+					},
+					"m": {
+						"type": "integer"
+					},
+					"a": {
+						"type": "number"
+					},
+					"d": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"AcousticCategory",
+					"Frequency",
+					"m",
+					"a",
+					"d"
+				]
+			}
+		]
+	}, 
+
+    "DefineAcousticLayer": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "array",
+		"items": [
+			{
+				"type": "object",
+				"properties": {
+					"AcousticCategory": {
+						"type": "integer"
+					},
+					"Frequency": {
+						"type": "integer"
+					},
+					"m": {
+						"type": "integer"
+					},
+					"a": {
+						"type": "number"
+					},
+					"d": {
+						"type": "integer"
+					}
+				},
+				"required": [
+					"AcousticCategory",
+					"Frequency",
+					"m",
+					"a",
+					"d"
+				]
+			}
+		]
+	}, 
+
+    "DefineBioticAssignment": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "array",
+		"items": [
+			{
+				"type": "object",
+				"properties": {
+					"Stratum": { "type": "string" },
+					"PSU": { "type": "string" },
+					"Layer": { "type": "string" },
+					"Haul": { "type": "string" },
+					"WeightingFactor": { "type": "integer" }
+				},
+				"required": [
+					"Stratum",
+					"PSU",
+					"Layer",
+					"Haul",
+					"WeightingFactor"
+				]
+			}
+		]
+	}, 
+
+    "DefineAcousticTargetStrength": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "array",
+		"items": [
+			{
+				"type": "object",
+				"properties": {
+					"AcousticCategory": { "type": "integer" },
+					"Frequency": { "type": "integer" },
+					"m": { "type": "integer" },
+					"a": { "type": "number" },
+					"d": { "type": "integer" }
+				},
+				"required": [
+					"AcousticCategory",
+					"Frequency",
+					"m",
+					"a",
+					"d"
+				]
+			}
+		]
+	}
+	
 }

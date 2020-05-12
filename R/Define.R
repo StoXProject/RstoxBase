@@ -546,6 +546,87 @@ DefineBioticAssignment <- function(
 }
 
 
+
+##################################################
+##################################################
+#' Assignnment of biotic hauls to acoustic PSUs
+#' 
+#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' 
+#' @inheritParams DefineStrata
+#' @inheritParams DefineSweptAreaPSU
+#' @inheritParams DefineAcousticPSU
+#' @inheritParams SumNASC
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
+#' @param AcousticPSU       The \code{\link{AcousticPSU}} process data.
+#' @param AcousticLayer     The \code{\link{AcousticLayer}} process data.
+#' @param Radius            Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
+#' @param EllipsoidalDistanceTable     Not yet implemented.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{BioticAssignment}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{BioticAssignment}}.
+#' 
+#' @export
+#' @import data.table
+#'
+BioticAssignmentWeightingTemp <- function(
+    BioticAssignment, 
+    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
+    StoxBioticData, 
+    LengthDistributionData, 
+    MaxNumberOfLengthSamples = 100) {
+    
+    # Get the DefinitionMethod:
+    WeightingMethod <- match.arg(WeightingMethod)
+    
+    # Define the weighting variable:
+    weightingVariable <- getDataTypeDefinition(dataType = "BioticAssignment", elements = "weighting", unlist = TRUE)
+    
+    if(WeightingMethod == "Equal") {
+        # Simply set WeightingFactor to 1
+    }
+    else if(WeightingMethod == "NumberOfLengthSamples") {
+        # 1. StoxBioticMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
+        # 2. BioticAssignment <- merge(BioticAssignment, StoxBioticMerged, by = "Haul")
+        # 3. BioticAssignment[, eval(weightingVariable) := CatchFractionCount]
+    }
+    else if(WeightingMethod == "NASC") {
+        
+    }
+    else if(WeightingMethod == "NormalizedTotalWeight") {
+        # 1. StoxBioticMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
+        # 2. BioticAssignment <- merge(BioticAssignment, StoxBioticMerged, by = "Haul")
+        # 3. BioticAssignment[, eval(weightingVariable) := CatchFractionWeightKilogram / EffectiveTowedDistance]
+    }
+    else if(WeightingMethod == "NormalizedTotalCount") {
+        # 1. StoxBioticMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
+        # 2. BioticAssignment <- merge(BioticAssignment, StoxBioticMerged, by = "Haul")
+        # 3. BioticAssignment[, eval(weightingVariable) := CatchFractionCount / EffectiveTowedDistance]
+    }
+    else if(WeightingMethod == "SumWeightedCount") {
+        # 1. BioticAssignment <- merge(BioticAssignment, LengthDistributionData, by = "Haul")
+        # 2. BioticAssignment[, eval(weightingVariable) := ?]
+    }
+    else if(WeightingMethod == "InverseSumWeightedCount") {
+        # 1. BioticAssignment <- merge(BioticAssignment, LengthDistributionData, by = "Haul")
+        # 2. BioticAssignment[, eval(weightingVariable) := ?]
+    }
+    
+    # Keep only relevant columns:
+    BioticAssignment <- setColumnOrder(BioticAssignment, dataType = "BioticAssignment", keep.all = FALSE)
+    
+    
+    return(BioticAssignment)
+}
+
 ##################################################
 #' Acoustic target strength definition
 #' 
