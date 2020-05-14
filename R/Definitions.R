@@ -105,32 +105,6 @@ initiateRstoxBase <- function(){
         sp::SpatialPolygons(list()), 
         data = data.frame()
     )
-    ### 
-    ### # Define empty process data:
-    ### empryProcessData <- list(
-    ###     DefineSweptAreaPSU = list(
-    ###         Stratum_PSU = data.table::data.table(), 
-    ###         Station_PSU = data.table::data.table(), 
-    ###         Stratum = data.table::data.table()
-    ###     ), 
-    ###     DefineAcousticPSU = list(
-    ###         Stratum_PSU = data.table::data.table(), 
-    ###         Station_PSU = data.table::data.table(), 
-    ###         Stratum = data.table::data.table()
-    ###     ),
-    ###     DefineSweptAreaLayer = list(
-    ###         DefineSweptAreaLayer = data.table::data.table()
-    ###     ), 
-    ###     DefineAcousticLayer = list(
-    ###         DefineAcousticLayer = data.table::data.table()
-    ###     ),
-    ###     DefineStrata = list(
-    ###         DefineStrata = emptyStratumPolygon()
-    ###     ), 
-    ###     DefineBioticAssignment = list(
-    ###         DefineBioticAssignment = data.table::data.table()
-    ###     )
-    ### )
     
     # Define the variables of the main data types used in estimation models:
     getRequiredVariables <- function(x) {

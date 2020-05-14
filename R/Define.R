@@ -1,7 +1,7 @@
 # DefineAcousticPSU
 # DefineAcousticLayer
 # DefineSweptAreaPSU
-# DefineStrata
+# DefineStratumPolygon
 # DefineSurvey
 
 
@@ -11,7 +11,7 @@
 #' 
 #' Underlying function for \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @param StratumPolygon    The \code{\link{StratumPolygon}} process data.
 #' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
@@ -123,7 +123,7 @@ DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxD
         names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
     )
     
-    # No longer neede, as the GUI gets stratum names from DefineStrata instead:
+    # No longer neede, as the GUI gets stratum names from DefineStratumPolygon instead:
     # Add a list of all strata:
     #out$Stratum <- data.table::data.table(
     #    Stratum = getStratumNames(StratumPolygon)
@@ -139,7 +139,7 @@ DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxD
 #' 
 #' This function defines the \code{\link{SweptAreaPSU}} process data, linking strata, swept-area PSUs and Stations 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefinePSU
 #' @param StoxBioticData    The \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.
@@ -185,7 +185,7 @@ DefineSweptAreaPSU <- function(processData, UseProcessData = FALSE, StratumPolyg
 #' 
 #' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefinePSU
 #' @param StoxAcousticData  The \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
@@ -231,7 +231,7 @@ DefineAcousticPSU <- function(processData, UseProcessData = FALSE, StratumPolygo
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.
 #' @param Resolution  Numeric: A single numeric giving the thickness of the layers.
@@ -367,7 +367,7 @@ DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, Definitio
 #' 
 #' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefineLayer
 #' @inheritParams DefineAcousticPSU
 #' 
@@ -405,7 +405,7 @@ DefineAcousticLayer <- function(processData, UseProcessData = FALSE, StoxAcousti
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefineLayer
 #' @inheritParams DefineSweptAreaPSU
 #' 
@@ -443,7 +443,7 @@ DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBiotic
 #' 
 #' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefineSweptAreaPSU
 #' @inheritParams DefineAcousticPSU
 #' @inheritParams SumNASC
@@ -553,7 +553,7 @@ DefineBioticAssignment <- function(
 #' 
 #' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefineSweptAreaPSU
 #' @inheritParams DefineAcousticPSU
 #' @inheritParams SumNASC
@@ -594,26 +594,32 @@ BioticAssignmentWeightingTemp <- function(
         # Simply set WeightingFactor to 1
     }
     else if(WeightingMethod == "NumberOfLengthSamples") {
-        # 1. StoxBioticMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
-        # 2. BioticAssignment <- merge(BioticAssignment, StoxBioticMerged, by = "Haul")
-        # 3. BioticAssignment[, eval(weightingVariable) := CatchFractionCount]
+        
+        # 1. Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
+        # 2. NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = min(..MaxNumberOfLengthSamples, nrow(.SD))), by = "Haul"]
+        
+        # 3. BioticAssignment <- merge(BioticAssignment, NumberOfLengthSamples, by = "Haul")
+        # 4. BioticAssignment[, eval(weightingVariable) := NumberOfLengthSamples]
+        
     }
     else if(WeightingMethod == "NASC") {
         
     }
     else if(WeightingMethod == "NormalizedTotalWeight") {
-        # 1. StoxBioticMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
-        # 2. BioticAssignment <- merge(BioticAssignment, StoxBioticMerged, by = "Haul")
-        # 3. BioticAssignment[, eval(weightingVariable) := CatchFractionWeightKilogram / EffectiveTowedDistance]
+        
+        # 1. Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
+        # 2. NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1], by = "Haul"]
+        # 3. BioticAssignment <- merge(BioticAssignment, NormalizedTotalWeight, by = "Haul")
+        # 4. BioticAssignment[, eval(weightingVariable) := NormalizedTotalWeight]
+        
     }
     else if(WeightingMethod == "NormalizedTotalCount") {
-        # 1. StoxBioticMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
-        # 2. BioticAssignment <- merge(BioticAssignment, StoxBioticMerged, by = "Haul")
-        # 3. BioticAssignment[, eval(weightingVariable) := CatchFractionCount / EffectiveTowedDistance]
+        
     }
     else if(WeightingMethod == "SumWeightedCount") {
-        # 1. BioticAssignment <- merge(BioticAssignment, LengthDistributionData, by = "Haul")
-        # 2. BioticAssignment[, eval(weightingVariable) := ?]
+        # 2. NormalizedTotalWeight <- LengthDistributionData[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1], by = "Haul"]
+        # 3. BioticAssignment <- merge(BioticAssignment, NormalizedTotalWeight, by = "Haul")
+        # 4. BioticAssignment[, eval(weightingVariable) := NormalizedTotalWeight]
     }
     else if(WeightingMethod == "InverseSumWeightedCount") {
         # 1. BioticAssignment <- merge(BioticAssignment, LengthDistributionData, by = "Haul")
@@ -632,7 +638,7 @@ BioticAssignmentWeightingTemp <- function(
 #' 
 #' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
 #' @param ParameterTable A table of the columns AcousticCategory, Frequency, m, a and d.
 #' @param FileName A file from which to read the \code{ParameterTable}.
