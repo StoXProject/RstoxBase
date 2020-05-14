@@ -546,7 +546,6 @@ DefineBioticAssignment <- function(
 }
 
 
-
 ##################################################
 ##################################################
 #' Assignnment of biotic hauls to acoustic PSUs
@@ -589,48 +588,55 @@ BioticAssignmentWeightingTemp <- function(
     
     # Define the weighting variable:
     weightingVariable <- getDataTypeDefinition(dataType = "BioticAssignment", elements = "weighting", unlist = TRUE)
+
+    # Make a copy of the BioticAssignment to enable safe modification by reference:
+    BioticAssignmentCopy <- data.table::copy(BioticAssignment)
     
     if(WeightingMethod == "Equal") {
         # Simply set WeightingFactor to 1
+        BioticAssignmentCopy[, eval(weightingVariable) := 1]
     }
     else if(WeightingMethod == "NumberOfLengthSamples") {
+        Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
+        NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = sum(!is.na(IndividualTotalLengthCentimeter))), by = "Haul"]
         
-        # 1. Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
-        # 2. NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = min(..MaxNumberOfLengthSamples, nrow(.SD))), by = "Haul"]
-        
-        # 3. BioticAssignment <- merge(BioticAssignment, NumberOfLengthSamples, by = "Haul")
-        # 4. BioticAssignment[, eval(weightingVariable) := NumberOfLengthSamples]
-        
+        BioticAssignmentCopy <- merge(BioticAssignmentCopy, NumberOfLengthSamples, by = "Haul")
+        BioticAssignmentCopy[, eval(weightingVariable) := NumberOfLengthSamples]
     }
     else if(WeightingMethod == "NASC") {
         
     }
     else if(WeightingMethod == "NormalizedTotalWeight") {
-        
-        # 1. Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
-        # 2. NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1], by = "Haul"]
-        # 3. BioticAssignment <- merge(BioticAssignment, NormalizedTotalWeight, by = "Haul")
-        # 4. BioticAssignment[, eval(weightingVariable) := NormalizedTotalWeight]
-        
+        Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
+        NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1]), by = "Haul"]
+        BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalWeight, by = "Haul")
+        BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalWeight]        
     }
     else if(WeightingMethod == "NormalizedTotalCount") {
-        
+        Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
+        NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowedDistance[1]), by = "Haul"]
+        BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalCount, by = "Haul")
+        BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalCount]
     }
     else if(WeightingMethod == "SumWeightedCount") {
-        # 2. NormalizedTotalWeight <- LengthDistributionData[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1], by = "Haul"]
-        # 3. BioticAssignment <- merge(BioticAssignment, NormalizedTotalWeight, by = "Haul")
-        # 4. BioticAssignment[, eval(weightingVariable) := NormalizedTotalWeight]
+        BioticAssignmentCopy <- addSumWeightedCount(
+            BioticAssignment = BioticAssignmentCopy, 
+            LengthDistributionData = LengthDistributionData, 
+            inverse = FALSE
+        )
     }
     else if(WeightingMethod == "InverseSumWeightedCount") {
-        # 1. BioticAssignment <- merge(BioticAssignment, LengthDistributionData, by = "Haul")
-        # 2. BioticAssignment[, eval(weightingVariable) := ?]
+        BioticAssignmentCopy <- addSumWeightedCount(
+            BioticAssignment = BioticAssignmentCopy, 
+            LengthDistributionData = LengthDistributionData, 
+            inverse = TRUE
+        )
     }
     
     # Keep only relevant columns:
-    BioticAssignment <- setColumnOrder(BioticAssignment, dataType = "BioticAssignment", keep.all = FALSE)
+    BioticAssignmentCopy <- setColumnOrder(BioticAssignmentCopy, dataType = "BioticAssignment", keep.all = FALSE)
     
-    
-    return(BioticAssignment)
+    return(BioticAssignmentCopy)
 }
 
 ##################################################
