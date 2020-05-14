@@ -634,6 +634,130 @@ BioticAssignmentWeightingTemp <- function(
 }
 
 ##################################################
+##################################################
+#' Assignnment of biotic hauls to acoustic PSUs
+#' 
+#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' 
+#' @param BioticAssignment The  \code{\link{BioticAssignment}} data.
+#' @param WeightingMethod  Character: A string naming the method to use (dee details).
+#' @inheritParams DefineSweptAreaPSU
+#' @inheritParams RegroupLengthDistribution
+#' @param MaxNumberOfLengthSamples  Numeric: When \code{WeightingMethod} is "NumberOfLengthSamples", \code{MaxNumberOfLengthSamples} set the opper limit for the weights, so that if a haul has more than \code{MaxNumberOfLengthSamples} number of sampled individuals, the weight is set to \code{MaxNumberOfLengthSamples}. 
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{BioticAssignment}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{BioticAssignment}}.
+#' 
+#' @export
+#' @import data.table
+#'
+BioticAssignmentWeightingTempNew <- function(
+    BioticAssignment, 
+    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
+    StoxBioticData, 
+    LengthDistributionData, 
+    MaxNumberOfLengthSamples = 100) {
+    
+    # Get the DefinitionMethod:
+    WeightingMethod <- match.arg(WeightingMethod)
+    
+    # Define the weighting variable:
+    weightingVariable <- getDataTypeDefinition(dataType = "BioticAssignment", elements = "weighting", unlist = TRUE)
+    
+    # Make a copy of the BioticAssignment to enable safe modification by reference:
+    BioticAssignmentCopy <- data.table::copy(BioticAssignment)
+    
+    if(WeightingMethod == "Equal") {
+        # Simply set WeightingFactor to 1
+    }
+    else if(WeightingMethod == "NumberOfLengthSamples") {
+        
+        # 1. Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
+        # 2. NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = min(..MaxNumberOfLengthSamples, nrow(.SD))), by = "Haul"]
+        
+        # 3. BioticAssignment <- merge(BioticAssignment, NumberOfLengthSamples, by = "Haul")
+        # 4. BioticAssignment[, eval(weightingVariable) := NumberOfLengthSamples]
+        
+    }
+    else if(WeightingMethod == "NASC") {
+        
+    }
+    else if(WeightingMethod == "NormalizedTotalWeight") {
+        
+        # 1. Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
+        # 2. NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1], by = "Haul"]
+        # 3. BioticAssignment <- merge(BioticAssignment, NormalizedTotalWeight, by = "Haul")
+        # 4. BioticAssignment[, eval(weightingVariable) := NormalizedTotalWeight]
+        
+    }
+    else if(WeightingMethod == "NormalizedTotalCount") {
+        
+    }
+    else if(WeightingMethod == "SumWeightedCount") {
+        BioticAssignmentCopy <- addSumWeightedCount(
+            BioticAssignment = BioticAssignmentCopy, 
+            LengthDistributionData = LengthDistributionData, 
+            inverse = FALSE
+        )
+    }
+    else if(WeightingMethod == "InverseSumWeightedCount") {
+        BioticAssignmentCopy <- addSumWeightedCount(
+            BioticAssignment = BioticAssignmentCopy, 
+            LengthDistributionData = LengthDistributionData, 
+            inverse = TRUE
+        )
+    }
+    
+    # Keep only relevant columns:
+    BioticAssignment <- setColumnOrder(BioticAssignment, dataType = "BioticAssignment", keep.all = FALSE)
+    
+    
+    return(BioticAssignment)
+}
+
+isLengthDistributionType <- function(LengthDistributionData, LengthDistributionType) {
+    LengthDistributionData$LengthDistributionType[1] == LengthDistributionType
+}
+
+
+addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, inverse = FALSE) {
+    
+    # Make a copy of the LengthDistributionData to enable safe modification by reference:
+    LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
+    
+    # Normalize the WeightedCount:
+    if(isLengthDistributionType(LengthDistributionData, "Standard")) {
+        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
+    } 
+    else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
+        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount is divided by EffectiveTowedDistance) or \"Normalized\"")
+    }
+    # Sum the normalized WeightedCount for each Haul:
+    SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
+    
+    # Merge the NormalizedTotalWeight into the BioticAssignment by the Haul identifyer: 
+    BioticAssignment <- merge(BioticAssignment, SumWeightedCount, by = "Haul")
+    
+    # Copy the NormalizedTotalWeight into the weightingVariable:
+    if(inverse) {
+        BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedCount]
+    }
+    else {
+        BioticAssignment[, eval(weightingVariable) := SumWeightedCount]
+    }
+    
+    BioticAssignment[]
+}
+
+##################################################
 #' Acoustic target strength definition
 #' 
 #' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.

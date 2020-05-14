@@ -24,5 +24,5 @@ The \code{AreaMethod} "Simple" is deprecated, but kept for backwards campatibili
 
 }
 \seealso{
-\code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
+\code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
 }

@@ -507,7 +507,7 @@ SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("P
 #' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
 #' 
 #' @inheritParams RegroupLengthDistribution
-#' @param BioticAssignment The  \code{\link{BioticAssignment}} data.
+#' @inheritParams BioticAssignmentWeighting
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -530,7 +530,7 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     uniqueAssignmentPasted <- unique(BioticAssignmentCollapsed$assignmentPasted)
     BioticAssignmentCollapsed[, assignmentID := match(assignmentPasted, uniqueAssignmentPasted)]
     
-        
+    
     # Get the assignment length distribution of each unique assignment ID:
     uniqueAssignmentPastedDT <- data.table::data.table(
         assignmentID = seq_along(uniqueAssignmentPasted), 
