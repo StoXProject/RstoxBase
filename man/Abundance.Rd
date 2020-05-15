@@ -7,7 +7,7 @@
 Abundance(DensityData, StratumArea)
 }
 \arguments{
-\item{DensityData}{The \code{\link{DensityData}} data.}
+\item{DensityData}{An object of \code{\link{DensityData}} data.}
 
 \item{StratumArea}{The \code{\link{StratumArea}} data.}
 }

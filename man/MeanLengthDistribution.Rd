@@ -16,7 +16,7 @@ MeanLengthDistribution(
 
 \item{PSUDefinition}{A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the PSUs in the input \code{SweptAreaPSU}}
 
-\item{SweptAreaPSU}{\code{\link{SweptAreaPSU}} data.}
+\item{SweptAreaPSU}{The  \code{\link{SweptAreaPSU}} data.}
 
 \item{TargetResolution}{The horizontal resolution of the output.}
 }
