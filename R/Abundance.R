@@ -4,7 +4,7 @@
 #' 
 #' Some description
 #' 
-#' @param DensityData The \code{\link{DensityData}} data.
+#' @inheritParams MeanDensity
 #' @param StratumArea The \code{\link{StratumArea}} data.
 #' 
 #' @details

@@ -454,7 +454,7 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' 
 #' @inheritParams RegroupLengthDistribution
 #' @param PSUDefinition A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the PSUs in the input \code{SweptAreaPSU}
-#' @param SweptAreaPSU \code{\link{SweptAreaPSU}} data.
+#' @inheritParams LengthDistribution
 #' @param TargetResolution The horizontal resolution of the output.
 #' 
 #' @details

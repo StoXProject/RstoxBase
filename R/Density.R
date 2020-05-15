@@ -233,7 +233,7 @@ SweptAreaDensity <- function(
     #SweptAreaMethod = c("LengthDependent", "TotalCatch"), 
     SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"), 
     SweepWidth = integer(), 
-    SweepWidthTable= data.table::data.table()#, 
+    SweepWidthTable = data.table::data.table()#, 
     #CatchVariable = c("Weight", "Count")
 ) {
 	
@@ -354,4 +354,59 @@ SweptAreaDensity <- function(
 MeanDensity <- function(DensityData, TargetResolution = "Stratum") {
     meanData(DensityData, dataType = "DensityData", targetResolution = TargetResolution)
 }
+
+
+##################################################
+##################################################
+#' Table of biotic stations as rows with station info and density of all species categories as columns
+#' 
+#' This function organizes density of all species in the input Density into a table with biotic stations as rows, and the density of each species category in columns. The function requires each swept-area PSUs to contain only one station.
+#' 
+#' @inheritParams MeanDensity
+#' @inheritParams DefineSweptAreaPSU
+#' @inheritParams LengthDistribution
+#' 
+#' @return
+#' A data.table is returned with awesome stuff.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @export
+#' 
+SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
+    
+    # Check that there is only one Station per PSU in SweptAreaPSU$Station_PSU
+    
+    # Sum the DensityData vertically and across length groups:
+    horizontalResolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
+    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
+    #data <- getDataTypeDefinition(dataType = "DensityData", elements = "data", unlist = TRUE)
+    
+    sumBy <- c(horizontalResolution, categoryVariable)
+    DensityData <- DensityData[, .(Density = sum(Density)), by = sumBy]
+    
+    # Add the column Station to the DensityData by merging DensityData and SweptAreaPSU$Station_PSU by PSU:
+    
+    # Create the SpeciesCategoryDensity as a table with species categories in the columns
+    SpeciesCategoryDensity <- data.table::dcast(
+        DensityData, 
+        formula = Station ~ get(categoryVariable), 
+        value.var = data)
+    
+    
+    
+    # Get the Station information by merging StoxBioticData$Cruise and StoxBioticData$Station into Cruise_Station: 
+    
+    # Merge Cruise_Station and SpeciesCategoryDensity
+    
+    
+    
+}
+
+
+
+
+
+
 

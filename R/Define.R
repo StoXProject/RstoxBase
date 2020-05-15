@@ -670,6 +670,7 @@ BioticAssignmentWeightingTempNew <- function(
     WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
     StoxBioticData, 
     LengthDistributionData, 
+    AcousticTargetStrength, 
     MaxNumberOfLengthSamples = 100) {
     
     # Get the DefinitionMethod:
@@ -687,7 +688,7 @@ BioticAssignmentWeightingTempNew <- function(
     else if(WeightingMethod == "NumberOfLengthSamples") {
         
         # 1. Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
-        # 2. NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = min(..MaxNumberOfLengthSamples, nrow(.SD))), by = "Haul"]
+        # 2. NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = min(..MaxNumberOfLengthSamples, sum(!is.na(IndividualTotalLengthCentimeter)))), by = "Haul"]
         
         # 3. BioticAssignment <- merge(BioticAssignment, NumberOfLengthSamples, by = "Haul")
         # 4. BioticAssignment[, eval(weightingVariable) := NumberOfLengthSamples]

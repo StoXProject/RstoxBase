@@ -10,6 +10,7 @@ BioticAssignmentWeightingTempNew(
     "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"),
   StoxBioticData,
   LengthDistributionData,
+  AcousticTargetStrength,
   MaxNumberOfLengthSamples = 100
 )
 }
