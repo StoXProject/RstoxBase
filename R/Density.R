@@ -376,7 +376,8 @@ MeanDensity <- function(DensityData, TargetResolution = "Stratum") {
 #' 
 SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
     
-    # Check that there is only one Station per PSU in SweptAreaPSU$Station_PSU
+    # Check that there is only one Station per PSU in SweptAreaPSU$Station_PSU: 
+    #SweptAreaPSU$Station_PSU[, .N, by = "PSU"]
     
     # Sum the DensityData vertically and across length groups:
     horizontalResolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
@@ -388,17 +389,17 @@ SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
     
     # Add the column Station to the DensityData by merging DensityData and SweptAreaPSU$Station_PSU by PSU:
     
-    # Create the SpeciesCategoryDensity as a table with species categories in the columns
+    # Create the SpeciesCategoryDensity as a table with species categories in the columns: 
     SpeciesCategoryDensity <- data.table::dcast(
         DensityData, 
         formula = Station ~ get(categoryVariable), 
-        value.var = data)
+        value.var = Density)
     
     
     
     # Get the Station information by merging StoxBioticData$Cruise and StoxBioticData$Station into Cruise_Station: 
     
-    # Merge Cruise_Station and SpeciesCategoryDensity
+    # Merge peciesCategoryDensity with Cruise_Station by Station:
     
     
     

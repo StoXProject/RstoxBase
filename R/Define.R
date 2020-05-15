@@ -583,6 +583,7 @@ BioticAssignmentWeightingTemp <- function(
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100) {
     
+    browser()
     # Get the DefinitionMethod:
     WeightingMethod <- match.arg(WeightingMethod)
     
