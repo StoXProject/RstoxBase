@@ -377,7 +377,19 @@ MeanDensity <- function(DensityData, TargetResolution = "Stratum") {
 SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
     
     # Check that there is only one Station per PSU in SweptAreaPSU$Station_PSU: 
-    #SweptAreaPSU$Station_PSU[, .N, by = "PSU"]
+    NumberOfStationsPerPSU <- SweptAreaPSU$Station_PSU[, .N, by = "PSU"]
+    PSUsWithMoreStations <- NumberOfStationsPerPSU[N>1]
+    nrOfRows <- PSUsWithMoreStations[,.N]
+    psuCol <- PSUsWithMoreStations[,PSU]
+
+    if(nrOfRows == 1) {
+        if(!is.na(psuCol)) {
+            stop("PSU ", psuCol, " is assigned more than one station.")
+        }
+    }
+    else if(nrOfRows > 1) {
+        stop("PSUs ", paste(psuCol, collapse = ", ") , " are assigned more than one station.")
+    }
     
     # Sum the DensityData vertically and across length groups:
     horizontalResolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
@@ -388,26 +400,19 @@ SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
     DensityData <- DensityData[, .(Density = sum(Density)), by = sumBy]
     
     # Add the column Station to the DensityData by merging DensityData and SweptAreaPSU$Station_PSU by PSU:
-    
+    DensityData = merge(DensityData, SweptAreaPSU$Station_PSU, by="PSU")
+
     # Create the SpeciesCategoryDensity as a table with species categories in the columns: 
     SpeciesCategoryDensity <- data.table::dcast(
         DensityData, 
         formula = Station ~ get(categoryVariable), 
         value.var = Density)
     
-    
-    
     # Get the Station information by merging StoxBioticData$Cruise and StoxBioticData$Station into Cruise_Station: 
+    Cruise_Station <- merge(StoxBioticData$Cruise, StoxBioticData$Station, by="CruseKey")
+
+    # Merge SpeciesCategoryDensity with Cruise_Station by Station:
+    SpeciesCategoryDensity <- merge(SpeciesCategoryDensity, Cruise_Station, by="Station")
     
-    # Merge peciesCategoryDensity with Cruise_Station by Station:
-    
-    
-    
+    return (SpeciesCategoryDensity)
 }
-
-
-
-
-
-
-
