@@ -427,7 +427,10 @@ quote.convert <- function(x) {
 keepOnlyRelevantColumns <- function(data, dataType) {
     allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
     toRemove <- setdiff(names(data), allDataTypeVariables)
-    data[, (toRemove) := NULL]
+    if(length(toRemove)) {
+        data[, (toRemove) := NULL]
+    }
+    
     setcolorder(data, allDataTypeVariables)
 }
 

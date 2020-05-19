@@ -545,40 +545,6 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     AssignmentLengthDistributionData <- setColumnOrder(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
     
     return(AssignmentLengthDistributionData)
-    stop(3)
-    
-    
-    BioticAssignment[, assignmentID := paste(Haul, WeightingFactor, sep = ":", collapse = ","), by = c("Stratum", "PSU", "Layer")]
-    
-    # Get unique assignment IDs, and a list of the hauls per assignmentID:
-    atNonDuplicatedAssignmentID <- which(!duplicated(BioticAssignment$assignmentID))
-    #uniqueAssignmentIDs <- unique(BioticAssignment$assignmentID)
-    BioticAssignmentUnique <- BioticAssignment[atNonDuplicatedAssignmentID, ]
-    
-    # Get the mean length distribution of each assignment ID in a list:
-    AssignmentLengthDistributionData <- apply(BioticAssignmentUnique, 1, getAssignmentLengthDistributionDataOne, LengthDistributionData = LengthDistributionData)
-    names(AssignmentLengthDistributionData) <- BioticAssignment$assignmentID[atNonDuplicatedAssignmentID]
-    
-    # Repeat the AssignmentLengthDistributionData to all rows of the BioticAssignment:
-    AssignmentLengthDistributionData <- AssignmentLengthDistributionData[BioticAssignment$assignmentID]
-    
-    # Add resolution variables:
-    toAdd <- getAllResolutionVariables("AssignmentLengthDistributionData")
-    AssignmentLengthDistributionData <- lapply(
-        seq_along(AssignmentLengthDistributionData), 
-        function(ind) data.table::data.table(
-            BioticAssignment[ind, ..toAdd], 
-            AssignmentLengthDistributionData[[ind]]
-        )
-    )
-    
-    # Rbind to one table:
-    AssignmentLengthDistributionData <- data.table::rbindlist(AssignmentLengthDistributionData)
-    
-    # Extract only the relevant columns:
-    AssignmentLengthDistributionData <- setColumnOrder(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
-    
-    return(AssignmentLengthDistributionData)
 }
 
 

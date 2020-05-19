@@ -334,6 +334,32 @@ stoxFunctionAttributes <- list(
                 DefinitionMethod = "ResourceFile"
             )
         )
+    ), 
+    
+    BioticAssignmentWeighting = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "BioticAssignment", 
+        functionArgumentHierarchy = list(
+            StoxBioticData = list(
+                WeightingMethod = c("NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalCount")
+            ), 
+            LengthDistributionData = list(
+                WeightingMethod = c("SumWeightedCount", "InverseSumWeightedCount", "NASC")
+            ), 
+            MaxNumberOfLengthSamples = list(
+                WeightingMethod = c("NumberOfLengthSamples")
+            ), 
+            NASCData = list(
+                WeightingMethod = c("NASC")
+            ), 
+            Radius = list(
+                WeightingMethod = c("NASC")
+            ), 
+            LengthExponent = list(
+                WeightingMethod = c("NASC")
+            )
+        )
     )
     
 )

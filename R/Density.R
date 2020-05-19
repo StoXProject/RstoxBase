@@ -28,6 +28,28 @@ AcousticDensity <- function(
     SpeciesLinkTable,
     TargetStrengthMethod = "Foote1987"){
     
+    
+    AcousticTargetStrength <- f$DefineAcousticTargetStrength
+    NASCData <- f$NASC
+    AssignmentLengthDistributionData <- f$AssignmentLengthDistribution
+    SpeciesLinkTable = data.table::data.table(
+		SpeciesCategory = c(
+			"torsk/164712/126436/NA", 
+			"sild'G03/161722.G03/126417/NA", 
+			"kolmule/164774/126439/NA", 
+			"makrell/172414/127023/NA"
+		), 
+		AcousticCategory = c(
+			31L,
+			12L, 
+			24L, 
+			21L
+		)
+	)
+    TargetStrengthMethod = "Foote1987"
+    
+    
+    
     # Check that the input SpeciesLinkTable has the appropriate types:
     checkTypes(table = SpeciesLinkTable)
     
@@ -49,17 +71,22 @@ AcousticDensity <- function(
     #TargetStrengthTable$Frequency<-as.integer(TargetStrengthTable$Frequency)
     #TargetStrengthTable$AcousticCategory<-as.integer(TargetStrengthTable$AcousticCategory)
     
+    # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship:
     mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
     
-    
+    # Merge the AssignmentLengthDistributionData into the DensityData. This adds the length distribution:
     mergeBy <- intersect(names(DensityData), names(AssignmentLengthDistributionData))
     DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
     
+    # Calculate the target strength:
     getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
     
-    # Get backscatteringCrossSection:
+    # Get backscattering cross section:
     DensityData[, backscatteringCrossSection := 10^(TargetStrength/10)]
+    
+    # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the percentages in the AssignmentLengthDistributionData:
+    #DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * ]
     
     stop("To be finished")
     
@@ -141,22 +168,22 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona20
     # Check wich model is selected
     if(grepl("Foote1987", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
-        if(!all(c("m", "a") %in% names(Data))){
-            stop("The columns \"m\" and \"a\" are required for TargetStrengthMethod \"Foote1987\" (m * log10(L) + a, where L is length in centimeter)")
+        if(!all(c("LengthExponent", "TargetStrength0") %in% names(Data))){
+            stop("The columns \"LengthExponent\" and \"TargetStrength0\" are required for TargetStrengthMethod \"Foote1987\" (LengthExponent * log10(L) + TargetStrength0, where L is length in centimeter)")
         }
         
         # Apply the Foote1987 equation: 
-        Data[, TargetStrength := m * log10(IndividualTotalLengthCentimeter) + a]
+        Data[, TargetStrength := LengthExponent * log10(IndividualTotalLengthCentimeter) + TargetStrength0]
     }
     else if(grepl("Ona2003", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
-        if(!all(c("m", "a", "d") %in% names(Data))){
-            stop("The columns \"m\", \"a\" and \"d\" are required for TargetStrengthMethod \"Foote1987\" (m * log10(L) + a, where L is length in centimeter)")
+        if(!all(c("LengthExponent", "TargetStrength0", "DepthExponent") %in% names(Data))){
+            stop("The columns \"LengthExponent\", \"TargetStrength0\" and \"DepthExponent\" are required for TargetStrengthMethod \"Foote1987\" (LengthExponent * log10(L) + TargetStrength0, where L is length in centimeter)")
         }
         
         # Apply the Ona2003 equation: 
         verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
-        Data[, TargetStrength := m * log10(IndividualTotalLengthCentimeter) + a + d * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
+        Data[, TargetStrength := LengthExponent * log10(IndividualTotalLengthCentimeter) + TargetStrength0 + DepthExponent * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
     }
     else{
         warning("Invalid TargetStrengthMethod (Foote1987 and Ona2003 currently implemented)")

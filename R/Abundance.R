@@ -273,7 +273,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     SuperIndividualsData[, individualCount := NULL]
-    SuperIndividualsData[, abundanceWeightFactor := NULL]
+    #SuperIndividualsData[, abundanceWeightFactor := NULL]
     SuperIndividualsData[, LengthGroup := NULL]
     
     

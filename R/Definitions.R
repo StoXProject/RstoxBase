@@ -27,7 +27,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "NASCWeight", 
             type = "ChannelReferenceType", 
-            other = "EffectiveLogDistance"
+            other = c("EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
         ), 
         LengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU", "Station"), 
@@ -40,7 +40,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "LengthDistributionWeight", 
             type = "LengthDistributionType", 
-            other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            other = c("EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
@@ -211,15 +211,34 @@ initiateRstoxBase <- function(){
                 )
             )
         ),
+        #acousticTargetStrengthTable = list(
+        #    title = "Define parameters of acoustic target strength by length", 
+        #    info = data.table::data.table(
+        #        name = c(
+        #            "AcousticCategory", 
+        #            "Frequency", 
+        #            "m", 
+        #            "a", 
+        #            "d"
+        #        ), 
+        #        type = c(
+        #            "integer",
+        #            "double",
+        #            "double",
+        #            "double",
+        #            "double"
+        #        )
+        #    )
+        #)
         acousticTargetStrengthTable = list(
             title = "Define parameters of acoustic target strength by length", 
             info = data.table::data.table(
                 name = c(
                     "AcousticCategory", 
                     "Frequency", 
-                    "m", 
-                    "a", 
-                    "d"
+                    "LengthExponent", 
+                    "TargetStrength0", 
+                    "DepthExponent"
                 ), 
                 type = c(
                     "integer",
@@ -232,9 +251,13 @@ initiateRstoxBase <- function(){
         )
     )
     
+    #targetStrengthParameters <- list(
+    #    Standard = c("m", "a"), 
+    #    DepthDependent = c("m", "a", "d")
+    #)
     targetStrengthParameters <- list(
-        Standard = c("m", "a"), 
-        DepthDependent = c("m", "a", "d")
+        Standard = c("LengthExponent", "TargetStrength0"), 
+        DepthDependent = c("LengthExponent", "TargetStrength0", "DepthExponent")
     )
     
     AcousticPSUPrefix <- "PSU"
