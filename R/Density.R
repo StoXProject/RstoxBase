@@ -430,16 +430,59 @@ SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
     DensityData = merge(DensityData, SweptAreaPSU$Station_PSU, by="PSU")
 
     # Create the SpeciesCategoryDensity as a table with species categories in the columns: 
-    SpeciesCategoryDensity <- data.table::dcast(
+    SpeciesCategoryDensityData <- data.table::dcast(
         DensityData, 
         formula = Station ~ get(categoryVariable), 
-        value.var = Density)
+        value.var = "Density")
     
     # Get the Station information by merging StoxBioticData$Cruise and StoxBioticData$Station into Cruise_Station: 
-    Cruise_Station <- merge(StoxBioticData$Cruise, StoxBioticData$Station, by="CruseKey")
+    Cruise_Station <- merge(StoxBioticData$Cruise, StoxBioticData$Station)
 
     # Merge SpeciesCategoryDensity with Cruise_Station by Station:
-    SpeciesCategoryDensity <- merge(SpeciesCategoryDensity, Cruise_Station, by="Station")
+    SpeciesCategoryDensityData <- merge(Cruise_Station, SpeciesCategoryDensityData, by="Station")
     
-    return (SpeciesCategoryDensity)
+    return (SpeciesCategoryDensityData)
+}
+
+##################################################
+##################################################
+#' Table of biotic stations as rows with station info and catch of all species categories as columns
+#' 
+#' This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram)   of each species category in columns.
+#' 
+#' @inheritParams DefineSweptAreaPSU
+#' @param CatchVariable Specifies whether to output catch or weight (kilogram).
+#' 
+#' @return
+#' A data.table is returned with awesome stuff.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @export
+#' 
+SpeciesCategoryCatch <- function(StoxBioticData, CatchVariable = c("Count", "WeightKilogram")) {
+    
+    # Get the DensityUnit and DensityType:
+    CatchVariable <- match.arg(CatchVariable)
+    
+    # Merge Station, ..., Sample table:
+    StoxBioticDataMerged <- MergeStoxBiotic(StoxBioticData, TargetTable = "Sample")
+    Cruise_Station <- MergeStoxBiotic(StoxBioticData, TargetTable = "Station")
+    
+    # Sum the CatchFractionWeightKilogram for each Haul:
+    CatchVariableName <- paste0("CatchFraction", CatchVariable)
+    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
+    sumBy <- c("Haul", categoryVariable)
+    StoxBioticDataMerged[, eval(CatchVariableName) := sum(get(CatchVariableName)), by = sumBy]
+    
+    # Create the SpeciesCategoryDensity as a table with species categories in the columns: 
+    SpeciesCategoryCatchData <- data.table::dcast(
+        StoxBioticDataMerged, 
+        formula = Station ~ get(categoryVariable), 
+        value.var = CatchVariableName)
+    
+    SpeciesCategoryCatchData <- merge(Cruise_Station, SpeciesCategoryCatchData, by = "Station")
+    
+    return (SpeciesCategoryCatchData)
 }

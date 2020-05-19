@@ -360,6 +360,18 @@ stoxFunctionAttributes <- list(
                 WeightingMethod = c("NASC")
             )
         )
+    ), 
+    
+    SpeciesCategoryDensity = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SpeciesCategoryDensityData"
+    ), 
+    
+    SpeciesCategoryCatch = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SpeciesCategoryCatchData"
     )
     
 )
