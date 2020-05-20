@@ -30,7 +30,7 @@ AcousticDensity <- function(
     
     
     AcousticTargetStrength <- f$DefineAcousticTargetStrength
-    NASCData <- f$NASC
+    NASCData <- f$MeanNASC
     AssignmentLengthDistributionData <- f$AssignmentLengthDistribution
     SpeciesLinkTable = data.table::data.table(
 		SpeciesCategory = c(
@@ -50,29 +50,19 @@ AcousticDensity <- function(
     
     
     
-    # Check that the input SpeciesLinkTable has the appropriate types:
-    checkTypes(table = SpeciesLinkTable)
     
-    #################################################################
-    #    Merge TargetStrengthTable with SpeciesLinkTable            #
-    #################################################################
+    
+    # Check that the input SpeciesLinkTable has the appropriate types:
+    RstoxBase:::checkTypes(table = SpeciesLinkTable)
+    
+    # Check that the NASCData has PSU and Layer resolution:
+    RstoxBase:::checkResolution(NASCData, horizontalResolution = "PSU", verticalResolution = "Layer")
+    
+    # Merge TargetStrengthTable with SpeciesLinkTable in order to get the targets trengt for each SepciesCategory (and not only AcousticCategory):
     TargetStrengthTable <- merge(AcousticTargetStrength, SpeciesLinkTable, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
     
-    
-    #################################################################
-    #         Join NASCData with species link                       #
-    #################################################################
-    #key <- c(names(NASCData)[names(NASCData)%in%names(TargetStrengthTable)])
-    #if(nrow(TargetStrengthTable)>1){
-    #    warning('Several TargetStrength references is included. This has not yet been implemented')}
-    #
-    #
-    ##Small hack as there is different types in data
-    #TargetStrengthTable$Frequency<-as.integer(TargetStrengthTable$Frequency)
-    #TargetStrengthTable$AcousticCategory<-as.integer(TargetStrengthTable$AcousticCategory)
-    
     # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship:
-    mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+    mergeBy <- RstoxBase:::getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
     
     # Merge the AssignmentLengthDistributionData into the DensityData. This adds the length distribution:
@@ -80,13 +70,23 @@ AcousticDensity <- function(
     DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
     
     # Calculate the target strength:
-    getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
+    RstoxBase:::getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
     
     # Get backscattering cross section:
     DensityData[, backscatteringCrossSection := 10^(TargetStrength/10)]
     
-    # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the percentages in the AssignmentLengthDistributionData:
-    #DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * ]
+    # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the percentages in the AssignmentLengthDistributionData divided by 100 to get proportions:
+    DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount / 100]
+    # Diivde by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
+    resolution <- RstoxBase:::getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    DensityData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection), by = resolution]
+    
+    # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
+    DensityData[, NASCDistributed := NASC * representativeBackscatteringCrossSectionNormalized]
+    # and get the density by divviding by the backscattering cross section of each length group:
+    DensityData[, Density := NASCDistributed / backscatteringCrossSection]
+    
+    
     
     stop("To be finished")
     

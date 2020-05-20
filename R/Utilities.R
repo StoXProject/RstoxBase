@@ -477,6 +477,9 @@ checkTypes <- function(table) {
     # Get the name of the table and the function name:
     parameterTableName <- deparse(substitute(table))
     functionName <- sub("()", "", deparse(sys.call(-1)[1]), fixed = TRUE)
+    if(length(functionName) == 0) {
+        stop("This function is only meant for use inside a StoX function.")
+    }
     
     # Get the format of the parameter table:
     format <- stoxFunctionAttributes[[functionName]]$functionParameterFormat[[parameterTableName]]
@@ -499,6 +502,7 @@ checkTypes <- function(table) {
     )
     
     # Order both the expected and acutal table, and check for identity:
+    
     data.table::setorder(parameterTableInfo)
     data.table::setorder(types)
     
@@ -511,4 +515,32 @@ checkTypes <- function(table) {
         return(TRUE)
     }
 }
+
+
+
+
+checkResolutionPSU_Layer <- function(data, dataType) {
+    
+    # Set the target resolution:
+    horizontalResolution <- "PSU"
+    verticalResolution <- "Layer"
+    # Get the column expected to be NA:
+    expectNAHorizontal <- RstoxBase:::determineAggregationVariables(data, dataType, horizontalResolution, dimension = "horizontal")$setToNA
+    expectNAVertical <- RstoxBase:::determineAggregationVariables(data, dataType, verticalResolution, dimension = "vertical")$setToNA
+    wrongHorizontalResolution <- data[, !all(is.na(get(expectNAHorizontal)))] || data[, any(is.na(get(horizontalResolution)))]
+    wrongVerticalResolution <- data[, !all(is.na(get(expectNAVertical)))] || data[, any(is.na(get(verticalResolution)))]
+    
+    if(wrongHorizontalResolution && wrongVerticalResolution) {
+        stop("The data does not have the correct horizontal (", horizontalResolution, ") and vertical (", verticalResolution, ") resolution")
+    }
+    else if(wrongHorizontalResolution) {
+        stop("The data does not have the correct horizontal resolution (", horizontalResolution, ")")
+    }
+    else if(wrongVerticalResolution) {
+        stop("The data does not have the correct vertical resolution (", verticalResolution, ")")
+    }
+    
+    return(TRUE)
+}
+
 

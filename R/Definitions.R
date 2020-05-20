@@ -538,6 +538,7 @@ determineAggregationVariables <- function(
     )
     
     out <- list(
+        dataTypeDefinition = dataTypeDefinition, 
         by = aggregateBy, 
         setToNA = setToNA, 
         targetResolution = targetResolution, 
@@ -550,8 +551,7 @@ determineAggregationVariables <- function(
         summedWeightingVariable = thisDataTypeDefinition$summedWeighting, 
         otherVariables = thisDataTypeDefinition$other, 
         verticalRawDimension = thisDataTypeDefinition$verticalRawDimension, 
-        verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension, 
-        dataTypeDefinition = dataTypeDefinition
+        verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension
     )
     return(out)
 }

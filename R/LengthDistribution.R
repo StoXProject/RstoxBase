@@ -525,11 +525,15 @@ SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("P
 #' 
 AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignment) {
     
+    # Require LengthDistributionType "Percent":
+    if(!isLengthDistributionType(LengthDistributionData, "Percent")) {
+        stop("LengthDistributionData used as input to AssignmentLengthDistribution() must be of LengthDistributionType \"Percent\"")
+    }
+    
     # Determine assignment IDs:
     BioticAssignmentCollapsed <- BioticAssignment[, .(assignmentPasted = paste0(paste(Haul, WeightingFactor, sep = ",", collapse = "\n"), "\n")), by = c("Stratum", "PSU", "Layer")]
     uniqueAssignmentPasted <- unique(BioticAssignmentCollapsed$assignmentPasted)
     BioticAssignmentCollapsed[, assignmentID := match(assignmentPasted, uniqueAssignmentPasted)]
-    
     
     # Get the assignment length distribution of each unique assignment ID:
     uniqueAssignmentPastedDT <- data.table::data.table(
@@ -551,8 +555,6 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
 # Function to get the assignment length distribution of one assignmentID, represented by one line in BioticAssignmentUnique:
 getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistributionData) {
     
-    # Average to length groups, defined by the grouping variables:
-    by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     # Define the data variable:
     dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
     
@@ -567,6 +569,8 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
     
     #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
+    # Get the category and grouping variables (SpeciesCategory, IndividualTotalLengthCentimeter, LengthResolutionCentimeter), and avverage across hauls for each combination of these variables. Also divide by the :
+    by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     thisLengthDistributionData[, c(dataVariable) := stats::weighted.mean(x = get(dataVariable), w = get(weightingVariable)), by = by]
     
     # Remove resolution columns:
