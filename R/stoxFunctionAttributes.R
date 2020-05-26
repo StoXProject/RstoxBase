@@ -16,11 +16,9 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            # These two are joined with AND, and must both be funlilled:
+            # These two are joined with AND, and must both be fulfilled:
             FileName = list(
-                DefinitionMethod = "ResourceFile"
-            ), 
-            FileName = list(
+                DefinitionMethod = "ResourceFile", 
                 UseProcessData = FALSE
             )
         )
@@ -48,7 +46,7 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
-    # Define acoustic PSUs:
+    # Define swetp-area PSUs:
     DefineSweptAreaPSU = list(
         functionType = "processData", 
         functionCategory = "baseline", 
@@ -72,10 +70,12 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             Resolution = list(
-                DefinitionMethod = "Resolution"
+                DefinitionMethod = "Resolution", 
+                UseProcessData = FALSE
             ), 
             LayerTable = list(
-                DefinitionMethod = "LayerTable"
+                DefinitionMethod = "LayerTable", 
+                UseProcessData = FALSE
             )
         )
     ), 
@@ -91,10 +91,12 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             Resolution = list(
-                DefinitionMethod = "Resolution"
+                DefinitionMethod = "Resolution", 
+                UseProcessData = FALSE
             ), 
             LayerTable = list(
-                DefinitionMethod = "LayerTable"
+                DefinitionMethod = "LayerTable", 
+                UseProcessData = FALSE
             )
         )
     ), 
@@ -138,35 +140,51 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
+            AcousticPSU = list(
+                UseProcessData = FALSE
+            ), 
+            AcousticLayer = list(
+                UseProcessData = FALSE
+            ), 
             StratumPolygon = list(
-                DefinitionMethod = "Stratum"
+                DefinitionMethod = "Stratum", 
+                UseProcessData = FALSE
             ), 
             StoxBioticData = list(
-                DefinitionMethod = "Stratum"
+                DefinitionMethod = "Stratum", 
+                UseProcessData = FALSE
             ), 
             StoxAcousticData = list(
-                DefinitionMethod = "Radius"
+                DefinitionMethod = "Radius", 
+                UseProcessData = FALSE
             ), 
             Radius = list(
-                DefinitionMethod = "Radius"
+                DefinitionMethod = "Radius", 
+                UseProcessData = FALSE
             ), 
-            MinimumNumberOfStations = list(
-                DefinitionMethod = "EllipsoidalDistance"
+            MinimumNumberOfHauls = list(
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
             ), 
             DistanceNauticalMiles = list(
-                DefinitionMethod = "EllipsoidalDistance"
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
             ), 
             TimeDifferenceHours = list(
-                DefinitionMethod = "EllipsoidalDistance"
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
             ), 
             BottomDepthDifferenceMeters = list(
-                DefinitionMethod = "EllipsoidalDistance"
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
             ), 
             LongitudeDifferenceDecimalDegrees = list(
-                DefinitionMethod = "EllipsoidalDistance"
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
             ), 
             LatitudeDifferenceDecimalDegrees = list(
-                DefinitionMethod = "EllipsoidalDistance"
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
             )
         )
     ), 
@@ -370,10 +388,12 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             ParameterTable = list(
-                DefinitionMethod = "Table"
+                DefinitionMethod = "Table", 
+                UseProcessData = FALSE
             ), 
             FileName = list(
-                DefinitionMethod = "ResourceFile"
+                DefinitionMethod = "ResourceFile", 
+                UseProcessData = FALSE
             )
         )
     ), 
