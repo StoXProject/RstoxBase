@@ -7,15 +7,19 @@
 DefineBioticAssignment(
   processData,
   UseProcessData = FALSE,
-  NASCData,
-  StoxBioticData,
   DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"),
-  StoxAcousticData,
+  StoxBioticData,
+  StratumPolygon,
   AcousticPSU,
   AcousticLayer,
-  StratumPolygon,
+  StoxAcousticData,
   Radius = double(),
-  EllipsoidalDistanceTable = data.table::data.table()
+  MinimumNumberOfHauls,
+  DistanceNauticalMiles,
+  TimeDifferenceHours,
+  BottomDepthDifferenceMeters,
+  LongitudeDifferenceDecimalDegrees,
+  LatitudeDifferenceDecimalDegrees
 )
 }
 \arguments{
@@ -23,19 +27,17 @@ DefineBioticAssignment(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{NASCData}{The \code{\link{NASC}} data.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.}
 
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.}
-
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 
 \item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
 
-\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
 
 \item{Radius}{Numeric: The radius inside which to assign biotic stations to each acoustic PSU.}
 

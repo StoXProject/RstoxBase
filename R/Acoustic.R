@@ -28,7 +28,7 @@ NASC <- function(
     
     # Merge the StoxAcousticData:
     NASC <- RstoxData::mergeDataTables(StoxAcousticData)$NASC
-    # Check that the input StoxAcousticData has the same ChannelReferenceType:
+    # Check that the input StoxAcousticData has the same ChannelReferenceType throughout:
     dataTypeDefinition <- getDataTypeDefinition(dataType = "NASCData")
     ChannelReferenceType <- NASC[[dataTypeDefinition$type]]
     if(!all(ChannelReferenceType == ChannelReferenceType[1])) {
@@ -36,29 +36,34 @@ NASC <- function(
     }
     
     # Insert the Stratum and PSU column by the AcousticPSU input, and otherwise by NAs:
-    NASC <- addPSUProcessData(NASC, dataType = "NASCData", PSUProcessData = AcousticPSU)
+    NASC <- addPSUProcessData(NASC, PSUProcessData = if(IncludePSU) AcousticPSU, all = TRUE)
     
-    ### # Add also the number of Stations in each PSU, and the number of PSUs in each Stratum:
-    ### PSUSize <- AcousticPSU$EDSU_PSU[, .(PSUSize = length(EDSU)), by = "PSU"]
-    ### StratumSize <- AcousticPSU$Stratum_PSU[, .(StratumSize = length(PSU)), by = "Stratum"]
-    ### # Merge the PSUSize and StratumSize into the LengthDistributionData:
-    ### NASC <- merge(NASC, PSUSize, by = "PSU")
-    ### NASC <- merge(NASC, StratumSize, by = "Stratum")
+    # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
+    NASC <- addLayerProcessData(NASC, dataType = "NASCData", layerProcessData = if(IncludeLayer) AcousticLayer)
     
-    # Insert the Layer column by the AcousticLayer input, and otherwise by NAs:
-    NASC <- addLayerProcessData(NASC, dataType = "NASCData", layerProcessData = AcousticLayer)
-    ## Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
-    #setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
+    # # Insert the Stratum and PSU column by the AcousticPSU input, and otherwise by NAs:
+    # NASC <- addPSUProcessData(NASC, PSUProcessData = AcousticPSU, all = TRUE)
+    # 
+    # ### # Add also the number of Stations in each PSU, and the number of PSUs in each Stratum:
+    # ### PSUSize <- AcousticPSU$EDSU_PSU[, .(PSUSize = length(EDSU)), by = "PSU"]
+    # ### StratumSize <- AcousticPSU$Stratum_PSU[, .(StratumSize = length(PSU)), by = "Stratum"]
+    # ### # Merge the PSUSize and StratumSize into the LengthDistributionData:
+    # ### NASC <- merge(NASC, PSUSize, by = "PSU")
+    # ### NASC <- merge(NASC, StratumSize, by = "Stratum")
+    # 
+    # # Insert the Layer column by the AcousticLayer input, and otherwise by NAs:
+    # NASC <- addLayerProcessData(NASC, dataType = "NASCData", layerProcessData = AcousticLayer)
+    # ## Rename "MinRange" and "MaxRange" to "MinChannelRange" and "MaxChannelRange":
+    # #setnames(NASC, old=c("MinRange", "MaxRange"), new=c("MinChannelRange", "MaxChannelRange"))
     
     # Add weights:
     NASC[, NASCWeight := EffectiveLogDistance]
     
-    # Add the sum of the weigths over the stations of each PSU:
-    NASC[, SummedWeights := sum(NASCWeight), by = "PSU"]
-    
-    # Extract the relevant variables:
-    validVariables <- getAllDataTypeVariables(dataType = "NASCData")
-    NASC <- NASC[, ..validVariables]
+    # Set the order of the columns:
+    formatOutput(NASC, dataType = "NASCData", keep.all = FALSE)
+    ## Extract the relevant variables:
+    #validVariables <- getAllDataTypeVariables(dataType = "NASCData")
+    #NASC <- NASC[, ..validVariables]
     
     return(NASC)
 }

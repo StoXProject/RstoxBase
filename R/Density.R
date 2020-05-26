@@ -28,134 +28,98 @@ AcousticDensity <- function(
     SpeciesLinkTable,
     TargetStrengthMethod = "Foote1987"){
     
-    
-    AcousticTargetStrength <- f$DefineAcousticTargetStrength
-    NASCData <- f$MeanNASC
-    AssignmentLengthDistributionData <- f$AssignmentLengthDistribution
-    SpeciesLinkTable = data.table::data.table(
-		SpeciesCategory = c(
-			"torsk/164712/126436/NA", 
-			"sild'G03/161722.G03/126417/NA", 
-			"kolmule/164774/126439/NA", 
-			"makrell/172414/127023/NA"
-		), 
-		AcousticCategory = c(
-			31L,
-			12L, 
-			24L, 
-			21L
-		)
-	)
-    TargetStrengthMethod = "Foote1987"
-    
-    
-    
-    
-    
     # Check that the input SpeciesLinkTable has the appropriate types:
-    RstoxBase:::checkTypes(table = SpeciesLinkTable)
+    checkTypes(table = SpeciesLinkTable)
     
     # Check that the NASCData has PSU and Layer resolution:
-    RstoxBase:::checkResolution(NASCData, horizontalResolution = "PSU", verticalResolution = "Layer")
+    checkResolutionPSU_Layer(NASCData, "NASCData")
     
     # Merge TargetStrengthTable with SpeciesLinkTable in order to get the targets trengt for each SepciesCategory (and not only AcousticCategory):
     TargetStrengthTable <- merge(AcousticTargetStrength, SpeciesLinkTable, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
+    # Define the resolution on which to distribute the NASC:
+    resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     
+    # Convert NASC to number density using the length distribution coupled with the target strength:
+    DensityData <- NASCToDensity(
+        NASCData = NASCData, 
+        LengthDistributionData = AssignmentLengthDistributionData, 
+        TargetStrengthTable = TargetStrengthTable, 
+        TargetStrengthMethod = TargetStrengthMethod, 
+        resolution = resolution
+    )
+        
+        
+        
+        
+        
+        
+        
+    
+    # # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship:
+    # mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+    # DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
+    # 
+    # # Merge the AssignmentLengthDistributionData into the DensityData. This adds the length distribution:
+    # mergeBy <- intersect(names(DensityData), names(AssignmentLengthDistributionData))
+    # DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
+    # 
+    # # Calculate the target strength:
+    # getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
+    # 
+    # # Get backscattering cross section:
+    # DensityData[, backscatteringCrossSection := 10^(TargetStrength/10)]
+    # 
+    # # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the length distribution from#  the AssignmentLengthDistributionData:
+    # DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount]
+    # # Divide by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
+    # resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    # DensityData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection# ), by = resolution]
+    # 
+    # # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
+    # DensityData[, NASCDistributed := NASC * representativeBackscatteringCrossSectionNormalized]
+    # # and get the density by divviding by the backscattering cross section of each length group:
+    # DensityData[, Density := NASCDistributed / backscatteringCrossSection]
+    
+    
+    
+    
+    
+    # Introduce the DensityWeight as a copy of the NASCWeight:
+    DensityData[, DensityWeight := NASCWeight]
+    
+    # Keep only the releavnt columns:
+    #keepOnlyRelevantColumns(DensityData, "DensityData")
+    formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
+    
+    return(DensityData)
+}
+
+NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable, TargetStrengthMethod, resolution) {
     # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship:
-    mergeBy <- RstoxBase:::getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+    mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
     
-    # Merge the AssignmentLengthDistributionData into the DensityData. This adds the length distribution:
-    mergeBy <- intersect(names(DensityData), names(AssignmentLengthDistributionData))
-    DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
+    # Merge the LengthDistributionData into the DensityData. This adds the length distribution:
+    mergeBy <- intersect(names(DensityData), names(LengthDistributionData))
+    DensityData <- merge(DensityData, LengthDistributionData, by = mergeBy, all.x = TRUE)
     
-    # Calculate the target strength:
-    RstoxBase:::getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
+    # Calculate the target strength of each length group:
+    getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
     
     # Get backscattering cross section:
     DensityData[, backscatteringCrossSection := 10^(TargetStrength/10)]
     
-    # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the percentages in the AssignmentLengthDistributionData divided by 100 to get proportions:
-    DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount / 100]
-    # Diivde by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
-    resolution <- RstoxBase:::getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the length distribution from the AssignmentLengthDistributionData:
+    DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount]
+    # Divide by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
     DensityData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection), by = resolution]
     
     # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
     DensityData[, NASCDistributed := NASC * representativeBackscatteringCrossSectionNormalized]
-    # and get the density by divviding by the backscattering cross section of each length group:
+    # and get the density by dividing by the backscattering cross section:
     DensityData[, Density := NASCDistributed / backscatteringCrossSection]
     
-    
-    
-    stop("To be finished")
-    
-    
-    #################################################################
-    #         Remove horizontal resolution not in NASCData          #
-    ################################################################# 
-    rmo <- c(names((colSums(is.na(DensityData[,c('Stratum','PSU')])) == nrow(DensityData[,c('Stratum','PSU')])))[(colSums(is.na(DensityData[,c('Stratum','PSU')])) == nrow(DensityData[,c('Stratum','PSU')]))==T],'assignmentID')
-    AssignedLengthDistributionData[,(rmo):=NULL]
-    AssignedLengthDistributionData<-unique(AssignedLengthDistributionData)
-    
-    
-    
-    
-    
-    #################################################################
-    #         merge DensityData with biology info                   #
-    #################################################################
-    key <- c(names(DensityData)[names(DensityData)%in%names(AssignedLengthDistributionData)])
-    DensityData <- merge(DensityData,AssignedLengthDistributionData,by=key,all.x = T)
-    
-    
-    
-    
-    
-    #################################################################
-    #         Compute Target strength when using model              #
-    #################################################################
-    DensityData<-TargetStrengthFunctions(TargetStrengthMethod,DensityData)
-    
-    
-    
-    #################################################################
-    #         Compute the total weight                              #
-    #################################################################
-    tmp <- DensityData[, sum(10^(TargetStrength/10)*WeightedCount,na.rm = T), by=.(Stratum,Layer,SpeciesCategory)]
-    DensityData<-merge(DensityData,tmp,by=c(names(DensityData)[names(DensityData)%in%names(tmp)]))
-    
-    
-    
-    
-    
-    
-    #################################################################
-    #         Compute the mean nasc per length group                #
-    #################################################################
-    DensityData$NASC <- apply(DensityData,1,function(x) as.numeric(x['NASC'])*(((10^(as.numeric(x['TargetStrength'])/10))*as.numeric(x['WeightedCount']))/as.numeric(x['V1'])))
-    
-    
-    
-    
-    
-    
-    #################################################################
-    #          Compute number of individs                           #
-    #################################################################
-    #Compute the number of idivids per sqare nautical mile per length group
-    DensityData$Density <- apply(DensityData,1,function(x) as.numeric(x['NASC'])/(4*pi*10^(as.numeric(x['TargetStrength'])/10)))
-    
-    
-    
-    
-    
-    #################################################################
-    #         Cleen DensityData output                              #
-    #################################################################
-    relevantVariables <- getAllDataTypeVariables(dataType = "DensityData")
-    DensityData <- DensityData[, ..relevantVariables]
-    
+    return(DensityData[])
 }
 
 ###########################################################
@@ -166,68 +130,38 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona20
     TargetStrengthMethod <- match.arg(TargetStrengthMethod)
     
     # Check wich model is selected
-    if(grepl("Foote1987", TargetStrengthMethod, ignore.case = TRUE)){
+    if(grepl("OnlyLength", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
-        if(!all(c("LengthExponent", "TargetStrength0") %in% names(Data))){
-            stop("The columns \"LengthExponent\" and \"TargetStrength0\" are required for TargetStrengthMethod \"Foote1987\" (LengthExponent * log10(L) + TargetStrength0, where L is length in centimeter)")
+        if(!all(c("LengthExponent") %in% names(Data))){
+            stop("The column \"LengthExponent\" is required for TargetStrengthMethod \"OnlyLength\" (LengthExponent * log10(L), where L is length in centimeter)")
         }
         
         # Apply the Foote1987 equation: 
-        Data[, TargetStrength := LengthExponent * log10(IndividualTotalLengthCentimeter) + TargetStrength0]
+        Data[, TargetStrength := LengthExponent * log10(IndividualTotalLengthCentimeter)]
+    }
+    if(grepl("Foote1987", TargetStrengthMethod, ignore.case = TRUE)){
+        # Check that all parameters are present: 
+        if(!all(c("TargetStrength0", "LengthExponent") %in% names(Data))){
+            stop("The columns \"LengthExponent\" and \"TargetStrength0\" are required for TargetStrengthMethod \"Foote1987\" (TargetStrength0 + LengthExponent * log10(L), where L is length in centimeter)")
+        }
+        
+        # Apply the Foote1987 equation: 
+        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(IndividualTotalLengthCentimeter)]
     }
     else if(grepl("Ona2003", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
-        if(!all(c("LengthExponent", "TargetStrength0", "DepthExponent") %in% names(Data))){
-            stop("The columns \"LengthExponent\", \"TargetStrength0\" and \"DepthExponent\" are required for TargetStrengthMethod \"Foote1987\" (LengthExponent * log10(L) + TargetStrength0, where L is length in centimeter)")
+        if(!all(c("TargetStrength0", "LengthExponent", "DepthExponent") %in% names(Data))){
+            stop("The columns \"LengthExponent\", \"TargetStrength0\" and \"DepthExponent\" are required for TargetStrengthMethod \"Foote1987\" (TargetStrength0 + LengthExponent * log10(L), where L is length in centimeter)")
         }
         
         # Apply the Ona2003 equation: 
         verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
-        Data[, TargetStrength := LengthExponent * log10(IndividualTotalLengthCentimeter) + TargetStrength0 + DepthExponent * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
+        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(IndividualTotalLengthCentimeter) + DepthExponent * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
     }
     else{
         warning("Invalid TargetStrengthMethod (Foote1987 and Ona2003 currently implemented)")
     }
 }
-
-
-AcousticDensityOld <- function(NASCData, m = 20, a = -70, d = double()) {
-    # Use @noRd to prevent rd-files, and @inheritParams runBaseline to inherit parameters (those in common that are not documented) from e.g. getBaseline. Use @section to start a section in e.g. the details. Use @inheritParams runBaseline to inherit parameters from e.g. runBaseline(). Remove the @import data.table for functions that do not use the data.table package, and add @importFrom packageName functionName anotherFunctionName for importing specific functions from packages. Also use the packageName::functionName convention for the specifically imported functions.
-    
-    
-    
-    
-    # TS_l = m*log10(l) +a+d*log10(1+r_y/10)
-    #Where:
-    # TS_l = target strength (dB re 1 m2) of a fish with length l (cm)
-    # m = constant in the TS vs length relationship for the given species (user input)
-    # a = constant in the TS vs length relationship for the given species (user input)
-    # d = constant in the TS vs length relationship related to depth dependent TS (user input)
-    # l = length of the fish (cm). Typically, the center length of a length group (data input)
-    # ry = average depth (m) of the NASC channel y (data input)
-    
-    # depth_info <- NASCData[,c('Channel','MinRange','MaxRange')]
-    TS_l = c()
-    
-    
-    #In linear domain
-    sigma_bs_l = 10**(TS_l/10)
-    # where
-    #sigma_bs_l = acoustic backscattering cross-section (m2) for a fish of length l
-    
-    # NASC_l = NASC *(sigma_bs_l*p_l)/(sum(sigma_bs_l*p_l))
-    # where:
-    # NASC = the total NASC which is used to calculate densities by length
-    # NASCl = the proportion of the total NASC which can be attributed to length group l. The sum of
-    # NASCl for all length groups in the total length distribution is equal to NASC
-    # pl = proportion of fish of length l in the input length distribution. Sum of all pl is 1.
-    
-    
-}
-
-
-
-
 
 
 ##################################################
@@ -257,23 +191,13 @@ AcousticDensityOld <- function(NASCData, m = 20, a = -70, d = double()) {
 #' 
 SweptAreaDensity <- function(
     LengthDistributionData, 
-    #SweptAreaMethod = c("LengthDependent", "TotalCatch"), 
     SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"), 
     SweepWidth = integer(), 
-    SweepWidthTable = data.table::data.table()#, 
-    #CatchVariable = c("Weight", "Count")
+    SweepWidthTable = data.table::data.table()
 ) {
 	
     ## Get the DefinitionMethod:
-    #SweptAreaMethod <- match.arg(SweptAreaMethod)
-    # Get the DefinitionMethod:
     SweepWidthMethod <- match.arg(SweepWidthMethod)
-    
-    ## This method may require defining an additional data type in StoX:
-    #if(SweptAreaMethod == "TotalCatch") {
-    #    stop("SweptAreaMethod = \"TotalCatch\" not yet implemented")
-    #}
-    
     
     # Check the horizontal and vertical resolution of the input LengthDistributionData:
     if(any(!is.na(LengthDistributionData$Station)) && any(!is.na(LengthDistributionData$Haul))) {
@@ -286,7 +210,6 @@ SweptAreaDensity <- function(
         stop("The vertical resolution of the input LengthDistributionData must be Layer (identified by only NAs in the Haul column)")
     }
     
-    
     # Get the length distribution type:
     LengthDistributionType <- utils::head(LengthDistributionData$LengthDistributionType, 1)
     
@@ -295,8 +218,6 @@ SweptAreaDensity <- function(
     if(! LengthDistributionType %in% validLengthDistributionType) {
         stop("The LengthDistributionType of the input LengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
     }
-    
-    
     
     # Make a copy of the input, since we are averaging and setting values by reference:
     DensityData = data.table::copy(LengthDistributionData)
@@ -314,7 +235,9 @@ SweptAreaDensity <- function(
             }
             
             # Convert WeightedCount to density:
-            sweepWidthInNauticalMiles <- SweepWidth / 1852
+            #sweepWidthInNauticalMiles <- SweepWidth / 1852
+            sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
+            
             DensityData[, Density := WeightedCount / sweepWidthInNauticalMiles]
         }
         else if(SweepWidthMethod == "CruiseDependent") {

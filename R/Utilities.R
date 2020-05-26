@@ -183,7 +183,7 @@ findLayer <- function(minDepth, maxDepth, layerProcessData, acceptNA = TRUE) {
 }
 
 # Function to add Stratum and PSU:
-addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
+addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
     
     # If present, add the PSUProcessData to the start of the data
     if(length(PSUProcessData) && length(PSUProcessData$Stratum_PSU)) {
@@ -208,9 +208,9 @@ addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
     }
     
     
-    # Set the order of the columns:
-    #dataType <- detectDataType(data)
-    data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
+    ## Set the order of the columns:
+    ##dataType <- detectDataType(data)
+    #data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
 }
@@ -254,7 +254,8 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
     
     # Set the order of the columns:
     #dataType <- detectDataType(data)
-    data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
+    #browser()
+    #formatOutput(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
 }
@@ -278,7 +279,7 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
     # Add the PSUs if PSUDefinition is "FunctionInput" and PSUProcessData is given:
     PSUDefinition <- match.arg(PSUDefinition)
     if(identical(PSUDefinition, "FunctionInput")) {
-        dataCopy <- addPSUProcessData(dataCopy, dataType = dataType, PSUProcessData = PSUProcessData)
+        dataCopy <- addPSUProcessData(dataCopy, PSUProcessData = PSUProcessData, all = TRUE)
     }
     else if(identical(PSUDefinition, "PreDefined")) {
         if(all(is.na(data$PSU))) {
@@ -344,11 +345,13 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
     
-    # Order by 'by':
-    setorderv(dataCopy, cols = by, order = 1L, na.last = TRUE)
+    # Set the order of the columns:
+    formatOutput(dataCopy, dataType = dataType, keep.all = FALSE)
+    ## Order by 'by':
+    #setorderv(dataCopy, cols = by, order = 1L, na.last = TRUE)
     
     # Keep only the releavnt columns:
-    keepOnlyRelevantColumns(dataCopy, dataType)
+    #keepOnlyRelevantColumns(dataCopy, dataType)
     
     return(dataCopy)
 }
@@ -402,7 +405,8 @@ sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionI
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
     
     # Keep only the releavnt columns:
-    keepOnlyRelevantColumns(dataCopy, dataType)
+    #keepOnlyRelevantColumns(dataCopy, dataType)
+    formatOutput(dataCopy, dataType = dataType, keep.all = FALSE)
     
     return(dataCopy)
 }
@@ -424,15 +428,15 @@ quote.convert <- function(x) {
 #}
 
 
-keepOnlyRelevantColumns <- function(data, dataType) {
-    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
-    toRemove <- setdiff(names(data), allDataTypeVariables)
-    if(length(toRemove)) {
-        data[, (toRemove) := NULL]
-    }
-    
-    setcolorder(data, allDataTypeVariables)
-}
+#keepOnlyRelevantColumns <- function(data, dataType) {
+#    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
+#    toRemove <- setdiff(names(data), allDataTypeVariables)
+#    if(length(toRemove)) {
+#        data[, (toRemove) := NULL]
+#    }
+#    
+#    setcolorder(data, allDataTypeVariables)
+#}
 
 
 
@@ -525,10 +529,10 @@ checkResolutionPSU_Layer <- function(data, dataType) {
     horizontalResolution <- "PSU"
     verticalResolution <- "Layer"
     # Get the column expected to be NA:
-    expectNAHorizontal <- RstoxBase:::determineAggregationVariables(data, dataType, horizontalResolution, dimension = "horizontal")$setToNA
-    expectNAVertical <- RstoxBase:::determineAggregationVariables(data, dataType, verticalResolution, dimension = "vertical")$setToNA
-    wrongHorizontalResolution <- data[, !all(is.na(get(expectNAHorizontal)))] || data[, any(is.na(get(horizontalResolution)))]
-    wrongVerticalResolution <- data[, !all(is.na(get(expectNAVertical)))] || data[, any(is.na(get(verticalResolution)))]
+    expectNAHorizontal <- determineAggregationVariables(data, dataType, horizontalResolution, dimension = "horizontal")$setToNA
+    expectNAVertical <- determineAggregationVariables(data, dataType, verticalResolution, dimension = "vertical")$setToNA
+    wrongHorizontalResolution <- data[, !all(is.na(get(expectNAHorizontal)))] || data[, all(is.na(get(horizontalResolution)))]
+    wrongVerticalResolution <- data[, !all(is.na(get(expectNAVertical)))] || data[, all(is.na(get(verticalResolution)))]
     
     if(wrongHorizontalResolution && wrongVerticalResolution) {
         stop("The data does not have the correct horizontal (", horizontalResolution, ") and vertical (", verticalResolution, ") resolution")

@@ -48,8 +48,10 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = "AssignmentLengthDistributionWeight", 
+            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
+            #weighting = "AssignmentLengthDistributionWeight", 
+            weighting = NULL, 
             other = NULL
         ), 
         DensityData = list(
@@ -78,7 +80,8 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = NULL, 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
         ), 
@@ -88,7 +91,8 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Abundance", 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
         ), 
@@ -183,10 +187,10 @@ initiateRstoxBase <- function(){
                 name = c(
                     "MinimumNumberOfStations",
                     "DistanceNauticalMiles", 
-                    "TimeHours", 
-                    "BottomDepthMeters", 
-                    "LatitudeDecimalDegrees", 
-                    "LongitudeDecimalDegrees"
+                    "TimeDifferenceHours", 
+                    "BottomDepthDifferenceMeters", 
+                    "LongitudeDifferenceDecimalDegrees", 
+                    "LatitudeDifferenceDecimalDegrees"
                 ), 
                 type = c(
                     "integer", 
@@ -248,6 +252,19 @@ initiateRstoxBase <- function(){
                     "double"
                 )
             )
+        ), 
+        LengthExponentTable = list(
+            title = "Define the LengthExponent used when distributing NASC in BioticAssignmentWeighting() when WeightingMethod = \"NASC\"", 
+            info = data.table::data.table(
+                name = c(
+                    "SpeciesCategory", 
+                    "LengthExponent"
+                ), 
+                type = c(
+                    "character",
+                    "double"
+                )
+            )
         )
     )
     
@@ -262,6 +279,8 @@ initiateRstoxBase <- function(){
     
     AcousticPSUPrefix <- "PSU"
     SweptAreaPSUPrefix <- "PSU"
+    
+    nauticalMileInMeters <- 1852
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
@@ -370,7 +389,8 @@ getColumnOrder <- function(dataType) {
     return(columns)
 }
 
-setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
+#setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
+formatOutput <- function(data, dataType, keep.all = TRUE) {
     
     # Remove any duplicated columns:
     if(any(duplicated(names(data)))) {
@@ -380,19 +400,16 @@ setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE
     # Get the column order:
     columnOrder <- getColumnOrder(dataType)
     
-    # Select only the column names present in the data:
-    if(allow.partial) {
-        columnOrder <- intersect(columnOrder, names(data))
-    }
-    
     # Order the columns:
     data.table::setcolorder(data, columnOrder)
     
     if(!keep.all) {
-        data <- data[, ..columnOrder]
+        toRemove <- setdiff(names(data), columnOrder)
+        if(length(toRemove)) {
+            data[, eval(toRemove) := NULL]
+        }
+        #data <- data[, ..columnOrder]
     }
-    
-    return(data)
 }
 
 

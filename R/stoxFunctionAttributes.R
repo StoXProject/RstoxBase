@@ -99,14 +99,41 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
+    ## Define acoustic PSUs:
+    #DefineBioticAssignment = list(
+    #    functionType = "processData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "BioticAssignment", 
+    #    functionParameterFormat = list(
+    #        EllipsoidalDistanceTable = "ellipsoidalDistanceTable"
+    #    ), 
+    #    functionArgumentHierarchy = list(
+    #        DefinitionMethod = list(
+    #            UseProcessData = FALSE
+    #        ), 
+    #        StratumPolygon = list(
+    #            DefinitionMethod = "Stratum"
+    #        ), 
+    #        StoxBioticData = list(
+    #            DefinitionMethod = "Stratum"
+    #        ), 
+    #        StoxAcousticData = list(
+    #            DefinitionMethod = "Radius"
+    #        ), 
+    #        Radius = list(
+    #            DefinitionMethod = "Radius"
+    #        ), 
+    #        EllipsoidalDistanceTable = list(
+    #            DefinitionMethod = "EllipsoidalDistance"
+    #        )
+    #    )
+    #), 
+    
     # Define acoustic PSUs:
     DefineBioticAssignment = list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
-        functionParameterFormat = list(
-            EllipsoidalDistanceTable = "ellipsoidalDistanceTable"
-        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -123,7 +150,22 @@ stoxFunctionAttributes <- list(
             Radius = list(
                 DefinitionMethod = "Radius"
             ), 
-            EllipsoidalDistanceTable = list(
+            MinimumNumberOfStations = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            DistanceNauticalMiles = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            TimeDifferenceHours = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            BottomDepthDifferenceMeters = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            LongitudeDifferenceDecimalDegrees = list(
+                DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            LatitudeDifferenceDecimalDegrees = list(
                 DefinitionMethod = "EllipsoidalDistance"
             )
         )

@@ -56,9 +56,11 @@ LengthDistribution <- function(
     ##### 2. Get the count in each length group: #######
     ####################################################
     keys <- c(
+        # Get all keys except the individual key (since we are supposed to count individuals). This includes unique hauls (CruiseKey, StationKey, HaulKey, SpeciesCategoryKey, SampleKey):
         getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
-        # The length group is defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter. See 'dataTypeDefinition' in initiateRstoxBase(): 
+        # Use SpeciesCategory as key (this is obsolete, but clarifies that length distributions are per species):
         dataTypeDefinition$categoryVariable, 
+        # The length group is defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter. See 'dataTypeDefinition' in initiateRstoxBase(): 
         dataTypeDefinition$groupingVariables
     )
     # Declare the variables used below:
@@ -76,10 +78,10 @@ LengthDistribution <- function(
     LengthDistributionData$LengthDistributionWeight <- 1
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    LengthDistributionData <- addPSUProcessData(LengthDistributionData, dataType = "LengthDistributionData", PSUProcessData = SweptAreaPSU, all = TRUE)
+    LengthDistributionData <- addPSUProcessData(LengthDistributionData, PSUProcessData = if(IncludePSU) SweptAreaPSU, all = TRUE)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
+    LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = if(IncludeLayer) SweptAreaLayer)
     ######################################################
     
     
@@ -135,7 +137,7 @@ LengthDistribution <- function(
     }
     
     # Extract only the relevant columns:
-    LengthDistributionData <- setColumnOrder(LengthDistributionData, dataType = "LengthDistributionData", keep.all = FALSE)
+    formatOutput(LengthDistributionData, dataType = "LengthDistributionData", keep.all = FALSE)
     
     # Order the rows 
     orderBy <- unlist(dataTypeDefinition[c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables")])
@@ -288,7 +290,9 @@ LengthDependentCatchCompensation <- function(
         
         # Calculate the factor to multiply the WeightedCount by:
         sweepWidth <- Alpha * IndividualTotalLengthCentimeterMiddle^Beta
-        sweepWidthInNauticalMiles <- sweepWidth / 1852
+        #sweepWidthInNauticalMiles <- sweepWidth / 1852
+        sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
+        
         WeightedCount <- WeightedCount / sweepWidthInNauticalMiles
         
         return(WeightedCount)
@@ -345,7 +349,8 @@ LengthDependentCatchCompensation <- function(
     }
     
     # Keep only the releavnt columns:
-    keepOnlyRelevantColumns(LengthDistributionDataCopy, "LengthDistributionData")
+    #keepOnlyRelevantColumns(LengthDistributionDataCopy, "LengthDistributionData")
+    formatOutput(LengthDistributionDataCopy, dataType = "LengthDistributionData", keep.all = FALSE)
     
     return(LengthDistributionDataCopy)
 }
@@ -546,7 +551,7 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     AssignmentLengthDistributionData <- merge(BioticAssignmentCollapsed, uniqueAssignmentLengthDistributionData, by = "assignmentID", allow.cartesian = TRUE)
     
     # Extract only the relevant columns:
-    AssignmentLengthDistributionData <- setColumnOrder(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
+    formatOutput(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
     
     return(AssignmentLengthDistributionData)
 }

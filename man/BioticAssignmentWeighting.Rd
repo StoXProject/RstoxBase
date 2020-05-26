@@ -13,7 +13,7 @@ BioticAssignmentWeighting(
   MaxNumberOfLengthSamples = 100,
   NASCData,
   Radius,
-  LengthExponent
+  LengthExponentTable
 )
 }
 \arguments{
