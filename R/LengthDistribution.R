@@ -49,7 +49,7 @@ LengthDistribution <- function(
     ############################
     ##### 1. Merge levels: #####
     ############################
-    StoxBioticDataMerged <- RstoxData::mergeDataTables(StoxBioticData, output.only.last = TRUE, all = TRUE)
+    StoxBioticDataMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
     ############################
     
     ####################################################

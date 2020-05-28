@@ -252,11 +252,6 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
         data.table::set(data, j = toAdd, value = NA_character_)
     }
     
-    # Set the order of the columns:
-    #dataType <- detectDataType(data)
-    #browser()
-    #formatOutput(data, dataType = dataType, keep.all = TRUE)
-    
     return(data)
 }
 
@@ -264,10 +259,20 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
 
 
 # Stolen from https://stackoverflow.com/questions/4752275/test-for-equality-among-all-elements-of-a-single-vector:
-allEqual <- function(x, tol = .Machine$double.eps ^ 0.5) {
-    if (length(x) == 1) return(TRUE)
-    x <- range(x) / mean(x)
-    isTRUE(all.equal(x[1], x[2], tolerance = tol))
+allEqual <- function(x, tol = .Machine$double.eps ^ 0.5, ...) {
+    if (length(x) == 1) {
+        return(TRUE)
+    }
+    if(is.numeric(x)) {
+        x <- range(x, ...) / mean(x, ...)
+        isTRUE(all.equal(x[1], x[2], tolerance = tol))
+    }
+    else {
+        if(isTRUE(list(...)$na.rm)) {
+            x <- x[!is.na(x)]
+        }
+        length(table(x, useNA = "ifany")) == 1
+    }
 }
 
 
@@ -478,6 +483,10 @@ JavaJEXL2R <- function(x, eval=TRUE){
 # Check the types of the SpeciesLinkTable:
 checkTypes <- function(table) {
     
+    if(length(table) == 0) {
+        return(FALSE)
+    }
+    
     # Get the name of the table and the function name:
     parameterTableName <- deparse(substitute(table))
     functionName <- sub("()", "", deparse(sys.call(-1)[1]), fixed = TRUE)
@@ -488,7 +497,7 @@ checkTypes <- function(table) {
     # Get the format of the parameter table:
     format <- stoxFunctionAttributes[[functionName]]$functionParameterFormat[[parameterTableName]]
     # Get the parameter table info holding the types:
-    parameterTableInfo <- getRstoxBaseDefinitions("parameterTableInfo")[[format]]$info
+    parameterTableInfo <- processPropertyFormats[[format]]$info
     
     if(!all(names(table) %in% parameterTableInfo$name)) {
         missing <- setdiff(parameterTableInfo$name, names(table))
@@ -506,14 +515,23 @@ checkTypes <- function(table) {
     )
     
     # Order both the expected and acutal table, and check for identity:
-    
     data.table::setorder(parameterTableInfo)
     data.table::setorder(types)
     
-    if(!identical(parameterTableInfo, types)) {
+    compareTypes <- function(x, y, allow.numeric = TRUE) {
+        out <- identical(x, t)
+        if(allow.numeric) {
+            out <- out | all(is.numeric(x), is.numeric(y))
+        }
+        return(out)
+    }
+    
+    if(!all(parameterTableInfo == types)) {
         # Print error message for those different:
-        differs <- parameterTableInfo$type != types$type
-        stop("The input ", parameterTableName, " does contains columns of the wrong type (", paste0(parameterTableInfo$name[differs], ": ", parameterTableInfo$type[differs], " (was ", types$type[differs], ")", collapse = ", "), ")")
+        differs <- mapply(compareTypes, parameterTableInfo$type, types$type)
+        if(any(differs)) {
+            stop("The input ", parameterTableName, " contains columns of the wrong type (", paste0(parameterTableInfo$name[differs], ": ", parameterTableInfo$type[differs], " (was ", types$type[differs], ")", collapse = ", "), ")")
+        }
     }
     else {
         return(TRUE)

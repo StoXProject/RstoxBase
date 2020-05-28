@@ -112,7 +112,7 @@ NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable,
     # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the length distribution from the AssignmentLengthDistributionData:
     DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount]
     # Divide by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
-    DensityData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection), by = resolution]
+    DensityData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection, na.rm = TRUE), by = resolution]
     
     # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
     DensityData[, NASCDistributed := NASC * representativeBackscatteringCrossSectionNormalized]

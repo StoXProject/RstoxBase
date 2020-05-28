@@ -18,8 +18,8 @@ DefineBioticAssignment(
   DistanceNauticalMiles,
   TimeDifferenceHours,
   BottomDepthDifferenceMeters,
-  LongitudeDifferenceDecimalDegrees,
-  LatitudeDifferenceDecimalDegrees
+  LongitudeDifferenceDegrees,
+  LatitudeDifferenceDegrees
 )
 }
 \arguments{
@@ -50,7 +50,7 @@ An object of StoX data type \code{\link{BioticAssignment}}.
 This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 }
 \details{
-This function is awesome and does excellent stuff.
+See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?".
 }
 \examples{
 x <- 1

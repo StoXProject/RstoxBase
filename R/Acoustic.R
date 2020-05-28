@@ -27,11 +27,12 @@ NASC <- function(
     ) {
     
     # Merge the StoxAcousticData:
-    NASC <- RstoxData::mergeDataTables(StoxAcousticData)$NASC
+    NASC <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
     # Check that the input StoxAcousticData has the same ChannelReferenceType throughout:
     dataTypeDefinition <- getDataTypeDefinition(dataType = "NASCData")
     ChannelReferenceType <- NASC[[dataTypeDefinition$type]]
-    if(!all(ChannelReferenceType == ChannelReferenceType[1])) {
+    
+    if(!allEqual(ChannelReferenceType, na.rm = TRUE)) {
         stop("The StoxAcousticData must have only one ", dataTypeDefinition$type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
     }
     

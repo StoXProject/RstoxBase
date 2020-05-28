@@ -455,7 +455,7 @@ DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBiotic
 #' @param EllipsoidalDistanceTable     Not yet implemented.
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?".
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
@@ -481,8 +481,8 @@ DefineBioticAssignment <- function(
     DistanceNauticalMiles, 
     TimeDifferenceHours, 
     BottomDepthDifferenceMeters, 
-    LongitudeDifferenceDecimalDegrees, 
-    LatitudeDifferenceDecimalDegrees
+    LongitudeDifferenceDegrees, 
+    LatitudeDifferenceDegrees
     )
 {
     
@@ -574,27 +574,34 @@ DefineBioticAssignment <- function(
                     )
                 }, 
                 # Get the longitude difference between the EDSUs and Hauls:
-                if(length(LongitudeDifferenceDecimalDegrees)) {
-                    LongitudeDifferenceDecimalDegrees = getSquaredRelativeDiff(
+                if(length(LongitudeDifferenceDegrees)) {
+                    LongitudeDifferenceDegrees = getSquaredRelativeDiff(
                         MergedStoxAcousticData = MergedStoxAcousticData, 
                         MergedStoxBioticData = MergedStoxBioticData, 
                         variableName = "Longitude", 
-                        axisLength = LongitudeDifferenceDecimalDegrees
+                        axisLength = LongitudeDifferenceDegrees
                     )
                 }, 
                 # Get the latitude differerence between the EDSUs and Hauls:
-                if(length(LatitudeDifferenceDecimalDegrees)) {
-                    LatitudeDifferenceDecimalDegrees = getSquaredRelativeDiff(
+                if(length(LatitudeDifferenceDegrees)) {
+                    LatitudeDifferenceDegrees = getSquaredRelativeDiff(
                         MergedStoxAcousticData = MergedStoxAcousticData, 
                         MergedStoxBioticData = MergedStoxBioticData, 
                         variableName = "Latitude", 
-                        axisLength = LatitudeDifferenceDecimalDegrees
+                        axisLength = LatitudeDifferenceDegrees
                     )
                 }
             )
             
+            # Check whether any of the columns are all NA, indicating error in the data:
+            NACols <- unlist(differenceTable[, lapply(.SD, function(x) all(is.na(x)))])
+            if(any(NACols)) {
+                warning("The following axes of the ellipsoid were all NA, indicating missing data: ", paste0(names(differenceTable)[NACols], collapse = ", "))
+            }
+            
             # Sum and take the square root to get the ellipsoidal distance:
-            differenceTable[, distance := sqrt(rowSums(.SD, na.rm = TRUE))]
+            #differenceTable[, distance := sqrt(rowSums(.SD, na.rm = TRUE))] # No need to sqrt:
+            differenceTable[, distance := rowSums(.SD, na.rm = TRUE)]
             
             # Tag Hauls inside the ellipsoid:
             differenceTable[, inside := distance <= 1]
@@ -631,22 +638,28 @@ DefineBioticAssignment <- function(
     return(BioticAssignment)
 }
 
+# Function to get the great circle distance between EDSUs in the MergedStoxAcousticData and Hauls in the MergedStoxBioticData: 
 getDistanceNauticalMiles <- function(MergedStoxAcousticData, MergedStoxBioticData) {
-    # Get the distances between EDUSs and Hauls:
+    # Extract the goegraphical positions:
     EDSUPositions <- as.matrix(MergedStoxAcousticData[, c("Longitude", "Latitude")])
     HaulPositions <- as.matrix(MergedStoxBioticData[, c("Longitude", "Latitude")])
+    # Get the distances between EDUSs and Hauls:
     EDSUToHaulDistanceKilometers <- c(sp::spDists(EDSUPositions, HaulPositions, longlat = TRUE))
+    # Convert to nautical miles:
     EDSUToHaulDistanceNauticalMiles <- EDSUToHaulDistanceKilometers * 1000 / getRstoxBaseDefinitions("nauticalMileInMeters")
     return(EDSUToHaulDistanceNauticalMiles)
 }
 
+# Function to ge the squared distance in units of the DistanceNauticalMiles squared:
 getSquaredRelativeDistanceNauticalMiles <- function(MergedStoxAcousticData, MergedStoxBioticData, DistanceNauticalMiles) {
     # Get the distances between EDUSs and Hauls:
     EDSUToHaulDistanceNauticalMiles <- getDistanceNauticalMiles(MergedStoxAcousticData, MergedStoxBioticData)
+    # Square and return:
     SquaredRelativeDistanceNauticalMiles <- EDSUToHaulDistanceNauticalMiles^2 / DistanceNauticalMiles^2
     return(SquaredRelativeDistanceNauticalMiles)
 }
 
+# Function to ge the squared time difference in units of the TimeDifferenceHours squared:
 getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, TimeDifferenceHours, variableName = "DateTime") {
     # Get the time difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
@@ -654,6 +667,7 @@ getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticD
         y = MergedStoxBioticData[[variableName]]
     )
     TimeDiff <- as.numeric(out[, difftime(x, y, units = "hours")])
+    # Square and return:
     SquaredTimeDiff <- TimeDiff^2 / TimeDifferenceHours^2
     return(SquaredTimeDiff)
 }
@@ -664,6 +678,7 @@ getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData,
         x = MergedStoxAcousticData[[variableName]], 
         y = MergedStoxBioticData[[variableName]]
     )
+    # Square and return:
     SquaredRelativeDiff <- c(out[, x - y])^2 / axisLength^2
     return(SquaredRelativeDiff)
 }
@@ -723,10 +738,12 @@ BioticAssignmentWeighting <- function(
     # Make a copy of the BioticAssignment to enable safe modification by reference:
     BioticAssignmentCopy <- data.table::copy(BioticAssignment)
     
+    # Put equal weight (1) to each haul:
     if(WeightingMethod == "Equal") {
         # Simply set WeightingFactor to 1
         BioticAssignmentCopy[, eval(weightingVariable) := 1]
     }
+    # Weight hauls by the number of length samples (count the length samples for which IndividualTotalLengthCentimeter is not NA):
     else if(WeightingMethod == "NumberOfLengthSamples") {
         # Merge Haul and Individual, and count individuals with length for each Haul:
         Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
@@ -808,6 +825,7 @@ BioticAssignmentWeighting <- function(
         
         
     }
+    # Weight hauls by the summed CatchFractionWeightKilogram divided by the EffectiveTowedDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
         # Merge Haul and Sample, and sum the catch weight divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
@@ -823,6 +841,7 @@ BioticAssignmentWeighting <- function(
         #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalWeight, by = "Haul")
         #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalWeight]        
     }
+    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowedDistance:
     else if(WeightingMethod == "NormalizedTotalCount") {
         # Merge Haul and Sample, and sum the catch count divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
@@ -837,6 +856,7 @@ BioticAssignmentWeighting <- function(
         #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalCount, by = "Haul")
         #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalCount]
     }
+    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowedDistance:
     else if(WeightingMethod == "SumWeightedCount") {
         BioticAssignmentCopy <- addSumWeightedCount(
             BioticAssignment = BioticAssignmentCopy, 
@@ -871,7 +891,7 @@ isLengthDistributionType <- function(LengthDistributionData, LengthDistributionT
     LengthDistributionData$LengthDistributionType[1] == LengthDistributionType
 }
 
-
+# Function to sum up the WeightedCount
 addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weightingVariable, inverse = FALSE) {
     
     # Make a copy of the LengthDistributionData to enable safe modification by reference:
@@ -945,12 +965,6 @@ DefineAcousticTargetStrength <- function(processData, UseProcessData = FALSE, De
     
     # Check that the input ParameterTable has the appropriate types:
     checkTypes(table = ParameterTable)
-    
-    
-    # Check that the ParameterTable contains only valid columns:
-    #checkAcousticTargetStrengthEquationType(ParameterTable)
-    #
-    #checkAcousticTargetStrengthPresentColumns(ParameterTable)
     
     return(ParameterTable)
 }
