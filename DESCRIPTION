@@ -15,7 +15,7 @@ Imports:
     rgdal (>= 1.4.7),
     rgeos (>= 0.5.2),
     sp (>= 1.3.2),
-    RstoxData (>= 0.8.9)
+    RstoxData (>= 0.8.8)
 Suggests: 
     testthat
 Additional_repositories: 
