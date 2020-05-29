@@ -1,6 +1,6 @@
-#' Base StoX functions
+#' Base StoX Functions
 #'
-#' This package contains the base StoX functions used for survey estimation.
+#' Base StoX functions used for survey estimation.
 #'
 #' The StoX functions defined in RstoxBase are those for defining resolution (e.g., PSUs and Layers), assignment, NASC data and StationLengthDistribution data, density, abundance and superindividual abundance
 #' @docType package
