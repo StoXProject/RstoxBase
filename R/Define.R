@@ -771,7 +771,7 @@ BioticAssignmentWeighting <- function(
         #### Convert length distribution to percent:
         ###LengthDistributionData[, WeightedCount := WeightedCount / sum(WeightedCount), by = "Haul"]
         
-        ##### Search around each station for the NASC values in side the range Radius': #####
+        ##### Search around each station for the NASC values inside the range 'Radius': #####
         # Get a table of "Station", "Haul", "DateTime", "Longitude", "Latitude" containing the information needed for the WeightingMethod "NASC":
         stationInfo <- unique(LengthDistributionData[, c("Station", "Haul", "DateTime", "Longitude", "Latitude")])
         
