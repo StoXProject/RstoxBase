@@ -1,13 +1,13 @@
-# Rename DefineStrata to DefineStratum:
-#rename_DefineStrata_to_DefineStratum <- function(projectDescription) {
+# Rename DefineStratumPolygon to DefineStratum:
+#rename_DefineStratumPolygon_to_DefineStratum <- function(projectDescription) {
 #    if(StoxVersion == 2.7) {
 #        # Get the function names:
 #        functionNames <- sapply(projectDescription$baseline, "[[", "functionName")
-#        # Get the position of the process using DefineStrata():
-#        atDefineStrata <- which("DefineStrata" %in% functionNames)
-#        if(length(atDefineStrata)) {
+#        # Get the position of the process using DefineStratumPolygon():
+#        atDefineStratumPolygon <- which("DefineStratumPolygon" %in% functionNames)
+#        if(length(atDefineStratumPolygon)) {
 #            # Split the process:
-#            projectDescription$baseline[[atDefineStrata]]$functionName <- "DefineStratum"
+#            projectDescription$baseline[[atDefineStratumPolygon]]$functionName <- "DefineStratum"
 #        }
 #    }
 #    
@@ -88,7 +88,7 @@ modifyFilterBiotic <- function(projectDescription) {
     
     # Run only for StoX 2.7:
     if(length(resourceVersion) && resourceVersion == "1.92") {
-        # Find the process using DefineStrata():
+        # Find the process using DefineStratumPolygon():
         atProcess <- findProcessFromFunctionName(
             functionName = "FilterBiotic", 
             projectDescription =projectDescription, 
@@ -140,16 +140,16 @@ modifyFilterBiotic <- function(projectDescription) {
 }
 
 
-modify_DefineStrata <- function(projectDescription) {
+modify_DefineStratumPolygon <- function(projectDescription) {
     
     # Get the StoxVersion from the attributes:
     resourceVersion <- attr(projectDescription, "resourceversion")
     
     # Run only for StoX 2.7:
     if(length(resourceVersion) && resourceVersion == "1.92") {
-        # Find the process using DefineStrata():
+        # Find the process using DefineStratumPolygon():
         atProcess <- findProcessFromFunctionName(
-            functionName = "DefineStrata", 
+            functionName = "DefineStratumPolygon", 
             projectDescription =projectDescription, 
             modelName = "baseline"
         )
@@ -183,6 +183,6 @@ findProcessFromFunctionName <- function(functionName, projectDescription, modelN
 #' @export
 #' 
 backwardCompatibility <- list(
-    # rename_DefineStrata_to_DefineStratum, 
+    # rename_DefineStratumPolygon_to_DefineStratum, 
     split_ReadBioticXML_to_ReadBiotic_and_StoxBiotic
 )

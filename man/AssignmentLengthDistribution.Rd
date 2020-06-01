@@ -8,8 +8,6 @@ AssignmentLengthDistribution(LengthDistributionData, BioticAssignment)
 }
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
-
-\item{BioticAssignment}{The  \code{\link{BioticAssignment}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.

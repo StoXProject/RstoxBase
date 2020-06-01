@@ -183,7 +183,7 @@ findLayer <- function(minDepth, maxDepth, layerProcessData, acceptNA = TRUE) {
 }
 
 # Function to add Stratum and PSU:
-addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
+addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
     
     # If present, add the PSUProcessData to the start of the data
     if(length(PSUProcessData) && length(PSUProcessData$Stratum_PSU)) {
@@ -204,13 +204,13 @@ addPSUProcessData <- function(data, dataType, PSUProcessData = NULL, ...) {
         #warning("StoX: PSUs not defined, possibly due to no data inside the any strata")
         data.table::setDT(data)
         toAdd <- c("Stratum", "PSU")
-        data.table::set(data, j = toAdd, value = NA)
+        data.table::set(data, j = toAdd, value = NA_character_)
     }
     
     
-    # Set the order of the columns:
-    #dataType <- detectDataType(data)
-    data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
+    ## Set the order of the columns:
+    ##dataType <- detectDataType(data)
+    #data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
 }
@@ -249,12 +249,8 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
     else if(! "Layer" %in% names(data)){
         data.table::setDT(data)
         toAdd <- c("Layer", "MinLayerDepth", "MaxLayerDepth")
-        data.table::set(data, j = toAdd, value=NA)
+        data.table::set(data, j = toAdd, value = NA_character_)
     }
-    
-    # Set the order of the columns:
-    #dataType <- detectDataType(data)
-    data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
     
     return(data)
 }
@@ -263,10 +259,20 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
 
 
 # Stolen from https://stackoverflow.com/questions/4752275/test-for-equality-among-all-elements-of-a-single-vector:
-allEqual <- function(x, tol = .Machine$double.eps ^ 0.5) {
-    if (length(x) == 1) return(TRUE)
-    x <- range(x) / mean(x)
-    isTRUE(all.equal(x[1], x[2], tolerance = tol))
+allEqual <- function(x, tol = .Machine$double.eps ^ 0.5, ...) {
+    if (length(x) == 1) {
+        return(TRUE)
+    }
+    if(is.numeric(x)) {
+        x <- range(x, ...) / mean(x, ...)
+        isTRUE(all.equal(x[1], x[2], tolerance = tol))
+    }
+    else {
+        if(isTRUE(list(...)$na.rm)) {
+            x <- x[!is.na(x)]
+        }
+        length(table(x, useNA = "ifany")) == 1
+    }
 }
 
 
@@ -278,7 +284,7 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
     # Add the PSUs if PSUDefinition is "FunctionInput" and PSUProcessData is given:
     PSUDefinition <- match.arg(PSUDefinition)
     if(identical(PSUDefinition, "FunctionInput")) {
-        dataCopy <- addPSUProcessData(dataCopy, dataType = dataType, PSUProcessData = PSUProcessData)
+        dataCopy <- addPSUProcessData(dataCopy, PSUProcessData = PSUProcessData, all = TRUE)
     }
     else if(identical(PSUDefinition, "PreDefined")) {
         if(all(is.na(data$PSU))) {
@@ -338,17 +344,19 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
             aggregationVariables$setToNA, 
             aggregationVariables$otherVariables
         ), 
-        value=NA
+        value = NA
     )
     
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
     
-    # Order by 'by':
-    setorderv(dataCopy, cols = by, order = 1L, na.last = TRUE)
+    # Set the order of the columns:
+    formatOutput(dataCopy, dataType = dataType, keep.all = FALSE)
+    ## Order by 'by':
+    #setorderv(dataCopy, cols = by, order = 1L, na.last = TRUE)
     
     # Keep only the releavnt columns:
-    keepOnlyRelevantColumns(dataCopy, dataType)
+    #keepOnlyRelevantColumns(dataCopy, dataType)
     
     return(dataCopy)
 }
@@ -395,14 +403,15 @@ sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionI
             aggregationVariables$setToNA, 
             aggregationVariables$verticalRawDimension
         ), 
-        value=NA
+        value = NA
     )
     
     # Remove duplicated rows:
     dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
     
     # Keep only the releavnt columns:
-    keepOnlyRelevantColumns(dataCopy, dataType)
+    #keepOnlyRelevantColumns(dataCopy, dataType)
+    formatOutput(dataCopy, dataType = dataType, keep.all = FALSE)
     
     return(dataCopy)
 }
@@ -424,12 +433,15 @@ quote.convert <- function(x) {
 #}
 
 
-keepOnlyRelevantColumns <- function(data, dataType) {
-    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
-    toRemove <- setdiff(names(data), allDataTypeVariables)
-    data[, (toRemove) := NULL]
-    setcolorder(data, allDataTypeVariables)
-}
+#keepOnlyRelevantColumns <- function(data, dataType) {
+#    allDataTypeVariables <- getAllDataTypeVariables(dataType, unlist = TRUE)
+#    toRemove <- setdiff(names(data), allDataTypeVariables)
+#    if(length(toRemove)) {
+#        data[, (toRemove) := NULL]
+#    }
+#    
+#    setcolorder(data, allDataTypeVariables)
+#}
 
 
 
@@ -471,14 +483,21 @@ JavaJEXL2R <- function(x, eval=TRUE){
 # Check the types of the SpeciesLinkTable:
 checkTypes <- function(table) {
     
+    if(length(table) == 0) {
+        return(FALSE)
+    }
+    
     # Get the name of the table and the function name:
     parameterTableName <- deparse(substitute(table))
     functionName <- sub("()", "", deparse(sys.call(-1)[1]), fixed = TRUE)
+    if(length(functionName) == 0) {
+        stop("This function is only meant for use inside a StoX function.")
+    }
     
     # Get the format of the parameter table:
     format <- stoxFunctionAttributes[[functionName]]$functionParameterFormat[[parameterTableName]]
     # Get the parameter table info holding the types:
-    parameterTableInfo <- getRstoxBaseDefinitions("parameterTableInfo")[[format]]$info
+    parameterTableInfo <- processPropertyFormats[[format]]$info
     
     if(!all(names(table) %in% parameterTableInfo$name)) {
         missing <- setdiff(parameterTableInfo$name, names(table))
@@ -499,13 +518,51 @@ checkTypes <- function(table) {
     data.table::setorder(parameterTableInfo)
     data.table::setorder(types)
     
-    if(!identical(parameterTableInfo, types)) {
+    compareTypes <- function(x, y, allow.numeric = TRUE) {
+        out <- identical(x, t)
+        if(allow.numeric) {
+            out <- out | all(is.numeric(x), is.numeric(y))
+        }
+        return(out)
+    }
+    
+    if(!all(parameterTableInfo == types)) {
         # Print error message for those different:
-        differs <- parameterTableInfo$type != types$type
-        stop("The input ", parameterTableName, " does contains columns of the wrong type (", paste0(parameterTableInfo$name[differs], ": ", parameterTableInfo$type[differs], " (was ", types$type[differs], ")", collapse = ", "), ")")
+        differs <- mapply(compareTypes, parameterTableInfo$type, types$type)
+        if(any(differs)) {
+            stop("The input ", parameterTableName, " contains columns of the wrong type (", paste0(parameterTableInfo$name[differs], ": ", parameterTableInfo$type[differs], " (was ", types$type[differs], ")", collapse = ", "), ")")
+        }
     }
     else {
         return(TRUE)
     }
 }
+
+
+
+
+checkResolutionPSU_Layer <- function(data, dataType) {
+    
+    # Set the target resolution:
+    horizontalResolution <- "PSU"
+    verticalResolution <- "Layer"
+    # Get the column expected to be NA:
+    expectNAHorizontal <- determineAggregationVariables(data, dataType, horizontalResolution, dimension = "horizontal")$setToNA
+    expectNAVertical <- determineAggregationVariables(data, dataType, verticalResolution, dimension = "vertical")$setToNA
+    wrongHorizontalResolution <- data[, !all(is.na(get(expectNAHorizontal)))] || data[, all(is.na(get(horizontalResolution)))]
+    wrongVerticalResolution <- data[, !all(is.na(get(expectNAVertical)))] || data[, all(is.na(get(verticalResolution)))]
+    
+    if(wrongHorizontalResolution && wrongVerticalResolution) {
+        stop("The data does not have the correct horizontal (", horizontalResolution, ") and vertical (", verticalResolution, ") resolution")
+    }
+    else if(wrongHorizontalResolution) {
+        stop("The data does not have the correct horizontal resolution (", horizontalResolution, ")")
+    }
+    else if(wrongVerticalResolution) {
+        stop("The data does not have the correct vertical resolution (", verticalResolution, ")")
+    }
+    
+    return(TRUE)
+}
+
 

@@ -27,7 +27,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "NASCWeight", 
             type = "ChannelReferenceType", 
-            other = "EffectiveLogDistance"
+            other = c("EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
         ), 
         LengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU", "Station"), 
@@ -40,7 +40,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "LengthDistributionWeight", 
             type = "LengthDistributionType", 
-            other = c("EffectiveTowedDistance", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            other = c("EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
@@ -48,8 +48,10 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = "AssignmentLengthDistributionWeight", 
+            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
+            #weighting = "AssignmentLengthDistributionWeight", 
+            weighting = NULL, 
             other = NULL
         ), 
         DensityData = list(
@@ -73,23 +75,32 @@ initiateRstoxBase <- function(){
             other = NULL
         ), 
         IndividualsData = list(
-            horizontalResolution = c("Stratum"), 
+            horizontalResolution = "Stratum", 
             verticalResolution = c("Layer", "Haul"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = NULL, 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
         ), 
         SuperIndividualsData = list(
-            horizontalResolution = c("Stratum"), 
+            horizontalResolution = "Stratum", 
             verticalResolution = c("Layer", "Haul"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Abundance", 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
+            other = NULL
+        ), 
+        BioticAssignment = list(
+            horizontalResolution = c("Stratum", "PSU"), 
+            verticalResolution = "Layer", 
+            data = "Haul", 
+            weighting = "WeightingFactor", 
             other = NULL
         )
     )
@@ -98,32 +109,6 @@ initiateRstoxBase <- function(){
         sp::SpatialPolygons(list()), 
         data = data.frame()
     )
-    ### 
-    ### # Define empty process data:
-    ### empryProcessData <- list(
-    ###     DefineSweptAreaPSU = list(
-    ###         Stratum_PSU = data.table::data.table(), 
-    ###         Station_PSU = data.table::data.table(), 
-    ###         Stratum = data.table::data.table()
-    ###     ), 
-    ###     DefineAcousticPSU = list(
-    ###         Stratum_PSU = data.table::data.table(), 
-    ###         Station_PSU = data.table::data.table(), 
-    ###         Stratum = data.table::data.table()
-    ###     ),
-    ###     DefineSweptAreaLayer = list(
-    ###         DefineSweptAreaLayer = data.table::data.table()
-    ###     ), 
-    ###     DefineAcousticLayer = list(
-    ###         DefineAcousticLayer = data.table::data.table()
-    ###     ),
-    ###     DefineStrata = list(
-    ###         DefineStrata = emptyStratumPolygon()
-    ###     ), 
-    ###     DefineBioticAssignment = list(
-    ###         DefineBioticAssignment = data.table::data.table()
-    ###     )
-    ### )
     
     # Define the variables of the main data types used in estimation models:
     getRequiredVariables <- function(x) {
@@ -142,122 +127,16 @@ initiateRstoxBase <- function(){
     
     proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
     
-    # Define the process property formats:
-    processPropertyFormats <- list(
-        single = list(
-            "filePath"
-        ), 
-        vector = list(), 
-        list = list(), 
-        table = list(
-            "catchCompensationTable", 
-            "selectivityTable", 
-            "ellipsoidalDistanceTable", 
-            "speciesLinkTable", 
-            "acousticTargetStrengthTable"
-        )
-    )
-    
-    # Define the column names of the different parameter tables:
-    parameterTableInfo <- list(
-        catchCompensationTable = list(
-            title = "Define parameters for length dependent catch compensation", 
-            info = data.table::data.table(
-                name = c(
-                    "SpeciesCategory", 
-                    "Alpha", 
-                    "Beta", 
-                    "LMin", 
-                    "LMax"
-                ), 
-                type = c(
-                    "character", 
-                    "double", 
-                    "double", 
-                    "double", 
-                    "double"
-                )
-            )
-        ),
-        selectivityTable = list(
-            title = "Define parameters for length dependent selectivity", 
-            info = data.table::data.table(
-                name = c(
-                    "SpeciesCategory", 
-                    "Alpha", 
-                    "Beta", 
-                    "LMax"
-                ), 
-                type = c(
-                    "character", 
-                    "double", 
-                    "double", 
-                    "double"
-                )
-            )
-        ),
-        ellipsoidalDistanceTable = list(
-            title = "Define semi asix lengths for an ellipsoid inside which biotic stations are assigned to acoustic PSUs", 
-            info = data.table::data.table(
-                name = c(
-                    "MinimumNumberOfStations",
-                    "DistanceNauticalMiles", 
-                    "TimeHours", 
-                    "BottomDepthMeters", 
-                    "LatitudeDecimalDegrees", 
-                    "LongitudeDecimalDegrees"
-                ), 
-                type = c(
-                    "integer", 
-                    "double", 
-                    "double", 
-                    "double", 
-                    "double", 
-                    "double"
-                )
-            )
-        ),
-        speciesLinkTable = list(
-            title = "Link acoustic categories and species categories", 
-            info = data.table::data.table(
-                name = c(
-                    "AcousticCategory",
-                    "SpeciesCategory"
-                ), 
-                type = c(
-                    "integer", # This is how it is defined in the XSD, see http://www.imr.no/formats/nmdechosounder/v1/nmdechosounderv1.xsd
-                    "character"
-                )
-            )
-        ),
-        acousticTargetStrengthTable = list(
-            title = "Define parameters of acoustic target strength by length", 
-            info = data.table::data.table(
-                name = c(
-                    "AcousticCategory", 
-                    "Frequency", 
-                    "m", 
-                    "a", 
-                    "d"
-                ), 
-                type = c(
-                    "integer",
-                    "double",
-                    "double",
-                    "double",
-                    "double"
-                )
-            )
-        )
-    )
     
     targetStrengthParameters <- list(
-        Standard = c("m", "a"), 
-        DepthDependent = c("m", "a", "d")
+        Standard = c("LengthExponent", "TargetStrength0"), 
+        DepthDependent = c("LengthExponent", "TargetStrength0", "DepthExponent")
     )
     
     AcousticPSUPrefix <- "PSU"
     SweptAreaPSUPrefix <- "PSU"
+    
+    nauticalMileInMeters <- 1852
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
@@ -366,7 +245,8 @@ getColumnOrder <- function(dataType) {
     return(columns)
 }
 
-setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
+#setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
+formatOutput <- function(data, dataType, keep.all = TRUE) {
     
     # Remove any duplicated columns:
     if(any(duplicated(names(data)))) {
@@ -376,19 +256,16 @@ setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE
     # Get the column order:
     columnOrder <- getColumnOrder(dataType)
     
-    # Select only the column names present in the data:
-    if(allow.partial) {
-        columnOrder <- intersect(columnOrder, names(data))
-    }
-    
     # Order the columns:
     data.table::setcolorder(data, columnOrder)
     
     if(!keep.all) {
-        data <- data[, ..columnOrder]
+        toRemove <- setdiff(names(data), columnOrder)
+        if(length(toRemove)) {
+            data[, eval(toRemove) := NULL]
+        }
+        #data <- data[, ..columnOrder]
     }
-    
-    return(data)
 }
 
 
@@ -534,6 +411,7 @@ determineAggregationVariables <- function(
     )
     
     out <- list(
+        dataTypeDefinition = dataTypeDefinition, 
         by = aggregateBy, 
         setToNA = setToNA, 
         targetResolution = targetResolution, 
@@ -546,8 +424,7 @@ determineAggregationVariables <- function(
         summedWeightingVariable = thisDataTypeDefinition$summedWeighting, 
         otherVariables = thisDataTypeDefinition$other, 
         verticalRawDimension = thisDataTypeDefinition$verticalRawDimension, 
-        verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension, 
-        dataTypeDefinition = dataTypeDefinition
+        verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension
     )
     return(out)
 }

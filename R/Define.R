@@ -1,7 +1,7 @@
 # DefineAcousticPSU
 # DefineAcousticLayer
 # DefineSweptAreaPSU
-# DefineStrata
+# DefineStratumPolygon
 # DefineSurvey
 
 
@@ -11,7 +11,7 @@
 #' 
 #' Underlying function for \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @param StratumPolygon    The \code{\link{StratumPolygon}} process data.
 #' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
@@ -31,7 +31,7 @@
 #' @export
 #' @import data.table
 #' 
-DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
+DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -99,21 +99,13 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         # Remove PSUs that do not have a stratum:
         validPSUs <- unique(Stratum_PSU$PSU[!is.na(Stratum_PSU$Stratum)])
         Stratum_PSU <- Stratum_PSU[ PSU %in% validPSUs ]
-        #SSU_PSU <- SSU_PSU[ PSU %in% validPSUs ]
-        #SSU_PSU$PSU[! SSU_PSU$PSU %in% validPSUs] <- NA
-        
-        SSU_PSU[! PSU %in% validPSUs, PSU := NA]
-        
-        #SSU_PSU[, PSU := ifelse(PSU %in% validPSUs, validPSUs, "")]
-        
-        
+        SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
     }
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
     else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
         SSU_PSU <- data.table::data.table(
             SSU = SSU, 
-            #PSU = ""
-            PSU = NA
+            PSU = NA_character_
         )
         Stratum_PSU <- data.table::data.table()
     }
@@ -131,7 +123,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
         names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
     )
     
-    # No longer neede, as the GUI gets stratum names from DefineStrata instead:
+    # No longer neede, as the GUI gets stratum names from DefineStratumPolygon instead:
     # Add a list of all strata:
     #out$Stratum <- data.table::data.table(
     #    Stratum = getStratumNames(StratumPolygon)
@@ -147,7 +139,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
 #' 
 #' This function defines the \code{\link{SweptAreaPSU}} process data, linking strata, swept-area PSUs and Stations 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefinePSU
 #' @param StoxBioticData    The \code{\link[RstoxData]{StoxBioticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.
@@ -166,7 +158,7 @@ DefinePSU <- function(processData, StratumPolygon, StoxData, DefinitionMethod = 
 #' @export
 #' @import data.table
 #' 
-DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, DefinitionMethod = c("StationToPSU", "None"), UseProcessData = FALSE) {
+DefineSweptAreaPSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxBioticData, DefinitionMethod = c("StationToPSU", "None")) {
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -193,7 +185,7 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
 #' 
 #' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefinePSU
 #' @param StoxAcousticData  The \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
@@ -212,7 +204,7 @@ DefineSweptAreaPSU <- function(processData, StratumPolygon, StoxBioticData, Defi
 #' @export
 #' @import data.table
 #' 
-DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, DefinitionMethod = c("EDSUToPSU", "None"), UseProcessData = FALSE) {
+DefineAcousticPSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxAcousticData, DefinitionMethod = c("EDSUToPSU", "None")) {
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -239,7 +231,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.
 #' @param Resolution  Numeric: A single numeric giving the thickness of the layers.
@@ -260,7 +252,7 @@ DefineAcousticPSU <- function(processData, StratumPolygon, StoxAcousticData, Def
 #' @export
 #' @import data.table
 #' 
-DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE, modelType = c("Acoustic", "SweptArea")) {
+DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), modelType = c("Acoustic", "SweptArea")) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -375,7 +367,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 #' 
 #' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefineLayer
 #' @inheritParams DefineAcousticPSU
 #' 
@@ -393,7 +385,7 @@ DefineLayer <- function(processData, StoxData, DefinitionMethod = c("WaterColumn
 #' @export
 #' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+DefineAcousticLayer <- function(processData, UseProcessData = FALSE, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table()) {
     
     DefineLayer(
         processData = processData, 
@@ -413,7 +405,7 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefineLayer
 #' @inheritParams DefineSweptAreaPSU
 #' 
@@ -431,7 +423,7 @@ DefineAcousticLayer <- function(processData, StoxAcousticData, DefinitionMethod 
 #' @export
 #' @import data.table
 #' 
-DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), UseProcessData = FALSE) {
+DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table()) {
     
     DefineLayer(
         processData = processData, 
@@ -445,13 +437,264 @@ DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod =
 }
 
 
+
 ##################################################
 ##################################################
 #' Assignnment of biotic hauls to acoustic PSUs
 #' 
 #' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
+#' @inheritParams DefineSweptAreaPSU
+#' @inheritParams DefineAcousticPSU
+#' @inheritParams SumNASC
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
+#' @param AcousticPSU       The \code{\link{AcousticPSU}} process data.
+#' @param AcousticLayer     The \code{\link{AcousticLayer}} process data.
+#' @param Radius            Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
+#' @param EllipsoidalDistanceTable     Not yet implemented.
+#' 
+#' @details
+#' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?".
+#' 
+#' @return
+#' An object of StoX data type \code{\link{BioticAssignment}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{BioticAssignment}}.
+#' 
+#' @export
+#' @import data.table
+#'
+DefineBioticAssignment <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"), 
+    # For DefinitionMethod "Stratum": 
+    StoxBioticData, StratumPolygon, AcousticPSU, AcousticLayer, 
+    # (Additional) for DefinitionMethod "Radius": 
+    StoxAcousticData, 
+    Radius = double(), 
+    # (Additional) for DefinitionMethod "EllipsoidalDistance": 
+    MinimumNumberOfHauls,
+    DistanceNauticalMiles, 
+    TimeDifferenceHours, 
+    BottomDepthDifferenceMeters, 
+    LongitudeDifferenceDegrees, 
+    LatitudeDifferenceDegrees
+    )
+{
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    # Merge the StoxBioticData:
+    MergedStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
+    
+    
+    # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
+    if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
+        # Create a spatial points object of the positions of the hauls:
+        SpatialHauls <- sp::SpatialPoints(MergedStoxBioticData[, c("Longitude", "Latitude")])
+        # Get the stratum for each haul:
+        Stratum <- unname(unlist(sp::over(SpatialHauls, StratumPolygon)))
+        BioticAssignment <- MergedStoxBioticData
+        BioticAssignment[, Stratum := ..Stratum]
+        
+        # Add the PSUs to the BioticAssignment:
+        BioticAssignment <- merge(BioticAssignment, AcousticPSU$Stratum_PSU, all = TRUE, by = "Stratum", allow.cartesian = TRUE)
+        
+        # Discard all rows with missing PSU:
+        BioticAssignment <- subset(BioticAssignment, !is.na(PSU))
+    }
+    # Search for Hauls around all EDSUs of each PSU:
+    else if(grepl("Radius|EllipsoidalDistance", DefinitionMethod, 
+                  ignore.case = TRUE)) {
+        # Merge the StoxBioticData:
+        MergedStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
+        
+        # Get a table of EDSUs and Hauls:
+        BioticAssignment <- data.table::CJ(
+            EDSU = MergedStoxAcousticData$EDSU, 
+            Haul = MergedStoxBioticData$Haul
+        )
+        
+        # Merge PSUs and strata into the table:
+        EDSU_PSU_Stratum <- RstoxData::mergeDataTables(AcousticPSU, all = TRUE, output.only.last = TRUE)
+        BioticAssignment <- merge(EDSU_PSU_Stratum, BioticAssignment, by = "EDSU", all = TRUE)
+        
+        # Discard all rows with missing PSU:
+        BioticAssignment <- subset(BioticAssignment, !is.na(PSU))
+        
+        # Get the distance units:
+        if(grepl("Radius", DefinitionMethod, ignore.case = TRUE)) {
+            
+            differenceTable = data.table::data.table(
+                distance = getDistanceNauticalMiles(
+                    MergedStoxAcousticData = MergedStoxAcousticData, 
+                    MergedStoxBioticData = MergedStoxBioticData
+                )
+            )
+            
+            # Tag the Hauls that are inside the radius:
+            differenceTable[, inside := distance <= Radius]
+        }
+        else if(grepl("EllipsoidalDistance", DefinitionMethod, ignore.case = TRUE)) {
+            
+            differenceTable = data.table::data.table(
+                # Get the distance between the EDSUs and Hauls:
+                if(length(DistanceNauticalMiles)) {
+                    DistanceNauticalMiles = getSquaredRelativeDistanceNauticalMiles(
+                        MergedStoxAcousticData = MergedStoxAcousticData, 
+                        MergedStoxBioticData = MergedStoxBioticData, 
+                        DistanceNauticalMiles = DistanceNauticalMiles
+                    )
+                }, 
+                # Get the time difference between the EDSUs and Hauls:
+                if(length(TimeDifferenceHours)) {
+                    TimeDifferenceHours = getSquaredRelativeTimeDiff(
+                        MergedStoxAcousticData = MergedStoxAcousticData, 
+                        MergedStoxBioticData = MergedStoxBioticData, 
+                        TimeDifferenceHours = TimeDifferenceHours
+                    )
+                }, 
+                # Get the difference in bottom depth between the EDSUs and Hauls:
+                if(length(BottomDepthDifferenceMeters)) {
+                    BottomDepthDifferenceMeters = getSquaredRelativeDiff(
+                        MergedStoxAcousticData = MergedStoxAcousticData, 
+                        MergedStoxBioticData = MergedStoxBioticData, 
+                        variableName = "BottomDepth", 
+                        axisLength = BottomDepthDifferenceMeters
+                    )
+                }, 
+                # Get the longitude difference between the EDSUs and Hauls:
+                if(length(LongitudeDifferenceDegrees)) {
+                    LongitudeDifferenceDegrees = getSquaredRelativeDiff(
+                        MergedStoxAcousticData = MergedStoxAcousticData, 
+                        MergedStoxBioticData = MergedStoxBioticData, 
+                        variableName = "Longitude", 
+                        axisLength = LongitudeDifferenceDegrees
+                    )
+                }, 
+                # Get the latitude differerence between the EDSUs and Hauls:
+                if(length(LatitudeDifferenceDegrees)) {
+                    LatitudeDifferenceDegrees = getSquaredRelativeDiff(
+                        MergedStoxAcousticData = MergedStoxAcousticData, 
+                        MergedStoxBioticData = MergedStoxBioticData, 
+                        variableName = "Latitude", 
+                        axisLength = LatitudeDifferenceDegrees
+                    )
+                }
+            )
+            
+            # Check whether any of the columns are all NA, indicating error in the data:
+            NACols <- unlist(differenceTable[, lapply(.SD, function(x) all(is.na(x)))])
+            if(any(NACols)) {
+                warning("The following axes of the ellipsoid were all NA, indicating missing data: ", paste0(names(differenceTable)[NACols], collapse = ", "))
+            }
+            
+            # Sum and take the square root to get the ellipsoidal distance:
+            #differenceTable[, distance := sqrt(rowSums(.SD, na.rm = TRUE))] # No need to sqrt:
+            differenceTable[, distance := rowSums(.SD, na.rm = TRUE)]
+            
+            # Tag Hauls inside the ellipsoid:
+            differenceTable[, inside := distance <= 1]
+        }
+        
+        # Join the differenceTable into the BioticAssignment:
+        BioticAssignment <- data.table::data.table(BioticAssignment, differenceTable)
+        
+        # Apply any requirement on the number of hauls per PSU:
+        if(length(MinimumNumberOfHauls)) {
+            BioticAssignment[, inside := inside | distance <= sort(distance)[MinimumNumberOfHauls], by = c("PSU")]
+        }
+        
+        # Keep only Hauls inside the radius:
+        BioticAssignment <- subset(BioticAssignment, inside)
+    }
+    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
+        BioticAssignment <- data.table::data.table()
+    }
+    else {
+        stop("Only DefinitionMethod = \"Stratum\" is currently implemented")
+    }
+    
+    # Add all Layers to each assigned haul:
+    Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
+    BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
+    
+    # Add weighting  = 1:
+    BioticAssignment[, WeightingFactor := 1]
+    
+    # Extract only the relevant columns:
+    formatOutput(BioticAssignment, dataType = "BioticAssignment", keep.all = FALSE)
+    
+    return(BioticAssignment)
+}
+
+# Function to get the great circle distance between EDSUs in the MergedStoxAcousticData and Hauls in the MergedStoxBioticData: 
+getDistanceNauticalMiles <- function(MergedStoxAcousticData, MergedStoxBioticData) {
+    # Extract the goegraphical positions:
+    EDSUPositions <- as.matrix(MergedStoxAcousticData[, c("Longitude", "Latitude")])
+    HaulPositions <- as.matrix(MergedStoxBioticData[, c("Longitude", "Latitude")])
+    # Get the distances between EDUSs and Hauls:
+    EDSUToHaulDistanceKilometers <- c(sp::spDists(EDSUPositions, HaulPositions, longlat = TRUE))
+    # Convert to nautical miles:
+    EDSUToHaulDistanceNauticalMiles <- EDSUToHaulDistanceKilometers * 1000 / getRstoxBaseDefinitions("nauticalMileInMeters")
+    return(EDSUToHaulDistanceNauticalMiles)
+}
+
+# Function to ge the squared distance in units of the DistanceNauticalMiles squared:
+getSquaredRelativeDistanceNauticalMiles <- function(MergedStoxAcousticData, MergedStoxBioticData, DistanceNauticalMiles) {
+    # Get the distances between EDUSs and Hauls:
+    EDSUToHaulDistanceNauticalMiles <- getDistanceNauticalMiles(MergedStoxAcousticData, MergedStoxBioticData)
+    # Square and return:
+    SquaredRelativeDistanceNauticalMiles <- EDSUToHaulDistanceNauticalMiles^2 / DistanceNauticalMiles^2
+    return(SquaredRelativeDistanceNauticalMiles)
+}
+
+# Function to ge the squared time difference in units of the TimeDifferenceHours squared:
+getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, TimeDifferenceHours, variableName = "DateTime") {
+    # Get the time difference between all EDSUs and all Hauls:
+    out <- data.table::CJ(
+        x = MergedStoxAcousticData[[variableName]], 
+        y = MergedStoxBioticData[[variableName]]
+    )
+    TimeDiff <- as.numeric(out[, difftime(x, y, units = "hours")])
+    # Square and return:
+    SquaredTimeDiff <- TimeDiff^2 / TimeDifferenceHours^2
+    return(SquaredTimeDiff)
+}
+
+getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, variableName, axisLength) {
+    # Get the absolute difference between all EDSUs and all Hauls:
+    out <- data.table::CJ(
+        x = MergedStoxAcousticData[[variableName]], 
+        y = MergedStoxBioticData[[variableName]]
+    )
+    # Square and return:
+    SquaredRelativeDiff <- c(out[, x - y])^2 / axisLength^2
+    return(SquaredRelativeDiff)
+}
+
+
+
+
+
+
+##################################################
+##################################################
+#' Assignnment of biotic hauls to acoustic PSUs
+#' 
+#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' 
+#' @inheritParams DefineStratumPolygon
 #' @inheritParams DefineSweptAreaPSU
 #' @inheritParams DefineAcousticPSU
 #' @inheritParams SumNASC
@@ -475,84 +718,210 @@ DefineSweptAreaLayer <- function(processData, StoxBioticData, DefinitionMethod =
 #' @export
 #' @import data.table
 #'
-DefineBioticAssignment <- function(
-    processData, 
-    NASCData, StoxBioticData, 
-    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"), 
-    StoxAcousticData, 
-    AcousticPSU, AcousticLayer, 
-    StratumPolygon, 
-    Radius = double(), EllipsoidalDistanceTable = data.table::data.table(), 
-    UseProcessData = FALSE) {
+BioticAssignmentWeighting <- function(
+    BioticAssignment, 
+    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
+    StoxBioticData, 
+    LengthDistributionData, 
+    MaxNumberOfLengthSamples = 100, 
+    NASCData, Radius, LengthExponentTable) {
     
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
+    # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    WeightingMethod <- match.arg(WeightingMethod)
     
-    # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
-    if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
+    # Define the weighting variable:
+    weightingVariable <- getDataTypeDefinition(dataType = "BioticAssignment", elements = "weighting", unlist = TRUE)
+    #weightedCountVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
+
+    # Make a copy of the BioticAssignment to enable safe modification by reference:
+    BioticAssignmentCopy <- data.table::copy(BioticAssignment)
+    
+    # Put equal weight (1) to each haul:
+    if(WeightingMethod == "Equal") {
+        # Simply set WeightingFactor to 1
+        BioticAssignmentCopy[, eval(weightingVariable) := 1]
+    }
+    # Weight hauls by the number of length samples (count the length samples for which IndividualTotalLengthCentimeter is not NA):
+    else if(WeightingMethod == "NumberOfLengthSamples") {
+        # Merge Haul and Individual, and count individuals with length for each Haul:
+        Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
+        NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLengthCentimeter)))), by = "Haul"]
+        # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
+        #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NumberOfLengthSamples, by = "Haul")
+        #BioticAssignmentCopy[, eval(weightingVariable) := NumberOfLengthSamples]
+        BioticAssignmentCopy <- mergeIntoBioticAssignment(
+            BioticAssignment = BioticAssignmentCopy, 
+            toMerge = NumberOfLengthSamples, 
+            variable = "NumberOfLengthSamples", 
+            weightingVariable = weightingVariable
+        )
+    }
+    else if(WeightingMethod == "NASC") {
         
-        # Create a spatial points object:
-        SpatialStations <- sp::SpatialPoints(StoxBioticData$Station[, c("Longitude", "Latitude")])
+        # Check that the LengthDistributionData and NASCData are on the Station and EDSU resolution horizontally, respectively:
+        if(NASC[, all(is.na(EDSU))]) {
+            stop("StoX: Horizontal resolution of the NASCData must be EDSU for WeightingMethod == \"NASC\" (before applying MeanNASC")
+        }
+        if(LengthDistributionData[, all(is.na(Station))]) {
+            stop("StoX: Horizontal resolution of the LengthDistributionData must be Station for WeightingMethod == \"NASC\" (before applying MeanLengthDistribution")
+        }
         
-        # Get the stratum for each point:
-        Stratum <- unname(unlist(sp::over(SpatialStations, StratumPolygon)))
+        #### Convert length distribution to percent:
+        ###LengthDistributionData[, WeightedCount := WeightedCount / sum(WeightedCount), by = "Haul"]
         
-        # Create a list of the stations of each stratum:
-        stationList <- split(StoxBioticData$Station$Station, Stratum)
+        ##### Search around each station for the NASC values inside the range 'Radius': #####
+        # Get a table of "Station", "Haul", "DateTime", "Longitude", "Latitude" containing the information needed for the WeightingMethod "NASC":
+        stationInfo <- unique(LengthDistributionData[, c("Station", "Haul", "DateTime", "Longitude", "Latitude")])
         
-        # Use all hauls of each station in the automatic assignment method "Stratum":
-        Station_Haul <- merge(
-            StoxBioticData$Station, 
-            StoxBioticData$Haul, 
-            by = intersect(names(StoxBioticData$Station), names(StoxBioticData$Haul))
+        
+        # Function to get great circle distance between a Haul and the EDSUs:
+        getHaulEDSUDistance <- function(thisHaul, stationInfo, NASCData) {
+            # Get the distance from the station of the Haul to the EDSUs:
+            StationPosition <- stationInfo[Haul == thisHaul, c("Longitude", "Latitude")]
+            # Get the distance using WGS84 ellipsoid:
+            EDSUsInsideRadius <- sp::spDistsN1(
+                pts = as.matrix(NSAC[, c("Longitude", "Latitude")]), 
+                pt = as.matrix(StationPosition), 
+                longlat = TRUE
+            )
+            # plot(NSAC$Longitude, NSAC$Latitude, cex = EDSUsInsideRadius/max(EDSUsInsideRadius) * 5)
+            
+            return(EDSUsInsideRadius)
+        }
+        
+        
+        
+        # Function to get great circle distance between a Haul and the EDSUs:
+        getEDSUsInsideRadius <- function(thisHaul, stationInfo, NASCData, Radius) {
+            # Get the distance from the station of the Haul to the EDSUs:
+            haulEDSUDistance <- getHaulEDSUDistance(thisHaul, stationInfo, NASCData)
+            
+            # Identify EDSUs within the specified radius:
+            EDSUsInsideRadius <- haulEDSUDistance <= Radius
+            return(EDSUsInsideRadius)
+        }
+        
+        getEDSUsInsideRadius <- function(thisHaul, stationInfo, NASCData, Radius) {
+            # Identify EDSUs within the specified radius:
+            EDSUsInsideRadius <- getEDSUsInsideRadius(thisHaul, stationInfo, NASCData, Radius)
+            
+            
+            # Get the average NASC inside of the EDSUs:
+            averageNASC <- NASCData[EDSUsInsideRadius, mean(NASC)]
+            
+            # Get the targ
+            
+            
+            
+        }
+        
+        
+        
+        
+        
+        apply()
+        
+        
+    }
+    # Weight hauls by the summed CatchFractionWeightKilogram divided by the EffectiveTowedDistance:
+    else if(WeightingMethod == "NormalizedTotalWeight") {
+        # Merge Haul and Sample, and sum the catch weight divided by towed distance:
+        Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
+        NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1]), by = "Haul"]
+        # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
+        BioticAssignmentCopy <- mergeIntoBioticAssignment(
+            BioticAssignment = BioticAssignmentCopy, 
+            toMerge = NormalizedTotalWeight, 
+            variable = "NormalizedTotalWeight", 
+            weightingVariable = weightingVariable
         )
         
-        # Small funciton to get the hauls of requested stations:
-        getAllHaulsOfStations <- function(Station, Station_Haul) {
-            requestedStations <- Station_Haul$Station %in% Station
-            Station_Haul$Haul[requestedStations]
-        }
-        haulList <- lapply(stationList, getAllHaulsOfStations, Station_Haul = Station_Haul)
-        
-        # Issue an error if there are strata to be used which do not contain any hauls:
-        uniqueStrata <- unique(NASCData$Stratum)
-        nHaulsOfUniqueStrata <- lengths(haulList[uniqueStrata])
-        hasNoHauls <- which(nHaulsOfUniqueStrata == 0)
-        if(length(hasNoHauls)) {
-            stop("The following strata containing acoustic PSUs have no biotic Hauls: ", paste(uniqueStrata[hasNoHauls], collapse = ", "))
-        }
-        
-        # Link the stratum to PSU:
-        Stratum_PSU_Layer <- unique(NASCData[, c("Stratum", "PSU", "Layer")])
-        # Get the hauls per PSU:
-        Haul <- haulList[Stratum_PSU_Layer$Stratum]
-        
-        # Build a table with hauls as a vector in each cell of the Haul column.
-        BioticAssignment <- cbind(
-            Stratum_PSU_Layer[, c("Stratum", "PSU", "Layer")], 
-            Haul = Haul
+        #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalWeight, by = "Haul")
+        #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalWeight]        
+    }
+    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowedDistance:
+    else if(WeightingMethod == "NormalizedTotalCount") {
+        # Merge Haul and Sample, and sum the catch count divided by towed distance:
+        Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
+        NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowedDistance[1]), by = "Haul"]
+        # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
+        BioticAssignmentCopy <- mergeIntoBioticAssignment(
+            BioticAssignment = BioticAssignmentCopy, 
+            toMerge = NormalizedTotalCount, 
+            variable = "NormalizedTotalCount", 
+            weightingVariable = weightingVariable
         )
-        
-        # Expand to a regular table:
-        BioticAssignment <- expandDT(BioticAssignment)
-        # Add weighting  = 1:
-        BioticAssignment[, WeightingFactor := 1]
-        
+        #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalCount, by = "Haul")
+        #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalCount]
     }
-    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
-        BioticAssignment <- data.table::data.table()
+    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowedDistance:
+    else if(WeightingMethod == "SumWeightedCount") {
+        BioticAssignmentCopy <- addSumWeightedCount(
+            BioticAssignment = BioticAssignmentCopy, 
+            LengthDistributionData = LengthDistributionData, 
+            weightingVariable = weightingVariable, 
+            inverse = FALSE
+        )
     }
-    else {
-        stop("Only DefinitionMethod = \"Stratum\" is currently implemented")
+    else if(WeightingMethod == "InverseSumWeightedCount") {
+        BioticAssignmentCopy <- addSumWeightedCount(
+            BioticAssignment = BioticAssignmentCopy, 
+            LengthDistributionData = LengthDistributionData, 
+            weightingVariable = weightingVariable, 
+            inverse = TRUE
+        )
     }
     
+    # Keep only relevant columns:
+    formatOutput(BioticAssignmentCopy, dataType = "BioticAssignment", keep.all = FALSE)
+    
+    return(BioticAssignmentCopy)
+}
+
+mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weightingVariable) {
+    BioticAssignment <- merge(BioticAssignment, toMerge, by = "Haul")
+    BioticAssignment[, eval(weightingVariable) := as.double(get(variable))]
     return(BioticAssignment)
 }
+
+
+isLengthDistributionType <- function(LengthDistributionData, LengthDistributionType) {
+    LengthDistributionData$LengthDistributionType[1] == LengthDistributionType
+}
+
+# Function to sum up the WeightedCount
+addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weightingVariable, inverse = FALSE) {
+    
+    # Make a copy of the LengthDistributionData to enable safe modification by reference:
+    LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
+    
+    # Normalize the WeightedCount:
+    if(isLengthDistributionType(LengthDistributionData, "Standard")) {
+        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
+    } 
+    else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
+        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount is divided by EffectiveTowedDistance) or \"Normalized\"")
+    }
+    # Sum the normalized WeightedCount for each Haul:
+    SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
+    
+    # Merge the NormalizedTotalWeight into the BioticAssignment by the Haul identifyer: 
+    BioticAssignment <- merge(BioticAssignment, SumWeightedCount, by = "Haul")
+    
+    # Copy the NormalizedTotalWeight into the weightingVariable:
+    if(inverse) {
+        BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedCount]
+    }
+    else {
+        BioticAssignment[, eval(weightingVariable) := SumWeightedCount]
+    }
+    
+    BioticAssignment[]
+}
+
+
 
 
 ##################################################
@@ -560,7 +929,7 @@ DefineBioticAssignment <- function(
 #' 
 #' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 #' 
-#' @inheritParams DefineStrata
+#' @inheritParams DefineStratumPolygon
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
 #' @param ParameterTable A table of the columns AcousticCategory, Frequency, m, a and d.
 #' @param FileName A file from which to read the \code{ParameterTable}.
@@ -576,7 +945,7 @@ DefineBioticAssignment <- function(
 #' 
 #' @export
 #' 
-DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Table", "ResourceFile"), ParameterTable = data.table::data.table(), FileName, UseProcessData = FALSE) {
+DefineAcousticTargetStrength <- function(processData, UseProcessData = FALSE, DefinitionMethod = c("Table", "ResourceFile"), ParameterTable = data.table::data.table(), FileName) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -596,12 +965,6 @@ DefineAcousticTargetStrength <- function(processData, DefinitionMethod = c("Tabl
     
     # Check that the input ParameterTable has the appropriate types:
     checkTypes(table = ParameterTable)
-    
-    
-    # Check that the ParameterTable contains only valid columns:
-    #checkAcousticTargetStrengthEquationType(ParameterTable)
-    #
-    #checkAcousticTargetStrengthPresentColumns(ParameterTable)
     
     return(ParameterTable)
 }

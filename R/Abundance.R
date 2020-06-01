@@ -4,7 +4,7 @@
 #' 
 #' Some description
 #' 
-#' @param DensityData The \code{\link{DensityData}} data.
+#' @inheritParams MeanDensity
 #' @param StratumArea The \code{\link{StratumArea}} data.
 #' 
 #' @details
@@ -30,7 +30,8 @@ Abundance <- function(DensityData, StratumArea) {
     AbundanceData[, Abundance := Area * Density]
     
     # Keep only the releavnt columns:
-    keepOnlyRelevantColumns(AbundanceData, "AbundanceData")
+    #keepOnlyRelevantColumns(AbundanceData, "AbundanceData")
+    formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE)
     
     return(AbundanceData)
 }
@@ -77,9 +78,8 @@ Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea
         usedHauls <- BioticAssignment[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
     else if(AbundanceType == "SweptArea") {
-        
         # Add PSUs and Layers:
-        usedHauls <- addPSUProcessData(MergedStoxBioticData, dataType = "LengthDistributionData", PSUProcessData = SweptAreaPSU, all = TRUE)
+        usedHauls <- addPSUProcessData(MergedStoxBioticData, PSUProcessData = SweptAreaPSU, all = TRUE)
         usedHauls <- addLayerProcessData(usedHauls, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
         
         # get the unique rows, while extracting only the Haul and abundance resolution columns:
@@ -109,7 +109,7 @@ Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea
     IndividualsData <- IndividualsData[!is.na(IndividualKey), ]
     
     # Order the columns, but keep all columns:
-    IndividualsData <- setColumnOrder(IndividualsData, dataType = "IndividualsData", keep.all = TRUE)
+    formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE)
     
     
     return(IndividualsData)
@@ -269,11 +269,11 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     SuperIndividualsData[, Abundance := Abundance / individualCount]
     
     # Order the columns, but keep all columns:
-    SuperIndividualsData <- setColumnOrder(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     SuperIndividualsData[, individualCount := NULL]
-    SuperIndividualsData[, abundanceWeightFactor := NULL]
+    #SuperIndividualsData[, abundanceWeightFactor := NULL]
     SuperIndividualsData[, LengthGroup := NULL]
     
     

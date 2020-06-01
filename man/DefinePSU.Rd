@@ -6,23 +6,23 @@
 \usage{
 DefinePSU(
   processData,
+  UseProcessData = FALSE,
   StratumPolygon,
   StoxData,
   DefinitionMethod = c("Identity", "None"),
-  UseProcessData = FALSE,
   modelType = c("Acoustic", "SweptArea")
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
+
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
 \item{StoxData}{Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{modelType}{Character: A string naming the type of model, either "Acoustic" or "SweptArea".}
 }

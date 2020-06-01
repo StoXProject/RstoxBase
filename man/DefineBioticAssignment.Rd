@@ -6,40 +6,42 @@
 \usage{
 DefineBioticAssignment(
   processData,
-  NASCData,
-  StoxBioticData,
+  UseProcessData = FALSE,
   DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"),
-  StoxAcousticData,
+  StoxBioticData,
+  StratumPolygon,
   AcousticPSU,
   AcousticLayer,
-  StratumPolygon,
+  StoxAcousticData,
   Radius = double(),
-  EllipsoidalDistanceTable = data.table::data.table(),
-  UseProcessData = FALSE
+  MinimumNumberOfHauls,
+  DistanceNauticalMiles,
+  TimeDifferenceHours,
+  BottomDepthDifferenceMeters,
+  LongitudeDifferenceDegrees,
+  LatitudeDifferenceDegrees
 )
 }
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 
-\item{NASCData}{The \code{\link{NASC}} data.}
-
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.}
 
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 
 \item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
 
-\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
 
 \item{Radius}{Numeric: The radius inside which to assign biotic stations to each acoustic PSU.}
 
 \item{EllipsoidalDistanceTable}{Not yet implemented.}
-
-\item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.
@@ -48,7 +50,7 @@ An object of StoX data type \code{\link{BioticAssignment}}.
 This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 }
 \details{
-This function is awesome and does excellent stuff.
+See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?".
 }
 \examples{
 x <- 1

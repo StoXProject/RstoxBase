@@ -7,20 +7,20 @@
 stoxFunctionAttributes <- list(
     
     # Read strata polygons:
-    DefineStrata = list(
+    DefineStratumPolygon = list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "StratumPolygon", 
-        functionParameterFormat = list(FileName = "filePath"), 
+        functionParameterFormat = list(
+            FileName = "filePath"
+        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            # These two are joined with AND, and must both be funlilled:
+            # These two are joined with AND, and must both be fulfilled:
             FileName = list(
-                DefinitionMethod = "ResourceFile"
-            ), 
-            FileName = list(
+                DefinitionMethod = "ResourceFile", 
                 UseProcessData = FALSE
             )
         )
@@ -30,17 +30,14 @@ stoxFunctionAttributes <- list(
     StratumArea = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "StratumArea", 
-        functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionOutputDataType = "StratumArea"
     ), 
     
     # Define acoustic PSUs:
     DefineAcousticPSU = list(
         functionType = "processData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "AcousticPSU", 
-        functionParameterFormat = list(), 
+        functionOutputDataType = "AcousticPSU",
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -48,12 +45,11 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
-    # Define acoustic PSUs:
+    # Define swetp-area PSUs:
     DefineSweptAreaPSU = list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaPSU", 
-        functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -66,16 +62,17 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "AcousticLayer", 
-        functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
             Resolution = list(
-                DefinitionMethod = "Resolution"
+                DefinitionMethod = "Resolution", 
+                UseProcessData = FALSE
             ), 
             LayerTable = list(
-                DefinitionMethod = "LayerTable"
+                DefinitionMethod = "LayerTable", 
+                UseProcessData = FALSE
             )
         )
     ), 
@@ -85,16 +82,17 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SweptAreaLayer", 
-        functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
             Resolution = list(
-                DefinitionMethod = "Resolution"
+                DefinitionMethod = "Resolution", 
+                UseProcessData = FALSE
             ), 
             LayerTable = list(
-                DefinitionMethod = "LayerTable"
+                DefinitionMethod = "LayerTable", 
+                UseProcessData = FALSE
             )
         )
     ), 
@@ -104,27 +102,55 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
-        functionParameterFormat = list(
-            EllipsoidalDistanceTable = "ellipsoidalDistanceTable"
-        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
+            AcousticPSU = list(
+                UseProcessData = FALSE
+            ), 
+            AcousticLayer = list(
+                UseProcessData = FALSE
+            ), 
             StratumPolygon = list(
-                DefinitionMethod = "Stratum"
+                DefinitionMethod = "Stratum", 
+                UseProcessData = FALSE
             ), 
             StoxBioticData = list(
-                DefinitionMethod = "Stratum"
+                DefinitionMethod = "Stratum", 
+                UseProcessData = FALSE
             ), 
             StoxAcousticData = list(
-                DefinitionMethod = "Radius"
+                DefinitionMethod = "Radius", 
+                UseProcessData = FALSE
             ), 
             Radius = list(
-                DefinitionMethod = "Radius"
+                DefinitionMethod = "Radius", 
+                UseProcessData = FALSE
             ), 
-            EllipsoidalDistanceTable = list(
-                DefinitionMethod = "EllipsoidalDistance"
+            MinimumNumberOfHauls = list(
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
+            ), 
+            DistanceNauticalMiles = list(
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
+            ), 
+            TimeDifferenceHours = list(
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
+            ), 
+            BottomDepthDifferenceMeters = list(
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
+            ), 
+            LongitudeDifferenceDegrees = list(
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
+            ), 
+            LatitudeDifferenceDegrees = list(
+                DefinitionMethod = "EllipsoidalDistance", 
+                UseProcessData = FALSE
             )
         )
     ), 
@@ -134,7 +160,6 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
-        functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
             SweptAreaPSU = list(
                 IncludePSU = TRUE
@@ -149,9 +174,7 @@ stoxFunctionAttributes <- list(
     RegroupLengthDistribution = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "LengthDistributionData", 
-        functionParameterFormat = list(), 
-        functionArgumentHierarchy = list()
+        functionOutputDataType = "LengthDistributionData"
     ), 
     
     # Calculate areas of strata polygons:
@@ -159,7 +182,6 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
-        functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
             SweptAreaPSU = list(
                 PSUDefinition = "FunctionInput"
@@ -172,7 +194,6 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
-        functionParameterFormat = list(), 
         functionArgumentHierarchy = list(
             SweptAreaLayer = list(
                 LayerDefinition = "FunctionInput"
@@ -328,12 +349,153 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             ParameterTable = list(
-                DefinitionMethod = "Table"
+                DefinitionMethod = "Table", 
+                UseProcessData = FALSE
             ), 
             FileName = list(
-                DefinitionMethod = "ResourceFile"
+                DefinitionMethod = "ResourceFile", 
+                UseProcessData = FALSE
+            )
+        )
+    ), 
+    
+    BioticAssignmentWeighting = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "BioticAssignment", 
+        functionParameterFormat = list(
+            LengthExponentTable = "lengthExponentTable"
+        ), 
+        functionArgumentHierarchy = list(
+            StoxBioticData = list(
+                WeightingMethod = c("NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalCount")
+            ), 
+            LengthDistributionData = list(
+                WeightingMethod = c("SumWeightedCount", "InverseSumWeightedCount", "NASC")
+            ), 
+            MaxNumberOfLengthSamples = list(
+                WeightingMethod = c("NumberOfLengthSamples")
+            ), 
+            NASCData = list(
+                WeightingMethod = c("NASC")
+            ), 
+            Radius = list(
+                WeightingMethod = c("NASC")
+            ), 
+            LengthExponent = list(
+                WeightingMethod = c("NASC")
+            )
+        )
+    ), 
+    
+    SpeciesCategoryDensity = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SpeciesCategoryDensityData"
+    ), 
+    
+    SpeciesCategoryCatch = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SpeciesCategoryCatchData"
+    )
+    
+)
+
+# Define the process property formats:
+#' 
+#' @export
+#' 
+processPropertyFormats <- list(
+    filePath = list(
+        title = "The path to a single file", 
+        type = "single"
+        
+    ), 
+    catchCompensationTable = list(
+        title = "Define parameters for length dependent catch compensation", 
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "SpeciesCategory", 
+                "Alpha", 
+                "Beta", 
+                "LMin", 
+                "LMax"
+            ), 
+            type = c(
+                "character", 
+                "double", 
+                "double", 
+                "double", 
+                "double"
+            )
+        )
+    ), 
+    selectivityTable = list(
+        title = "Define parameters for length dependent selectivity", 
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "SpeciesCategory", 
+                "Alpha", 
+                "Beta", 
+                "LMax"
+            ), 
+            type = c(
+                "character", 
+                "double", 
+                "double", 
+                "double"
+            )
+        )
+    ), 
+    speciesLinkTable = list(
+        title = "Link acoustic categories and species categories", 
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "AcousticCategory",
+                "SpeciesCategory"
+            ), 
+            type = c(
+                "integer", # This is how it is defined in the XSD, see http://www.imr.no/formats/nmdechosounder/v1/nmdechosounderv1.xsd
+                "character"
+            )
+        )
+    ), 
+    acousticTargetStrengthTable = list(
+        title = "Define parameters of acoustic target strength by length", 
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "AcousticCategory", 
+                "Frequency", 
+                "LengthExponent", 
+                "TargetStrength0", 
+                "DepthExponent"
+            ), 
+            type = c(
+                "integer",
+                "double",
+                "double",
+                "double",
+                "double"
+            )
+        )
+    ), 
+    lengthExponentTable = list(
+        title = "Define the LengthExponent used when distributing NASC in BioticAssignmentWeighting() when WeightingMethod = \"NASC\"",
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "SpeciesCategory", 
+                "LengthExponent"
+            ), 
+            type = c(
+                "character",
+                "double"
             )
         )
     )
-    
 )

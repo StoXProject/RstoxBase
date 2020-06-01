@@ -19,5 +19,5 @@ This function extracts the polygons as a named list of tables of class \code{\li
 
 }
 \seealso{
-\code{\link[RstoxBase]{DefineStrata}} for the \code{StratumPolygon} input to the function.
+\code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
 }
