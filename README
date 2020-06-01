@@ -1,4 +1,4 @@
-# RstoxBase version: 1.2.8 (latest alpha, 2020-05-29)
+# RstoxBase version: 1.2.9 (latest alpha, 2020-06-01)
 # R version: 3.6
 
 # Base StoX functions used for survey estimation.
@@ -6,9 +6,9 @@
 # The StoX functions defined in RstoxBase are those for defining resolution (e.g., PSUs and Layers), assignment, NASC data and StationLengthDistribution data, density, abundance and superindividual abundance
 
 # Install the latest GitHub release
-devtools::install_github("https://github.com/StoXProject/RstoxBase", ref = "RstoxBase-v1.2.8")
+devtools::install_github("https://github.com/StoXProject/RstoxBase", ref = "RstoxBase-v1.2.9")
 
-# Release notes for RstoxBase_1.2.8:
+# Release notes for RstoxBase_1.2.9:
 # . 
 
 # For historical release notes see https://github.com/StoXProject/RstoxBase/blob/master/NEWS

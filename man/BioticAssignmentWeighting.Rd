@@ -11,7 +11,7 @@ BioticAssignmentWeighting(
   StoxBioticData,
   LengthDistributionData,
   MaxNumberOfLengthSamples = 100,
-  NASCData,
+  StoxAcousticData,
   Radius,
   LengthExponentTable
 )
@@ -19,7 +19,7 @@ BioticAssignmentWeighting(
 \arguments{
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
 
-\item{NASCData}{The \code{\link{NASC}} data.}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
 
 \item{Radius}{Numeric: The radius inside which to assign biotic stations to each acoustic PSU.}
 
