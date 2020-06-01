@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
       </span>
     </div>
 
@@ -176,7 +176,8 @@
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$other
-#&gt; [1] "EffectiveLogDistance"
+#&gt; [1] "EffectiveLogDistance" "DateTime"             "Longitude"           
+#&gt; [4] "Latitude"            
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData
@@ -208,8 +209,9 @@
 #&gt; [1] "LengthDistributionType"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$other
-#&gt; [1] "EffectiveTowedDistance" "VerticalNetOpening"     "HorizontalNetOpening"  
-#&gt; [4] "TrawlDoorSpread"       
+#&gt; [1] "EffectiveTowedDistance" "DateTime"               "Longitude"             
+#&gt; [4] "Latitude"               "VerticalNetOpening"     "HorizontalNetOpening"  
+#&gt; [7] "TrawlDoorSpread"       
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData
@@ -229,10 +231,10 @@
 #&gt; [1] "WeightedCount"
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData$weighting
-#&gt; [1] "AssignmentLengthDistributionWeight"
+#&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData$other
 #&gt; NULL
@@ -307,7 +309,7 @@
 #&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$IndividualsData$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$IndividualsData$weighting
 #&gt; NULL
@@ -333,12 +335,29 @@
 #&gt; [1] "Abundance"
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$weighting
 #&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$other
+#&gt; NULL
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$BioticAssignment
+#&gt; $dataTypeDefinition$BioticAssignment$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
+#&gt; 
+#&gt; $dataTypeDefinition$BioticAssignment$verticalResolution
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $dataTypeDefinition$BioticAssignment$data
+#&gt; [1] "Haul"
+#&gt; 
+#&gt; $dataTypeDefinition$BioticAssignment$weighting
+#&gt; [1] "WeightingFactor"
+#&gt; 
+#&gt; $dataTypeDefinition$BioticAssignment$other
 #&gt; NULL
 #&gt; 
 #&gt; 
@@ -354,9 +373,9 @@
 #&gt; [5] "LengthResolutionCentimeter"      "LengthDistributionWeight"       
 #&gt; 
 #&gt; $dataTypeRequiredVariables$AssignmentLengthDistributionData
-#&gt; [1] "PSU"                                "Layer"                             
-#&gt; [3] "SpeciesCategory"                    "IndividualTotalLengthCentimeter"   
-#&gt; [5] "LengthResolutionCentimeter"         "AssignmentLengthDistributionWeight"
+#&gt; [1] "PSU"                             "Layer"                          
+#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
+#&gt; [5] "LengthResolutionCentimeter"     
 #&gt; 
 #&gt; $dataTypeRequiredVariables$DensityData
 #&gt; [1] "PSU"                             "Layer"                          
@@ -377,6 +396,9 @@
 #&gt; [1] "Stratum"                         "Haul"                           
 #&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
 #&gt; [5] "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeRequiredVariables$BioticAssignment
+#&gt; [1] "PSU"             "Layer"           "WeightingFactor"
 #&gt; 
 #&gt; 
 #&gt; $emptyStratumPolygon
@@ -405,102 +427,11 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x44ac118&gt;
-#&gt; &lt;environment: 0x44aad68&gt;
+#&gt; &lt;bytecode: 0x5978d68&gt;
+#&gt; &lt;environment: 0x5977e18&gt;
 #&gt; 
-#&gt; $parameterTableInfo
-#&gt; $parameterTableInfo$catchCompensationTable
-#&gt; $parameterTableInfo$catchCompensationTable$title
-#&gt; [1] "Define parameters for length dependent catch compensation"
-#&gt; 
-#&gt; $parameterTableInfo$catchCompensationTable$info
-#&gt;               name      type
-#&gt; 1: SpeciesCategory character
-#&gt; 2:           Alpha    double
-#&gt; 3:            Beta    double
-#&gt; 4:            LMin    double
-#&gt; 5:            LMax    double
-#&gt; 
-#&gt; 
-#&gt; $parameterTableInfo$selectivityTable
-#&gt; $parameterTableInfo$selectivityTable$title
-#&gt; [1] "Define parameters for length dependent selectivity"
-#&gt; 
-#&gt; $parameterTableInfo$selectivityTable$info
-#&gt;               name      type
-#&gt; 1: SpeciesCategory character
-#&gt; 2:           Alpha    double
-#&gt; 3:            Beta    double
-#&gt; 4:            LMax    double
-#&gt; 
-#&gt; 
-#&gt; $parameterTableInfo$ellipsoidalDistanceTable
-#&gt; $parameterTableInfo$ellipsoidalDistanceTable$title
-#&gt; [1] "Define semi asix lengths for an ellipsoid inside which biotic stations are assigned to acoustic PSUs"
-#&gt; 
-#&gt; $parameterTableInfo$ellipsoidalDistanceTable$info
-#&gt;                       name    type
-#&gt; 1: MinimumNumberOfStations integer
-#&gt; 2:   DistanceNauticalMiles  double
-#&gt; 3:               TimeHours  double
-#&gt; 4:       BottomDepthMeters  double
-#&gt; 5:  LatitudeDecimalDegrees  double
-#&gt; 6: LongitudeDecimalDegrees  double
-#&gt; 
-#&gt; 
-#&gt; $parameterTableInfo$speciesLinkTable
-#&gt; $parameterTableInfo$speciesLinkTable$title
-#&gt; [1] "Link acoustic categories and species categories"
-#&gt; 
-#&gt; $parameterTableInfo$speciesLinkTable$info
-#&gt;                name      type
-#&gt; 1: AcousticCategory   integer
-#&gt; 2:  SpeciesCategory character
-#&gt; 
-#&gt; 
-#&gt; $parameterTableInfo$acousticTargetStrengthTable
-#&gt; $parameterTableInfo$acousticTargetStrengthTable$title
-#&gt; [1] "Define parameters of acoustic target strength by length"
-#&gt; 
-#&gt; $parameterTableInfo$acousticTargetStrengthTable$info
-#&gt;                name    type
-#&gt; 1: AcousticCategory integer
-#&gt; 2:        Frequency  double
-#&gt; 3:                m  double
-#&gt; 4:                a  double
-#&gt; 5:                d  double
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $processPropertyFormats
-#&gt; $processPropertyFormats$single
-#&gt; $processPropertyFormats$single[[1]]
-#&gt; [1] "filePath"
-#&gt; 
-#&gt; 
-#&gt; $processPropertyFormats$vector
-#&gt; list()
-#&gt; 
-#&gt; $processPropertyFormats$list
-#&gt; list()
-#&gt; 
-#&gt; $processPropertyFormats$table
-#&gt; $processPropertyFormats$table[[1]]
-#&gt; [1] "catchCompensationTable"
-#&gt; 
-#&gt; $processPropertyFormats$table[[2]]
-#&gt; [1] "selectivityTable"
-#&gt; 
-#&gt; $processPropertyFormats$table[[3]]
-#&gt; [1] "ellipsoidalDistanceTable"
-#&gt; 
-#&gt; $processPropertyFormats$table[[4]]
-#&gt; [1] "speciesLinkTable"
-#&gt; 
-#&gt; $processPropertyFormats$table[[5]]
-#&gt; [1] "acousticTargetStrengthTable"
-#&gt; 
-#&gt; 
+#&gt; $nauticalMileInMeters
+#&gt; [1] 1852
 #&gt; 
 #&gt; $proj4string
 #&gt; CRS arguments:
@@ -511,10 +442,10 @@
 #&gt; 
 #&gt; $targetStrengthParameters
 #&gt; $targetStrengthParameters$Standard
-#&gt; [1] "m" "a"
+#&gt; [1] "LengthExponent"  "TargetStrength0"
 #&gt; 
 #&gt; $targetStrengthParameters$DepthDependent
-#&gt; [1] "m" "a" "d"
+#&gt; [1] "LengthExponent"  "TargetStrength0" "DepthExponent"  
 #&gt; 
 #&gt; </div><div class='input'>
 </div></pre>

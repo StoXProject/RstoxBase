@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
       </span>
     </div>
 
@@ -119,10 +119,10 @@
 
     <pre class="usage"><span class='fu'>DefinePSU</span>(
   <span class='no'>processData</span>,
+  <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>StratumPolygon</span>,
   <span class='no'>StoxData</span>,
   <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Identity"</span>, <span class='st'>"None"</span>),
-  <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>modelType</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Acoustic"</span>, <span class='st'>"SweptArea"</span>)
 )</pre>
 
@@ -132,6 +132,10 @@
     <tr>
       <th>processData</th>
       <td><p>The current data produced by a previous instance of the function.</p></td>
+    </tr>
+    <tr>
+      <th>UseProcessData</th>
+      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
       <th>StratumPolygon</th>
@@ -144,10 +148,6 @@
     <tr>
       <th>DefinitionMethod</th>
       <td><p>Character: A string naming the method to use, see <code><a href='DefineSweptAreaPSU.html'>DefineSweptAreaPSU</a></code> and <code><a href='DefineAcousticPSU.html'>DefineAcousticPSU</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>UseProcessData</th>
-      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
       <th>modelType</th>

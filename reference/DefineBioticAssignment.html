@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
       </span>
     </div>
 
@@ -119,16 +119,20 @@
 
     <pre class="usage"><span class='fu'>DefineBioticAssignment</span>(
   <span class='no'>processData</span>,
-  <span class='no'>NASCData</span>,
-  <span class='no'>StoxBioticData</span>,
+  <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Stratum"</span>, <span class='st'>"Radius"</span>, <span class='st'>"EllipsoidalDistance"</span>, <span class='st'>"None"</span>),
-  <span class='no'>StoxAcousticData</span>,
+  <span class='no'>StoxBioticData</span>,
+  <span class='no'>StratumPolygon</span>,
   <span class='no'>AcousticPSU</span>,
   <span class='no'>AcousticLayer</span>,
-  <span class='no'>StratumPolygon</span>,
+  <span class='no'>StoxAcousticData</span>,
   <span class='kw'>Radius</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  <span class='kw'>EllipsoidalDistanceTable</span> <span class='kw'>=</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
-  <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='no'>MinimumNumberOfHauls</span>,
+  <span class='no'>DistanceNauticalMiles</span>,
+  <span class='no'>TimeDifferenceHours</span>,
+  <span class='no'>BottomDepthDifferenceMeters</span>,
+  <span class='no'>LongitudeDifferenceDegrees</span>,
+  <span class='no'>LatitudeDifferenceDegrees</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -139,20 +143,20 @@
       <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr>
     <tr>
-      <th>NASCData</th>
-      <td><p>The <code><a href='NASC.html'>NASC</a></code> data.</p></td>
-    </tr>
-    <tr>
-      <th>StoxBioticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
+      <th>UseProcessData</th>
+      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
       <th>DefinitionMethod</th>
       <td><p>Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in <code>Radius</code> to each acoustic PSU; and "EllipsoidalDistance" to provide the <code>EllipsoidalDistanceTable</code> specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.</p></td>
     </tr>
     <tr>
-      <th>StoxAcousticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
+      <th>StoxBioticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>StratumPolygon</th>
+      <td><p>The <code><a href='StratumPolygon.html'>StratumPolygon</a></code> process data.</p></td>
     </tr>
     <tr>
       <th>AcousticPSU</th>
@@ -163,8 +167,8 @@
       <td><p>The <code><a href='AcousticLayer.html'>AcousticLayer</a></code> process data.</p></td>
     </tr>
     <tr>
-      <th>StratumPolygon</th>
-      <td><p>The <code><a href='StratumPolygon.html'>StratumPolygon</a></code> process data.</p></td>
+      <th>StoxAcousticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
     </tr>
     <tr>
       <th>Radius</th>
@@ -174,10 +178,6 @@
       <th>EllipsoidalDistanceTable</th>
       <td><p>Not yet implemented.</p></td>
     </tr>
-    <tr>
-      <th>UseProcessData</th>
-      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -185,7 +185,7 @@
     <p>An object of StoX data type <code><a href='BioticAssignment.html'>BioticAssignment</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?".</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='BioticAssignment.html'>BioticAssignment</a></code>.</p></div>

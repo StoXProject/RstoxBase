@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Define Acoustic Layer — DefineAcousticLayer • RstoxBase</title>
+<title>Define stratum multipolygon — DefineStratumPolygon • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Define Acoustic Layer — DefineAcousticLayer" />
-<meta property="og:description" content="This function defines the AcousticLayer process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX." />
+<meta property="og:title" content="Define stratum multipolygon — DefineStratumPolygon" />
+<meta property="og:description" content="This function reads a goejson file, shape file or a StratumPolygon Stox multipolygon WKT file and returns an object of StoX data type StratumPolygon object." />
 
 
 
@@ -108,22 +108,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Define Acoustic Layer</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R'><code>R/Define.R</code></a></small>
-    <div class="hidden name"><code>DefineAcousticLayer.Rd</code></div>
+    <h1>Define stratum multipolygon</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Spatial.R'><code>R/Spatial.R</code></a></small>
+    <div class="hidden name"><code>DefineStratumPolygon.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function defines the <code><a href='AcousticLayer.html'>AcousticLayer</a></code> process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX.</p>
+    <p>This function reads a goejson file, shape file or a <code><a href='StratumPolygon.html'>StratumPolygon</a></code> Stox multipolygon WKT file and returns an object of StoX data type <code><a href='StratumPolygon.html'>StratumPolygon</a></code> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DefineAcousticLayer</span>(
+    <pre class="usage"><span class='fu'>DefineStratumPolygon</span>(
   <span class='no'>processData</span>,
   <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>StoxAcousticData</span>,
-  <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"WaterColumn"</span>, <span class='st'>"HighestResolution"</span>, <span class='st'>"Resolution"</span>, <span class='st'>"LayerTable"</span>),
-  <span class='kw'>Resolution</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  <span class='kw'>LayerTable</span> <span class='kw'>=</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>()
+  <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ResourceFile"</span>, <span class='st'>"None"</span>),
+  <span class='no'>FileName</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -138,35 +136,24 @@
       <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
-      <th>StoxAcousticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
-    </tr>
-    <tr>
-      <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the <code>LayerTable</code>.</p></td>
-    </tr>
-    <tr>
-      <th>Resolution</th>
-      <td><p>Numeric: A single numeric giving the thickness of the layers.</p></td>
-    </tr>
-    <tr>
-      <th>LayerTable</th>
-      <td><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></td>
+      <th>FileName</th>
+      <td><p>The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of StoX data type <code><a href='AcousticLayer.html'>AcousticLayer</a></code>.</p>
+    <p>A <code><a href='https://rdrr.io/pkg/sp/man/SpatialPolygons.html'>SpatialPolygonsDataFrame</a></code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>The parameter <code>UseProcessData</code> is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='AcousticPSU.html'>AcousticPSU</a></code>.</p></div>
+    <div class='dont-index'><p><code><a href='StratumArea.html'>StratumArea</a></code> for calculating the area of the strata.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span></div></pre>
+    <pre class="examples"><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

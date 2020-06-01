@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
       </span>
     </div>
 
@@ -119,10 +119,10 @@
 
     <pre class="usage"><span class='fu'>DefineSweptAreaPSU</span>(
   <span class='no'>processData</span>,
+  <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='no'>StratumPolygon</span>,
   <span class='no'>StoxBioticData</span>,
-  <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"StationToPSU"</span>, <span class='st'>"None"</span>),
-  <span class='kw'>UseProcessData</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>DefinitionMethod</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"StationToPSU"</span>, <span class='st'>"None"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -131,6 +131,10 @@
     <tr>
       <th>processData</th>
       <td><p>The current data produced by a previous instance of the function.</p></td>
+    </tr>
+    <tr>
+      <th>UseProcessData</th>
+      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
       <th>StratumPolygon</th>
@@ -143,10 +147,6 @@
     <tr>
       <th>DefinitionMethod</th>
       <td><p>Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.</p></td>
-    </tr>
-    <tr>
-      <th>UseProcessData</th>
-      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     </table>
 
