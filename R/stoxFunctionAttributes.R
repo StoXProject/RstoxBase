@@ -30,7 +30,7 @@ stoxFunctionAttributes <- list(
     StratumArea = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "StratumArea"
+        functionOutputDataType = "StratumAreaData"
     ), 
     
     # Define acoustic PSUs:
@@ -376,13 +376,13 @@ stoxFunctionAttributes <- list(
             MaxNumberOfLengthSamples = list(
                 WeightingMethod = c("NumberOfLengthSamples")
             ), 
-            StoxAcousticData = list(
+            NASCData = list(
                 WeightingMethod = c("NASC")
             ), 
             Radius = list(
                 WeightingMethod = c("NASC")
             ), 
-            LengthExponentTable = list(
+            LengthExponent = list(
                 WeightingMethod = c("NASC")
             )
         )

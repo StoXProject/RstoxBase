@@ -4,12 +4,12 @@
 \alias{Abundance}
 \title{Some title}
 \usage{
-Abundance(DensityData, StratumArea)
+Abundance(DensityData, StratumAreaData)
 }
 \arguments{
 \item{DensityData}{An object of \code{\link{DensityData}} data.}
 
-\item{StratumArea}{The \code{\link{StratumArea}} data.}
+\item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.
