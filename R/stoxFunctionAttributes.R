@@ -30,7 +30,7 @@ stoxFunctionAttributes <- list(
     StratumArea = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "StratumArea"
+        functionOutputDataType = "StratumAreaData"
     ), 
     
     # Define acoustic PSUs:

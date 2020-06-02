@@ -5,7 +5,7 @@
 #' Some description
 #' 
 #' @inheritParams MeanDensity
-#' @param StratumArea The \code{\link{StratumArea}} data.
+#' @param StratumAreaData The \code{\link{StratumAreaData}} data.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -21,10 +21,10 @@
 #' @export
 #' @import data.table
 #' 
-Abundance <- function(DensityData, StratumArea) {
+Abundance <- function(DensityData, StratumAreaData) {
 	
     # Merge the stratum area with the DensityData to an AbundanceData (remove the area at the end of the function):
-    AbundanceData <- merge(DensityData, StratumArea, by ="Stratum")
+    AbundanceData <- merge(DensityData, StratumAreaData, by ="Stratum")
     
     # Multiply the area and the density:
     AbundanceData[, Abundance := Area * Density]
