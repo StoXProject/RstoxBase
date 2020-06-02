@@ -724,7 +724,7 @@ BioticAssignmentWeighting <- function(
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    NASCData, Radius, LengthExponentTable) {
+    StoxAcousticData, Radius, LengthExponentTable) {
     
     # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.
     
@@ -758,72 +758,35 @@ BioticAssignmentWeighting <- function(
             weightingVariable = weightingVariable
         )
     }
+    # Search around each station for the NASC values inside the range 'Radius':
     else if(WeightingMethod == "NASC") {
-        
-        # Check that the LengthDistributionData and NASCData are on the Station and EDSU resolution horizontally, respectively:
-        if(NASC[, all(is.na(EDSU))]) {
-            stop("StoX: Horizontal resolution of the NASCData must be EDSU for WeightingMethod == \"NASC\" (before applying MeanNASC")
+        # Merge the Station and Haul table:
+        if(any(unlist(LengthDistributionData[, lapply(.SD, function(x) all(is.na(x))), .SDcols = c("Station", "Haul")]))) {
+            stop("LengthDistributionData must have horizontal/vertical resolution Station/Haul (the finest resolution)")
         }
-        if(LengthDistributionData[, all(is.na(Station))]) {
-            stop("StoX: Horizontal resolution of the LengthDistributionData must be Station for WeightingMethod == \"NASC\" (before applying MeanLengthDistribution")
-        }
-        
-        #### Convert length distribution to percent:
-        ###LengthDistributionData[, WeightedCount := WeightedCount / sum(WeightedCount), by = "Haul"]
-        
-        ##### Search around each station for the NASC values inside the range 'Radius': #####
-        # Get a table of "Station", "Haul", "DateTime", "Longitude", "Latitude" containing the information needed for the WeightingMethod "NASC":
         stationInfo <- unique(LengthDistributionData[, c("Station", "Haul", "DateTime", "Longitude", "Latitude")])
+        # Get unique hauls in BioticAssignmentCopy:
+        uniqueHauls <- BioticAssignmentCopy[, .(Haul = unique(Haul))]
+        # Get the position and NASC from the StoxAcousticData:
+        EDSUInfo <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
         
+        # Get the average NASC around each haul:
+        NASCData <- uniqueHauls[, 
+            NASC := getAverageNASCInsideRadius(
+                thisHaul = Haul, 
+                stationInfo = stationInfo, 
+                EDSUInfo = EDSUInfo, 
+                Radius = Radius
+            ), by = "Haul"
+        ]
         
-        # Function to get great circle distance between a Haul and the EDSUs:
-        getHaulEDSUDistance <- function(thisHaul, stationInfo, NASCData) {
-            # Get the distance from the station of the Haul to the EDSUs:
-            StationPosition <- stationInfo[Haul == thisHaul, c("Longitude", "Latitude")]
-            # Get the distance using WGS84 ellipsoid:
-            EDSUsInsideRadius <- sp::spDistsN1(
-                pts = as.matrix(NSAC[, c("Longitude", "Latitude")]), 
-                pt = as.matrix(StationPosition), 
-                longlat = TRUE
-            )
-            # plot(NSAC$Longitude, NSAC$Latitude, cex = EDSUsInsideRadius/max(EDSUsInsideRadius) * 5)
-            
-            return(EDSUsInsideRadius)
-        }
-        
-        
-        
-        # Function to get great circle distance between a Haul and the EDSUs:
-        getEDSUsInsideRadius <- function(thisHaul, stationInfo, NASCData, Radius) {
-            # Get the distance from the station of the Haul to the EDSUs:
-            haulEDSUDistance <- getHaulEDSUDistance(thisHaul, stationInfo, NASCData)
-            
-            # Identify EDSUs within the specified radius:
-            EDSUsInsideRadius <- haulEDSUDistance <= Radius
-            return(EDSUsInsideRadius)
-        }
-        
-        getEDSUsInsideRadius <- function(thisHaul, stationInfo, NASCData, Radius) {
-            # Identify EDSUs within the specified radius:
-            EDSUsInsideRadius <- getEDSUsInsideRadius(thisHaul, stationInfo, NASCData, Radius)
-            
-            
-            # Get the average NASC inside of the EDSUs:
-            averageNASC <- NASCData[EDSUsInsideRadius, mean(NASC)]
-            
-            # Get the targ
-            
-            
-            
-        }
-        
-        
-        
-        
-        
-        apply()
-        
-        
+        # Change the weights to the average NASC:
+        BioticAssignmentCopy <- merge(
+            BioticAssignmentCopy, 
+            NASCData, 
+            by = "Haul"
+        )
+        BioticAssignmentCopy[, WeightingFactor := NASC]
     }
     # Weight hauls by the summed CatchFractionWeightKilogram divided by the EffectiveTowedDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
@@ -880,6 +843,7 @@ BioticAssignmentWeighting <- function(
     return(BioticAssignmentCopy)
 }
 
+
 mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weightingVariable) {
     BioticAssignment <- merge(BioticAssignment, toMerge, by = "Haul")
     BioticAssignment[, eval(weightingVariable) := as.double(get(variable))]
@@ -889,6 +853,47 @@ mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weigh
 
 isLengthDistributionType <- function(LengthDistributionData, LengthDistributionType) {
     LengthDistributionData$LengthDistributionType[1] == LengthDistributionType
+}
+
+# Function to get great circle distance between a Haul and the EDSUs:
+getHaulToEDSUDistance <- function(thisHaul, stationInfo, EDSUInfo) {
+    # Get the distance from the station of the Haul to the EDSUs:
+    stationPosition <- stationInfo[Haul == thisHaul, c("Longitude", "Latitude")]
+    # Get the distance using WGS84 ellipsoid:
+    haulToEDSUDistance <- sp::spDistsN1(
+        pts = as.matrix(EDSUInfo[, c("Longitude", "Latitude")]), 
+        pt = as.matrix(stationPosition), 
+        longlat = TRUE
+    )
+    # plot(NSAC$Longitude, NSAC$Latitude, cex = haulToEDSUDistance/max(haulToEDSUDistance) * 5)
+    return(haulToEDSUDistance)
+}
+# Function to get great circle distance between a Haul and the EDSUs:
+getEDSUsInsideRadius <- function(thisHaul, stationInfo, EDSUInfo, Radius) {
+    # Get the distance from the station of the Haul to the EDSUs:
+    haulToEDSUDistance <- getHaulToEDSUDistance(
+        thisHaul = thisHaul, 
+        stationInfo = stationInfo, 
+        EDSUInfo = EDSUInfo
+    )
+    
+    # Identify EDSUs within the specified radius:
+    EDSUsInsideRadius <- haulToEDSUDistance <= Radius
+    return(EDSUsInsideRadius)
+}
+# Function to get average NASC around one haul:
+getAverageNASCInsideRadius <- function(thisHaul, stationInfo, EDSUInfo, Radius) {
+    # Identify EDSUs within the specified radius:
+    EDSUsInsideRadius <- getEDSUsInsideRadius(
+        thisHaul = thisHaul, 
+        stationInfo = stationInfo, 
+        EDSUInfo = EDSUInfo, 
+        Radius = Radius
+    )
+    
+    # Get the average NASC inside of the radius (across Frequency and AcosuticCategory):
+    averageNASC <- EDSUInfo[EDSUsInsideRadius, mean(NASC, na.rm = TRUE)]
+    return(averageNASC)
 }
 
 # Function to sum up the WeightedCount
@@ -902,7 +907,7 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
         LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
     } 
     else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
-        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount is divided by EffectiveTowedDistance) or \"Normalized\"")
+        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowedDistance) or \"Normalized\"")
     }
     # Sum the normalized WeightedCount for each Haul:
     SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
@@ -920,8 +925,6 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     
     BioticAssignment[]
 }
-
-
 
 
 ##################################################

@@ -96,8 +96,14 @@ AcousticDensity <- function(
 
 NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable, TargetStrengthMethod, resolution) {
     # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship:
-    mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
-    DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
+    #mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
+    mergeBy <- intersect(names(NASCData), names(TargetStrengthTable))
+    if(length(mergeBy) > 0) {
+        DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
+    }
+    else {
+        DensityData <- cbind(NASCData, TargetStrengthTable)
+    }
     
     # Merge the LengthDistributionData into the DensityData. This adds the length distribution:
     mergeBy <- intersect(names(DensityData), names(LengthDistributionData))
@@ -125,7 +131,7 @@ NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable,
 ###########################################################
 # Define a function to add TS according to selected model #
 ###########################################################
-getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona2003")){
+getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona2003", "OnlyLength")){
     
     TargetStrengthMethod <- match.arg(TargetStrengthMethod)
     
