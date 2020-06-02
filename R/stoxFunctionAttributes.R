@@ -376,13 +376,13 @@ stoxFunctionAttributes <- list(
             MaxNumberOfLengthSamples = list(
                 WeightingMethod = c("NumberOfLengthSamples")
             ), 
-            NASCData = list(
+            StoxAcousticData = list(
                 WeightingMethod = c("NASC")
             ), 
             Radius = list(
                 WeightingMethod = c("NASC")
             ), 
-            LengthExponent = list(
+            LengthExponentTable = list(
                 WeightingMethod = c("NASC")
             )
         )
