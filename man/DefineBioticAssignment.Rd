@@ -50,7 +50,7 @@ An object of StoX data type \code{\link{BioticAssignment}}.
 This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 }
 \details{
-See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?".
+See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
 }
 \examples{
 x <- 1
