@@ -455,7 +455,7 @@ DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBiotic
 #' @param EllipsoidalDistanceTable     Not yet implemented.
 #' 
 #' @details
-#' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?".
+#' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
