@@ -52,6 +52,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
             #weighting = "AssignmentLengthDistributionWeight", 
             weighting = NULL, 
+            type = "LengthDistributionType", 
             other = NULL
         ), 
         DensityData = list(
