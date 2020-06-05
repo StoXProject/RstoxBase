@@ -128,7 +128,7 @@ stoxFunctionAttributes <- list(
                 DefinitionMethod = "Radius", 
                 UseProcessData = FALSE
             ), 
-            MinimumNumberOfHauls = list(
+            MinNumberOfHauls = list(
                 DefinitionMethod = "EllipsoidalDistance", 
                 UseProcessData = FALSE
             ), 

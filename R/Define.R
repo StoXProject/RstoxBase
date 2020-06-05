@@ -477,7 +477,7 @@ DefineBioticAssignment <- function(
     StoxAcousticData, 
     Radius = double(), 
     # (Additional) for DefinitionMethod "EllipsoidalDistance": 
-    MinimumNumberOfHauls,
+    MinNumberOfHauls,
     DistanceNauticalMiles, 
     TimeDifferenceHours, 
     BottomDepthDifferenceMeters, 
@@ -611,8 +611,8 @@ DefineBioticAssignment <- function(
         BioticAssignment <- data.table::data.table(BioticAssignment, differenceTable)
         
         # Apply any requirement on the number of hauls per PSU:
-        if(length(MinimumNumberOfHauls)) {
-            BioticAssignment[, inside := inside | distance <= sort(distance)[MinimumNumberOfHauls], by = c("PSU")]
+        if(length(MinNumberOfHauls)) {
+            BioticAssignment[, inside := inside | distance <= sort(distance)[MinNumberOfHauls], by = c("PSU")]
         }
         
         # Keep only Hauls inside the radius:
@@ -748,6 +748,9 @@ BioticAssignmentWeighting <- function(
         # Merge Haul and Individual, and count individuals with length for each Haul:
         Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
         NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLengthCentimeter)))), by = "Haul"]
+        # Apply the MaxNumberOfLengthSamples:
+        NumberOfLengthSamples[NumberOfLengthSamples > MaxNumberOfLengthSamples, NumberOfLengthSamples := MaxNumberOfLengthSamples]
+        
         # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
         #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NumberOfLengthSamples, by = "Haul")
         #BioticAssignmentCopy[, eval(weightingVariable) := NumberOfLengthSamples]

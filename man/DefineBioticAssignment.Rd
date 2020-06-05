@@ -14,7 +14,7 @@ DefineBioticAssignment(
   AcousticLayer,
   StoxAcousticData,
   Radius = double(),
-  MinimumNumberOfHauls,
+  MinNumberOfHauls,
   DistanceNauticalMiles,
   TimeDifferenceHours,
   BottomDepthDifferenceMeters,
