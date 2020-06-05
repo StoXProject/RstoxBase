@@ -47,42 +47,6 @@ AcousticDensity <- function(
         TargetStrengthMethod = TargetStrengthMethod, 
         resolution = resolution
     )
-        
-        
-        
-        
-        
-        
-        
-    
-    # # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship:
-    # mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
-    # DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
-    # 
-    # # Merge the AssignmentLengthDistributionData into the DensityData. This adds the length distribution:
-    # mergeBy <- intersect(names(DensityData), names(AssignmentLengthDistributionData))
-    # DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
-    # 
-    # # Calculate the target strength:
-    # getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
-    # 
-    # # Get backscattering cross section:
-    # DensityData[, backscatteringCrossSection := 10^(TargetStrength/10)]
-    # 
-    # # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the length distribution from#  the AssignmentLengthDistributionData:
-    # DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount]
-    # # Divide by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
-    # resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
-    # DensityData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection# ), by = resolution]
-    # 
-    # # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
-    # DensityData[, NASCDistributed := NASC * representativeBackscatteringCrossSectionNormalized]
-    # # and get the density by divviding by the backscattering cross section of each length group:
-    # DensityData[, Density := NASCDistributed / backscatteringCrossSection]
-    
-    
-    
-    
     
     # Introduce the DensityWeight as a copy of the NASCWeight:
     DensityData[, DensityWeight := NASCWeight]
@@ -113,7 +77,7 @@ NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable,
     getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
     
     # Get backscattering cross section:
-    DensityData[, backscatteringCrossSection := 10^(TargetStrength/10)]
+    DensityData[, backscatteringCrossSection := targetStrengthToBackscatteringCrossSection(TargetStrength)]
     
     # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the length distribution from the AssignmentLengthDistributionData:
     DensityData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount]
@@ -122,11 +86,13 @@ NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable,
     
     # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
     DensityData[, NASCDistributed := NASC * representativeBackscatteringCrossSectionNormalized]
-    # and get the density by dividing by the backscattering cross section:
-    DensityData[, Density := NASCDistributed / backscatteringCrossSection]
+    # and get the density by dividing by the cross section (4 * pi * backscatteringCrossSection):
+    DensityData[, crossSection := 4 * pi * backscatteringCrossSection]
+    DensityData[, Density := NASCDistributed / crossSection]
     
     return(DensityData[])
 }
+
 
 ###########################################################
 # Define a function to add TS according to selected model #
@@ -134,6 +100,9 @@ NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable,
 getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona2003", "OnlyLength")){
     
     TargetStrengthMethod <- match.arg(TargetStrengthMethod)
+    
+    # Get the length intervavl mid points:
+    Data[, lengthIntervalMidPoint := IndividualTotalLengthCentimeter + LengthResolutionCentimeter / 2]
     
     # Check wich model is selected
     if(grepl("OnlyLength", TargetStrengthMethod, ignore.case = TRUE)){
@@ -143,7 +112,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona20
         }
         
         # Apply the Foote1987 equation: 
-        Data[, TargetStrength := LengthExponent * log10(IndividualTotalLengthCentimeter)]
+        Data[, TargetStrength := LengthExponent * log10(lengthIntervalMidPoint)]
     }
     if(grepl("Foote1987", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
@@ -152,7 +121,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona20
         }
         
         # Apply the Foote1987 equation: 
-        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(IndividualTotalLengthCentimeter)]
+        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(lengthIntervalMidPoint)]
     }
     else if(grepl("Ona2003", TargetStrengthMethod, ignore.case = TRUE)){
         # Check that all parameters are present: 
@@ -162,11 +131,16 @@ getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona20
         
         # Apply the Ona2003 equation: 
         verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
-        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(IndividualTotalLengthCentimeter) + DepthExponent * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
+        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(lengthIntervalMidPoint) + DepthExponent * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
     }
     else{
         warning("Invalid TargetStrengthMethod (Foote1987 and Ona2003 currently implemented)")
     }
+}
+
+# Function to convert from target strength (TS) to backscattering cross section (sigma_bs)
+targetStrengthToBackscatteringCrossSection <- function(targetStrength) {
+    10^(targetStrength/10)
 }
 
 
