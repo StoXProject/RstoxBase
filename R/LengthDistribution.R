@@ -188,6 +188,16 @@ RegroupLengthDistribution <- function(
         minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
         # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
         maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
+        
+        print("LengthDistributionDataCopy")
+        print(LengthDistributionDataCopy)
+        print("minLength")
+        print(minLength)
+        print("maxLength")
+        print(maxLength)
+        print("LengthInterval")
+        print(LengthInterval)
+        
         # Create a vector of evenly spaced breaks:
         print("minLengthIntervalIndexFrom0")
         print(minLengthIntervalIndexFrom0)
