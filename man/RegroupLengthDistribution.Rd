@@ -4,7 +4,7 @@
 \alias{RegroupLengthDistribution}
 \title{Regroup length distribution to common intervals}
 \usage{
-RegroupLengthDistribution(LengthDistributionData, LengthInterval = double())
+RegroupLengthDistribution(LengthDistributionData, LengthInterval = numeric())
 }
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
