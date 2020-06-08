@@ -179,6 +179,9 @@ RegroupLengthDistribution <- function(
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
     
     # Get the minimum and maximum lower and upper length interval breaks:
+    if(all(is.na(LengthDistributionDataCopy$IndividualTotalLengthCentimeter))) {
+        stop("IndividualTotalLengthCentimeter is all NA in LengthDistributionData")
+    }
     minLength <- min(LengthDistributionDataCopy$IndividualTotalLengthCentimeter, na.rm = TRUE)
     maxLength <- max(LengthDistributionDataCopy$IndividualTotalLengthCentimeter + LengthDistributionDataCopy$LengthResolutionCentimeter, na.rm = TRUE)
     
@@ -189,20 +192,6 @@ RegroupLengthDistribution <- function(
         # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
         maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
         
-        print("LengthDistributionDataCopy")
-        print(LengthDistributionDataCopy)
-        print("minLength")
-        print(minLength)
-        print("maxLength")
-        print(maxLength)
-        print("LengthInterval")
-        print(LengthInterval)
-        
-        # Create a vector of evenly spaced breaks:
-        print("minLengthIntervalIndexFrom0")
-        print(minLengthIntervalIndexFrom0)
-        print("maxLengthIntervalIndexFrom0")
-        print(maxLengthIntervalIndexFrom0)
         LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
     }
     else {
