@@ -172,7 +172,7 @@ LengthDistribution <- function(
 #' 
 RegroupLengthDistribution <- function(
     LengthDistributionData, 
-    LengthInterval
+    LengthInterval = double()
 ) {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
@@ -190,6 +190,9 @@ RegroupLengthDistribution <- function(
         maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
         # Create a vector of evenly spaced breaks:
         LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
+    }
+    else {
+        stop("The function parameter LengthInterval must be set as a numeric value")
     }
     
     # Check that there are no existing length intervals that are inside one of the new intervals:
