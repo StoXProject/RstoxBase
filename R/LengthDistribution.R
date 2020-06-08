@@ -172,7 +172,7 @@ LengthDistribution <- function(
 #' 
 RegroupLengthDistribution <- function(
     LengthDistributionData, 
-    LengthInterval = double()
+    LengthInterval = numeric()
 ) {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
@@ -189,6 +189,10 @@ RegroupLengthDistribution <- function(
         # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
         maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
         # Create a vector of evenly spaced breaks:
+        print("minLengthIntervalIndexFrom0")
+        print(minLengthIntervalIndexFrom0)
+        print("maxLengthIntervalIndexFrom0")
+        print(maxLengthIntervalIndexFrom0)
         LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
     }
     else {
