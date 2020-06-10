@@ -4,12 +4,15 @@
 \alias{RegroupLengthDistribution}
 \title{Regroup length distribution to common intervals}
 \usage{
-RegroupLengthDistribution(LengthDistributionData, LengthInterval = numeric())
+RegroupLengthDistribution(
+  LengthDistributionData,
+  LengthIntervalCentimeter = numeric()
+)
 }
 \arguments{
 \item{LengthDistributionData}{The length distribution data.}
 
-\item{LengthInterval}{Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.}
+\item{LengthIntervalCentimeter}{Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.
