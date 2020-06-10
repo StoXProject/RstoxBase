@@ -158,7 +158,7 @@ initiateRstoxBase <- function(){
         "..intervalVector", 
         "..keys", 
         "..keysSansSample", 
-        "..LengthInterval", 
+        "..LengthIntervalCentimeter", 
         "..LengthIntervalWidths", 
         "..lengthVar", 
         "..refvar", 
