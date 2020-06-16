@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.17</span>
       </span>
     </div>
 
@@ -117,7 +117,10 @@
     <p>This function aggregates the <code>WeightedCount</code> of the LengthDistributionData</p>
     </div>
 
-    <pre class="usage"><span class='fu'>RegroupLengthDistribution</span>(<span class='no'>LengthDistributionData</span>, <span class='kw'>LengthInterval</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>())</pre>
+    <pre class="usage"><span class='fu'>RegroupLengthDistribution</span>(
+  <span class='kw'>LengthDistributionData</span>,
+  LengthIntervalCentimeter = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>()
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -127,20 +130,21 @@
       <td><p>The length distribution data.</p></td>
     </tr>
     <tr>
-      <th>LengthInterval</th>
+      <th>LengthIntervalCentimeter</th>
       <td><p>Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> object.</p>
+    <p>A <code>LengthDistributionData</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function is awesome and does excellent stuff.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span></div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
