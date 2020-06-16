@@ -383,7 +383,9 @@ SpeciesCategoryCatch <- function(StoxBioticData, CatchVariable = c("Count", "Wei
     SpeciesCategoryCatchData <- data.table::dcast(
         StoxBioticDataMerged, 
         formula = Station ~ get(categoryVariable), 
-        value.var = CatchVariableName)
+        value.var = CatchVariableName, 
+        fun.aggregate = sum
+        )
     
     SpeciesCategoryCatchData <- merge(Cruise_Station, SpeciesCategoryCatchData, by = "Station")
     
