@@ -25,8 +25,7 @@ AcousticDensity <- function(
     NASCData,
     AssignmentLengthDistributionData,
     AcousticTargetStrength,
-    SpeciesLinkTable,
-    TargetStrengthMethod = "Foote1987"){
+    SpeciesLinkTable){
     
     # Check that the input SpeciesLinkTable has the appropriate types:
     checkTypes(table = SpeciesLinkTable)
@@ -35,7 +34,7 @@ AcousticDensity <- function(
     checkResolutionPSU_Layer(NASCData, "NASCData")
     
     # Merge TargetStrengthTable with SpeciesLinkTable in order to get the targets trengt for each SepciesCategory (and not only AcousticCategory):
-    TargetStrengthTable <- merge(AcousticTargetStrength, SpeciesLinkTable, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
+    AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLinkTable, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
     # Define the resolution on which to distribute the NASC:
     resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     
@@ -43,8 +42,7 @@ AcousticDensity <- function(
     DensityData <- NASCToDensity(
         NASCData = NASCData, 
         LengthDistributionData = AssignmentLengthDistributionData, 
-        TargetStrengthTable = TargetStrengthTable, 
-        TargetStrengthMethod = TargetStrengthMethod, 
+        AcousticTargetStrength = AcousticTargetStrength, 
         resolution = resolution
     )
     
@@ -58,15 +56,39 @@ AcousticDensity <- function(
     return(DensityData)
 }
 
-NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable, TargetStrengthMethod, resolution) {
-    # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship:
+NASCToDensity <- function(NASCData, LengthDistributionData, AcousticTargetStrength, resolution) {
+    # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship. This step is important, as merging is done by the AcousticCategory, Frequency and possibly other grouping columns.:
+    
+    
+    # Take special care of TargetStrengthMethods that are tables of length instead of functions, in which we apply constant interpolation to the lengths in the data here, to facilitate correct merging:
+    if(getRstoxBaseDefinitions("targetStrengthMethodTypes")[[AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod]] == "Table") {
+        #AcousticTargetStrength$TargetStrengthFunction <- getTargetStrengthFunction(
+        #    TargetStrengthTable = AcousticTargetStrength$TargetStrengthTable, 
+        #    LengthData = LengthDistributionData
+        #)
+        AcousticTargetStrength$TargetStrengthTable <- getTargetStrengthByLengthFunction(
+            AcousticTargetStrength$TargetStrengthTable, 
+            method = "constant", 
+            rule = 2
+        )
+    }
+    
     #mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
-    mergeBy <- intersect(names(NASCData), names(TargetStrengthTable))
+    mergeBy <- intersect(
+        names(NASCData), 
+        names(AcousticTargetStrength$TargetStrengthTable)
+    )
+    ## Subtract the columns defined as parameters to the target strength function:
+    #mergeBy <- setdiff(
+    #    mergeBy, 
+    #    getRstoxBaseDefinitions("targetStrengthParameters")[[AcousticTargetStrength$TargetStrengthMethod]]
+    #)
+    
     if(length(mergeBy) > 0) {
-        DensityData <- merge(NASCData, TargetStrengthTable, by = mergeBy, all.x = TRUE)
+        DensityData <- merge(NASCData, AcousticTargetStrength$TargetStrengthTable, by = mergeBy, all.x = TRUE)
     }
     else {
-        DensityData <- cbind(NASCData, TargetStrengthTable)
+        DensityData <- cbind(NASCData, AcousticTargetStrength$TargetStrengthTable)
     }
     
     # Merge the LengthDistributionData into the DensityData. This adds the length distribution:
@@ -74,7 +96,7 @@ NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable,
     DensityData <- merge(DensityData, LengthDistributionData, by = mergeBy, all.x = TRUE)
     
     # Calculate the target strength of each length group:
-    getTargetStrength(DensityData, TargetStrengthMethod = TargetStrengthMethod)
+    getTargetStrength(DensityData, TargetStrengthMethod = AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod)
     
     # Get backscattering cross section:
     DensityData[, backscatteringCrossSection := targetStrengthToBackscatteringCrossSection(TargetStrength)]
@@ -93,54 +115,170 @@ NASCToDensity <- function(NASCData, LengthDistributionData, TargetStrengthTable,
     return(DensityData[])
 }
 
+## Convert a table of lenght and TS to a funciton:
+#getTargetStrengthFunctionOld <- function(TargetStrengthTable, LengthData, method = "constant", rule = 2) {
+#    # Approximate the TargetStrength to the mid lengths of the length interavls of the LengthData (such as length distribution). Take a #copy first since the IndividualTotalLengthCentimeter is replaced by reference using getLengthIntervalMidPoints with replace.IndividualTo#talLengthCentimeter = TRUE:
+#    LengthDataCopy <- data.table::copy(LengthData)
+#    LengthData[, IndividualTotalLengthCentimeter := getLengthIntervalMidPoints(.SD)]
+#    
+#    # Since approxfun with method "constant" defines values to span to the next value, we need to modify the TargetStrengthTable to have #the first point followed by the mid points (in x), and then followed by the last point:
+#    TargetStrengthTable <- addMidPointsOfTargetStrengthTable(TargetStrengthTable)
+#    
+#    # Create the function to use in getTargetStrength():
+#    approxfun(
+#        x = TargetStrengthTable$IndividualTotalLengthCentimeter, 
+#        y = TargetStrengthTable$TargetStrength, 
+#        xout = sort(unique(LengthData$IndividualTotalLengthCentimeter)), 
+#        method = method, 
+#        rule = rule
+#    )
+#}
+
+
+# Convert a table of lenght and TS to a funciton:
+getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "constant", rule = 2) {
+    
+    # Define the columns to modify:
+    functionColumns <- c("IndividualTotalLengthCentimeter", "TargetStrength")
+    by <- setdiff(names(TargetStrengthTable), functionColumns)
+    
+    # Add mid points to the TargetStrengthTable to facilitate use of approxfun with method = "constant":
+    TargetStrengthTable  <- expandTargetStrengthTable(TargetStrengthTable, by = by)
+    
+    # Get one function for each combination of the columns given by 'by':
+    TargetStrengthTableWithFunction <- TargetStrengthTable[, .(TargetStrengthFunction = getTargetStrengthByLengthFunctionOne(.SD, by = by, method = method, rule = rule)), by = by]
+    
+    return(TargetStrengthTableWithFunction)
+}
+
+
+# Define the function to get the target strength function, using one TargetStrengthTable (a subset of the TargetStrengthTable):
+getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method = "constant", rule = 2) {
+    
+    # Define the target strength function as a function of length and length interval:
+    targetStrengthByLengthFunctionOne <- function(midIndividualTotalLengthCentimeter) {
+        output <- approx(
+            x = TargetStrengthTable$IndividualTotalLengthCentimeter, 
+            y = TargetStrengthTable$TargetStrength, 
+            xout = midIndividualTotalLengthCentimeter, 
+            method = method, 
+            rule = rule
+        )$y
+        
+        return(output)
+    }
+    
+    # Save the function in the package environment:
+    #functionName <- paste0("StrengthByLengthFunction_", paste(by, TargetStrengthTable[1, ..by], sep = "_", collapse = "_"))
+    functionName <- paste0("StrengthByLengthFunction_UNIXTime", unclass(Sys.time()))
+    assign(
+        x = functionName, 
+        value = targetStrengthByLengthFunctionOne, 
+        envir = get("RstoxBaseEnv")
+    )
+    
+    # Return the function:
+    return(functionName)
+}
+
+
+
+
+
+
+## Convert a table of lenght and TS to a funciton:
+#getTargetStrengthFunctionOne <- function(TargetStrengthTable, LengthData, method = "constant", rule = 2) {
+#    
+#    # Define the columns to modify:
+#    functionColumns <- c("IndividualTotalLengthCentimeter", "TargetStrength")
+#    by <- setdiff(names(TargetStrengthTable), functionColumns)
+#    
+#    # Add mid points to the TargetStrengthTable to facilitate use of approxfun with method = "constant":
+#    TargetStrengthTable  <- addMidPointsOfTargetStrengthTable(TargetStrengthTable, by = by)
+#    
+#}
+
+# Function to prepare a TargetStrengthTable for approxfun():
+expandTargetStrengthTable <- function(TargetStrengthTable, by) {
+    # Add mid points of the lengths between the first and last:
+    TargetStrengthTable[, .(
+        IndividualTotalLengthCentimeter = c(
+            utils::head(IndividualTotalLengthCentimeter, 1), 
+            IndividualTotalLengthCentimeter[-1] - diff(IndividualTotalLengthCentimeter) / 2, 
+            utils::tail(IndividualTotalLengthCentimeter, 1)
+        ), 
+        TargetStrength = c(
+            TargetStrength, 
+            utils::tail(TargetStrength, 1)
+        )), 
+        by = by]
+}
+
 
 ###########################################################
 # Define a function to add TS according to selected model #
 ###########################################################
-getTargetStrength <- function(Data, TargetStrengthMethod = c("Foote1987", "Ona2003", "OnlyLength")){
+getTargetStrength <- function(Data, TargetStrengthMethod){
     
-    TargetStrengthMethod <- match.arg(TargetStrengthMethod)
-    
-    # Get the length intervavl mid points:
-    Data[, lengthIntervalMidPoint := IndividualTotalLengthCentimeter + LengthResolutionCentimeter / 2]
+    # Get the length interval mid points:
+    Data[, midIndividualTotalLengthCentimeter := getMidIndividualTotalLengthCentimeter(.SD)]
     
     # Check wich model is selected
-    if(grepl("OnlyLength", TargetStrengthMethod, ignore.case = TRUE)){
-        # Check that all parameters are present: 
-        if(!all(c("LengthExponent") %in% names(Data))){
-            stop("The column \"LengthExponent\" is required for TargetStrengthMethod \"OnlyLength\" (LengthExponent * log10(L), where L is length in centimeter)")
-        }
-        
-        # Apply the Foote1987 equation: 
-        Data[, TargetStrength := LengthExponent * log10(lengthIntervalMidPoint)]
+    if(grepl("LengthDependent", TargetStrengthMethod, ignore.case = TRUE)){
+        # Apply the LengthDependent equation: 
+        Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthDependent")(
+            midIndividualTotalLengthCentimeter = midIndividualTotalLengthCentimeter, 
+            TargetStrength0 = TargetStrength0, 
+            LengthExponent = LengthExponent
+        )]
     }
-    if(grepl("Foote1987", TargetStrengthMethod, ignore.case = TRUE)){
-        # Check that all parameters are present: 
-        if(!all(c("TargetStrength0", "LengthExponent") %in% names(Data))){
-            stop("The columns \"LengthExponent\" and \"TargetStrength0\" are required for TargetStrengthMethod \"Foote1987\" (TargetStrength0 + LengthExponent * log10(L), where L is length in centimeter)")
-        }
-        
-        # Apply the Foote1987 equation: 
-        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(lengthIntervalMidPoint)]
-    }
-    else if(grepl("Ona2003", TargetStrengthMethod, ignore.case = TRUE)){
-        # Check that all parameters are present: 
-        if(!all(c("TargetStrength0", "LengthExponent", "DepthExponent") %in% names(Data))){
-            stop("The columns \"LengthExponent\", \"TargetStrength0\" and \"DepthExponent\" are required for TargetStrengthMethod \"Foote1987\" (TargetStrength0 + LengthExponent * log10(L), where L is length in centimeter)")
-        }
-        
-        # Apply the Ona2003 equation: 
+    else if(grepl("LengthAndDepthDependent", TargetStrengthMethod, ignore.case = TRUE)){
+        # Add the the depth:
         verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
-        Data[, TargetStrength := TargetStrength0 + LengthExponent * log10(lengthIntervalMidPoint) + DepthExponent * log10(1 + rowMeans(.SD)/10), .SDcols = verticalLayerDimension]
+        Data[, midDepthMeter := rowMeans(.SD), .SDcols = verticalLayerDimension]
+        
+        # Apply the LengthAndDepthDependent equation: 
+        Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthAndDepthDependent")(
+            midIndividualTotalLengthCentimeter = midIndividualTotalLengthCentimeter, 
+            TargetStrength0 = TargetStrength0, 
+            LengthExponent = LengthExponent, 
+            DepthMeter = DepthMeter
+        )]
+    }
+    else if(grepl("LengthExponent", TargetStrengthMethod, ignore.case = TRUE)){
+        # Apply only the LengthExponent: 
+        Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthExponent")(
+            midIndividualTotalLengthCentimeter = midIndividualTotalLengthCentimeter, 
+            LengthExponent = LengthExponent
+        )]
+    }
+    else if(grepl("TargetStrengthByLength", TargetStrengthMethod, ignore.case = TRUE)){
+        # Apply the TargetStrengthByLengthTargetStrengthByLength equations: 
+        Data[, TargetStrength := 
+            if(!is.na(TargetStrengthFunction)) 
+                    get("RstoxBaseEnv")[[TargetStrengthFunction]](midIndividualTotalLengthCentimeter)
+            else 
+                NA_real_, 
+            by = seq_len(nrow(Data)
+        )]
     }
     else{
-        warning("Invalid TargetStrengthMethod (Foote1987 and Ona2003 currently implemented)")
+        warning("StoX: Invalid TargetStrengthMethod (", paste(getRstoxBaseDefinitions("targetStrengthParameters"), collapse = ", "), " currently implemented)")
     }
 }
+
+
+
+
 
 # Function to convert from target strength (TS) to backscattering cross section (sigma_bs)
 targetStrengthToBackscatteringCrossSection <- function(targetStrength) {
     10^(targetStrength/10)
+}
+
+# Function to get mid points of length intervals of e.g. LengthDistributionData:
+getMidIndividualTotalLengthCentimeter <- function(x) {
+    x[, IndividualTotalLengthCentimeter + LengthResolutionCentimeter / 2]
 }
 
 
@@ -339,10 +477,11 @@ SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
         value.var = "Density")
     
     # Get the Station information by merging StoxBioticData$Cruise and StoxBioticData$Station into Cruise_Station: 
-    Cruise_Station <- merge(StoxBioticData$Cruise, StoxBioticData$Station)
-
-    # Merge SpeciesCategoryDensity with Cruise_Station by Station:
-    SpeciesCategoryDensityData <- merge(Cruise_Station, SpeciesCategoryDensityData, by="Station")
+    #Cruise_Station <- merge(StoxBioticData$Cruise, StoxBioticData$Station)
+    Cruise_Station_Haul <- MergeStoxBiotic(StoxBioticData, TargetTable = "Haul")
+    
+    # Merge SpeciesCategoryDensity with Cruise_Station_Haul by Station:
+    SpeciesCategoryDensityData <- merge(Cruise_Station_Haul, SpeciesCategoryDensityData, by="Station")
     
     return (SpeciesCategoryDensityData)
 }
@@ -371,7 +510,8 @@ SpeciesCategoryCatch <- function(StoxBioticData, CatchVariable = c("Count", "Wei
     
     # Merge Station, ..., Sample table:
     StoxBioticDataMerged <- MergeStoxBiotic(StoxBioticData, TargetTable = "Sample")
-    Cruise_Station <- MergeStoxBiotic(StoxBioticData, TargetTable = "Station")
+    #Cruise_Station <- MergeStoxBiotic(StoxBioticData, TargetTable = "Station")
+    Cruise_Station_Haul <- MergeStoxBiotic(StoxBioticData, TargetTable = "Haul")
     
     # Sum the CatchFractionWeightKilogram for each Haul:
     CatchVariableName <- paste0("CatchFraction", CatchVariable)
@@ -379,15 +519,26 @@ SpeciesCategoryCatch <- function(StoxBioticData, CatchVariable = c("Count", "Wei
     sumBy <- c("Haul", categoryVariable)
     StoxBioticDataMerged[, eval(CatchVariableName) := sum(get(CatchVariableName)), by = sumBy]
     
-    # Create the SpeciesCategoryDensity as a table with species categories in the columns: 
-    SpeciesCategoryCatchData <- data.table::dcast(
+    # Warning if there are species ccategories which are empty string:
+    emptyString <- StoxBioticDataMerged[, nchar(get(categoryVariable))] == 0
+    if(any(emptyString, na.rm = TRUE)) {
+        warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")
+    }
+    
+    # Create the SpeciesCategoryDensity as a table with species categories in the columns:
+    SpeciesCategoryCatch <- data.table::dcast(
         StoxBioticDataMerged, 
-        formula = Station ~ get(categoryVariable), 
+        formula = Haul ~ get(categoryVariable), 
         value.var = CatchVariableName, 
         fun.aggregate = sum
         )
     
-    SpeciesCategoryCatchData <- merge(Cruise_Station, SpeciesCategoryCatchData, by = "Station")
+    SpeciesCategoryCatchData <- list(
+        HaulInfo = Cruise_Station_Haul, 
+        SpeciesCategoryCatch = SpeciesCategoryCatch
+    )
+    
+    #SpeciesCategoryCatchData <- merge(Cruise_Station_Haul, SpeciesCategoryCatchData, by = "Station")
     
     return (SpeciesCategoryCatchData)
 }

@@ -596,7 +596,7 @@ DefineBioticAssignment <- function(
             # Check whether any of the columns are all NA, indicating error in the data:
             NACols <- unlist(differenceTable[, lapply(.SD, function(x) all(is.na(x)))])
             if(any(NACols)) {
-                warning("The following axes of the ellipsoid were all NA, indicating missing data: ", paste0(names(differenceTable)[NACols], collapse = ", "))
+                warning("StoX: The following axes of the ellipsoid were all NA, indicating missing data: ", paste0(names(differenceTable)[NACols], collapse = ", "))
             }
             
             # Sum and take the square root to get the ellipsoidal distance:
@@ -936,91 +936,145 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 #' 
 #' @inheritParams DefineStratumPolygon
+#' @param TargetStrengthMethod  Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
-#' @param ParameterTable A table of the columns AcousticCategory, Frequency, m, a and d.
+#' @param LengthDependentTable A table of the columns AcousticCategory, Frequency, TargetStrength0, LengthExponent and DepthExponent
+#' @param LengthAndDepthDependentTable A table of the columns AcousticCategory, Frequency, TargetStrength0 and LengthExponent.
+#' @param TargetStrengthByLengthTable A table of the columns AcousticCategory, Frequency and IndividualTotalLengthCentimeter.
+#' @param LengthExponentTable A table of the columns AcousticCategory, Frequency and LengthExponent
 #' @param FileName A file from which to read the \code{ParameterTable}.
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' The \code{TargetStrengthMethod} has the following possible values: 
+#' \enumerate{
+#'   \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length).
+#'   \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10).
+#'   \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length).
+#'   \item TargetStrengthByLength, applying a table of TargetStrength and Length.
+#' }
+#' The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.
 #' 
 #' @return
-#' A \code{\link{NASCData}} object.
+#' An \code{\link{AcousticTargetStrength}} object.
 #' 
 #' @examples
 #' x <- 1
 #' 
 #' @export
 #' 
-DefineAcousticTargetStrength <- function(processData, UseProcessData = FALSE, DefinitionMethod = c("Table", "ResourceFile"), ParameterTable = data.table::data.table(), FileName) {
+DefineAcousticTargetStrength <- function(
+    processData, UseProcessData = FALSE, 
+    TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "LengthExponent", "TargetStrengthByLength"), 
+    DefinitionMethod = c("Table", "ResourceFile"),
+    LengthDependentTable = data.table::data.table(), 
+    LengthAndDepthDependentTable = data.table::data.table(), 
+    LengthExponentTable = data.table::data.table(), 
+    TargetStrengthByLengthTable = data.table::data.table(), 
+    FileName) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         return(processData)
     }
     
+    # Get the methods:
+    TargetStrengthMethod <- match.arg(TargetStrengthMethod)
     DefinitionMethod <- match.arg(DefinitionMethod)
     
+    # Get or read the TargetStrengthTable and return in a list with the TargetStrengthMethod:
+    AcousticTargetStrength <- getAcousticTargetStrength(
+        TargetStrengthMethod = TargetStrengthMethod, 
+        DefinitionMethod = DefinitionMethod, 
+        TargetStrengthTable = get(paste0(TargetStrengthMethod, "Table")), 
+        FileName = FileName
+    )
+    
+    return(AcousticTargetStrength)
+}
+
+getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, TargetStrengthTable, FileName) {
+    
+    # Read the table if requested, or issue an error if not given:
     if(DefinitionMethod == "Table") {
-        if(length(ParameterTable) == 0) {
-            stop("ParameterTable must be given if DefinitionMethod = \"Table\"")
+        if(length(TargetStrengthTable) == 0) {
+            stop(TargetStrengthMethod, "Table must be given if DefinitionMethod = \"Table\"")
         }
     }
     else if(DefinitionMethod == "ResourceFile") {
-        ParameterTable <- data.table::fread(FileName)
+        TargetStrengthTable <- data.table::fread(FileName)
     }
     
-    # Check that the input ParameterTable has the appropriate types:
-    checkTypes(table = ParameterTable)
+    # Check the columns of the table:
+    checkTargetStrengthTable(TargetStrengthTable, TargetStrengthMethod)
     
-    return(ParameterTable)
-}
-
-
-checkAcousticTargetStrengthPresentColumns <- function(ParameterTable) {
-    
-    # Get the valid columns of the NASCData:
-    NASCDataDefinition <- getDataTypeDefinition("NASCData", unlist = TRUE)
-    
-    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
-    
-    validColumnNames <- c(
-        NASCDataDefinition, 
-        unique(unlist(targetStrengthParameters[ParameterTable$EquationType])), 
-        "EquationType"
+    # Define the output AcousticTargetStrength as a list of the method and the table:
+    AcousticTargetStrength <- list(
+        TargetStrengthMethod = data.table::data.table(TargetStrengthMethod = TargetStrengthMethod), 
+        TargetStrengthTable = TargetStrengthTable
     )
-    invalidColumns <- setdiff(
-        names(ParameterTable), 
-        validColumnNames
-    )
-    
-    if(length(invalidColumns)) {
-        stop("The acoustic target strength parameter table containes the following inavlid columns: ", paste(invalidColumns, collapse = ", "))
+        
+    return(AcousticTargetStrength)
+}
+
+
+checkTargetStrengthTable <- function(TargetStrengthTable, TargetStrengthMethod) {
+    # Get and check the TargetStrengthMethod:
+    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
+    if(! TargetStrengthMethod %in% names(targetStrengthParameters)) {
+        stop("Wrong TargetStrengthMethod. Must be one of ", paste(names(targetStrengthParameters), collapse = ", "))
+    }
+    # Check that the TargetStrengthTable contains the required columns:
+    if(! all(targetStrengthParameters[[TargetStrengthMethod]] %in% names(TargetStrengthTable))) {
+        stop("The ", TargetStrengthMethod, "Table must contain the required column; ", paste(targetStrengthParameters[[TargetStrengthMethod]], collapse = ", "))
     }
 }
 
-checkAcousticTargetStrengthEquationType <- function(ParameterTable) {
-    
-    # Check that EquationType is given:
-    #if(length(ParameterTable$EquationType) == 0) {
-    #    stop("EquationType must be gievn")
-    #}
-    ## Check that all values are equal in the EquationType:
-    #if(! all(ParameterTable$EquationType == ParameterTable$EquationType[1])) {
-    #    stop("EquationType must be the same in all rows")
-    #}
-    
-    # EquationType:
-    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
-    for(type in names(targetStrengthParameters)) {
-        if(ParameterTable$EquationType[1] == type) {
-            if(! all(targetStrengthParameters[[type]] %in% names(ParameterTable))) {
-                stop("With EquationType = \"", type, "\" the columns ", paste(targetStrengthParameters[[type]], collapse = ", "), " must be given.")
-            }
-        }
-    }
-    if(! ParameterTable$EquationType[1] %in% names(targetStrengthParameters)) {
-        stop("Invalid EquationType.")
-    }
-}
+
+#checkAcousticTargetStrengthPresentColumns <- function(ParameterTable) {
+#    
+#    # Get the valid columns of the NASCData:
+#    NASCDataDefinition <- getDataTypeDefinition("NASCData", unlist = TRUE)
+#    
+#    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
+#    
+#    validColumnNames <- c(
+#        NASCDataDefinition, 
+#        unique(unlist(targetStrengthParameters[ParameterTable$EquationType])), 
+#        "EquationType"
+#    )
+#    invalidColumns <- setdiff(
+#        names(ParameterTable), 
+#        validColumnNames
+#    )
+#    
+#    if(length(invalidColumns)) {
+#        stop("The acoustic target strength parameter table containes the following inavlid columns: ", paste(invalidColumns, collapse = #", "))
+#    }
+#}
+
+#checkAcousticTargetStrengthEquationType <- function(ParameterTable) {
+#    
+#    # Check that EquationType is given:
+#    #if(length(ParameterTable$EquationType) == 0) {
+#    #    stop("EquationType must be gievn")
+#    #}
+#    ## Check that all values are equal in the EquationType:
+#    #if(! all(ParameterTable$EquationType == ParameterTable$EquationType[1])) {
+#    #    stop("EquationType must be the same in all rows")
+#    #}
+#    
+#    # EquationType:
+#    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
+#    for(type in names(targetStrengthParameters)) {
+#        if(ParameterTable$EquationType[1] == type) {
+#            if(! all(targetStrengthParameters[[type]] %in% names(ParameterTable))) {
+#                stop("With EquationType = \"", type, "\" the columns ", paste(targetStrengthParameters[[type]], collapse = ", "), " #must be given.")
+#            }
+#        }
+#    }
+#    if(! ParameterTable$EquationType[1] %in% names(targetStrengthParameters)) {
+#        stop("Invalid EquationType.")
+#    }
+#}
 
 

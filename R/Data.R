@@ -179,4 +179,16 @@ NULL
 NULL
 
 
+##################################################
+##################################################
+#' Acoustic target strength
+#' 
+#' The AcousticTargetStrength process data is a list of two tables, the TargetStrengthMethod, holding only the string naming the method to use, and the TargetStrengthTable, holding the parameters/values of the method. See \code{\link{DefineAcousticTargetStrength}} for details on the different methods.
+#' 
+#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name AcousticTargetStrength
+#' 
+NULL
+
 

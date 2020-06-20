@@ -8,8 +8,7 @@ AcousticDensity(
   NASCData,
   AssignmentLengthDistributionData,
   AcousticTargetStrength,
-  SpeciesLinkTable,
-  TargetStrengthMethod = "Foote1987"
+  SpeciesLinkTable
 )
 }
 \arguments{
