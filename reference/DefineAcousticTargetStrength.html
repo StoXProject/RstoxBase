@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.18</span>
       </span>
     </div>
 
@@ -120,8 +120,13 @@
     <pre class="usage"><span class='fu'>DefineAcousticTargetStrength</span>(
   <span class='kw'>processData</span>,
   UseProcessData = <span class='fl'>FALSE</span>,
+  TargetStrengthMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"LengthDependent"</span>, <span class='st'>"LengthAndDepthDependent"</span>,
+    <span class='st'>"LengthExponent"</span>, <span class='st'>"TargetStrengthByLength"</span>),
   DefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Table"</span>, <span class='st'>"ResourceFile"</span>),
-  ParameterTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
+  LengthDependentTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
+  LengthAndDepthDependentTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
+  LengthExponentTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
+  TargetStrengthByLengthTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
   <span class='kw'>FileName</span>
 )</pre>
 
@@ -137,12 +142,28 @@
       <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
+      <th>TargetStrengthMethod</th>
+      <td><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></td>
+    </tr>
+    <tr>
       <th>DefinitionMethod</th>
       <td><p>Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table <code>ParameterTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></td>
     </tr>
     <tr>
-      <th>ParameterTable</th>
-      <td><p>A table of the columns AcousticCategory, Frequency, m, a and d.</p></td>
+      <th>LengthDependentTable</th>
+      <td><p>A table of the columns AcousticCategory, Frequency, TargetStrength0, LengthExponent and DepthExponent</p></td>
+    </tr>
+    <tr>
+      <th>LengthAndDepthDependentTable</th>
+      <td><p>A table of the columns AcousticCategory, Frequency, TargetStrength0 and LengthExponent.</p></td>
+    </tr>
+    <tr>
+      <th>LengthExponentTable</th>
+      <td><p>A table of the columns AcousticCategory, Frequency and LengthExponent</p></td>
+    </tr>
+    <tr>
+      <th>TargetStrengthByLengthTable</th>
+      <td><p>A table of the columns AcousticCategory, Frequency and IndividualTotalLengthCentimeter.</p></td>
     </tr>
     <tr>
       <th>FileName</th>
@@ -152,10 +173,15 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>NASCData</code> object.</p>
+    <p>An <code>AcousticTargetStrength</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>The <code>TargetStrengthMethod</code> has the following possible values:</p><ol>
+<li><p>LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length).</p></li>
+<li><p>LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10).</p></li>
+<li><p>LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length).</p></li>
+<li><p>TargetStrengthByLength, applying a table of TargetStrength and Length.</p></li>
+</ol><p>The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
