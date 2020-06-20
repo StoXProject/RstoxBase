@@ -7,8 +7,13 @@
 DefineAcousticTargetStrength(
   processData,
   UseProcessData = FALSE,
+  TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent",
+    "LengthExponent", "TargetStrengthByLength"),
   DefinitionMethod = c("Table", "ResourceFile"),
-  ParameterTable = data.table::data.table(),
+  LengthDependentTable = data.table::data.table(),
+  LengthAndDepthDependentTable = data.table::data.table(),
+  LengthExponentTable = data.table::data.table(),
+  TargetStrengthByLengthTable = data.table::data.table(),
   FileName
 )
 }
@@ -17,20 +22,35 @@ DefineAcousticTargetStrength(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
+\item{TargetStrengthMethod}{Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.}
+
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.}
 
-\item{ParameterTable}{A table of the columns AcousticCategory, Frequency, m, a and d.}
+\item{LengthDependentTable}{A table of the columns AcousticCategory, Frequency, TargetStrength0, LengthExponent and DepthExponent}
+
+\item{LengthAndDepthDependentTable}{A table of the columns AcousticCategory, Frequency, TargetStrength0 and LengthExponent.}
+
+\item{LengthExponentTable}{A table of the columns AcousticCategory, Frequency and LengthExponent}
+
+\item{TargetStrengthByLengthTable}{A table of the columns AcousticCategory, Frequency and IndividualTotalLengthCentimeter.}
 
 \item{FileName}{A file from which to read the \code{ParameterTable}.}
 }
 \value{
-A \code{\link{NASCData}} object.
+An \code{\link{AcousticTargetStrength}} object.
 }
 \description{
 This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 }
 \details{
-This function is awesome and does excellent stuff.
+The \code{TargetStrengthMethod} has the following possible values: 
+\enumerate{
+  \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length).
+  \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10).
+  \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length).
+  \item TargetStrengthByLength, applying a table of TargetStrength and Length.
+}
+The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.
 }
 \examples{
 x <- 1

@@ -106,7 +106,8 @@ DefineStratumPolygon <- function(processData, UseProcessData = FALSE, Definition
             stop("FileName must include file extension.")
         }
         else {
-            FileExt <- unlist(strsplit(FileName, "\\."))[length(unlist(strsplit(FileName, "\\.")))]
+            fileParts <- unlist(strsplit(FileName, "\\."))
+            FileExt <- utils::head(fileParts, 1)
         }
         
         if(tolower(FileExt) %in% c("wkt", "txt")) {

@@ -342,13 +342,36 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "AcousticTargetStrength", 
         functionParameterFormat = list(
-            ParameterTable = "acousticTargetStrengthTable"
+            FileName = "filePath",
+            LengthDependentTable = "lengthDependentTable",
+            LengthAndDepthDependentTable = "lengthAndDepthDependentTable",
+            TargetStrengthByLengthTable = "targetStrengthByLengthTable",
+            LengthExponentTable = "lengthExponentTable"
         ), 
         functionArgumentHierarchy = list(
+            TargetStrengthMethod = list(
+                UseProcessData = FALSE
+            ), 
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            ParameterTable = list(
+            LengthDependentTable = list(
+                TargetStrengthMethod = "LengthDependent", 
+                DefinitionMethod = "Table", 
+                UseProcessData = FALSE
+            ), 
+            LengthAndDepthDependentTable = list(
+                TargetStrengthMethod = "LengthAndDepthDependent", 
+                DefinitionMethod = "Table", 
+                UseProcessData = FALSE
+            ), 
+            TargetStrengthByLengthTable = list(
+                TargetStrengthMethod = "TargetStrengthByLength", 
+                DefinitionMethod = "Table", 
+                UseProcessData = FALSE
+            ), 
+            LengthExponentTable = list(
+                TargetStrengthMethod = "LengthExponent", 
                 DefinitionMethod = "Table", 
                 UseProcessData = FALSE
             ), 
@@ -464,20 +487,72 @@ processPropertyFormats <- list(
             )
         )
     ), 
-    acousticTargetStrengthTable = list(
-        title = "Define parameters of acoustic target strength by length", 
+    lengthDependentTable = list(
+        title = "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length))", 
         type = "table", 
         info = data.table::data.table(
             name = c(
                 "AcousticCategory", 
                 "Frequency", 
-                "LengthExponent", 
                 "TargetStrength0", 
+                "LengthExponent"
+            ), 
+            type = c(
+                "integer",
+                "double",
+                "double",
+                "double"
+            )
+        )
+    ), 
+    lengthAndDepthDependentTable = list(
+        title = "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10))", 
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "AcousticCategory", 
+                "Frequency", 
+                "TargetStrength0", 
+                "LengthExponent", 
                 "DepthExponent"
             ), 
             type = c(
                 "integer",
                 "double",
+                "double",
+                "double",
+                "double"
+            )
+        )
+    ), 
+    lengthExponentTable = list(
+        title = "Define LengthExponent", 
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "AcousticCategory", 
+                "Frequency", 
+                "LengthExponent"
+            ), 
+            type = c(
+                "integer",
+                "double",
+                "double"
+            )
+        )
+    ), 
+    targetStrengthByLengthTable = list(
+        title = "Define a table of IndividualTotalLengthCentimeter and TargetStrength for each AcousticCategory and Frequency", 
+        type = "table", 
+        info = data.table::data.table(
+            name = c(
+                "AcousticCategory", 
+                "Frequency", 
+                "IndividualTotalLengthCentimeter", 
+                "TargetStrength"
+            ), 
+            type = c(
+                "integer",
                 "double",
                 "double",
                 "double"

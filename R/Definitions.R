@@ -130,9 +130,33 @@ initiateRstoxBase <- function(){
     
     
     targetStrengthParameters <- list(
-        Standard = c("LengthExponent", "TargetStrength0"), 
-        DepthDependent = c("LengthExponent", "TargetStrength0", "DepthExponent")
+        LengthDependent = c("TargetStrength0", "LengthExponent"), 
+        LengthAndDepthDependent = c("TargetStrength0", "LengthExponent", "DepthExponent"), 
+        LengthExponent = "LengthExponent", 
+        TargetStrengthByLength = c("TargetStrength", "IndividualTotalLengthCentimeter")
     )
+    
+    targetStrengthMethodTypes  <- list(
+        LengthDependent = "Function", 
+        LengthAndDepthDependent = "Function", 
+        LengthExponent = "Function", 
+        TargetStrengthByLength = "Table"
+    )
+    
+    TargetStrengthFunction_LengthDependent <- function(midIndividualTotalLengthCentimeter, TargetStrength0, LengthExponent, DepthMeter) {
+        TargetStrength0 + 
+            LengthExponent * log10(midIndividualTotalLengthCentimeter)
+    }
+    
+    TargetStrengthFunction_LengthAndDepthDependent <- function(midIndividualTotalLengthCentimeter, TargetStrength0, LengthExponent, DepthMeter) {
+        TargetStrength0 + 
+            LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
+            DepthExponent * log10(1 + DepthMeter/10)
+    }
+    
+    TargetStrengthFunction_LengthExponent <- function(midIndividualTotalLengthCentimeter, LengthExponent) {
+        LengthExponent * log10(midIndividualTotalLengthCentimeter)
+    }
     
     AcousticPSUPrefix <- "PSU"
     SweptAreaPSUPrefix <- "PSU"
@@ -192,7 +216,7 @@ initiateRstoxBase <- function(){
         "WeightingFactor"
     ))
     assign("RstoxBaseEnv", new.env(), parent.env(environment()))
-    assign("definitions", definitions, envir=get("RstoxBaseEnv"))
+    assign("definitions", definitions, envir = get("RstoxBaseEnv"))
     
     #### Return the definitions: ####
     definitions
