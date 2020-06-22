@@ -4,7 +4,7 @@
 \alias{LengthDistributionData}
 \title{Length distribution data}
 \description{
-The LengthDistributionData model data gives the frequency per Haul, SpeciesCategory and length group defined by the two variables IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
+The LengthDistributionData model data contains the columns Stratum, PSU, Station, Layer, Haul, SpeciesCategory, IndividualTotalLengthCentimeter, LengthResolutionCentimeter, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowedDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType. [List all types here in a nice table]
 }
 \seealso{
 \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}

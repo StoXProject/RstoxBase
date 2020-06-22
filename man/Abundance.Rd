@@ -2,7 +2,7 @@
 % Please edit documentation in R/Abundance.R
 \name{Abundance}
 \alias{Abundance}
-\title{Some title}
+\title{Calculate abundance of a stratum}
 \usage{
 Abundance(DensityData, StratumAreaData)
 }
@@ -12,10 +12,10 @@ Abundance(DensityData, StratumAreaData)
 \item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
 }
 \value{
-A data.table is returned with awesome stuff.
+An object of StoX data type \code{\link{AbundanceData}}.
 }
 \description{
-Some description
+This function calcualtes abundance as the product of density and area of each stratum.
 }
 \details{
 This function is awesome and does excellent stuff.

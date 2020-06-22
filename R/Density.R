@@ -3,7 +3,7 @@
 ##################################################
 #' Calculate number density from NASC in length intervals
 #' 
-#' This function takes NASC and 
+#' This function converts NASC to number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
 #' 
 #' @param parameterName Parameter descrption.
 #' 
@@ -11,7 +11,7 @@
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' A data.table is returned with awesome stuff.
+#' An object of StoX data type \code{\link{DensityData}}.
 #' 
 #' @examples
 #' x <- 1
@@ -139,7 +139,7 @@ NASCToDensity <- function(NASCData, LengthDistributionData, AcousticTargetStreng
 getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "constant", rule = 2) {
     
     # Define the columns to modify:
-    functionColumns <- c("IndividualTotalLengthCentimeter", "TargetStrength")
+    functionColumns <- c("TotalLengthCentimeter", "TargetStrength")
     by <- setdiff(names(TargetStrengthTable), functionColumns)
     
     # Add mid points to the TargetStrengthTable to facilitate use of approxfun with method = "constant":
@@ -156,11 +156,11 @@ getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "con
 getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method = "constant", rule = 2) {
     
     # Define the target strength function as a function of length and length interval:
-    targetStrengthByLengthFunctionOne <- function(midIndividualTotalLengthCentimeter) {
+    targetStrengthByLengthFunctionOne <- function(TotalLengthCentimeter) {
         output <- approx(
-            x = TargetStrengthTable$IndividualTotalLengthCentimeter, 
+            x = TargetStrengthTable$TotalLengthCentimeter, 
             y = TargetStrengthTable$TargetStrength, 
-            xout = midIndividualTotalLengthCentimeter, 
+            xout = TotalLengthCentimeter, 
             method = method, 
             rule = rule
         )$y
@@ -202,10 +202,10 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
 expandTargetStrengthTable <- function(TargetStrengthTable, by) {
     # Add mid points of the lengths between the first and last:
     TargetStrengthTable[, .(
-        IndividualTotalLengthCentimeter = c(
-            utils::head(IndividualTotalLengthCentimeter, 1), 
-            IndividualTotalLengthCentimeter[-1] - diff(IndividualTotalLengthCentimeter) / 2, 
-            utils::tail(IndividualTotalLengthCentimeter, 1)
+        TotalLengthCentimeter = c(
+            utils::head(TotalLengthCentimeter, 1), 
+            TotalLengthCentimeter[-1] - diff(TotalLengthCentimeter) / 2, 
+            utils::tail(TotalLengthCentimeter, 1)
         ), 
         TargetStrength = c(
             TargetStrength, 
@@ -227,7 +227,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod){
     if(grepl("LengthDependent", TargetStrengthMethod, ignore.case = TRUE)){
         # Apply the LengthDependent equation: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthDependent")(
-            midIndividualTotalLengthCentimeter = midIndividualTotalLengthCentimeter, 
+            midIndividualTotalLengthCentimeter, 
             TargetStrength0 = TargetStrength0, 
             LengthExponent = LengthExponent
         )]
@@ -239,7 +239,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod){
         
         # Apply the LengthAndDepthDependent equation: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthAndDepthDependent")(
-            midIndividualTotalLengthCentimeter = midIndividualTotalLengthCentimeter, 
+            midIndividualTotalLengthCentimeter, 
             TargetStrength0 = TargetStrength0, 
             LengthExponent = LengthExponent, 
             DepthMeter = DepthMeter
@@ -248,7 +248,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod){
     else if(grepl("LengthExponent", TargetStrengthMethod, ignore.case = TRUE)){
         # Apply only the LengthExponent: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthExponent")(
-            midIndividualTotalLengthCentimeter = midIndividualTotalLengthCentimeter, 
+            midIndividualTotalLengthCentimeter, 
             LengthExponent = LengthExponent
         )]
     }
