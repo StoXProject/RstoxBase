@@ -7,7 +7,7 @@
 The StratumPolygon data type contains the polygons defining the strata of a survey, stored as an object of type \code{\link[sp]{SpatialPolygons}}.
 }
 \details{
-The polygons are stored
+The polygons are stored as gsojson in the project.json file and in output text files.
 }
 \seealso{
 \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}

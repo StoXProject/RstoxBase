@@ -1,8 +1,8 @@
 ##################################################
 ##################################################
-#' Some title
+#' Calculate abundance of a stratum
 #' 
-#' Some description
+#' This function calcualtes abundance as the product of density and area of each stratum.
 #' 
 #' @inheritParams MeanDensity
 #' @param StratumAreaData The \code{\link{StratumAreaData}} data.
@@ -11,7 +11,7 @@
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' A data.table is returned with awesome stuff.
+#' An object of StoX data type \code{\link{AbundanceData}}. 
 #' 
 #' @examples
 #' x <- 1

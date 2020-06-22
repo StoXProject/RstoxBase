@@ -548,7 +548,7 @@ processPropertyFormats <- list(
             name = c(
                 "AcousticCategory", 
                 "Frequency", 
-                "IndividualTotalLengthCentimeter", 
+                "TotalLengthCentimeter", 
                 "TargetStrength"
             ), 
             type = c(

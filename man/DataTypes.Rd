@@ -10,6 +10,22 @@ StoX data types are the data types used to transfer data and information between
 This RstoxBase package produces the folliwing StoX data types:
 \itemize{
 \item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
+\item{\code{\link{StratumPolygon}}}
 }
 }
 \seealso{

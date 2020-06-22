@@ -15,10 +15,10 @@ AcousticDensity(
 \item{parameterName}{Parameter descrption.}
 }
 \value{
-A data.table is returned with awesome stuff.
+An object of StoX data type \code{\link{DensityData}}.
 }
 \description{
-This function takes NASC and
+This function converts NASC to number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
 }
 \details{
 This function is awesome and does excellent stuff.
