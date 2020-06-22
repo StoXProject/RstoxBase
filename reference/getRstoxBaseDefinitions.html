@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
       </span>
     </div>
 
@@ -430,8 +430,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fbe2452e8c8&gt;
-#&gt; &lt;environment: 0x7fbe24538d98&gt;
+#&gt; &lt;bytecode: 0x7ff5331a33d8&gt;
+#&gt; &lt;environment: 0x7ff5331a52f8&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -450,8 +450,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
 #&gt;         DepthExponent * log10(1 + DepthMeter/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fbe24539d20&gt;
-#&gt; &lt;environment: 0x7fbe24538d98&gt;
+#&gt; &lt;bytecode: 0x7ff5331a2370&gt;
+#&gt; &lt;environment: 0x7ff5331a52f8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLengthCentimeter, TargetStrength0, 
@@ -459,16 +459,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fbe24530190&gt;
-#&gt; &lt;environment: 0x7fbe24538d98&gt;
+#&gt; &lt;bytecode: 0x7ff5331a26f0&gt;
+#&gt; &lt;environment: 0x7ff5331a52f8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLengthCentimeter, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fbe24539700&gt;
-#&gt; &lt;environment: 0x7fbe24538d98&gt;
+#&gt; &lt;bytecode: 0x7ff5331a1d50&gt;
+#&gt; &lt;environment: 0x7ff5331a52f8&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
@@ -495,7 +495,7 @@
 #&gt; [1] "LengthExponent"
 #&gt; 
 #&gt; $targetStrengthParameters$TargetStrengthByLength
-#&gt; [1] "TargetStrength"                  "IndividualTotalLengthCentimeter"
+#&gt; [1] "TargetStrength"        "TotalLengthCentimeter"
 #&gt; 
 #&gt; </div><div class='input'></div></pre>
   </div>

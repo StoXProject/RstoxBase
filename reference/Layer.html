@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Acoustic PSU — DefineAcousticPSU • RstoxBase</title>
+<title>Layer vertical resolution — Layer • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Acoustic PSU — DefineAcousticPSU" />
-<meta property="og:description" content="This function defines the AcousticPSU process data, linking strata, acoustic PSUs and EDSUs." />
+<meta property="og:title" content="Layer vertical resolution — Layer" />
+<meta property="og:description" content="The vertical resolution Layer is the report resolution of a StoX project along with the horizontal report resolution Stratum." />
 
 
 
@@ -108,61 +108,21 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Acoustic PSU</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R'><code>R/Define.R</code></a></small>
-    <div class="hidden name"><code>DefineAcousticPSU.Rd</code></div>
+    <h1>Layer vertical resolution</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Data.R'><code>R/Data.R</code></a></small>
+    <div class="hidden name"><code>Layer.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function defines the <code>AcousticPSU</code> process data, linking strata, acoustic PSUs and EDSUs.</p>
+    <p>The vertical resolution <code>Layer</code> is the report resolution of a StoX project along with the horizontal report resolution <code>Stratum</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DefineAcousticPSU</span>(
-  <span class='kw'>processData</span>,
-  UseProcessData = <span class='fl'>FALSE</span>,
-  <span class='kw'>StratumPolygon</span>,
-  <span class='kw'>StoxAcousticData</span>,
-  DefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"EDSUToPSU"</span>, <span class='st'>"None"</span>)
-)</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>processData</th>
-      <td><p>The current data produced by a previous instance of the function.</p></td>
-    </tr>
-    <tr>
-      <th>UseProcessData</th>
-      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
-    </tr>
-    <tr>
-      <th>StratumPolygon</th>
-      <td><p>The <code>StratumPolygon</code> process data.</p></td>
-    </tr>
-    <tr>
-      <th>StoxAcousticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
-    </tr>
-    <tr>
-      <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>An object of StoX data type <code>AcousticPSU</code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>AcousticPSU</code>.</p></div>
+    <div class='dont-index'><p><code>Resolution</code> for other resolutions.</p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
