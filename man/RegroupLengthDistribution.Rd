@@ -10,7 +10,7 @@ RegroupLengthDistribution(
 )
 }
 \arguments{
-\item{LengthDistributionData}{The length distribution data.}
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
 \item{LengthIntervalCentimeter}{Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.}
 }

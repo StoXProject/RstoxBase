@@ -29,7 +29,7 @@ DefineBioticAssignment(
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.}
 
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
@@ -37,11 +37,21 @@ DefineBioticAssignment(
 
 \item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
 
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
 
 \item{Radius}{Numeric: The radius inside which to assign biotic stations to each acoustic PSU.}
 
-\item{EllipsoidalDistanceTable}{Not yet implemented.}
+\item{MinNumberOfHauls}{For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the \code{MinNumberOfHauls}, the \code{MinNumberOfHauls} closest Hauls will be used (in ellipsoidal distance).}
+
+\item{DistanceNauticalMiles}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.}
+
+\item{TimeDifferenceHours}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.}
+
+\item{BottomDepthDifferenceMeters}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.}
+
+\item{LongitudeDifferenceDegrees}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.}
+
+\item{LatitudeDifferenceDegrees}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.
@@ -57,5 +67,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{BioticAssignment}}.
+\code{\link{BioticAssignmentWeighting}} for weighting BioticAssignment.
 }

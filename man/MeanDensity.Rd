@@ -4,12 +4,7 @@
 \alias{MeanDensity}
 \title{Mean density in each stratum}
 \usage{
-MeanDensity(DensityData, TargetResolution = "Stratum")
-}
-\arguments{
-\item{DensityData}{An object of \code{\link{DensityData}} data.}
-
-\item{TargetResolution}{The vertical resolution of the output.}
+MeanDensity(DensityData)
 }
 \value{
 A data.table is returned with awesome stuff.
@@ -25,5 +20,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+See \code{\link{AcousticDensity}} for acoustic density and  \code{\link{SweptAreaDensity}} for swept-area density.
 }

@@ -18,7 +18,7 @@ DefineAcousticLayer(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.}
 
@@ -40,5 +40,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{AcousticPSU}}.
+Swept-area Layers are generated using \code{\link{DefineSweptAreaLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
 }

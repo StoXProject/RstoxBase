@@ -4,11 +4,9 @@
 \alias{Abundance}
 \title{Calculate abundance of a stratum}
 \usage{
-Abundance(DensityData, StratumAreaData)
+Abundance(MeanDensityData, StratumAreaData)
 }
 \arguments{
-\item{DensityData}{An object of \code{\link{DensityData}} data.}
-
 \item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
 }
 \value{
@@ -25,5 +23,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+\code{\link{SuperIndividuals}} for distributing Abundance to individuals.
 }

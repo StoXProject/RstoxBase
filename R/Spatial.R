@@ -72,9 +72,8 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' 
 #' This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
 #' 
-#' @param processData The current data produced by a previous instance of the function.
+#' @inheritParams general_arguments
 #' @param FileName The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension. 
-#' @param UseProcessData Logical: If TRUE use the existing function output in the process. 
 #' 
 #' @details
 #' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment). 
@@ -82,24 +81,26 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' @return
 #' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
 #' 
-#' @import 
-#' rgdal sp
-#' 
 #' @examples
 #' 
 #' @seealso \code{\link{StratumArea}} for calculating the area of the strata.
 #' 
 #' @export
 #' 
-DefineStratumPolygon <- function(processData, UseProcessData = FALSE, DefinitionMethod = c("ResourceFile", "None"), FileName) {
+DefineStratumPolygon <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("ResourceFile", "None"), 
+    FileName
+) {
     #if(!is.null(processData) & UseProcessData) {
     if(UseProcessData) {
         return(processData)
     } 
-        
+    
+    # Get the definition method:
     DefinitionMethod <- match.arg(DefinitionMethod)
     
-    
+    # Read the file:
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
         
         if(length(unlist(strsplit(FileName, "\\."))) < 2) {
@@ -107,7 +108,7 @@ DefineStratumPolygon <- function(processData, UseProcessData = FALSE, Definition
         }
         else {
             fileParts <- unlist(strsplit(FileName, "\\."))
-            FileExt <- utils::head(fileParts, 1)
+            FileExt <- utils::tail(fileParts, 1)
         }
         
         if(tolower(FileExt) %in% c("wkt", "txt")) {
@@ -129,7 +130,7 @@ DefineStratumPolygon <- function(processData, UseProcessData = FALSE, Definition
         }
     }
     else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
-        StratumPolygon <- emptyStratumPolygon()
+        StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
     }
     else {
         stop("Inavlid DefinitionMethod")
@@ -195,8 +196,8 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' 
 #' This function calculated the area of each stratum.
 #' 
-#' @param StratumPolygon    An object of StoX class StratumPolygon, which is s SpatialPolygonsDataFrame object (sp package).
-#' @param AreaMethod        The method to use for the area calculation, defaulted to "Accurate", which applied a lambert azimuthal equal area projection. 
+#' @inheritParams ProcessData
+#' @param AreaMethod The method to use for the area calculation, defaulted to "Accurate", which applied a lambert azimuthal equal area projection. 
 #' 
 #' @details
 #' The \code{AreaMethod} "Simple" is deprecated, but kept for backwards campatibility.
@@ -210,7 +211,10 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' 
 #' @export
 #' 
-StratumArea <- function(StratumPolygon, AreaMethod = c("Accurate", "Simple")) {
+StratumArea <- function(
+    StratumPolygon, 
+    AreaMethod = c("Accurate", "Simple")
+) {
     
     AreaMethod <- match.arg(AreaMethod)
     

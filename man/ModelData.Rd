@@ -2,17 +2,46 @@
 % Please edit documentation in R/Data.R
 \name{ModelData}
 \alias{ModelData}
-\title{Model data used in estimation models in StoX}
+\title{Model data used by RstoxBase}
+\arguments{
+\item{BioticData}{The \code{\link[RstoxData]{BioticData}} data (defined in RstoxData).}
+
+\item{AcousticData}{The \code{\link[RstoxData]{AcousticData}} data (defined in RstoxData).}
+
+\item{LandingData}{The \code{\link[RstoxData]{LandingData}} data (defined in RstoxData).}
+
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
+
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
+
+\item{StoxLandingData}{The \code{\link[RstoxData]{StoxLandingData}} data (defined in RstoxData).}
+
+\item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
+
+\item{NASCData}{The \code{\link{NASCData}} data.}
+
+\item{SumNASCData}{The \code{\link{SumNASCData}} data.}
+
+\item{MeanNASCData}{The \code{\link{MeanNASCData}} data.}
+
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
+
+\item{SumLengthDistributionData}{The \code{\link{SumLengthDistributionData}} data.}
+
+\item{MeanLengthDistributionData}{The \code{\link{MeanLengthDistributionData}} data.}
+
+\item{AssignmentLengthDistribution}{The \code{\link{AssignmentLengthDistribution}} data.}
+
+\item{DensityData}{The \code{\link{DensityData}} data.}
+
+\item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
+
+\item{AbundanceData}{The \code{\link{AbundanceData}} data.}
+
+\item{IndividualsData}{The \code{\link{IndividualsData}} data.}
+
+\item{SuperIndividualsData}{The \code{\link{SuperIndividualsData}} data.}
+}
 \description{
-The model data of a StoX model is the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.
-}
-\details{
-This \code{\link{RstoxBase}} package produces the folliwing model data:
-\itemize{
-\item{\code{\link{LengthDistributionData}}}
-\item{\code{\link{NASCData}}}
-\item{\code{\link{DensityData}}}
-\item{\code{\link{StratumAreaData}}}
-\item{\code{\link{AbundanceData}}}
-}
+The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.
 }

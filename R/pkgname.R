@@ -13,3 +13,7 @@
 	initiateRstoxBase()
 } 
 
+# Packages to import to NAMESPACE (typically packages which are used extensively or packcages with special syntax that requires import, e.g, data.table)
+#' @import data.table
+NULL
+

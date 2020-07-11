@@ -5,49 +5,105 @@
 #' 
 #' This function converts NASC to number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
 #' 
-#' @param parameterName Parameter descrption.
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @param SpeciesLinkTable A table of the two columns AcousticCategory and SpeciesCategory.
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' The AcousticDensity function calculates length distributed densities as number of fish per square nautical mile by vertical layer. Length based density distributions are calculated for each NASC value of the input acoustic data set (MacLennan \emph{et al}, 2002) . Usually, the NASC values have a horizontal resolution at PSU level (e.g. transect). By combining a NASC value with a length distribution (usually a total combined length distribution derived from more than one biotic station) and applying a TS vslength relationship, a corresponding density length distribution can be calculated.
 #' 
+#' The horizontal resolution (EDSU, PSU or Stratum) of the NASC object determines the horizontal resolution of the densities. The same principal applies for the vertical layer resolution.
+#' 
+#' To combine a NASC value and a length distribution into a density distribution, the TS vs length relationship for the actual species and acoustic frequency, needs to be known.Constants in the TS vs length formula has to be given. If the vertical layer resolution is channels referred from surface and with a fixed thickness, the mean depth of each channel can be calculated and a depth dependent TS vs length formula may be applied. The calculation of densities by length from a NASC value and a corresponding length distribution (as percentage or proportion) is performed as follows (Ona, 2003, Simmond and MacLennan, 2005, Johnsen \emph{et al}, 2019):
+#'
+#' \deqn{TS_l = m \log_{10}{(l)}+a + d \log_{10}{(1 + \frac{r_y}{10})}}
+#'
+#' where:
+#'
+#' \eqn{TS_l} = target strength (dB re 1 \eqn{m^{2}}) of a fish with length l (cm)
+#'
+#' \eqn{m} = constant in the TS vs length relationship for the given
+#' species
+#'
+#' \eqn{a} = constant in the TS vs length relationship for the given species
+#'
+#' \eqn{d} = constant in the TS vs length relationship related to depth dependent TS
+#'
+#' \eqn{l} = length of the fish (cm). Typically, the center length of a length group
+#'
+#' \eqn{r_y} = average depth (m) of the NASC channel \eqn{y}
+#'
+#' \deqn{\sigma_{bs,l} = 10^{  (  \frac{TS_l}{10}  )  }   }
+#'
+#' where:
+#'
+#' \eqn{\sigma_{bs,l}} = acoustic backscattering cross-section (\eqn{m^{2}}) for a fish of length \eqn{l}
+#'
+#' \deqn{NASC_l = NASC \frac{\sigma_{bs,l} p_l}{\sum_l{( \sigma_{bs,l} p_l )} } }
+#'
+#' where:
+#'
+#' \eqn{NASC} =  the total NASC which is used to calculate densities by length
+#'
+#' \eqn{NASC_l} = the proportion of the total \eqn{NASC} which can be attributed to length group \eqn{l}.  The sum of \eqn{NASC_l} for all length groups in the total length distribution is equal to \eqn{NASC}
+#'
+#' \eqn{p_l} = proportion of fish of length \eqn{l} in the input length distribution. Sum of all \eqn{p_l} is 1.
+#'
+#'
+#' \deqn{\rho_l = \frac{NASC_l}{(4 \pi \sigma_{bs,l})}}
+#'
+#' where:
+#'
+#' \eqn{\rho_l} = area density of fish (ind. per sqare nautical mile) in length group \eqn{l}
+#'
+#' References:
+#'
+#' Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  \url{https://doi.org/10.1111/2041-210X.13250}
+#'
+#' MacLennan, D. N., Fernandes, P. G., and Dalen, J. 2002. A consistent approach to definitions and symbols in fisheries acoustics. ICES Journal of Marine Science, 59: 365_369.
+#'
+#' Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, \url{https://doi.org/10.1016/S1054-3139(03)00031-6}
+#'
+#' Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.
+#'
 #' @return
 #' An object of StoX data type \code{\link{DensityData}}.
 #' 
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' @seealso To modify AcousticCategory use \code{\link[RstoxData]{DefineStoxAcousticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxAcousticVariables}} and to modify SpeciesCategory use \code{\link[RstoxData]{DefineStoxBioticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxBioticVariables}}. See \code{\link{SweptAreaDensity}} for swept-area density.
 #' 
 #' @export
-#' @import data.table
 #' 
 AcousticDensity <- function(
-    NASCData,
+    MeanNASCData,
     AssignmentLengthDistributionData,
     AcousticTargetStrength,
-    SpeciesLinkTable){
+    SpeciesLinkTable
+){
     
     # Check that the input SpeciesLinkTable has the appropriate types:
     checkTypes(table = SpeciesLinkTable)
     
-    # Check that the NASCData has PSU and Layer resolution:
-    checkResolutionPSU_Layer(NASCData, "NASCData")
+    # Check that the MeanNASCData has PSU and Layer resolution:
+    #checkResolutionPSU_Layer(MeanNASCData, "MeanNASCData")
     
-    # Merge TargetStrengthTable with SpeciesLinkTable in order to get the targets trengt for each SepciesCategory (and not only AcousticCategory):
+    # Merge TargetStrengthTable with SpeciesLinkTable in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
     AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLinkTable, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
     # Define the resolution on which to distribute the NASC:
     resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     
     # Convert NASC to number density using the length distribution coupled with the target strength:
     DensityData <- NASCToDensity(
-        NASCData = NASCData, 
+        NASCData = MeanNASCData$Data, 
         LengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
         resolution = resolution
     )
     
     # Introduce the DensityWeight as a copy of the NASCWeight:
-    DensityData[, DensityWeight := NASCWeight]
+    DensityData[, DensityWeight := MeanNASCWeight]
     
     # Keep only the releavnt columns:
     #keepOnlyRelevantColumns(DensityData, "DensityData")
@@ -288,7 +344,7 @@ getMidIndividualTotalLengthCentimeter <- function(x) {
 #' 
 #' This function calculates the area density of fish as number of individuals per square nautical mile.
 #' 
-#' @inheritParams RegroupLengthDistribution
+#' @inheritParams ModelData
 #' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.
 #' @param SweepWidth The constant sweep width of the project.
 #' @param SweepWidthTable A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
@@ -302,46 +358,45 @@ getMidIndividualTotalLengthCentimeter <- function(x) {
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' @seealso See \code{\link{AcousticDensity}} for acoustic density.
 #' 
 #' @export
-#' @import data.table
 #' 
 SweptAreaDensity <- function(
-    LengthDistributionData, 
+    MeanLengthDistributionData, 
     SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"), 
-    SweepWidth = integer(), 
+    SweepWidth = double(), 
     SweepWidthTable = data.table::data.table()
 ) {
 	
     ## Get the DefinitionMethod:
     SweepWidthMethod <- match.arg(SweepWidthMethod)
     
-    # Check the horizontal and vertical resolution of the input LengthDistributionData:
-    if(any(!is.na(LengthDistributionData$Station)) && any(!is.na(LengthDistributionData$Haul))) {
-        stop("The horizontal and vertical resolution of the input LengthDistributionData must be PSU (identified by only NAs in the Station column) and Layer (identified by only NAs in the Haul column)")
-    }
-    else if(any(!is.na(LengthDistributionData$Station))) {
-        stop("The horizontal resolution of the input LengthDistributionData must be PSU (identified by only NAs in the Station column)")
-    }
-    else if(any(!is.na(LengthDistributionData$Haul))) {
-        stop("The vertical resolution of the input LengthDistributionData must be Layer (identified by only NAs in the Haul column)")
-    }
+    # Check the horizontal and vertical resolution of the input AggregateLengthDistributionData:
+    ###if(any(!is.na(LengthDistributionData$Station)) && any(!is.na(LengthDistributionData$Haul))) {
+    ###    stop("The horizontal and vertical resolution of the input LengthDistributionData must be PSU (identified by only NAs in the Stat###ion column) and Layer (identified by only NAs in the Haul column)")
+    ###}
+    ###else if(any(!is.na(LengthDistributionData$Station))) {
+    ###    stop("The horizontal resolution of the input LengthDistributionData must be PSU (identified by only NAs in the Station column)")###
+    ###}
+    ###else if(any(!is.na(LengthDistributionData$Haul))) {
+    ###    stop("The vertical resolution of the input LengthDistributionData must be Layer (identified by only NAs in the Haul column)")
+    ###}
     
     # Get the length distribution type:
-    LengthDistributionType <- utils::head(LengthDistributionData$LengthDistributionType, 1)
+    LengthDistributionType <- utils::head(MeanLengthDistributionData$Data$LengthDistributionType, 1)
     
     # Issue an error if the LengthDistributionType is "Percent" or "Standard":
     validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
     if(! LengthDistributionType %in% validLengthDistributionType) {
-        stop("The LengthDistributionType of the input LengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
+        stop("The LengthDistributionType of the input MeanLengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
     }
     
     # Make a copy of the input, since we are averaging and setting values by reference:
-    DensityData = data.table::copy(LengthDistributionData)
+    DensityData = data.table::copy(MeanLengthDistributionData$Data)
     
-    # Introduce the DensityWeight as a copy of the LengthDistributionWeight:
-    DensityData[, DensityWeight := LengthDistributionWeight]
+    # Introduce the DensityWeight as a copy of the MeanLengthDistributionWeight:
+    DensityData[, DensityWeight := MeanLengthDistributionWeight]
     
     # If LengthDistributionType is "NormalizedLengthDistribution", the effectivev towed distance has been accounted for, but there is still need to account for the sweep width:
     if(LengthDistributionType %in% c("Normalized", "SelectivityCompensatedNormalized")) {
@@ -365,7 +420,7 @@ SweptAreaDensity <- function(
             }
         }
         else {
-            stop("SweepWidthMethod must be \"Constant\" or \"CruiseDependent\" if LengthDistributionType is \"Normalized\" or \"SelectivityCompensatedNormalized\" in the LengthDistributionData")
+            stop("SweepWidthMethod must be \"Constant\" or \"CruiseDependent\" if LengthDistributionType is \"Normalized\" or \"SelectivityCompensatedNormalized\" in the MeanLengthDistributionData")
         }
         
     }
@@ -376,7 +431,7 @@ SweptAreaDensity <- function(
             DensityData[, Density := WeightedCount]
         }
         else {
-            stop("SweepWidthMethod must be \"PreDefined\" if LengthDistributionType is \"SweepWidthCompensatedNormalized\" in the LengthDistributionData")
+            stop("SweepWidthMethod must be \"PreDefined\" if LengthDistributionType is \"SweepWidthCompensatedNormalized\" in the MeanLengthDistributionData")
         }
     }
     else {
@@ -388,8 +443,9 @@ SweptAreaDensity <- function(
     #DensityData[, Density := Density * lengthOfOneNauticalMile]
     
     # Extract the relevant variables only:
-    relevantVariables <- getAllDataTypeVariables(dataType = "DensityData")
-    DensityData <- DensityData[, ..relevantVariables]
+    #relevantVariables <- getAllDataTypeVariables(dataType = "DensityData")
+    #DensityData <- DensityData[, ..relevantVariables]
+    formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
     
     return(DensityData)
 }
@@ -402,8 +458,7 @@ SweptAreaDensity <- function(
 #' 
 #' This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.
 #' 
-#' @param DensityData An object of \code{\link{DensityData}} data.
-#' @param TargetResolution The vertical resolution of the output.
+#' @inheritParams ProcessData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -414,77 +469,82 @@ SweptAreaDensity <- function(
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
-#' 
-#' @export
-#' @import data.table
-#' 
-MeanDensity <- function(DensityData, TargetResolution = "Stratum") {
-    meanData(DensityData, dataType = "DensityData", targetResolution = TargetResolution)
-}
-
-
-##################################################
-##################################################
-#' Table of biotic stations as rows with station info and density of all species categories as columns
-#' 
-#' This function organizes density of all species in the input Density into a table with biotic stations as rows, and the density of each species category in columns. The function requires each swept-area PSUs to contain only one station.
-#' 
-#' @inheritParams MeanDensity
-#' @inheritParams DefineSweptAreaPSU
-#' @inheritParams LengthDistribution
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
+#' @seealso See \code{\link{AcousticDensity}} for acoustic density and  \code{\link{SweptAreaDensity}} for swept-area density.
 #' 
 #' @export
 #' 
-SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
-    
-    # Check that there is only one Station per PSU in SweptAreaPSU$Station_PSU: 
-    NumberOfStationsPerPSU <- SweptAreaPSU$Station_PSU[, .N, by = "PSU"]
-    PSUsWithMoreStations <- NumberOfStationsPerPSU[N>1]
-    nrOfRows <- PSUsWithMoreStations[,.N]
-    psuCol <- PSUsWithMoreStations[,PSU]
-
-    if(nrOfRows == 1) {
-        if(!is.na(psuCol)) {
-            stop("PSU ", psuCol, " is assigned more than one station.")
-        }
-    }
-    else if(nrOfRows > 1) {
-        stop("PSUs ", paste(psuCol, collapse = ", ") , " are assigned more than one station.")
-    }
-    
-    # Sum the DensityData vertically and across length groups:
-    horizontalResolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
-    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
-    #data <- getDataTypeDefinition(dataType = "DensityData", elements = "data", unlist = TRUE)
-    
-    sumBy <- c(horizontalResolution, categoryVariable)
-    DensityData <- DensityData[, .(Density = sum(Density)), by = sumBy]
-    
-    # Add the column Station to the DensityData by merging DensityData and SweptAreaPSU$Station_PSU by PSU:
-    DensityData = merge(DensityData, SweptAreaPSU$Station_PSU, by="PSU")
-
-    # Create the SpeciesCategoryDensity as a table with species categories in the columns: 
-    SpeciesCategoryDensityData <- data.table::dcast(
-        DensityData, 
-        formula = Station ~ get(categoryVariable), 
-        value.var = "Density")
-    
-    # Get the Station information by merging StoxBioticData$Cruise and StoxBioticData$Station into Cruise_Station: 
-    #Cruise_Station <- merge(StoxBioticData$Cruise, StoxBioticData$Station)
-    Cruise_Station_Haul <- MergeStoxBiotic(StoxBioticData, TargetTable = "Haul")
-    
-    # Merge SpeciesCategoryDensity with Cruise_Station_Haul by Station:
-    SpeciesCategoryDensityData <- merge(Cruise_Station_Haul, SpeciesCategoryDensityData, by="Station")
-    
-    return (SpeciesCategoryDensityData)
+MeanDensity <- function(
+    DensityData
+) {
+    #meanData(DensityData, dataType = "DensityData", targetResolution = "Stratum")
+    applyMeanToData(data = DensityData, dataType = "DensityData", targetResolution = "Stratum")
 }
+
+
+### ##################################################
+### ##################################################
+### #' Table of biotic stations as rows with station info and density of all species categories as columns
+### #' 
+### #' This function organizes density of all species in the input Density into a table with biotic stations as rows, and the density of each ### species category in columns. The function requires each swept-area PSUs to contain only one station.
+### #' 
+### #' @inheritParams ProcessData
+### #' @inheritParams ModelData
+### #' 
+### #' @return
+### #' A data.table is returned with awesome stuff.
+### #' 
+### #' @examples
+### #' x <- 1
+### #' 
+### #' @export
+### #' 
+### SpeciesCategoryDensity <- function(
+###     DensityData, 
+###     StoxBioticData, 
+###     SweptAreaPSU
+### ) {
+###     
+###     # Check that there is only one Station per PSU in SweptAreaPSU$Station_PSU: 
+###     NumberOfStationsPerPSU <- SweptAreaPSU$Station_PSU[, .N, by = "PSU"]
+###     PSUsWithMoreStations <- NumberOfStationsPerPSU[N>1]
+###     nrOfRows <- PSUsWithMoreStations[,.N]
+###     psuCol <- PSUsWithMoreStations[,PSU]
+### 
+###     if(nrOfRows == 1) {
+###         if(!is.na(psuCol)) {
+###             stop("PSU ", psuCol, " is assigned more than one station.")
+###         }
+###     }
+###     else if(nrOfRows > 1) {
+###         stop("PSUs ", paste(psuCol, collapse = ", ") , " are assigned more than one station.")
+###     }
+###     
+###     # Sum the DensityData vertically and across length groups:
+###     horizontalResolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
+###     categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
+###     #data <- getDataTypeDefinition(dataType = "DensityData", elements = "data", unlist = TRUE)
+###     
+###     sumBy <- c(horizontalResolution, categoryVariable)
+###     DensityData <- DensityData[, .(Density = sum(Density)), by = sumBy]
+###     
+###     # Add the column Station to the DensityData by merging DensityData and SweptAreaPSU$Station_PSU by PSU:
+###     DensityData = merge(DensityData, SweptAreaPSU$Station_PSU, by="PSU")
+### 
+###     # Create the SpeciesCategoryDensity as a table with species categories in the columns: 
+###     SpeciesCategoryDensityData <- data.table::dcast(
+###         DensityData, 
+###         formula = Station ~ get(categoryVariable), 
+###         value.var = "Density")
+###     
+###     # Get the Station information by merging StoxBioticData$Cruise and StoxBioticData$Station into Cruise_Station: 
+###     #Cruise_Station <- merge(StoxBioticData$Cruise, StoxBioticData$Station)
+###     Cruise_Station_Haul <- MergeStoxBiotic(StoxBioticData, TargetTable = "Haul")
+###     
+###     # Merge SpeciesCategoryDensity with Cruise_Station_Haul by Station:
+###     SpeciesCategoryDensityData <- merge(Cruise_Station_Haul, SpeciesCategoryDensityData, by="Station")
+###     
+###     return (SpeciesCategoryDensityData)
+### }
 
 ##################################################
 ##################################################
@@ -492,7 +552,7 @@ SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
 #' 
 #' This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram)   of each species category in columns.
 #' 
-#' @inheritParams DefineSweptAreaPSU
+#' @inheritParams ModelData
 #' @param CatchVariable Specifies whether to output catch or weight (kilogram).
 #' 
 #' @return
@@ -503,7 +563,10 @@ SpeciesCategoryDensity <- function(DensityData, StoxBioticData, SweptAreaPSU) {
 #' 
 #' @export
 #' 
-SpeciesCategoryCatch <- function(StoxBioticData, CatchVariable = c("Count", "WeightKilogram")) {
+SpeciesCategoryCatch <- function(
+    StoxBioticData, 
+    CatchVariable = c("Count", "WeightKilogram")
+) {
     
     # Get the DensityUnit and DensityType:
     CatchVariable <- match.arg(CatchVariable)

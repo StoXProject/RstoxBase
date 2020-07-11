@@ -6,20 +6,12 @@
 \usage{
 LengthDistribution(
   StoxBioticData,
-  IncludePSU = FALSE,
-  IncludeLayer = FALSE,
-  SweptAreaPSU = NULL,
-  SweptAreaLayer = NULL,
   LengthDistributionType = c("Normalized", "Standard", "Percent"),
   RaisingFactorPriority = c("Weight", "Count")
 )
 }
 \arguments{
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
-
-\item{SweptAreaPSU}{The  \code{\link{SweptAreaPSU}} data.}
-
-\item{SweptAreaLayer}{The  \code{\link{SweptAreaLayer}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
 \item{LengthDistributionType}{The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').}
 

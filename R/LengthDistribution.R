@@ -4,10 +4,8 @@
 #' 
 #' This function calculates length frequency distribution per Stratum, swept-area PSU, swept-area layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
 #' 
-#' @inheritParams DefineSweptAreaPSU
-#' @param SweptAreaPSU		The  \code{\link{SweptAreaPSU}} data.
-#' @param SweptAreaLayer	The  \code{\link{SweptAreaLayer}} data.
-#' @param LengthDistributionType	The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
+#' @inheritParams ModelData
+#' @param LengthDistributionType The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
 #' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".
 #'
 #' @details *********
@@ -20,17 +18,11 @@
 #' @seealso 
 #' 
 #' @export
-#' @import data.table
 #' 
 LengthDistribution <- function(
     StoxBioticData, 
-    IncludePSU = FALSE, 
-    IncludeLayer = FALSE, 
-    SweptAreaPSU = NULL, 
-    SweptAreaLayer = NULL, 
     LengthDistributionType = c("Normalized", "Standard", "Percent"), 
     RaisingFactorPriority = c("Weight", "Count")
-    # allowMissingWeight = TRUE
 ) {
     
     ####################################
@@ -42,7 +34,8 @@ LengthDistribution <- function(
     RaisingFactorPriority <- match.arg(RaisingFactorPriority)
     
     # Get specification of the data type:
-    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")$LengthDistributionData
+    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")$LengthDistributionData
+    dataTypeDefinition <- getDataTypeDefinition("LengthDistributionData")
     ####################################
     
     
@@ -78,10 +71,10 @@ LengthDistribution <- function(
     LengthDistributionData$LengthDistributionWeight <- 1
     
     # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    LengthDistributionData <- addPSUProcessData(LengthDistributionData, PSUProcessData = if(IncludePSU) SweptAreaPSU, all = TRUE)
+    #LengthDistributionData <- addPSUProcessData(LengthDistributionData, PSUProcessData = if(IncludePSU) SweptAreaPSU, all = TRUE)
     
     # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = if(IncludeLayer) SweptAreaLayer)
+    #LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = if(IncludeLayer) SweptAreaLayer)
     ######################################################
     
     
@@ -139,9 +132,8 @@ LengthDistribution <- function(
     # Extract only the relevant columns:
     formatOutput(LengthDistributionData, dataType = "LengthDistributionData", keep.all = FALSE)
     
-    # Order the rows 
-    orderBy <- unlist(dataTypeDefinition[c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables")])
-    setorderv(LengthDistributionData, cols = orderBy)
+    # Order the rows:
+    orderDataByReference(LengthDistributionData, "LengthDistributionData")
     ########################
     
     
@@ -155,7 +147,7 @@ LengthDistribution <- function(
 #' 
 #' This function aggregates the \code{WeightedCount} of the LengthDistributionData
 #' 
-#' @param LengthDistributionData The length distribution data.
+#' @inheritParams ModelData
 #' @param LengthIntervalCentimeter Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.
 #' 
 #' @details
@@ -168,7 +160,6 @@ LengthDistribution <- function(
 #' x <- 1
 #' 
 #' @export
-#' @import data.table
 #' 
 RegroupLengthDistribution <- function(
     LengthDistributionData, 
@@ -253,7 +244,7 @@ RegroupLengthDistribution <- function(
 #' 
 #' This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.
 #' 
-#' @inheritParams RegroupLengthDistribution
+#' @inheritParams ModelData
 #' @param CompensationMethod Parameter descrption.
 #' @param LengthDependentSweepWidthParameters A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
 #' @param LengthDependentSelectivityParameters A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
@@ -262,7 +253,6 @@ RegroupLengthDistribution <- function(
 #' A \code{\link{LengthDistributionData}} object.
 #' 
 #' @export
-#' @import data.table
 #' 
 LengthDependentCatchCompensation <- function(
     LengthDistributionData, 
@@ -426,7 +416,7 @@ extractColumnsBy <- function(values, table, refvar, vars) {
 #' 
 #' This function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and verticacl resolution.
 #' 
-#' @inheritParams RegroupLengthDistribution
+#' @inheritParams ModelData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -440,7 +430,6 @@ extractColumnsBy <- function(values, table, refvar, vars) {
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
 #' @export
-#' @import data.table
 #' 
 RelativeLengthDistribution <- function(LengthDistributionData) {
     # Make a copy of the input, since we are averaging and setting values by reference:
@@ -459,55 +448,116 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 
 ##################################################
 ##################################################
-#' (Weighted) Average length distribution horizontally
+#' Sum length distribution vertically
 #' 
-#' This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "Normalized".
+#' This function summes LengthDistributionData data vertically.
 #' 
-#' @inheritParams RegroupLengthDistribution
-#' @param PSUDefinition A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the PSUs in the input \code{SweptAreaPSU}
-#' @inheritParams LengthDistribution
-#' @param TargetResolution The horizontal resolution of the output.
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @inheritParams DefineLayer
+#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{SweptAreaLayer} or \code{SweptAreaPSU}.
+#' @param LayerDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineSweptAreaLayer}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' A \code{\link{LengthDistributionData}} object.
+#' An \code{\link{SumLengthDistributionData}} object.
 #' 
 #' @examples
 #' x <- 1
 #' 
 #' @export
 #' 
-MeanLengthDistribution <- function(LengthDistributionData, PSUDefinition = c("PreDefined", "FunctionInput"), SweptAreaPSU = NULL, TargetResolution = "PSU") {
-    meanData(LengthDistributionData, dataType = "LengthDistributionData", PSUDefinition = PSUDefinition, PSUProcessData = SweptAreaPSU, targetResolution = TargetResolution)
+SumLengthDistribution <- function(
+    LengthDistributionData, 
+    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    SweptAreaLayer = NULL
+) {
+    
+    sumRawResolutionData(
+        data = LengthDistributionData, dataType = "LengthDistributionData", 
+        LayerDefinition = LayerDefinition, 
+        LayerProcessData = SweptAreaLayer, 
+        LayerDefinitionMethod = LayerDefinitionMethod, 
+        Resolution = Resolution, 
+        LayerTable = LayerTable, 
+        modelType = "SweptArea"
+    )
 }
 
 
+
 ##################################################
 ##################################################
-#' Sum length distribution vertically
+#' Mean length distribution
 #' 
-#' This function sums length distribution to swept area layers.
+#' This function averages LengthDistributionData data horizontally, weighted by the effective towed distance.
 #' 
-#' @inheritParams RegroupLengthDistribution
-#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the Layers in the input \code{SweptAreaLayer}
-#' @param SweptAreaLayer \code{\link{SweptAreaLayer}} data.
-#' @param TargetResolution The vertical resolution of the output.
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @inheritParams DefinePSU
+#' @param PSUDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{SweptAreaLayer} or \code{SweptAreaPSU}.
+#' @param PSUDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineSweptAreaPSU}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' A \code{\link{LengthDistributionData}} object.
+#' An \code{\link{MeanLengthDistributionData}} object.
 #' 
 #' @examples
 #' x <- 1
 #' 
 #' @export
 #' 
-SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("PreDefined", "FunctionInput"), SweptAreaLayer = NULL, TargetResolution = "Layer") {
-    sumData(LengthDistributionData, dataType = "LengthDistributionData", LayerDefinition = LayerDefinition, layerProcessData = SweptAreaLayer, targetResolution = TargetResolution)
+MeanLengthDistribution <- function(
+    LengthDistributionData, 
+    SumLengthDistributionData, 
+    # Parameters of the sum part:
+    LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    SweptAreaLayer = NULL, 
+    # Parameters of the mean part:
+    PSUDefinition = c("FunctionParameter", "FunctionInput"), 
+    PSUDefinitionMethod = c("StationToPSU", "None"), 
+    StratumPolygon = NULL, 
+    SweptAreaPSU = NULL
+) {
+    
+    # Skip the sum part if predefined:
+    LayerDefinition <- match.arg(LayerDefinition)
+    if(LayerDefinition != "PreDefined") {
+        SumLengthDistributionData <- SumLengthDistribution(
+            LengthDistributionData = LengthDistributionData, 
+            LayerDefinition = LayerDefinition, 
+            LayerDefinitionMethod = LayerDefinitionMethod, 
+            Resolution = Resolution, 
+            LayerTable = LayerTable, 
+            SweptAreaLayer = SweptAreaLayer
+        )
+    }
+    
+    # Convert the PSUDefinitionMethod to "Identity" if "EDSUToPSU":
+    PSUDefinitionMethod <- match.arg(PSUDefinitionMethod)
+    if(grepl("StationToPSU", PSUDefinitionMethod, ignore.case = TRUE)) {
+        PSUDefinitionMethod <- "Identity"
+    }
+    
+    # Run the mean part:
+    meanRawResolutionData(
+        data = SumLengthDistributionData, dataType = "SumLengthDistributionData", 
+        PSUDefinition = PSUDefinition, 
+        PSUProcessData = SweptAreaPSU, 
+        PSUDefinitionMethod = PSUDefinitionMethod, 
+        StratumPolygon = StratumPolygon, 
+        modelType = "SweptArea"
+    )
 }
 
 
@@ -517,8 +567,8 @@ SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("P
 #' 
 #' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
 #' 
-#' @inheritParams RegroupLengthDistribution
-#' @inheritParams BioticAssignmentWeighting
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -532,7 +582,6 @@ SumLengthDistribution <- function(LengthDistributionData, LayerDefinition = c("P
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
 #' @export
-#' @import data.table
 #' 
 AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignment) {
     
@@ -588,10 +637,14 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     thisLengthDistributionData[, c(dataVariable) := sum(x = get(dataVariable) * get(weightingVariable)), by = by]
     
     # Extract only the relevant columns:
-    formatOutput(thisLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
+    formatOutput(thisLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE, allow.missing = TRUE)
     # Remove also the resolution variables, as the output from this function will be merged with BioticAssignmentData by AssignmentID (and not by these resolution avriables):
-    toRemove <- getAllResolutionVariables("AssignmentLengthDistributionData")
-    thisLengthDistributionData[, c(toRemove) := NULL]
+    removeColumnsByReference(
+        data = thisLengthDistributionData, 
+        toRemove = getResolutionVariables("AssignmentLengthDistributionData")
+    )
+    
+    
     
     # Subset to the unique rows (since the sum was by reference):
     thisLengthDistributionData <- unique(thisLengthDistributionData)

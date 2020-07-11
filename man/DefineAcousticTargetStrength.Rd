@@ -8,12 +8,9 @@ DefineAcousticTargetStrength(
   processData,
   UseProcessData = FALSE,
   TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent",
-    "LengthExponent", "TargetStrengthByLength"),
+    "TargetStrengthByLength"),
   DefinitionMethod = c("Table", "ResourceFile"),
-  LengthDependentTable = data.table::data.table(),
-  LengthAndDepthDependentTable = data.table::data.table(),
-  LengthExponentTable = data.table::data.table(),
-  TargetStrengthByLengthTable = data.table::data.table(),
+  TargetStrengthDefinitionTable = data.table::data.table(),
   FileName
 )
 }
@@ -26,13 +23,7 @@ DefineAcousticTargetStrength(
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.}
 
-\item{LengthDependentTable}{A table of the columns AcousticCategory, Frequency, TargetStrength0, LengthExponent and DepthExponent}
-
-\item{LengthAndDepthDependentTable}{A table of the columns AcousticCategory, Frequency, TargetStrength0 and LengthExponent.}
-
-\item{LengthExponentTable}{A table of the columns AcousticCategory, Frequency and LengthExponent}
-
-\item{TargetStrengthByLengthTable}{A table of the columns AcousticCategory, Frequency and IndividualTotalLengthCentimeter.}
+\item{TargetStrengthDefinitionTable}{A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.}
 
 \item{FileName}{A file from which to read the \code{ParameterTable}.}
 }
@@ -45,14 +36,17 @@ This function returns a table of parameters specifying the acoustic target stren
 \details{
 The \code{TargetStrengthMethod} has the following possible values: 
 \enumerate{
-  \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length).
-  \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10).
-  \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length).
-  \item TargetStrengthByLength, applying a table of TargetStrength and Length.
+  \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.
+  \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.
+  \item TargetStrengthByLength, applying a table of TargetStrength and TotalLengthCentimeter. Required columns: TargetStrength and TotalLengthCentimeter.
+  \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length). Required columns: LengthExponent.
 }
 The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.
 }
 \examples{
 x <- 1
 
+}
+\seealso{
+\code{\link{AcousticDensity}} for applying the AcousticTargetStrength.
 }

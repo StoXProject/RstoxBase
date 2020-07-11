@@ -5,14 +5,18 @@
 \title{Calculate number density from NASC in length intervals}
 \usage{
 AcousticDensity(
-  NASCData,
+  MeanNASCData,
   AssignmentLengthDistributionData,
   AcousticTargetStrength,
   SpeciesLinkTable
 )
 }
 \arguments{
-\item{parameterName}{Parameter descrption.}
+\item{MeanNASCData}{The \code{\link{MeanNASCData}} data.}
+
+\item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
+
+\item{SpeciesLinkTable}{A table of the two columns AcousticCategory and SpeciesCategory.}
 }
 \value{
 An object of StoX data type \code{\link{DensityData}}.
@@ -21,12 +25,66 @@ An object of StoX data type \code{\link{DensityData}}.
 This function converts NASC to number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
 }
 \details{
-This function is awesome and does excellent stuff.
+The AcousticDensity function calculates length distributed densities as number of fish per square nautical mile by vertical layer. Length based density distributions are calculated for each NASC value of the input acoustic data set (MacLennan \emph{et al}, 2002) . Usually, the NASC values have a horizontal resolution at PSU level (e.g. transect). By combining a NASC value with a length distribution (usually a total combined length distribution derived from more than one biotic station) and applying a TS vslength relationship, a corresponding density length distribution can be calculated.
+
+The horizontal resolution (EDSU, PSU or Stratum) of the NASC object determines the horizontal resolution of the densities. The same principal applies for the vertical layer resolution.
+
+To combine a NASC value and a length distribution into a density distribution, the TS vs length relationship for the actual species and acoustic frequency, needs to be known.Constants in the TS vs length formula has to be given. If the vertical layer resolution is channels referred from surface and with a fixed thickness, the mean depth of each channel can be calculated and a depth dependent TS vs length formula may be applied. The calculation of densities by length from a NASC value and a corresponding length distribution (as percentage or proportion) is performed as follows (Ona, 2003, Simmond and MacLennan, 2005, Johnsen \emph{et al}, 2019):
+
+\deqn{TS_l = m \log_{10}{(l)}+a + d \log_{10}{(1 + \frac{r_y}{10})}}
+
+where:
+
+\eqn{TS_l} = target strength (dB re 1 \eqn{m^{2}}) of a fish with length l (cm)
+
+\eqn{m} = constant in the TS vs length relationship for the given
+species
+
+\eqn{a} = constant in the TS vs length relationship for the given species
+
+\eqn{d} = constant in the TS vs length relationship related to depth dependent TS
+
+\eqn{l} = length of the fish (cm). Typically, the center length of a length group
+
+\eqn{r_y} = average depth (m) of the NASC channel \eqn{y}
+
+\deqn{\sigma_{bs,l} = 10^{  (  \frac{TS_l}{10}  )  }   }
+
+where:
+
+\eqn{\sigma_{bs,l}} = acoustic backscattering cross-section (\eqn{m^{2}}) for a fish of length \eqn{l}
+
+\deqn{NASC_l = NASC \frac{\sigma_{bs,l} p_l}{\sum_l{( \sigma_{bs,l} p_l )} } }
+
+where:
+
+\eqn{NASC} =  the total NASC which is used to calculate densities by length
+
+\eqn{NASC_l} = the proportion of the total \eqn{NASC} which can be attributed to length group \eqn{l}.  The sum of \eqn{NASC_l} for all length groups in the total length distribution is equal to \eqn{NASC}
+
+\eqn{p_l} = proportion of fish of length \eqn{l} in the input length distribution. Sum of all \eqn{p_l} is 1.
+
+
+\deqn{\rho_l = \frac{NASC_l}{(4 \pi \sigma_{bs,l})}}
+
+where:
+
+\eqn{\rho_l} = area density of fish (ind. per sqare nautical mile) in length group \eqn{l}
+
+References:
+
+Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  \url{https://doi.org/10.1111/2041-210X.13250}
+
+MacLennan, D. N., Fernandes, P. G., and Dalen, J. 2002. A consistent approach to definitions and symbols in fisheries acoustics. ICES Journal of Marine Science, 59: 365_369.
+
+Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, \url{https://doi.org/10.1016/S1054-3139(03)00031-6}
+
+Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.
 }
 \examples{
 x <- 1
 
 }
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+To modify AcousticCategory use \code{\link[RstoxData]{DefineStoxAcousticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxAcousticVariables}} and to modify SpeciesCategory use \code{\link[RstoxData]{DefineStoxBioticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxBioticVariables}}. See \code{\link{SweptAreaDensity}} for swept-area density.
 }

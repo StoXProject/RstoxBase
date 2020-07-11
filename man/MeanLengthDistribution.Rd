@@ -2,29 +2,43 @@
 % Please edit documentation in R/LengthDistribution.R
 \name{MeanLengthDistribution}
 \alias{MeanLengthDistribution}
-\title{(Weighted) Average length distribution horizontally}
+\title{Mean length distribution}
 \usage{
 MeanLengthDistribution(
   LengthDistributionData,
-  PSUDefinition = c("PreDefined", "FunctionInput"),
-  SweptAreaPSU = NULL,
-  TargetResolution = "PSU"
+  SumLengthDistributionData,
+  LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"),
+  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution",
+    "LayerTable"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  SweptAreaLayer = NULL,
+  PSUDefinition = c("FunctionParameter", "FunctionInput"),
+  PSUDefinitionMethod = c("StationToPSU", "None"),
+  StratumPolygon = NULL,
+  SweptAreaPSU = NULL
 )
 }
 \arguments{
-\item{LengthDistributionData}{The length distribution data.}
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
-\item{PSUDefinition}{A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the PSUs in the input \code{SweptAreaPSU}}
+\item{SumLengthDistributionData}{The \code{\link{SumLengthDistributionData}} data.}
 
-\item{SweptAreaPSU}{The  \code{\link{SweptAreaPSU}} data.}
+\item{SweptAreaLayer}{The \code{\link{SweptAreaLayer}} process data.}
 
-\item{TargetResolution}{The horizontal resolution of the output.}
+\item{PSUDefinition}{A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{SweptAreaLayer} or \code{SweptAreaPSU}.}
+
+\item{PSUDefinitionMethod}{See \code{DefinitionMethod} of \code{\link{DefineSweptAreaPSU}}.}
+
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+
+\item{SweptAreaPSU}{The \code{\link{SweptAreaPSU}} process data.}
 }
 \value{
-A \code{\link{LengthDistributionData}} object.
+An \code{\link{MeanLengthDistributionData}} object.
 }
 \description{
-This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "Normalized".
+This function averages LengthDistributionData data horizontally, weighted by the effective towed distance.
 }
 \details{
 This function is awesome and does excellent stuff.

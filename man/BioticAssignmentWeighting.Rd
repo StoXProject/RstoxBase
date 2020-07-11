@@ -17,19 +17,21 @@ BioticAssignmentWeighting(
 )
 }
 \arguments{
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{BioticAssignment}{The \code{\link{BioticAssignment}} process data.}
 
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data.}
+\item{WeightingMethod}{Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.}
 
-\item{Radius}{Numeric: The radius inside which to assign biotic stations to each acoustic PSU.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.}
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
-\item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
+\item{MaxNumberOfLengthSamples}{For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.}
 
-\item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
 
-\item{EllipsoidalDistanceTable}{Not yet implemented.}
+\item{Radius}{For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated.}
+
+\item{LengthExponentTable}{For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.
@@ -45,5 +47,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{BioticAssignment}}.
+\code{\link{DefineBioticAssignment}} for generating BioticAssignment.
 }

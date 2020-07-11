@@ -5,11 +5,7 @@
 \title{Acoustic Layer}
 \description{
 The Acoustic Layer process data is a table of the three columns Layer, MinLayerDepth and MaxLayerDepth specifying the depth ranges for the acoustic layers on which the acoustic density should be calculated, where the Layer column gives the names of the layers.
-
-The AcousticLayer process data is a table of the three columns Layer, MinLayerDepth and MaxLayerDepth specifying the depth ranges for the acoustic layers on which the acoustic density should be calculated, where the Layer column gives the names of the layers.
 }
 \seealso{
-\code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
-
 \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

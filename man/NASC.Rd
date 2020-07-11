@@ -4,27 +4,20 @@
 \alias{NASC}
 \title{NASC}
 \usage{
-NASC(
-  StoxAcousticData = NULL,
-  IncludePSU = FALSE,
-  IncludeLayer = FALSE,
-  AcousticLayer = NULL,
-  AcousticPSU = NULL
-)
+NASC(StoxAcousticData = NULL)
 }
 \arguments{
-\item{StoxAcousticData}{input in a StoxAcoustcdata format}
+\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
 
-\item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
+\item{IncludePSU}{Logical: If TRUE the \code{AcousticLayer} is added to the NASC data}
 
-\item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
+\item{IncludeLayer}{input in a StoxAcoustcdata format}
 }
 \value{
 A \code{\link{NASCData}} object.
 }
 \description{
-NASC function converts the StoxAcousticData into
-a NASCData format
+NASC function converts the StoxAcousticData into NASCData format
 }
 \details{
 This function is awesome and does excellent stuff.

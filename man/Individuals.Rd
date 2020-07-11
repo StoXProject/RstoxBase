@@ -8,16 +8,17 @@ Individuals(
   StoxBioticData,
   AbundanceType = c("Acoustic", "SweptArea"),
   BioticAssignment,
-  SweptAreaPSU,
-  SweptAreaLayer
+  MeanLengthDistributionData
 )
 }
 \arguments{
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
+
+\item{AbundanceType}{The type of abundance, one of "Acoustic" and "SweptArea".}
 
 \item{BioticAssignment}{The \code{\link{BioticAssignment}} process data.}
 
-\item{DensityType}{The type of density, one of "Acoustic" and "SweptArea".}
+\item{MeanLengthDistributionData}{The \code{\link{MeanLengthDistributionData}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.
@@ -33,5 +34,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+\code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 }
