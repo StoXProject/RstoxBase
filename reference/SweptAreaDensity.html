@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -118,9 +118,9 @@
     </div>
 
     <pre class="usage"><span class='fu'>SweptAreaDensity</span>(
-  <span class='kw'>LengthDistributionData</span>,
+  <span class='kw'>MeanLengthDistributionData</span>,
   SweepWidthMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Constant"</span>, <span class='st'>"PreDefined"</span>, <span class='st'>"CruiseDependent"</span>),
-  SweepWidth = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
+  SweepWidth = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
   SweepWidthTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>()
 )</pre>
 
@@ -128,8 +128,8 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>LengthDistributionData</th>
-      <td><p>The length distribution data.</p></td>
+      <th>MeanLengthDistributionData</th>
+      <td><p>The <code>MeanLengthDistributionData</code> data.</p></td>
     </tr>
     <tr>
       <th>SweepWidthMethod</th>
@@ -153,7 +153,7 @@
     <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
+    <div class='dont-index'><p>See <code>AcousticDensity</code> for acoustic density.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

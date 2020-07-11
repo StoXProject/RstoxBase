@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>(Weighted) Average length distribution horizontally — MeanLengthDistribution • RstoxBase</title>
+<title>Mean length distribution — MeanLengthDistribution • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="(Weighted) Average length distribution horizontally — MeanLengthDistribution" />
-<meta property="og:description" content="This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = &quot;Normalized&quot;." />
+<meta property="og:title" content="Mean length distribution — MeanLengthDistribution" />
+<meta property="og:description" content="This function averages LengthDistributionData data horizontally, weighted by the effective towed distance." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -108,20 +108,28 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>(Weighted) Average length distribution horizontally</h1>
+    <h1>Mean length distribution</h1>
     <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
     <div class="hidden name"><code>MeanLengthDistribution.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function calculates average length distribution, weighted by the EffectiveTowedDistance for the case that LengthDistributionType = "Normalized".</p>
+    <p>This function averages LengthDistributionData data horizontally, weighted by the effective towed distance.</p>
     </div>
 
     <pre class="usage"><span class='fu'>MeanLengthDistribution</span>(
   <span class='kw'>LengthDistributionData</span>,
-  PSUDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PreDefined"</span>, <span class='st'>"FunctionInput"</span>),
-  SweptAreaPSU = <span class='kw'>NULL</span>,
-  TargetResolution = <span class='st'>"PSU"</span>
+  <span class='kw'>SumLengthDistributionData</span>,
+  LayerDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span>, <span class='st'>"PreDefined"</span>),
+  LayerDefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"WaterColumn"</span>, <span class='st'>"HighestResolution"</span>, <span class='st'>"Resolution"</span>,
+    <span class='st'>"LayerTable"</span>),
+  Resolution = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
+  LayerTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
+  SweptAreaLayer = <span class='kw'>NULL</span>,
+  PSUDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span>),
+  PSUDefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"StationToPSU"</span>, <span class='st'>"None"</span>),
+  StratumPolygon = <span class='kw'>NULL</span>,
+  SweptAreaPSU = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -129,25 +137,37 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>LengthDistributionData</th>
-      <td><p>The length distribution data.</p></td>
+      <td><p>The <code>LengthDistributionData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>SumLengthDistributionData</th>
+      <td><p>The <code>SumLengthDistributionData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>SweptAreaLayer</th>
+      <td><p>The <code>SweptAreaLayer</code> process data.</p></td>
     </tr>
     <tr>
       <th>PSUDefinition</th>
-      <td><p>A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the <code>LengthDistributionData</code>, or "FunctionInput" to provide the PSUs in the input <code>SweptAreaPSU</code></p></td>
+      <td><p>A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring <code>LayerDefinitionMethod</code> or <code>PSUDefinitionMethod</code> and the conditionally <code>Resolution</code>, <code>LayerTableLayerTable</code> or <code>StratumPolygon</code> to be set, or "FunctionInput", requiring the inputs <code>SweptAreaLayer</code> or <code>SweptAreaPSU</code>.</p></td>
+    </tr>
+    <tr>
+      <th>PSUDefinitionMethod</th>
+      <td><p>See <code>DefinitionMethod</code> of <code>DefineSweptAreaPSU</code>.</p></td>
+    </tr>
+    <tr>
+      <th>StratumPolygon</th>
+      <td><p>The <code>StratumPolygon</code> process data.</p></td>
     </tr>
     <tr>
       <th>SweptAreaPSU</th>
-      <td><p>The  <code>SweptAreaPSU</code> data.</p></td>
-    </tr>
-    <tr>
-      <th>TargetResolution</th>
-      <td><p>The horizontal resolution of the output.</p></td>
+      <td><p>The <code>SweptAreaPSU</code> process data.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>LengthDistributionData</code> object.</p>
+    <p>An <code>MeanLengthDistributionData</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function is awesome and does excellent stuff.</p>

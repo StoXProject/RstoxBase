@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>AcousticDensity</span>(
-  <span class='kw'>NASCData</span>,
+  <span class='kw'>MeanNASCData</span>,
   <span class='kw'>AssignmentLengthDistributionData</span>,
   <span class='kw'>AcousticTargetStrength</span>,
   <span class='kw'>SpeciesLinkTable</span>
@@ -128,8 +128,16 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>parameterName</th>
-      <td><p>Parameter descrption.</p></td>
+      <th>MeanNASCData</th>
+      <td><p>The <code>MeanNASCData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>AcousticTargetStrength</th>
+      <td><p>The <code>AcousticTargetStrength</code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>SpeciesLinkTable</th>
+      <td><p>A table of the two columns AcousticCategory and SpeciesCategory.</p></td>
     </tr>
     </table>
 
@@ -138,10 +146,38 @@
     <p>An object of StoX data type <code>DensityData</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>The AcousticDensity function calculates length distributed densities as number of fish per square nautical mile by vertical layer. Length based density distributions are calculated for each NASC value of the input acoustic data set (MacLennan <em>et al</em>, 2002) . Usually, the NASC values have a horizontal resolution at PSU level (e.g. transect). By combining a NASC value with a length distribution (usually a total combined length distribution derived from more than one biotic station) and applying a TS vslength relationship, a corresponding density length distribution can be calculated.</p>
+<p>The horizontal resolution (EDSU, PSU or Stratum) of the NASC object determines the horizontal resolution of the densities. The same principal applies for the vertical layer resolution.</p>
+<p>To combine a NASC value and a length distribution into a density distribution, the TS vs length relationship for the actual species and acoustic frequency, needs to be known.Constants in the TS vs length formula has to be given. If the vertical layer resolution is channels referred from surface and with a fixed thickness, the mean depth of each channel can be calculated and a depth dependent TS vs length formula may be applied. The calculation of densities by length from a NASC value and a corresponding length distribution (as percentage or proportion) is performed as follows (Ona, 2003, Simmond and MacLennan, 2005, Johnsen <em>et al</em>, 2019):</p>
+<p>$$TS_l = m \log_{10}{(l)}+a + d \log_{10}{(1 + \frac{r_y}{10})}$$</p>
+<p>where:</p>
+<p>\(TS_l\) = target strength (dB re 1 \(m^{2}\)) of a fish with length l (cm)</p>
+<p>\(m\) = constant in the TS vs length relationship for the given
+species</p>
+<p>\(a\) = constant in the TS vs length relationship for the given species</p>
+<p>\(d\) = constant in the TS vs length relationship related to depth dependent TS</p>
+<p>\(l\) = length of the fish (cm). Typically, the center length of a length group</p>
+<p>\(r_y\) = average depth (m) of the NASC channel \(y\)</p>
+<p>$$\sigma_{bs,l} = 10^{  (  \frac{TS_l}{10}  )  }   $$</p>
+<p>where:</p>
+<p>\(\sigma_{bs,l}\) = acoustic backscattering cross-section (\(m^{2}\)) for a fish of length \(l\)</p>
+<p>$$NASC_l = NASC \frac{\sigma_{bs,l} p_l}{\sum_l{( \sigma_{bs,l} p_l )} } $$</p>
+<p>where:</p>
+<p>\(NASC\) =  the total NASC which is used to calculate densities by length</p>
+<p>\(NASC_l\) = the proportion of the total \(NASC\) which can be attributed to length group \(l\).  The sum of \(NASC_l\) for all length groups in the total length distribution is equal to \(NASC\)</p>
+<p>\(p_l\) = proportion of fish of length \(l\) in the input length distribution. Sum of all \(p_l\) is 1.</p>
+
+<p>$$\rho_l = \frac{NASC_l}{(4 \pi \sigma_{bs,l})}$$</p>
+<p>where:</p>
+<p>\(\rho_l\) = area density of fish (ind. per sqare nautical mile) in length group \(l\)</p>
+<p>References:</p>
+<p>Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  <a href='https://doi.org/10.1111/2041-210X.13250'>https://doi.org/10.1111/2041-210X.13250</a></p>
+<p>MacLennan, D. N., Fernandes, P. G., and Dalen, J. 2002. A consistent approach to definitions and symbols in fisheries acoustics. ICES Journal of Marine Science, 59: 365_369.</p>
+<p>Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, <a href='https://doi.org/10.1016/S1054-3139(03)00031-6'>https://doi.org/10.1016/S1054-3139(03)00031-6</a></p>
+<p>Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
+    <div class='dont-index'><p>To modify AcousticCategory use <code><a href='https://rdrr.io/pkg/RstoxData/man/DefineStoxAcousticVariableConversion.html'>DefineStoxAcousticVariableConversion</a></code> and <code><a href='https://rdrr.io/pkg/RstoxData/man/ConvertStoxAcousticVariables.html'>ConvertStoxAcousticVariables</a></code> and to modify SpeciesCategory use <code><a href='https://rdrr.io/pkg/RstoxData/man/DefineStoxBioticVariableConversion.html'>DefineStoxBioticVariableConversion</a></code> and <code><a href='https://rdrr.io/pkg/RstoxData/man/ConvertStoxBioticVariables.html'>ConvertStoxBioticVariables</a></code>. See <code>SweptAreaDensity</code> for swept-area density.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -133,32 +133,36 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>BioticAssignment</th>
+      <td><p>The <code>BioticAssignment</code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>WeightingMethod</th>
+      <td><p>Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.</p></td>
+    </tr>
+    <tr>
       <th>StoxBioticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>LengthDistributionData</th>
+      <td><p>The <code>LengthDistributionData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>MaxNumberOfLengthSamples</th>
+      <td><p>For <code>WeightingMethod</code> = "NumberOfLengthSamples": Values of the number of length samples that exceed <code>MaxNumberOfLengthSamples</code> are set to <code>MaxNumberOfLengthSamples</code>. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.</p></td>
     </tr>
     <tr>
       <th>StoxAcousticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
     </tr>
     <tr>
       <th>Radius</th>
-      <td><p>Numeric: The radius inside which to assign biotic stations to each acoustic PSU.</p></td>
+      <td><p>For <code>WeightingMethod</code> = "NASC": The radius inside which the average NASC is calculated.</p></td>
     </tr>
     <tr>
-      <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in <code>Radius</code> to each acoustic PSU; and "EllipsoidalDistance" to provide the <code>EllipsoidalDistanceTable</code> specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.</p></td>
-    </tr>
-    <tr>
-      <th>AcousticPSU</th>
-      <td><p>The <code>AcousticPSU</code> process data.</p></td>
-    </tr>
-    <tr>
-      <th>AcousticLayer</th>
-      <td><p>The <code>AcousticLayer</code> process data.</p></td>
-    </tr>
-    <tr>
-      <th>EllipsoidalDistanceTable</th>
-      <td><p>Not yet implemented.</p></td>
+      <th>LengthExponentTable</th>
+      <td><p>For <code>WeightingMethod</code> = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.</p></td>
     </tr>
     </table>
 
@@ -170,7 +174,7 @@
     <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>BioticAssignment</code>.</p></div>
+    <div class='dont-index'><p><code>DefineBioticAssignment</code> for generating BioticAssignment.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

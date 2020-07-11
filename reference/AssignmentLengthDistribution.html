@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Length distribution assigned to each cell of acoustic PSU and Layer — AssignmentLengthDistribution • RstoxBase</title>
+<title>Assignment length distribution data — AssignmentLengthDistribution • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Length distribution assigned to each cell of acoustic PSU and Layer — AssignmentLengthDistribution" />
-<meta property="og:description" content="This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by BioticAssignmentWeighting." />
+<meta property="og:title" content="Assignment length distribution data — AssignmentLengthDistribution" />
+<meta property="og:description" content="The AssignmentLengthDistribution model data is a table averaged length distribution for each combination of Stratum (acoustic)PSU and (acoustic)Layer.
+This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by BioticAssignmentWeighting." />
 
 
 
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -108,13 +109,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Length distribution assigned to each cell of acoustic PSU and Layer</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
+    <h1>Assignment length distribution data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Data.R'><code>R/Data.R</code></a>, <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
     <div class="hidden name"><code>AssignmentLengthDistribution.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by <code>BioticAssignmentWeighting</code>.</p>
+    <p>The AssignmentLengthDistribution model data is a table averaged length distribution for each combination of Stratum (acoustic)PSU and (acoustic)Layer.</p>
+<p>This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by <code>BioticAssignmentWeighting</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>AssignmentLengthDistribution</span>(<span class='kw'>LengthDistributionData</span>, <span class='kw'>BioticAssignment</span>)</pre>
@@ -124,7 +126,11 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>LengthDistributionData</th>
-      <td><p>The length distribution data.</p></td>
+      <td><p>The <code>LengthDistributionData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>BioticAssignment</th>
+      <td><p>The <code>BioticAssignment</code> process data.</p></td>
     </tr>
     </table>
 
@@ -136,7 +142,8 @@
     <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
+    <div class='dont-index'><p><code>DataTypes</code> for a list of all StoX data types produced by <code>RstoxBase</code></p>
+<p><code>roxygenize</code> is used to generate the documentation.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

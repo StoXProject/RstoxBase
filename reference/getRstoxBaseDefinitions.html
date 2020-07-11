@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -140,13 +140,42 @@
     <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span>()</div><div class='output co'>#&gt; $AcousticPSUPrefix
 #&gt; [1] "PSU"
 #&gt; 
+#&gt; $allResolution
+#&gt; $allResolution$NASCData
+#&gt; [1] "NASC"
+#&gt; 
+#&gt; $allResolution$SumNASCData
+#&gt; [1] "NASC"
+#&gt; 
+#&gt; $allResolution$MeanNASCData
+#&gt; [1] "NASC"
+#&gt; 
+#&gt; $allResolution$LengthDistributionData
+#&gt; [1] "LengthDistribution"
+#&gt; 
+#&gt; $allResolution$SumLengthDistributionData
+#&gt; [1] "LengthDistribution"
+#&gt; 
+#&gt; $allResolution$MeanLengthDistributionData
+#&gt; [1] "LengthDistribution"
+#&gt; 
+#&gt; $allResolution$DensityData
+#&gt; [1] "Density"
+#&gt; 
+#&gt; $allResolution$MeanDensityData
+#&gt; [1] "Density"
+#&gt; 
+#&gt; $allResolution$AbundanceData
+#&gt; [1] "Abundance"
+#&gt; 
+#&gt; 
 #&gt; $dataTypeDefinition
 #&gt; $dataTypeDefinition$NASCData
 #&gt; $dataTypeDefinition$NASCData$horizontalResolution
-#&gt; [1] "Stratum" "PSU"     "EDSU"   
+#&gt; [1] "EDSU"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$verticalResolution
-#&gt; [1] "Layer"   "Channel"
+#&gt; [1] "Channel"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$categoryVariable
 #&gt; [1] "AcousticCategory"
@@ -154,20 +183,14 @@
 #&gt; $dataTypeDefinition$NASCData$groupingVariables
 #&gt; [1] "Frequency"
 #&gt; 
-#&gt; $dataTypeDefinition$NASCData$coordinateSystemOrigin
-#&gt; [1] "ChannelReferenceDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$coordinateSystemOrientation
-#&gt; [1] "ChannelReferenceOrientation"
-#&gt; 
 #&gt; $dataTypeDefinition$NASCData$data
 #&gt; [1] "NASC"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$verticalRawDimension
-#&gt; [1] "MinChannelRange" "MaxChannelRange"
+#&gt; [1] "MinChannelDepth" "MaxChannelDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$weighting
 #&gt; [1] "NASCWeight"
@@ -180,12 +203,77 @@
 #&gt; [4] "Latitude"            
 #&gt; 
 #&gt; 
+#&gt; $dataTypeDefinition$SumNASCData
+#&gt; $dataTypeDefinition$SumNASCData$horizontalResolution
+#&gt; [1] "EDSU"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$verticalResolution
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$categoryVariable
+#&gt; [1] "AcousticCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$groupingVariables
+#&gt; [1] "Frequency"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$data
+#&gt; [1] "NASC"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$verticalRawDimension
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$weighting
+#&gt; [1] "SumNASCWeight"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$type
+#&gt; [1] "ChannelReferenceType"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$other
+#&gt; [1] "EffectiveLogDistance" "DateTime"             "Longitude"           
+#&gt; [4] "Latitude"            
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData
+#&gt; $dataTypeDefinition$MeanNASCData$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$verticalResolution
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$categoryVariable
+#&gt; [1] "AcousticCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$groupingVariables
+#&gt; [1] "Frequency"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$data
+#&gt; [1] "NASC"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$verticalRawDimension
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$weighting
+#&gt; [1] "MeanNASCWeight"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$type
+#&gt; [1] "ChannelReferenceType"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$other
+#&gt; NULL
+#&gt; 
+#&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData
 #&gt; $dataTypeDefinition$LengthDistributionData$horizontalResolution
-#&gt; [1] "Stratum" "PSU"     "Station"
+#&gt; [1] "Station"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$verticalResolution
-#&gt; [1] "Layer" "Haul" 
+#&gt; [1] "Haul"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$categoryVariable
 #&gt; [1] "SpeciesCategory"
@@ -200,7 +288,7 @@
 #&gt; [1] "MinHaulDepth" "MaxHaulDepth"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; NULL
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$weighting
 #&gt; [1] "LengthDistributionWeight"
@@ -212,6 +300,72 @@
 #&gt; [1] "EffectiveTowedDistance" "DateTime"               "Longitude"             
 #&gt; [4] "Latitude"               "VerticalNetOpening"     "HorizontalNetOpening"  
 #&gt; [7] "TrawlDoorSpread"       
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData
+#&gt; $dataTypeDefinition$SumLengthDistributionData$horizontalResolution
+#&gt; [1] "Station"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$verticalResolution
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$categoryVariable
+#&gt; [1] "SpeciesCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$groupingVariables
+#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$data
+#&gt; [1] "WeightedCount"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$verticalRawDimension
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$weighting
+#&gt; [1] "SumLengthDistributionWeight"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$type
+#&gt; [1] "LengthDistributionType"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$other
+#&gt; [1] "EffectiveTowedDistance" "DateTime"               "Longitude"             
+#&gt; [4] "Latitude"               "VerticalNetOpening"     "HorizontalNetOpening"  
+#&gt; [7] "TrawlDoorSpread"       
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$verticalResolution
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$categoryVariable
+#&gt; [1] "SpeciesCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$groupingVariables
+#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$data
+#&gt; [1] "WeightedCount"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$verticalRawDimension
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$weighting
+#&gt; [1] "MeanLengthDistributionWeight"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$type
+#&gt; [1] "LengthDistributionType"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$other
+#&gt; NULL
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData
@@ -266,6 +420,32 @@
 #&gt; [1] "DensityWeight"
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData$other
+#&gt; NULL
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData
+#&gt; $dataTypeDefinition$MeanDensityData$horizontalResolution
+#&gt; [1] "Stratum"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData$verticalResolution
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData$categoryVariable
+#&gt; [1] "SpeciesCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData$groupingVariables
+#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData$data
+#&gt; [1] "Density"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData$weighting
+#&gt; [1] "MeanDensityWeight"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanDensityData$other
 #&gt; NULL
 #&gt; 
 #&gt; 
@@ -370,10 +550,28 @@
 #&gt; [1] "EDSU"             "Channel"          "AcousticCategory" "Frequency"       
 #&gt; [5] "NASCWeight"      
 #&gt; 
+#&gt; $dataTypeRequiredVariables$SumNASCData
+#&gt; [1] "EDSU"             "Layer"            "AcousticCategory" "Frequency"       
+#&gt; [5] "SumNASCWeight"   
+#&gt; 
+#&gt; $dataTypeRequiredVariables$MeanNASCData
+#&gt; [1] "PSU"              "Layer"            "AcousticCategory" "Frequency"       
+#&gt; [5] "MeanNASCWeight"  
+#&gt; 
 #&gt; $dataTypeRequiredVariables$LengthDistributionData
 #&gt; [1] "Station"                         "Haul"                           
 #&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
 #&gt; [5] "LengthResolutionCentimeter"      "LengthDistributionWeight"       
+#&gt; 
+#&gt; $dataTypeRequiredVariables$SumLengthDistributionData
+#&gt; [1] "Station"                         "Layer"                          
+#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
+#&gt; [5] "LengthResolutionCentimeter"      "SumLengthDistributionWeight"    
+#&gt; 
+#&gt; $dataTypeRequiredVariables$MeanLengthDistributionData
+#&gt; [1] "PSU"                             "Layer"                          
+#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
+#&gt; [5] "LengthResolutionCentimeter"      "MeanLengthDistributionWeight"   
 #&gt; 
 #&gt; $dataTypeRequiredVariables$AssignmentLengthDistributionData
 #&gt; [1] "PSU"                             "Layer"                          
@@ -384,6 +582,11 @@
 #&gt; [1] "PSU"                             "Layer"                          
 #&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
 #&gt; [5] "LengthResolutionCentimeter"      "DensityWeight"                  
+#&gt; 
+#&gt; $dataTypeRequiredVariables$MeanDensityData
+#&gt; [1] "Stratum"                         "Layer"                          
+#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
+#&gt; [5] "LengthResolutionCentimeter"      "MeanDensityWeight"              
 #&gt; 
 #&gt; $dataTypeRequiredVariables$AbundanceData
 #&gt; [1] "Stratum"                         "Layer"                          
@@ -430,8 +633,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff5331a33d8&gt;
-#&gt; &lt;environment: 0x7ff5331a52f8&gt;
+#&gt; &lt;bytecode: 0x7f860b1f3b00&gt;
+#&gt; &lt;environment: 0x7f860b1f5e48&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -439,6 +642,40 @@
 #&gt; $proj4string
 #&gt; CRS arguments:
 #&gt;  +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+#&gt; 
+#&gt; $resolutionClasses
+#&gt; $resolutionClasses$NASC
+#&gt; $resolutionClasses$NASC$vertical
+#&gt; [1] "Layer"   "Channel"
+#&gt; 
+#&gt; $resolutionClasses$NASC$horizontal
+#&gt; [1] "Stratum" "PSU"     "EDSU"   
+#&gt; 
+#&gt; 
+#&gt; $resolutionClasses$LengthDistribution
+#&gt; $resolutionClasses$LengthDistribution$vertical
+#&gt; [1] "Layer" "Haul" 
+#&gt; 
+#&gt; $resolutionClasses$LengthDistribution$horizontal
+#&gt; [1] "Stratum" "PSU"     "Station"
+#&gt; 
+#&gt; 
+#&gt; $resolutionClasses$Density
+#&gt; $resolutionClasses$Density$vertical
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $resolutionClasses$Density$horizontal
+#&gt; [1] "Stratum" "PSU"    
+#&gt; 
+#&gt; 
+#&gt; $resolutionClasses$Abundance
+#&gt; $resolutionClasses$Abundance$vertical
+#&gt; [1] "Layer"
+#&gt; 
+#&gt; $resolutionClasses$Abundance$horizontal
+#&gt; [1] "Stratum"
+#&gt; 
+#&gt; 
 #&gt; 
 #&gt; $SweptAreaPSUPrefix
 #&gt; [1] "PSU"
@@ -450,8 +687,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
 #&gt;         DepthExponent * log10(1 + DepthMeter/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff5331a2370&gt;
-#&gt; &lt;environment: 0x7ff5331a52f8&gt;
+#&gt; &lt;bytecode: 0x7f860b1f2cc8&gt;
+#&gt; &lt;environment: 0x7f860b1f5e48&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLengthCentimeter, TargetStrength0, 
@@ -459,16 +696,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff5331a26f0&gt;
-#&gt; &lt;environment: 0x7ff5331a52f8&gt;
+#&gt; &lt;bytecode: 0x7f860b1f3048&gt;
+#&gt; &lt;environment: 0x7f860b1f5e48&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLengthCentimeter, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff5331a1d50&gt;
-#&gt; &lt;environment: 0x7ff5331a52f8&gt;
+#&gt; &lt;bytecode: 0x7f860b1f26a8&gt;
+#&gt; &lt;environment: 0x7f860b1f5e48&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent

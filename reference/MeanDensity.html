@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -117,20 +117,8 @@
     <p>This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MeanDensity</span>(<span class='kw'>DensityData</span>, TargetResolution = <span class='st'>"Stratum"</span>)</pre>
+    <pre class="usage"><span class='fu'>MeanDensity</span>(<span class='kw'>DensityData</span>)</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>DensityData</th>
-      <td><p>An object of <code>DensityData</code> data.</p></td>
-    </tr>
-    <tr>
-      <th>TargetResolution</th>
-      <td><p>The vertical resolution of the output.</p></td>
-    </tr>
-    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -140,7 +128,7 @@
     <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
+    <div class='dont-index'><p>See <code>AcousticDensity</code> for acoustic density and  <code>SweptAreaDensity</code> for swept-area density.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

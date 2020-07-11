@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -121,8 +121,7 @@
   <span class='kw'>StoxBioticData</span>,
   AbundanceType = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Acoustic"</span>, <span class='st'>"SweptArea"</span>),
   <span class='kw'>BioticAssignment</span>,
-  <span class='kw'>SweptAreaPSU</span>,
-  <span class='kw'>SweptAreaLayer</span>
+  <span class='kw'>MeanLengthDistributionData</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -130,15 +129,19 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>StoxBioticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data.</p></td>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>AbundanceType</th>
+      <td><p>The type of abundance, one of "Acoustic" and "SweptArea".</p></td>
     </tr>
     <tr>
       <th>BioticAssignment</th>
       <td><p>The <code>BioticAssignment</code> process data.</p></td>
     </tr>
     <tr>
-      <th>DensityType</th>
-      <td><p>The type of density, one of "Acoustic" and "SweptArea".</p></td>
+      <th>MeanLengthDistributionData</th>
+      <td><p>The <code>MeanLengthDistributionData</code> data.</p></td>
     </tr>
     </table>
 
@@ -150,7 +153,7 @@
     <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
+    <div class='dont-index'><p><code>SuperIndividuals</code> for distributing Abundance to the Individuals.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

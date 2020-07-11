@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Model data used in estimation models in StoX — ModelData • RstoxBase</title>
+<title>Model data used by RstoxBase — ModelData • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Model data used in estimation models in StoX — ModelData" />
-<meta property="og:description" content="The model data of a StoX model is the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed." />
+<meta property="og:title" content="Model data used by RstoxBase — ModelData" />
+<meta property="og:description" content="The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -108,26 +108,96 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Model data used in estimation models in StoX</h1>
+    <h1>Model data used by RstoxBase</h1>
     <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Data.R'><code>R/Data.R</code></a></small>
     <div class="hidden name"><code>ModelData.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>The model data of a StoX model is the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.</p>
+    <p>The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.</p>
     </div>
 
 
-
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This <code>RstoxBase</code> package produces the folliwing model data:</p><ul>
-<li><p><code>LengthDistributionData</code></p></li>
-<li><p><code>NASCData</code></p></li>
-<li><p><code>DensityData</code></p></li>
-<li><p><code>StratumAreaData</code></p></li>
-<li><p><code>AbundanceData</code></p></li>
-</ul>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>BioticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/BioticData.html'>BioticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>AcousticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/AcousticData.html'>AcousticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>LandingData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/LandingData.html'>LandingData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>StoxBioticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>StoxAcousticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>StoxLandingData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxLandingData.html'>StoxLandingData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>StratumAreaData</th>
+      <td><p>The <code>StratumAreaData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>NASCData</th>
+      <td><p>The <code>NASCData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>SumNASCData</th>
+      <td><p>The <code>SumNASCData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>MeanNASCData</th>
+      <td><p>The <code>MeanNASCData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>LengthDistributionData</th>
+      <td><p>The <code>LengthDistributionData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>SumLengthDistributionData</th>
+      <td><p>The <code>SumLengthDistributionData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>MeanLengthDistributionData</th>
+      <td><p>The <code>MeanLengthDistributionData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>AssignmentLengthDistribution</th>
+      <td><p>The <code>AssignmentLengthDistribution</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>DensityData</th>
+      <td><p>The <code>DensityData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>SpeciesCategoryCatchData</th>
+      <td><p>The <code>SpeciesCategoryCatchData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>AbundanceData</th>
+      <td><p>The <code>AbundanceData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>IndividualsData</th>
+      <td><p>The <code>IndividualsData</code> data.</p></td>
+    </tr>
+    <tr>
+      <th>SuperIndividualsData</th>
+      <td><p>The <code>SuperIndividualsData</code> data.</p></td>
+    </tr>
+    </table>
 
 
   </div>

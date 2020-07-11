@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Sum NASC — SumNASC" />
-<meta property="og:description" content="This function sums NASC data vertically into layer resolution" />
+<meta property="og:description" content="This function summes NASC data vertically." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -114,46 +114,29 @@
     </div>
 
     <div class="ref-description">
-    <p>This function sums NASC data vertically into layer resolution</p>
+    <p>This function summes NASC data vertically.</p>
     </div>
 
     <pre class="usage"><span class='fu'>SumNASC</span>(
   <span class='kw'>NASCData</span>,
-  LayerDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PreDefined"</span>, <span class='st'>"FunctionInput"</span>),
-  AcousticLayer = <span class='kw'>NULL</span>,
-  TargetResolution = <span class='st'>"Layer"</span>
+  LayerDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span>),
+  LayerDefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"WaterColumn"</span>, <span class='st'>"HighestResolution"</span>, <span class='st'>"Resolution"</span>,
+    <span class='st'>"LayerTable"</span>),
+  Resolution = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
+  LayerTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
+  AcousticLayer = <span class='kw'>NULL</span>
 )</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>NASCData</th>
-      <td><p>The <code>NASC</code> data.</p></td>
-    </tr>
-    <tr>
-      <th>LayerDefinition</th>
-      <td><p>A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the <code>NASCData</code>, or "FunctionInput" to provide the Layers in the input <code>AcousticLayer</code></p></td>
-    </tr>
-    <tr>
-      <th>AcousticLayer</th>
-      <td><p><code>AcousticLayer</code> data.</p></td>
-    </tr>
-    <tr>
-      <th>TargetResolution</th>
-      <td><p>The vertical resolution of the output.</p></td>
-    </tr>
-    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>NASCData</code> object.</p>
+    <p>A <code>SumNASCData</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>NASC</code> and <code>SumNASC</code>.</p></div>
+    <div class='dont-index'><p><code>NASC</code> and <code>MeanNASC</code>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

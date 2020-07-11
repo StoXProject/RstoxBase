@@ -40,8 +40,7 @@
 
 
 <meta property="og:title" content="NASC — NASC" />
-<meta property="og:description" content="NASC function converts the StoxAcousticData into
-a NASCData format" />
+<meta property="og:description" content="NASC function converts the StoxAcousticData into NASCData format" />
 
 
 
@@ -73,7 +72,7 @@ a NASCData format" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
       </span>
     </div>
 
@@ -115,32 +114,25 @@ a NASCData format" />
     </div>
 
     <div class="ref-description">
-    <p>NASC function converts the StoxAcousticData into
-a NASCData format</p>
+    <p>NASC function converts the StoxAcousticData into NASCData format</p>
     </div>
 
-    <pre class="usage"><span class='fu'>NASC</span>(
-  StoxAcousticData = <span class='kw'>NULL</span>,
-  IncludePSU = <span class='fl'>FALSE</span>,
-  IncludeLayer = <span class='fl'>FALSE</span>,
-  AcousticLayer = <span class='kw'>NULL</span>,
-  AcousticPSU = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>NASC</span>(StoxAcousticData = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>StoxAcousticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    <tr>
+      <th>IncludePSU</th>
+      <td><p>Logical: If TRUE the <code>AcousticLayer</code> is added to the NASC data</p></td>
+    </tr>
+    <tr>
+      <th>IncludeLayer</th>
       <td><p>input in a StoxAcoustcdata format</p></td>
-    </tr>
-    <tr>
-      <th>AcousticLayer</th>
-      <td><p>The <code>AcousticLayer</code> process data.</p></td>
-    </tr>
-    <tr>
-      <th>AcousticPSU</th>
-      <td><p>The <code>AcousticPSU</code> process data.</p></td>
     </tr>
     </table>
 
