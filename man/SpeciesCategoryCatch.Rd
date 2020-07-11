@@ -10,7 +10,7 @@ SpeciesCategoryCatch(
 )
 }
 \arguments{
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
 \item{CatchVariable}{Specifies whether to output catch or weight (kilogram).}
 }

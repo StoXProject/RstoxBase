@@ -4,8 +4,7 @@
 #' 
 #' This function calcualtes abundance as the product of density and area of each stratum.
 #' 
-#' @inheritParams MeanDensity
-#' @param StratumAreaData The \code{\link{StratumAreaData}} data.
+#' @inheritParams ModelData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -16,15 +15,17 @@
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to individuals.
 #' 
 #' @export
-#' @import data.table
 #' 
-Abundance <- function(DensityData, StratumAreaData) {
+Abundance <- function(
+    MeanDensityData, 
+    StratumAreaData
+) {
 	
     # Merge the stratum area with the DensityData to an AbundanceData (remove the area at the end of the function):
-    AbundanceData <- merge(DensityData, StratumAreaData, by ="Stratum")
+    AbundanceData <- merge(MeanDensityData, StratumAreaData, by ="Stratum")
     
     # Multiply the area and the density:
     AbundanceData[, Abundance := Area * Density]
@@ -43,10 +44,9 @@ Abundance <- function(DensityData, StratumAreaData) {
 #' 
 #' Some description
 #' 
-#' @inheritParams DefineSweptAreaPSU
-#' @inheritParams RegroupLengthDistribution
-#' @param DensityType The type of density, one of "Acoustic" and "SweptArea".
-#' @param BioticAssignment The \code{\link{BioticAssignment}} process data.
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -57,12 +57,16 @@ Abundance <- function(DensityData, StratumAreaData) {
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 #' 
 #' @export
-#' @import data.table
 #' 
-Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea"), BioticAssignment, SweptAreaPSU, SweptAreaLayer) {
+Individuals <- function(
+    StoxBioticData, 
+    AbundanceType = c("Acoustic", "SweptArea"), 
+    BioticAssignment, 
+    MeanLengthDistributionData
+) {
     
     # Get the DefinitionMethod:
     AbundanceType <- match.arg(AbundanceType)
@@ -71,16 +75,19 @@ Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea
     MergedStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
     
     # Get the resolution variables of AbundanceData:
-    abundanceResolutionVariables <- getAllResolutionVariables("AbundanceData")
+    abundanceResolutionVariables <- getResolutionVariables("AbundanceData")
     
     # Get all hauls of each Stratum and Layer:
     if(AbundanceType == "Acoustic") {
         usedHauls <- BioticAssignment[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
     else if(AbundanceType == "SweptArea") {
-        # Add PSUs and Layers:
-        usedHauls <- addPSUProcessData(MergedStoxBioticData, PSUProcessData = SweptAreaPSU, all = TRUE)
-        usedHauls <- addLayerProcessData(usedHauls, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
+        # Get the original resolution from the MeanLengthDistributionData:
+        usedHauls <- MeanLengthDistributionData$Resolution
+        
+        ### # Add PSUs and Layers:
+        ### usedHauls <- addPSUProcessData(MergedStoxBioticData, PSUProcessData = SweptAreaPSU, all = TRUE)
+        ### usedHauls <- addLayerProcessData(usedHauls, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
         
         # get the unique rows, while extracting only the Haul and abundance resolution columns:
         usedHauls <- usedHauls[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
@@ -124,10 +131,8 @@ Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea
 #' 
 #' Some description
 #' 
-#' @inheritParams RegroupLengthDistribution
-#' @param IndividualsData   The 
-#' @param AbundanceData Parameter descrption.
-#' @param AbundWeightMethod Parameter descrption.
+#' @inheritParams ModelData
+#' @param AbundWeightMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -141,9 +146,13 @@ Individuals <- function(StoxBioticData, AbundanceType = c("Acoustic", "SweptArea
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
 #' @export
-#' @import data.table
 #' 
-SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod = c("Equal", "HaulDensity"), LengthDistributionData) {
+SuperIndividuals <- function(
+    IndividualsData, 
+    AbundanceData, 
+    AbundWeightMethod = c("Equal", "HaulDensity"), 
+    LengthDistributionData
+) {
     # Get the AbundWeightMethod:
     AbundWeightMethod <- match.arg(AbundWeightMethod)
     
@@ -192,7 +201,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
             stop("The LengthDistributionType of the input LengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
         }
         
-        # Add length groups IDs also in in LengthDistributionData:
+        # Add length group IDs also in in LengthDistributionData:
         # Make sure the AbundanceData is proper data.table:
         LengthDistributionData <- data.table::setDT(LengthDistributionData)
         addLengthGroupsByReference(data = LengthDistributionData, master = AbundanceData)
@@ -221,19 +230,22 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         keep <- !duplicated(LengthDistributionData[, ..haulGrouping])
         LengthDistributionData <- subset(LengthDistributionData, keep)
         
-        # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup:
-        LengthDistributionData[, sumWeightedCount := sum(WeightedCount, na.rm = TRUE), by = abundanceGrouping]
-        # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
-        LengthDistributionData[, haulWeightFactor := WeightedCount / sumWeightedCount , by = haulGrouping]
-        
-        
         # Add the haul density as the WeightedCount to the SuperIndividualsData (requiring Normalized LengthDistributionType):
         SuperIndividualsData <- merge(
             SuperIndividualsData, 
             #LengthDistributionData[, c(..haulGrouping, "WeightedCount", "sumWeightedCount", "haulWeightFactor")], 
-            LengthDistributionData[, c(..haulGrouping, "haulWeightFactor")], 
+            #LengthDistributionData[, ..haulGrouping], 
+            LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
             by = haulGrouping
         )
+        
+        # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup:
+        SuperIndividualsData[, sumWeightedCount := sum(WeightedCount, na.rm = TRUE), by = abundanceGrouping]
+        # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
+        SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount , by = haulGrouping]
+        
+        
+        
         
         # Get the sum of the WeightedCount in each Stratum/SpeciesCategory/LengthGroup:
         #sumBy <- c(
@@ -250,15 +262,15 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
         ###SuperIndividualsData[, individualCount := 1]
         
         # Remove WeightedCount and sumWeightedCount:
-        #SuperIndividualsData[, WeightedCount := NULL]
-        #SuperIndividualsData[, sumWeightedCount := NULL]
+        SuperIndividualsData[, WeightedCount := NULL]
+        SuperIndividualsData[, sumWeightedCount := NULL]
     }
     else{
         stop("Invalid AbundWeightMethod")
     }
     
-    # Order by the grouping variables:
-    SuperIndividualsData <- setorderv(SuperIndividualsData, abundanceGrouping)
+    ## Order by the grouping variables:
+    #SuperIndividualsData <- setorderv(SuperIndividualsData, abundanceGrouping)
     
     # Multiply by abundance weighting factors:
     #print(SuperIndividualsData[, "abundanceWeightFactor"], 20)
@@ -272,11 +284,14 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
+    SuperIndividualsData[, haulWeightFactor := NULL]
+    
     SuperIndividualsData[, individualCount := NULL]
     #SuperIndividualsData[, abundanceWeightFactor := NULL]
     SuperIndividualsData[, LengthGroup := NULL]
     
-    
+    # Order the rows:
+    orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
     
     ### # Remove the temporary columns:
     ### toRemove <- c("LengthGroup", "abundanceWeightFactor", "individualCount")
@@ -284,7 +299,7 @@ SuperIndividuals <- function(IndividualsData, AbundanceData, AbundWeightMethod =
     ### 
     ### # Order 
     ### toOrderFirst <- c(
-    ###     getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TR### UE), 
+    ###     getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
     ###     "Haul"
     ### )
     ### data.table::setcolorder(SuperIndividualsData, toOrderFirst)
@@ -332,7 +347,9 @@ addLengthGroupsByReferenceOneSpecies <- function(
     if(length(missingLength)) {
         # The 'atMissingLengthGroup' is guaranteed to be of length 1:
         atMissingLengthGroup <- which(is.na(uniqueLengthGroups[[lengthVar]]))
-        data[missingLength, LengthGroup := ..atMissingLengthGroup]
+        if(length(atMissingLengthGroup)) {
+            data[missingLength, LengthGroup := ..atMissingLengthGroup]
+        }
     }
     
     # (3) For the length intervals not exactly matched in the master, find the appropriate intervals. The intervalVector may contain intervals that are not present in the data (intervals between present intervals):
@@ -380,13 +397,13 @@ addLengthGroupsByReference <- function(
     speciesInMaster <- unique(master[[speciesVar]])
     
     # If there are species in the master that are not in the data, report a warning:
-    speciesOnlyInMaster <- setdiff(speciesInMaster, speciesInData)
+    speciesOnlyInMaster <- na.omit(setdiff(speciesInMaster, speciesInData))
     if(length(speciesOnlyInMaster)) {
         warning("StoX: The species categories ", paste(speciesOnlyInMaster, collapse = ", "), " are present in the master but not in the data")
     }
     # If there are species in the data that are not in the master, report a warning:
-    speciesOnlyInData <- setdiff(speciesInMaster, speciesInData)
-    if(length(speciesOnlyInMaster)) {
+    speciesOnlyInData <- na.omit(setdiff(speciesInMaster, speciesInData))
+    if(length(speciesOnlyInData)) {
         warning("StoX: The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
     }
 

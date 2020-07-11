@@ -6,25 +6,32 @@
 \usage{
 SumLengthDistribution(
   LengthDistributionData,
-  LayerDefinition = c("PreDefined", "FunctionInput"),
-  SweptAreaLayer = NULL,
-  TargetResolution = "Layer"
+  LayerDefinition = c("FunctionParameter", "FunctionInput"),
+  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution",
+    "LayerTable"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  SweptAreaLayer = NULL
 )
 }
 \arguments{
-\item{LengthDistributionData}{The length distribution data.}
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
-\item{LayerDefinition}{A string naming the method to use for defining the Layers, one of "PreDefined", if the Layer column is already populated in the \code{LengthDistributionData}, or "FunctionInput" to provide the Layers in the input \code{SweptAreaLayer}}
+\item{LayerDefinition}{A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{SweptAreaLayer} or \code{SweptAreaPSU}.}
 
-\item{SweptAreaLayer}{\code{\link{SweptAreaLayer}} data.}
+\item{LayerDefinitionMethod}{See \code{DefinitionMethod} of \code{\link{DefineSweptAreaLayer}}.}
 
-\item{TargetResolution}{The vertical resolution of the output.}
+\item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
+
+\item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
+
+\item{SweptAreaLayer}{The \code{\link{SweptAreaLayer}} process data.}
 }
 \value{
-A \code{\link{LengthDistributionData}} object.
+An \code{\link{SumLengthDistributionData}} object.
 }
 \description{
-This function sums length distribution to swept area layers.
+This function summes LengthDistributionData data vertically.
 }
 \details{
 This function is awesome and does excellent stuff.

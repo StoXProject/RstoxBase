@@ -43,5 +43,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{SweptAreaPSU}}.
+\code{\link{DefineAcousticLayer}} and \code{\link{DefineSweptAreaLayer}}.
 }

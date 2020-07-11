@@ -4,30 +4,5 @@
 \alias{DataTypes}
 \title{StoX data types of the RstoxBase package}
 \description{
-StoX data types are the data types used to transfer data and information between processes in a StoX estimation model.
-}
-\details{
-This RstoxBase package produces the folliwing StoX data types:
-\itemize{
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-\item{\code{\link{StratumPolygon}}}
-}
-}
-\seealso{
-\code{\link[RstoxData]{RstoxData}} and \code{\link[RstoxFDA]{RstoxFDA}} for a list of all StoX data types produced by the other official StoX function packages.
+StoX data types are the data types used to transfer data and information between processes in a StoX estimation model. The data types are divided into two types, the \code{\link{ModelData}} and \code{\link{ProcessData}}.
 }

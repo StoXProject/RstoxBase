@@ -19,7 +19,7 @@ DefineSweptAreaPSU(
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data.}
+\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.}
 }
@@ -37,5 +37,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{SweptAreaPSU}}.
+Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineSweptAreaLayer}} and \code{\link{DefineAcousticLayer}}.
 }

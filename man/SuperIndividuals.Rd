@@ -12,13 +12,13 @@ SuperIndividuals(
 )
 }
 \arguments{
-\item{IndividualsData}{The}
+\item{IndividualsData}{The \code{\link{IndividualsData}} data.}
 
-\item{AbundanceData}{Parameter descrption.}
+\item{AbundanceData}{The \code{\link{AbundanceData}} data.}
 
-\item{AbundWeightMethod}{Parameter descrption.}
+\item{AbundWeightMethod}{The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.}
 
-\item{LengthDistributionData}{The length distribution data.}
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.

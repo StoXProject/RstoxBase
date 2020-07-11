@@ -14,33 +14,79 @@ initiateRstoxBase <- function(){
     
     # Define the variables of the main data types used in estimation models:
     dataTypeDefinition <- list(
+        # NASC: 
         NASCData = list(
-            horizontalResolution = c("Stratum", "PSU", "EDSU"), 
-            verticalResolution = c("Layer", "Channel"), 
+            horizontalResolution = "EDSU", 
+            verticalResolution = "Channel", 
             categoryVariable = "AcousticCategory", 
-            groupingVariables = c("Frequency"), 
-            coordinateSystemOrigin = "ChannelReferenceDepth", 
-            coordinateSystemOrientation = "ChannelReferenceOrientation", 
+            groupingVariables = "Frequency", 
             data = "NASC", 
-            #verticalDimension = c("MinChannelRange", "MaxChannelRange", "MinLayerDepth", "MaxLayerDepth"), 
-            verticalRawDimension = c("MinChannelRange", "MaxChannelRange"), 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalRawDimension = c("MinChannelDepth", "MaxChannelDepth"), 
+            verticalLayerDimension = NULL, 
             weighting = "NASCWeight", 
             type = "ChannelReferenceType", 
             other = c("EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
         ), 
+        SumNASCData = list(
+            horizontalResolution = "EDSU", 
+            verticalResolution = "Layer", 
+            categoryVariable = "AcousticCategory", 
+            groupingVariables = "Frequency", 
+            data = "NASC", 
+            verticalRawDimension = NULL, 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            weighting = "SumNASCWeight", 
+            type = "ChannelReferenceType", 
+            other = c("EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+        ), 
+        MeanNASCData = list(
+            horizontalResolution = c("Stratum", "PSU"), 
+            verticalResolution = "Layer", 
+            categoryVariable = "AcousticCategory", 
+            groupingVariables = "Frequency", 
+            data = "NASC", 
+            verticalRawDimension = NULL, 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            weighting = "MeanNASCWeight", 
+            type = "ChannelReferenceType", 
+            other = NULL
+        ), 
+        # LengthDistribution:
         LengthDistributionData = list(
-            horizontalResolution = c("Stratum", "PSU", "Station"), 
-            verticalResolution = c("Layer", "Haul"), 
+            horizontalResolution = "Station", 
+            verticalResolution = "Haul", 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            #verticalDimension = c("MinHaulDepth", "MaxHaulDepth", "MinLayerDepth", "MaxLayerDepth"), 
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            verticalLayerDimension = NULL, 
             weighting = "LengthDistributionWeight", 
             type = "LengthDistributionType", 
             other = c("EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+        ), 
+        SumLengthDistributionData = list(
+            horizontalResolution = "Station", 
+            verticalResolution = "Layer", 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            data = "WeightedCount",
+            verticalRawDimension = NULL, 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            weighting = "SumLengthDistributionWeight", 
+            type = "LengthDistributionType", 
+            other = c("EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+        ), 
+        MeanLengthDistributionData = list(
+            horizontalResolution = c("Stratum", "PSU"), 
+            verticalResolution = "Layer", 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            data = "WeightedCount",
+            verticalRawDimension = NULL, 
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            weighting = "MeanLengthDistributionWeight", 
+            type = "LengthDistributionType", 
+            other = NULL
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
@@ -48,13 +94,12 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "WeightedCount",
-            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
-            #weighting = "AssignmentLengthDistributionWeight", 
             weighting = NULL, 
             type = "LengthDistributionType", 
             other = NULL
         ), 
+        # Density:
         DensityData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
@@ -65,6 +110,17 @@ initiateRstoxBase <- function(){
             weighting = "DensityWeight", 
             other = NULL
         ), 
+        MeanDensityData = list(
+            horizontalResolution = c("Stratum"), 
+            verticalResolution = c("Layer"), 
+            categoryVariable = "SpeciesCategory", 
+            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            data = "Density",
+            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+            weighting = "MeanDensityWeight", 
+            other = NULL
+        ), 
+        # Abundance:
         AbundanceData = list(
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
@@ -81,7 +137,6 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = NULL, 
-            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
@@ -92,7 +147,6 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
             data = "Abundance", 
-            #verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
@@ -104,6 +158,37 @@ initiateRstoxBase <- function(){
             weighting = "WeightingFactor", 
             other = NULL
         )
+    )
+    
+    resolutionClasses <- list(
+        NASC = list(
+            vertical= c("Layer", "Channel"), 
+            horizontal = c("Stratum", "PSU", "EDSU")
+        ), 
+        LengthDistribution = list(
+            vertical= c("Layer", "Haul"), 
+            horizontal = c("Stratum", "PSU", "Station")
+        ), 
+        Density = list(
+            vertical= c("Layer"), 
+            horizontal = c("Stratum", "PSU")
+        ), 
+        Abundance = list(
+            vertical= c("Layer"), 
+            horizontal = c("Stratum")
+        )
+    )
+    
+    allResolution = list(
+        NASCData = "NASC", 
+        SumNASCData = "NASC", 
+        MeanNASCData = "NASC", 
+        LengthDistributionData = "LengthDistribution", 
+        SumLengthDistributionData = "LengthDistribution", 
+        MeanLengthDistributionData = "LengthDistribution", 
+        DensityData = "Density",
+        MeanDensityData = "Density",
+        AbundanceData = "Abundance"
     )
     
     emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
@@ -264,14 +349,15 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 
 
 
-getColumnOrder <- function(dataType) {
-    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    columns <- unlist(dataTypeDefinition[[dataType]])
-    return(columns)
-}
+#getColumnOrder <- function(dataType) {
+#    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+#    #columns <- unlist(dataTypeDefinition[[dataType]])
+#    #return(columns)
+#    getDataTypeDefinition(dataType, unlist = TRUE)
+#}
 
 #setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
-formatOutput <- function(data, dataType, keep.all = TRUE) {
+formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE) {
     
     # Remove any duplicated columns:
     if(any(duplicated(names(data)))) {
@@ -279,16 +365,26 @@ formatOutput <- function(data, dataType, keep.all = TRUE) {
     }
     
     # Get the column order:
-    columnOrder <- getColumnOrder(dataType)
+    #columnOrder <- getColumnOrder(dataType)
+    columnOrder <- getDataTypeDefinition(dataType, unlist = TRUE)
+    if(allow.missing) {
+        columnOrder <- intersect(columnOrder, names(data))
+    }
     
     # Order the columns:
     data.table::setcolorder(data, columnOrder)
     
     if(!keep.all) {
-        toRemove <- setdiff(names(data), columnOrder)
-        if(length(toRemove)) {
-            data[, eval(toRemove) := NULL]
-        }
+        #toRemove <- setdiff(names(data), columnOrder)
+        #if(length(toRemove)) {
+        #    data[, eval(toRemove) := NULL]
+        #}
+        
+        removeColumnsByReference(
+            data = data, 
+            toRemove =  setdiff(names(data), columnOrder)
+        )
+        
         #data <- data[, ..columnOrder]
     }
 }
@@ -326,12 +422,28 @@ detectDataType <- function(data) {
 }
 
 
-getAllDataTypeVariables <- function(dataType, unlist = TRUE) {
-    aggregateBy <- getDataTypeDefinition(
-        dataType = dataType, 
-        unlist = unlist
-    )
-}
+#getModelType <- function(dataType) {
+#    if(endsWith(dataType, "NASCData")) {
+#        modelType <- "Acoustic"
+#    }
+#    else if(dataType == "LengthDistributionData") {
+#        modelType <- "SweptArea"
+#    }
+#    else {
+#        stop("Model type not detected")
+#    }
+#    return(modelType)
+#}
+
+
+
+
+#getAllDataTypeVariables <- function(dataType, unlist = TRUE) {
+#    getDataTypeDefinition(
+#        dataType = dataType, 
+#        unlist = unlist
+#    )
+#}
 
 
 
@@ -351,31 +463,71 @@ getAllAggregationVariables <- function(dataType, exclude.groupingVariables = FAL
     return(aggregateBy)
 }
 
-getAllResolutionVariables <- function(dataType) {
+getResolutionVariables <- function(dataType = NULL, dimension = c("horizontal", "vertical")) {
     
     # Define the elements to return:
-    resolutionElements <- c("horizontalResolution", "verticalResolution")
+    resolutionElements <- paste0(dimension, "Resolution")
     
     # Get the definitions:
-    resolution <- getDataTypeDefinition(
-        dataType = dataType, 
-        elements = resolutionElements, 
-        unlist = TRUE
+    resolution <- unique(
+        getDataTypeDefinition(
+            dataType = dataType, 
+            elements = resolutionElements, 
+            unlist = TRUE
+        )
     )
     
     return(resolution)
 }
 
-getDataTypeDefinition <- function(dataType, elements = NULL, unlist = FALSE) {
+getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE) {
+    # Define the valid dimensions, and select the other if requested:
+    validDimensions <- c("horizontal", "vertical")
+    
+    if(!length(dimension)) {
+        dimension <- validDimensions
+    }
+    else {
+        dimension <- match.arg(dimension, validDimensions)
+        if(other) {
+            dimension <- setdiff(validDimensions, dimension)
+        }
+    }
+    
+    allResolution <- getRstoxBaseDefinitions("allResolution")[[dataType]]
+    resolutionClasses <- getRstoxBaseDefinitions("resolutionClasses")
+    if(length(allResolution)) {
+        unlist(resolutionClasses[[allResolution]][dimension])
+    }
+    else {
+        NULL
+    }
+}
+
+# dataType can be NULL, implying all data types, a vector of data type names or a logical function of data type names, such as endswith(x, "NASCData"):
+getDataTypeDefinition <- function(dataType = NULL, elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
+    # If given as a function of data type names (names of 'dataTypeDefinition'), apply the function to subset the data types:
+    if(is.function(dataType)) {
+        dataTypeDefinitionNames <- names(dataTypeDefinition)
+        dataType <- subset(dataTypeDefinitionNames, dataType(dataTypeDefinitionNames))
+    }
+    # If NULL use all data types:
+    if(length(dataType) == 0) {
+        dataType <- names(dataTypeDefinition)
+    }
+    thisDataTypeDefinition <- dataTypeDefinition[dataType]
     
     # Extract the elements to return:
     if(length(elements)) {
-        thisDataTypeDefinition <- thisDataTypeDefinition[elements]
+        thisDataTypeDefinition <- lapply(thisDataTypeDefinition, "[", elements)
     }
+    if(length(dataType) == 1) {
+        thisDataTypeDefinition <- thisDataTypeDefinition[[dataType]]
+    }
+        
     # Unlist if specified:
     if(unlist) {
         thisDataTypeDefinition <- unlist(thisDataTypeDefinition)
@@ -383,6 +535,24 @@ getDataTypeDefinition <- function(dataType, elements = NULL, unlist = FALSE) {
     
     return(thisDataTypeDefinition)
 }
+
+
+#getAllDataTypeDefinitions <- function(elements = NULL, unlist = FALSE) {
+#    
+#    # Get the requested type:
+#    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+#    
+#    # Extract the elements to return:
+#    if(length(elements)) {
+#        dataTypeDefinition <- lapply(dataTypeDefinition, "[", elements)
+#    }
+#    # Unlist if specified:
+#    if(unlist) {
+#        dataTypeDefinition <- unlist(dataTypeDefinition)
+#    }
+#    
+#    return(dataTypeDefinition)
+#}
 
 determineAggregationVariables <- function(
         data, 
@@ -394,23 +564,34 @@ determineAggregationVariables <- function(
     # Get the requested type:
     dimension <- match.arg(dimension)
     #dataType <- detectDataType(data)
-    dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
+    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+    #thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
+    dataTypeDefinition <- getDataTypeDefinition(dataType)
     
     # Get the relevant resolution variables:
-    resolutionName <- paste0(dimension, "Resolution")
-    resolution <- thisDataTypeDefinition[[resolutionName]]
+    thisResolution <- getAllResolutionVariables(
+        dataType = dataType, 
+        dimension = dimension
+    )
+    thisResolution <- intersect(thisResolution, names(data))
+    otherResolution <- getAllResolutionVariables(
+        dataType = dataType, 
+        dimension = dimension, 
+        other = TRUE
+    )
+    otherResolution <- intersect(otherResolution, names(data))
+    
     # Get the present resolution variables:
-    hasAnyNonNA <- unlist(data[, lapply(.SD, function(x) any(!is.na(x))), .SDcols = resolution])
-    presentResolution <- resolution[hasAnyNonNA]
+    hasAnyNonNA <- unlist(data[, lapply(.SD, function(x) any(!is.na(x))), .SDcols = thisResolution])
+    presentResolution <- thisResolution[hasAnyNonNA]
     
-    # Get the finest resolution variable:
-    finestResolution <- utils::tail(presentResolution, 1)
+    ## Get the finest resolution variable:
+    #finestResolution <- utils::tail(presentResolution, 1)
+    #
+    ## Get the higher resolution than the finest:
+    #allButFinestResolution <- setdiff(presentResolution, finestResolution)
     
-    # Get the higher resolution than the finest:
-    allButFinestResolution <- setdiff(presentResolution, finestResolution)
-    
-    # Get the next resolution, that is the resolution one level higher than the fines resolution:
+    # Get the next resolution, that is the resolution one level higher than the present resolution:
     nextResolution <- if(length(presentResolution) == 1) NA else presentResolution[length(presentResolution) - 1]
     
     # And the resolution variables to aggregate by:
@@ -422,38 +603,41 @@ determineAggregationVariables <- function(
     aggregationResolution <- presentResolution[seq_len(min(which(presentIsTarget)))]
     
     # Get the variables NOT to aggregate by:
-    setToNA <- setdiff(resolution, aggregationResolution)
+    setToNA <- setdiff(thisResolution, aggregationResolution)
     
     # ... and diff these from all possigle grouping variables:
     aggregateBy <- setdiff(
         c(
-            thisDataTypeDefinition$horizontalResolution, 
-            thisDataTypeDefinition$verticalResolution, 
-            thisDataTypeDefinition$categoryVariable, 
-            thisDataTypeDefinition$groupingVariables
+            aggregationResolution, 
+            otherResolution, 
+            dataTypeDefinition$categoryVariable, 
+            dataTypeDefinition$groupingVariables
         ), 
         setToNA
     )
     
     out <- list(
-        dataTypeDefinition = dataTypeDefinition, 
+        #dataTypeDefinition = dataTypeDefinition, 
         by = aggregateBy, 
         setToNA = setToNA, 
         targetResolution = targetResolution, 
         presentResolution = presentResolution, 
-        finestResolution = finestResolution, 
-        allButFinestResolution = allButFinestResolution, 
+        #finestResolution = finestResolution, 
+        #allButFinestResolution = allButFinestResolution, 
         nextResolution = nextResolution, 
-        dataVariable = thisDataTypeDefinition$data, 
-        weightingVariable = thisDataTypeDefinition$weighting, 
-        summedWeightingVariable = thisDataTypeDefinition$summedWeighting, 
-        otherVariables = thisDataTypeDefinition$other, 
-        verticalRawDimension = thisDataTypeDefinition$verticalRawDimension, 
-        verticalLayerDimension = thisDataTypeDefinition$verticalLayerDimension
+        dataVariable = dataTypeDefinition$data, 
+        weightingVariable = dataTypeDefinition$weighting, 
+        otherVariables = dataTypeDefinition$other, 
+        verticalRawDimension = dataTypeDefinition$verticalRawDimension, 
+        verticalLayerDimension = dataTypeDefinition$verticalLayerDimension
     )
     return(out)
 }
 
 
 
+orderDataByReference <- function(data, dataType) {
+    orderColumns <- getAllAggregationVariables(dataType)
+    setorderv(data, cols = orderColumns)
+}
 

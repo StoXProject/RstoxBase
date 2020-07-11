@@ -1,37 +1,34 @@
-# DefineAcousticPSU
-# DefineAcousticLayer
-# DefineSweptAreaPSU
-# DefineStratumPolygon
-# DefineSurvey
-
-
 ##################################################
 ##################################################
 #' Definne PSU
 #' 
 #' Underlying function for \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
-#' @inheritParams DefineStratumPolygon
-#' @param StratumPolygon    The \code{\link{StratumPolygon}} process data.
-#' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
-#' @param modelType         Character: A string naming the type of model, either "Acoustic" or "SweptArea".
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' An list of two objects, Stratum_PSU and SSU_PSU.
 #' 
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{AcousticPSU}}.
+#' @seealso \code{\link{DefineAcousticPSU}} and \code{\link{DefineSweptAreaPSU}}..
 #' 
 #' @export
-#' @import data.table
 #' 
-DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxData, DefinitionMethod = c("Identity", "None"), modelType = c("Acoustic", "SweptArea")) {
+DefinePSU <- function(
+    processData, UseProcessData = FALSE, 
+    StratumPolygon, 
+    StoxData, 
+    DefinitionMethod = c("Identity", "None"), 
+    modelType = c("Acoustic", "SweptArea")
+) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -44,13 +41,13 @@ DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxD
     
     # SSULevel
     if(modelType == "Acoustic") {
-        SSULevel <- "Log"
+        #SSULevel <- "Log"
         SSUName <- "EDSU"
         #prefix <- "T"
         prefix <- getRstoxBaseDefinitions("AcousticPSUPrefix")
     }
     else if(modelType == "SweptArea") {
-        SSULevel <- "Station"
+        #SSULevel <- "Station"
         SSUName <- "Station"
         #prefix <- "S"
         prefix <- getRstoxBaseDefinitions("SweptAreaPSUPrefix")
@@ -59,8 +56,13 @@ DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxD
         stop("Unknown model type")
     }
     
+    # Make sure that there is only one row per SSU:
+    notDuplicatedSSUs <- !duplicated(StoxData[[SSUName]])
+    StoxData <- StoxData[notDuplicatedSSUs, ]
+    
     # Get SSUs:
-    SSU <- StoxData[[SSULevel]][[SSUName]]
+    #SSU <- StoxData[[SSULevel]][[SSUName]]
+    SSU <- StoxData[[SSUName]]
     
     # Get the stratum names:
     StratumNames = getStratumNames(StratumPolygon)
@@ -79,7 +81,8 @@ DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxD
         )
         
         # Find the stratum of each PSU:
-        SpatialPSUs <- sp::SpatialPoints(StoxData[[SSULevel]][, c("Longitude", "Latitude")])
+        #SpatialPSUs <- sp::SpatialPoints(StoxData[[SSULevel]][, c("Longitude", "Latitude")])
+        SpatialPSUs <- sp::SpatialPoints(StoxData[, c("Longitude", "Latitude")])
         
         StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
         
@@ -139,9 +142,9 @@ DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxD
 #' 
 #' This function defines the \code{\link{SweptAreaPSU}} process data, linking strata, swept-area PSUs and Stations 
 #' 
-#' @inheritParams DefineStratumPolygon
-#' @inheritParams DefinePSU
-#' @param StoxBioticData    The \code{\link[RstoxData]{StoxBioticData}} data.
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -153,12 +156,16 @@ DefinePSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxD
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{SweptAreaPSU}}.
+#' @seealso Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineSweptAreaLayer}} and \code{\link{DefineAcousticLayer}}.
 #' 
 #' @export
-#' @import data.table
 #' 
-DefineSweptAreaPSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxBioticData, DefinitionMethod = c("StationToPSU", "None")) {
+DefineSweptAreaPSU <- function(
+    processData, UseProcessData = FALSE, 
+    StratumPolygon, 
+    StoxBioticData, 
+    DefinitionMethod = c("StationToPSU", "None")
+) {
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -169,7 +176,7 @@ DefineSweptAreaPSU <- function(processData, UseProcessData = FALSE, StratumPolyg
     SweptAreaPSU <- DefinePSU(
         processData = processData, 
         StratumPolygon = StratumPolygon, 
-        StoxData = StoxBioticData, 
+        StoxData = StoxBioticData$Station, 
         DefinitionMethod = DefinitionMethod, 
         UseProcessData = UseProcessData, 
         modelType = "SweptArea"
@@ -185,9 +192,9 @@ DefineSweptAreaPSU <- function(processData, UseProcessData = FALSE, StratumPolyg
 #' 
 #' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
-#' @inheritParams DefineStratumPolygon
-#' @inheritParams DefinePSU
-#' @param StoxAcousticData  The \code{\link[RstoxData]{StoxAcousticData}} data.
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
 #' 
 #' @details
@@ -199,12 +206,16 @@ DefineSweptAreaPSU <- function(processData, UseProcessData = FALSE, StratumPolyg
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{AcousticPSU}}.
+#' @seealso Swept-area PSUs are generated using \code{\link{DefineSweptAreaPSU}}. For the vertical resolution (Layer) see \code{\link{DefineSweptAreaLayer}} and \code{\link{DefineAcousticLayer}}.
 #' 
 #' @export
-#' @import data.table
 #' 
-DefineAcousticPSU <- function(processData, UseProcessData = FALSE, StratumPolygon, StoxAcousticData, DefinitionMethod = c("EDSUToPSU", "None")) {
+DefineAcousticPSU <- function(
+    processData, UseProcessData = FALSE, 
+    StratumPolygon, 
+    StoxAcousticData, 
+    DefinitionMethod = c("EDSUToPSU", "None")
+) {
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
@@ -215,7 +226,7 @@ DefineAcousticPSU <- function(processData, UseProcessData = FALSE, StratumPolygo
     AcousticPSU <- DefinePSU(
         processData = processData, 
         StratumPolygon = StratumPolygon, 
-        StoxData = StoxAcousticData, 
+        StoxData = StoxAcousticData$Log, 
         DefinitionMethod = DefinitionMethod, 
         UseProcessData = UseProcessData, 
         modelType = "Acoustic"
@@ -231,12 +242,11 @@ DefineAcousticPSU <- function(processData, UseProcessData = FALSE, StratumPolygo
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
-#' @inheritParams DefineStratumPolygon
-#' @param StoxData          Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
+#' @inheritParams general_arguments
+#' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.
 #' @param Resolution  Numeric: A single numeric giving the thickness of the layers.
 #' @param LayerTable A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.
-#' @param modelType Character: A string naming the type of model, either "Acoustic" or "SweptArea".
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -247,12 +257,18 @@ DefineAcousticPSU <- function(processData, UseProcessData = FALSE, StratumPolygo
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{SweptAreaPSU}}.
+#' @seealso \code{\link{DefineAcousticLayer}} and \code{\link{DefineSweptAreaLayer}}.
 #' 
 #' @export
-#' @import data.table
 #' 
-DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table(), modelType = c("Acoustic", "SweptArea")) {
+DefineLayer <- function(
+    processData, UseProcessData = FALSE, 
+    StoxData, 
+    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    modelType = c("Acoustic", "SweptArea")
+) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -264,15 +280,26 @@ DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, Definitio
     # Get the DefinitionMethod:
     modelType <- match.arg(modelType)
     
+    # If given as a list of data.tables, extract the table holding the vertical resolution:
+    if(is.list(StoxData) && all(sapply(StoxData, data.table::is.data.table))) {
+        # Merge the tables of the input data:
+        data <- mergeDataTables(StoxData, output.only.last = TRUE, all = TRUE)
+        #data <- StoxData[[VerticalResolutionLevel]]
+    }
+    else {
+        data <- StoxData
+    }
     
     # SSULevel
     if(modelType == "Acoustic") {
-        VerticalResolutionLevel <- "NASC"
-        VerticalResolutionMin <- "MinChannelRange"
-        VerticalResolutionMax <- "MaxChannelRange"
+        # Add channel depths:
+        getChannelDepth(data)
+        #VerticalResolutionLevel <- "NASC"
+        VerticalResolutionMin <- "MinChannelDepth"
+        VerticalResolutionMax <- "MaxChannelDepth"
     }
     else if(modelType == "SweptArea") {
-        VerticalResolutionLevel <- "Haul"
+        #VerticalResolutionLevel <- "Haul"
         VerticalResolutionMin <- "MinHaulDepth"
         VerticalResolutionMax <- "MaxHaulDepth"
     }
@@ -280,41 +307,11 @@ DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, Definitio
         stop("Unknown model type")
     }
     
-    # Function to create a LayerTable from breaks:
-    createLayerTable <- function(x) {
-        # Create a data.table if a vector of breaks is given:
-        if(length(dim(x)) == 1) {
-            x <- data.table::data.table(
-                MinLayerDepth = x[-length(x)], 
-                MaxLayerDepth = x[-1]
-            )
-        }
-        else {
-            names(x) <- c("MinLayerDepth", "MaxLayerDepth")
-        }
-        # Create the Layer names:
-        LayerNames <- getDefaultLayerNames(x)
-        x <- cbind(
-            Layer = LayerNames, 
-            x
-        )
-        x
-    }
     
-    # Function to get defaul Layer names:
-    getDefaultLayerNames <- function(x) {
-        if(length(dim(x) == 2)) {
-            nlayers <- nrow(x)
-        }
-        else {
-            nlayers <- length(x)
-        }
-        paste0("Layer", formatC(seq_len(nlayers), width = nchar(nlayers), format = "d", flag = "0"))
-    }
     
     # Get the common intervals:
     possibleIntervals <- getCommonIntervals(
-        data = unique(StoxData[[VerticalResolutionLevel]][, c(..VerticalResolutionMin, ..VerticalResolutionMax)]), 
+        data = unique(data[, c(..VerticalResolutionMin, ..VerticalResolutionMax)]), 
         varMin = VerticalResolutionMin, 
         varMax = VerticalResolutionMax, 
         lowerName = "MinLayerDepth", 
@@ -360,6 +357,38 @@ DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, Definitio
     return(Layer)
 }
 
+# Function to create a LayerTable from breaks:
+createLayerTable <- function(x) {
+    # Create a data.table if a vector of breaks is given:
+    if(length(dim(x)) == 1) {
+        x <- data.table::data.table(
+            MinLayerDepth = x[-length(x)], 
+            MaxLayerDepth = x[-1]
+        )
+    }
+    else {
+        names(x) <- c("MinLayerDepth", "MaxLayerDepth")
+    }
+    # Create the Layer names:
+    LayerNames <- getDefaultLayerNames(x)
+    x <- cbind(
+        Layer = LayerNames, 
+        x
+    )
+    x
+}
+
+# Function to get defaul Layer names:
+getDefaultLayerNames <- function(x) {
+    if(length(dim(x) == 2)) {
+        nlayers <- nrow(x)
+    }
+    else {
+        nlayers <- length(x)
+    }
+    paste0("Layer", formatC(seq_len(nlayers), width = nchar(nlayers), format = "d", flag = "0"))
+}
+
 
 ##################################################
 ##################################################
@@ -367,9 +396,9 @@ DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, Definitio
 #' 
 #' This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX. 
 #' 
-#' @inheritParams DefineStratumPolygon
+#' @inheritParams general_arguments
+#' @inheritParams ModelData
 #' @inheritParams DefineLayer
-#' @inheritParams DefineAcousticPSU
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -380,12 +409,17 @@ DefineLayer <- function(processData, UseProcessData = FALSE, StoxData, Definitio
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{AcousticPSU}}.
+#' @seealso Swept-area Layers are generated using \code{\link{DefineSweptAreaLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @export
-#' @import data.table
 #' 
-DefineAcousticLayer <- function(processData, UseProcessData = FALSE, StoxAcousticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table()) {
+DefineAcousticLayer <- function(
+    processData, UseProcessData = FALSE, 
+    StoxAcousticData, 
+    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table()
+) {
     
     DefineLayer(
         processData = processData, 
@@ -405,9 +439,9 @@ DefineAcousticLayer <- function(processData, UseProcessData = FALSE, StoxAcousti
 #' 
 #' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
 #' 
-#' @inheritParams DefineStratumPolygon
+#' @inheritParams general_arguments
+#' @inheritParams ModelData
 #' @inheritParams DefineLayer
-#' @inheritParams DefineSweptAreaPSU
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -418,12 +452,17 @@ DefineAcousticLayer <- function(processData, UseProcessData = FALSE, StoxAcousti
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{SweptAreaPSU}}.
+#' @seealso Acoustic Layers are generated using \code{\link{DefineAcousticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @export
-#' @import data.table
 #' 
-DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBioticData, DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), Resolution = double(), LayerTable = data.table::data.table()) {
+DefineSweptAreaLayer <- function(
+    processData, UseProcessData = FALSE, 
+    StoxBioticData, 
+    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table()
+) {
     
     DefineLayer(
         processData = processData, 
@@ -444,15 +483,17 @@ DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBiotic
 #' 
 #' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 #' 
-#' @inheritParams DefineStratumPolygon
-#' @inheritParams DefineSweptAreaPSU
-#' @inheritParams DefineAcousticPSU
-#' @inheritParams SumNASC
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
-#' @param AcousticPSU       The \code{\link{AcousticPSU}} process data.
-#' @param AcousticLayer     The \code{\link{AcousticLayer}} process data.
-#' @param Radius            Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
-#' @param EllipsoidalDistanceTable     Not yet implemented.
+#' @param Radius Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
+#' @param MinNumberOfHauls For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the \code{MinNumberOfHauls}, the \code{MinNumberOfHauls} closest Hauls will be used (in ellipsoidal distance). 
+#' @param DistanceNauticalMiles For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.
+#' @param TimeDifferenceHours For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.
+#' @param BottomDepthDifferenceMeters For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.
+#' @param LongitudeDifferenceDegrees For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.
+#' @param LatitudeDifferenceDegrees For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.
 #' 
 #' @details
 #' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
@@ -463,16 +504,16 @@ DefineSweptAreaLayer <- function(processData, UseProcessData = FALSE, StoxBiotic
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{BioticAssignment}}.
+#' @seealso \code{\link{BioticAssignmentWeighting}} for weighting BioticAssignment.
 #' 
 #' @export
-#' @import data.table
 #'
 DefineBioticAssignment <- function(
     processData, UseProcessData = FALSE, 
     DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"), 
+    StoxBioticData, 
     # For DefinitionMethod "Stratum": 
-    StoxBioticData, StratumPolygon, AcousticPSU, AcousticLayer, 
+    StratumPolygon, AcousticPSU, AcousticLayer, 
     # (Additional) for DefinitionMethod "Radius": 
     StoxAcousticData, 
     Radius = double(), 
@@ -483,7 +524,7 @@ DefineBioticAssignment <- function(
     BottomDepthDifferenceMeters, 
     LongitudeDifferenceDegrees, 
     LatitudeDifferenceDegrees
-    )
+)
 {
     
     # Return immediately if UseProcessData = TRUE:
@@ -694,15 +735,13 @@ getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData,
 #' 
 #' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 #' 
-#' @inheritParams DefineStratumPolygon
-#' @inheritParams DefineSweptAreaPSU
-#' @inheritParams DefineAcousticPSU
-#' @inheritParams SumNASC
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
-#' @param AcousticPSU       The \code{\link{AcousticPSU}} process data.
-#' @param AcousticLayer     The \code{\link{AcousticLayer}} process data.
-#' @param Radius            Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
-#' @param EllipsoidalDistanceTable     Not yet implemented.
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.
+#' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
+#' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
+#' @param LengthExponentTable For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -713,10 +752,9 @@ getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData,
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{BioticAssignment}}.
+#' @seealso \code{\link{DefineBioticAssignment}} for generating BioticAssignment.
 #' 
 #' @export
-#' @import data.table
 #'
 BioticAssignmentWeighting <- function(
     BioticAssignment, 
@@ -724,7 +762,8 @@ BioticAssignmentWeighting <- function(
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    StoxAcousticData, Radius, LengthExponentTable) {
+    StoxAcousticData, Radius, LengthExponentTable
+) {
     
     # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.
     
@@ -763,10 +802,11 @@ BioticAssignmentWeighting <- function(
     }
     # Search around each station for the NASC values inside the range 'Radius':
     else if(WeightingMethod == "NASC") {
+        warning("Not implemented")
         # Merge the Station and Haul table:
-        if(any(unlist(LengthDistributionData[, lapply(.SD, function(x) all(is.na(x))), .SDcols = c("Station", "Haul")]))) {
-            stop("LengthDistributionData must have horizontal/vertical resolution Station/Haul (the finest resolution)")
-        }
+        ###if(any(unlist(LengthDistributionData[, lapply(.SD, function(x) all(is.na(x))), .SDcols = c("Station", "Haul")]))) {
+        ###    stop("LengthDistributionData must have horizontal/vertical resolution Station/Haul (the finest resolution)")
+        ###}
         stationInfo <- unique(LengthDistributionData[, c("Station", "Haul", "DateTime", "Longitude", "Latitude")])
         # Get unique hauls in BioticAssignmentCopy:
         uniqueHauls <- BioticAssignmentCopy[, .(Haul = unique(Haul))]
@@ -935,22 +975,19 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' 
 #' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 #' 
-#' @inheritParams DefineStratumPolygon
+#' @inheritParams general_arguments
 #' @param TargetStrengthMethod  Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
-#' @param LengthDependentTable A table of the columns AcousticCategory, Frequency, TargetStrength0, LengthExponent and DepthExponent
-#' @param LengthAndDepthDependentTable A table of the columns AcousticCategory, Frequency, TargetStrength0 and LengthExponent.
-#' @param TargetStrengthByLengthTable A table of the columns AcousticCategory, Frequency and IndividualTotalLengthCentimeter.
-#' @param LengthExponentTable A table of the columns AcousticCategory, Frequency and LengthExponent
+#' @param TargetStrengthDefinitionTable A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
 #' @param FileName A file from which to read the \code{ParameterTable}.
 #' 
 #' @details
 #' The \code{TargetStrengthMethod} has the following possible values: 
 #' \enumerate{
-#'   \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length).
-#'   \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10).
-#'   \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length).
-#'   \item TargetStrengthByLength, applying a table of TargetStrength and Length.
+#'   \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.
+#'   \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.
+#'   \item TargetStrengthByLength, applying a table of TargetStrength and TotalLengthCentimeter. Required columns: TargetStrength and TotalLengthCentimeter.
+#'   \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length). Required columns: LengthExponent.
 #' }
 #' The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.
 #' 
@@ -960,17 +997,22 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' @examples
 #' x <- 1
 #' 
+#' @seealso \code{\link{AcousticDensity}} for applying the AcousticTargetStrength.
+#' 
 #' @export
 #' 
 DefineAcousticTargetStrength <- function(
     processData, UseProcessData = FALSE, 
-    TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "LengthExponent", "TargetStrengthByLength"), 
+    # Note that "LengthExponent" is an option for TargetStrengthMethod (used by BioticAssignmentWeighting()), but this is not shown.
+    TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
     DefinitionMethod = c("Table", "ResourceFile"),
-    LengthDependentTable = data.table::data.table(), 
-    LengthAndDepthDependentTable = data.table::data.table(), 
-    LengthExponentTable = data.table::data.table(), 
-    TargetStrengthByLengthTable = data.table::data.table(), 
-    FileName) {
+    TargetStrengthDefinitionTable = data.table::data.table(), 
+    #LengthDependentTable = data.table::data.table(), 
+    #LengthAndDepthDependentTable = data.table::data.table(), 
+    #LengthExponentTable = data.table::data.table(), 
+    #TargetStrengthByLengthTable = data.table::data.table(), 
+    FileName
+) {
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -985,7 +1027,8 @@ DefineAcousticTargetStrength <- function(
     AcousticTargetStrength <- getAcousticTargetStrength(
         TargetStrengthMethod = TargetStrengthMethod, 
         DefinitionMethod = DefinitionMethod, 
-        TargetStrengthTable = get(paste0(TargetStrengthMethod, "Table")), 
+        TargetStrengthTable = TargetStrengthDefinitionTable, 
+        #TargetStrengthTable = get(paste0(TargetStrengthMethod, "Table")), 
         FileName = FileName
     )
     

@@ -12,7 +12,7 @@ LengthDependentCatchCompensation(
 )
 }
 \arguments{
-\item{LengthDistributionData}{The length distribution data.}
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
 \item{CompensationMethod}{Parameter descrption.}
 

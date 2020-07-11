@@ -2,29 +2,28 @@
 % Please edit documentation in R/Acoustic.R
 \name{MeanNASC}
 \alias{MeanNASC}
-\title{(Weighted) Average NASC}
+\title{Mean NASC}
 \usage{
 MeanNASC(
   NASCData,
-  PSUDefinition = c("PreDefined", "FunctionInput"),
-  AcousticPSU = NULL,
-  TargetResolution = "PSU"
+  SumNASCData,
+  LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"),
+  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution",
+    "LayerTable"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  AcousticLayer = NULL,
+  PSUDefinition = c("FunctionParameter", "FunctionInput"),
+  PSUDefinitionMethod = c("EDSUToPSU", "None"),
+  StratumPolygon = NULL,
+  AcousticPSU = NULL
 )
 }
-\arguments{
-\item{NASCData}{The \code{\link{NASC}} data.}
-
-\item{PSUDefinition}{A string naming the method to use for defining the PSUs, one of "PreDefined", if the PSU column is already populated in the \code{NASCData}, or "FunctionInput" to provide the PSUs in the input \code{AcousticPSU}}
-
-\item{AcousticPSU}{\code{\link{AcousticPSU}} data.}
-
-\item{TargetResolution}{The vertical resolution of the output.}
-}
 \value{
-A \code{\link{NASCData}} object.
+A \code{\link{SumNASCData}} object.
 }
 \description{
-This function averages NASC data horizontally, weighted by the log distance.
+This function summes NASC data vertically.
 }
 \details{
 This function is awesome and does excellent stuff.

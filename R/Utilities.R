@@ -194,9 +194,15 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
         # Remove columns with only NAs in the data in 'by':
         onlyNAs <- unlist(data[, lapply(.SD, function(x) all(is.na(x))), .SDcols = by])
         if(any(onlyNAs)) {
-            toRemove <- by[onlyNAs]
+            #toRemove <- by[onlyNAs]
+            #toRemove <- intersect(toRemove, names(data))
+            #data[, (toRemove):=NULL]
+            removeColumnsByReference(
+                data = data, 
+                toRemove =  by[onlyNAs]
+            )
+            
             by <- by[!onlyNAs]
-            data[, (toRemove):=NULL] 
         }
         data <- merge(PSUProcessData, data, by = by, ...)
     }
@@ -313,7 +319,6 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
     # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
     dataVariable <- aggregationVariables$dataVariable
     weightingVariable <- aggregationVariables$weightingVariable
-    summedWeightingVariable <- aggregationVariables$summedWeightingVariable
     
     # Extract the resolution and weighting variables, and uniquify:
     extract <- c(aggregationVariables$presentResolution, weightingVariable)
@@ -361,6 +366,7 @@ meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionIn
     return(dataCopy)
 }
 
+# No longer used:
 sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionInput"), layerProcessData = NULL, targetResolution = "Layer") {
     
     # Make a copy of the input, since we are summing and setting values by reference:
@@ -379,7 +385,6 @@ sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionI
     else {
         stop("Invalid LayerDefinition, must be one of \"PreDefined\" and \"FunctionInput\"")
     }
-    
     # Get the variables to aggregate by etc.:
     aggregationVariables <- determineAggregationVariables(
         data = dataCopy, 
@@ -415,6 +420,425 @@ sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionI
     
     return(dataCopy)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sumRawResolutionData <- function(
+    data, dataType, 
+    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
+    LayerProcessData = NULL, 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    modelType = c("Acoustic", "SweptArea")
+) {
+    
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    dataCopy = data.table::copy(data)
+    
+    # Add the Layers and PSUs either from function inputs or by automatic methods using function parameters:
+    LayerDefinition <- match.arg(LayerDefinition)
+    
+    # Get the Layers:
+    if(identical(LayerDefinition, "FunctionParameter")) {
+        LayerProcessData <- DefineLayer(
+            StoxData = dataCopy, 
+            DefinitionMethod = LayerDefinitionMethod, 
+            Resolution = Resolution, 
+            LayerTable = LayerTable, 
+            modelType = modelType
+        )
+    }
+    # Add the Layers:
+    if(length(LayerProcessData)) {
+        dataCopy <- addLayerProcessData(
+            dataCopy, 
+            dataType = dataType, 
+            layerProcessData = LayerProcessData
+        )
+    }
+    else {
+        stop("LayerProcessData must be given if LayerDefinition = \"FunctionInput\"")
+    }
+    
+    # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
+    resolutionVariables <- getAllResolutionVariables(
+        dataType = dataType#, 
+        #dimension = "vertical"
+    )
+    presentResolutionVariables <- intersect(resolutionVariables, names(dataCopy))
+    Resolution <- unique(dataCopy[, ..presentResolutionVariables])
+    
+    # Sum the data vertically:
+    aggregateData <- applySumToData(data = dataCopy, dataType = dataType)
+    
+    # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
+    return(
+        list(
+            Data = aggregateData, 
+            Resolution = Resolution
+        )
+    )
+}
+
+
+
+
+meanRawResolutionData <- function(
+    data, dataType, 
+    PSUDefinition = c("FunctionParameter", "FunctionInput"), 
+    PSUProcessData = NULL, 
+    PSUDefinitionMethod = c("Identity", "None"), 
+    StratumPolygon = NULL, 
+    modelType = c("Acoustic", "SweptArea")
+) {
+    
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    dataCopy = data.table::copy(data$Data)
+    resolutionCopy = data.table::copy(data$Resolution)
+    
+    # Add the PSUs either from function input or by automatic method using function parameter:
+    PSUDefinition <- match.arg(PSUDefinition)
+    
+    # Get the PSUs:
+    if(identical(PSUDefinition, "FunctionParameter")) {
+        PSUProcessData <- DefinePSU(
+            StratumPolygon = StratumPolygon, 
+            StoxData = dataCopy, 
+            DefinitionMethod = PSUDefinitionMethod, 
+            modelType = modelType
+        )
+    }
+    # Add the PSUs:
+    if(length(PSUProcessData)) {
+        dataCopy <- addPSUProcessData(dataCopy, PSUProcessData = PSUProcessData, all = TRUE)
+    }
+    else {
+        stop("PSUProcessData must be given if PSUDefinition = \"FunctionInput\"")
+    }
+    
+    # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
+    resolutionVariables <- getAllResolutionVariables(
+        dataType = dataType#, 
+        #dimension = "horizontal"
+    )
+    extractFromDataCopy <- intersect(resolutionVariables, names(dataCopy))
+    mergeBy <- intersect(names(data$Resolution), extractFromDataCopy)
+    Resolution <- unique(
+        merge(
+            data$Resolution, 
+            dataCopy[, ..extractFromDataCopy], 
+            allow.cartesian = TRUE, 
+            by = mergeBy
+        )
+    )
+    
+    # Average the data horizonally:
+    aggregateData <- applyMeanToData(data = dataCopy, dataType = dataType, targetResolution = "PSU")
+    
+    # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
+    return(
+        list(
+            Data = aggregateData, 
+            Resolution = Resolution
+        )
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#aggregateData <- function(
+#    data, dataType, 
+#    # Arguments for summing to Layers:
+#    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
+#    LayerProcessData = NULL, 
+#    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+#    Resolution = double(), 
+#    LayerTable = data.table::data.table(), 
+#    # Arguments for averaging to PSUs:
+#    PSUDefinition = c("FunctionParameter", "FunctionInput"), 
+#    PSUProcessData = NULL, 
+#    PSUDefinitionMethod = c("Identity", "None"), 
+#    StratumPolygon = NULL
+#) {
+#    
+#    # Make a copy of the input, since we are averaging and setting values by reference:
+#    dataCopy = data.table::copy(data)
+#    
+#    # Add the Layers and PSUs either from function inputs or by automatic methods using function parameters:
+#    LayerDefinition <- match.arg(LayerDefinition)
+#    PSUDefinition <- match.arg(PSUDefinition)
+#    
+#    # Get the PSUs:
+#    if(identical(PSUDefinition, "FunctionParameter")) {
+#        PSUProcessData <- DefinePSU(
+#            StratumPolygon = StratumPolygon, 
+#            StoxData = data, 
+#            DefinitionMethod = PSUDefinitionMethod, 
+#            modelType = modelType
+#        )
+#    }
+#    # Add the PSUs:
+#    if(length(PSUProcessData)) {
+#        dataCopy <- addPSUProcessData(dataCopy, PSUProcessData = PSUProcessData, all = TRUE)
+#    }
+#    else {
+#        stop("PSUProcessData must be given if PSUDefinition = \"FunctionInput\"")
+#    }
+#    
+#    # Get the Layers:
+#    if(identical(LayerDefinition, "FunctionParameter")) {
+#        LayerProcessData <- DefineLayer(
+#            StoxData = data, 
+#            DefinitionMethod = LayerDefinitionMethod, 
+#            Resolution = Resolution, 
+#            LayerTable = LayerTable, 
+#            modelType = modelType
+#        )
+#    }
+#    # Add the PSUs:
+#    if(length(LayerProcessData)) {
+#        dataCopy <- addLayerProcessData(dataCopy, layerProcessData = LayerProcessData)
+#    }
+#    else {
+#        stop("LayerProcessData must be given if LayerDefinition = \"FunctionInput\"")
+#    }
+#    
+#    # Sum the data vertically:
+#    aggregateData <- applySumToData(data = dataCopy, dataType = dataType)
+#    
+#    # Average the data horizonally:
+#    aggregateData <- applyMeanToData(data = aggregateData, dataType = dataType)
+#    
+#    # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
+#    
+#    return(
+#        list(
+#            Data = aggregateData, 
+#            Resolution = Resolution
+#        )
+#    )
+#}
+
+
+
+
+
+
+
+aggregateData <- function(
+    data, dataType, 
+    modelType = c("Acoustic", "SweptArea"), 
+    # Arguments for summing to Layers:
+    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
+    LayerProcessData = NULL, 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    # Arguments for averaging to PSUs:
+    PSUDefinition = c("FunctionParameter", "FunctionInput"), 
+    PSUProcessData = NULL, 
+    PSUDefinitionMethod = c("Identity", "None"), 
+    StratumPolygon = NULL
+) {
+    
+    data <- sumRawResolutionData(
+        data = data, dataType = dataType, 
+        LayerDefinition = LayerDefinition, 
+        LayerProcessData = LayerProcessData, 
+        LayerDefinitionMethod = LayerDefinitionMethod, 
+        Resolution = Resolution, 
+        LayerTable = LayerTable, 
+        modelType = modelType
+    )
+    
+    sumDataType <- paste0("Sum", dataType)
+    data <- meanRawResolutionData(
+        data = data, dataType = sumDataType, 
+        PSUDefinition = PSUDefinition, 
+        PSUProcessData = PSUProcessData, 
+        PSUDefinitionMethod = PSUDefinitionMethod, 
+        StratumPolygon = StratumPolygon
+    )
+    
+    
+    return(data)
+}
+
+
+
+
+
+
+
+
+
+applySumToData <- function(data, dataType) {
+    
+    targetDataType <- paste0("Sum", dataType)
+    
+    # Get the variables to aggregate by etc.:
+    aggregationVariables <- determineAggregationVariables(
+        data = data, 
+        dataType = targetDataType, 
+        targetResolution = "Layer", 
+        dimension = "vertical"
+    )
+    # Extract the 'by' element:
+    by <- aggregationVariables$by
+    
+    # Sum of the data variable over the grouping variables:
+    dataVariable <- aggregationVariables$dataVariable
+    data[, c(dataVariable) := sum(x = get(dataVariable)), by = by]
+    
+    # Add the weighting variable:
+    oldWeightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
+    weightingVariable <- aggregationVariables$weightingVariable
+    data[, c(weightingVariable) := get(oldWeightingVariable)]
+    
+    # Remove the resolution variables which were summed over, and the verticalRawDimension:
+    #set(
+    #    data, 
+    #    j = c(
+    #        aggregationVariables$setToNA, 
+    #        aggregationVariables$verticalRawDimension
+    #    ), 
+    #    value = NA
+    #)
+    data[, (c(aggregationVariables$setToNA, aggregationVariables$verticalRawDimension)) := NULL] 
+    
+    # Remove duplicated rows:
+    data <- subset(data, !duplicated(data[, ..by]))
+    
+    # Keep only the releavnt columns:
+    formatOutput(data, dataType = targetDataType, keep.all = FALSE)
+    # Order the rows:
+    orderDataByReference(data, targetDataType)
+    
+    return(data)
+}
+
+applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
+    
+    # Store the original data type defnition, particularly for summing the weights:
+    originalDataTypeDefinition <- getDataTypeDefinition(dataType)
+    
+    # Get the variables to aggregate by etc.:
+    targetDataType <- paste0("Mean", sub("Sum", "", dataType))
+    aggregationVariables <- determineAggregationVariables(
+        data = data, 
+        dataType = targetDataType, 
+        targetResolution = targetResolution, 
+        dimension = "horizontal"
+    )
+    # Extract the 'by' element:
+    by <- aggregationVariables$by
+    
+    #### Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
+    ###if(utils::tail(aggregationVariables$presentResolution, 1) == aggregationVariables$finestResolution) {
+    ###    valid <- data[, lapply(aggregationVariables$verticalRawDimension, allEqual), by = by]
+    ###}
+    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
+    dataVariable <- aggregationVariables$dataVariable
+    targetWeightingVariable <- aggregationVariables$weightingVariable
+    weightingVariable <- originalDataTypeDefinition$weighting
+
+    # Extract the resolution and weighting variables:
+    extract <- c(aggregationVariables$presentResolution, weightingVariable)
+    summedWeighting <- data[, ..extract]
+    # Finally uniquify to the Stratum/Layer:
+    summedWeighting <- unique(summedWeighting)
+    # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
+    summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = eval(aggregationVariables$nextResolution)]
+    
+    # Extract the next resolution and the summed weights and uniquify:
+    extract <- c(aggregationVariables$nextResolution, "SummedWeights")
+    summedWeighting <- summedWeighting[, ..extract]
+    summedWeighting <- unique(summedWeighting)
+    
+    # Merge the resulting summed weights with the data, by the next resolution:
+    summedWeightingBy <- aggregationVariables$nextResolution
+    data <- merge(data, summedWeighting, by = summedWeightingBy, all = TRUE)
+    
+    # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
+    data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
+    # Store the new weights by the summed original weights:
+    data[, c(targetWeightingVariable) := SummedWeights]
+    ###data[, SummedWeights := NULL]
+    
+    # Set the resolution variables which were summed over to NA:
+    #set(
+    #    data, 
+    #    j = c(
+    #        aggregationVariables$setToNA, 
+    #        aggregationVariables$otherVariables
+    #    ), 
+    #    value = NA
+    #)
+    ###data[, (c(aggregationVariables$setToNA, aggregationVariables$otherVariables)) := NULL] 
+    
+    
+    # Set the order of the columns:
+    formatOutput(data, dataType = targetDataType, keep.all = FALSE)
+    # Order the rows:
+    orderDataByReference(data, targetDataType)
+    
+    
+    # Remove duplicated rows:
+    data <- subset(data, !duplicated(data[, ..by]))
+    
+    
+    return(data)
+}
+
+
+
+
 
 
 # https://stackoverflow.com/questions/24833247/how-can-one-work-fully-generically-in-data-table-in-r-with-column-names-in-varia:
@@ -497,10 +921,10 @@ checkTypes <- function(table) {
     # Get the format of the parameter table:
     format <- stoxFunctionAttributes[[functionName]]$functionParameterFormat[[parameterTableName]]
     # Get the parameter table info holding the types:
-    parameterTableInfo <- processPropertyFormats[[format]]$info
+    #parameterTableInfo <- processPropertyFormats[[format]]$info
     
-    if(!all(names(table) %in% parameterTableInfo$name)) {
-        missing <- setdiff(parameterTableInfo$name, names(table))
+    if(!all(names(table) %in% processPropertyFormats[[format]]$columnNames)) {
+        missing <- setdiff(processPropertyFormats[[format]]$columnNames, names(table))
         stop("All columns must be present in the ", parameterTableName, " (", missing, " missing)")
     }
     
@@ -509,28 +933,21 @@ checkTypes <- function(table) {
     # numeric and double are identical in R, so we convert numeric to double, which is what is given by the functionParameterFormat:
     types <- replace(types, types == "numeric", "double")
     # Build a table similar to the parameterTableInfo:
-    types <- data.table::data.table(
-        name = names(table), 
-        type = types
+    types <- list(
+        columnNames = names(table), 
+        variableTypes = types
     )
     
-    # Order both the expected and acutal table, and check for identity:
-    data.table::setorder(parameterTableInfo)
-    data.table::setorder(types)
+    # Order both and check for identity:
+    types <- orderListBy(types, "columnNames")
+    processPropertyFormats[[format]] <- orderListBy(processPropertyFormats[[format]], "columnNames")
     
-    compareTypes <- function(x, y, allow.numeric = TRUE) {
-        out <- identical(x, t)
-        if(allow.numeric) {
-            out <- out | all(is.numeric(x), is.numeric(y))
-        }
-        return(out)
-    }
-    
-    if(!all(parameterTableInfo == types)) {
+    commonElements <- intersect(names(processPropertyFormats[[format]]), names(types))
+    if(!identical(processPropertyFormats[[format]][commonElements], types[commonElements])) {
         # Print error message for those different:
-        differs <- mapply(compareTypes, parameterTableInfo$type, types$type)
+        differs <- mapply(compareTypes, processPropertyFormats[[format]]$variableTypes, types$variableTypes)
         if(any(differs)) {
-            stop("The input ", parameterTableName, " contains columns of the wrong type (", paste0(parameterTableInfo$name[differs], ": ", parameterTableInfo$type[differs], " (was ", types$type[differs], ")", collapse = ", "), ")")
+            stop("The input ", parameterTableName, " contains columns of the wrong type (", paste0(processPropertyFormats[[format]]$columnNames[differs], ": ", processPropertyFormats[[format]]$variableTypes[differs], " (was ", types$variableTypes[differs], ")", collapse = ", "), ")")
         }
     }
     else {
@@ -538,6 +955,20 @@ checkTypes <- function(table) {
     }
 }
 
+
+orderListBy <- function(x, by) {
+    o <- order(x[[by]])
+    lapply(x, "[", o)
+}
+
+
+compareTypes <- function(x, y, allow.numeric = TRUE) {
+    out <- identical(x, t)
+    if(allow.numeric) {
+        out <- out | all(is.numeric(x), is.numeric(y))
+    }
+    return(out)
+}
 
 
 
@@ -565,4 +996,11 @@ checkResolutionPSU_Layer <- function(data, dataType) {
     return(TRUE)
 }
 
+
+removeColumnsByReference <- function(data, toRemove) {
+    toRemove <- intersect(toRemove, names(data))
+    if(length(toRemove)) {
+        data[, c(toRemove) := NULL]
+    }
+}
 

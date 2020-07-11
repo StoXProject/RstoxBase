@@ -5,14 +5,14 @@
 \title{Swept-area density}
 \usage{
 SweptAreaDensity(
-  LengthDistributionData,
+  MeanLengthDistributionData,
   SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"),
-  SweepWidth = integer(),
+  SweepWidth = double(),
   SweepWidthTable = data.table::data.table()
 )
 }
 \arguments{
-\item{LengthDistributionData}{The length distribution data.}
+\item{MeanLengthDistributionData}{The \code{\link{MeanLengthDistributionData}} data.}
 
 \item{SweepWidthMethod}{The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.}
 
@@ -34,5 +34,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+See \code{\link{AcousticDensity}} for acoustic density.
 }

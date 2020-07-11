@@ -27,7 +27,7 @@ DefinePSU(
 \item{modelType}{Character: A string naming the type of model, either "Acoustic" or "SweptArea".}
 }
 \value{
-An object of StoX data type \code{\link{AcousticPSU}}.
+An list of two objects, Stratum_PSU and SSU_PSU.
 }
 \description{
 Underlying function for \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
@@ -40,5 +40,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{AcousticPSU}}.
+\code{\link{DefineAcousticPSU}} and \code{\link{DefineSweptAreaPSU}}..
 }

@@ -7,7 +7,7 @@
 RelativeLengthDistribution(LengthDistributionData)
 }
 \arguments{
-\item{LengthDistributionData}{The length distribution data.}
+\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 }
 \value{
 A data.table is returned with awesome stuff.
