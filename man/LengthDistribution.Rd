@@ -21,7 +21,7 @@ LengthDistribution(
 A \code{\link{LengthDistributionData}} object.
 }
 \description{
-This function calculates length frequency distribution per Stratum, swept-area PSU, swept-area layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
+This function calculates length frequency distribution per Stratum, biotic PSU, biotic layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
 }
 \details{
 *********

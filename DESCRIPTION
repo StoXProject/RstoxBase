@@ -1,5 +1,5 @@
 Package: RstoxBase
-Version: 1.2.21
+Version: 1.0.1
 Date: 2020-07-12
 Title: Base StoX Functions
 Authors@R: c(

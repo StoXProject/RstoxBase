@@ -2,10 +2,10 @@
 % Please edit documentation in R/Data.R
 \name{StratumAreaData}
 \alias{StratumAreaData}
-\title{Stratum area}
+\title{Stratum area data}
 \description{
 The StratumAreaData model data is a table of the area in square nautical miles of each stratum.
 }
 \seealso{
-\code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{StratumArea}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

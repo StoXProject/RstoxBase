@@ -11,7 +11,7 @@ DefineLayer(
   DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"),
   Resolution = double(),
   LayerTable = data.table::data.table(),
-  modelType = c("Acoustic", "SweptArea")
+  LayerType = c("Acoustic", "Biotic")
 )
 }
 \arguments{
@@ -27,13 +27,13 @@ DefineLayer(
 
 \item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
 
-\item{modelType}{Character: A string naming the type of model, either "Acoustic" or "SweptArea".}
+\item{LayerType}{Character: A string naming the type of model, either "Acoustic" or "Biotic".}
 }
 \value{
-An object of StoX data type \code{\link{SweptAreaLayer}}.
+An object of StoX data type \code{\link{BioticLayer}}.
 }
 \description{
-This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
+This function defines the \code{\link{BioticLayer}} process data, which sets the range intervals of the swetp-area layers used in biotic estimation models in StoX.
 }
 \details{
 This function is awesome and does excellent stuff.
@@ -43,5 +43,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{DefineAcousticLayer}} and \code{\link{DefineSweptAreaLayer}}.
+\code{\link{DefineAcousticLayer}} and \code{\link{DefineBioticLayer}}.
 }

@@ -85,11 +85,7 @@ Individuals <- function(
         # Get the original resolution from the MeanLengthDistributionData:
         usedHauls <- MeanLengthDistributionData$Resolution
         
-        ### # Add PSUs and Layers:
-        ### usedHauls <- addPSUProcessData(MergedStoxBioticData, PSUProcessData = SweptAreaPSU, all = TRUE)
-        ### usedHauls <- addLayerProcessData(usedHauls, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
-        
-        # get the unique rows, while extracting only the Haul and abundance resolution columns:
+        # Get the unique rows, while extracting only the Haul and abundance resolution columns:
         usedHauls <- usedHauls[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
         
         # Remove rows with any NAs:

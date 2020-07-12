@@ -2,7 +2,7 @@
 % Please edit documentation in R/Data.R
 \name{PSU}
 \alias{PSU}
-\title{Acoustic and swept-area primary sampling units}
+\title{Acoustic and biotic primary sampling units}
 \description{
 The horizontal resolution \code{PSU} is common for acoustic-trawl and swept-area estimation models, and defines the primary sampling units, typically transects for acoustic-trawl models and single trawl stations for swept-area models.
 }

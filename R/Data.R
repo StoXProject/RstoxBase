@@ -6,7 +6,8 @@
 #' 
 #' @param processData The current data produced by a previous instance of the function.
 #' @param UseProcessData Logical: If TRUE use the existing function output in the process. 
-#' @param modelType Character: A string naming the type of model, either "Acoustic" or "SweptArea".
+#' @param LayerType Character: A string naming the type of model, either "Acoustic" or "Biotic".
+#' @param PSUType Character: A string naming the type of model, either "Acoustic" or "Biotic".
 #' 
 #' @name general_arguments
 #' 
@@ -50,6 +51,8 @@ NULL
 #' 
 #' @name ModelData
 #' 
+#' @seealso \code{\link{ProcessData}} for process data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}.
+#' 
 NULL
 
 ##################################################
@@ -61,12 +64,14 @@ NULL
 #' @param StratumPolygon The \code{\link{StratumPolygon}} process data.
 #' @param AcousticLayer The \code{\link{AcousticLayer}} process data.
 #' @param AcousticPSU The \code{\link{AcousticPSU}} process data.
-#' @param SweptAreaLayer The \code{\link{SweptAreaLayer}} process data.
-#' @param SweptAreaPSU The \code{\link{SweptAreaPSU}} process data.
+#' @param BioticLayer The \code{\link{BioticLayer}} process data.
+#' @param BioticPSU The \code{\link{BioticPSU}} process data.
 #' @param BioticAssignment The \code{\link{BioticAssignment}} process data.
 #' @param AcousticTargetStrength The \code{\link{AcousticTargetStrength}} process data.
 #' 
 #' @name ProcessData
+#' 
+#' @seealso \code{\link{ModelData}} for model data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}.
 #' 
 NULL
 
@@ -104,7 +109,7 @@ NULL
 
 ##################################################
 ##################################################
-#' Acoustic and swept-area primary sampling units
+#' Acoustic and biotic primary sampling units
 #' 
 #' The horizontal resolution \code{PSU} is common for acoustic-trawl and swept-area estimation models, and defines the primary sampling units, typically transects for acoustic-trawl models and single trawl stations for swept-area models. 
 #' 
@@ -187,7 +192,7 @@ NULL
 #' @details
 #' The polygons are stored as gsojson in the project.json file and in output text files.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{DefineStratumPolygon}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name StratumPolygon
 #' 
@@ -201,7 +206,7 @@ NULL
 #' 
 #' The Acoustic Layer process data is a table of the three columns Layer, MinLayerDepth and MaxLayerDepth specifying the depth ranges for the acoustic layers on which the acoustic density should be calculated, where the Layer column gives the names of the layers.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{DefineAcousticLayer}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name AcousticLayer
 #' 
@@ -210,13 +215,13 @@ NULL
 
 ##################################################
 ##################################################
-#' Swept-area Layer
+#' Biotic Layer
 #' 
-#' The Swept-area Layer process data is a table of the three columns Layer, MinLayerDepth and MaxLayerDepth specifying the depth ranges for the swept-area layers on which the swept-area density should be calculated, where the Layer column gives the names of the layers.
+#' The biotic Layer process data is a table of the three columns Layer, MinLayerDepth and MaxLayerDepth specifying the depth ranges for the biotic layers on which the biotic density should be calculated, where the Layer column gives the names of the layers.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{DefineBioticLayer}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
-#' @name SweptAreaLayer
+#' @name BioticLayer
 #' 
 NULL
 
@@ -227,7 +232,7 @@ NULL
 #' 
 #' The AcousticPSU process data contains two tables Stratum_PSU and EDSU_PSU, where Stratum_PSU has the two column Stratum and PSU giving the acoustic PSUs defined in each stratum (possibly none), and EDSU_PSU has the two column EDSU listing every EDSU in the data and PSU which tags each EDSU to a PSU. EDSUs can be un-tagged, which is indicated with PSU = "".
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{DefineAcousticPSU}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name AcousticPSU
 #' 
@@ -236,24 +241,24 @@ NULL
 
 ##################################################
 ##################################################
-#' Swept-area PSU
+#' Biotic PSU
 #' 
-#' The SweptAreaPSU process data contains two tables Stratum_PSU and Station_PSU, where Stratum_PSU has the two column Stratum and PSU giving the swept-area PSUs defined in each stratum (possibly none), and Station_PSU has the two column Station listing every Station in the data and PSU which tags each Station to a PSU. Stations can be un-tagged, which is indicated with PSU = "".
+#' The BioticPSU process data contains two tables Stratum_PSU and Station_PSU, where Stratum_PSU has the two column Stratum and PSU giving the biotic PSUs defined in each stratum (possibly none), and Station_PSU has the two column Station listing every Station in the data and PSU which tags each Station to a PSU. Stations can be un-tagged, which is indicated with PSU = "".
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{DefineBioticPSU}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
-#' @name SweptAreaPSU
+#' @name BioticPSU
 #' 
 NULL
 
 
 ##################################################
 ##################################################
-#' Stratum area
+#' Stratum area data
 #' 
 #' The StratumAreaData model data is a table of the area in square nautical miles of each stratum.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{StratumArea}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name StratumAreaData
 #' 
@@ -266,7 +271,7 @@ NULL
 #' 
 #' The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLengthCentimeter, LengthResolutionCentimeter, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowedDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType. [List all types here in a nice table]
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentCatchCompensation}} and \code{\link{RelativeLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name LengthDistributionData
 #' 
@@ -279,7 +284,7 @@ NULL
 #' 
 #' The SumLengthDistributionData model data is a list of two elements; the Data, which are similar to \code{\link{LengthDistributionData}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns Station, Layer and Haul containing the link between the vertical resolution variables before summing.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{SumLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name SumLengthDistributionData
 #' 
@@ -292,7 +297,7 @@ NULL
 #' 
 #' The MeanLengthDistributionData model data is a list of two elements; the Data, which are similar to \code{\link{LengthDistributionData}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, Station, Layer and Haul containing the link between the horizontal and vertical resolution variables before summing and averaging.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{MeanLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name MeanLengthDistributionData
 #' 
@@ -303,11 +308,11 @@ NULL
 ##################################################
 #' Assignment length distribution data
 #' 
-#' The AssignmentLengthDistribution model data is a table averaged length distribution for each combination of Stratum (acoustic)PSU and (acoustic)Layer.
+#' The AssignmentLengthDistributionData model data is a table averaged length distribution for each combination of Stratum (acoustic)PSU and (acoustic)Layer.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{AssignmentLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
-#' @name AssignmentLengthDistribution
+#' @name AssignmentLengthDistributionData
 #' 
 NULL
 
@@ -318,7 +323,7 @@ NULL
 #' 
 #' The NASCData model data gives the includes NASC for each acoustic channel or Layer, and ESDU, PSU or Stratum. 
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{NASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name NASCData
 #' 
@@ -331,7 +336,7 @@ NULL
 #' 
 #' The SumNASCData model data is a list of two elements; the Data, which are similar to \code{\link{NASCData}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns EDSU, Layer and Channel containing the link between the vertical resolution variables before summing.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{SumNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name SumNASCData
 #' 
@@ -344,7 +349,7 @@ NULL
 #' 
 #' The MeanNASCData model data is a list of two elements; the Data, which are similar to \code{\link{NASCData}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, EDSU, Layer and Channel containing the link between the horizontal and vertical resolution variables before summing and averaging.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{MeanNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name MeanNASCData
 #' 
@@ -353,11 +358,11 @@ NULL
 
 ##################################################
 ##################################################
-#' Biotic assignment data
+#' Biotic assignment
 #' 
 #' The BioticAssignment process data is a table containing the columns Stratum, PSU, Layer, Haul and WeightingFactor, where Haul is a list of all Hauls assigned to each acoustic PSU of each acoustic layer. 
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{DefineBioticAssignment}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name BioticAssignment
 #' 
@@ -370,7 +375,7 @@ NULL
 #' 
 #' The DensityData model data holds the density of individuals as number per square nautical mile, by PSU or Stratum, and by Layer. 
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{AcousticDensity}} and \code{\link{SweptAreaDensity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name DensityData
 #' 
@@ -383,7 +388,7 @@ NULL
 #' 
 #' The SpeciesCategoryDensityData model data is a list of two elements; the HaulInfo, containing information about each Haul; and the SpeciesCategoryCatch, holding the total catch of each SpeciesCategory of each Haul, where the Hauls are organized as rows and SpeciesCategories as columns.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{SpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name SpeciesCategoryCatchData
 #' 
@@ -396,7 +401,7 @@ NULL
 #' 
 #' The AcousticTargetStrength process data is a list of two tables, the TargetStrengthMethod, holding only the string naming the method to use, and the TargetStrengthTable, holding the parameters/values of the method. See \code{\link{DefineAcousticTargetStrength}} for details on the different methods.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{DefineAcousticTargetStrength}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name AcousticTargetStrength
 #' 
@@ -406,11 +411,11 @@ NULL
 
 ##################################################
 ##################################################
-#' Abundance
+#' Abundance data
 #' 
 #' The Abundance model data holds the abundance of individuals as number per Stratum and Layer. 
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{Abundance}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name AbundanceData
 #' 
@@ -419,11 +424,11 @@ NULL
 
 ##################################################
 ##################################################
-#' Individuals
+#' Individuals data
 #' 
 #' The IndividualsData model data are the individuals from \code{\link{StoxBioticData}} used in the estimate.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{Individuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name IndividualsData
 #' 
@@ -432,11 +437,11 @@ NULL
 
 ##################################################
 ##################################################
-#' Super-individuals
+#' Super-individuals data
 #' 
 #' The SuperIndividualsData model data is the \code{\link{IndivdualsData}} added Abundance.
 #' 
-#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name SuperIndividualsData
 #' 

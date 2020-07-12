@@ -12,11 +12,11 @@ MeanLengthDistribution(
     "LayerTable"),
   Resolution = double(),
   LayerTable = data.table::data.table(),
-  SweptAreaLayer = NULL,
+  BioticLayer = NULL,
   PSUDefinition = c("FunctionParameter", "FunctionInput"),
   PSUDefinitionMethod = c("StationToPSU", "None"),
   StratumPolygon = NULL,
-  SweptAreaPSU = NULL
+  BioticPSU = NULL
 )
 }
 \arguments{
@@ -24,15 +24,15 @@ MeanLengthDistribution(
 
 \item{SumLengthDistributionData}{The \code{\link{SumLengthDistributionData}} data.}
 
-\item{SweptAreaLayer}{The \code{\link{SweptAreaLayer}} process data.}
+\item{BioticLayer}{The \code{\link{BioticLayer}} process data.}
 
-\item{PSUDefinition}{A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{SweptAreaLayer} or \code{SweptAreaPSU}.}
+\item{PSUDefinition}{A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.}
 
-\item{PSUDefinitionMethod}{See \code{DefinitionMethod} of \code{\link{DefineSweptAreaPSU}}.}
+\item{PSUDefinitionMethod}{See \code{DefinitionMethod} of \code{\link{DefineBioticPSU}}.}
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
-\item{SweptAreaPSU}{The \code{\link{SweptAreaPSU}} process data.}
+\item{BioticPSU}{The \code{\link{BioticPSU}} process data.}
 }
 \value{
 An \code{\link{MeanLengthDistributionData}} object.

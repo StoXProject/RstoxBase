@@ -37,5 +37,5 @@ x <- 1
 
 }
 \seealso{
-Swept-area PSUs are generated using \code{\link{DefineSweptAreaPSU}}. For the vertical resolution (Layer) see \code{\link{DefineSweptAreaLayer}} and \code{\link{DefineAcousticLayer}}.
+Biotic PSUs are generated using \code{\link{DefineBioticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 }

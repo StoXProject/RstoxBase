@@ -2,10 +2,10 @@
 % Please edit documentation in R/Data.R
 \name{AbundanceData}
 \alias{AbundanceData}
-\title{Abundance}
+\title{Abundance data}
 \description{
 The Abundance model data holds the abundance of individuals as number per Stratum and Layer.
 }
 \seealso{
-\code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{Abundance}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

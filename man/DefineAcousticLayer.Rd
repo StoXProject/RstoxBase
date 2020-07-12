@@ -40,5 +40,5 @@ x <- 1
 
 }
 \seealso{
-Swept-area Layers are generated using \code{\link{DefineSweptAreaLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
+Biotic Layers are generated using \code{\link{DefineBioticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 }

@@ -10,7 +10,7 @@ DefinePSU(
   StratumPolygon,
   StoxData,
   DefinitionMethod = c("Identity", "None"),
-  modelType = c("Acoustic", "SweptArea")
+  PSUType = c("Acoustic", "Biotic")
 )
 }
 \arguments{
@@ -22,15 +22,15 @@ DefinePSU(
 
 \item{StoxData}{Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.}
+\item{DefinitionMethod}{Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.}
 
-\item{modelType}{Character: A string naming the type of model, either "Acoustic" or "SweptArea".}
+\item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic".}
 }
 \value{
 An list of two objects, Stratum_PSU and SSU_PSU.
 }
 \description{
-Underlying function for \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
+Underlying function for \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 }
 \details{
 This function is awesome and does excellent stuff.
@@ -40,5 +40,5 @@ x <- 1
 
 }
 \seealso{
-\code{\link{DefineAcousticPSU}} and \code{\link{DefineSweptAreaPSU}}..
+\code{\link{DefineAcousticPSU}} and \code{\link{DefineBioticPSU}}..
 }
