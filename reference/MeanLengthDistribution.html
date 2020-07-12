@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
       </span>
     </div>
 
@@ -125,11 +125,11 @@
     <span class='st'>"LayerTable"</span>),
   Resolution = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
   LayerTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
-  SweptAreaLayer = <span class='kw'>NULL</span>,
+  BioticLayer = <span class='kw'>NULL</span>,
   PSUDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span>),
   PSUDefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"StationToPSU"</span>, <span class='st'>"None"</span>),
   StratumPolygon = <span class='kw'>NULL</span>,
-  SweptAreaPSU = <span class='kw'>NULL</span>
+  BioticPSU = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -144,24 +144,24 @@
       <td><p>The <code>SumLengthDistributionData</code> data.</p></td>
     </tr>
     <tr>
-      <th>SweptAreaLayer</th>
-      <td><p>The <code>SweptAreaLayer</code> process data.</p></td>
+      <th>BioticLayer</th>
+      <td><p>The <code>BioticLayer</code> process data.</p></td>
     </tr>
     <tr>
       <th>PSUDefinition</th>
-      <td><p>A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring <code>LayerDefinitionMethod</code> or <code>PSUDefinitionMethod</code> and the conditionally <code>Resolution</code>, <code>LayerTableLayerTable</code> or <code>StratumPolygon</code> to be set, or "FunctionInput", requiring the inputs <code>SweptAreaLayer</code> or <code>SweptAreaPSU</code>.</p></td>
+      <td><p>A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring <code>LayerDefinitionMethod</code> or <code>PSUDefinitionMethod</code> and the conditionally <code>Resolution</code>, <code>LayerTableLayerTable</code> or <code>StratumPolygon</code> to be set, or "FunctionInput", requiring the inputs <code>BioticLayer</code> or <code>BioticPSU</code>.</p></td>
     </tr>
     <tr>
       <th>PSUDefinitionMethod</th>
-      <td><p>See <code>DefinitionMethod</code> of <code>DefineSweptAreaPSU</code>.</p></td>
+      <td><p>See <code>DefinitionMethod</code> of <code>DefineBioticPSU</code>.</p></td>
     </tr>
     <tr>
       <th>StratumPolygon</th>
       <td><p>The <code>StratumPolygon</code> process data.</p></td>
     </tr>
     <tr>
-      <th>SweptAreaPSU</th>
-      <td><p>The <code>SweptAreaPSU</code> process data.</p></td>
+      <th>BioticPSU</th>
+      <td><p>The <code>BioticPSU</code> process data.</p></td>
     </tr>
     </table>
 

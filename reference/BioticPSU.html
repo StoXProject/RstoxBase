@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mean NASC — MeanNASC • RstoxBase</title>
+<title>Biotic PSU — BioticPSU • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Mean NASC — MeanNASC" />
-<meta property="og:description" content="This function summes NASC data vertically." />
+<meta property="og:title" content="Biotic PSU — BioticPSU" />
+<meta property="og:description" content="The BioticPSU process data contains two tables Stratum_PSU and Station_PSU, where Stratum_PSU has the two column Stratum and PSU giving the biotic PSUs defined in each stratum (possibly none), and Station_PSU has the two column Station listing every Station in the data and PSU which tags each Station to a PSU. Stations can be un-tagged, which is indicated with PSU = &quot;&quot;." />
 
 
 
@@ -108,44 +108,21 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Mean NASC</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Acoustic.R'><code>R/Acoustic.R</code></a></small>
-    <div class="hidden name"><code>MeanNASC.Rd</code></div>
+    <h1>Biotic PSU</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Data.R'><code>R/Data.R</code></a></small>
+    <div class="hidden name"><code>BioticPSU.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function summes NASC data vertically.</p>
+    <p>The BioticPSU process data contains two tables Stratum_PSU and Station_PSU, where Stratum_PSU has the two column Stratum and PSU giving the biotic PSUs defined in each stratum (possibly none), and Station_PSU has the two column Station listing every Station in the data and PSU which tags each Station to a PSU. Stations can be un-tagged, which is indicated with PSU = "".</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MeanNASC</span>(
-  <span class='kw'>NASCData</span>,
-  <span class='kw'>SumNASCData</span>,
-  LayerDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span>, <span class='st'>"PreDefined"</span>),
-  LayerDefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"WaterColumn"</span>, <span class='st'>"HighestResolution"</span>, <span class='st'>"Resolution"</span>,
-    <span class='st'>"LayerTable"</span>),
-  Resolution = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  LayerTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
-  AcousticLayer = <span class='kw'>NULL</span>,
-  PSUDefinition = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span>),
-  PSUDefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"EDSUToPSU"</span>, <span class='st'>"None"</span>),
-  StratumPolygon = <span class='kw'>NULL</span>,
-  AcousticPSU = <span class='kw'>NULL</span>
-)</pre>
 
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A <code>SumNASCData</code> object.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>NASC</code> and <code>MeanNASC</code>.</p></div>
+    <div class='dont-index'><p>This data type is produced by <code>DefineBioticPSU</code>. See <code>DataTypes</code> for a list of all StoX data types produced by <code>RstoxBase</code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Definne PSU — DefinePSU" />
-<meta property="og:description" content="Underlying function for DefineSweptAreaPSU and DefineAcousticPSU." />
+<meta property="og:description" content="Underlying function for DefineBioticPSU and DefineAcousticPSU." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
       </span>
     </div>
 
@@ -114,7 +114,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Underlying function for <code>DefineSweptAreaPSU</code> and <code>DefineAcousticPSU</code>.</p>
+    <p>Underlying function for <code>DefineBioticPSU</code> and <code>DefineAcousticPSU</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>DefinePSU</span>(
@@ -123,7 +123,7 @@
   <span class='kw'>StratumPolygon</span>,
   <span class='kw'>StoxData</span>,
   DefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Identity"</span>, <span class='st'>"None"</span>),
-  modelType = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Acoustic"</span>, <span class='st'>"SweptArea"</span>)
+  PSUType = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Acoustic"</span>, <span class='st'>"Biotic"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -147,11 +147,11 @@
     </tr>
     <tr>
       <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, see <code>DefineSweptAreaPSU</code> and <code>DefineAcousticPSU</code>.</p></td>
+      <td><p>Character: A string naming the method to use, see <code>DefineBioticPSU</code> and <code>DefineAcousticPSU</code>.</p></td>
     </tr>
     <tr>
-      <th>modelType</th>
-      <td><p>Character: A string naming the type of model, either "Acoustic" or "SweptArea".</p></td>
+      <th>PSUType</th>
+      <td><p>Character: A string naming the type of model, either "Acoustic" or "Biotic".</p></td>
     </tr>
     </table>
 
@@ -163,7 +163,7 @@
     <p>This function is awesome and does excellent stuff.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>DefineAcousticPSU</code> and <code>DefineSweptAreaPSU</code>..</p></div>
+    <div class='dont-index'><p><code>DefineAcousticPSU</code> and <code>DefineBioticPSU</code>..</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
