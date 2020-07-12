@@ -7,5 +7,5 @@
 The AcousticPSU process data contains two tables Stratum_PSU and EDSU_PSU, where Stratum_PSU has the two column Stratum and PSU giving the acoustic PSUs defined in each stratum (possibly none), and EDSU_PSU has the two column EDSU listing every EDSU in the data and PSU which tags each EDSU to a PSU. EDSUs can be un-tagged, which is indicated with PSU = "".
 }
 \seealso{
-\code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{DefineAcousticPSU}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

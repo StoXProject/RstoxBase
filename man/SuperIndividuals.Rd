@@ -2,7 +2,7 @@
 % Please edit documentation in R/Abundance.R
 \name{SuperIndividuals}
 \alias{SuperIndividuals}
-\title{Some title}
+\title{Super-indivduals with abundance}
 \usage{
 SuperIndividuals(
   IndividualsData,
@@ -24,7 +24,7 @@ SuperIndividuals(
 A data.table is returned with awesome stuff.
 }
 \description{
-Some description
+This function distributes Abundance to the individuals defined by \code{\link{Individuals}}.
 }
 \details{
 This function is awesome and does excellent stuff.

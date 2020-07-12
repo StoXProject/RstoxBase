@@ -2,7 +2,7 @@
 ##################################################
 #' Length distribution
 #' 
-#' This function calculates length frequency distribution per Stratum, swept-area PSU, swept-area layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
+#' This function calculates length frequency distribution per Stratum, biotic PSU, biotic layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
 #' 
 #' @inheritParams ModelData
 #' @param LengthDistributionType The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
@@ -70,11 +70,11 @@ LengthDistribution <- function(
     # Add the weights, which are 1 for all types of length distributions (other more advanced weights may come later). Add this here, before adding the PSU definition, since this will lead to NA for strata with no PSUs:
     LengthDistributionData$LengthDistributionWeight <- 1
     
-    # Insert the Stratum and PSU column by the SweptAreaPSU input, and otherwise by NAs:
-    #LengthDistributionData <- addPSUProcessData(LengthDistributionData, PSUProcessData = if(IncludePSU) SweptAreaPSU, all = TRUE)
+    # Insert the Stratum and PSU column by the BioticPSU input, and otherwise by NAs:
+    #LengthDistributionData <- addPSUProcessData(LengthDistributionData, PSUProcessData = if(IncludePSU) BioticPSU, all = TRUE)
     
-    # Insert the Layer column by the SweptAreaLayer input, and otherwise by NAs:
-    #LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = if(IncludeLayer) SweptAreaLayer)
+    # Insert the Layer column by the BioticLayer input, and otherwise by NAs:
+    #LengthDistributionData <- addLayerProcessData(LengthDistributionData, dataType = "LengthDistributionData", layerProcessData = if(IncludeLayer) BioticLayer)
     ######################################################
     
     
@@ -455,8 +455,8 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
 #' @inheritParams DefineLayer
-#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{SweptAreaLayer} or \code{SweptAreaPSU}.
-#' @param LayerDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineSweptAreaLayer}}.
+#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.
+#' @param LayerDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineBioticLayer}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -475,17 +475,17 @@ SumLengthDistribution <- function(
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
-    SweptAreaLayer = NULL
+    BioticLayer = NULL
 ) {
     
     sumRawResolutionData(
         data = LengthDistributionData, dataType = "LengthDistributionData", 
         LayerDefinition = LayerDefinition, 
-        LayerProcessData = SweptAreaLayer, 
+        LayerProcessData = BioticLayer, 
         LayerDefinitionMethod = LayerDefinitionMethod, 
         Resolution = Resolution, 
         LayerTable = LayerTable, 
-        modelType = "SweptArea"
+        LayerType = "Biotic"
     )
 }
 
@@ -500,8 +500,8 @@ SumLengthDistribution <- function(
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
 #' @inheritParams DefinePSU
-#' @param PSUDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{SweptAreaLayer} or \code{SweptAreaPSU}.
-#' @param PSUDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineSweptAreaPSU}}.
+#' @param PSUDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.
+#' @param PSUDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineBioticPSU}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -522,12 +522,12 @@ MeanLengthDistribution <- function(
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
-    SweptAreaLayer = NULL, 
+    BioticLayer = NULL, 
     # Parameters of the mean part:
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
     PSUDefinitionMethod = c("StationToPSU", "None"), 
     StratumPolygon = NULL, 
-    SweptAreaPSU = NULL
+    BioticPSU = NULL
 ) {
     
     # Skip the sum part if predefined:
@@ -539,7 +539,7 @@ MeanLengthDistribution <- function(
             LayerDefinitionMethod = LayerDefinitionMethod, 
             Resolution = Resolution, 
             LayerTable = LayerTable, 
-            SweptAreaLayer = SweptAreaLayer
+            BioticLayer = BioticLayer
         )
     }
     
@@ -553,10 +553,10 @@ MeanLengthDistribution <- function(
     meanRawResolutionData(
         data = SumLengthDistributionData, dataType = "SumLengthDistributionData", 
         PSUDefinition = PSUDefinition, 
-        PSUProcessData = SweptAreaPSU, 
+        PSUProcessData = BioticPSU, 
         PSUDefinitionMethod = PSUDefinitionMethod, 
         StratumPolygon = StratumPolygon, 
-        modelType = "SweptArea"
+        PSUType = "Biotic"
     )
 }
 

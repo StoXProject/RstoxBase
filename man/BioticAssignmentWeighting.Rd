@@ -2,7 +2,7 @@
 % Please edit documentation in R/Define.R
 \name{BioticAssignmentWeighting}
 \alias{BioticAssignmentWeighting}
-\title{Assignnment of biotic hauls to acoustic PSUs}
+\title{Weighting of biotic hauls in biotic assignment}
 \usage{
 BioticAssignmentWeighting(
   BioticAssignment,
@@ -37,7 +37,7 @@ BioticAssignmentWeighting(
 An object of StoX data type \code{\link{BioticAssignment}}.
 }
 \description{
-This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+This function puts weights to the hauls assigned to acoustic PSUs in \code{\link{BioticAssignment}} process data.
 }
 \details{
 This function is awesome and does excellent stuff.

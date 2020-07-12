@@ -40,9 +40,9 @@ Abundance <- function(
 
 ##################################################
 ##################################################
-#' Some title
+#' Indivduals to distribute abundance to to create super-individuals
 #' 
-#' Some description
+#' This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
 #' 
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
@@ -85,11 +85,7 @@ Individuals <- function(
         # Get the original resolution from the MeanLengthDistributionData:
         usedHauls <- MeanLengthDistributionData$Resolution
         
-        ### # Add PSUs and Layers:
-        ### usedHauls <- addPSUProcessData(MergedStoxBioticData, PSUProcessData = SweptAreaPSU, all = TRUE)
-        ### usedHauls <- addLayerProcessData(usedHauls, dataType = "LengthDistributionData", layerProcessData = SweptAreaLayer)
-        
-        # get the unique rows, while extracting only the Haul and abundance resolution columns:
+        # Get the unique rows, while extracting only the Haul and abundance resolution columns:
         usedHauls <- usedHauls[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
         
         # Remove rows with any NAs:
@@ -127,9 +123,9 @@ Individuals <- function(
 
 ##################################################
 ##################################################
-#' Some title
+#' Super-indivduals with abundance
 #' 
-#' Some description
+#' This function distributes Abundance to the individuals defined by \code{\link{Individuals}}.
 #' 
 #' @inheritParams ModelData
 #' @param AbundWeightMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.
@@ -328,6 +324,11 @@ addLengthGroupsByReferenceOneSpecies <- function(
     
     # Get the unique length intervals of the master:
     uniqueLengthGroups <- unique(master[atSpeciesInMaster, c(..lengthVar, ..resolutionVar)])
+    
+    if(all(is.na(uniqueLengthGroups))) {
+        return(FALSE)
+    }
+    
     # Order the unique length intervals:
     uniqueLengthGroups <- uniqueLengthGroups[order(uniqueLengthGroups[[lengthVar]]), ]
     

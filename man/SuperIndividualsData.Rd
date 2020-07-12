@@ -2,10 +2,10 @@
 % Please edit documentation in R/Data.R
 \name{SuperIndividualsData}
 \alias{SuperIndividualsData}
-\title{Super-individuals}
+\title{Super-individuals data}
 \description{
 The SuperIndividualsData model data is the \code{\link{IndivdualsData}} added Abundance.
 }
 \seealso{
-\code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

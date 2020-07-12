@@ -2,12 +2,12 @@
 ##################################################
 #' Definne PSU
 #' 
-#' Underlying function for \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
+#' Underlying function for \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -18,7 +18,7 @@
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{DefineAcousticPSU}} and \code{\link{DefineSweptAreaPSU}}..
+#' @seealso \code{\link{DefineAcousticPSU}} and \code{\link{DefineBioticPSU}}..
 #' 
 #' @export
 #' 
@@ -27,7 +27,7 @@ DefinePSU <- function(
     StratumPolygon, 
     StoxData, 
     DefinitionMethod = c("Identity", "None"), 
-    modelType = c("Acoustic", "SweptArea")
+    PSUType = c("Acoustic", "Biotic")
 ) {
     
     # Return immediately if UseProcessData = TRUE:
@@ -35,22 +35,22 @@ DefinePSU <- function(
         return(processData)
     }
     
-    # Get the DefinitionMethod and modelType:
+    # Get the DefinitionMethod and PSUType:
     DefinitionMethod <- match.arg(DefinitionMethod)
-    modelType <- match.arg(modelType)
+    PSUType <- match.arg(PSUType)
     
     # SSULevel
-    if(modelType == "Acoustic") {
+    if(PSUType == "Acoustic") {
         #SSULevel <- "Log"
         SSUName <- "EDSU"
         #prefix <- "T"
         prefix <- getRstoxBaseDefinitions("AcousticPSUPrefix")
     }
-    else if(modelType == "SweptArea") {
+    else if(PSUType == "Biotic") {
         #SSULevel <- "Station"
         SSUName <- "Station"
         #prefix <- "S"
-        prefix <- getRstoxBaseDefinitions("SweptAreaPSUPrefix")
+        prefix <- getRstoxBaseDefinitions("BioticPSUPrefix")
     }
     else {
         stop("Unknown model type")
@@ -138,9 +138,9 @@ DefinePSU <- function(
 
 ##################################################
 ##################################################
-#' SweptArea PSU
+#' Biotic PSU
 #' 
-#' This function defines the \code{\link{SweptAreaPSU}} process data, linking strata, swept-area PSUs and Stations 
+#' This function defines the \code{\link{BioticPSU}} process data, linking strata, biotic PSUs and Stations 
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
@@ -151,16 +151,16 @@ DefinePSU <- function(
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{SweptAreaPSU}}.
+#' An object of StoX data type \code{\link{BioticPSU}}.
 #' 
 #' @examples
 #' x <- 1
 #' 
-#' @seealso Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineSweptAreaLayer}} and \code{\link{DefineAcousticLayer}}.
+#' @seealso Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 #' 
 #' @export
 #' 
-DefineSweptAreaPSU <- function(
+DefineBioticPSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxBioticData, 
@@ -173,16 +173,16 @@ DefineSweptAreaPSU <- function(
         DefinitionMethod <- "Identity"
     }
     
-    SweptAreaPSU <- DefinePSU(
+    BioticPSU <- DefinePSU(
         processData = processData, 
         StratumPolygon = StratumPolygon, 
         StoxData = StoxBioticData$Station, 
         DefinitionMethod = DefinitionMethod, 
         UseProcessData = UseProcessData, 
-        modelType = "SweptArea"
+        PSUType = "Biotic"
     )
     
-    return(SweptAreaPSU)
+    return(BioticPSU)
 }
 
 
@@ -206,7 +206,7 @@ DefineSweptAreaPSU <- function(
 #' @examples
 #' x <- 1
 #' 
-#' @seealso Swept-area PSUs are generated using \code{\link{DefineSweptAreaPSU}}. For the vertical resolution (Layer) see \code{\link{DefineSweptAreaLayer}} and \code{\link{DefineAcousticLayer}}.
+#' @seealso Biotic PSUs are generated using \code{\link{DefineBioticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 #' 
 #' @export
 #' 
@@ -229,7 +229,7 @@ DefineAcousticPSU <- function(
         StoxData = StoxAcousticData$Log, 
         DefinitionMethod = DefinitionMethod, 
         UseProcessData = UseProcessData, 
-        modelType = "Acoustic"
+        PSUType = "Acoustic"
     )
     
     return(AcousticPSU)
@@ -240,7 +240,7 @@ DefineAcousticPSU <- function(
 ##################################################
 #' Define Layers
 #' 
-#' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
+#' This function defines the \code{\link{BioticLayer}} process data, which sets the range intervals of the swetp-area layers used in biotic estimation models in StoX.
 #' 
 #' @inheritParams general_arguments
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
@@ -252,12 +252,12 @@ DefineAcousticPSU <- function(
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{SweptAreaLayer}}.
+#' An object of StoX data type \code{\link{BioticLayer}}.
 #' 
 #' @examples
 #' x <- 1
 #' 
-#' @seealso \code{\link{DefineAcousticLayer}} and \code{\link{DefineSweptAreaLayer}}.
+#' @seealso \code{\link{DefineAcousticLayer}} and \code{\link{DefineBioticLayer}}.
 #' 
 #' @export
 #' 
@@ -267,7 +267,7 @@ DefineLayer <- function(
     DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
-    modelType = c("Acoustic", "SweptArea")
+    LayerType = c("Acoustic", "Biotic")
 ) {
     
     # Return immediately if UseProcessData = TRUE:
@@ -278,7 +278,7 @@ DefineLayer <- function(
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     # Get the DefinitionMethod:
-    modelType <- match.arg(modelType)
+    LayerType <- match.arg(LayerType)
     
     # If given as a list of data.tables, extract the table holding the vertical resolution:
     if(is.list(StoxData) && all(sapply(StoxData, data.table::is.data.table))) {
@@ -291,14 +291,14 @@ DefineLayer <- function(
     }
     
     # SSULevel
-    if(modelType == "Acoustic") {
+    if(LayerType == "Acoustic") {
         # Add channel depths:
         getChannelDepth(data)
         #VerticalResolutionLevel <- "NASC"
         VerticalResolutionMin <- "MinChannelDepth"
         VerticalResolutionMax <- "MaxChannelDepth"
     }
-    else if(modelType == "SweptArea") {
+    else if(LayerType == "Biotic") {
         #VerticalResolutionLevel <- "Haul"
         VerticalResolutionMin <- "MinHaulDepth"
         VerticalResolutionMax <- "MaxHaulDepth"
@@ -409,7 +409,7 @@ getDefaultLayerNames <- function(x) {
 #' @examples
 #' x <- 1
 #' 
-#' @seealso Swept-area Layers are generated using \code{\link{DefineSweptAreaLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @seealso Biotic Layers are generated using \code{\link{DefineBioticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @export
 #' 
@@ -428,16 +428,16 @@ DefineAcousticLayer <- function(
         Resolution = Resolution, 
         LayerTable = LayerTable, 
         UseProcessData = UseProcessData, 
-        modelType = "Acoustic"
+        LayerType = "Acoustic"
     )
 }
 
 
 ##################################################
 ##################################################
-#' Define Swept-area Layer
+#' Define biotic Layer
 #' 
-#' This function defines the \code{\link{SweptAreaLayer}} process data, which sets the range intervals of the swetp-area layers used in swept-area estimation models in StoX.
+#' This function defines the \code{\link{BioticLayer}} process data, which sets the range intervals of the swetp-area layers used in biotic estimation models in StoX.
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
@@ -447,16 +447,16 @@ DefineAcousticLayer <- function(
 #' This function is awesome and does excellent stuff.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{SweptAreaLayer}}.
+#' An object of StoX data type \code{\link{BioticLayer}}.
 #' 
 #' @examples
 #' x <- 1
 #' 
-#' @seealso Acoustic Layers are generated using \code{\link{DefineAcousticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineSweptAreaPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @seealso Acoustic Layers are generated using \code{\link{DefineAcousticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @export
 #' 
-DefineSweptAreaLayer <- function(
+DefineBioticLayer <- function(
     processData, UseProcessData = FALSE, 
     StoxBioticData, 
     DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
@@ -471,7 +471,7 @@ DefineSweptAreaLayer <- function(
         Resolution = Resolution, 
         LayerTable = LayerTable, 
         UseProcessData = UseProcessData, 
-        modelType = "SweptArea"
+        LayerType = "Biotic"
     )
 }
 
@@ -731,9 +731,9 @@ getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData,
 
 ##################################################
 ##################################################
-#' Assignnment of biotic hauls to acoustic PSUs
+#' Weighting of biotic hauls in biotic assignment
 #' 
-#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' This function puts weights to the hauls assigned to acoustic PSUs in \code{\link{BioticAssignment}} process data.
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData

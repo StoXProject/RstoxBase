@@ -443,7 +443,7 @@ sumRawResolutionData <- function(
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
-    modelType = c("Acoustic", "SweptArea")
+    LayerType = c("Acoustic", "Biotic")
 ) {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
@@ -459,7 +459,7 @@ sumRawResolutionData <- function(
             DefinitionMethod = LayerDefinitionMethod, 
             Resolution = Resolution, 
             LayerTable = LayerTable, 
-            modelType = modelType
+            LayerType = LayerType
         )
     }
     # Add the Layers:
@@ -483,12 +483,12 @@ sumRawResolutionData <- function(
     Resolution <- unique(dataCopy[, ..presentResolutionVariables])
     
     # Sum the data vertically:
-    aggregateData <- applySumToData(data = dataCopy, dataType = dataType)
+    aggregatedData <- applySumToData(data = dataCopy, dataType = dataType)
     
     # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
     return(
         list(
-            Data = aggregateData, 
+            Data = aggregatedData, 
             Resolution = Resolution
         )
     )
@@ -503,7 +503,7 @@ meanRawResolutionData <- function(
     PSUProcessData = NULL, 
     PSUDefinitionMethod = c("Identity", "None"), 
     StratumPolygon = NULL, 
-    modelType = c("Acoustic", "SweptArea")
+    PSUType = c("Acoustic", "Biotic")
 ) {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
@@ -519,7 +519,7 @@ meanRawResolutionData <- function(
             StratumPolygon = StratumPolygon, 
             StoxData = dataCopy, 
             DefinitionMethod = PSUDefinitionMethod, 
-            modelType = modelType
+            PSUType = PSUType
         )
     }
     # Add the PSUs:
@@ -547,169 +547,16 @@ meanRawResolutionData <- function(
     )
     
     # Average the data horizonally:
-    aggregateData <- applyMeanToData(data = dataCopy, dataType = dataType, targetResolution = "PSU")
+    aggregatedData <- applyMeanToData(data = dataCopy, dataType = dataType, targetResolution = "PSU")
     
     # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
     return(
         list(
-            Data = aggregateData, 
+            Data = aggregatedData, 
             Resolution = Resolution
         )
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#aggregateData <- function(
-#    data, dataType, 
-#    # Arguments for summing to Layers:
-#    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
-#    LayerProcessData = NULL, 
-#    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
-#    Resolution = double(), 
-#    LayerTable = data.table::data.table(), 
-#    # Arguments for averaging to PSUs:
-#    PSUDefinition = c("FunctionParameter", "FunctionInput"), 
-#    PSUProcessData = NULL, 
-#    PSUDefinitionMethod = c("Identity", "None"), 
-#    StratumPolygon = NULL
-#) {
-#    
-#    # Make a copy of the input, since we are averaging and setting values by reference:
-#    dataCopy = data.table::copy(data)
-#    
-#    # Add the Layers and PSUs either from function inputs or by automatic methods using function parameters:
-#    LayerDefinition <- match.arg(LayerDefinition)
-#    PSUDefinition <- match.arg(PSUDefinition)
-#    
-#    # Get the PSUs:
-#    if(identical(PSUDefinition, "FunctionParameter")) {
-#        PSUProcessData <- DefinePSU(
-#            StratumPolygon = StratumPolygon, 
-#            StoxData = data, 
-#            DefinitionMethod = PSUDefinitionMethod, 
-#            modelType = modelType
-#        )
-#    }
-#    # Add the PSUs:
-#    if(length(PSUProcessData)) {
-#        dataCopy <- addPSUProcessData(dataCopy, PSUProcessData = PSUProcessData, all = TRUE)
-#    }
-#    else {
-#        stop("PSUProcessData must be given if PSUDefinition = \"FunctionInput\"")
-#    }
-#    
-#    # Get the Layers:
-#    if(identical(LayerDefinition, "FunctionParameter")) {
-#        LayerProcessData <- DefineLayer(
-#            StoxData = data, 
-#            DefinitionMethod = LayerDefinitionMethod, 
-#            Resolution = Resolution, 
-#            LayerTable = LayerTable, 
-#            modelType = modelType
-#        )
-#    }
-#    # Add the PSUs:
-#    if(length(LayerProcessData)) {
-#        dataCopy <- addLayerProcessData(dataCopy, layerProcessData = LayerProcessData)
-#    }
-#    else {
-#        stop("LayerProcessData must be given if LayerDefinition = \"FunctionInput\"")
-#    }
-#    
-#    # Sum the data vertically:
-#    aggregateData <- applySumToData(data = dataCopy, dataType = dataType)
-#    
-#    # Average the data horizonally:
-#    aggregateData <- applyMeanToData(data = aggregateData, dataType = dataType)
-#    
-#    # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
-#    
-#    return(
-#        list(
-#            Data = aggregateData, 
-#            Resolution = Resolution
-#        )
-#    )
-#}
-
-
-
-
-
-
-
-aggregateData <- function(
-    data, dataType, 
-    modelType = c("Acoustic", "SweptArea"), 
-    # Arguments for summing to Layers:
-    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
-    LayerProcessData = NULL, 
-    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
-    Resolution = double(), 
-    LayerTable = data.table::data.table(), 
-    # Arguments for averaging to PSUs:
-    PSUDefinition = c("FunctionParameter", "FunctionInput"), 
-    PSUProcessData = NULL, 
-    PSUDefinitionMethod = c("Identity", "None"), 
-    StratumPolygon = NULL
-) {
-    
-    data <- sumRawResolutionData(
-        data = data, dataType = dataType, 
-        LayerDefinition = LayerDefinition, 
-        LayerProcessData = LayerProcessData, 
-        LayerDefinitionMethod = LayerDefinitionMethod, 
-        Resolution = Resolution, 
-        LayerTable = LayerTable, 
-        modelType = modelType
-    )
-    
-    sumDataType <- paste0("Sum", dataType)
-    data <- meanRawResolutionData(
-        data = data, dataType = sumDataType, 
-        PSUDefinition = PSUDefinition, 
-        PSUProcessData = PSUProcessData, 
-        PSUDefinitionMethod = PSUDefinitionMethod, 
-        StratumPolygon = StratumPolygon
-    )
-    
-    
-    return(data)
-}
-
 
 
 

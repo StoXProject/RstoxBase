@@ -44,10 +44,10 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
-    DefineSweptAreaPSU = list(
+    DefineBioticPSU = list(
         functionType = "processData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "SweptAreaPSU", 
+        functionOutputDataType = "BioticPSU", 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -78,10 +78,10 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
-    DefineSweptAreaLayer = list(
+    DefineBioticLayer = list(
         functionType = "processData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "SweptAreaLayer", 
+        functionOutputDataType = "BioticLayer", 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -264,22 +264,6 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "MeanLengthDistributionData", 
         functionArgumentHierarchy = list(
-            PSUDefinitionMethod = list(
-                PSUDefinition = "FunctionParameter"
-            ), 
-            StratumPolygon = list(
-                PSUDefinitionMethod = "StationToPSU"
-            ), 
-            PSUProcessData = list(
-                PSUDefinition = "FunctionInput"
-            )
-        )
-    ), 
-    MeanLengthDistribution = list(
-        functionType = "modelData", 
-        functionCategory = "baseline", 
-        functionOutputDataType = "MeanLengthDistributionData", 
-        functionArgumentHierarchy = list(
             # Layer: 
             LengthDistributionData = list(
                 # The LayerDefinition can be any of these:
@@ -291,7 +275,7 @@ stoxFunctionAttributes <- list(
             SumLengthDistributionData = list(
                 LayerDefinition = "PreDefined"
             ), 
-            SweptAreaLayer = list(
+            BioticLayer = list(
                 LayerDefinition = "FunctionInput"
             ),
             LayerDefinitionMethod = list(
@@ -304,7 +288,7 @@ stoxFunctionAttributes <- list(
                 LayerDefinitionMethod = "LayerTable"
             ), 
             # PSU: 
-            SweptAreaPSU = list(
+            BioticPSU = list(
                 PSUDefinition = "FunctionInput"
             ), 
             PSUDefinitionMethod = list(
@@ -431,10 +415,7 @@ stoxFunctionAttributes <- list(
             BioticAssignment = list(
                 AbundanceType = "Acoustic"
             ), 
-            SweptAreaPSU = list(
-                AbundanceType = "SweptArea"
-            ), 
-            SweptAreaLayer = list(
+            MeanLengthDistributionData = list(
                 AbundanceType = "SweptArea"
             )
         )

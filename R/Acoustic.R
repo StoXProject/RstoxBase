@@ -93,7 +93,7 @@ SumNASC <- function(
         LayerDefinitionMethod = LayerDefinitionMethod, 
         Resolution = Resolution, 
         LayerTable = LayerTable, 
-        modelType = "Acoustic"
+        LayerType = "Acoustic"
     )
 }
 
@@ -160,6 +160,6 @@ MeanNASC <- function(
         PSUProcessData = AcousticPSU, 
         PSUDefinitionMethod = PSUDefinitionMethod, 
         StratumPolygon = StratumPolygon, 
-        modelType = "Acoustic"
+        PSUType = "Acoustic"
     )
 }
