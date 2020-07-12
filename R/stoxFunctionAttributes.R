@@ -431,10 +431,7 @@ stoxFunctionAttributes <- list(
             BioticAssignment = list(
                 AbundanceType = "Acoustic"
             ), 
-            SweptAreaPSU = list(
-                AbundanceType = "SweptArea"
-            ), 
-            SweptAreaLayer = list(
+            MeanLengthDistributionData = list(
                 AbundanceType = "SweptArea"
             )
         )

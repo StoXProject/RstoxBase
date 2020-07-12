@@ -731,9 +731,9 @@ getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData,
 
 ##################################################
 ##################################################
-#' Assignnment of biotic hauls to acoustic PSUs
+#' Weighting of biotic hauls in biotic assignment
 #' 
-#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' This function puts weights to the hauls assigned to acoustic PSUs in \code{\link{BioticAssignment}} process data.
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData

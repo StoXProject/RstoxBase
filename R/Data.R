@@ -368,7 +368,7 @@ NULL
 ##################################################
 #' Density data
 #' 
-#' The DensityData model data gives the density of individuals as number per square nautical mile, by PSU or Stratum, and by Layer. 
+#' The DensityData model data holds the density of individuals as number per square nautical mile, by PSU or Stratum, and by Layer. 
 #' 
 #' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -403,6 +403,33 @@ NULL
 NULL
 
 
+
+##################################################
+##################################################
+#' Abundance
+#' 
+#' The Abundance model data holds the abundance of individuals as number per Stratum and Layer. 
+#' 
+#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name AbundanceData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Individuals
+#' 
+#' The IndividualsData model data are the individuals from \code{\link{StoxBioticData}} used in the estimate.
+#' 
+#' @seealso \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name IndividualsData
+#' 
+NULL
+
+
 ##################################################
 ##################################################
 #' Super-individuals
@@ -414,6 +441,5 @@ NULL
 #' @name SuperIndividualsData
 #' 
 NULL
-
 
 

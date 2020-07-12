@@ -2,7 +2,7 @@
 % Please edit documentation in R/Abundance.R
 \name{Individuals}
 \alias{Individuals}
-\title{Some title}
+\title{Indivduals to distribute abundance to to create super-individuals}
 \usage{
 Individuals(
   StoxBioticData,
@@ -24,7 +24,7 @@ Individuals(
 A data.table is returned with awesome stuff.
 }
 \description{
-Some description
+This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
 }
 \details{
 This function is awesome and does excellent stuff.
