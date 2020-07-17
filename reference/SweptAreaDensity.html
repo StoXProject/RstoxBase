@@ -120,7 +120,7 @@
     <pre class="usage"><span class='fu'>SweptAreaDensity</span>(
   <span class='kw'>MeanLengthDistributionData</span>,
   SweepWidthMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Constant"</span>, <span class='st'>"PreDefined"</span>, <span class='st'>"CruiseDependent"</span>),
-  SweepWidth = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
+  SweepWidthMeter = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
   SweepWidthTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>()
 )</pre>
 
@@ -133,15 +133,15 @@
     </tr>
     <tr>
       <th>SweepWidthMethod</th>
-      <td><p>The method for calculating the sweep width to multiply the <code>WeightedCount</code> in the <code>LengthDistributionData</code> with. Possible options are (1) "Constant", which requires <code>SweepWidth</code> to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the <code>WeightedCount</code> in the <code>LengthDistributionData</code>, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function <code>LengthDependentCatchCompensation</code>, and (3) "CruiseDependent", which requires the <code>SweepWidthTable</code> to be given.</p></td>
+      <td><p>The method for calculating the sweep width to multiply the <code>WeightedCount</code> in the <code>LengthDistributionData</code> with. Possible options are (1) "Constant", which requires <code>SweepWidthMeter</code> to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the <code>WeightedCount</code> in the <code>LengthDistributionData</code>, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function <code>LengthDependentCatchCompensation</code>, and (3) "CruiseDependent", which requires the <code>SweepWidthTable</code> to be given.</p></td>
     </tr>
     <tr>
-      <th>SweepWidth</th>
-      <td><p>The constant sweep width of the project.</p></td>
+      <th>SweepWidthMeter</th>
+      <td><p>The constant sweep width in meters.</p></td>
     </tr>
     <tr>
       <th>SweepWidthTable</th>
-      <td><p>A table of two columns, <code>Cruise</code> and <code>SweepWidth</code>, giving the sweep width for each cruise.</p></td>
+      <td><p>A table of two columns, <code>Cruise</code> and <code>SweepWidthMeter</code>, giving the sweep width for each cruise.</p></td>
     </tr>
     </table>
 

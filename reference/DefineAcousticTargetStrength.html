@@ -120,9 +120,9 @@
     <pre class="usage"><span class='fu'>DefineAcousticTargetStrength</span>(
   <span class='kw'>processData</span>,
   UseProcessData = <span class='fl'>FALSE</span>,
+  DefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Table"</span>, <span class='st'>"ResourceFile"</span>),
   TargetStrengthMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"LengthDependent"</span>, <span class='st'>"LengthAndDepthDependent"</span>,
     <span class='st'>"TargetStrengthByLength"</span>),
-  DefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Table"</span>, <span class='st'>"ResourceFile"</span>),
   TargetStrengthDefinitionTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
   <span class='kw'>FileName</span>
 )</pre>
@@ -139,12 +139,12 @@
       <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
-      <th>TargetStrengthMethod</th>
-      <td><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></td>
-    </tr>
-    <tr>
       <th>DefinitionMethod</th>
       <td><p>Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table <code>ParameterTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></td>
+    </tr>
+    <tr>
+      <th>TargetStrengthMethod</th>
+      <td><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></td>
     </tr>
     <tr>
       <th>TargetStrengthDefinitionTable</th>
