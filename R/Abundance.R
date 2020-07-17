@@ -128,7 +128,7 @@ Individuals <- function(
 #' This function distributes Abundance to the individuals defined by \code{\link{Individuals}}.
 #' 
 #' @inheritParams ModelData
-#' @param AbundWeightMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.
+#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -146,11 +146,11 @@ Individuals <- function(
 SuperIndividuals <- function(
     IndividualsData, 
     AbundanceData, 
-    AbundWeightMethod = c("Equal", "HaulDensity"), 
+    DistributionMethod = c("Equal", "HaulDensity"), 
     LengthDistributionData
 ) {
-    # Get the AbundWeightMethod:
-    AbundWeightMethod <- match.arg(AbundWeightMethod)
+    # Get the DistributionMethod:
+    DistributionMethod <- match.arg(DistributionMethod)
     
     # Make a copy of the IndividualsData:
     SuperIndividualsData <- data.table::copy(IndividualsData)
@@ -185,11 +185,11 @@ SuperIndividuals <- function(
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
-    if(AbundWeightMethod == "Equal"){
+    if(DistributionMethod == "Equal") {
         SuperIndividualsData[, individualCount := as.double(.N), by = abundanceGrouping]
         SuperIndividualsData[, haulWeightFactor := 1]
     }
-    else if(AbundWeightMethod == "HaulDensity") {
+    else if(DistributionMethod == "HaulDensity") {
         
         # Give an error if the LengthDistributionType is "Percent" or "Standard":
         validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
@@ -262,7 +262,7 @@ SuperIndividuals <- function(
         SuperIndividualsData[, sumWeightedCount := NULL]
     }
     else{
-        stop("Invalid AbundWeightMethod")
+        stop("Invalid DistributionMethod")
     }
     
     ## Order by the grouping variables:
@@ -273,7 +273,7 @@ SuperIndividuals <- function(
     #print(SuperIndividualsData[, "individualCount"], 20)
     SuperIndividualsData[, Abundance := Abundance * haulWeightFactor]
     
-    # Divide by the number of individuals (regardless of AbundWeightMethod)
+    # Divide by the number of individuals (regardless of DistributionMethod)
     SuperIndividualsData[, Abundance := Abundance / individualCount]
     
     # Order the columns, but keep all columns:

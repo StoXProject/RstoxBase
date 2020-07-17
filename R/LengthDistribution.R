@@ -266,56 +266,6 @@ LengthDependentCatchCompensation <- function(
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
     
-    # Function to apply the length dependent sweep width function.
-    #   w = w * 1852 / (Alpha * L^Beta), 
-    # where 
-    #   L = LMin if L < LMin 
-    # and 
-    #   L = LMax if L > LMax:
-    applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMin, LMax, Alpha, Beta) {
-        # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
-        if(any(is.na(LMin))) {
-            stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMin. Subset the rows before applying the function.")
-        }
-        
-        # Set the lengths lower than LMin to LMin: 
-        IndividualTotalLengthCentimeterMiddle <- pmax(IndividualTotalLengthCentimeterMiddle, LMin)
-        
-        # And the lengths larger than LMax to LMax: 
-        IndividualTotalLengthCentimeterMiddle <- pmin(IndividualTotalLengthCentimeterMiddle, LMax)
-        
-        # Calculate the factor to multiply the WeightedCount by:
-        sweepWidth <- Alpha * IndividualTotalLengthCentimeterMiddle^Beta
-        #sweepWidthInNauticalMiles <- sweepWidth / 1852
-        sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
-        
-        WeightedCount <- WeightedCount / sweepWidthInNauticalMiles
-        
-        return(WeightedCount)
-    }
-    
-    # Function to apply the length dependent selectivity function.
-    #   w = w * fact, 
-    # where 
-    #   fact = Alpha * exp(L * Beta)
-    # and 
-    #   fact = 1 if L > LMax:
-    applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMax, Alpha, Beta) {
-        # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
-        if(any(is.na(LMax))) {
-            stop("The function applyLengthDependentSelectivity() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
-        }
-        
-        # Calculate the factor to multiply the WeightedCount:
-        fact <- Alpha * exp(IndividualTotalLengthCentimeterMiddle * Beta)
-        # Set the factor to 1 outside of the range LMin to LMax. This is  questionable, and we do not turn on this functionality before this method is approved:
-        stop("CatchabilityMethod = \"LengthDependentSelectivity\" is not yet supported.")
-        fact[IndividualTotalLengthCentimeterMiddle > LMax] <- 1
-        WeightedCount <- WeightedCount * fact
-        
-        return(WeightedCount)
-    }
-    
     # Run the appropriate method:
     if(CompensationMethod == "LengthDependentSweepWidth") {
         LengthDistributionDataCopy <- runLengthDependentCompensationFunction(
@@ -350,6 +300,57 @@ LengthDependentCatchCompensation <- function(
     
     return(LengthDistributionDataCopy)
 }
+
+# Function to apply the length dependent sweep width function.
+#   w = w * 1852 / (Alpha * L^Beta), 
+# where 
+#   L = LMin if L < LMin 
+# and 
+#   L = LMax if L > LMax:
+applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMin, LMax, Alpha, Beta) {
+    # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
+    if(any(is.na(LMin))) {
+        stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMin. Subset the rows before applying the function.")
+    }
+    
+    # Set the lengths lower than LMin to LMin: 
+    IndividualTotalLengthCentimeterMiddle <- pmax(IndividualTotalLengthCentimeterMiddle, LMin)
+    
+    # And the lengths larger than LMax to LMax: 
+    IndividualTotalLengthCentimeterMiddle <- pmin(IndividualTotalLengthCentimeterMiddle, LMax)
+    
+    # Calculate the factor to multiply the WeightedCount by:
+    sweepWidth <- Alpha * IndividualTotalLengthCentimeterMiddle^Beta
+    #sweepWidthInNauticalMiles <- sweepWidth / 1852
+    sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
+    
+    WeightedCount <- WeightedCount / sweepWidthInNauticalMiles
+    
+    return(WeightedCount)
+}
+
+# Function to apply the length dependent selectivity function.
+#   w = w * fact, 
+# where 
+#   fact = Alpha * exp(L * Beta)
+# and 
+#   fact = 1 if L > LMax:
+applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMax, Alpha, Beta) {
+    # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
+    if(any(is.na(LMax))) {
+        stop("The function applyLengthDependentSelectivity() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
+    }
+    
+    # Calculate the factor to multiply the WeightedCount:
+    fact <- Alpha * exp(IndividualTotalLengthCentimeterMiddle * Beta)
+    # Set the factor to 1 outside of the range LMin to LMax. This is  questionable, and we do not turn on this functionality before this method is approved:
+    stop("CatchabilityMethod = \"LengthDependentSelectivity\" is not yet supported.")
+    fact[IndividualTotalLengthCentimeterMiddle > LMax] <- 1
+    WeightedCount <- WeightedCount * fact
+    
+    return(WeightedCount)
+}
+
 
 # Function to run a length dependent compensation function, given its method name, parameter table, vector of required parameters and the specific grouping variable, which in all current cases is "SpeciesCategory":
 # It is possible to simplify this function to only take the method as input, requiring that the function is named apply<methodname>, the parameter table is named <methodname>Parameters, and the function has the parameters WeightedCount and IndividualTotalLengthCentimeterMiddle followed by the required parameters (then R would determine the required parameters from the formals of the function). We should discuss whether to proceed with this strategy:

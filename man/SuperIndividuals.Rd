@@ -7,7 +7,7 @@
 SuperIndividuals(
   IndividualsData,
   AbundanceData,
-  AbundWeightMethod = c("Equal", "HaulDensity"),
+  DistributionMethod = c("Equal", "HaulDensity"),
   LengthDistributionData
 )
 }
@@ -16,7 +16,7 @@ SuperIndividuals(
 
 \item{AbundanceData}{The \code{\link{AbundanceData}} data.}
 
-\item{AbundWeightMethod}{The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.}
+\item{DistributionMethod}{The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.}
 
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 }

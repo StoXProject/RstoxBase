@@ -375,8 +375,11 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "DensityData", 
+        functionParameterFormat = list(
+            SweepWidthTable = "sweepWidthTable"
+        ), 
         functionArgumentHierarchy = list(
-            SweepWidth = list(
+            SweepWidthMeter = list(
                 SweepWidthMethod = "Constant"
             ), 
             SweepWidthTable = list(
@@ -426,7 +429,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "SuperIndividualsData", 
         functionArgumentHierarchy = list(
             LengthDistributionData = list(
-                AbundWeightMethod = "HaulDensity"
+                DistributionMethod = "HaulDensity"
             )
         )
     ), 
@@ -489,6 +492,18 @@ processPropertyFormats <- list(
         class = "single", 
         title = "The path to a single file"
     ), 
+    sweepWidthTable = list(
+        class = "table", 
+        title = "Define sweep width in meters for each cruise", 
+        columnNames = c(
+            "Cruise", 
+            "SweepWidthMeter"
+        ), 
+        variableTypes = c(
+            "character", 
+            "double"
+        )
+    ),
     catchCompensationTable = list(
         class = "table", 
         title = "Define parameters for length dependent catch compensation", 
@@ -554,6 +569,9 @@ processPropertyFormats <- list(
             else if(identical(TargetStrengthMethod, "LengthExponent")) {
                 title <- "Define LengthExponent"
             }
+            else {
+                stop("Wrong TargetStrengthMethod")
+            }
             
             return(title)
         }, 
@@ -593,7 +611,7 @@ processPropertyFormats <- list(
                 )
             }
             else {
-                stop("TargetStrengthMethod must be one of ", paste(validTargetStrengthMethod, collapse = ", "), ".")
+                stop("Wrong TargetStrengthMethod")
             }
             
             return(columnNames)
@@ -634,7 +652,7 @@ processPropertyFormats <- list(
                 )
             }
             else {
-                stop("TargetStrengthMethod must be one of ", paste(validTargetStrengthMethod, collapse = ", "), ".")
+                stop("Wrong TargetStrengthMethod")
             }
             
             return(variableTypes)

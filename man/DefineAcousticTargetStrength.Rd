@@ -7,9 +7,9 @@
 DefineAcousticTargetStrength(
   processData,
   UseProcessData = FALSE,
+  DefinitionMethod = c("Table", "ResourceFile"),
   TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent",
     "TargetStrengthByLength"),
-  DefinitionMethod = c("Table", "ResourceFile"),
   TargetStrengthDefinitionTable = data.table::data.table(),
   FileName
 )
@@ -19,9 +19,9 @@ DefineAcousticTargetStrength(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{TargetStrengthMethod}{Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.}
-
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.}
+
+\item{TargetStrengthMethod}{Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.}
 
 \item{TargetStrengthDefinitionTable}{A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.}
 
