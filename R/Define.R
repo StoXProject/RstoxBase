@@ -1004,13 +1004,9 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 DefineAcousticTargetStrength <- function(
     processData, UseProcessData = FALSE, 
     # Note that "LengthExponent" is an option for TargetStrengthMethod (used by BioticAssignmentWeighting()), but this is not shown.
-    TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
     DefinitionMethod = c("Table", "ResourceFile"),
+    TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
     TargetStrengthDefinitionTable = data.table::data.table(), 
-    #LengthDependentTable = data.table::data.table(), 
-    #LengthAndDepthDependentTable = data.table::data.table(), 
-    #LengthExponentTable = data.table::data.table(), 
-    #TargetStrengthByLengthTable = data.table::data.table(), 
     FileName
 ) {
     

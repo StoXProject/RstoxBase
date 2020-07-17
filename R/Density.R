@@ -81,7 +81,7 @@ AcousticDensity <- function(
     AssignmentLengthDistributionData,
     AcousticTargetStrength,
     SpeciesLinkTable
-){
+) {
     
     # Check that the input SpeciesLinkTable has the appropriate types:
     checkTypes(table = SpeciesLinkTable)
@@ -274,13 +274,13 @@ expandTargetStrengthTable <- function(TargetStrengthTable, by) {
 ###########################################################
 # Define a function to add TS according to selected model #
 ###########################################################
-getTargetStrength <- function(Data, TargetStrengthMethod){
+getTargetStrength <- function(Data, TargetStrengthMethod) {
     
     # Get the length interval mid points:
     Data[, midIndividualTotalLengthCentimeter := getMidIndividualTotalLengthCentimeter(.SD)]
     
     # Check wich model is selected
-    if(grepl("LengthDependent", TargetStrengthMethod, ignore.case = TRUE)){
+    if(grepl("LengthDependent", TargetStrengthMethod, ignore.case = TRUE)) {
         # Apply the LengthDependent equation: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthDependent")(
             midIndividualTotalLengthCentimeter, 
@@ -288,7 +288,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod){
             LengthExponent = LengthExponent
         )]
     }
-    else if(grepl("LengthAndDepthDependent", TargetStrengthMethod, ignore.case = TRUE)){
+    else if(grepl("LengthAndDepthDependent", TargetStrengthMethod, ignore.case = TRUE)) {
         # Add the the depth:
         verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
         Data[, midDepthMeter := rowMeans(.SD), .SDcols = verticalLayerDimension]
@@ -301,14 +301,14 @@ getTargetStrength <- function(Data, TargetStrengthMethod){
             DepthMeter = DepthMeter
         )]
     }
-    else if(grepl("LengthExponent", TargetStrengthMethod, ignore.case = TRUE)){
+    else if(grepl("LengthExponent", TargetStrengthMethod, ignore.case = TRUE)) {
         # Apply only the LengthExponent: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthExponent")(
             midIndividualTotalLengthCentimeter, 
             LengthExponent = LengthExponent
         )]
     }
-    else if(grepl("TargetStrengthByLength", TargetStrengthMethod, ignore.case = TRUE)){
+    else if(grepl("TargetStrengthByLength", TargetStrengthMethod, ignore.case = TRUE)) {
         # Apply the TargetStrengthByLengthTargetStrengthByLength equations: 
         Data[, TargetStrength := 
             if(!is.na(TargetStrengthFunction)) 
@@ -345,9 +345,9 @@ getMidIndividualTotalLengthCentimeter <- function(x) {
 #' This function calculates the area density of fish as number of individuals per square nautical mile.
 #' 
 #' @inheritParams ModelData
-#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.
-#' @param SweepWidth The constant sweep width of the project.
-#' @param SweepWidthTable A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
+#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidthMeter} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.
+#' @param SweepWidthMeter The constant sweep width in meters.
+#' @param SweepWidthTable A table of two columns, \code{Cruise} and \code{SweepWidthMeter}, giving the sweep width for each cruise.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -365,7 +365,7 @@ getMidIndividualTotalLengthCentimeter <- function(x) {
 SweptAreaDensity <- function(
     MeanLengthDistributionData, 
     SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"), 
-    SweepWidth = double(), 
+    SweepWidthMeter = double(), 
     SweepWidthTable = data.table::data.table()
 ) {
 	
@@ -403,21 +403,27 @@ SweptAreaDensity <- function(
         
         # Use a constant sweep width for all data by default:
         if(SweepWidthMethod == "Constant") {
-            if(length(SweepWidth) == 0) {
-                stop("SweepWidth must be given when SweepWidthMethod == \"Constant\"")
+            if(length(SweepWidthMeter) == 0) {
+                stop("SweepWidthMeter must be given when SweepWidthMethod == \"Constant\"")
             }
             
             # Convert WeightedCount to density:
-            #sweepWidthInNauticalMiles <- SweepWidth / 1852
-            sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
+            #sweepWidthInNauticalMiles <- SweepWidthMeter / 1852
+            sweepWidthInNauticalMiles <- SweepWidthMeter / getRstoxBaseDefinitions("nauticalMileInMeters")
             
             DensityData[, Density := WeightedCount / sweepWidthInNauticalMiles]
         }
         else if(SweepWidthMethod == "CruiseDependent") {
-            stop("SweepWidthMethod = \"CruiseDependent\" is not yet implemented")
             if(length(SweepWidthTable) == 0) {
                 stop("SweepWidthTable must be given when SweepWidthMethod == \"CruiseDependent\"")
             }
+            
+            # Merge in the SweepWidthTable:
+            DensityData <- merge(DensityData, SweepWidthTable, by = "Cruise")
+            # Convert sweep width to nautical miles:
+            DensityData[, SweepWidthNauticalMile := SweepWidthMeter  / getRstoxBaseDefinitions("nauticalMileInMeters")]
+            # Divide by the sweep width:
+            DensityData[, Density := WeightedCount / SweepWidthNauticalMile, by = "Cruise"]
         }
         else {
             stop("SweepWidthMethod must be \"Constant\" or \"CruiseDependent\" if LengthDistributionType is \"Normalized\" or \"SelectivityCompensatedNormalized\" in the MeanLengthDistributionData")

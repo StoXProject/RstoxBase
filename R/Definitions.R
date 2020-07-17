@@ -10,7 +10,7 @@
 #' @noRd
 #' @seealso Use \code{\link{getRstoxBaseDefinitions}} to get the definitions.
 #' 
-initiateRstoxBase <- function(){
+initiateRstoxBase <- function() {
     
     # Define the variables of the main data types used in estimation models:
     dataTypeDefinition <- list(
@@ -332,12 +332,12 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
     
     # Get all or a subset of the definitions:
     definitions <- get("RstoxBaseEnv")$definitions
-    if(length(name)){
+    if(length(name)) {
         definitions <- definitions[[name]]
     }
     
     l <- l[names(l) %in% names(definitions)]
-    if(length(l)){
+    if(length(l)) {
         definitions <- utils::modifyList(definitions, l)
     }
     

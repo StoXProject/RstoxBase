@@ -252,7 +252,7 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
         
         data <- data.table::data.table(layerData, data)
     }
-    else if(! "Layer" %in% names(data)){
+    else if(! "Layer" %in% names(data)) {
         data.table::setDT(data)
         toAdd <- c("Layer", "MinLayerDepth", "MaxLayerDepth")
         data.table::set(data, j = toAdd, value = NA_character_)
@@ -716,7 +716,7 @@ quote.convert <- function(x) {
 
 
 
-JavaJEXL2R <- function(x, eval=TRUE){
+JavaJEXL2R <- function(x, eval=TRUE) {
     
     if(length(x) == 0 || nchar(x) == 0) {
         return("")
@@ -739,12 +739,12 @@ JavaJEXL2R <- function(x, eval=TRUE){
     )
     
     # Replace Jexl with R:
-    for(i in seq_len(nrow(pattern_replacement))){
+    for(i in seq_len(nrow(pattern_replacement))) {
         x <- gsub(pattern_replacement[i,1], pattern_replacement[i,2], x)
     }
     
     # Return the evaluated exprexsion:
-    if(eval){
+    if(eval) {
         x <- eval(parse(text = x))
     }
     

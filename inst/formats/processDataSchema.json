@@ -43,7 +43,7 @@
         ]
     }, 
     
-    "SweptAreaPSU": {
+    "BioticPSU": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
@@ -86,7 +86,7 @@
         ]
     }, 
     
-    "SweptAreaLayer": {
+    "BioticLayer": {
 		"$schema": "http://json-schema.org/draft-04/schema#",
 		"type": "array",
 		"items": [
