@@ -10,7 +10,7 @@
 #' @noRd
 #' @seealso Use \code{\link{getRstoxBaseDefinitions}} to get the definitions.
 #' 
-initiateRstoxBase <- function() {
+initiateRstoxBase <- function(){
     
     # Define the variables of the main data types used in estimation models:
     dataTypeDefinition <- list(
@@ -25,7 +25,7 @@ initiateRstoxBase <- function() {
             verticalLayerDimension = NULL, 
             weighting = "NASCWeight", 
             type = "ChannelReferenceType", 
-            other = c("EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+            other = c("Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
         ), 
         SumNASCData = list(
             horizontalResolution = "EDSU", 
@@ -62,7 +62,7 @@ initiateRstoxBase <- function() {
             verticalLayerDimension = NULL, 
             weighting = "LengthDistributionWeight", 
             type = "LengthDistributionType", 
-            other = c("EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            other = c("Cruise", "EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
         SumLengthDistributionData = list(
             horizontalResolution = "Station", 
@@ -332,12 +332,12 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
     
     # Get all or a subset of the definitions:
     definitions <- get("RstoxBaseEnv")$definitions
-    if(length(name)) {
+    if(length(name)){
         definitions <- definitions[[name]]
     }
     
     l <- l[names(l) %in% names(definitions)]
-    if(length(l)) {
+    if(length(l)){
         definitions <- utils::modifyList(definitions, l)
     }
     
