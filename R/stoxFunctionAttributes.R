@@ -433,6 +433,11 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
+    ImputeSuperIndividuals = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "ImputeSuperIndividualsData"
+    ),
     ##########
     
     
