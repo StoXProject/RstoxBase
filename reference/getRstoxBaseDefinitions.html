@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.22</span>
       </span>
     </div>
 
@@ -202,8 +202,8 @@
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$other
-#&gt; [1] "EffectiveLogDistance" "DateTime"             "Longitude"           
-#&gt; [4] "Latitude"            
+#&gt; [1] "Cruise"               "EffectiveLogDistance" "DateTime"            
+#&gt; [4] "Longitude"            "Latitude"            
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumNASCData
@@ -300,9 +300,9 @@
 #&gt; [1] "LengthDistributionType"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$other
-#&gt; [1] "EffectiveTowedDistance" "DateTime"               "Longitude"             
-#&gt; [4] "Latitude"               "VerticalNetOpening"     "HorizontalNetOpening"  
-#&gt; [7] "TrawlDoorSpread"       
+#&gt; [1] "Cruise"                 "EffectiveTowedDistance" "DateTime"              
+#&gt; [4] "Longitude"              "Latitude"               "VerticalNetOpening"    
+#&gt; [7] "HorizontalNetOpening"   "TrawlDoorSpread"       
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumLengthDistributionData
@@ -636,15 +636,15 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fd7e9fcf008&gt;
-#&gt; &lt;environment: 0x7fd7e9fd2f50&gt;
+#&gt; &lt;bytecode: 0x7fea7dc1c0d0&gt;
+#&gt; &lt;environment: 0x7fea7dc1e418&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
 #&gt; 
 #&gt; $proj4string
 #&gt; CRS arguments:
-#&gt;  +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+#&gt;  +proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs 
 #&gt; 
 #&gt; $resolutionClasses
 #&gt; $resolutionClasses$NASC
@@ -687,8 +687,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
 #&gt;         DepthExponent * log10(1 + DepthMeter/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fd7e9fd3ce0&gt;
-#&gt; &lt;environment: 0x7fd7e9fd2f50&gt;
+#&gt; &lt;bytecode: 0x7fea7dc1b298&gt;
+#&gt; &lt;environment: 0x7fea7dc1e418&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLengthCentimeter, TargetStrength0, 
@@ -696,16 +696,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fd7e9fce550&gt;
-#&gt; &lt;environment: 0x7fd7e9fd2f50&gt;
+#&gt; &lt;bytecode: 0x7fea7dc1b618&gt;
+#&gt; &lt;environment: 0x7fea7dc1e418&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLengthCentimeter, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fd7e9fd36c0&gt;
-#&gt; &lt;environment: 0x7fd7e9fd2f50&gt;
+#&gt; &lt;bytecode: 0x7fea7dc1ac78&gt;
+#&gt; &lt;environment: 0x7fea7dc1e418&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
