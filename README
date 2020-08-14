@@ -1,4 +1,4 @@
-# RstoxBase version: 1.2.21 (latest alpha, 2020-07-18)
+# RstoxBase version: 1.2.22 (latest alpha, 2020-08-14)
 # R version: 3.6
 
 # Base StoX functions used for survey estimation.
@@ -8,11 +8,11 @@
 # Install the latest binary:
 install.packages(RstoxBase, repo = c("https://stoxproject.github.io/repo", "https://cloud.r-project.org"))
 # ... or install the latest version from GitHub:
-# devtools::install_github("https://github.com/StoXProject/RstoxBase", ref = "RstoxBase-v1.2.21")
+# devtools::install_github("https://github.com/StoXProject/RstoxBase", ref = "RstoxBase-v1.2.22")
 # ... or install the develop version from GitHub:
 # devtools::install_github("https://github.com/StoXProject/RstoxBase", ref = "develop")
 
-# Release notes for RstoxBase_1.2.21:
+# Release notes for RstoxBase_1.2.22:
 # . 
 
 # For historical release notes see https://github.com/StoXProject/RstoxBase/blob/master/NEWS
