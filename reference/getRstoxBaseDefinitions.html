@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.23</span>
       </span>
     </div>
 
@@ -530,6 +530,32 @@
 #&gt; NULL
 #&gt; 
 #&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$horizontalResolution
+#&gt; [1] "Stratum"
+#&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$verticalResolution
+#&gt; [1] "Layer" "Haul" 
+#&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$categoryVariable
+#&gt; [1] "SpeciesCategory"
+#&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$groupingVariables
+#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$data
+#&gt; [1] "Abundance"
+#&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$verticalLayerDimension
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$weighting
+#&gt; NULL
+#&gt; 
+#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$other
+#&gt; NULL
+#&gt; 
+#&gt; 
 #&gt; $dataTypeDefinition$BioticAssignment
 #&gt; $dataTypeDefinition$BioticAssignment$horizontalResolution
 #&gt; [1] "Stratum" "PSU"    
@@ -606,6 +632,11 @@
 #&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
 #&gt; [5] "LengthResolutionCentimeter"     
 #&gt; 
+#&gt; $dataTypeRequiredVariables$ImputeSuperIndividualsData
+#&gt; [1] "Stratum"                         "Haul"                           
+#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
+#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; 
 #&gt; $dataTypeRequiredVariables$BioticAssignment
 #&gt; [1] "PSU"             "Layer"           "WeightingFactor"
 #&gt; 
@@ -636,8 +667,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fea7dc1c0d0&gt;
-#&gt; &lt;environment: 0x7fea7dc1e418&gt;
+#&gt; &lt;bytecode: 0x7fce9da59e38&gt;
+#&gt; &lt;environment: 0x7fce9da56458&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -687,8 +718,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
 #&gt;         DepthExponent * log10(1 + DepthMeter/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fea7dc1b298&gt;
-#&gt; &lt;environment: 0x7fea7dc1e418&gt;
+#&gt; &lt;bytecode: 0x7fce9da571c0&gt;
+#&gt; &lt;environment: 0x7fce9da56458&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLengthCentimeter, TargetStrength0, 
@@ -696,16 +727,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fea7dc1b618&gt;
-#&gt; &lt;environment: 0x7fea7dc1e418&gt;
+#&gt; &lt;bytecode: 0x7fce9da5aa08&gt;
+#&gt; &lt;environment: 0x7fce9da56458&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLengthCentimeter, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fea7dc1ac78&gt;
-#&gt; &lt;environment: 0x7fea7dc1e418&gt;
+#&gt; &lt;bytecode: 0x7fce9da57930&gt;
+#&gt; &lt;environment: 0x7fce9da56458&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent

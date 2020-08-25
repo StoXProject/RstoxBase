@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get the common intervals of possibly overlapping intervals: — getCommonIntervals • RstoxBase</title>
+<title>Indivduals to distribute abundance to to create super-individuals — ImputeSuperIndividuals • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Get the common intervals of possibly overlapping intervals: — getCommonIntervals" />
-<meta property="og:description" content="Get the common intervals of possibly overlapping intervals:" />
+<meta property="og:title" content="Indivduals to distribute abundance to to create super-individuals — ImputeSuperIndividuals" />
+<meta property="og:description" content="This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals." />
 
 
 
@@ -108,49 +108,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get the common intervals of possibly overlapping intervals:</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Utilities.R'><code>R/Utilities.R</code></a></small>
-    <div class="hidden name"><code>getCommonIntervals.Rd</code></div>
+    <h1>Indivduals to distribute abundance to to create super-individuals</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R'><code>R/Abundance.R</code></a></small>
+    <div class="hidden name"><code>ImputeSuperIndividuals.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Get the common intervals of possibly overlapping intervals:</p>
+    <p>This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getCommonIntervals</span>(
-  <span class='kw'>data</span>,
-  varMin = <span class='kw'>NULL</span>,
-  varMax = <span class='kw'>NULL</span>,
-  lowerName = <span class='kw'>NULL</span>,
-  upperName = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>ImputeSuperIndividuals</span>(<span class='kw'>SuperIndividualsData</span>, Seed = <span class='fl'>1</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>A data.table/data.frame holding the columns representing lower and upper interval.</p></td>
+      <th>SuperIndividualsData</th>
+      <td><p>The <code><a href='SuperIndividualsData.html'>SuperIndividualsData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>varMin</th>
-      <td><p>The name of the lower interval column. By default interpreted from the first column of <code>data</code>.</p></td>
-    </tr>
-    <tr>
-      <th>varMax</th>
-      <td><p>The name of the upper interval column. By default interpreted from the second column of <code>data</code>.</p></td>
-    </tr>
-    <tr>
-      <th>lowerName</th>
-      <td><p>The name of the lower interval column in the output table. By default set to <code>varMin</code>.</p></td>
-    </tr>
-    <tr>
-      <th>upperName</th>
-      <td><p>The name of the upper interval column in the output table. By default set to <code>varMax</code>.</p></td>
+      <th>AbundanceType</th>
+      <td><p>The type of abundance, one of "Acoustic" and "SweptArea".</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>A data.table is returned with awesome stuff.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function is awesome and does excellent stuff.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='SuperIndividuals.html'>SuperIndividuals</a></code> for distributing Abundance to the Individuals.</p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
