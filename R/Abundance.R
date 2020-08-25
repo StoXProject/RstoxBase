@@ -79,7 +79,8 @@ Individuals <- function(
     
     # Get all hauls of each Stratum and Layer:
     if(AbundanceType == "Acoustic") {
-        usedHauls <- BioticAssignment[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
+        # Get the hauls with positive WeightingFactor:
+        usedHauls <- BioticAssignment[WeightingFactor > 0, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
     else if(AbundanceType == "SweptArea") {
         # Get the original resolution from the MeanLengthDistributionData:
@@ -117,179 +118,6 @@ Individuals <- function(
     
     return(IndividualsData)
 }
-
-
-
-##################################################
-##################################################
-#' Indivduals to distribute abundance to to create super-individuals
-#' 
-#' This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
-#' 
-#' @inheritParams ProcessData
-#' @inheritParams ModelData
-#' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
-#' 
-#' @export
-#' 
-ImputeSuperIndividuals <- function(
-    SuperIndividualsData, 
-    Seed = 1
-) {
-    
-    # Check that the length resolution is constant: 
-    if(!allEqual(SuperIndividualsData$LengthResolutionCentimeter)) {
-        stop("All individuals must have identical LengthResolutionCentimeter in the current version.")
-    }
-    
-    ImputeSuperIndividualsData <- ImputeData(
-        data = SuperIndividualsData, 
-        imputeAtMissing = "IndividualAge", 
-        imputeByEqual = "IndividualTotalLengthCentimeter", 
-        groupBy = "SpeciesCategory", 
-        seed = Seed
-    )
-    
-    # Order the columns, but keep all columns:
-    formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
-}
-
-
-ImputeData <- function(
-    data, 
-    imputeAtMissing = "IndividualAge", 
-    imputeByEqual = "IndividualTotalLengthCentimeter", 
-    groupBy = "SpeciesCategory", 
-    seed = 1
-) {
-    
-    dataCopy <- data.table::copy(data)
-    RowIndex <- seq_len(nrow(dataCopy))
-    dataCopy[, RowIndex := ..RowIndex]
-    
-    levels <- list(
-        "Haul", 
-        "Stratum", 
-        NULL
-    )
-    
-    dataCopy[, ReplaceRowIndex := NA_integer_]
-    dataCopy[, ReplaceLevel := NA_character_]
-    for(level in levels) {
-        getImputeRowIndicesOneLevel(
-            dataCopy, 
-            imputeAtMissing = imputeAtMissing, 
-            imputeByEqual = imputeByEqual, 
-            groupBy = groupBy, 
-            level = level)
-    }
-    
-    # Perform the imputation:
-    dataCopy <- replaceMissingData(dataCopy)
-    
-    # Delete the RowIndex and ReplaceRowIndex:
-    #SuperIndividualsDataCopy[, RowIndex := NULL]
-    #SuperIndividualsDataCopy[, ReplaceRowIndex := NULL]
-    
-    return(dataCopy)
-}
-
-# Function to get the imputation row indices of one level ("Haul", "Stratum", NULL). This function is applied using for loop over the levels:
-getImputeRowIndicesOneLevel <- function(
-    dataCopy, 
-    imputeAtMissing = "Age", 
-    imputeByEqual = "IndividualTotalLengthCentimeter", 
-    groupBy = "SpeciesCategory", 
-    level = "Haul"
-) {
-    
-    # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the groupBy input, the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
-    by <- c(groupBy, level, imputeByEqual)
-    dataCopy[, 
-        c("ReplaceRowIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
-            .SD, 
-            imputeAtMissing = imputeAtMissing, 
-            level = level
-        ), 
-    by = by]
-}
-
-# Function to get the imputation row indices of one table of one level ("Haul", "Stratum", NULL). This function is applied using data table with 'by':
-getImputeRowIndicesOneGroup <- function(
-    dataCopyOneGroup, 
-    imputeAtMissing, 
-    level
-) {
-    # Get the super individuals with missing data (and which have not been given ReplaceRowIndex):
-    missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceRowIndex)]
-    # Get the number of missing and present rows:
-    NMissingRows <- sum(missingData)
-    NumberOfCores <- sum(!missingData)
-    
-    # We chose (as it may be cleaner) to create the output row indices as a vector of NAs, instead of using data.table:
-    ReplaceRowIndex <- dataCopyOneGroup$ReplaceRowIndex
-    ReplaceLevel <- dataCopyOneGroup$ReplaceLevel
-    
-    if(NMissingRows > 0 && NPresentRows > 0) {
-        # Sample the rows with present data:
-        sampleIndexInPresent <- sample.int(NPresentRows, NMissingRows, replace = TRUE)
-        ReplaceRowIndex[missingData] <- dataCopyOneGroup[!missingData, RowIndex][sampleIndexInPresent]
-        
-        # Add also the replace level:
-        ReplaceLevel[missingData] <- if(length(level)) level else "Survey"
-    }
-    
-    return(
-        list(
-            ReplaceRowIndex = ReplaceRowIndex, 
-            ReplaceLevel = ReplaceLevel
-        )
-    )
-}
-
-# Function to perform imputation of a table containing the ReplaceRowIndex column:
-replaceMissingDataOld <- function(x) {
-    browser()
-    rowsWithMissingData <- which(x[, !is.na(ReplaceRowIndex)])
-    replacement <- x[(ReplaceRowIndex), ]
-    
-    for(colInd in names(x)) {
-        atMissingData <- x[rowsWithMissingData, is.na(get(colInd))]
-        atPresentReplacement <- replacement[, !is.na(get(colInd))]
-        #!is.na(replacement)
-        atReplace <- atMissingData & atPresentReplacement
-        if(any(atReplace)) {
-            x[rowsWithMissingData[atReplace], eval(colInd) := replacement[atReplace, get(colInd)]]
-        }
-    }
-}
-
-replaceMissingData <- function(x) {
-    
-    # Get the matrix indices of data to replace, which are those that are missing in the rows impute:
-    rowsToImpute <- x[!is.na(ReplaceRowIndex), RowIndex]
-    rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
-    
-    x <- as.data.frame(x)
-    atReplace <- is.na(x[rowsToImpute, ]) & !is.na(x[rowsToImputeFrom, ])
-    x[rowsToImpute, ][atReplace] <- x[(rowsToImputeFrom), ][atReplace]
-    
-    x <- data.table::setDT(x)
-    return(x)
-}
-
-
 
 
 
@@ -595,4 +423,199 @@ addLengthGroupsByReference <- function(
     
     return(TRUE)
 }
+
+
+
+
+##################################################
+##################################################
+#' Indivduals to distribute abundance to to create super-individuals
+#' 
+#' This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
+#' 
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' A data.table is returned with awesome stuff.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
+#' 
+#' @export
+#' 
+ImputeSuperIndividuals <- function(
+    SuperIndividualsData, 
+    Seed = 1
+) {
+    
+    # Check that the length resolution is constant: 
+    if(!allEqual(SuperIndividualsData$LengthResolutionCentimeter)) {
+        stop("All individuals must have identical LengthResolutionCentimeter in the current version.")
+    }
+    
+    ImputeSuperIndividualsData <- ImputeData(
+        data = SuperIndividualsData, 
+        imputeAtMissing = "IndividualAge", 
+        imputeByEqual = "IndividualTotalLengthCentimeter", 
+        groupBy = "SpeciesCategory", 
+        seed = Seed
+    )
+    
+    # Order the columns, but keep all columns:
+    formatOutput(ImputeSuperIndividualsData, dataType = "ImputeSuperIndividualsData", keep.all = TRUE)
+    
+    return(ImputeSuperIndividualsData)
+}
+
+
+ImputeData <- function(
+    data, 
+    imputeAtMissing = "IndividualAge", 
+    imputeByEqual = "IndividualTotalLengthCentimeter", 
+    groupBy = "SpeciesCategory", 
+    seed = 1
+) {
+    
+    dataCopy <- data.table::copy(data)
+    RowIndex <- seq_len(nrow(dataCopy))
+    dataCopy[, RowIndex := ..RowIndex]
+    
+    levels <- list(
+        "Haul", 
+        "Stratum", 
+        "AllStrata"
+    )
+    # Add an AllStrata column to the data to facilitate the AllStrata level: 
+    dataCopy[, AllStrata := "AllStrata"]
+    setcolorder(dataCopy, neworder = "AllStrata")
+    
+    # Get a vector with the seed of each level:
+    seedVector <- structure(as.list(getSeedVector(size = length(levels), seed = seed)), names = levels)
+    
+    dataCopy[, ReplaceRowIndex := NA_integer_]
+    dataCopy[, ReplaceLevel := NA_character_]
+    for(level in levels) {
+        # Get the vector of columns to impute by:
+        by <- c(groupBy, level, imputeByEqual)
+        
+        # Get the table of seeds for each unique combination of the columns defined by 'by':
+        seedTable <- unique(dataCopy[, ..by])
+        data.table::setorder(seedTable)
+        seedTable <- data.table::data.table(
+            seedTable, 
+            imputeSeed = getSeedVector(size = nrow(seedTable), seed = seedVector[[level]])
+        )
+        
+        # Add the seeds to the data (recycled):
+        dataCopy <- merge(dataCopy, seedTable, by = by, all = TRUE, sort = FALSE)
+        
+        # Perform the imputation:
+        getImputeRowIndicesOneLevel(
+            dataCopy, 
+            imputeAtMissing = imputeAtMissing, 
+            level = level, 
+            by = by
+        )
+        
+        # Remove the imputeSeed column:
+        dataCopy[, imputeSeed := NULL]
+    }
+    
+    # Perform the imputation:
+    dataCopy <- replaceMissingData(dataCopy)
+    
+    # Delete the RowIndex and ReplaceRowIndex:
+    dataCopy$ReplaceIndividual <- dataCopy[(ReplaceRowIndex), "Individual"]
+    dataCopy[, RowIndex := NULL]
+    dataCopy[, ReplaceRowIndex := NULL]
+    dataCopy[, AllStrata := NULL]
+    
+    return(dataCopy)
+}
+
+# Function to get the imputation row indices of one level ("Haul", "Stratum", NULL). This function is applied using for loop over the levels:
+getImputeRowIndicesOneLevel <- function(
+    dataCopy, 
+    imputeAtMissing = "Age", 
+    level = "Haul", 
+    by
+) {
+    # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the groupBy input, the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
+    dataCopy[, 
+         c("ReplaceRowIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
+             .SD, 
+             imputeAtMissing = imputeAtMissing, 
+             level = level
+         ), 
+         by = by]
+}
+
+# Function to get the imputation row indices of one table of one level ("Haul", "Stratum", NULL). This function is applied using data table with 'by':
+getImputeRowIndicesOneGroup <- function(
+    dataCopyOneGroup, 
+    imputeAtMissing, 
+    level
+) {
+    # Get the super individuals with missing data (and which have not been given ReplaceRowIndex):
+    missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceRowIndex)]
+    # Get the number of missing and present rows:
+    NMissingRows <- sum(missingData)
+    NPresentRows <- sum(!missingData)
+    
+    # We chose (as it may be cleaner) to create the output row indices as a vector of NAs, instead of using data.table:
+    ReplaceRowIndex <- dataCopyOneGroup$ReplaceRowIndex
+    ReplaceLevel <- dataCopyOneGroup$ReplaceLevel
+    
+    if(NMissingRows > 0 && NPresentRows > 0) {
+        
+        
+        # Sample the rows with present data:
+        #sampleIndexInPresent <- sample.int(NPresentRows, NMissingRows, replace = TRUE)
+        sampleIndexInPresent <- sampleSorted(
+            dataCopyOneGroup[!missingData, Individual], 
+            size = NMissingRows, 
+            seed = dataCopyOneGroup$imputeSeed[1], 
+            replace = TRUE, 
+            index.out = TRUE
+        )
+        ReplaceRowIndex[missingData] <- dataCopyOneGroup[!missingData, RowIndex][sampleIndexInPresent]
+        
+        # Add also the replace level:
+        ReplaceLevel[missingData] <- level
+    }
+    
+    return(
+        list(
+            ReplaceRowIndex = ReplaceRowIndex, 
+            ReplaceLevel = ReplaceLevel
+        )
+    )
+}
+
+
+
+replaceMissingData <- function(x) {
+    
+    # Get the matrix indices of data to replace, which are those that are missing in the rows impute:
+    rowsToImpute <- x[!is.na(ReplaceRowIndex), RowIndex]
+    rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
+    
+    x <- as.data.frame(x)
+    atReplace <- is.na(x[rowsToImpute, ]) & !is.na(x[rowsToImputeFrom, ])
+    x[rowsToImpute, ][atReplace] <- x[(rowsToImputeFrom), ][atReplace]
+    
+    x <- data.table::setDT(x)
+    return(x)
+}
+
+
+
+
 

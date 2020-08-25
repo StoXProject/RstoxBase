@@ -97,7 +97,7 @@ AcousticDensity <- function(
     # Convert NASC to number density using the length distribution coupled with the target strength:
     DensityData <- NASCToDensity(
         NASCData = MeanNASCData$Data, 
-        LengthDistributionData = AssignmentLengthDistributionData, 
+        AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
         resolution = resolution
     )
@@ -112,16 +112,12 @@ AcousticDensity <- function(
     return(DensityData)
 }
 
-NASCToDensity <- function(NASCData, LengthDistributionData, AcousticTargetStrength, resolution) {
+NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTargetStrength, resolution) {
     # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship. This step is important, as merging is done by the AcousticCategory, Frequency and possibly other grouping columns.:
     
     
     # Take special care of TargetStrengthMethods that are tables of length instead of functions, in which we apply constant interpolation to the lengths in the data here, to facilitate correct merging:
     if(getRstoxBaseDefinitions("targetStrengthMethodTypes")[[AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod]] == "Table") {
-        #AcousticTargetStrength$TargetStrengthFunction <- getTargetStrengthFunction(
-        #    TargetStrengthTable = AcousticTargetStrength$TargetStrengthTable, 
-        #    LengthData = LengthDistributionData
-        #)
         AcousticTargetStrength$TargetStrengthTable <- getTargetStrengthByLengthFunction(
             AcousticTargetStrength$TargetStrengthTable, 
             method = "constant", 
@@ -147,9 +143,9 @@ NASCToDensity <- function(NASCData, LengthDistributionData, AcousticTargetStreng
         DensityData <- cbind(NASCData, AcousticTargetStrength$TargetStrengthTable)
     }
     
-    # Merge the LengthDistributionData into the DensityData. This adds the length distribution:
-    mergeBy <- intersect(names(DensityData), names(LengthDistributionData))
-    DensityData <- merge(DensityData, LengthDistributionData, by = mergeBy, all.x = TRUE)
+    # Merge the AssignmentLengthDistributionData into the DensityData. This adds the length distribution:
+    mergeBy <- intersect(names(DensityData), names(AssignmentLengthDistributionData))
+    DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
     
     # Calculate the target strength of each length group:
     getTargetStrength(DensityData, TargetStrengthMethod = AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod)
@@ -371,17 +367,6 @@ SweptAreaDensity <- function(
 	
     ## Get the DefinitionMethod:
     SweepWidthMethod <- match.arg(SweepWidthMethod)
-    
-    # Check the horizontal and vertical resolution of the input AggregateLengthDistributionData:
-    ###if(any(!is.na(LengthDistributionData$Station)) && any(!is.na(LengthDistributionData$Haul))) {
-    ###    stop("The horizontal and vertical resolution of the input LengthDistributionData must be PSU (identified by only NAs in the Stat###ion column) and Layer (identified by only NAs in the Haul column)")
-    ###}
-    ###else if(any(!is.na(LengthDistributionData$Station))) {
-    ###    stop("The horizontal resolution of the input LengthDistributionData must be PSU (identified by only NAs in the Station column)")###
-    ###}
-    ###else if(any(!is.na(LengthDistributionData$Haul))) {
-    ###    stop("The vertical resolution of the input LengthDistributionData must be Layer (identified by only NAs in the Haul column)")
-    ###}
     
     # Get the length distribution type:
     LengthDistributionType <- utils::head(MeanLengthDistributionData$Data$LengthDistributionType, 1)

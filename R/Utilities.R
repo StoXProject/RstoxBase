@@ -851,3 +851,49 @@ removeColumnsByReference <- function(data, toRemove) {
     }
 }
 
+
+
+#### Tools to perform resampling: ####
+
+# Function to sample after sorting:
+#' 
+#' @export
+#' 
+sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out = FALSE, redraw.seed = FALSE){
+    # If not given, get the size of the sample as the length of the vector:
+    lx <- length(x)
+    if(missing(size)){
+        size <- lx
+    }
+    if(sorted){
+        x <- sort(x)
+    }
+    # Sample:
+    set.seed(seed)
+    # To increase uniqueness in sampling, resample the seed from the length of the vector to sample:
+    if(redraw.seed) {
+        seed <- sample.int(lx, 1)
+        set.seed(seed)
+    }
+    sampled <- x[sample.int(lx, size = size, replace = replace)]
+    
+    if(index.out) {
+        sampled <- match(sampled, x)
+    }
+    return(sampled)
+}
+
+#' 
+#' @export
+#' 
+getSeedVector <- function(seed, size = 1) {
+    set.seed(seed)
+    sample(getSequenceToSampleFrom(), size, replace = FALSE)
+}
+
+getSequenceToSampleFrom <- function(){
+    seedSequenceLength <- getRstoxFrameworkDefinitions("seedSequenceLength")
+    seq_len(seedSequenceLength)
+}
+
+
