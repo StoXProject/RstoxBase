@@ -1,6 +1,6 @@
 Package: RstoxBase
-Version: 1.2.22
-Date: 2020-08-14
+Version: 1.2.23
+Date: 2020-08-25
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "arnejh@hi.no"))
@@ -16,7 +16,7 @@ Imports:
     rgdal (>= 1.4.7),
     rgeos (>= 0.5.2),
     sp (>= 1.3.2),
-    RstoxData (>= 1.0.2)
+    RstoxData (>= 1.0.4)
 Suggests: 
     testthat
 Additional_repositories: 

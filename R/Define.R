@@ -778,12 +778,13 @@ BioticAssignmentWeighting <- function(
     BioticAssignmentCopy <- data.table::copy(BioticAssignment)
     
     # Put equal weight (1) to each haul:
-    if(WeightingMethod == "Equal") {
-        # Simply set WeightingFactor to 1
-        BioticAssignmentCopy[, eval(weightingVariable) := 1]
-    }
-    # Weight hauls by the number of length samples (count the length samples for which IndividualTotalLengthCentimeter is not NA):
-    else if(WeightingMethod == "NumberOfLengthSamples") {
+    #if(WeightingMethod == "Equal") {
+    #    # Simply set WeightingFactor to 1
+    #    #BioticAssignmentCopy[, eval(weightingVariable) := 1]
+    #}
+    ## Weight hauls by the number of length samples (count the length samples for which IndividualTotalLengthCentimeter is not NA):
+    #else 
+    if(WeightingMethod == "NumberOfLengthSamples") {
         # Merge Haul and Individual, and count individuals with length for each Haul:
         Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
         NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLengthCentimeter)))), by = "Haul"]
@@ -889,7 +890,7 @@ BioticAssignmentWeighting <- function(
 
 mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weightingVariable) {
     BioticAssignment <- merge(BioticAssignment, toMerge, by = "Haul")
-    BioticAssignment[, eval(weightingVariable) := as.double(get(variable))]
+    BioticAssignment[, eval(weightingVariable) := as.double(get(variable)) * get(weightingVariable)]
     return(BioticAssignment)
 }
 
