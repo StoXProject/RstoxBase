@@ -483,9 +483,13 @@ ImputeData <- function(
     seed = 1
 ) {
     
+    # Get the data and add the RowIndex foor use when identifying which rows to impute from:
     dataCopy <- data.table::copy(data)
     RowIndex <- seq_len(nrow(dataCopy))
     dataCopy[, RowIndex := ..RowIndex]
+    
+    # Introduce an Individual index for use in the sorted sampling:
+    dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]
     
     levels <- list(
         "Haul", 
@@ -494,13 +498,14 @@ ImputeData <- function(
     )
     # Add an AllStrata column to the data to facilitate the AllStrata level: 
     dataCopy[, AllStrata := "AllStrata"]
-    setcolorder(dataCopy, neworder = "AllStrata")
+    #setcolorder(dataCopy, neworder = "AllStrata")
     
     # Get a vector with the seed of each level:
     seedVector <- structure(as.list(getSeedVector(size = length(levels), seed = seed)), names = levels)
     
     dataCopy[, ReplaceRowIndex := NA_integer_]
     dataCopy[, ReplaceLevel := NA_character_]
+    
     for(level in levels) {
         # Get the vector of columns to impute by:
         by <- c(groupBy, level, imputeByEqual)
@@ -533,6 +538,7 @@ ImputeData <- function(
     
     # Delete the RowIndex and ReplaceRowIndex:
     dataCopy$ReplaceIndividual <- dataCopy[(ReplaceRowIndex), "Individual"]
+    dataCopy[, IndividualIndex := NULL]
     dataCopy[, RowIndex := NULL]
     dataCopy[, ReplaceRowIndex := NULL]
     dataCopy[, AllStrata := NULL]
@@ -548,12 +554,14 @@ getImputeRowIndicesOneLevel <- function(
     by
 ) {
     # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the groupBy input, the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
+    .SDcols <- c(imputeAtMissing, "ReplaceRowIndex", "ReplaceLevel", "IndividualIndex", "imputeSeed", "RowIndex")
     dataCopy[, 
          c("ReplaceRowIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
              .SD, 
              imputeAtMissing = imputeAtMissing, 
              level = level
          ), 
+         .SDcols = .SDcols, 
          by = by]
 }
 
@@ -563,6 +571,7 @@ getImputeRowIndicesOneGroup <- function(
     imputeAtMissing, 
     level
 ) {
+    
     # Get the super individuals with missing data (and which have not been given ReplaceRowIndex):
     missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceRowIndex)]
     # Get the number of missing and present rows:
@@ -574,16 +583,15 @@ getImputeRowIndicesOneGroup <- function(
     ReplaceLevel <- dataCopyOneGroup$ReplaceLevel
     
     if(NMissingRows > 0 && NPresentRows > 0) {
-        
-        
         # Sample the rows with present data:
         #sampleIndexInPresent <- sample.int(NPresentRows, NMissingRows, replace = TRUE)
         sampleIndexInPresent <- sampleSorted(
-            dataCopyOneGroup[!missingData, Individual], 
+            dataCopyOneGroup[!missingData, IndividualIndex], 
             size = NMissingRows, 
             seed = dataCopyOneGroup$imputeSeed[1], 
             replace = TRUE, 
-            index.out = TRUE
+            index.out = TRUE, 
+            redraw.seed = TRUE
         )
         ReplaceRowIndex[missingData] <- dataCopyOneGroup[!missingData, RowIndex][sampleIndexInPresent]
         
