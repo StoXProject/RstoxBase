@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.24</span>
       </span>
     </div>
 
@@ -137,7 +137,8 @@
     <p>A list of definitions.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span>()</div><div class='output co'>#&gt; $AcousticPSUPrefix
+    <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span>()
+</div><div class='output co'>#&gt; $AcousticPSUPrefix
 #&gt; [1] "PSU"
 #&gt; 
 #&gt; $allResolution
@@ -667,8 +668,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fce9da59e38&gt;
-#&gt; &lt;environment: 0x7fce9da56458&gt;
+#&gt; &lt;bytecode: 0x7f8faea625f8&gt;
+#&gt; &lt;environment: 0x7f8faea64940&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -718,8 +719,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
 #&gt;         DepthExponent * log10(1 + DepthMeter/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fce9da571c0&gt;
-#&gt; &lt;environment: 0x7fce9da56458&gt;
+#&gt; &lt;bytecode: 0x7f8faea656d0&gt;
+#&gt; &lt;environment: 0x7f8faea64940&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLengthCentimeter, TargetStrength0, 
@@ -727,16 +728,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fce9da5aa08&gt;
-#&gt; &lt;environment: 0x7fce9da56458&gt;
+#&gt; &lt;bytecode: 0x7f8faea65a50&gt;
+#&gt; &lt;environment: 0x7f8faea64940&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLengthCentimeter, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLengthCentimeter)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fce9da57930&gt;
-#&gt; &lt;environment: 0x7fce9da56458&gt;
+#&gt; &lt;bytecode: 0x7f8faea650b0&gt;
+#&gt; &lt;environment: 0x7f8faea64940&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
@@ -765,7 +766,8 @@
 #&gt; $targetStrengthParameters$TargetStrengthByLength
 #&gt; [1] "TargetStrength"        "TotalLengthCentimeter"
 #&gt; 
-#&gt; </div><div class='input'></div></pre>
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
