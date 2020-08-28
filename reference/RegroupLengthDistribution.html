@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.25</span>
       </span>
     </div>
 
@@ -117,10 +117,7 @@
     <p>This function aggregates the <code>WeightedCount</code> of the LengthDistributionData</p>
     </div>
 
-    <pre class="usage"><span class='fu'>RegroupLengthDistribution</span>(
-  <span class='kw'>LengthDistributionData</span>,
-  LengthIntervalCentimeter = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>()
-)</pre>
+    <pre class="usage"><span class='fu'>RegroupLengthDistribution</span>(<span class='kw'>LengthDistributionData</span>, LengthInterval = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>())</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -130,7 +127,7 @@
       <td><p>The <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>LengthIntervalCentimeter</th>
+      <th>LengthInterval</th>
       <td><p>Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.</p></td>
     </tr>
     </table>

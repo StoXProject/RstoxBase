@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.25</span>
       </span>
     </div>
 
@@ -128,11 +128,11 @@
   <span class='kw'>StoxAcousticData</span>,
   Radius = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
   <span class='kw'>MinNumberOfHauls</span>,
-  <span class='kw'>DistanceNauticalMiles</span>,
-  <span class='kw'>TimeDifferenceHours</span>,
-  <span class='kw'>BottomDepthDifferenceMeters</span>,
-  <span class='kw'>LongitudeDifferenceDegrees</span>,
-  <span class='kw'>LatitudeDifferenceDegrees</span>
+  <span class='kw'>Distance</span>,
+  <span class='kw'>TimeDifference</span>,
+  <span class='kw'>BottomDepthDifference</span>,
+  <span class='kw'>LongitudeDifference</span>,
+  <span class='kw'>LatitudeDifference</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -179,23 +179,23 @@
       <td><p>For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the <code>MinNumberOfHauls</code>, the <code>MinNumberOfHauls</code> closest Hauls will be used (in ellipsoidal distance).</p></td>
     </tr>
     <tr>
-      <th>DistanceNauticalMiles</th>
+      <th>Distance</th>
       <td><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.</p></td>
     </tr>
     <tr>
-      <th>TimeDifferenceHours</th>
+      <th>TimeDifference</th>
       <td><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.</p></td>
     </tr>
     <tr>
-      <th>BottomDepthDifferenceMeters</th>
+      <th>BottomDepthDifference</th>
       <td><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.</p></td>
     </tr>
     <tr>
-      <th>LongitudeDifferenceDegrees</th>
+      <th>LongitudeDifference</th>
       <td><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.</p></td>
     </tr>
     <tr>
-      <th>LatitudeDifferenceDegrees</th>
+      <th>LatitudeDifference</th>
       <td><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.</p></td>
     </tr>
     </table>

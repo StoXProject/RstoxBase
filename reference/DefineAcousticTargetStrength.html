@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.25</span>
       </span>
     </div>
 
@@ -163,8 +163,8 @@
 
     <p>The <code>TargetStrengthMethod</code> has the following possible values:</p><ol>
 <li><p>LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.</p></li>
-<li><p>LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.</p></li>
-<li><p>TargetStrengthByLength, applying a table of TargetStrength and TotalLengthCentimeter. Required columns: TargetStrength and TotalLengthCentimeter.</p></li>
+<li><p>LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.</p></li>
+<li><p>TargetStrengthByLength, applying a table of TargetStrength and TotalLength. Required columns: TargetStrength and TotalLength.</p></li>
 <li><p>LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length). Required columns: LengthExponent.</p></li>
 </ol><p>The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

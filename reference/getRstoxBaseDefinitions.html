@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.25</span>
       </span>
     </div>
 
@@ -283,7 +283,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$data
 #&gt; [1] "WeightedCount"
@@ -317,7 +317,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$SumLengthDistributionData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$SumLengthDistributionData$data
 #&gt; [1] "WeightedCount"
@@ -351,7 +351,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$MeanLengthDistributionData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$MeanLengthDistributionData$data
 #&gt; [1] "WeightedCount"
@@ -383,7 +383,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData$data
 #&gt; [1] "WeightedCount"
@@ -412,7 +412,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData$data
 #&gt; [1] "Density"
@@ -438,7 +438,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$MeanDensityData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$MeanDensityData$data
 #&gt; [1] "Density"
@@ -464,7 +464,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$data
 #&gt; [1] "Abundance"
@@ -490,7 +490,7 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$IndividualsData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$IndividualsData$data
 #&gt; NULL
@@ -516,10 +516,10 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$data
-#&gt; [1] "Abundance"
+#&gt; [1] "Abundance" "Biomass"  
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$verticalLayerDimension
 #&gt; NULL
@@ -542,10 +542,10 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$ImputeSuperIndividualsData$groupingVariables
-#&gt; [1] "IndividualTotalLengthCentimeter" "LengthResolutionCentimeter"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeDefinition$ImputeSuperIndividualsData$data
-#&gt; [1] "Abundance"
+#&gt; [1] "Abundance" "Biomass"  
 #&gt; 
 #&gt; $dataTypeDefinition$ImputeSuperIndividualsData$verticalLayerDimension
 #&gt; NULL
@@ -589,54 +589,47 @@
 #&gt; [5] "MeanNASCWeight"  
 #&gt; 
 #&gt; $dataTypeRequiredVariables$LengthDistributionData
-#&gt; [1] "Station"                         "Haul"                           
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"      "LengthDistributionWeight"       
+#&gt; [1] "Station"                  "Haul"                    
+#&gt; [3] "SpeciesCategory"          "IndividualTotalLength"   
+#&gt; [5] "LengthResolution"         "LengthDistributionWeight"
 #&gt; 
 #&gt; $dataTypeRequiredVariables$SumLengthDistributionData
-#&gt; [1] "Station"                         "Layer"                          
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"      "SumLengthDistributionWeight"    
+#&gt; [1] "Station"                     "Layer"                      
+#&gt; [3] "SpeciesCategory"             "IndividualTotalLength"      
+#&gt; [5] "LengthResolution"            "SumLengthDistributionWeight"
 #&gt; 
 #&gt; $dataTypeRequiredVariables$MeanLengthDistributionData
-#&gt; [1] "PSU"                             "Layer"                          
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"      "MeanLengthDistributionWeight"   
+#&gt; [1] "PSU"                          "Layer"                       
+#&gt; [3] "SpeciesCategory"              "IndividualTotalLength"       
+#&gt; [5] "LengthResolution"             "MeanLengthDistributionWeight"
 #&gt; 
 #&gt; $dataTypeRequiredVariables$AssignmentLengthDistributionData
-#&gt; [1] "PSU"                             "Layer"                          
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; [1] "PSU"                   "Layer"                 "SpeciesCategory"      
+#&gt; [4] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeRequiredVariables$DensityData
-#&gt; [1] "PSU"                             "Layer"                          
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"      "DensityWeight"                  
+#&gt; [1] "PSU"                   "Layer"                 "SpeciesCategory"      
+#&gt; [4] "IndividualTotalLength" "LengthResolution"      "DensityWeight"        
 #&gt; 
 #&gt; $dataTypeRequiredVariables$MeanDensityData
-#&gt; [1] "Stratum"                         "Layer"                          
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"      "MeanDensityWeight"              
+#&gt; [1] "Stratum"               "Layer"                 "SpeciesCategory"      
+#&gt; [4] "IndividualTotalLength" "LengthResolution"      "MeanDensityWeight"    
 #&gt; 
 #&gt; $dataTypeRequiredVariables$AbundanceData
-#&gt; [1] "Stratum"                         "Layer"                          
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; [1] "Stratum"               "Layer"                 "SpeciesCategory"      
+#&gt; [4] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeRequiredVariables$IndividualsData
-#&gt; [1] "Stratum"                         "Haul"                           
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; [1] "Stratum"               "Haul"                  "SpeciesCategory"      
+#&gt; [4] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeRequiredVariables$SuperIndividualsData
-#&gt; [1] "Stratum"                         "Haul"                           
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; [1] "Stratum"               "Haul"                  "SpeciesCategory"      
+#&gt; [4] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeRequiredVariables$ImputeSuperIndividualsData
-#&gt; [1] "Stratum"                         "Haul"                           
-#&gt; [3] "SpeciesCategory"                 "IndividualTotalLengthCentimeter"
-#&gt; [5] "LengthResolutionCentimeter"     
+#&gt; [1] "Stratum"               "Haul"                  "SpeciesCategory"      
+#&gt; [4] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
 #&gt; $dataTypeRequiredVariables$BioticAssignment
 #&gt; [1] "PSU"             "Layer"           "WeightingFactor"
@@ -668,8 +661,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7f8faea625f8&gt;
-#&gt; &lt;environment: 0x7f8faea64940&gt;
+#&gt; &lt;bytecode: 0x7ffe566c9408&gt;
+#&gt; &lt;environment: 0x7ffe566c7840&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -713,31 +706,31 @@
 #&gt; 
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthAndDepthDependent
-#&gt; function (midIndividualTotalLengthCentimeter, TargetStrength0, 
-#&gt;     LengthExponent, DepthMeter) 
+#&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
+#&gt;     Depth) 
 #&gt; {
-#&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
-#&gt;         DepthExponent * log10(1 + DepthMeter/10)
+#&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
+#&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7f8faea656d0&gt;
-#&gt; &lt;environment: 0x7f8faea64940&gt;
+#&gt; &lt;bytecode: 0x7ffe566c85d0&gt;
+#&gt; &lt;environment: 0x7ffe566c7840&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
-#&gt; function (midIndividualTotalLengthCentimeter, TargetStrength0, 
-#&gt;     LengthExponent, DepthMeter) 
+#&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
+#&gt;     Depth) 
 #&gt; {
-#&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLengthCentimeter)
+#&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7f8faea65a50&gt;
-#&gt; &lt;environment: 0x7f8faea64940&gt;
+#&gt; &lt;bytecode: 0x7ffe566c8950&gt;
+#&gt; &lt;environment: 0x7ffe566c7840&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
-#&gt; function (midIndividualTotalLengthCentimeter, LengthExponent) 
+#&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
-#&gt;     LengthExponent * log10(midIndividualTotalLengthCentimeter)
+#&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7f8faea650b0&gt;
-#&gt; &lt;environment: 0x7f8faea64940&gt;
+#&gt; &lt;bytecode: 0x7ffe566c7fb0&gt;
+#&gt; &lt;environment: 0x7ffe566c7840&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
@@ -764,7 +757,7 @@
 #&gt; [1] "LengthExponent"
 #&gt; 
 #&gt; $targetStrengthParameters$TargetStrengthByLength
-#&gt; [1] "TargetStrength"        "TotalLengthCentimeter"
+#&gt; [1] "TargetStrength" "TotalLength"   
 #&gt; 
 #&gt; </div><div class='input'>
 </div></pre>

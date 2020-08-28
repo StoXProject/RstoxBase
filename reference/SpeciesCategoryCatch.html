@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Table of biotic stations as rows with station info and catch of all species categories as columns — SpeciesCategoryCatch" />
-<meta property="og:description" content="This function organizes the catch of all species in the input StoxBioticData into a table with biotic stations as rows, and the catch in count or weight (kilogram)   of each species category in columns." />
+<meta property="og:description" content="This function organizes the catch of all species in the input StoxBioticData into a table with biotic stations as rows, and the catch in count or weight (kilogram) of each species category in columns." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.25</span>
       </span>
     </div>
 
@@ -114,13 +114,10 @@
     </div>
 
     <div class="ref-description">
-    <p>This function organizes the catch of all species in the input <code>StoxBioticData</code> into a table with biotic stations as rows, and the catch in count or weight (kilogram)   of each species category in columns.</p>
+    <p>This function organizes the catch of all species in the input <code>StoxBioticData</code> into a table with biotic stations as rows, and the catch in count or weight (kilogram) of each species category in columns.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SpeciesCategoryCatch</span>(
-  <span class='kw'>StoxBioticData</span>,
-  CatchVariable = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Count"</span>, <span class='st'>"WeightKilogram"</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>SpeciesCategoryCatch</span>(<span class='kw'>StoxBioticData</span>, CatchVariable = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Count"</span>, <span class='st'>"Weight"</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
