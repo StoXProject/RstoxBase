@@ -56,7 +56,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = "Station", 
             verticalResolution = "Haul", 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "WeightedCount",
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = NULL, 
@@ -68,7 +68,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = "Station", 
             verticalResolution = "Layer", 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "WeightedCount",
             verticalRawDimension = NULL, 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
@@ -80,7 +80,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = "Layer", 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "WeightedCount",
             verticalRawDimension = NULL, 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
@@ -92,7 +92,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "WeightedCount",
             verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
             weighting = NULL, 
@@ -104,7 +104,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "DensityWeight", 
@@ -114,7 +114,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "MeanDensityWeight", 
@@ -125,7 +125,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "Abundance", 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = NULL, 
@@ -135,7 +135,7 @@ initiateRstoxBase <- function(){
             horizontalResolution = "Stratum", 
             verticalResolution = c("Layer", "Haul"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = NULL, 
             verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
@@ -145,8 +145,8 @@ initiateRstoxBase <- function(){
             horizontalResolution = "Stratum", 
             verticalResolution = c("Layer", "Haul"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
-            data = "Abundance", 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            data = c("Abundance",  "Biomass"), 
             verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
@@ -155,8 +155,8 @@ initiateRstoxBase <- function(){
             horizontalResolution = "Stratum", 
             verticalResolution = c("Layer", "Haul"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLengthCentimeter", "LengthResolutionCentimeter"), 
-            data = "Abundance", 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            data = c("Abundance",  "Biomass"), 
             verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
@@ -228,7 +228,7 @@ initiateRstoxBase <- function(){
         LengthDependent = c("TargetStrength0", "LengthExponent"), 
         LengthAndDepthDependent = c("TargetStrength0", "LengthExponent", "DepthExponent"), 
         LengthExponent = "LengthExponent", 
-        TargetStrengthByLength = c("TargetStrength", "TotalLengthCentimeter")
+        TargetStrengthByLength = c("TargetStrength", "TotalLength")
     )
     
     targetStrengthMethodTypes  <- list(
@@ -238,19 +238,19 @@ initiateRstoxBase <- function(){
         TargetStrengthByLength = "Table"
     )
     
-    TargetStrengthFunction_LengthDependent <- function(midIndividualTotalLengthCentimeter, TargetStrength0, LengthExponent, DepthMeter) {
+    TargetStrengthFunction_LengthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, Depth) {
         TargetStrength0 + 
-            LengthExponent * log10(midIndividualTotalLengthCentimeter)
+            LengthExponent * log10(midIndividualTotalLength)
     }
     
-    TargetStrengthFunction_LengthAndDepthDependent <- function(midIndividualTotalLengthCentimeter, TargetStrength0, LengthExponent, DepthMeter) {
+    TargetStrengthFunction_LengthAndDepthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, Depth) {
         TargetStrength0 + 
-            LengthExponent * log10(midIndividualTotalLengthCentimeter) + 
-            DepthExponent * log10(1 + DepthMeter/10)
+            LengthExponent * log10(midIndividualTotalLength) + 
+            DepthExponent * log10(1 + Depth/10)
     }
     
-    TargetStrengthFunction_LengthExponent <- function(midIndividualTotalLengthCentimeter, LengthExponent) {
-        LengthExponent * log10(midIndividualTotalLengthCentimeter)
+    TargetStrengthFunction_LengthExponent <- function(midIndividualTotalLength, LengthExponent) {
+        LengthExponent * log10(midIndividualTotalLength)
     }
     
     AcousticPSUPrefix <- "PSU"
@@ -277,7 +277,7 @@ initiateRstoxBase <- function(){
         "..intervalVector", 
         "..keys", 
         "..keysSansSample", 
-        "..LengthIntervalCentimeter", 
+        "..LengthInterval", 
         "..LengthIntervalWidths", 
         "..lengthVar", 
         "..refvar", 
@@ -297,13 +297,13 @@ initiateRstoxBase <- function(){
         "EffectiveLogDistance", 
         "Haul", 
         "individualCount", 
-        "IndividualTotalLengthCentimeter", 
-        "IndividualTotalLengthCentimeterMiddle", 
+        "IndividualTotalLength", 
+        "IndividualTotalLengthMiddle", 
         "intervalIndex", 
         "LengthDistributionType", 
         "LengthDistributionWeight", 
         "LengthGroup", 
-        "LengthResolutionCentimeter", 
+        "LengthResolution", 
         "NASCWeight", 
         "PSU", 
         "raisingFactor", 

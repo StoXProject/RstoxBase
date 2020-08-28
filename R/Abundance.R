@@ -209,8 +209,8 @@ SuperIndividuals <- function(
         #addLengthGroups(
         #    data = LengthDistributionData, 
         #    master = AbundanceData, 
-        #    lengthVar = "IndividualTotalLengthCentimeter", 
-        #    resolutionVar = "LengthResolutionCentimeter"
+        #    lengthVar = "IndividualTotalLength", 
+        #    resolutionVar = "LengthResolution"
         #)
         # In case that the length resolution is higher in the LengthDistributionData than in the AbundanceData, uniquify the LengthDistributionData:
         
@@ -277,6 +277,9 @@ SuperIndividuals <- function(
     # Divide by the number of individuals (regardless of DistributionMethod)
     SuperIndividualsData[, Abundance := Abundance / individualCount]
     
+    # Add Biomass:
+    SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    
     # Order the columns, but keep all columns:
     formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
     
@@ -310,8 +313,8 @@ addLengthGroupsByReferenceOneSpecies <- function(
     data, 
     master, 
     species, 
-    lengthVar = "IndividualTotalLengthCentimeter", 
-    resolutionVar = "LengthResolutionCentimeter"
+    lengthVar = "IndividualTotalLength", 
+    resolutionVar = "LengthResolution"
 ) {
     
     # Get the indices at the given species in 'data' and 'master':
@@ -389,8 +392,8 @@ addLengthGroupsByReferenceOneSpecies <- function(
 addLengthGroupsByReference <- function(
     data, 
     master, 
-    lengthVar = "IndividualTotalLengthCentimeter", 
-    resolutionVar = "LengthResolutionCentimeter"
+    lengthVar = "IndividualTotalLength", 
+    resolutionVar = "LengthResolution"
 ) {
     
     # Run a for loop through the common species:
@@ -456,14 +459,14 @@ ImputeSuperIndividuals <- function(
 ) {
     
     # Check that the length resolution is constant: 
-    if(!allEqual(SuperIndividualsData$LengthResolutionCentimeter)) {
-        stop("All individuals must have identical LengthResolutionCentimeter in the current version.")
+    if(!allEqual(SuperIndividualsData$LengthResolution)) {
+        stop("All individuals must have identical LengthResolution in the current version.")
     }
     
     ImputeSuperIndividualsData <- ImputeData(
         data = SuperIndividualsData, 
         imputeAtMissing = "IndividualAge", 
-        imputeByEqual = "IndividualTotalLengthCentimeter", 
+        imputeByEqual = "IndividualTotalLength", 
         groupBy = "SpeciesCategory", 
         seed = Seed
     )
@@ -478,7 +481,7 @@ ImputeSuperIndividuals <- function(
 ImputeData <- function(
     data, 
     imputeAtMissing = "IndividualAge", 
-    imputeByEqual = "IndividualTotalLengthCentimeter", 
+    imputeByEqual = "IndividualTotalLength", 
     groupBy = "SpeciesCategory", 
     seed = 1
 ) {

@@ -140,27 +140,27 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             # These two are joined with AND, and must both be fulfilled:
-            DistanceNauticalMiles = list(
+            Distance = list(
                 DefinitionMethod = "EllipsoidalDistance", 
                 UseProcessData = FALSE
             ), 
             # These two are joined with AND, and must both be fulfilled:
-            TimeDifferenceHours = list(
+            TimeDifference = list(
                 DefinitionMethod = "EllipsoidalDistance", 
                 UseProcessData = FALSE
             ), 
             # These two are joined with AND, and must both be fulfilled:
-            BottomDepthDifferenceMeters = list(
+            BottomDepthDifferences = list(
                 DefinitionMethod = "EllipsoidalDistance", 
                 UseProcessData = FALSE
             ), 
             # These two are joined with AND, and must both be fulfilled:
-            LongitudeDifferenceDegrees = list(
+            LongitudeDifference = list(
                 DefinitionMethod = "EllipsoidalDistance", 
                 UseProcessData = FALSE
             ), 
             # These two are joined with AND, and must both be fulfilled:
-            LatitudeDifferenceDegrees = list(
+            LatitudeDifference = list(
                 DefinitionMethod = "EllipsoidalDistance", 
                 UseProcessData = FALSE
             )
@@ -379,7 +379,7 @@ stoxFunctionAttributes <- list(
             SweepWidthTable = "sweepWidthTable"
         ), 
         functionArgumentHierarchy = list(
-            SweepWidthMeter = list(
+            SweepWidth = list(
                 SweepWidthMethod = "Constant"
             ), 
             SweepWidthTable = list(
@@ -502,7 +502,7 @@ processPropertyFormats <- list(
         title = "Define sweep width in meters for each cruise", 
         columnNames = c(
             "Cruise", 
-            "SweepWidthMeter"
+            "SweepWidth"
         ), 
         variableTypes = c(
             "character", 
@@ -566,10 +566,10 @@ processPropertyFormats <- list(
                 title <- "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length))"
             }
             else if(identical(TargetStrengthMethod, "LengthAndDepthDependent")) {
-                title <- "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10))"
+                title <- "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10))"
             }
             else if(identical(TargetStrengthMethod, "TargetStrengthByLength")) {
-                title <- "Define a table of IndividualTotalLengthCentimeter and TargetStrength for each AcousticCategory and Frequency"
+                title <- "Define a table of IndividualTotalLength and TargetStrength for each AcousticCategory and Frequency"
             }
             else if(identical(TargetStrengthMethod, "LengthExponent")) {
                 title <- "Define LengthExponent"
@@ -604,7 +604,7 @@ processPropertyFormats <- list(
                 columnNames <- c(
                     "AcousticCategory", 
                     "Frequency", 
-                    "TotalLengthCentimeter", 
+                    "TotalLength", 
                     "TargetStrength"
                 )
             }
