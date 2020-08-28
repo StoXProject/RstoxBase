@@ -1,6 +1,6 @@
 Package: RstoxBase
-Version: 1.2.24
-Date: 2020-08-26
+Version: 1.2.25
+Date: 2020-08-28
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "arnejh@hi.no"))

@@ -4,10 +4,7 @@
 \alias{SpeciesCategoryCatch}
 \title{Table of biotic stations as rows with station info and catch of all species categories as columns}
 \usage{
-SpeciesCategoryCatch(
-  StoxBioticData,
-  CatchVariable = c("Count", "WeightKilogram")
-)
+SpeciesCategoryCatch(StoxBioticData, CatchVariable = c("Count", "Weight"))
 }
 \arguments{
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
@@ -18,7 +15,7 @@ SpeciesCategoryCatch(
 A data.table is returned with awesome stuff.
 }
 \description{
-This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram)   of each species category in columns.
+This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram) of each species category in columns.
 }
 \examples{
 x <- 1

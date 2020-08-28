@@ -37,8 +37,8 @@ This function returns a table of parameters specifying the acoustic target stren
 The \code{TargetStrengthMethod} has the following possible values: 
 \enumerate{
   \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.
-  \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.
-  \item TargetStrengthByLength, applying a table of TargetStrength and TotalLengthCentimeter. Required columns: TargetStrength and TotalLengthCentimeter.
+  \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.
+  \item TargetStrengthByLength, applying a table of TargetStrength and TotalLength. Required columns: TargetStrength and TotalLength.
   \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length). Required columns: LengthExponent.
 }
 The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.

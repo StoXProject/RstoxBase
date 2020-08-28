@@ -269,7 +269,7 @@ NULL
 ##################################################
 #' Length distribution data
 #' 
-#' The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLengthCentimeter, LengthResolutionCentimeter, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowedDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType. [List all types here in a nice table]
+#' The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowedDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType. [List all types here in a nice table]
 #' 
 #' @seealso This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentCatchCompensation}} and \code{\link{RelativeLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -439,7 +439,7 @@ NULL
 ##################################################
 #' Super-individuals data
 #' 
-#' The SuperIndividualsData model data is the \code{\link{IndivdualsData}} added Abundance.
+#' The SuperIndividualsData model data is the \code{\link{IndivdualsData}} added Abundance and Biomass.
 #' 
 #' @seealso This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -447,4 +447,16 @@ NULL
 #' 
 NULL
 
+
+##################################################
+##################################################
+#' Imputed super-individuals data
+#' 
+#' The ImputeSuperIndividualsData model data is the \code{\link{SuperIndividualsData}} imputed to fill inn missing data from individual in the same dataset.
+#' 
+#' @seealso This data type is produced by \code{\link{ImputeSuperIndividualsData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ImputeSuperIndividualsData
+#' 
+NULL
 

@@ -52,8 +52,8 @@ getChannelDepth <- function(NASC, force = FALSE) {
     }
 }
 
-getDepth <- function(depth0, range, angleDegrees) {
-    depth0 + range * (-cos(angleDegrees * pi / 180))
+getDepth <- function(depth0, range, angle) {
+    depth0 + range * (-cos(angle * pi / 180))
 }
 
 

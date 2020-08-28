@@ -489,11 +489,11 @@ DefineBioticLayer <- function(
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
 #' @param Radius Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
 #' @param MinNumberOfHauls For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the \code{MinNumberOfHauls}, the \code{MinNumberOfHauls} closest Hauls will be used (in ellipsoidal distance). 
-#' @param DistanceNauticalMiles For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.
-#' @param TimeDifferenceHours For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.
-#' @param BottomDepthDifferenceMeters For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.
-#' @param LongitudeDifferenceDegrees For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.
-#' @param LatitudeDifferenceDegrees For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.
+#' @param Distance For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.
+#' @param TimeDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.
+#' @param BottomDepthDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.
+#' @param LongitudeDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.
+#' @param LatitudeDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.
 #' 
 #' @details
 #' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
@@ -519,11 +519,11 @@ DefineBioticAssignment <- function(
     Radius = double(), 
     # (Additional) for DefinitionMethod "EllipsoidalDistance": 
     MinNumberOfHauls,
-    DistanceNauticalMiles, 
-    TimeDifferenceHours, 
-    BottomDepthDifferenceMeters, 
-    LongitudeDifferenceDegrees, 
-    LatitudeDifferenceDegrees
+    Distance, 
+    TimeDifference, 
+    BottomDepthDifference, 
+    LongitudeDifference, 
+    LatitudeDifference
 )
 {
     
@@ -577,7 +577,7 @@ DefineBioticAssignment <- function(
         if(grepl("Radius", DefinitionMethod, ignore.case = TRUE)) {
             
             differenceTable = data.table::data.table(
-                distance = getDistanceNauticalMiles(
+                distance = getDistance(
                     MergedStoxAcousticData = MergedStoxAcousticData, 
                     MergedStoxBioticData = MergedStoxBioticData
                 )
@@ -590,46 +590,46 @@ DefineBioticAssignment <- function(
             
             differenceTable = data.table::data.table(
                 # Get the distance between the EDSUs and Hauls:
-                if(length(DistanceNauticalMiles)) {
-                    DistanceNauticalMiles = getSquaredRelativeDistanceNauticalMiles(
+                if(length(Distance)) {
+                    Distance = getSquaredRelativeDistance(
                         MergedStoxAcousticData = MergedStoxAcousticData, 
                         MergedStoxBioticData = MergedStoxBioticData, 
-                        DistanceNauticalMiles = DistanceNauticalMiles
+                        Distance = Distance
                     )
                 }, 
                 # Get the time difference between the EDSUs and Hauls:
-                if(length(TimeDifferenceHours)) {
-                    TimeDifferenceHours = getSquaredRelativeTimeDiff(
+                if(length(TimeDifference)) {
+                    TimeDifference = getSquaredRelativeTimeDiff(
                         MergedStoxAcousticData = MergedStoxAcousticData, 
                         MergedStoxBioticData = MergedStoxBioticData, 
-                        TimeDifferenceHours = TimeDifferenceHours
+                        TimeDifference = TimeDifference
                     )
                 }, 
                 # Get the difference in bottom depth between the EDSUs and Hauls:
-                if(length(BottomDepthDifferenceMeters)) {
-                    BottomDepthDifferenceMeters = getSquaredRelativeDiff(
+                if(length(BottomDepthDifference)) {
+                    BottomDepthDifference = getSquaredRelativeDiff(
                         MergedStoxAcousticData = MergedStoxAcousticData, 
                         MergedStoxBioticData = MergedStoxBioticData, 
                         variableName = "BottomDepth", 
-                        axisLength = BottomDepthDifferenceMeters
+                        axisLength = BottomDepthDifference
                     )
                 }, 
                 # Get the longitude difference between the EDSUs and Hauls:
-                if(length(LongitudeDifferenceDegrees)) {
-                    LongitudeDifferenceDegrees = getSquaredRelativeDiff(
+                if(length(LongitudeDifference)) {
+                    LongitudeDifference = getSquaredRelativeDiff(
                         MergedStoxAcousticData = MergedStoxAcousticData, 
                         MergedStoxBioticData = MergedStoxBioticData, 
                         variableName = "Longitude", 
-                        axisLength = LongitudeDifferenceDegrees
+                        axisLength = LongitudeDifference
                     )
                 }, 
                 # Get the latitude differerence between the EDSUs and Hauls:
-                if(length(LatitudeDifferenceDegrees)) {
-                    LatitudeDifferenceDegrees = getSquaredRelativeDiff(
+                if(length(LatitudeDifference)) {
+                    LatitudeDifference = getSquaredRelativeDiff(
                         MergedStoxAcousticData = MergedStoxAcousticData, 
                         MergedStoxBioticData = MergedStoxBioticData, 
                         variableName = "Latitude", 
-                        axisLength = LatitudeDifferenceDegrees
+                        axisLength = LatitudeDifference
                     )
                 }
             )
@@ -680,28 +680,28 @@ DefineBioticAssignment <- function(
 }
 
 # Function to get the great circle distance between EDSUs in the MergedStoxAcousticData and Hauls in the MergedStoxBioticData: 
-getDistanceNauticalMiles <- function(MergedStoxAcousticData, MergedStoxBioticData) {
+getDistance <- function(MergedStoxAcousticData, MergedStoxBioticData) {
     # Extract the goegraphical positions:
     EDSUPositions <- as.matrix(MergedStoxAcousticData[, c("Longitude", "Latitude")])
     HaulPositions <- as.matrix(MergedStoxBioticData[, c("Longitude", "Latitude")])
     # Get the distances between EDUSs and Hauls:
-    EDSUToHaulDistanceKilometers <- c(sp::spDists(EDSUPositions, HaulPositions, longlat = TRUE))
+    EDSUToHaulDistance <- c(sp::spDists(EDSUPositions, HaulPositions, longlat = TRUE))
     # Convert to nautical miles:
-    EDSUToHaulDistanceNauticalMiles <- EDSUToHaulDistanceKilometers * 1000 / getRstoxBaseDefinitions("nauticalMileInMeters")
-    return(EDSUToHaulDistanceNauticalMiles)
+    EDSUToHaulDistance <- EDSUToHaulDistance * 1000 / getRstoxBaseDefinitions("nauticalMileInMeters")
+    return(EDSUToHaulDistance)
 }
 
-# Function to ge the squared distance in units of the DistanceNauticalMiles squared:
-getSquaredRelativeDistanceNauticalMiles <- function(MergedStoxAcousticData, MergedStoxBioticData, DistanceNauticalMiles) {
+# Function to ge the squared distance in units of the Distance squared:
+getSquaredRelativeDistance <- function(MergedStoxAcousticData, MergedStoxBioticData, Distance) {
     # Get the distances between EDUSs and Hauls:
-    EDSUToHaulDistanceNauticalMiles <- getDistanceNauticalMiles(MergedStoxAcousticData, MergedStoxBioticData)
+    EDSUToHaulDistance <- getDistance(MergedStoxAcousticData, MergedStoxBioticData)
     # Square and return:
-    SquaredRelativeDistanceNauticalMiles <- EDSUToHaulDistanceNauticalMiles^2 / DistanceNauticalMiles^2
-    return(SquaredRelativeDistanceNauticalMiles)
+    SquaredRelativeDistance <- EDSUToHaulDistance^2 / Distance^2
+    return(SquaredRelativeDistance)
 }
 
-# Function to ge the squared time difference in units of the TimeDifferenceHours squared:
-getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, TimeDifferenceHours, variableName = "DateTime") {
+# Function to ge the squared time difference in units of the TimeDifference squared:
+getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, TimeDifference, variableName = "DateTime") {
     # Get the time difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
         x = MergedStoxAcousticData[[variableName]], 
@@ -709,7 +709,7 @@ getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticD
     )
     TimeDiff <- as.numeric(out[, difftime(x, y, units = "hours")])
     # Square and return:
-    SquaredTimeDiff <- TimeDiff^2 / TimeDifferenceHours^2
+    SquaredTimeDiff <- TimeDiff^2 / TimeDifference^2
     return(SquaredTimeDiff)
 }
 
@@ -782,12 +782,12 @@ BioticAssignmentWeighting <- function(
     #    # Simply set WeightingFactor to 1
     #    #BioticAssignmentCopy[, eval(weightingVariable) := 1]
     #}
-    ## Weight hauls by the number of length samples (count the length samples for which IndividualTotalLengthCentimeter is not NA):
+    ## Weight hauls by the number of length samples (count the length samples for which IndividualTotalLength is not NA):
     #else 
     if(WeightingMethod == "NumberOfLengthSamples") {
         # Merge Haul and Individual, and count individuals with length for each Haul:
         Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
-        NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLengthCentimeter)))), by = "Haul"]
+        NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLength)))), by = "Haul"]
         # Apply the MaxNumberOfLengthSamples:
         NumberOfLengthSamples[NumberOfLengthSamples > MaxNumberOfLengthSamples, NumberOfLengthSamples := MaxNumberOfLengthSamples]
         
@@ -832,11 +832,11 @@ BioticAssignmentWeighting <- function(
         )
         BioticAssignmentCopy[, WeightingFactor := NASC]
     }
-    # Weight hauls by the summed CatchFractionWeightKilogram divided by the EffectiveTowedDistance:
+    # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowedDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
         # Merge Haul and Sample, and sum the catch weight divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
-        NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeightKilogram) / EffectiveTowedDistance[1]), by = "Haul"]
+        NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeight) / EffectiveTowedDistance[1]), by = "Haul"]
         # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
         BioticAssignmentCopy <- mergeIntoBioticAssignment(
             BioticAssignment = BioticAssignmentCopy, 
@@ -986,8 +986,8 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' The \code{TargetStrengthMethod} has the following possible values: 
 #' \enumerate{
 #'   \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.
-#'   \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + DepthMeter/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.
-#'   \item TargetStrengthByLength, applying a table of TargetStrength and TotalLengthCentimeter. Required columns: TargetStrength and TotalLengthCentimeter.
+#'   \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.
+#'   \item TargetStrengthByLength, applying a table of TargetStrength and TotalLength. Required columns: TargetStrength and TotalLength.
 #'   \item LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length). Required columns: LengthExponent.
 #' }
 #' The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.
@@ -1069,52 +1069,5 @@ checkTargetStrengthTable <- function(TargetStrengthTable, TargetStrengthMethod) 
     }
 }
 
-
-#checkAcousticTargetStrengthPresentColumns <- function(ParameterTable) {
-#    
-#    # Get the valid columns of the NASCData:
-#    NASCDataDefinition <- getDataTypeDefinition("NASCData", unlist = TRUE)
-#    
-#    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
-#    
-#    validColumnNames <- c(
-#        NASCDataDefinition, 
-#        unique(unlist(targetStrengthParameters[ParameterTable$EquationType])), 
-#        "EquationType"
-#    )
-#    invalidColumns <- setdiff(
-#        names(ParameterTable), 
-#        validColumnNames
-#    )
-#    
-#    if(length(invalidColumns)) {
-#        stop("The acoustic target strength parameter table containes the following inavlid columns: ", paste(invalidColumns, collapse = #", "))
-#    }
-#}
-
-#checkAcousticTargetStrengthEquationType <- function(ParameterTable) {
-#    
-#    # Check that EquationType is given:
-#    #if(length(ParameterTable$EquationType) == 0) {
-#    #    stop("EquationType must be gievn")
-#    #}
-#    ## Check that all values are equal in the EquationType:
-#    #if(! all(ParameterTable$EquationType == ParameterTable$EquationType[1])) {
-#    #    stop("EquationType must be the same in all rows")
-#    #}
-#    
-#    # EquationType:
-#    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
-#    for(type in names(targetStrengthParameters)) {
-#        if(ParameterTable$EquationType[1] == type) {
-#            if(! all(targetStrengthParameters[[type]] %in% names(ParameterTable))) {
-#                stop("With EquationType = \"", type, "\" the columns ", paste(targetStrengthParameters[[type]], collapse = ", "), " #must be given.")
-#            }
-#        }
-#    }
-#    if(! ParameterTable$EquationType[1] %in% names(targetStrengthParameters)) {
-#        stop("Invalid EquationType.")
-#    }
-#}
 
 

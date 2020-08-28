@@ -7,18 +7,18 @@
 SweptAreaDensity(
   MeanLengthDistributionData,
   SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"),
-  SweepWidthMeter = double(),
+  SweepWidth = double(),
   SweepWidthTable = data.table::data.table()
 )
 }
 \arguments{
 \item{MeanLengthDistributionData}{The \code{\link{MeanLengthDistributionData}} data.}
 
-\item{SweepWidthMethod}{The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidthMeter} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.}
+\item{SweepWidthMethod}{The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.}
 
-\item{SweepWidthMeter}{The constant sweep width in meters.}
+\item{SweepWidth}{The constant sweep width in meters.}
 
-\item{SweepWidthTable}{A table of two columns, \code{Cruise} and \code{SweepWidthMeter}, giving the sweep width for each cruise.}
+\item{SweepWidthTable}{A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.}
 }
 \value{
 A data.table is returned with awesome stuff.

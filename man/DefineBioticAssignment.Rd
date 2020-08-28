@@ -15,11 +15,11 @@ DefineBioticAssignment(
   StoxAcousticData,
   Radius = double(),
   MinNumberOfHauls,
-  DistanceNauticalMiles,
-  TimeDifferenceHours,
-  BottomDepthDifferenceMeters,
-  LongitudeDifferenceDegrees,
-  LatitudeDifferenceDegrees
+  Distance,
+  TimeDifference,
+  BottomDepthDifference,
+  LongitudeDifference,
+  LatitudeDifference
 )
 }
 \arguments{
@@ -43,15 +43,15 @@ DefineBioticAssignment(
 
 \item{MinNumberOfHauls}{For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the \code{MinNumberOfHauls}, the \code{MinNumberOfHauls} closest Hauls will be used (in ellipsoidal distance).}
 
-\item{DistanceNauticalMiles}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.}
+\item{Distance}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.}
 
-\item{TimeDifferenceHours}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.}
+\item{TimeDifference}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.}
 
-\item{BottomDepthDifferenceMeters}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.}
+\item{BottomDepthDifference}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.}
 
-\item{LongitudeDifferenceDegrees}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.}
+\item{LongitudeDifference}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.}
 
-\item{LatitudeDifferenceDegrees}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.}
+\item{LatitudeDifference}{For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.

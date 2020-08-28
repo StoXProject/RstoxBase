@@ -169,18 +169,18 @@ NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTa
 
 ## Convert a table of lenght and TS to a funciton:
 #getTargetStrengthFunctionOld <- function(TargetStrengthTable, LengthData, method = "constant", rule = 2) {
-#    # Approximate the TargetStrength to the mid lengths of the length interavls of the LengthData (such as length distribution). Take a #copy first since the IndividualTotalLengthCentimeter is replaced by reference using getLengthIntervalMidPoints with replace.IndividualTo#talLengthCentimeter = TRUE:
+#    # Approximate the TargetStrength to the mid lengths of the length interavls of the LengthData (such as length distribution). Take a #copy first since the IndividualTotalLength is replaced by reference using getLengthIntervalMidPoints with replace.IndividualTo#talLength = TRUE:
 #    LengthDataCopy <- data.table::copy(LengthData)
-#    LengthData[, IndividualTotalLengthCentimeter := getLengthIntervalMidPoints(.SD)]
+#    LengthData[, IndividualTotalLength := getLengthIntervalMidPoints(.SD)]
 #    
 #    # Since approxfun with method "constant" defines values to span to the next value, we need to modify the TargetStrengthTable to have #the first point followed by the mid points (in x), and then followed by the last point:
 #    TargetStrengthTable <- addMidPointsOfTargetStrengthTable(TargetStrengthTable)
 #    
 #    # Create the function to use in getTargetStrength():
 #    approxfun(
-#        x = TargetStrengthTable$IndividualTotalLengthCentimeter, 
+#        x = TargetStrengthTable$IndividualTotalLength, 
 #        y = TargetStrengthTable$TargetStrength, 
-#        xout = sort(unique(LengthData$IndividualTotalLengthCentimeter)), 
+#        xout = sort(unique(LengthData$IndividualTotalLength)), 
 #        method = method, 
 #        rule = rule
 #    )
@@ -191,7 +191,7 @@ NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTa
 getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "constant", rule = 2) {
     
     # Define the columns to modify:
-    functionColumns <- c("TotalLengthCentimeter", "TargetStrength")
+    functionColumns <- c("TotalLength", "TargetStrength")
     by <- setdiff(names(TargetStrengthTable), functionColumns)
     
     # Add mid points to the TargetStrengthTable to facilitate use of approxfun with method = "constant":
@@ -208,11 +208,11 @@ getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "con
 getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method = "constant", rule = 2) {
     
     # Define the target strength function as a function of length and length interval:
-    targetStrengthByLengthFunctionOne <- function(TotalLengthCentimeter) {
+    targetStrengthByLengthFunctionOne <- function(TotalLength) {
         output <- approx(
-            x = TargetStrengthTable$TotalLengthCentimeter, 
+            x = TargetStrengthTable$TotalLength, 
             y = TargetStrengthTable$TargetStrength, 
-            xout = TotalLengthCentimeter, 
+            xout = TotalLength, 
             method = method, 
             rule = rule
         )$y
@@ -242,7 +242,7 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
 #getTargetStrengthFunctionOne <- function(TargetStrengthTable, LengthData, method = "constant", rule = 2) {
 #    
 #    # Define the columns to modify:
-#    functionColumns <- c("IndividualTotalLengthCentimeter", "TargetStrength")
+#    functionColumns <- c("IndividualTotalLength", "TargetStrength")
 #    by <- setdiff(names(TargetStrengthTable), functionColumns)
 #    
 #    # Add mid points to the TargetStrengthTable to facilitate use of approxfun with method = "constant":
@@ -254,10 +254,10 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
 expandTargetStrengthTable <- function(TargetStrengthTable, by) {
     # Add mid points of the lengths between the first and last:
     TargetStrengthTable[, .(
-        TotalLengthCentimeter = c(
-            utils::head(TotalLengthCentimeter, 1), 
-            TotalLengthCentimeter[-1] - diff(TotalLengthCentimeter) / 2, 
-            utils::tail(TotalLengthCentimeter, 1)
+        TotalLength = c(
+            utils::head(TotalLength, 1), 
+            TotalLength[-1] - diff(TotalLength) / 2, 
+            utils::tail(TotalLength, 1)
         ), 
         TargetStrength = c(
             TargetStrength, 
@@ -273,13 +273,13 @@ expandTargetStrengthTable <- function(TargetStrengthTable, by) {
 getTargetStrength <- function(Data, TargetStrengthMethod) {
     
     # Get the length interval mid points:
-    Data[, midIndividualTotalLengthCentimeter := getMidIndividualTotalLengthCentimeter(.SD)]
+    Data[, midIndividualTotalLength := getMidIndividualTotalLength(.SD)]
     
     # Check wich model is selected
     if(grepl("LengthDependent", TargetStrengthMethod, ignore.case = TRUE)) {
         # Apply the LengthDependent equation: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthDependent")(
-            midIndividualTotalLengthCentimeter, 
+            midIndividualTotalLength, 
             TargetStrength0 = TargetStrength0, 
             LengthExponent = LengthExponent
         )]
@@ -287,20 +287,20 @@ getTargetStrength <- function(Data, TargetStrengthMethod) {
     else if(grepl("LengthAndDepthDependent", TargetStrengthMethod, ignore.case = TRUE)) {
         # Add the the depth:
         verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
-        Data[, midDepthMeter := rowMeans(.SD), .SDcols = verticalLayerDimension]
+        Data[, midDepth := rowMeans(.SD), .SDcols = verticalLayerDimension]
         
         # Apply the LengthAndDepthDependent equation: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthAndDepthDependent")(
-            midIndividualTotalLengthCentimeter, 
+            midIndividualTotalLength, 
             TargetStrength0 = TargetStrength0, 
             LengthExponent = LengthExponent, 
-            DepthMeter = DepthMeter
+            Depth = Depth
         )]
     }
     else if(grepl("LengthExponent", TargetStrengthMethod, ignore.case = TRUE)) {
         # Apply only the LengthExponent: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthExponent")(
-            midIndividualTotalLengthCentimeter, 
+            midIndividualTotalLength, 
             LengthExponent = LengthExponent
         )]
     }
@@ -308,7 +308,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod) {
         # Apply the TargetStrengthByLengthTargetStrengthByLength equations: 
         Data[, TargetStrength := 
             if(!is.na(TargetStrengthFunction)) 
-                    get("RstoxBaseEnv")[[TargetStrengthFunction]](midIndividualTotalLengthCentimeter)
+                    get("RstoxBaseEnv")[[TargetStrengthFunction]](midIndividualTotalLength)
             else 
                 NA_real_, 
             by = seq_len(nrow(Data)
@@ -329,8 +329,8 @@ targetStrengthToBackscatteringCrossSection <- function(targetStrength) {
 }
 
 # Function to get mid points of length intervals of e.g. LengthDistributionData:
-getMidIndividualTotalLengthCentimeter <- function(x) {
-    x[, IndividualTotalLengthCentimeter + LengthResolutionCentimeter / 2]
+getMidIndividualTotalLength <- function(x) {
+    x[, IndividualTotalLength + LengthResolution / 2]
 }
 
 
@@ -341,9 +341,9 @@ getMidIndividualTotalLengthCentimeter <- function(x) {
 #' This function calculates the area density of fish as number of individuals per square nautical mile.
 #' 
 #' @inheritParams ModelData
-#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidthMeter} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.
-#' @param SweepWidthMeter The constant sweep width in meters.
-#' @param SweepWidthTable A table of two columns, \code{Cruise} and \code{SweepWidthMeter}, giving the sweep width for each cruise.
+#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.
+#' @param SweepWidth The constant sweep width in meters.
+#' @param SweepWidthTable A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -361,7 +361,7 @@ getMidIndividualTotalLengthCentimeter <- function(x) {
 SweptAreaDensity <- function(
     MeanLengthDistributionData, 
     SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"), 
-    SweepWidthMeter = double(), 
+    SweepWidth = double(), 
     SweepWidthTable = data.table::data.table()
 ) {
 	
@@ -388,13 +388,13 @@ SweptAreaDensity <- function(
         
         # Use a constant sweep width for all data by default:
         if(SweepWidthMethod == "Constant") {
-            if(length(SweepWidthMeter) == 0) {
-                stop("SweepWidthMeter must be given when SweepWidthMethod == \"Constant\"")
+            if(length(SweepWidth) == 0) {
+                stop("SweepWidth must be given when SweepWidthMethod == \"Constant\"")
             }
             
             # Convert WeightedCount to density:
-            #sweepWidthInNauticalMiles <- SweepWidthMeter / 1852
-            sweepWidthInNauticalMiles <- SweepWidthMeter / getRstoxBaseDefinitions("nauticalMileInMeters")
+            #sweepWidthInNauticalMiles <- SweepWidth / 1852
+            sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
             
             DensityData[, Density := WeightedCount / sweepWidthInNauticalMiles]
         }
@@ -406,7 +406,7 @@ SweptAreaDensity <- function(
             # Merge in the SweepWidthTable:
             DensityData <- merge(DensityData, SweepWidthTable, by = "Cruise")
             # Convert sweep width to nautical miles:
-            DensityData[, SweepWidthNauticalMile := SweepWidthMeter  / getRstoxBaseDefinitions("nauticalMileInMeters")]
+            DensityData[, SweepWidthNauticalMile := SweepWidth  / getRstoxBaseDefinitions("nauticalMileInMeters")]
             # Divide by the sweep width:
             DensityData[, Density := WeightedCount / SweepWidthNauticalMile, by = "Cruise"]
         }
@@ -476,7 +476,7 @@ MeanDensity <- function(
 ##################################################
 #' Table of biotic stations as rows with station info and catch of all species categories as columns
 #' 
-#' This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram)   of each species category in columns.
+#' This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram) of each species category in columns.
 #' 
 #' @inheritParams ModelData
 #' @param CatchVariable Specifies whether to output catch or weight (kilogram).
@@ -491,7 +491,7 @@ MeanDensity <- function(
 #' 
 SpeciesCategoryCatch <- function(
     StoxBioticData, 
-    CatchVariable = c("Count", "WeightKilogram")
+    CatchVariable = c("Count", "Weight")
 ) {
     
     # Get the DensityUnit and DensityType:
@@ -502,7 +502,7 @@ SpeciesCategoryCatch <- function(
     #Cruise_Station <- MergeStoxBiotic(StoxBioticData, TargetTable = "Station")
     Cruise_Station_Haul <- MergeStoxBiotic(StoxBioticData, TargetTable = "Haul")
     
-    # Sum the CatchFractionWeightKilogram for each Haul:
+    # Sum the CatchFractionWeight for each Haul:
     CatchVariableName <- paste0("CatchFraction", CatchVariable)
     categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
     sumBy <- c("Haul", categoryVariable)

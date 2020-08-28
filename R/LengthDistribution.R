@@ -2,7 +2,7 @@
 ##################################################
 #' Length distribution
 #' 
-#' This function calculates length frequency distribution per Stratum, biotic PSU, biotic layer, SpeciesCategory and length group defined by the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter.
+#' This function calculates length frequency distribution per Stratum, biotic PSU, biotic layer, SpeciesCategory and length group defined by the combination of IndividualTotalLength and LengthResolution.
 #' 
 #' @inheritParams ModelData
 #' @param LengthDistributionType The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
@@ -53,7 +53,7 @@ LengthDistribution <- function(
         getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
         # Use SpeciesCategory as key (this is obsolete, but clarifies that length distributions are per species):
         dataTypeDefinition$categoryVariable, 
-        # The length group is defined as the combination of IndividualTotalLengthCentimeter and LengthResolutionCentimeter. See 'dataTypeDefinition' in initiateRstoxBase(): 
+        # The length group is defined as the combination of IndividualTotalLength and LengthResolution. See 'dataTypeDefinition' in initiateRstoxBase(): 
         dataTypeDefinition$groupingVariables
     )
     # Declare the variables used below:
@@ -83,7 +83,7 @@ LengthDistribution <- function(
     #######################################################
     # Create a data table of different raising factors in the columns:
     raisingFactorTable <- data.frame(
-        Weight = LengthDistributionData$CatchFractionWeightKilogram / LengthDistributionData$SampleWeightKilogram, 
+        Weight = LengthDistributionData$CatchFractionWeight / LengthDistributionData$SampleWeight, 
         Count = LengthDistributionData$CatchFractionCount / LengthDistributionData$SampleCount, 
         Percent = 1
     )
@@ -148,7 +148,7 @@ LengthDistribution <- function(
 #' This function aggregates the \code{WeightedCount} of the LengthDistributionData
 #' 
 #' @inheritParams ModelData
-#' @param LengthIntervalCentimeter Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.
+#' @param LengthInterval Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -163,66 +163,66 @@ LengthDistribution <- function(
 #' 
 RegroupLengthDistribution <- function(
     LengthDistributionData, 
-    LengthIntervalCentimeter = numeric()
+    LengthInterval = numeric()
 ) {
     
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
     
     # Get the minimum and maximum lower and upper length interval breaks:
-    if(all(is.na(LengthDistributionDataCopy$IndividualTotalLengthCentimeter))) {
-        stop("IndividualTotalLengthCentimeter is all NA in LengthDistributionData")
+    if(all(is.na(LengthDistributionDataCopy$IndividualTotalLength))) {
+        stop("IndividualTotalLength is all NA in LengthDistributionData")
     }
-    minLength <- min(LengthDistributionDataCopy$IndividualTotalLengthCentimeter, na.rm = TRUE)
-    maxLength <- max(LengthDistributionDataCopy$IndividualTotalLengthCentimeter + LengthDistributionDataCopy$LengthResolutionCentimeter, na.rm = TRUE)
+    minLength <- min(LengthDistributionDataCopy$IndividualTotalLength, na.rm = TRUE)
+    maxLength <- max(LengthDistributionDataCopy$IndividualTotalLength + LengthDistributionDataCopy$LengthResolution, na.rm = TRUE)
     
-    # Create a vector of breaks, if not given in the input 'LengthIntervalCentimeter':
-    if(length(LengthIntervalCentimeter) == 1) {
+    # Create a vector of breaks, if not given in the input 'LengthInterval':
+    if(length(LengthInterval) == 1) {
         # Convert to indices:
-        minLengthIntervalIndexFrom0 <- floor(minLength / LengthIntervalCentimeter)
+        minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
         # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
-        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthIntervalCentimeter) + as.numeric(ceiling(maxLength / LengthIntervalCentimeter) == floor(maxLength / LengthIntervalCentimeter))
+        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
         
-        LengthIntervalCentimeter <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthIntervalCentimeter
+        LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
     }
     else {
-        stop("The function parameter LengthIntervalCentimeter must be set as a numeric value")
+        stop("The function parameter LengthInterval must be set as a numeric value")
     }
     
     # Check that there are no existing length intervals that are inside one of the new intervals:
     # Get the possible intervals:
-    lengthGroupMinMax <- unique(LengthDistributionDataCopy[, .(lengthIntervalMin = IndividualTotalLengthCentimeter, lengthIntervalMax = IndividualTotalLengthCentimeter + LengthResolutionCentimeter)])
+    lengthGroupMinMax <- unique(LengthDistributionDataCopy[, .(lengthIntervalMin = IndividualTotalLength, lengthIntervalMax = IndividualTotalLength + LengthResolution)])
     #possibleIntervals <- getCommonIntervals(data = lengthGroupMinMax)
     
     strictlyInside <- function(x, table, margin = 1e-6) {
         any(x - margin > table[, 1] & x + margin < table[, 2], na.rm=TRUE)
     }
     
-    invalidIntervalBreaks <- sapply(LengthIntervalCentimeter, strictlyInside, lengthGroupMinMax)
+    invalidIntervalBreaks <- sapply(LengthInterval, strictlyInside, lengthGroupMinMax)
     
     # Check whether any of the new interval limits are inside the possible intervals:
     if(any(invalidIntervalBreaks)) {
         at <- which(invalidIntervalBreaks)
-        stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthIntervalCentimeter[at], LengthIntervalCentimeter[at + 1], sep = " - "), collapse = ", "))
+        stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthInterval[at], LengthInterval[at + 1], sep = " - "), collapse = ", "))
     }
     
-    # Get the inteval widths, and replace LengthResolutionCentimeter with the appropriate widths:
-    LengthIntervalWidths <- diff(LengthIntervalCentimeter)
+    # Get the inteval widths, and replace LengthResolution with the appropriate widths:
+    LengthIntervalWidths <- diff(LengthInterval)
     numIntervals <- length(LengthIntervalWidths)
     # Temporary add the index of the length intervals:
-    LengthDistributionDataCopy[, intervalIndex := findInterval(IndividualTotalLengthCentimeter, ..LengthIntervalCentimeter)]
+    LengthDistributionDataCopy[, intervalIndex := findInterval(IndividualTotalLength, ..LengthInterval)]
     
-    # Issue a warning if the intervalIndex is NA (values outside of the LengthIntervalCentimeter):
+    # Issue a warning if the intervalIndex is NA (values outside of the LengthInterval):
     anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1, na.rm = TRUE)
     anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals, na.rm = TRUE)
     if(any(anyBelow, anyAbove)) {
-        warning("StoX: Not all individuals are inside the length intervals defined by the input LengthIntervalCentimeter of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
+        warning("StoX: Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
     }
     
-    # Replace with the new LengthResolutionCentimeter:
-    LengthDistributionDataCopy[, LengthResolutionCentimeter := ..LengthIntervalWidths[intervalIndex]]
-    # Replace IndividualTotalLengthCentimeter with the new lower interval breaks:
-    LengthDistributionDataCopy[, IndividualTotalLengthCentimeter := ..LengthIntervalCentimeter[intervalIndex]]
+    # Replace with the new LengthResolution:
+    LengthDistributionDataCopy[, LengthResolution := ..LengthIntervalWidths[intervalIndex]]
+    # Replace IndividualTotalLength with the new lower interval breaks:
+    LengthDistributionDataCopy[, IndividualTotalLength := ..LengthInterval[intervalIndex]]
     
     # Finally, aggregate the WeightedCount in the new length groups:
     # Extract the 'by' element:
@@ -307,20 +307,20 @@ LengthDependentCatchCompensation <- function(
 #   L = LMin if L < LMin 
 # and 
 #   L = LMax if L > LMax:
-applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMin, LMax, Alpha, Beta) {
+applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthMiddle, LMin, LMax, Alpha, Beta) {
     # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
     if(any(is.na(LMin))) {
         stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMin. Subset the rows before applying the function.")
     }
     
     # Set the lengths lower than LMin to LMin: 
-    IndividualTotalLengthCentimeterMiddle <- pmax(IndividualTotalLengthCentimeterMiddle, LMin)
+    IndividualTotalLengthMiddle <- pmax(IndividualTotalLengthMiddle, LMin)
     
     # And the lengths larger than LMax to LMax: 
-    IndividualTotalLengthCentimeterMiddle <- pmin(IndividualTotalLengthCentimeterMiddle, LMax)
+    IndividualTotalLengthMiddle <- pmin(IndividualTotalLengthMiddle, LMax)
     
     # Calculate the factor to multiply the WeightedCount by:
-    sweepWidth <- Alpha * IndividualTotalLengthCentimeterMiddle^Beta
+    sweepWidth <- Alpha * IndividualTotalLengthMiddle^Beta
     #sweepWidthInNauticalMiles <- sweepWidth / 1852
     sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
     
@@ -335,17 +335,17 @@ applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthC
 #   fact = Alpha * exp(L * Beta)
 # and 
 #   fact = 1 if L > LMax:
-applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLengthCentimeterMiddle, LMax, Alpha, Beta) {
+applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLengthMiddle, LMax, Alpha, Beta) {
     # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
     if(any(is.na(LMax))) {
         stop("The function applyLengthDependentSelectivity() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
     }
     
     # Calculate the factor to multiply the WeightedCount:
-    fact <- Alpha * exp(IndividualTotalLengthCentimeterMiddle * Beta)
+    fact <- Alpha * exp(IndividualTotalLengthMiddle * Beta)
     # Set the factor to 1 outside of the range LMin to LMax. This is  questionable, and we do not turn on this functionality before this method is approved:
     stop("CatchabilityMethod = \"LengthDependentSelectivity\" is not yet supported.")
-    fact[IndividualTotalLengthCentimeterMiddle > LMax] <- 1
+    fact[IndividualTotalLengthMiddle > LMax] <- 1
     WeightedCount <- WeightedCount * fact
     
     return(WeightedCount)
@@ -353,7 +353,7 @@ applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLength
 
 
 # Function to run a length dependent compensation function, given its method name, parameter table, vector of required parameters and the specific grouping variable, which in all current cases is "SpeciesCategory":
-# It is possible to simplify this function to only take the method as input, requiring that the function is named apply<methodname>, the parameter table is named <methodname>Parameters, and the function has the parameters WeightedCount and IndividualTotalLengthCentimeterMiddle followed by the required parameters (then R would determine the required parameters from the formals of the function). We should discuss whether to proceed with this strategy:
+# It is possible to simplify this function to only take the method as input, requiring that the function is named apply<methodname>, the parameter table is named <methodname>Parameters, and the function has the parameters WeightedCount and IndividualTotalLengthMiddle followed by the required parameters (then R would determine the required parameters from the formals of the function). We should discuss whether to proceed with this strategy:
 runLengthDependentCompensationFunction <- function(data, compensationMethod, compensationFunction, parametertable, requiredParameters, groupingVariable = "SpeciesCategory") {
     
     # Check that the parametertable is given:
@@ -376,7 +376,7 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     }
     
     
-    # First add the columns LMin, LMax, Alpha, Beta and IndividualTotalLengthCentimeterMiddle:
+    # First add the columns LMin, LMax, Alpha, Beta and IndividualTotalLengthMiddle:
     data <- data.table::data.table(
         data, 
         extractColumnsBy(
@@ -388,14 +388,14 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     )
     
     # Add also the mid point of each length interval:
-    data[, IndividualTotalLengthCentimeterMiddle := IndividualTotalLengthCentimeter + LengthResolutionCentimeter / 2]
+    data[, IndividualTotalLengthMiddle := IndividualTotalLength + LengthResolution / 2]
     
     # Apply the compensationFunction:
     valid <- !is.na(data[[requiredParameters[1]]])
     if(!all(valid)) {
         warning("StoX: Length dependent compensation was not applied to all species categories in the length distribution data")
     }
-    functionInputColumns <- c("WeightedCount", "IndividualTotalLengthCentimeterMiddle", requiredParameters)
+    functionInputColumns <- c("WeightedCount", "IndividualTotalLengthMiddle", requiredParameters)
     data[valid, WeightedCount := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]
     
     # Remove the temporary columns:
@@ -633,7 +633,7 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
     thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
     
-    # Get the category and grouping variables (SpeciesCategory, IndividualTotalLengthCentimeter, LengthResolutionCentimeter), and sum across hauls for each combination of these variables, weighted by the "WeightedCount":
+    # Get the category and grouping variables (SpeciesCategory, IndividualTotalLength, LengthResolution), and sum across hauls for each combination of these variables, weighted by the "WeightedCount":
     by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     thisLengthDistributionData[, c(dataVariable) := sum(x = get(dataVariable) * get(weightingVariable)), by = by]
     
