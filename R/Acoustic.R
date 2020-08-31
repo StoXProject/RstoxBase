@@ -23,25 +23,29 @@ NASC <- function(
     StoxAcousticData = NULL
 ) {
     # Merge the StoxAcousticData:
-    NASC <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
+    NASCData <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
     
     # Check that the input StoxAcousticData has the same ChannelReferenceType throughout:
     dataTypeDefinition <- getDataTypeDefinition(dataType = "NASCData")
-    ChannelReferenceType <- NASC[[dataTypeDefinition$type]]
+    ChannelReferenceType <- NASCData[[dataTypeDefinition$type]]
     if(!allEqual(ChannelReferenceType, na.rm = TRUE)) {
         stop("The StoxAcousticData must have only one ", dataTypeDefinition$type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
     }
     
     # Interpret the ChannelDepths:
-    getChannelDepth(NASC)
+    getChannelDepth(NASCData)
     
     # Add weights:
-    NASC[, NASCWeight := EffectiveLogDistance]
+    NASCData[, NASCWeight := EffectiveLogDistance]
     
     # Set the order of the columns:
-    formatOutput(NASC, dataType = "NASCData", keep.all = FALSE)
+    formatOutput(NASCData, dataType = "NASCData", keep.all = FALSE)
     
-    return(NASC)
+    # Not needed here, since we only copy data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(NASCData)
+    
+    return(NASCData)
 }
 
 

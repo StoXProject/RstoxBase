@@ -235,6 +235,9 @@ StratumArea <- function(
         stop("Invalid AreaMethod")
     }
     
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(areaDT)
+    
     return(areaDT)
 }
 

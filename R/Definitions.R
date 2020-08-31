@@ -238,17 +238,19 @@ initiateRstoxBase <- function(){
         TargetStrengthByLength = "Table"
     )
     
+    # Define the various acoustic target strength functions:
+    # 1. TS = TS0 + M log10(Lcm): 
     TargetStrengthFunction_LengthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, Depth) {
         TargetStrength0 + 
             LengthExponent * log10(midIndividualTotalLength)
     }
-    
+    # 2. TS = TS0 + M log10(Lcm) + D log10(1 + D/10) # Ona 2003:
     TargetStrengthFunction_LengthAndDepthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, Depth) {
         TargetStrength0 + 
             LengthExponent * log10(midIndividualTotalLength) + 
             DepthExponent * log10(1 + Depth/10)
     }
-    
+    # 3. TS = M log10(Lcm): 
     TargetStrengthFunction_LengthExponent <- function(midIndividualTotalLength, LengthExponent) {
         LengthExponent * log10(midIndividualTotalLength)
     }
@@ -257,6 +259,23 @@ initiateRstoxBase <- function(){
     BioticPSUPrefix <- "PSU"
     
     nauticalMileInMeters <- 1852
+    
+    # List of functions avilable for report functions:
+    reportFunctions <- list(
+        summaryStox = "RstoxBase", 
+        sum = "base", 
+        mean = "base", 
+        weighted.mean = "stats", 
+        median = "stats", 
+        min = "base", 
+        max = "base", 
+        sd = "stats", 
+        var = "stats", 
+        cv = "RstoxBase", 
+        summary = "base", 
+        quantile = "stats", 
+        percentile_5_95 = "RstoxBase"
+    )
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
