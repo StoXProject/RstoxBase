@@ -34,6 +34,9 @@ Abundance <- function(
     #keepOnlyRelevantColumns(AbundanceData, "AbundanceData")
     formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE)
     
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(AbundanceData)
+    
     return(AbundanceData)
 }
 
@@ -115,6 +118,9 @@ Individuals <- function(
     # Order the columns, but keep all columns:
     formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE)
     
+    # Not needed here, since we only copy data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(IndividualsData)
     
     return(IndividualsData)
 }
@@ -206,17 +212,6 @@ SuperIndividuals <- function(
         LengthDistributionData <- unique(LengthDistributionData)
         
         
-        #addLengthGroups(
-        #    data = LengthDistributionData, 
-        #    master = AbundanceData, 
-        #    lengthVar = "IndividualTotalLength", 
-        #    resolutionVar = "LengthResolution"
-        #)
-        # In case that the length resolution is higher in the LengthDistributionData than in the AbundanceData, uniquify the LengthDistributionData:
-        
-        
-        
-        
         # Sum in each length group:
         haulGrouping <- c(
             "Haul", 
@@ -304,6 +299,10 @@ SuperIndividuals <- function(
     ### )
     ### data.table::setcolorder(SuperIndividualsData, toOrderFirst)
 
+    # Not needed here, since we only copy data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
+    
     return(SuperIndividualsData)
 }
 
@@ -473,6 +472,10 @@ ImputeSuperIndividuals <- function(
     
     # Order the columns, but keep all columns:
     formatOutput(ImputeSuperIndividualsData, dataType = "ImputeSuperIndividualsData", keep.all = TRUE)
+    
+    # Not needed here, since we only copy data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(ImputeSuperIndividualsData)
     
     return(ImputeSuperIndividualsData)
 }

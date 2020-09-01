@@ -109,6 +109,9 @@ AcousticDensity <- function(
     #keepOnlyRelevantColumns(DensityData, "DensityData")
     formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
     
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(DensityData)
+    
     return(DensityData)
 }
 
@@ -167,25 +170,6 @@ NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTa
     return(DensityData[])
 }
 
-## Convert a table of lenght and TS to a funciton:
-#getTargetStrengthFunctionOld <- function(TargetStrengthTable, LengthData, method = "constant", rule = 2) {
-#    # Approximate the TargetStrength to the mid lengths of the length interavls of the LengthData (such as length distribution). Take a #copy first since the IndividualTotalLength is replaced by reference using getLengthIntervalMidPoints with replace.IndividualTo#talLength = TRUE:
-#    LengthDataCopy <- data.table::copy(LengthData)
-#    LengthData[, IndividualTotalLength := getLengthIntervalMidPoints(.SD)]
-#    
-#    # Since approxfun with method "constant" defines values to span to the next value, we need to modify the TargetStrengthTable to have #the first point followed by the mid points (in x), and then followed by the last point:
-#    TargetStrengthTable <- addMidPointsOfTargetStrengthTable(TargetStrengthTable)
-#    
-#    # Create the function to use in getTargetStrength():
-#    approxfun(
-#        x = TargetStrengthTable$IndividualTotalLength, 
-#        y = TargetStrengthTable$TargetStrength, 
-#        xout = sort(unique(LengthData$IndividualTotalLength)), 
-#        method = method, 
-#        rule = rule
-#    )
-#}
-
 
 # Convert a table of lenght and TS to a funciton:
 getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "constant", rule = 2) {
@@ -233,22 +217,6 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
     return(functionName)
 }
 
-
-
-
-
-
-## Convert a table of lenght and TS to a funciton:
-#getTargetStrengthFunctionOne <- function(TargetStrengthTable, LengthData, method = "constant", rule = 2) {
-#    
-#    # Define the columns to modify:
-#    functionColumns <- c("IndividualTotalLength", "TargetStrength")
-#    by <- setdiff(names(TargetStrengthTable), functionColumns)
-#    
-#    # Add mid points to the TargetStrengthTable to facilitate use of approxfun with method = "constant":
-#    TargetStrengthTable  <- addMidPointsOfTargetStrengthTable(TargetStrengthTable, by = by)
-#    
-#}
 
 # Function to prepare a TargetStrengthTable for approxfun():
 expandTargetStrengthTable <- function(TargetStrengthTable, by) {
@@ -393,7 +361,6 @@ SweptAreaDensity <- function(
             }
             
             # Convert WeightedCount to density:
-            #sweepWidthInNauticalMiles <- SweepWidth / 1852
             sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
             
             DensityData[, Density := WeightedCount / sweepWidthInNauticalMiles]
@@ -438,6 +405,9 @@ SweptAreaDensity <- function(
     #DensityData <- DensityData[, ..relevantVariables]
     formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
     
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(DensityData)
+    
     return(DensityData)
 }
 
@@ -468,7 +438,12 @@ MeanDensity <- function(
     DensityData
 ) {
     #meanData(DensityData, dataType = "DensityData", targetResolution = "Stratum")
-    applyMeanToData(data = DensityData, dataType = "DensityData", targetResolution = "Stratum")
+    MeanDensityData <- applyMeanToData(data = DensityData, dataType = "DensityData", targetResolution = "Stratum")
+    
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(MeanDensityData)
+    
+    return(MeanDensityData)
 }
 
 
@@ -528,6 +503,10 @@ SpeciesCategoryCatch <- function(
     )
     
     #SpeciesCategoryCatchData <- merge(Cruise_Station_Haul, SpeciesCategoryCatchData, by = "Station")
+    
+    # Not needed here, since we only copy data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(SpeciesCategoryCatchData)
     
     return (SpeciesCategoryCatchData)
 }

@@ -134,6 +134,9 @@ LengthDistribution <- function(
     
     # Order the rows:
     orderDataByReference(LengthDistributionData, "LengthDistributionData")
+    
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(LengthDistributionData)
     ########################
     
     
@@ -298,6 +301,9 @@ LengthDependentCatchCompensation <- function(
     #keepOnlyRelevantColumns(LengthDistributionDataCopy, "LengthDistributionData")
     formatOutput(LengthDistributionDataCopy, dataType = "LengthDistributionData", keep.all = FALSE)
     
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(LengthDistributionDataCopy)
+    
     return(LengthDistributionDataCopy)
 }
 
@@ -321,7 +327,6 @@ applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthM
     
     # Calculate the factor to multiply the WeightedCount by:
     sweepWidth <- Alpha * IndividualTotalLengthMiddle^Beta
-    #sweepWidthInNauticalMiles <- sweepWidth / 1852
     sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
     
     WeightedCount <- WeightedCount / sweepWidthInNauticalMiles
