@@ -261,21 +261,70 @@ initiateRstoxBase <- function(){
     nauticalMileInMeters <- 1852
     
     # List of functions avilable for report functions:
-    reportFunctions <- list(
-        summaryStox = "RstoxBase", 
-        sum = "base", 
-        mean = "base", 
-        weighted.mean = "stats", 
-        median = "stats", 
-        min = "base", 
-        max = "base", 
-        sd = "stats", 
-        var = "stats", 
-        cv = "RstoxBase", 
-        summary = "base", 
-        quantile = "stats", 
-        percentile_5_95 = "RstoxBase"
+    reportFunctions <- data.table::data.table(
+        functionName = c(
+            "summaryStox", 
+            "sum", 
+            "mean", 
+            "weighted.mean", 
+            "median", 
+            "min", 
+            "max", 
+            "sd", 
+            "var", 
+            "cv", 
+            "summary", 
+            "quantile", 
+            "percentile_5_95"
+        ), 
+        packageName = c(
+            "RstoxBase", 
+            "base", 
+            "base", 
+            "stats", 
+            "stats", 
+            "base", 
+            "base", 
+            "stats", 
+            "stats", 
+            "RstoxBase", 
+            "base", 
+            "stats", 
+            "RstoxBase"
+        ), 
+        weighted = c(
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            TRUE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE
+        ), 
+        weightingParameter = c(
+            "", 
+            "", 
+            "", 
+            "w", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            ""
+        )
     )
+    
+
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()

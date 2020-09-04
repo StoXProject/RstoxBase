@@ -454,9 +454,22 @@ NULL
 #' 
 #' The ImputeSuperIndividualsData model data is the \code{\link{SuperIndividualsData}} imputed to fill inn missing data from individual in the same dataset.
 #' 
-#' @seealso This data type is produced by \code{\link{ImputeSuperIndividualsData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{ImputeSuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name ImputeSuperIndividualsData
 #' 
 NULL
+
+##################################################
+##################################################
+#' Reported imputed super-individuals data
+#' 
+#' The ReportImputeSuperIndividualsData model data is a report of the \code{\link{ImputeSuperIndividualsData}} such as summed Biomass per Stratum and SpeciesCategory.
+#' 
+#' @seealso This data type is produced by \code{\link{ReportImputeSuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ReportImputeSuperIndividualsData
+#' 
+NULL
+
 
