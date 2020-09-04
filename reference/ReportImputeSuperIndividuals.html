@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mean density in each stratum — MeanDensity • RstoxBase</title>
+<title>Report ImputeSuperIndividualsData — ReportImputeSuperIndividuals • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Mean density in each stratum — MeanDensity" />
-<meta property="og:description" content="This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density." />
+<meta property="og:title" content="Report ImputeSuperIndividualsData — ReportImputeSuperIndividuals" />
+<meta property="og:description" content="Reports the sum, mean or other functions on a variable of the ImputeSuperIndividualsData." />
 
 
 
@@ -108,31 +108,63 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Mean density in each stratum</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Density.R'><code>R/Density.R</code></a></small>
-    <div class="hidden name"><code>MeanDensity.Rd</code></div>
+    <h1>Report ImputeSuperIndividualsData</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R'><code>R/Report.R</code></a></small>
+    <div class="hidden name"><code>ReportImputeSuperIndividuals.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.</p>
+    <p>Reports the sum, mean or other functions on a variable of the <code><a href='ImputeSuperIndividualsData.html'>ImputeSuperIndividualsData</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MeanDensity</span>(<span class='kw'>DensityData</span>)</pre>
+    <pre class="usage"><span class='fu'>ReportImputeSuperIndividuals</span>(
+  <span class='kw'>ImputeSuperIndividualsData</span>,
+  <span class='kw'>TargetVariable</span>,
+  ReportFunction = <span class='fu'><a href='getRstoxBaseDefinitions.html'>getRstoxBaseDefinitions</a></span>(<span class='st'>"reportFunctions"</span>)<span class='op'>$</span><span class='kw'>functionName</span>,
+  GroupingVariables = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
+  RemoveMissingValues = <span class='fl'>FALSE</span>,
+  WeightingVariable = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>()
+)</pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>TargetVariable</th>
+      <td><p>The variable to report.</p></td>
+    </tr>
+    <tr>
+      <th>ReportFunction</th>
+      <td><p>The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".</p></td>
+    </tr>
+    <tr>
+      <th>GroupingVariables</th>
+      <td><p>The variables to report by, e.g. "Stratum" or "SpeciesCategory".</p></td>
+    </tr>
+    <tr>
+      <th>RemoveMissingValues</th>
+      <td><p>Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA.</p></td>
+    </tr>
+    <tr>
+      <th>WeightingVariable</th>
+      <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.table is returned with awesome stuff.</p>
+    <p>A <code><a href='ReportImputeSuperIndividualsData.html'>ReportImputeSuperIndividualsData</a></code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>See <code><a href='AcousticDensity.html'>AcousticDensity</a></code> for acoustic density and  <code><a href='SweptAreaDensity.html'>SweptAreaDensity</a></code> for swept-area density.</p></div>
+    <div class='dont-index'>
+
+</div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-
+    <pre class="examples"><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
