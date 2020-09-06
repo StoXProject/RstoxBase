@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.27</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.28</span>
       </span>
     </div>
 
@@ -661,8 +661,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ffc939af288&gt;
-#&gt; &lt;environment: 0x7ffc9358de10&gt;
+#&gt; &lt;bytecode: 0x7ff78d0a1f90&gt;
+#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -672,20 +672,20 @@
 #&gt;  +proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs 
 #&gt; 
 #&gt; $reportFunctions
-#&gt;        functionName packageName weighted weightingParameter
-#&gt;  1:     summaryStox   RstoxBase    FALSE                   
-#&gt;  2:             sum        base    FALSE                   
-#&gt;  3:            mean        base    FALSE                   
-#&gt;  4:   weighted.mean       stats     TRUE                  w
-#&gt;  5:          median       stats    FALSE                   
-#&gt;  6:             min        base    FALSE                   
-#&gt;  7:             max        base    FALSE                   
-#&gt;  8:              sd       stats    FALSE                   
-#&gt;  9:             var       stats    FALSE                   
-#&gt; 10:              cv   RstoxBase    FALSE                   
-#&gt; 11:         summary        base    FALSE                   
-#&gt; 12:        quantile       stats    FALSE                   
-#&gt; 13: percentile_5_95   RstoxBase    FALSE                   
+#&gt;        functionName packageName weighted weightingParameter multiple
+#&gt;  1:     summaryStox   RstoxBase    FALSE                        TRUE
+#&gt;  2:             sum        base    FALSE                       FALSE
+#&gt;  3:            mean        base    FALSE                       FALSE
+#&gt;  4:   weighted.mean       stats     TRUE                  w    FALSE
+#&gt;  5:          median       stats    FALSE                       FALSE
+#&gt;  6:             min        base    FALSE                       FALSE
+#&gt;  7:             max        base    FALSE                       FALSE
+#&gt;  8:              sd       stats    FALSE                       FALSE
+#&gt;  9:             var       stats    FALSE                       FALSE
+#&gt; 10:              cv   RstoxBase    FALSE                       FALSE
+#&gt; 11:         summary        base    FALSE                        TRUE
+#&gt; 12:        quantile       stats    FALSE                        TRUE
+#&gt; 13: percentile_5_95   RstoxBase    FALSE                        TRUE
 #&gt; 
 #&gt; $resolutionClasses
 #&gt; $resolutionClasses$NASC
@@ -728,8 +728,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ffc939abae0&gt;
-#&gt; &lt;environment: 0x7ffc9358de10&gt;
+#&gt; &lt;bytecode: 0x7ff78d0a1158&gt;
+#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -737,16 +737,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ffc939ab6f0&gt;
-#&gt; &lt;environment: 0x7ffc9358de10&gt;
+#&gt; &lt;bytecode: 0x7ff78d0a14d8&gt;
+#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ffc939a63e8&gt;
-#&gt; &lt;environment: 0x7ffc9358de10&gt;
+#&gt; &lt;bytecode: 0x7ff78d0a0b38&gt;
+#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
