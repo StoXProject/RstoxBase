@@ -321,10 +321,24 @@ initiateRstoxBase <- function(){
             "", 
             "", 
             ""
+        ), 
+        multiple = c(
+            TRUE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            TRUE, 
+            TRUE, 
+            TRUE
         )
     )
     
-
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()

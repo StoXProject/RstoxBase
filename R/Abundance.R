@@ -118,6 +118,15 @@ Individuals <- function(
     # Order the columns, but keep all columns:
     formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE)
     
+    # Add the attribute 'variableNames':
+    setattr(
+        IndividualsData, 
+        "stoxDataVariableNames",
+        attr(MergedStoxBioticData, "stoxDataVariableNames")
+    )
+    
+    attr(IndividualsData, "stoxDataVariableNames") <- attr(MergedStoxBioticData, "stoxDataVariableNames")
+    
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:
     #RstoxData::setRstoxPrecisionLevel(IndividualsData)
@@ -287,6 +296,14 @@ SuperIndividuals <- function(
     
     # Order the rows:
     orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
+    
+    # Add the attribute 'variableNames':
+    setattr(
+        SuperIndividualsData, 
+        "stoxDataVariableNames",
+        attr(IndividualsData, "stoxDataVariableNames")
+    )
+    
     
     ### # Remove the temporary columns:
     ### toRemove <- c("LengthGroup", "abundanceWeightFactor", "individualCount")
@@ -462,14 +479,24 @@ ImputeSuperIndividuals <- function(
         stop("All individuals must have identical LengthResolution in the current version.")
     }
     
+    # Get the columns to impute:
+    individualNames <- attr(SuperIndividualsData, "stoxDataVariableNames")$Individual
+    # Subtract the keys: 
+    IndividualKeys <- setdiff(individualNames, RstoxData::getStoxKeys("StoxBiotic"))
+    
+    # Impute the SuperIndividualsData:
     ImputeSuperIndividualsData <- ImputeData(
         data = SuperIndividualsData, 
         imputeAtMissing = "IndividualAge", 
         imputeByEqual = "IndividualTotalLength", 
         groupBy = "SpeciesCategory", 
-        seed = Seed
+        seed = Seed, 
+        columnNames = individualNames
     )
     
+    # Re-calculate the Biomass:
+    ImputeSuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+
     # Order the columns, but keep all columns:
     formatOutput(ImputeSuperIndividualsData, dataType = "ImputeSuperIndividualsData", keep.all = TRUE)
     
@@ -486,7 +513,8 @@ ImputeData <- function(
     imputeAtMissing = "IndividualAge", 
     imputeByEqual = "IndividualTotalLength", 
     groupBy = "SpeciesCategory", 
-    seed = 1
+    seed = 1, 
+    columnNames = NULL
 ) {
     
     # Get the data and add the RowIndex foor use when identifying which rows to impute from:
@@ -540,7 +568,7 @@ ImputeData <- function(
     }
     
     # Perform the imputation:
-    dataCopy <- replaceMissingData(dataCopy)
+    dataCopy <- replaceMissingData(dataCopy, columnNames = columnNames)
     
     # Delete the RowIndex and ReplaceRowIndex:
     dataCopy$ReplaceIndividual <- dataCopy[(ReplaceRowIndex), "Individual"]
@@ -615,17 +643,36 @@ getImputeRowIndicesOneGroup <- function(
 
 
 
-replaceMissingData <- function(x) {
+replaceMissingData <- function(x, columnNames) {
     
     # Get the matrix indices of data to replace, which are those that are missing in the rows impute:
     rowsToImpute <- x[!is.na(ReplaceRowIndex), RowIndex]
     rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
     
-    x <- as.data.frame(x)
-    atReplace <- is.na(x[rowsToImpute, ]) & !is.na(x[rowsToImputeFrom, ])
-    x[rowsToImpute, ][atReplace] <- x[(rowsToImputeFrom), ][atReplace]
+    # Loop through the columns and replace missing data:
+    namesx <- names(x)
+    if(!length(columnNames)) {
+        columnNames <- namesx
+    }
     
-    x <- data.table::setDT(x)
+    for(columnName in columnNames) {
+        if(columnName %in% namesx) {
+            atReplacement <- x[rowsToImpute, is.na(get(columnName))] & x[rowsToImputeFrom, !is.na(get(columnName))]
+            if(any(atReplacement)) {
+                atMissing <- rowsToImpute[atReplacement]
+                atPresent <- rowsToImputeFrom[atReplacement]
+                replacement <- x[atPresent, get(columnName)]
+                x[atMissing, eval(columnName) := replacement]
+            }
+        }
+    }
+    
+    #
+    #x <- as.data.frame(x)
+    #atReplace <- is.na(x[rowsToImpute, ]) & !is.na(x[rowsToImputeFrom, ])
+    #x[rowsToImpute, ][atReplace] <- x[(rowsToImputeFrom), ][atReplace]
+    #
+    #x <- data.table::setDT(x)
     return(x)
 }
 

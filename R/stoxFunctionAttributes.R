@@ -489,10 +489,38 @@ stoxFunctionAttributes <- list(
     ReportImputeSuperIndividuals = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "ReportImputeSuperIndividualsData"
+        functionOutputDataType = "ReportImputeSuperIndividualsData", 
+        # This is an example of using an expression to determine when to show a parameter:
+        functionArgumentHierarchy = list(
+            WeightingVariable = list(
+                ReportFunction = expression(RstoxBase::getWeightingFunctions())
+            )
+        )
+    ), 
+    
+    
+    ReportBootstrap = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "ReportBootstrapData", 
+        # This is an example of using an expression to determine when to show a parameter:
+        functionArgumentHierarchy = list(
+            AggregationWeightingVariable = list(
+                ReportFunction = expression(RstoxBase::getWeightingFunctions())
+            ), 
+            BootstrapReportWeightingVariable = list(
+                ReportFunction = expression(RstoxBase::getWeightingFunctions())
+            )
+        )
+    ), 
+    
+    
+    ReportSpeciesCategoryCatch = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "ReportSpeciesCategoryCatchData"
     )
     ##########
-    
 )
 
 # Define the process property formats:

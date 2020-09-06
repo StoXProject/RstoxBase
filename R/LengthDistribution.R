@@ -50,7 +50,8 @@ LengthDistribution <- function(
     ####################################################
     keys <- c(
         # Get all keys except the individual key (since we are supposed to count individuals). This includes unique hauls (CruiseKey, StationKey, HaulKey, SpeciesCategoryKey, SampleKey):
-        getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
+        #getStoxBioticKeys(setdiff(names(StoxBioticData), "Individual")), 
+        RstoxData::getStoxKeys("StoxBiotic", level = "Individual", all.keys = FALSE), 
         # Use SpeciesCategory as key (this is obsolete, but clarifies that length distributions are per species):
         dataTypeDefinition$categoryVariable, 
         # The length group is defined as the combination of IndividualTotalLength and LengthResolution. See 'dataTypeDefinition' in initiateRstoxBase(): 
@@ -102,7 +103,10 @@ LengthDistribution <- function(
     LengthDistributionData$raisingFactor <- raisingFactorTable[cbind(seq_along(raisingFactorIndex), raisingFactorIndex)]
     
     # Apply the raising factor and sum over samples:
-    keysSansSample <- setdiff(keys, getStoxBioticKeys("Sample"))
+    #keysSansSample <- setdiff(keys, getStoxBioticKeys("Sample"))
+    SampleKey <- RstoxData::getStoxKeys("StoxBiotic", level = "Sample", all.keys = FALSE)
+    keysSansSample <- setdiff(keys, SampleKey)
+    
     LengthDistributionData <- LengthDistributionData[, WeightedCount := sum(WeightedCount * raisingFactor), by = keysSansSample]
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keysSansSample]))
     #######################################################
