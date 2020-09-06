@@ -924,3 +924,32 @@ CV = function(x, na.rm = FALSE) {
 percentile_5_95 = function(x) {
     quantiile(x, c(5, 95) / 100)
 }
+
+
+# Define report functions:
+#' 
+#' @export
+#' 
+summaryStox <- function(x, na.rm = FALSE) {
+    c(
+        quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
+        mean = mean(x, na.rm = na.rm),
+        sd = sd(x, na.rm = na.rm),
+        cv = cv(x, na.rm = na.rm)
+    )
+}
+#' 
+#' @export
+#' 
+cv <- function(x, na.rm = FALSE) {
+    sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
+}
+#' 
+#' @export
+#' 
+percentile_5_95 <- function(x, na.rm = FALSE) {
+    quantile(x, c(0.05, 0.95), na.rm = na.rm)
+}
+
+    
+

@@ -460,6 +460,21 @@ NULL
 #' 
 NULL
 
+
+
+##################################################
+##################################################
+#' Output from Bootstrap
+#' 
+#' The BootstrapData model data is a list of data from one or more baseline processes stacked for all bootstrap runs.
+#' 
+#' @seealso This data type is produced by \code{\link{Bootstrap}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name BootstrapData
+#' 
+NULL
+
+
 ##################################################
 ##################################################
 #' Reported imputed super-individuals data
@@ -472,4 +487,29 @@ NULL
 #' 
 NULL
 
+
+##################################################
+##################################################
+#' Reported Bootstrap data
+#' 
+#' The ReportBootstrapData model data is a report of the \code{\link{BootstrapData}} such as cv of Biomass per Stratum and SpeciesCategory.
+#' 
+#' @seealso This data type is produced by \code{\link{ReportBootstrap}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ReportBootstrapData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Reported SpeciesCategoryCatch data
+#' 
+#' The ReportSpeciesCategoryCatchData model data is a report of the \code{\link{SpeciesCategoryCatchData}} which combines Haul info and a table of the catch of each SpeciesCategory.
+#' 
+#' @seealso This data type is produced by \code{\link{ReportSpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ReportSpeciesCategoryCatchData
+#' 
+NULL
 
