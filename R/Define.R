@@ -26,7 +26,7 @@ DefinePSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxData, 
-    DefinitionMethod = c("Identity", "None"), 
+    DefinitionMethod = c("Identity", "DeleteAllPSUs"), 
     PSUType = c("Acoustic", "Biotic")
 ) {
     
@@ -36,7 +36,8 @@ DefinePSU <- function(
     }
     
     # Get the DefinitionMethod and PSUType:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    #DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
     PSUType <- match.arg(PSUType)
     
     # SSULevel
@@ -105,12 +106,24 @@ DefinePSU <- function(
         SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
     }
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
-    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
+    else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
         SSU_PSU <- data.table::data.table(
             SSU = SSU, 
             PSU = NA_character_
         )
         Stratum_PSU <- data.table::data.table()
+    }
+    else if(isEmptyString(DefinitionMethod)){
+        if(length(processData)) {
+            return(processData)
+        }
+        else {
+            SSU_PSU <- data.table::data.table(
+                SSU = SSU, 
+                PSU = NA_character_
+            )
+            Stratum_PSU <- data.table::data.table()
+        }
     }
     else {
         stop("Inavlid DefinitionMethod")
@@ -145,7 +158,7 @@ DefinePSU <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -164,11 +177,12 @@ DefineBioticPSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxBioticData, 
-    DefinitionMethod = c("StationToPSU", "None")
+    DefinitionMethod = c("StationToPSU", "DeleteAllPSUs")
 ) {
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    #DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
     if(grepl("StationToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
@@ -195,7 +209,7 @@ DefineBioticPSU <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "None" for pure manual actions by the user.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -214,11 +228,12 @@ DefineAcousticPSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxAcousticData, 
-    DefinitionMethod = c("EDSUToPSU", "None")
+    DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs")
 ) {
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    #DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
     if(grepl("EDSUToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
