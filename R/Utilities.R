@@ -951,5 +951,11 @@ percentile_5_95 <- function(x, na.rm = FALSE) {
     quantile(x, c(0.05, 0.95), na.rm = na.rm)
 }
 
-    
+
+isEmptyString <- function(x) {
+    is.character(x) && (
+        !length(x) || 
+            (length(x) == 1 && nchar(x) == 0)
+        )
+}
 

@@ -9,7 +9,7 @@ DefineBioticPSU(
   UseProcessData = FALSE,
   StratumPolygon,
   StoxBioticData,
-  DefinitionMethod = c("StationToPSU", "None")
+  DefinitionMethod = c("StationToPSU", "DeleteAllPSUs")
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ DefineBioticPSU(
 
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "None" for pure manual actions by the user.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
 }
 \value{
 An object of StoX data type \code{\link{BioticPSU}}.

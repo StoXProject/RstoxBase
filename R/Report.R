@@ -258,7 +258,7 @@ ReportSpeciesCategoryCatch <- function(
     # Add a warining if there are empty cells in the NewValue column of the StoxBioticTranslation table:
     ValueWithEmptyNewValue <- StoxBioticTranslation[nchar(NewValue) == 0, Value]
     if(length(ValueWithEmptyNewValue)) {
-        warning("StoX: The following Value had empty NewValue in the StoxBioticTranslation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
+        warning("StoX: The following Values had empty NewValue in the StoxBioticTranslation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
         SpeciesCategoryCatchData$SpeciesCategoryCatch[, V1 := NULL]
     }
     
@@ -267,7 +267,7 @@ ReportSpeciesCategoryCatch <- function(
         StoxBioticTranslation$NewValue
     )
     if(length(ValueNotPresentInStoxBioticTranslation)) {
-        warning("StoX: The following SpeciesCategory was not found in the NewValue column of the StoxBioticTranslation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
+        warning("StoX: The following SpeciesCategories were not found in the NewValue column of the StoxBioticTranslation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
         SpeciesCategoryCatchData$SpeciesCategoryCatch[, (ValueNotPresentInStoxBioticTranslation) := NULL]
     }
     

@@ -133,7 +133,7 @@ MeanNASC <- function(
     AcousticLayer = NULL, 
     # Parameters of the mean part:
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
-    PSUDefinitionMethod = c("EDSUToPSU", "None"), 
+    PSUDefinitionMethod = c("EDSUToPSU"), 
     StratumPolygon = NULL, 
     AcousticPSU = NULL
 ) {

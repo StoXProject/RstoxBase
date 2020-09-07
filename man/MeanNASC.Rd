@@ -14,7 +14,7 @@ MeanNASC(
   LayerTable = data.table::data.table(),
   AcousticLayer = NULL,
   PSUDefinition = c("FunctionParameter", "FunctionInput"),
-  PSUDefinitionMethod = c("EDSUToPSU", "None"),
+  PSUDefinitionMethod = c("EDSUToPSU"),
   StratumPolygon = NULL,
   AcousticPSU = NULL
 )

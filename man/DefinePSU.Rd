@@ -9,7 +9,7 @@ DefinePSU(
   UseProcessData = FALSE,
   StratumPolygon,
   StoxData,
-  DefinitionMethod = c("Identity", "None"),
+  DefinitionMethod = c("Identity", "DeleteAllPSUs"),
   PSUType = c("Acoustic", "Biotic")
 )
 }
