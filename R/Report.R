@@ -267,7 +267,7 @@ ReportSpeciesCategoryCatch <- function(
         StoxBioticTranslation$NewValue
     )
     if(length(ValueNotPresentInStoxBioticTranslation)) {
-        warning("StoX: The following SpeciesCategories were not found in the NewValue column of the StoxBioticTranslation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
+        warning("StoX: The following SpeciesCategories were not found in the NewValue column of the StoxBioticTranslation, and were removed from the report: ", paste(ValueNotPresentInStoxBioticTranslation, collapse = ", "), ".")
         SpeciesCategoryCatchData$SpeciesCategoryCatch[, (ValueNotPresentInStoxBioticTranslation) := NULL]
     }
     
