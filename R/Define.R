@@ -525,10 +525,15 @@ DefineBioticLayer <- function(
 #'
 DefineBioticAssignment <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "None"), 
+    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "DeleteAllAssignments"), 
     StoxBioticData, 
     # For DefinitionMethod "Stratum": 
-    StratumPolygon, AcousticPSU, AcousticLayer, 
+    StratumPolygon, AcousticPSU, #AcousticLayer, 
+    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    AcousticLayer = NULL, 
     # (Additional) for DefinitionMethod "Radius": 
     StoxAcousticData, 
     Radius = double(), 
@@ -674,14 +679,34 @@ DefineBioticAssignment <- function(
         # Keep only Hauls inside the radius:
         BioticAssignment <- subset(BioticAssignment, inside)
     }
-    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
+    else if(grepl("DeleteAllAssignments", DefinitionMethod, ignore.case = TRUE)) {
         BioticAssignment <- data.table::data.table()
     }
+    else if(isEmptyString(DefinitionMethod)){
+        if(length(processData)) {
+            return(processData)
+        }
+        else {
+            BioticAssignment <- data.table::data.table()
+        }
+    }
     else {
-        stop("Only DefinitionMethod = \"Stratum\" is currently implemented")
+        stop("Inavlid DefinitionMethod")
     }
     
     # Add all Layers to each assigned haul:
+    LayerDefinition <- match.arg(LayerDefinition)
+    # Get the Layers:
+    if(identical(LayerDefinition, "FunctionParameter")) {
+        AcousticLayer <- DefineLayer(
+            StoxData = StoxAcousticData, 
+            DefinitionMethod = LayerDefinitionMethod, 
+            Resolution = Resolution, 
+            LayerTable = LayerTable, 
+            LayerType = "Acoustic"
+        )
+    }
+    # Add the layers:
     Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
     BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
     

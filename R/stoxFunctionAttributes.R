@@ -116,9 +116,28 @@ stoxFunctionAttributes <- list(
             AcousticPSU = list(
                 UseProcessData = FALSE
             ), 
-            AcousticLayer = list(
+            LayerDefinition = list(
                 UseProcessData = FALSE
             ), 
+            AcousticLayer = list(
+                LayerDefinition = "FunctionInput", 
+                UseProcessData = FALSE
+            ), 
+            LayerDefinitionMethod = list(
+                LayerDefinition = "FunctionParameter", 
+                UseProcessData = FALSE
+            ), 
+            Resolution = list(
+                LayerDefinitionMethod = "Resolution", 
+                UseProcessData = FALSE
+            ), 
+            LayerTable = list(
+                LayerDefinitionMethod = "LayerTable", 
+                UseProcessData = FALSE
+            ), 
+            #AcousticLayer = list(
+            #    UseProcessData = FALSE
+            #), 
             # These two are joined with AND, and must both be fulfilled:
             StratumPolygon = list(
                 DefinitionMethod = "Stratum", 
@@ -127,6 +146,10 @@ stoxFunctionAttributes <- list(
             # These two are joined with AND, and must both be fulfilled:
             StoxAcousticData = list(
                 DefinitionMethod = c("Radius", "EllipsoidalDistance"), 
+                UseProcessData = FALSE
+            ), 
+            StoxAcousticData = list(
+                LayerDefinition = "FunctionParameter", 
                 UseProcessData = FALSE
             ), 
             # These two are joined with AND, and must both be fulfilled:
@@ -150,7 +173,7 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             # These two are joined with AND, and must both be fulfilled:
-            BottomDepthDifferences = list(
+            BottomDepthDifference = list(
                 DefinitionMethod = "EllipsoidalDistance", 
                 UseProcessData = FALSE
             ), 
