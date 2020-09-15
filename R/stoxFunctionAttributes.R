@@ -41,6 +41,22 @@ stoxFunctionAttributes <- list(
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
+            ), 
+            StratumPolygon = list(
+                UseProcessData = FALSE
+            )
+        )
+    ), 
+    DefineAcousticPSUByTime = list(
+        functionType = "processData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "AcousticPSU",
+        functionArgumentHierarchy = list(
+            AcousticPSU = list(
+                UseProcessData = FALSE
+            ), 
+            StratumPolygon = list(
+                UseProcessData = FALSE
             )
         )
     ), 
@@ -49,6 +65,12 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "BioticPSU", 
         functionArgumentHierarchy = list(
+            StratumPolygon = list(
+                UseProcessData = FALSE
+            ), 
+            StoxAcousticData = list(
+                UseProcessData = FALSE
+            ), 
             DefinitionMethod = list(
                 UseProcessData = FALSE
             )
