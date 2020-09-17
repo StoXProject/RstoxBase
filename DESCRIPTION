@@ -1,9 +1,10 @@
 Package: RstoxBase
 Version: 1.2.32
-Date: 2020-09-14
+Date: 2020-09-17
 Title: Base StoX Functions
 Authors@R: c(
-  person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "arnejh@hi.no"))
+  person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "arnejh@hi.no"), 
+  person(given = "Espen", family = "Johnsen", role = "aut"))
 Depends: R (>= 3.6)
 Description: Base StoX functions used for survey estimation.
 URL: https://github.com/StoXProject/RstoxBase

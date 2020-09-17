@@ -7,7 +7,7 @@
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @param DefinitionMethod Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -158,7 +158,7 @@ DefinePSU <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
+#' @param DefinitionMethod Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -247,55 +247,138 @@ DefineAcousticPSU <- function(
         PSUType = "Acoustic"
     )
     
-    # Add the times of the PSUs:
-    AcousticPSU$PSUStartEndDateTime <- getAcousticPSUByTime(AcousticPSU, StoxAcousticData)
-    
     return(AcousticPSU)
 }
 
-
-
-getAcousticPSUByTime <- function(AcousticPSU, StoxAcousticData) {
+##################################################
+##################################################
+#' Define Acoustic PSU by time
+#' 
+#' This function defines Acoustic PSUs by start and stop times.
+#' 
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @param DefinitionMethod  Character: A string naming the method to use. Currently, only "FunctionInput" is available, implying to take previously defined AcousticPSU definition and the StoxAcousticData used in that definition as input and determine start and stop times of unbroken sequences of EDSUs
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
+#' 
+#' @export
+#' 
+DefineAcousticPSUByTime <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("FunctionInput"), 
+    AcousticPSU, 
+    StoxAcousticData
+) {
     
-    # Interpret start (, middle) and end times:
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    if(DefinitionMethod == "FunctionInput") {
+        # Get the times of the PSUs:
+        AcousticPSUByTime <- getPSUStartStopDateTime(AcousticPSU, StoxAcousticData)
+    }
+    else {
+        stop("Inavlid DefinitionMethod")
+    }
+    
+    return(AcousticPSUByTime)
+}
+
+# Function to get the start and 
+getPSUStartStopDateTime <- function(AcousticPSU, StoxAcousticData) {
+    
+    # Interpret start and end times:
     StoxAcousticDataCopy <- data.table::copy(StoxAcousticData)
-    StoxAcousticDataCopy <- RstoxData::StoxAcousticStartMiddleEndDateTime(StoxAcousticDataCopy)
+    StoxAcousticDataCopy <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticDataCopy)
     
     # Split the EDSU_PSU table into PSUs:
     EDSU_PSU_ByPSU <- AcousticPSU$EDSU_PSU[!is.na(PSU) & nchar(PSU) > 0]
     EDSU_PSU_ByPSU <- split(EDSU_PSU_ByPSU, by = "PSU")
     
-    # Get the table of start and end times of all PSUs and combine to a table:
-    PSUStartEndDateTime <- lapply(EDSU_PSU_ByPSU, getPSUStartEndDateTimeOne, StoxAcousticData = StoxAcousticDataCopy)
-    PSUStartEndDateTime <- data.table::rbindlist(PSUStartEndDateTime)
+    # Get the table of start and stop times of each PSUs and combine to a table:
+    PSUStartStopDateTime <- lapply(
+        X = names(EDSU_PSU_ByPSU), 
+        FUN = getPSUStartStopDateTimeByPSU, 
+        # Parameters of getPSUStartStopDateTimeByPSU(): 
+        EDSU_PSU_ByPSU = EDSU_PSU_ByPSU, 
+        StoxAcousticData = StoxAcousticDataCopy
+    )
+    PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
     
-    return(PSUStartEndDateTime)
+    # Add the Stratum:
+    PSUStartStopDateTime <- RstoxData::mergeByIntersect(AcousticPSU$Stratum_PSU, PSUStartStopDateTime)
+    
+    return(PSUStartStopDateTime)
 }
 
 # Function to get the start and end times of one acoustic PSU:
-getPSUStartEndDateTimeOne <- function(EDSU_PSU, StoxAcousticData) {
+getPSUStartStopDateTimeByPSU <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
+    
+    #browser()
+    # For conevnience get the EDSUs of the current PSU:
+    thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
     
     # Match the EDSUs of the AcousticPSU with EDSUs of the StoxAcousticData:
-    atEDSUInStoxAcousticData <- match(EDSU_PSU$EDSU, StoxAcousticData$Log$EDSU)
-    # Get start and end times of unbroken sequences fo EDSUs:
-    steps <- which(diff(atEDSUInStoxAcousticData) > 1)
-    startInd <- c(1, steps + 1)
-    endInd <- c(steps, length(atEDSUInStoxAcousticData))
+    atEDSUInStoxAcousticData <- match(thisEDSU_PSU$EDSU, StoxAcousticData$Log$EDSU)
+    if(any(is.na(atEDSUInStoxAcousticData))) {
+        stop("The StoxAcousticData must be the same data that were used to generate the AcousticPSU.")
+    }
     
-    # Get the PSU, the start times and the end times:
-    PSUs <- EDSU_PSU$PSU[startInd]
-    startTimes <- StoxAcousticData$Log$StartDateTime[atEDSUInStoxAcousticData[startInd]]
-    endTimes <- StoxAcousticData$Log$EndDateTime[atEDSUInStoxAcousticData[endInd]]
+    # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data):
+    atEDSUInStoxAcousticDataByCruise <- split(atEDSUInStoxAcousticData, StoxAcousticData$Log$Cruise[atEDSUInStoxAcousticData])
     
-    # Create the output table:
-    PSUStartEndDateTime <- data.table::data.table(
-        PSU = PSUs, 
-        StartDateTime = startTimes, 
-        EndDateTime = endTimes
+    # Get the table of start and stop times of all Cruises and combine to a table:
+    PSUStartStopDateTime <- lapply(
+        X = names(atEDSUInStoxAcousticDataByCruise), 
+        FUN = getPSUStartStopDateTimeOneCruise, 
+        # Parameters of getPSUStartStopDateTimeOneCruise(): 
+        atEDSUInStoxAcousticDataByCruise = atEDSUInStoxAcousticDataByCruise, 
+        StoxAcousticData = StoxAcousticData
+    )
+    PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
+    
+    # Add the PSU:
+    PSUStartStopDateTime <- data.table::data.table(
+        PSU = PSU, 
+        PSUStartStopDateTime
     )
     
-    return(PSUStartEndDateTime)
+    return(PSUStartStopDateTime)
 }
+
+# Function to get the table of start and stop times of one Cruise:
+getPSUStartStopDateTimeOneCruise <- function(Cruise, atEDSUInStoxAcousticDataByCruise, StoxAcousticData) {
+    # Get start and stop of unbroken sequences fo EDSUs:
+    thisEDSU <- atEDSUInStoxAcousticDataByCruise[[Cruise]]
+    steps <- which(diff(thisEDSU) > 1)
+    startInd <- c(1, steps + 1)
+    stopInd <- c(steps, length(thisEDSU))
+    # Get start and stop times of the unbroken sequences:
+    startTimes <- StoxAcousticData$Log$StartDateTime[thisEDSU[startInd]]
+    stopTimes <- StoxAcousticData$Log$StopDateTime[thisEDSU[stopInd]]
+    
+    # Create the output table:
+    PSUStartStopDateTimeOneCruise <- data.table::data.table(
+        Cruise = Cruise, 
+        StartDateTime = startTimes, 
+        StopDateTime = stopTimes
+    )
+    
+    return(PSUStartStopDateTimeOneCruise)
+}
+
+
 
 
 ##################################################
@@ -321,11 +404,14 @@ getPSUStartEndDateTimeOne <- function(EDSU_PSU, StoxAcousticData) {
 #' 
 #' @export
 #' 
-DefineAcousticPSUByTime <- function(
+DefineAcousticPSUFromPSUByTime <- function(
     processData, UseProcessData = FALSE, 
-    StoxAcousticData, 
-    AcousticPSU
+    DefinitionMethod = c("FunctionInput"), 
+    AcousticPSUByTime, 
+    StoxAcousticData
 ) {
+    
+    warning("This function should be included as a DefinitionMethod in DefineAcousticPSU() in the future")
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -333,40 +419,37 @@ DefineAcousticPSUByTime <- function(
     }
     
     # Interpret middle times:
-    StoxAcousticDataCopy <- data.table::copy(StoxAcousticData)
-    StoxAcousticDataCopy <- RstoxData::StoxAcousticStartMiddleEndDateTime(StoxAcousticDataCopy)
+    StoxAcousticData <- data.table::copy(StoxAcousticData)
+    StoxAcousticData <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticData)
+    # Extract only the Cruise, EDSU and MiddleDateTime: 
+    Log <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")[, c("Cruise", "EDSU", "MiddleDateTime")]
     
-    # This is not ideal, but prsumably fast, using findInterval() for all time intervals, also those which are beteen the PSUs:
-    # Order the PSU time intervals:
-    timeIntervals <- AcousticPSU$PSUStartEndDateTime[, c("StartDateTime", "EndDateTime")]
-    timeIntervals <- timeIntervals[order(timeIntervals$StartDateTime), ]
-    timeIntervals <- c(
-        timeIntervals$StartDateTime, 
-        timeIntervals$EndDateTime
+    # Get the EDSU indices for each PSU:
+    StratumPSUEDSU <- AcousticPSUByTime[, data.table::data.table(
+        Stratum, 
+        PSU, 
+        Cruise, 
+        EDSUIIndex = which(Log$MiddleDateTime >= StartDateTime & Log$MiddleDateTime < StopDateTime)), 
+        by = seq_len(nrow(AcousticPSUByTime))]
+    
+    # Remove PSUs with no EDSUs:
+    StratumPSUEDSU <- StratumPSUEDSU[!is.na(EDSUIIndex), ]
+    
+    # Add the EDSUs:
+    StratumPSUEDSU[, EDSU := Log$EDSU[EDSUIIndex]]
+    
+    # Split into Stratum_PSU and EDSU_PSU:
+    Stratum_PSU <- unique(StratumPSUEDSU[, c("Stratum", "PSU")])
+    EDSU_PSU <- unique(StratumPSUEDSU[, c("EDSU", "PSU")])
+    # Add all EDSUs:
+    EDSU_PSU <- merge(Log[, "EDSU"], EDSU_PSU, all = TRUE)
+    
+    # Create the output list as from DefineAcousticPSU. In fact, the present function will be implemented as a DefintionMethod in DefnieAcousticPSU() in the future:
+    AcousticPSU <- list(
+        Stratum_PSU = Stratum_PSU,
+        EDSU_PSU = EDSU_PSU
     )
-    # Revert the time zone to UTC, as it was changed in the c() above:
-    attr(timeIntervals, "tzone") <- "UTC"
-    
-    # Order the times to create intervals:
-    orderTimeIntervals <- c(t(matrix(seq_along(timeIntervals), ncol = 2)))
-    timeIntervals <- timeIntervals[orderTimeIntervals]
-    
-    # Create a vector of PSU names, with NA at gaps between PSUs:
-    PSUs <- rep(NA, length(timeIntervals))
-    odd <- seq(1, length(PSUs), 2)
-    PSUs[odd] <- AcousticPSU$PSUStartEndDateTime$PSU
-    
-    # Find the intervals of the times in the PSU definition:
-    StoxAcousticDataCopy$Log[, atPSU := findInterval(MiddleDateTime, timeIntervals)]
-    # Replace 0 and length(timeIntervals) + 1 by NA, indicating that the EDSU was not inside the start and end times of any PSU:
-    StoxAcousticDataCopy$Log[, atPSU := replace(atPSU, atPSU %in% c(0, length(timeIntervals) + 1), NA_integer_)]
-    # Insert the PSUs and remove the atPSU column:
-    StoxAcousticDataCopy$Log[, PSU := PSUs[atPSU]]
-    StoxAcousticDataCopy$Log[, atPSU := NULL]
-    
-    # Extract the new EDSUs:
-    AcousticPSU$EDSU_PSU <- StoxAcousticDataCopy$Log[, c("EDSU", "PSU")]
-    
+
     return(AcousticPSU)
 }
 
@@ -621,7 +704,7 @@ DefineBioticLayer <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference} and \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
 #' @param Radius Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
 #' @param MinNumberOfHauls For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the \code{MinNumberOfHauls}, the \code{MinNumberOfHauls} closest Hauls will be used (in ellipsoidal distance). 
 #' @param Distance For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.
@@ -991,6 +1074,8 @@ BioticAssignmentWeighting <- function(
             by = "Haul"
         )
         BioticAssignmentCopy[, WeightingFactor := NASC]
+        
+        stop("Unfinished method")
     }
     # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowedDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {

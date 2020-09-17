@@ -43,20 +43,39 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             StratumPolygon = list(
-                UseProcessData = FALSE
+                DefinitionMethod = "EDSUToPSU"
             )
         )
     ), 
     DefineAcousticPSUByTime = list(
         functionType = "processData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "AcousticPSU",
+        functionOutputDataType = "AcousticPSUByTime",
         functionArgumentHierarchy = list(
-            AcousticPSU = list(
+            DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            StratumPolygon = list(
+            AcousticPSU = list(
+                DefinitionMethod = "FunctionInput"
+            ), 
+            StoxAcousticData = list(
+                DefinitionMethod = "FunctionInput"
+            )
+        )
+    ), 
+    DefineAcousticPSUFromPSUByTime = list(
+        functionType = "processData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "AcousticPSU",
+        functionArgumentHierarchy = list(
+            DefinitionMethod = list(
                 UseProcessData = FALSE
+            ), 
+            AcousticPSUByTime = list(
+                DefinitionMethod = "FunctionInput"
+            ), 
+            StoxAcousticData = list(
+                DefinitionMethod = "FunctionInput"
             )
         )
     ), 
@@ -65,12 +84,6 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "BioticPSU", 
         functionArgumentHierarchy = list(
-            StratumPolygon = list(
-                UseProcessData = FALSE
-            ), 
-            StoxAcousticData = list(
-                UseProcessData = FALSE
-            ), 
             DefinitionMethod = list(
                 UseProcessData = FALSE
             )
@@ -493,11 +506,11 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "AcousticTargetStrength", 
         functionParameterFormat = list(
             FileName = "filePath",
-            TargetStrengthDefinitionTable = "targetStrengthDefinitionTable", 
-            LengthDependentTable = "lengthDependentTable",
-            LengthAndDepthDependentTable = "lengthAndDepthDependentTable",
-            TargetStrengthByLengthTable = "targetStrengthByLengthTable",
-            LengthExponentTable = "lengthExponentTable"
+            TargetStrengthDefinitionTable = "targetStrengthDefinitionTable"#, 
+            #LengthDependentTable = "lengthDependentTable",
+            #LengthAndDepthDependentTable = "lengthAndDepthDependentTable",
+            #TargetStrengthByLengthTable = "targetStrengthByLengthTable",
+            #LengthExponentTable = "lengthExponentTable"
         ), 
         functionArgumentHierarchy = list(
             TargetStrengthMethod = list(
