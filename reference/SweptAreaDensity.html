@@ -72,19 +72,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.28</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.32</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -117,12 +111,12 @@
     <p>This function calculates the area density of fish as number of individuals per square nautical mile.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SweptAreaDensity</span>(
-  <span class='kw'>MeanLengthDistributionData</span>,
-  SweepWidthMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Constant"</span>, <span class='st'>"PreDefined"</span>, <span class='st'>"CruiseDependent"</span>),
-  SweepWidth = <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span>(),
-  SweepWidthTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>()
-)</pre>
+    <pre class="usage"><span class='fu'>SweptAreaDensity</span><span class='op'>(</span>
+  <span class='va'>MeanLengthDistributionData</span>,
+  SweepWidthMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Constant"</span>, <span class='st'>"PreDefined"</span>, <span class='st'>"CruiseDependent"</span><span class='op'>)</span>,
+  SweepWidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span><span class='op'>(</span><span class='op'>)</span>,
+  SweepWidthByCruise <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,14 +127,10 @@
     </tr>
     <tr>
       <th>SweepWidthMethod</th>
-      <td><p>The method for calculating the sweep width to multiply the <code>WeightedCount</code> in the <code>LengthDistributionData</code> with. Possible options are (1) "Constant", which requires <code>SweepWidth</code> to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the <code>WeightedCount</code> in the <code>LengthDistributionData</code>, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function <code><a href='LengthDependentCatchCompensation.html'>LengthDependentCatchCompensation</a></code>, and (3) "CruiseDependent", which requires the <code>SweepWidthTable</code> to be given.</p></td>
+      <td><p>The method for calculating the sweep width to multiply the <code>WeightedCount</code> in the <code>LengthDistributionData</code> with. Possible options are (1) "Constant", which requires <code>SweepWidth</code> to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the <code>WeightedCount</code> in the <code>LengthDistributionData</code>, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function <code><a href='LengthDependentCatchCompensation.html'>LengthDependentCatchCompensation</a></code>, and (3) "CruiseDependent", which requires the <code>SweepWidth</code> to be given.</p></td>
     </tr>
     <tr>
       <th>SweepWidth</th>
-      <td><p>The constant sweep width in meters.</p></td>
-    </tr>
-    <tr>
-      <th>SweepWidthTable</th>
       <td><p>A table of two columns, <code>Cruise</code> and <code>SweepWidth</code>, giving the sweep width for each cruise.</p></td>
     </tr>
     </table>
@@ -156,7 +146,7 @@
     <div class='dont-index'><p>See <code><a href='AcousticDensity.html'>AcousticDensity</a></code> for acoustic density.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
 
 </div></pre>
   </div>
@@ -170,11 +160,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin.</p>
+  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

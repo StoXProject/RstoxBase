@@ -72,19 +72,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.28</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.32</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -117,15 +111,15 @@
     <p>This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DefineAcousticTargetStrength</span>(
-  <span class='kw'>processData</span>,
-  UseProcessData = <span class='fl'>FALSE</span>,
-  DefinitionMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Table"</span>, <span class='st'>"ResourceFile"</span>),
-  TargetStrengthMethod = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"LengthDependent"</span>, <span class='st'>"LengthAndDepthDependent"</span>,
-    <span class='st'>"TargetStrengthByLength"</span>),
-  TargetStrengthDefinitionTable = <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(),
-  <span class='kw'>FileName</span>
-)</pre>
+    <pre class="usage"><span class='fu'>DefineAcousticTargetStrength</span><span class='op'>(</span>
+  <span class='va'>processData</span>,
+  UseProcessData <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Table"</span>, <span class='st'>"ResourceFile"</span><span class='op'>)</span>,
+  TargetStrengthMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"LengthDependent"</span>, <span class='st'>"LengthAndDepthDependent"</span>,
+    <span class='st'>"TargetStrengthByLength"</span><span class='op'>)</span>,
+  TargetStrengthDefinition <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>,
+  <span class='va'>FileName</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,19 +134,19 @@
     </tr>
     <tr>
       <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table <code>ParameterTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></td>
+      <td><p>Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table <code>TargetStrengthDefinition</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></td>
     </tr>
     <tr>
       <th>TargetStrengthMethod</th>
       <td><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></td>
     </tr>
     <tr>
-      <th>TargetStrengthDefinitionTable</th>
+      <th>TargetStrengthDefinition</th>
       <td><p>A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.</p></td>
     </tr>
     <tr>
       <th>FileName</th>
-      <td><p>A file from which to read the <code>ParameterTable</code>.</p></td>
+      <td><p>A file from which to read the <code>TargetStrengthDefinition</code>.</p></td>
     </tr>
     </table>
 
@@ -172,7 +166,7 @@
     <div class='dont-index'><p><code><a href='AcousticDensity.html'>AcousticDensity</a></code> for applying the AcousticTargetStrength.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
 
 </div></pre>
   </div>
@@ -186,11 +180,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin.</p>
+  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

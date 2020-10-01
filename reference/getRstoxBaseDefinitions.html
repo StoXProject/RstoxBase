@@ -72,19 +72,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.28</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.32</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
@@ -117,7 +111,7 @@
     <p>This function gets vital definitions from the RstoxBase environment.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getRstoxBaseDefinitions</span>(name = <span class='kw'>NULL</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>getRstoxBaseDefinitions</span><span class='op'>(</span>name <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -137,7 +131,7 @@
     <p>A list of definitions.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span>()
+    <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span><span class='op'>(</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $AcousticPSUPrefix
 #&gt; [1] "PSU"
 #&gt; 
@@ -661,8 +655,8 @@
 #&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
 #&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff78d0a1f90&gt;
-#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
+#&gt; &lt;bytecode: 0x7fb0a963e990&gt;
+#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -728,8 +722,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff78d0a1158&gt;
-#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
+#&gt; &lt;bytecode: 0x7fb0a963db58&gt;
+#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -737,16 +731,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff78d0a14d8&gt;
-#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
+#&gt; &lt;bytecode: 0x7fb0a963ded8&gt;
+#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7ff78d0a0b38&gt;
-#&gt; &lt;environment: 0x7ff78d0a80a8&gt;
+#&gt; &lt;bytecode: 0x7fb0a963d538&gt;
+#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
@@ -788,11 +782,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin.</p>
+  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

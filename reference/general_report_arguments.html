@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NASC — NASC • RstoxBase</title>
+<title>General report parameters of RstoxBase — general_report_arguments • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="NASC — NASC" />
-<meta property="og:description" content="NASC function converts the StoxAcousticData into NASCData format" />
+<meta property="og:title" content="General report parameters of RstoxBase — general_report_arguments" />
+<meta property="og:description" content="All functions referring to a project, a model, a process or an output table use the same parameters, listed here." />
 
 
 
@@ -102,43 +102,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>NASC</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Acoustic.R'><code>R/Acoustic.R</code></a></small>
-    <div class="hidden name"><code>NASC.Rd</code></div>
+    <h1>General report parameters of RstoxBase</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Data.R'><code>R/Data.R</code></a></small>
+    <div class="hidden name"><code>general_report_arguments.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>NASC function converts the StoxAcousticData into NASCData format</p>
+    <p>All functions referring to a project, a model, a process or an output table use the same parameters, listed here.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>NASC</span><span class='op'>(</span>StoxAcousticData <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>StoxAcousticData</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
+      <th>TargetVariable</th>
+      <td><p>The variable to report.</p></td>
     </tr>
     <tr>
-      <th>IncludePSU</th>
-      <td><p>Logical: If TRUE the <code>AcousticLayer</code> is added to the NASC data</p></td>
+      <th>GroupingVariables</th>
+      <td><p>The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).</p></td>
     </tr>
     <tr>
-      <th>IncludeLayer</th>
-      <td><p>input in a StoxAcoustcdata format</p></td>
+      <th>RemoveMissingValues</th>
+      <td><p>Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A <code><a href='NASCData.html'>NASCData</a></code> object.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This function is awesome and does excellent stuff.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
