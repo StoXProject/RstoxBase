@@ -180,7 +180,6 @@ SuperIndividuals <- function(
     #    AbundanceData
     #)
     
-    #print(head(AbundanceData, 2))
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the AbundanceData:
     addLengthGroupsByReference(data = SuperIndividualsData, master = AbundanceData)
     # Add length groups also to the AbundanceData:
@@ -274,8 +273,6 @@ SuperIndividuals <- function(
     #SuperIndividualsData <- setorderv(SuperIndividualsData, abundanceGrouping)
     
     # Multiply by abundance weighting factors:
-    #print(SuperIndividualsData[, "abundanceWeightFactor"], 20)
-    #print(SuperIndividualsData[, "individualCount"], 20)
     SuperIndividualsData[, Abundance := Abundance * haulWeightFactor]
     
     # Divide by the number of individuals (regardless of DistributionMethod)

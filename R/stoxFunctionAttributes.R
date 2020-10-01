@@ -72,9 +72,11 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             AcousticPSUByTime = list(
+                UseProcessData = FALSE, 
                 DefinitionMethod = "FunctionInput"
             ), 
             StoxAcousticData = list(
+                UseProcessData = FALSE, 
                 DefinitionMethod = "FunctionInput"
             )
         )
@@ -229,7 +231,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
         functionParameterFormat = list(
-            LengthExponentTable = "lengthExponentTable"
+            LengthExponent = "lengthExponentTable"
         ), 
         functionArgumentHierarchy = list(
             StoxBioticData = list(
@@ -249,7 +251,7 @@ stoxFunctionAttributes <- list(
             Radius = list(
                 WeightingMethod = c("NASC")
             ), 
-            LengthExponentTable = list(
+            LengthExponent = list(
                 WeightingMethod = c("NASC")
             )
         )
@@ -434,13 +436,13 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "DensityData", 
         functionParameterFormat = list(
-            SweepWidthTable = "sweepWidthTable"
+            SweepWidthByCruise = "sweepWidthByCruiseTable"
         ), 
         functionArgumentHierarchy = list(
             SweepWidth = list(
                 SweepWidthMethod = "Constant"
             ), 
-            SweepWidthTable = list(
+            SweepWidthByCruise = list(
                 SweepWidthMethod = "CruiseDependent"
             )
         )
@@ -450,7 +452,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "DensityData", 
         functionParameterFormat = list(
-            SpeciesLinkTable = "speciesLinkTable"
+            SpeciesLink = "speciesLinkTable"
         ),
         functionArgumentHierarchy = list()
     ), 
@@ -506,11 +508,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "AcousticTargetStrength", 
         functionParameterFormat = list(
             FileName = "filePath",
-            TargetStrengthDefinitionTable = "targetStrengthDefinitionTable"#, 
-            #LengthDependentTable = "lengthDependentTable",
-            #LengthAndDepthDependentTable = "lengthAndDepthDependentTable",
-            #TargetStrengthByLengthTable = "targetStrengthByLengthTable",
-            #LengthExponentTable = "lengthExponentTable"
+            TargetStrengthDefinition = "targetStrengthDefinitionTable"
         ), 
         functionArgumentHierarchy = list(
             TargetStrengthMethod = list(
@@ -519,7 +517,7 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            TargetStrengthDefinitionTable = list(
+            TargetStrengthDefinition = list(
                 DefinitionMethod = "Table", 
                 UseProcessData = FALSE
             ), 
@@ -590,7 +588,7 @@ processPropertyFormats <- list(
         class = "single", 
         title = "The path to a single file"
     ), 
-    sweepWidthTable = list(
+    sweepWidthByCruiseTable = list(
         class = "table", 
         title = "Define sweep width in meters for each cruise", 
         columnNames = c(

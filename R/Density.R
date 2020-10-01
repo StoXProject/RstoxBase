@@ -7,7 +7,7 @@
 #' 
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param SpeciesLinkTable A table of the two columns AcousticCategory and SpeciesCategory.
+#' @param SpeciesLink A table of the two columns AcousticCategory and SpeciesCategory.
 #' 
 #' @details
 #' The AcousticDensity function calculates length distributed densities as number of fish per square nautical mile by vertical layer. Length based density distributions are calculated for each NASC value of the input acoustic data set (MacLennan \emph{et al}, 2002) . Usually, the NASC values have a horizontal resolution at PSU level (e.g. transect). By combining a NASC value with a length distribution (usually a total combined length distribution derived from more than one biotic station) and applying a TS vslength relationship, a corresponding density length distribution can be calculated.
@@ -80,17 +80,16 @@ AcousticDensity <- function(
     MeanNASCData,
     AssignmentLengthDistributionData,
     AcousticTargetStrength,
-    SpeciesLinkTable
+    SpeciesLink
 ) {
     
-    # Check that the input SpeciesLinkTable has the appropriate types:
-    checkTypes(table = SpeciesLinkTable)
+    # Check that the input SpeciesLink has the appropriate types:
+    checkTypes(table = SpeciesLink)
     
     # Check that the MeanNASCData has PSU and Layer resolution:
     #checkResolutionPSU_Layer(MeanNASCData, "MeanNASCData")
-    
-    # Merge TargetStrengthTable with SpeciesLinkTable in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
-    AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLinkTable, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
+    # Merge TargetStrength with SpeciesLink in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
+    AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLink, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
     # Define the resolution on which to distribute the NASC:
     resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     
@@ -116,7 +115,7 @@ AcousticDensity <- function(
 }
 
 NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTargetStrength, resolution) {
-    # Merge the TargetStrengthTable into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship. This step is important, as merging is done by the AcousticCategory, Frequency and possibly other grouping columns.:
+    # Merge the TargetStrength into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship. This step is important, as merging is done by the AcousticCategory, Frequency and possibly other grouping columns.:
     
     
     # Take special care of TargetStrengthMethods that are tables of length instead of functions, in which we apply constant interpolation to the lengths in the data here, to facilitate correct merging:
@@ -176,19 +175,19 @@ getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "con
     
     # Define the columns to modify:
     functionColumns <- c("TotalLength", "TargetStrength")
-    by <- setdiff(names(TargetStrengthTable), functionColumns)
+    by <- setdiff(names(TargetStrength), functionColumns)
     
-    # Add mid points to the TargetStrengthTable to facilitate use of approxfun with method = "constant":
+    # Add mid points to the TargetStrength to facilitate use of approxfun with method = "constant":
     TargetStrengthTable  <- expandTargetStrengthTable(TargetStrengthTable, by = by)
     
     # Get one function for each combination of the columns given by 'by':
-    TargetStrengthTableWithFunction <- TargetStrengthTable[, .(TargetStrengthFunction = getTargetStrengthByLengthFunctionOne(.SD, by = by, method = method, rule = rule)), by = by]
+    TargetStrengthWithFunction <- TargetStrengthTable[, .(TargetStrengthFunction = getTargetStrengthByLengthFunctionOne(.SD, by = by, method = method, rule = rule)), by = by]
     
-    return(TargetStrengthTableWithFunction)
+    return(TargetStrengthWithFunction)
 }
 
 
-# Define the function to get the target strength function, using one TargetStrengthTable (a subset of the TargetStrengthTable):
+# Define the function to get the target strength function, using one TargetStrength (a subset of the TargetStrength):
 getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method = "constant", rule = 2) {
     
     # Define the target strength function as a function of length and length interval:
@@ -205,7 +204,7 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
     }
     
     # Save the function in the package environment:
-    #functionName <- paste0("StrengthByLengthFunction_", paste(by, TargetStrengthTable[1, ..by], sep = "_", collapse = "_"))
+    #functionName <- paste0("StrengthByLengthFunction_", paste(by, TargetStrength[1, ..by], sep = "_", collapse = "_"))
     functionName <- paste0("StrengthByLengthFunction_UNIXTime", unclass(Sys.time()))
     assign(
         x = functionName, 
@@ -218,7 +217,7 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
 }
 
 
-# Function to prepare a TargetStrengthTable for approxfun():
+# Function to prepare a TargetStrength for approxfun():
 expandTargetStrengthTable <- function(TargetStrengthTable, by) {
     # Add mid points of the lengths between the first and last:
     TargetStrengthTable[, .(
@@ -309,9 +308,9 @@ getMidIndividualTotalLength <- function(x) {
 #' This function calculates the area density of fish as number of individuals per square nautical mile.
 #' 
 #' @inheritParams ModelData
-#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidthTable} to be given.
+#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidth} to be given.
 #' @param SweepWidth The constant sweep width in meters.
-#' @param SweepWidthTable A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
+#' @param SweepWidth A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -330,7 +329,7 @@ SweptAreaDensity <- function(
     MeanLengthDistributionData, 
     SweepWidthMethod = c("Constant", "PreDefined", "CruiseDependent"), 
     SweepWidth = double(), 
-    SweepWidthTable = data.table::data.table()
+    SweepWidthByCruise = data.table::data.table()
 ) {
 	
     ## Get the DefinitionMethod:
@@ -366,12 +365,12 @@ SweptAreaDensity <- function(
             DensityData[, Density := WeightedCount / sweepWidthInNauticalMiles]
         }
         else if(SweepWidthMethod == "CruiseDependent") {
-            if(length(SweepWidthTable) == 0) {
-                stop("SweepWidthTable must be given when SweepWidthMethod == \"CruiseDependent\"")
+            if(length(SweepWidthByCruise) == 0) {
+                stop("SweepWidthByCruise must be given when SweepWidthMethod == \"CruiseDependent\"")
             }
             
-            # Merge in the SweepWidthTable:
-            DensityData <- merge(DensityData, SweepWidthTable, by = "Cruise")
+            # Merge in the SweepWidth:
+            DensityData <- merge(DensityData, SweepWidthByCruise, by = "Cruise")
             # Convert sweep width to nautical miles:
             DensityData[, SweepWidthNauticalMile := SweepWidth  / getRstoxBaseDefinitions("nauticalMileInMeters")]
             # Divide by the sweep width:

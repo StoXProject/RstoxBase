@@ -66,7 +66,7 @@ DefinePSU <- function(
     SSU <- StoxData[[SSUName]]
     
     # Get the stratum names:
-    StratumNames = getStratumNames(StratumPolygon)
+    #StratumNames = getStratumNames(StratumPolygon)
     
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
@@ -984,7 +984,7 @@ getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData,
 #' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
-#' @param LengthExponentTable For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
+#' @param LengthExponent For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -1005,7 +1005,7 @@ BioticAssignmentWeighting <- function(
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    StoxAcousticData, Radius, LengthExponentTable
+    StoxAcousticData, Radius, LengthExponent
 ) {
     
     # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.
@@ -1223,9 +1223,9 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' 
 #' @inheritParams general_arguments
 #' @param TargetStrengthMethod  Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
-#' @param TargetStrengthDefinitionTable A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
-#' @param FileName A file from which to read the \code{ParameterTable}.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{TargetStrengthDefinition}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
+#' @param TargetStrengthDefinition A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
+#' @param FileName A file from which to read the \code{TargetStrengthDefinition}.
 #' 
 #' @details
 #' The \code{TargetStrengthMethod} has the following possible values: 
@@ -1252,7 +1252,7 @@ DefineAcousticTargetStrength <- function(
     # Note that "LengthExponent" is an option for TargetStrengthMethod (used by BioticAssignmentWeighting()), but this is not shown.
     DefinitionMethod = c("Table", "ResourceFile"),
     TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
-    TargetStrengthDefinitionTable = data.table::data.table(), 
+    TargetStrengthDefinition = data.table::data.table(), 
     FileName
 ) {
     
@@ -1265,12 +1265,12 @@ DefineAcousticTargetStrength <- function(
     TargetStrengthMethod <- match.arg(TargetStrengthMethod)
     DefinitionMethod <- match.arg(DefinitionMethod)
     
-    # Get or read the TargetStrengthTable and return in a list with the TargetStrengthMethod:
+    # Get or read the TargetStrength and return in a list with the TargetStrengthMethod:
     AcousticTargetStrength <- getAcousticTargetStrength(
         TargetStrengthMethod = TargetStrengthMethod, 
         DefinitionMethod = DefinitionMethod, 
-        TargetStrengthTable = TargetStrengthDefinitionTable, 
-        #TargetStrengthTable = get(paste0(TargetStrengthMethod, "Table")), 
+        TargetStrengthTable = TargetStrengthDefinition, 
+        #TargetStrength = get(paste0(TargetStrengthMethod, "Table")), 
         FileName = FileName
     )
     
@@ -1282,7 +1282,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
     # Read the table if requested, or issue an error if not given:
     if(DefinitionMethod == "Table") {
         if(length(TargetStrengthTable) == 0) {
-            stop(TargetStrengthMethod, "Table must be given if DefinitionMethod = \"Table\"")
+            stop(TargetStrengthMethod, "TargetStrengthTable must be given if DefinitionMethod = \"Table\"")
         }
     }
     else if(DefinitionMethod == "ResourceFile") {
@@ -1290,7 +1290,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
     }
     
     # Check the columns of the table:
-    checkTargetStrengthTable(TargetStrengthTable, TargetStrengthMethod)
+    checkTargetStrength(TargetStrengthTable, TargetStrengthMethod)
     
     # Define the output AcousticTargetStrength as a list of the method and the table:
     AcousticTargetStrength <- list(
@@ -1302,7 +1302,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
 }
 
 
-checkTargetStrengthTable <- function(TargetStrengthTable, TargetStrengthMethod) {
+checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
     # Get and check the TargetStrengthMethod:
     targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
     if(! TargetStrengthMethod %in% names(targetStrengthParameters)) {

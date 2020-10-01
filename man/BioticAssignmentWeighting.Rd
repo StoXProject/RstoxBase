@@ -13,7 +13,7 @@ BioticAssignmentWeighting(
   MaxNumberOfLengthSamples = 100,
   StoxAcousticData,
   Radius,
-  LengthExponentTable
+  LengthExponent
 )
 }
 \arguments{
@@ -31,7 +31,7 @@ BioticAssignmentWeighting(
 
 \item{Radius}{For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated.}
 
-\item{LengthExponentTable}{For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.}
+\item{LengthExponent}{For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.

@@ -755,7 +755,7 @@ JavaJEXL2R <- function(x, eval=TRUE) {
     return(x)
 }
 
-# Check the types of the SpeciesLinkTable:
+# Check the types of the SpeciesLink:
 checkTypes <- function(table) {
     
     if(length(table) == 0) {
