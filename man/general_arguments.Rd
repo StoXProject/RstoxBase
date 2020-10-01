@@ -2,7 +2,7 @@
 % Please edit documentation in R/Data.R
 \name{general_arguments}
 \alias{general_arguments}
-\title{General parameters of RstoxFramework.}
+\title{General parameters of RstoxBase}
 \arguments{
 \item{processData}{The current data produced by a previous instance of the function.}
 

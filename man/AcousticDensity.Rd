@@ -8,7 +8,7 @@ AcousticDensity(
   MeanNASCData,
   AssignmentLengthDistributionData,
   AcousticTargetStrength,
-  SpeciesLinkTable
+  SpeciesLink
 )
 }
 \arguments{
@@ -16,7 +16,7 @@ AcousticDensity(
 
 \item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
 
-\item{SpeciesLinkTable}{A table of the two columns AcousticCategory and SpeciesCategory.}
+\item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
 }
 \value{
 An object of StoX data type \code{\link{DensityData}}.

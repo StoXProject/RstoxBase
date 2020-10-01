@@ -27,7 +27,7 @@ DefineAcousticPSU(
 An object of StoX data type \code{\link{AcousticPSU}}.
 }
 \description{
-This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs.
+Defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs.
 }
 \details{
 This function is awesome and does excellent stuff.

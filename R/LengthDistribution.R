@@ -188,7 +188,7 @@ RegroupLengthDistribution <- function(
     if(length(LengthInterval) == 1) {
         # Convert to indices:
         minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
-        # Add one intervavl if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
+        # Add one interval if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
         maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
         
         LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
@@ -214,12 +214,12 @@ RegroupLengthDistribution <- function(
         stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthInterval[at], LengthInterval[at + 1], sep = " - "), collapse = ", "))
     }
     
-    # Get the inteval widths, and replace LengthResolution with the appropriate widths:
-    LengthIntervalWidths <- diff(LengthInterval)
-    numIntervals <- length(LengthIntervalWidths)
-    # Temporary add the index of the length intervals:
+     # Temporary add the index of the length intervals:
     LengthDistributionDataCopy[, intervalIndex := findInterval(IndividualTotalLength, ..LengthInterval)]
     
+    # Get the inteval widths, and count the number of hits in each interval:
+    LengthIntervalWidths <- diff(LengthInterval)
+    numIntervals <- length(LengthIntervalWidths)
     # Issue a warning if the intervalIndex is NA (values outside of the LengthInterval):
     anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1, na.rm = TRUE)
     anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals, na.rm = TRUE)

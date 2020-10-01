@@ -187,8 +187,9 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
     
     # If present, add the PSUProcessData to the start of the data
     if(length(PSUProcessData) && length(PSUProcessData$Stratum_PSU)) {
-        # Merge first the PSUProcessData:
-        PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData, output.only.last = TRUE, ...)
+        # Merge first the PSUProcessData (except the PSUStartEndDateTime, which is used for matching new data into the same PSU definitions):
+        notPSUStartEndDateTime <- names(PSUProcessData) != "PSUStartEndDateTime"
+        PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData[notPSUStartEndDateTime], output.only.last = TRUE, ...)
         # Then merge the result with the data:
         by <- intersect(names(PSUProcessData), names(data))
         # Remove columns with only NAs in the data in 'by':
@@ -754,7 +755,7 @@ JavaJEXL2R <- function(x, eval=TRUE) {
     return(x)
 }
 
-# Check the types of the SpeciesLinkTable:
+# Check the types of the SpeciesLink:
 checkTypes <- function(table) {
     
     if(length(table) == 0) {

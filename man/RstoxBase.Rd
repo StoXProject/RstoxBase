@@ -22,4 +22,9 @@ Useful links:
 \author{
 \strong{Maintainer}: Arne Johannes Holmin \email{arnejh@hi.no}
 
+Authors:
+\itemize{
+  \item Espen Johnsen
+}
+
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Report.R
 \name{ReportBootstrap}
 \alias{ReportBootstrap}
-\title{Report ImputeSuperIndividualsData}
+\title{Report Bootstrap}
 \usage{
 ReportBootstrap(
   BootstrapData,
@@ -26,7 +26,7 @@ ReportBootstrap(
 
 \item{BootstrapReportFunction}{The function to apply across bootstrap run, such as "cv" or "stoxSummary".}
 
-\item{GroupingVariables}{The variables to report by, e.g. "Stratum" or "SpeciesCategory".}
+\item{GroupingVariables}{The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).}
 
 \item{RemoveMissingValues}{Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA.}
 

@@ -18,7 +18,7 @@ ReportImputeSuperIndividuals(
 
 \item{ReportFunction}{The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".}
 
-\item{GroupingVariables}{The variables to report by, e.g. "Stratum" or "SpeciesCategory".}
+\item{GroupingVariables}{The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).}
 
 \item{RemoveMissingValues}{Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA.}
 

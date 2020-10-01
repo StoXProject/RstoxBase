@@ -7,7 +7,7 @@
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @param DefinitionMethod Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -66,7 +66,7 @@ DefinePSU <- function(
     SSU <- StoxData[[SSUName]]
     
     # Get the stratum names:
-    StratumNames = getStratumNames(StratumPolygon)
+    #StratumNames = getStratumNames(StratumPolygon)
     
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
@@ -158,7 +158,7 @@ DefinePSU <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
+#' @param DefinitionMethod Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -204,7 +204,7 @@ DefineBioticPSU <- function(
 ##################################################
 #' Acoustic PSU
 #' 
-#' This function defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
+#' Defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
@@ -247,6 +247,209 @@ DefineAcousticPSU <- function(
         PSUType = "Acoustic"
     )
     
+    return(AcousticPSU)
+}
+
+##################################################
+##################################################
+#' Define Acoustic PSU by time
+#' 
+#' This function defines Acoustic PSUs by start and stop times.
+#' 
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @param DefinitionMethod  Character: A string naming the method to use. Currently, only "FunctionInput" is available, implying to take previously defined AcousticPSU definition and the StoxAcousticData used in that definition as input and determine start and stop times of unbroken sequences of EDSUs
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
+#' 
+#' @export
+#' 
+DefineAcousticPSUByTime <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("FunctionInput"), 
+    AcousticPSU, 
+    StoxAcousticData
+) {
+    
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    if(DefinitionMethod == "FunctionInput") {
+        # Get the times of the PSUs:
+        AcousticPSUByTime <- getPSUStartStopDateTime(AcousticPSU, StoxAcousticData)
+    }
+    else {
+        stop("Inavlid DefinitionMethod")
+    }
+    
+    return(AcousticPSUByTime)
+}
+
+# Function to get the start and 
+getPSUStartStopDateTime <- function(AcousticPSU, StoxAcousticData) {
+    
+    # Interpret start and end times:
+    StoxAcousticDataCopy <- data.table::copy(StoxAcousticData)
+    StoxAcousticDataCopy <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticDataCopy)
+    
+    # Split the EDSU_PSU table into PSUs:
+    EDSU_PSU_ByPSU <- AcousticPSU$EDSU_PSU[!is.na(PSU) & nchar(PSU) > 0]
+    EDSU_PSU_ByPSU <- split(EDSU_PSU_ByPSU, by = "PSU")
+    
+    # Get the table of start and stop times of each PSUs and combine to a table:
+    PSUStartStopDateTime <- lapply(
+        X = names(EDSU_PSU_ByPSU), 
+        FUN = getPSUStartStopDateTimeByPSU, 
+        # Parameters of getPSUStartStopDateTimeByPSU(): 
+        EDSU_PSU_ByPSU = EDSU_PSU_ByPSU, 
+        StoxAcousticData = StoxAcousticDataCopy
+    )
+    PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
+    
+    # Add the Stratum:
+    PSUStartStopDateTime <- RstoxData::mergeByIntersect(AcousticPSU$Stratum_PSU, PSUStartStopDateTime)
+    
+    return(PSUStartStopDateTime)
+}
+
+# Function to get the start and end times of one acoustic PSU:
+getPSUStartStopDateTimeByPSU <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
+    
+    #browser()
+    # For conevnience get the EDSUs of the current PSU:
+    thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
+    
+    # Match the EDSUs of the AcousticPSU with EDSUs of the StoxAcousticData:
+    atEDSUInStoxAcousticData <- match(thisEDSU_PSU$EDSU, StoxAcousticData$Log$EDSU)
+    if(any(is.na(atEDSUInStoxAcousticData))) {
+        stop("The StoxAcousticData must be the same data that were used to generate the AcousticPSU.")
+    }
+    
+    # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data):
+    atEDSUInStoxAcousticDataByCruise <- split(atEDSUInStoxAcousticData, StoxAcousticData$Log$Cruise[atEDSUInStoxAcousticData])
+    
+    # Get the table of start and stop times of all Cruises and combine to a table:
+    PSUStartStopDateTime <- lapply(
+        X = names(atEDSUInStoxAcousticDataByCruise), 
+        FUN = getPSUStartStopDateTimeOneCruise, 
+        # Parameters of getPSUStartStopDateTimeOneCruise(): 
+        atEDSUInStoxAcousticDataByCruise = atEDSUInStoxAcousticDataByCruise, 
+        StoxAcousticData = StoxAcousticData
+    )
+    PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
+    
+    # Add the PSU:
+    PSUStartStopDateTime <- data.table::data.table(
+        PSU = PSU, 
+        PSUStartStopDateTime
+    )
+    
+    return(PSUStartStopDateTime)
+}
+
+# Function to get the table of start and stop times of one Cruise:
+getPSUStartStopDateTimeOneCruise <- function(Cruise, atEDSUInStoxAcousticDataByCruise, StoxAcousticData) {
+    # Get start and stop of unbroken sequences fo EDSUs:
+    thisEDSU <- atEDSUInStoxAcousticDataByCruise[[Cruise]]
+    steps <- which(diff(thisEDSU) > 1)
+    startInd <- c(1, steps + 1)
+    stopInd <- c(steps, length(thisEDSU))
+    # Get start and stop times of the unbroken sequences:
+    startTimes <- StoxAcousticData$Log$StartDateTime[thisEDSU[startInd]]
+    stopTimes <- StoxAcousticData$Log$StopDateTime[thisEDSU[stopInd]]
+    
+    # Create the output table:
+    PSUStartStopDateTimeOneCruise <- data.table::data.table(
+        Cruise = Cruise, 
+        StartDateTime = startTimes, 
+        StopDateTime = stopTimes
+    )
+    
+    return(PSUStartStopDateTimeOneCruise)
+}
+
+
+
+
+##################################################
+##################################################
+#' Re-define Acoustic PSU
+#' 
+#' Re- defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs, based on the start and end time of preivously defined acoustic PSUs.
+#' 
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{AcousticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
+#' 
+#' @export
+#' 
+DefineAcousticPSUFromPSUByTime <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("FunctionInput"), 
+    AcousticPSUByTime, 
+    StoxAcousticData
+) {
+    
+    warning("This function should be included as a DefinitionMethod in DefineAcousticPSU() in the future")
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # Interpret middle times:
+    StoxAcousticData <- data.table::copy(StoxAcousticData)
+    StoxAcousticData <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticData)
+    # Extract only the Cruise, EDSU and MiddleDateTime: 
+    Log <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")[, c("Cruise", "EDSU", "MiddleDateTime")]
+    
+    # Get the EDSU indices for each PSU:
+    StratumPSUEDSU <- AcousticPSUByTime[, data.table::data.table(
+        Stratum, 
+        PSU, 
+        Cruise, 
+        EDSUIIndex = which(Log$MiddleDateTime >= StartDateTime & Log$MiddleDateTime < StopDateTime)), 
+        by = seq_len(nrow(AcousticPSUByTime))]
+    
+    # Remove PSUs with no EDSUs:
+    StratumPSUEDSU <- StratumPSUEDSU[!is.na(EDSUIIndex), ]
+    
+    # Add the EDSUs:
+    StratumPSUEDSU[, EDSU := Log$EDSU[EDSUIIndex]]
+    
+    # Split into Stratum_PSU and EDSU_PSU:
+    Stratum_PSU <- unique(StratumPSUEDSU[, c("Stratum", "PSU")])
+    EDSU_PSU <- unique(StratumPSUEDSU[, c("EDSU", "PSU")])
+    # Add all EDSUs:
+    EDSU_PSU <- merge(Log[, "EDSU"], EDSU_PSU, all = TRUE)
+    
+    # Create the output list as from DefineAcousticPSU. In fact, the present function will be implemented as a DefintionMethod in DefnieAcousticPSU() in the future:
+    AcousticPSU <- list(
+        Stratum_PSU = Stratum_PSU,
+        EDSU_PSU = EDSU_PSU
+    )
+
     return(AcousticPSU)
 }
 
@@ -501,7 +704,7 @@ DefineBioticLayer <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide the \code{EllipsoidalDistanceTable} specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference} and \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
 #' @param Radius Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
 #' @param MinNumberOfHauls For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the \code{MinNumberOfHauls}, the \code{MinNumberOfHauls} closest Hauls will be used (in ellipsoidal distance). 
 #' @param Distance For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.
@@ -781,7 +984,7 @@ getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData,
 #' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
-#' @param LengthExponentTable For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
+#' @param LengthExponent For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -802,7 +1005,7 @@ BioticAssignmentWeighting <- function(
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    StoxAcousticData, Radius, LengthExponentTable
+    StoxAcousticData, Radius, LengthExponent
 ) {
     
     # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.
@@ -871,6 +1074,8 @@ BioticAssignmentWeighting <- function(
             by = "Haul"
         )
         BioticAssignmentCopy[, WeightingFactor := NASC]
+        
+        stop("Unfinished method")
     }
     # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowedDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
@@ -1018,9 +1223,9 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' 
 #' @inheritParams general_arguments
 #' @param TargetStrengthMethod  Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{ParameterTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
-#' @param TargetStrengthDefinitionTable A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
-#' @param FileName A file from which to read the \code{ParameterTable}.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{TargetStrengthDefinition}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
+#' @param TargetStrengthDefinition A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
+#' @param FileName A file from which to read the \code{TargetStrengthDefinition}.
 #' 
 #' @details
 #' The \code{TargetStrengthMethod} has the following possible values: 
@@ -1047,7 +1252,7 @@ DefineAcousticTargetStrength <- function(
     # Note that "LengthExponent" is an option for TargetStrengthMethod (used by BioticAssignmentWeighting()), but this is not shown.
     DefinitionMethod = c("Table", "ResourceFile"),
     TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
-    TargetStrengthDefinitionTable = data.table::data.table(), 
+    TargetStrengthDefinition = data.table::data.table(), 
     FileName
 ) {
     
@@ -1060,12 +1265,12 @@ DefineAcousticTargetStrength <- function(
     TargetStrengthMethod <- match.arg(TargetStrengthMethod)
     DefinitionMethod <- match.arg(DefinitionMethod)
     
-    # Get or read the TargetStrengthTable and return in a list with the TargetStrengthMethod:
+    # Get or read the TargetStrength and return in a list with the TargetStrengthMethod:
     AcousticTargetStrength <- getAcousticTargetStrength(
         TargetStrengthMethod = TargetStrengthMethod, 
         DefinitionMethod = DefinitionMethod, 
-        TargetStrengthTable = TargetStrengthDefinitionTable, 
-        #TargetStrengthTable = get(paste0(TargetStrengthMethod, "Table")), 
+        TargetStrengthTable = TargetStrengthDefinition, 
+        #TargetStrength = get(paste0(TargetStrengthMethod, "Table")), 
         FileName = FileName
     )
     
@@ -1077,7 +1282,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
     # Read the table if requested, or issue an error if not given:
     if(DefinitionMethod == "Table") {
         if(length(TargetStrengthTable) == 0) {
-            stop(TargetStrengthMethod, "Table must be given if DefinitionMethod = \"Table\"")
+            stop(TargetStrengthMethod, "TargetStrengthTable must be given if DefinitionMethod = \"Table\"")
         }
     }
     else if(DefinitionMethod == "ResourceFile") {
@@ -1085,7 +1290,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
     }
     
     # Check the columns of the table:
-    checkTargetStrengthTable(TargetStrengthTable, TargetStrengthMethod)
+    checkTargetStrength(TargetStrengthTable, TargetStrengthMethod)
     
     # Define the output AcousticTargetStrength as a list of the method and the table:
     AcousticTargetStrength <- list(
@@ -1097,7 +1302,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
 }
 
 
-checkTargetStrengthTable <- function(TargetStrengthTable, TargetStrengthMethod) {
+checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
     # Get and check the TargetStrengthMethod:
     targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
     if(! TargetStrengthMethod %in% names(targetStrengthParameters)) {

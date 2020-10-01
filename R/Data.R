@@ -1,6 +1,6 @@
 ##################################################
 ##################################################
-#' General parameters of RstoxFramework.
+#' General parameters of RstoxBase
 #' 
 #' All functions referring to a project, a model, a process or an output table use the same parameters, listed here.
 #' 
@@ -10,6 +10,20 @@
 #' @param PSUType Character: A string naming the type of model, either "Acoustic" or "Biotic".
 #' 
 #' @name general_arguments
+#' 
+NULL
+
+##################################################
+##################################################
+#' General report parameters of RstoxBase
+#' 
+#' All functions referring to a project, a model, a process or an output table use the same parameters, listed here.
+#' 
+#' @param TargetVariable The variable to report.
+#' @param GroupingVariables The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).
+#' @param RemoveMissingValues Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA.  
+#' 
+#' @name general_report_arguments
 #' 
 NULL
 
@@ -399,7 +413,7 @@ NULL
 ##################################################
 #' Acoustic target strength
 #' 
-#' The AcousticTargetStrength process data is a list of two tables, the TargetStrengthMethod, holding only the string naming the method to use, and the TargetStrengthTable, holding the parameters/values of the method. See \code{\link{DefineAcousticTargetStrength}} for details on the different methods.
+#' The AcousticTargetStrength process data is a list of two tables, the TargetStrengthMethod, holding only the string naming the method to use, and the TargetStrength, holding the parameters/values of the method. See \code{\link{DefineAcousticTargetStrength}} for details on the different methods.
 #' 
 #' @seealso This data type is produced by \code{\link{DefineAcousticTargetStrength}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
