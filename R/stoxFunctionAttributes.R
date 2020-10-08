@@ -496,7 +496,7 @@ stoxFunctionAttributes <- list(
     ImputeSuperIndividuals = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "ImputeSuperIndividualsData"
+        functionOutputDataType = "SuperIndividualsData"
     ),
     ##########
     
@@ -542,10 +542,10 @@ stoxFunctionAttributes <- list(
     ), 
     
     
-    ReportImputeSuperIndividuals = list(
+    ReportSuperIndividuals = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "ReportImputeSuperIndividualsData", 
+        functionOutputDataType = "ReportSuperIndividualsData", 
         # This is an example of using an expression to determine when to show a parameter:
         functionArgumentHierarchy = list(
             WeightingVariable = list(

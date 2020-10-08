@@ -482,7 +482,7 @@ ImputeSuperIndividuals <- function(
     IndividualKeys <- setdiff(individualNames, RstoxData::getStoxKeys("StoxBiotic"))
     
     # Impute the SuperIndividualsData:
-    ImputeSuperIndividualsData <- ImputeData(
+    SuperIndividualsData <- ImputeData(
         data = SuperIndividualsData, 
         imputeAtMissing = "IndividualAge", 
         imputeByEqual = "IndividualTotalLength", 
@@ -492,16 +492,16 @@ ImputeSuperIndividuals <- function(
     )
     
     # Re-calculate the Biomass:
-    ImputeSuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
 
     # Order the columns, but keep all columns:
-    formatOutput(ImputeSuperIndividualsData, dataType = "ImputeSuperIndividualsData", keep.all = TRUE)
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(ImputeSuperIndividualsData)
+    #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
     
-    return(ImputeSuperIndividualsData)
+    return(SuperIndividualsData)
 }
 
 

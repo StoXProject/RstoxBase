@@ -2,7 +2,7 @@
 % Please edit documentation in R/Report.R
 \name{ReportSpeciesCategoryCatch}
 \alias{ReportSpeciesCategoryCatch}
-\title{Report ImputeSuperIndividualsData}
+\title{Report SpeciesCategoryCatch}
 \usage{
 ReportSpeciesCategoryCatch(SpeciesCategoryCatchData, StoxBioticTranslation)
 }
@@ -20,10 +20,10 @@ ReportSpeciesCategoryCatch(SpeciesCategoryCatchData, StoxBioticTranslation)
 \item{WeightingVariable}{The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".}
 }
 \value{
-A \code{\link{ReportImputeSuperIndividualsData}} object.
+A \code{\link{ReportSpeciesCategoryCatchData}} object.
 }
 \description{
-Reports the sum, mean or other functions on a variable of the \code{\link{ImputeSuperIndividualsData}}.
+Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 }
 \details{
 This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.

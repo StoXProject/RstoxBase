@@ -151,16 +151,16 @@ initiateRstoxBase <- function(){
             weighting = NULL, 
             other = NULL
         ), 
-        ImputeSuperIndividualsData = list(
-            horizontalResolution = "Stratum", 
-            verticalResolution = c("Layer", "Haul"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
-            data = c("Abundance",  "Biomass"), 
-            verticalLayerDimension = NULL, # Not relevant
-            weighting = NULL, 
-            other = NULL
-        ), 
+        #ImputeSuperIndividualsData = list(
+        #    horizontalResolution = "Stratum", 
+        #    verticalResolution = c("Layer", "Haul"), 
+        #    categoryVariable = "SpeciesCategory", 
+        #    groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+        #    data = c("Abundance",  "Biomass"), 
+        #    verticalLayerDimension = NULL, # Not relevant
+        #    weighting = NULL, 
+        #    other = NULL
+        #), 
         BioticAssignment = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = "Layer", 
