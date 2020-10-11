@@ -266,6 +266,9 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
 
 
 # Stolen from https://stackoverflow.com/questions/4752275/test-for-equality-among-all-elements-of-a-single-vector:
+#' 
+#' @export
+#' 
 allEqual <- function(x, tol = .Machine$double.eps ^ 0.5, ...) {
     if (length(x) == 1) {
         return(TRUE)

@@ -741,12 +741,12 @@ DefineBioticAssignment <- function(
     StoxAcousticData, 
     Radius = double(), 
     # (Additional) for DefinitionMethod "EllipsoidalDistance": 
-    MinNumberOfHauls,
-    Distance, 
-    TimeDifference, 
-    BottomDepthDifference, 
-    LongitudeDifference, 
-    LatitudeDifference
+    MinNumberOfHauls = double(),
+    Distance = double(), 
+    TimeDifference = double(), 
+    BottomDepthDifference = double(), 
+    LongitudeDifference = double(), 
+    LatitudeDifference = double()
 )
 {
     
@@ -1005,7 +1005,7 @@ BioticAssignmentWeighting <- function(
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    StoxAcousticData, Radius, LengthExponent
+    StoxAcousticData, Radius = double(), LengthExponent = double()
 ) {
     
     # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.

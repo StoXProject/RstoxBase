@@ -479,6 +479,9 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE)
         
         #data <- data[, ..columnOrder]
     }
+    
+    # Delete any keys, as we use the argument 'by' for all merging and aggregation:
+    setkey(data, NULL)
 }
 
 
