@@ -133,19 +133,25 @@ initiateRstoxBase <- function(){
         ), 
         IndividualsData = list(
             horizontalResolution = "Stratum", 
-            verticalResolution = c("Layer", "Haul"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            #verticalResolution = c("Layer", "Haul"), 
+            verticalResolution = c("Layer"), 
+            #categoryVariable = "SpeciesCategory", 
+            #groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            #groupingVariables = c("Haul", "Individual"), 
             data = NULL, 
             verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
             other = NULL
         ), 
+        # Prioritise the aggregation variables (horizontalResolution, verticalResolution, categoryVariable and groupingVariables) of the AbundanceData, followed by the IndividualRoundWeight, which is used to calculate Biomass (dividing Abundance by it); and finally the aggregation variables of the IndividualsData, as the purpose of the SuperIndividualsData is to distribute Abundance and Biomass onto the individuals:
         SuperIndividualsData = list(
             horizontalResolution = "Stratum", 
-            verticalResolution = c("Layer", "Haul"), 
+            #verticalResolution = c("Layer", "Haul"), 
+            verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            #groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            #groupingVariables = c("IndividualTotalLength", "LengthResolution", "IndividualRoundWeight", "Haul", "Individual"), 
+            groupingVariables = c("IndividualTotalLength", "LengthResolution", "IndividualRoundWeight"), 
             data = c("Abundance",  "Biomass"), 
             verticalLayerDimension = NULL, # Not relevant
             weighting = NULL, 
@@ -449,7 +455,7 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 #}
 
 #setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
-formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE) {
+formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
     
     # Remove any duplicated columns:
     if(any(duplicated(names(data)))) {
@@ -458,13 +464,13 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE)
     
     # Get the column order:
     #columnOrder <- getColumnOrder(dataType)
-    columnOrder <- getDataTypeDefinition(dataType, unlist = TRUE)
+    columnOrder <- c(
+        getDataTypeDefinition(dataType, unlist = TRUE), 
+        secondaryColumnOrder
+    )
     if(allow.missing) {
         columnOrder <- intersect(columnOrder, names(data))
     }
-    
-    # Order the columns:
-    data.table::setcolorder(data, columnOrder)
     
     if(!keep.all) {
         #toRemove <- setdiff(names(data), columnOrder)
@@ -480,8 +486,14 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE)
         #data <- data[, ..columnOrder]
     }
     
+    # Order the columns:
+    data.table::setcolorder(data, columnOrder)
+    
+    # Order the rows:
+    data.table::setorder(data, na.last = TRUE)
+    
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
-    setkey(data, NULL)
+    data.table::setkey(data, NULL)
 }
 
 

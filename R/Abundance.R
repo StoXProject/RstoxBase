@@ -75,7 +75,7 @@ Individuals <- function(
     AbundanceType <- match.arg(AbundanceType)
     
     # Merge StoxBtiotic:
-    MergedStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
+    MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
     
     # Get the resolution variables of AbundanceData:
     abundanceResolutionVariables <- getResolutionVariables("AbundanceData")
@@ -106,8 +106,8 @@ Individuals <- function(
     # Expand the vectors of hauls:
     #usedHauls <- expandDT(usedHauls)
     
-    # Merge individuals into the Stratum, Layer, Haul table:
-    IndividualsData <- merge(usedHauls, MergedStoxBioticData, by = "Haul", allow.cartesian = TRUE)
+    # Merge individuals into the Stratum, Layer, Haul table, for the purpose of gettinig all individuals used in the model, possibly repeating individuals if the same hauls are used for several Stratum-Layer combinations (which can be the case e.g. for several layers):
+    IndividualsData <- merge(usedHauls, MergeStoxBioticData, by = "Haul", allow.cartesian = TRUE)
     
     ## Remove rows with SpeciesCategory NA (change added on 2020-04-20, since NAs in SpeciesCategory are vital for including all Stations, PSUs# and Strata when using meanData(), but should not present when considering individuals):
     #IndividualsData <- IndividualsData[!is.na(SpeciesCategory), ]
@@ -115,17 +115,17 @@ Individuals <- function(
     # Remove rows with missing IndividualKey, indicating they are not individuals but merely rows for Hauls included in the PSU/Layer:
     IndividualsData <- IndividualsData[!is.na(IndividualKey), ]
     
-    # Order the columns, but keep all columns:
-    formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE)
+    # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
+    formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = names(MergeStoxBioticData))
     
     # Add the attribute 'variableNames':
     setattr(
         IndividualsData, 
         "stoxDataVariableNames",
-        attr(MergedStoxBioticData, "stoxDataVariableNames")
+        attr(MergeStoxBioticData, "stoxDataVariableNames")
     )
     
-    attr(IndividualsData, "stoxDataVariableNames") <- attr(MergedStoxBioticData, "stoxDataVariableNames")
+    attr(IndividualsData, "stoxDataVariableNames") <- attr(MergeStoxBioticData, "stoxDataVariableNames")
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:

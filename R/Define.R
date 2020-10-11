@@ -759,16 +759,16 @@ DefineBioticAssignment <- function(
     DefinitionMethod <- match.arg(DefinitionMethod)
     
     # Merge the StoxBioticData:
-    MergedStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
+    MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
     
     
     # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
     if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         # Create a spatial points object of the positions of the hauls:
-        SpatialHauls <- sp::SpatialPoints(MergedStoxBioticData[, c("Longitude", "Latitude")])
+        SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
         # Get the stratum for each haul:
         Stratum <- unname(unlist(sp::over(SpatialHauls, StratumPolygon)))
-        BioticAssignment <- MergedStoxBioticData
+        BioticAssignment <- MergeStoxBioticData
         BioticAssignment[, Stratum := ..Stratum]
         
         # Add the PSUs to the BioticAssignment:
@@ -781,12 +781,12 @@ DefineBioticAssignment <- function(
     else if(grepl("Radius|EllipsoidalDistance", DefinitionMethod, 
                   ignore.case = TRUE)) {
         # Merge the StoxBioticData:
-        MergedStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
+        MergeStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
         
         # Get a table of EDSUs and Hauls:
         BioticAssignment <- data.table::CJ(
-            EDSU = MergedStoxAcousticData$EDSU, 
-            Haul = MergedStoxBioticData$Haul
+            EDSU = MergeStoxAcousticData$EDSU, 
+            Haul = MergeStoxBioticData$Haul
         )
         
         # Merge PSUs and strata into the table:
@@ -801,8 +801,8 @@ DefineBioticAssignment <- function(
             
             differenceTable = data.table::data.table(
                 distance = getDistance(
-                    MergedStoxAcousticData = MergedStoxAcousticData, 
-                    MergedStoxBioticData = MergedStoxBioticData
+                    MergeStoxAcousticData = MergeStoxAcousticData, 
+                    MergeStoxBioticData = MergeStoxBioticData
                 )
             )
             
@@ -815,24 +815,24 @@ DefineBioticAssignment <- function(
                 # Get the distance between the EDSUs and Hauls:
                 if(length(Distance)) {
                     Distance = getSquaredRelativeDistance(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         Distance = Distance
                     )
                 }, 
                 # Get the time difference between the EDSUs and Hauls:
                 if(length(TimeDifference)) {
                     TimeDifference = getSquaredRelativeTimeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         TimeDifference = TimeDifference
                     )
                 }, 
                 # Get the difference in bottom depth between the EDSUs and Hauls:
                 if(length(BottomDepthDifference)) {
                     BottomDepthDifference = getSquaredRelativeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         variableName = "BottomDepth", 
                         axisLength = BottomDepthDifference
                     )
@@ -840,8 +840,8 @@ DefineBioticAssignment <- function(
                 # Get the longitude difference between the EDSUs and Hauls:
                 if(length(LongitudeDifference)) {
                     LongitudeDifference = getSquaredRelativeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         variableName = "Longitude", 
                         axisLength = LongitudeDifference
                     )
@@ -849,8 +849,8 @@ DefineBioticAssignment <- function(
                 # Get the latitude differerence between the EDSUs and Hauls:
                 if(length(LatitudeDifference)) {
                     LatitudeDifference = getSquaredRelativeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         variableName = "Latitude", 
                         axisLength = LatitudeDifference
                     )
@@ -922,11 +922,11 @@ DefineBioticAssignment <- function(
     return(BioticAssignment)
 }
 
-# Function to get the great circle distance between EDSUs in the MergedStoxAcousticData and Hauls in the MergedStoxBioticData: 
-getDistance <- function(MergedStoxAcousticData, MergedStoxBioticData) {
+# Function to get the great circle distance between EDSUs in the MergeStoxAcousticData and Hauls in the MergeStoxBioticData: 
+getDistance <- function(MergeStoxAcousticData, MergeStoxBioticData) {
     # Extract the goegraphical positions:
-    EDSUPositions <- as.matrix(MergedStoxAcousticData[, c("Longitude", "Latitude")])
-    HaulPositions <- as.matrix(MergedStoxBioticData[, c("Longitude", "Latitude")])
+    EDSUPositions <- as.matrix(MergeStoxAcousticData[, c("Longitude", "Latitude")])
+    HaulPositions <- as.matrix(MergeStoxBioticData[, c("Longitude", "Latitude")])
     # Get the distances between EDUSs and Hauls:
     EDSUToHaulDistance <- c(sp::spDists(EDSUPositions, HaulPositions, longlat = TRUE))
     # Convert to nautical miles:
@@ -935,20 +935,20 @@ getDistance <- function(MergedStoxAcousticData, MergedStoxBioticData) {
 }
 
 # Function to ge the squared distance in units of the Distance squared:
-getSquaredRelativeDistance <- function(MergedStoxAcousticData, MergedStoxBioticData, Distance) {
+getSquaredRelativeDistance <- function(MergeStoxAcousticData, MergeStoxBioticData, Distance) {
     # Get the distances between EDUSs and Hauls:
-    EDSUToHaulDistance <- getDistance(MergedStoxAcousticData, MergedStoxBioticData)
+    EDSUToHaulDistance <- getDistance(MergeStoxAcousticData, MergeStoxBioticData)
     # Square and return:
     SquaredRelativeDistance <- EDSUToHaulDistance^2 / Distance^2
     return(SquaredRelativeDistance)
 }
 
 # Function to ge the squared time difference in units of the TimeDifference squared:
-getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, TimeDifference, variableName = "DateTime") {
+getSquaredRelativeTimeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, TimeDifference, variableName = "DateTime") {
     # Get the time difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
-        x = MergedStoxAcousticData[[variableName]], 
-        y = MergedStoxBioticData[[variableName]]
+        x = MergeStoxAcousticData[[variableName]], 
+        y = MergeStoxBioticData[[variableName]]
     )
     TimeDiff <- as.numeric(out[, difftime(x, y, units = "hours")])
     # Square and return:
@@ -956,11 +956,11 @@ getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticD
     return(SquaredTimeDiff)
 }
 
-getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, variableName, axisLength) {
+getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, variableName, axisLength) {
     # Get the absolute difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
-        x = MergedStoxAcousticData[[variableName]], 
-        y = MergedStoxBioticData[[variableName]]
+        x = MergeStoxAcousticData[[variableName]], 
+        y = MergeStoxBioticData[[variableName]]
     )
     # Square and return:
     SquaredRelativeDiff <- c(out[, x - y])^2 / axisLength^2
