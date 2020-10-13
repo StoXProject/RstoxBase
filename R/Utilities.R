@@ -286,158 +286,6 @@ allEqual <- function(x, tol = .Machine$double.eps ^ 0.5, ...) {
 }
 
 
-meanData <- function(data, dataType, PSUDefinition = c("PreDefined", "FunctionInput"), PSUProcessData = NULL, targetResolution = "PSU") {
-    
-    # Make a copy of the input, since we are averaging and setting values by reference:
-    dataCopy = data.table::copy(data)
-    
-    # Add the PSUs if PSUDefinition is "FunctionInput" and PSUProcessData is given:
-    PSUDefinition <- match.arg(PSUDefinition)
-    if(identical(PSUDefinition, "FunctionInput")) {
-        dataCopy <- addPSUProcessData(dataCopy, PSUProcessData = PSUProcessData, all = TRUE)
-    }
-    else if(identical(PSUDefinition, "PreDefined")) {
-        if(all(is.na(data$PSU))) {
-            stop("PSUs must be present in the data if PSUDefinition is \"PreDefined\"")
-        }
-    }
-    else {
-        stop("Invalid PSUDefinition, must be one of \"PreDefined\" and \"FunctionInput\"")
-    }
-    
-    # Get the variables to aggregate by etc.:
-    aggregationVariables <- determineAggregationVariables(
-        data = dataCopy, 
-        dataType = dataType, 
-        targetResolution = targetResolution, 
-        dimension = "horizontal"
-    )
-    # Extract the 'by' element:
-    by <- aggregationVariables$by
-    
-    # Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
-    if(utils::tail(aggregationVariables$presentResolution, 1) == aggregationVariables$finestResolution) {
-        valid <- data[, lapply(aggregationVariables$verticalRawDimension, allEqual), by = by]
-    }
-    
-    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
-    dataVariable <- aggregationVariables$dataVariable
-    weightingVariable <- aggregationVariables$weightingVariable
-    
-    # Extract the resolution and weighting variables, and uniquify:
-    extract <- c(aggregationVariables$presentResolution, weightingVariable)
-    summedWeighting <- dataCopy[, ..extract]
-    summedWeighting <- unique(summedWeighting)
-    # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
-    summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = eval(aggregationVariables$nextResolution)]
-    
-    # Extract the next resolution and the summed weights and uniquify:
-    extract <- c(aggregationVariables$nextResolution, "SummedWeights")
-    summedWeighting <- summedWeighting[, ..extract]
-    summedWeighting <- unique(summedWeighting)
-    
-    # Merge the resulting summed weights with the data, by the next resolution:
-    summedWeightingBy <- aggregationVariables$nextResolution
-    dataCopy <- merge(dataCopy, summedWeighting, by = summedWeightingBy, all = TRUE)
-    
-    # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
-    dataCopy[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
-    # Replace the weights by the summed weights:
-    dataCopy[, c(weightingVariable) := SummedWeights]
-    dataCopy[, SummedWeights := NULL]
-    
-    # Set the resolution variables which were summed over to NA:
-    set(
-        dataCopy, 
-        j = c(
-            aggregationVariables$setToNA, 
-            aggregationVariables$otherVariables
-        ), 
-        value = NA
-    )
-    
-    # Remove duplicated rows:
-    dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
-    
-    # Set the order of the columns:
-    formatOutput(dataCopy, dataType = dataType, keep.all = FALSE)
-    ## Order by 'by':
-    #setorderv(dataCopy, cols = by, order = 1L, na.last = TRUE)
-    
-    # Keep only the releavnt columns:
-    #keepOnlyRelevantColumns(dataCopy, dataType)
-    
-    return(dataCopy)
-}
-
-# No longer used:
-sumData <- function(data, dataType, LayerDefinition = c("PreDefined", "FunctionInput"), layerProcessData = NULL, targetResolution = "Layer") {
-    
-    # Make a copy of the input, since we are summing and setting values by reference:
-    dataCopy = data.table::copy(data)
-    
-    # Add the PSUs if PSUDefinition is "FunctionInput" and PSUProcessData is given:
-    LayerDefinition <- match.arg(LayerDefinition)
-    if(identical(LayerDefinition, "FunctionInput")) {
-        dataCopy <- addLayerProcessData(dataCopy, dataType = dataType, layerProcessData = layerProcessData)
-    }
-    else if(identical(LayerDefinition, "PreDefined")) {
-        if(all(is.na(data$Layer))) {
-            stop("Layers must be present in the data if LayerDefinition is \"PreDefined\"")
-        }
-    }
-    else {
-        stop("Invalid LayerDefinition, must be one of \"PreDefined\" and \"FunctionInput\"")
-    }
-    # Get the variables to aggregate by etc.:
-    aggregationVariables <- determineAggregationVariables(
-        data = dataCopy, 
-        dataType = dataType, 
-        targetResolution = targetResolution, 
-        dimension = "vertical"
-    )
-    # Extract the 'by' element:
-    by <- aggregationVariables$by
-    
-    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
-    dataVariable <- aggregationVariables$dataVariable
-    
-    #LengthDistributionData[, WeightedCount := sum(WeightedCount), by = by]
-    dataCopy[, c(dataVariable) := sum(x = get(dataVariable)), by = by]
-    
-    # Set the resolution variables which were summed over to NA:
-    set(
-        dataCopy, 
-        j = c(
-            aggregationVariables$setToNA, 
-            aggregationVariables$verticalRawDimension
-        ), 
-        value = NA
-    )
-    
-    # Remove duplicated rows:
-    dataCopy <- subset(dataCopy, !duplicated(dataCopy[, ..by]))
-    
-    # Keep only the releavnt columns:
-    #keepOnlyRelevantColumns(dataCopy, dataType)
-    formatOutput(dataCopy, dataType = dataType, keep.all = FALSE)
-    
-    return(dataCopy)
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 sumRawResolutionData <- function(
@@ -596,14 +444,6 @@ applySumToData <- function(data, dataType) {
     data[, c(weightingVariable) := get(oldWeightingVariable)]
     
     # Remove the resolution variables which were summed over, and the verticalRawDimension:
-    #set(
-    #    data, 
-    #    j = c(
-    #        aggregationVariables$setToNA, 
-    #        aggregationVariables$verticalRawDimension
-    #    ), 
-    #    value = NA
-    #)
     data[, (c(aggregationVariables$setToNA, aggregationVariables$verticalRawDimension)) := NULL] 
     
     # Remove duplicated rows:
@@ -620,7 +460,7 @@ applySumToData <- function(data, dataType) {
 applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     
     # Store the original data type defnition, particularly for summing the weights:
-    originalDataTypeDefinition <- getDataTypeDefinition(dataType)
+    originalDataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
     
     # Get the variables to aggregate by etc.:
     targetDataType <- paste0("Mean", sub("Sum", "", dataType))
@@ -825,30 +665,6 @@ compareTypes <- function(x, y, allow.numeric = TRUE) {
 }
 
 
-
-checkResolutionPSU_Layer <- function(data, dataType) {
-    
-    # Set the target resolution:
-    horizontalResolution <- "PSU"
-    verticalResolution <- "Layer"
-    # Get the column expected to be NA:
-    expectNAHorizontal <- determineAggregationVariables(data, dataType, horizontalResolution, dimension = "horizontal")$setToNA
-    expectNAVertical <- determineAggregationVariables(data, dataType, verticalResolution, dimension = "vertical")$setToNA
-    wrongHorizontalResolution <- data[, !all(is.na(get(expectNAHorizontal)))] || data[, all(is.na(get(horizontalResolution)))]
-    wrongVerticalResolution <- data[, !all(is.na(get(expectNAVertical)))] || data[, all(is.na(get(verticalResolution)))]
-    
-    if(wrongHorizontalResolution && wrongVerticalResolution) {
-        stop("The data does not have the correct horizontal (", horizontalResolution, ") and vertical (", verticalResolution, ") resolution")
-    }
-    else if(wrongHorizontalResolution) {
-        stop("The data does not have the correct horizontal resolution (", horizontalResolution, ")")
-    }
-    else if(wrongVerticalResolution) {
-        stop("The data does not have the correct vertical resolution (", verticalResolution, ")")
-    }
-    
-    return(TRUE)
-}
 
 
 removeColumnsByReference <- function(data, toRemove) {

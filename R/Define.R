@@ -247,6 +247,9 @@ DefineAcousticPSU <- function(
         PSUType = "Acoustic"
     )
     
+    # Format the output:
+    formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
+    
     return(AcousticPSU)
 }
 
@@ -291,6 +294,9 @@ DefineAcousticPSUByTime <- function(
     else {
         stop("Inavlid DefinitionMethod")
     }
+    
+    # Format the output:
+    formatOutput(AcousticPSUByTime, dataType = "AcousticPSUByTime", keep.all = FALSE)
     
     return(AcousticPSUByTime)
 }
@@ -450,6 +456,9 @@ DefineAcousticPSUFromPSUByTime <- function(
         EDSU_PSU = EDSU_PSU
     )
 
+    # Format the output:
+    formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
+    
     return(AcousticPSU)
 }
 

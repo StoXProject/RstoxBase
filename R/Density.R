@@ -86,8 +86,6 @@ AcousticDensity <- function(
     # Check that the input SpeciesLink has the appropriate types:
     checkTypes(table = SpeciesLink)
     
-    # Check that the MeanNASCData has PSU and Layer resolution:
-    #checkResolutionPSU_Layer(MeanNASCData, "MeanNASCData")
     # Merge TargetStrength with SpeciesLink in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
     AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLink, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
     # Define the resolution on which to distribute the NASC:
@@ -436,7 +434,6 @@ SweptAreaDensity <- function(
 MeanDensity <- function(
     DensityData
 ) {
-    #meanData(DensityData, dataType = "DensityData", targetResolution = "Stratum")
     MeanDensityData <- applyMeanToData(data = DensityData, dataType = "DensityData", targetResolution = "Stratum")
     
     # Ensure that the numeric values are rounded to the defined number of digits:

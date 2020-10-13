@@ -185,14 +185,22 @@ SuperIndividuals <- function(
     # Add length groups also to the AbundanceData:
     addLengthGroupsByReference(data = AbundanceData, master = AbundanceData)
     
-    # Merge the abundance into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups():
+    # Merge the abundance into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups(). This is akward coding, with two instances of getDataTypeDefinition(), but the problem is the LengthGroup, and that we do not need "the columns IndividualTotalLength" and "LengthResolution":
+    
     abundanceGrouping <- c(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "LengthGroup"
     )
+    variablesToGetFromAbundanceData <- c(
+        abundanceGrouping, 
+        "Abundance", 
+        getDataTypeDefinition(dataType = "AbundanceData", elements = "verticalLayerDimension", unlist = TRUE)
+    )
+    
+    
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
-        AbundanceData[, c(..abundanceGrouping, "Abundance")], 
+        AbundanceData[, ..variablesToGetFromAbundanceData], 
         by = abundanceGrouping, 
         allow.cartesian = TRUE
     )
@@ -511,7 +519,12 @@ ImputeData <- function(
     imputeByEqual = "IndividualTotalLength", 
     groupBy = "SpeciesCategory", 
     seed = 1, 
-    columnNames = NULL
+    columnNames = NULL, 
+    levels = list(
+        "Haul", 
+        "Stratum", 
+        "AllStrata"
+    )
 ) {
     
     # Get the data and add the RowIndex foor use when identifying which rows to impute from:
@@ -522,11 +535,6 @@ ImputeData <- function(
     # Introduce an Individual index for use in the sorted sampling:
     dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]
     
-    levels <- list(
-        "Haul", 
-        "Stratum", 
-        "AllStrata"
-    )
     # Add an AllStrata column to the data to facilitate the AllStrata level: 
     dataCopy[, AllStrata := "AllStrata"]
     #setcolorder(dataCopy, neworder = "AllStrata")

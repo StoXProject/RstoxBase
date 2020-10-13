@@ -35,7 +35,7 @@ LengthDistribution <- function(
     
     # Get specification of the data type:
     #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")$LengthDistributionData
-    dataTypeDefinition <- getDataTypeDefinition("LengthDistributionData")
+    dataTypeDefinition <- getDataTypeDefinition(dataType = "LengthDistributionData")
     ####################################
     
     

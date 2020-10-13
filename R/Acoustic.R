@@ -22,6 +22,7 @@
 NASC <- function(
     StoxAcousticData = NULL
 ) {
+    
     # Merge the StoxAcousticData:
     NASCData <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
     
