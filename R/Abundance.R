@@ -198,6 +198,7 @@ SuperIndividuals <- function(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("verticalLayerDimension", "groupingVariables"), unlist = TRUE)
     )
     variablesToGetFromAbundanceData <- setdiff(variablesToGetFromAbundanceData, names(SuperIndividualsData))
+    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData))
     variablesToGetFromAbundanceData <- c(
         abundanceGrouping, 
         variablesToGetFromAbundanceData
