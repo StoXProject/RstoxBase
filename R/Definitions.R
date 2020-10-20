@@ -19,43 +19,49 @@ initiateRstoxBase <- function(){
             horizontalResolution = "EDSU", 
             verticalResolution = "Channel", 
             categoryVariable = "AcousticCategory", 
-            groupingVariables = "Frequency", 
+            groupingVariables = c("Beam", "Frequency"), 
             data = "NASC", 
             verticalRawDimension = c("MinChannelDepth", "MaxChannelDepth"), 
             verticalLayerDimension = NULL, 
             weighting = "NASCWeight", 
-            type = "ChannelReferenceType", 
-            other = c("Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+            type = c("ChannelReferenceType"), 
+            other = c("ChannelReferenceDepth", "ChannelReferenceOrientation", "Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
         ), 
         SumNASCData = list(
             Data = list(
                 horizontalResolution = "EDSU", 
                 verticalResolution = "Layer", 
                 categoryVariable = "AcousticCategory", 
-                groupingVariables = "Frequency", 
+                groupingVariables = c("Beam", "Frequency"), 
                 data = "NASC", 
                 verticalRawDimension = NULL, 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumNASCWeight", 
-                type = "ChannelReferenceType", 
-                other = c("EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+                type = c("ChannelReferenceType"), 
+                other = c("ChannelReferenceDepth", "ChannelReferenceOrientation", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
             ), 
-            Resolution = list()
+            Resolution = list(
+                horizontalResolution = "EDSU", 
+                verticalResolution = c("Layer", "Channel")
+            )
         ), 
         MeanNASCData = list(
             Data = list(
                 horizontalResolution = c("Stratum", "PSU"), 
                 verticalResolution = "Layer", 
                 categoryVariable = "AcousticCategory", 
-                groupingVariables = "Frequency", 
+                groupingVariables = c("Beam", "Frequency"), 
                 data = "NASC", 
                 verticalRawDimension = NULL, 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "MeanNASCWeight", 
-                type = "ChannelReferenceType", 
-                other = NULL
+                type = c("ChannelReferenceType"), 
+                other = c("ChannelReferenceDepth", "ChannelReferenceOrientation")
             ), 
-            Resolution = list()
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "EDSU"), 
+                verticalResolution = c("Layer", "Channel")
+            )
         ), 
         # LengthDistribution:
         LengthDistributionData = list(
@@ -83,7 +89,10 @@ initiateRstoxBase <- function(){
                 type = "LengthDistributionType", 
                 other = c("EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             ), 
-            Resolution = list()
+            Resolution = list(
+                horizontalResolution = "Station", 
+                verticalResolution = c("Layer", "Haul")
+            )
         ), 
         MeanLengthDistributionData = list(
             Data = list(
@@ -98,7 +107,10 @@ initiateRstoxBase <- function(){
                 type = "LengthDistributionType", 
                 other = NULL
             ), 
-            Resolution = list()
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "Station"), 
+                verticalResolution = c("Layer", "Haul")
+            )
         ), 
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
@@ -116,7 +128,10 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            groupingVariables = c(
+                "IndividualTotalLength", "LengthResolution", 
+                "Beam", "Frequency" # The relevant acoustic variables
+            ), 
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "DensityWeight", 
@@ -126,7 +141,10 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            groupingVariables = c(
+                "IndividualTotalLength", "LengthResolution", 
+                "Beam", "Frequency" # The relevant acoustic variables
+            ), 
             data = "Density",
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = "MeanDensityWeight", 
@@ -137,7 +155,10 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
-            groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
+            groupingVariables = c(
+                "IndividualTotalLength", "LengthResolution", 
+                "Beam", "Frequency" # The relevant acoustic variables
+            ), 
             data = "Abundance", 
             verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
             weighting = NULL, 
@@ -167,7 +188,10 @@ initiateRstoxBase <- function(){
                 categoryVariable = "SpeciesCategory", 
                 #groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
                 #groupingVariables = c("IndividualTotalLength", "LengthResolution", "IndividualRoundWeight", "Haul", "Individual"), 
-                groupingVariables = c("IndividualTotalLength", "LengthResolution", "IndividualRoundWeight"), 
+                groupingVariables = c(
+                    "IndividualTotalLength", "LengthResolution", "IndividualRoundWeight", 
+                    "Beam", "Frequency" # The relevant acoustic variables
+                ), 
                 data = c("Abundance",  "Biomass"), 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = NULL, 
@@ -178,7 +202,7 @@ initiateRstoxBase <- function(){
         BioticAssignment = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = "Layer", 
-            data = "Haul", 
+            categoryVariable = "Haul", 
             weighting = "WeightingFactor", 
             other = NULL
         ), 
@@ -522,7 +546,9 @@ formatOutputOld <- function(data, dataType, keep.all = TRUE, allow.missing = FAL
 
 
 
-
+#' 
+#' @export
+#' 
 formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
     
     # If data is only one table:
@@ -554,6 +580,11 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
 
 
 formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
+    
+    # Return immediately if empty table:
+    if(!nrow(table)) {
+        return(table)
+    }
     
     # Remove any duplicated columns:
     if(any(duplicated(names(table)))) {
@@ -706,11 +737,13 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
     #}
     
     if(is.list(thisDataTypeDefinition) && is.list(thisDataTypeDefinition[[1]])) {
-        thisDataTypeDefinition <- thisDataTypeDefinition[[subTable]]
+        if(subTable %in% names(thisDataTypeDefinition)) {
+            thisDataTypeDefinition <- thisDataTypeDefinition[[subTable]]
+        }
+        else {
+            stop("The dataType may be non-existing, or the subTable may not be present for the given dataType")
+        }
     }
-    if(!length(thisDataTypeDefinition)) (
-        stop("The dataType may be non-existing, og the subTable may not be present for the given dataType")
-    )
     
     # Select the elements to return:
     if(length(elements)) {
@@ -826,8 +859,9 @@ determineAggregationVariables <- function(
 
 
 
-orderDataByReference <- function(data, dataType) {
-    orderColumns <- getAllAggregationVariables(dataType)
-    setorderv(data, cols = orderColumns)
-}
-
+#orderDataByReference <- function(data, dataType) {
+#    orderColumns <- getAllAggregationVariables(dataType)
+#    setorderv(data, cols = orderColumns, na.last = TRUE)
+#}
+#
+#

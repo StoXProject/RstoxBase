@@ -8,7 +8,7 @@ AcousticDensity(
   MeanNASCData,
   AssignmentLengthDistributionData,
   AcousticTargetStrength,
-  SpeciesLink
+  SpeciesLink = data.table::data.table()
 )
 }
 \arguments{

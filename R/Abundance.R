@@ -30,9 +30,10 @@ Abundance <- function(
     # Multiply the area and the density:
     AbundanceData[, Abundance := Area * Density]
     
-    # Keep only the releavnt columns:
-    #keepOnlyRelevantColumns(AbundanceData, "AbundanceData")
-    formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE)
+    # Format the output:
+    # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
+    #formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE)
+    formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(AbundanceData)
@@ -191,13 +192,18 @@ SuperIndividuals <- function(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "LengthGroup"
     )
+    # Get the variables to add from the AbundanceData, which are "Abundance", the vertical dimension and grouping variables, but not those which may be present in the IndividualsData ("IndividualTotalLength", "LengthResolution"), and also the abundanceGrouping:
+    variablesToGetFromAbundanceData <- c(
+        "Abundance", 
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("verticalLayerDimension", "groupingVariables"), unlist = TRUE)
+    )
+    variablesToGetFromAbundanceData <- setdiff(variablesToGetFromAbundanceData, names(SuperIndividualsData))
     variablesToGetFromAbundanceData <- c(
         abundanceGrouping, 
-        "Abundance", 
-        getDataTypeDefinition(dataType = "AbundanceData", elements = "verticalLayerDimension", unlist = TRUE)
+        variablesToGetFromAbundanceData
     )
     
-    
+    # Merge AbundanceData into the IndividualsData
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
         AbundanceData[, ..variablesToGetFromAbundanceData], 
@@ -289,8 +295,8 @@ SuperIndividuals <- function(
     # Add Biomass:
     SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
     
-    # Order the columns, but keep all columns:
-    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
+    # Format the output but keep all columns:
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     SuperIndividualsData[, haulWeightFactor := NULL]
@@ -299,8 +305,8 @@ SuperIndividuals <- function(
     #SuperIndividualsData[, abundanceWeightFactor := NULL]
     SuperIndividualsData[, LengthGroup := NULL]
     
-    # Order the rows:
-    orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
+    ## Order the rows:
+    #orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
     
     # Add the attribute 'variableNames':
     setattr(
@@ -436,14 +442,21 @@ addLengthGroupsByReference <- function(
     # Keep only the common species:    
     species <- intersect(speciesInData, speciesInMaster)
     
-    for(thisspecies in species) {
-        addLengthGroupsByReferenceOneSpecies(
-            data = data, 
-            master = master, 
-            species = thisspecies, 
-            lengthVar = lengthVar, 
-            resolutionVar = resolutionVar)
+    if(!length(species)) {
+        data[, LengthGroup := NA]
     }
+    else {
+        for(thisspecies in species) {
+            addLengthGroupsByReferenceOneSpecies(
+                data = data, 
+                master = master, 
+                species = thisspecies, 
+                lengthVar = lengthVar, 
+                resolutionVar = resolutionVar
+            )
+        }
+    }
+    
     
     return(TRUE)
 }
@@ -502,8 +515,8 @@ ImputeSuperIndividuals <- function(
     # Re-calculate the Biomass:
     SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
 
-    # Order the columns, but keep all columns:
-    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
+    # Format the output but keep all columns:
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:

@@ -134,11 +134,11 @@ LengthDistribution <- function(
         LengthDistributionData <- RelativeLengthDistribution(LengthDistributionData)
     }
     
-    # Extract only the relevant columns:
+    # Format the output:
     formatOutput(LengthDistributionData, dataType = "LengthDistributionData", keep.all = FALSE)
     
-    # Order the rows:
-    orderDataByReference(LengthDistributionData, "LengthDistributionData")
+    ## Order the rows:
+    #orderDataByReference(LengthDistributionData, "LengthDistributionData")
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(LengthDistributionData)
@@ -302,8 +302,7 @@ LengthDependentCatchCompensation <- function(
         LengthDistributionDataCopy[, LengthDistributionType := paste0("SelectivityCompensated", LengthDistributionType)]
     }
     
-    # Keep only the releavnt columns:
-    #keepOnlyRelevantColumns(LengthDistributionDataCopy, "LengthDistributionData")
+    # Format the output:
     formatOutput(LengthDistributionDataCopy, dataType = "LengthDistributionData", keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
@@ -489,7 +488,7 @@ SumLengthDistribution <- function(
     BioticLayer = NULL
 ) {
     
-    sumRawResolutionData(
+    SumLengthDistributionData <- sumRawResolutionData(
         data = LengthDistributionData, dataType = "LengthDistributionData", 
         LayerDefinition = LayerDefinition, 
         LayerProcessData = BioticLayer, 
@@ -498,6 +497,14 @@ SumLengthDistribution <- function(
         LayerTable = LayerTable, 
         LayerType = "Biotic"
     )
+    
+    # Format the output:
+    formatOutput(SumLengthDistributionData, dataType = "SumLengthDistributionData", keep.all = FALSE)
+    
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(SumLengthDistributionData)
+    
+    return(SumLengthDistributionData)
 }
 
 
@@ -561,7 +568,7 @@ MeanLengthDistribution <- function(
     }
     
     # Run the mean part:
-    meanRawResolutionData(
+    MeanLengthDistributionData <- meanRawResolutionData(
         data = SumLengthDistributionData, dataType = "SumLengthDistributionData", 
         PSUDefinition = PSUDefinition, 
         PSUProcessData = BioticPSU, 
@@ -569,6 +576,15 @@ MeanLengthDistribution <- function(
         StratumPolygon = StratumPolygon, 
         PSUType = "Biotic"
     )
+    
+    
+    # Format the output:
+    formatOutput(MeanLengthDistributionData, dataType = "MeanLengthDistributionData", keep.all = FALSE)
+    
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(MeanLengthDistributionData)
+    
+    return(MeanLengthDistributionData)
 }
 
 
@@ -613,14 +629,14 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     )
     uniqueAssignmentLengthDistributionData <- uniqueAssignmentPastedDT[, getAssignmentLengthDistributionDataOne(assignmentPasted, LengthDistributionData = LengthDistributionData, percent = TRUE), by = "assignmentID"]
     
-    # Merge the mean length distribution of each assignment with the BioticAssignmentCollapsed extracted "assignmentPasted":
+    # Merge the mean length distribution of each assignment with the BioticAssignmentCollapsed excluded "assignmentPasted":
     BioticAssignmentCollapsed[, assignmentPasted := NULL]
     AssignmentLengthDistributionData <- merge(BioticAssignmentCollapsed, uniqueAssignmentLengthDistributionData, by = "assignmentID", allow.cartesian = TRUE)
     
     # Set the LengthDistributionType to "Percent":
     AssignmentLengthDistributionData[, LengthDistributionType := "Percent"]
     
-    # Extract only the relevant columns:
+    # Format the output:
     formatOutput(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
     
     return(AssignmentLengthDistributionData)
@@ -648,7 +664,7 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     thisLengthDistributionData[, c(dataVariable) := sum(x = get(dataVariable) * get(weightingVariable)), by = by]
     
     # Extract only the relevant columns:
-    formatOutput(thisLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE, allow.missing = TRUE)
+    ###formatOutput(thisLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE, allow.missing = TRUE)
     # Remove also the resolution variables, as the output from this function will be merged with BioticAssignmentData by AssignmentID (and not by these resolution avriables):
     removeColumnsByReference(
         data = thisLengthDistributionData, 

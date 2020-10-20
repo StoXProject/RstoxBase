@@ -416,7 +416,6 @@ DefineAcousticPSUFromPSUByTime <- function(
     AcousticPSUByTime, 
     StoxAcousticData
 ) {
-    
     warning("This function should be included as a DefinitionMethod in DefineAcousticPSU() in the future")
     
     # Return immediately if UseProcessData = TRUE:
@@ -925,7 +924,7 @@ DefineBioticAssignment <- function(
     # Add weighting  = 1:
     BioticAssignment[, WeightingFactor := 1]
     
-    # Extract only the relevant columns:
+    # Format the output:
     formatOutput(BioticAssignment, dataType = "BioticAssignment", keep.all = FALSE)
     
     return(BioticAssignment)
@@ -1135,7 +1134,7 @@ BioticAssignmentWeighting <- function(
         )
     }
     
-    # Keep only relevant columns:
+    # Format the output:
     formatOutput(BioticAssignmentCopy, dataType = "BioticAssignment", keep.all = FALSE)
     
     return(BioticAssignmentCopy)
@@ -1306,7 +1305,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
         TargetStrengthMethod = data.table::data.table(TargetStrengthMethod = TargetStrengthMethod), 
         TargetStrengthTable = TargetStrengthTable
     )
-        
+    
     return(AcousticTargetStrength)
 }
 
@@ -1324,4 +1323,48 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 }
 
 
+
+
+##################################################
+##################################################
+#' Biotic Survey
+#' 
+#' This function defines the Strata associated to different surveys (in the sense that a separate estimate should be made for those strata). 
+#' 
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams ModelData
+#' @param DefinitionMethod Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{BioticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
+#' 
+#' @export
+#' 
+DefineSurvey <- function(
+    processData, UseProcessData = FALSE, 
+    StratumPolygon, 
+    StoxData, 
+    DefinitionMethod = c("Identity", "DeleteAllPSUs"), 
+    PSUType = c("Acoustic", "Biotic")
+) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # Get the DefinitionMethod and PSUType:
+    #DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
+    PSUType <- match.arg(PSUType)
+}
 

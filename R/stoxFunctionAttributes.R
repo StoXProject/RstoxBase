@@ -547,7 +547,9 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "ReportSuperIndividualsData", 
         # This is an example of using an expression to determine when to show a parameter:
-        functionArgumentHierarchy = list(
+        functionParameterFormat = list(
+            GroupingVariables = "groupingVariables_ReportSuperIndividuals"
+        ), functionArgumentHierarchy = list(
             WeightingVariable = list(
                 ReportFunction = expression(RstoxBase::getWeightingFunctions())
             )
@@ -560,6 +562,9 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "ReportBootstrapData", 
         # This is an example of using an expression to determine when to show a parameter:
+        functionParameterFormat = list(
+            GroupingVariables = "groupingVariables_ReportBootstrap"
+        ), 
         functionArgumentHierarchy = list(
             AggregationWeightingVariable = list(
                 ReportFunction = expression(RstoxBase::getWeightingFunctions())
@@ -753,6 +758,24 @@ processPropertyFormats <- list(
             
             return(variableTypes)
         }
+    ), 
+    
+    groupingVariables_ReportBootstrap = list(
+        class = "vector", 
+        title = "One or more variables to group super-individuals by when reporting BootstrapData", 
+        possibleValues = function(Bootstrap) {
+            sort(setdiff(names(BioticData), "BootstrapID"))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
+    groupingVariables_ReportSuperIndividuals = list(
+        class = "vector", 
+        title = "One or more variables to group super-individuals by when reporting SuperIndividualsData", 
+        possibleValues = function(SuperIndividualsData) {
+            sort(names(SuperIndividualsData))
+        }, 
+        variableTypes <- "character"
     )
     
 )

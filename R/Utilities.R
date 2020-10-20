@@ -449,15 +449,19 @@ applySumToData <- function(data, dataType) {
     # Remove duplicated rows:
     data <- subset(data, !duplicated(data[, ..by]))
     
-    # Keep only the releavnt columns:
-    formatOutput(data, dataType = targetDataType, keep.all = FALSE)
-    # Order the rows:
-    orderDataByReference(data, targetDataType)
+    ## Keep only the releavnt columns:
+    #formatOutput(data, dataType = targetDataType, keep.all = FALSE)
+    ## Order the rows:
+    #orderDataByReference(data, targetDataType)
     
     return(data)
 }
 
 applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
+    
+    ##### IMPORTANT NOTE!: #####
+    # This function needs to be coded with care. The input data contains rows only for the data measured for each category and grouping variable. E.g., there could be cod of length 50 cm in some but not all hauls. When averaging we need to get the sum of the weights for each combination of the resolution variables (Step 1). Then these sums are merged into the data (Step 2). And finally the data variable is summed and divided by the summed weights (Step 3):
+    ##########
     
     # Store the original data type defnition, particularly for summing the weights:
     originalDataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
@@ -473,15 +477,13 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     # Extract the 'by' element:
     by <- aggregationVariables$by
     
-    #### Check that the average can be made, that is that the vertical resolution is identical throughout each unit in the targetResolution:
-    ###if(utils::tail(aggregationVariables$presentResolution, 1) == aggregationVariables$finestResolution) {
-    ###    valid <- data[, lapply(aggregationVariables$verticalRawDimension, allEqual), by = by]
-    ###}
     # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
     dataVariable <- aggregationVariables$dataVariable
     targetWeightingVariable <- aggregationVariables$weightingVariable
     weightingVariable <- originalDataTypeDefinition$weighting
-
+    
+    
+    #### Step 1: ####
     # Extract the resolution and weighting variables:
     extract <- c(aggregationVariables$presentResolution, weightingVariable)
     summedWeighting <- data[, ..extract]
@@ -494,38 +496,26 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     extract <- c(aggregationVariables$nextResolution, "SummedWeights")
     summedWeighting <- summedWeighting[, ..extract]
     summedWeighting <- unique(summedWeighting)
+    ########
     
+    
+    #### Step 2: ####
     # Merge the resulting summed weights with the data, by the next resolution:
     summedWeightingBy <- aggregationVariables$nextResolution
     data <- merge(data, summedWeighting, by = summedWeightingBy, all = TRUE)
+    ########
     
+    
+    #### Step 3: ####
     # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
+    by <- intersect(names(data), by)
     data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
     # Store the new weights by the summed original weights:
     data[, c(targetWeightingVariable) := SummedWeights]
-    ###data[, SummedWeights := NULL]
-    
-    # Set the resolution variables which were summed over to NA:
-    #set(
-    #    data, 
-    #    j = c(
-    #        aggregationVariables$setToNA, 
-    #        aggregationVariables$otherVariables
-    #    ), 
-    #    value = NA
-    #)
-    ###data[, (c(aggregationVariables$setToNA, aggregationVariables$otherVariables)) := NULL] 
-    
-    
-    # Set the order of the columns:
-    formatOutput(data, dataType = targetDataType, keep.all = FALSE)
-    # Order the rows:
-    orderDataByReference(data, targetDataType)
-    
+    ########
     
     # Remove duplicated rows:
     data <- subset(data, !duplicated(data[, ..by]))
-    
     
     return(data)
 }
@@ -533,7 +523,47 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
 
 
 
-
+applyMeanToDataWrongSinceWeightingIsDoneOnEachCategoryAndGroup <- function(data, dataType, targetResolution = "PSU") {
+    
+    # Store the original data type defnition, particularly for summing the weights:
+    originalDataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
+    
+    # Get the variables to aggregate by etc.:
+    targetDataType <- paste0("Mean", sub("Sum", "", dataType))
+    aggregationVariables <- determineAggregationVariables(
+        data = data, 
+        dataType = targetDataType, 
+        targetResolution = targetResolution, 
+        dimension = "horizontal"
+    )
+    
+    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
+    dataVariable <- aggregationVariables$dataVariable
+    targetWeightingVariable <- aggregationVariables$weightingVariable
+    weightingVariable <- originalDataTypeDefinition$weighting
+    
+    # Sum the weights for each combination of the desired horizontal and vertical resolution and the category and grouping variables, discarding variables that are not present for this data:
+    sumWeigthsBy <- intersect(
+        aggregationVariables$by, 
+        names(data)
+    )
+    
+    # Sum the weights:
+    summedWeighting <- data[, .(SummedWeights = sum(get(weightingVariable), na.rm = TRUE)), by = sumWeigthsBy]
+    
+    # Merge the resulting summed weights with the data, by the next resolution:
+    data <- RstoxData::mergeByIntersect(data, summedWeighting, all = TRUE)
+    
+    # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
+    data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = sumWeigthsBy]
+    # Store the new weights by the summed original weights:
+    data[, c(targetWeightingVariable) := SummedWeights]
+    
+    # Remove duplicated rows:
+    data <- subset(data, !duplicated(data[, ..sumWeigthsBy]))
+    
+    return(data)
+}
 
 # https://stackoverflow.com/questions/24833247/how-can-one-work-fully-generically-in-data-table-in-r-with-column-names-in-varia:
 quote.convert <- function(x) {
