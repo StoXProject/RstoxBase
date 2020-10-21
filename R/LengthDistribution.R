@@ -536,12 +536,19 @@ MeanLengthDistribution <- function(
     LengthDistributionData, 
     SumLengthDistributionData, 
     # Parameters of the sum part:
+    # Layer: 
     LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"), 
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     BioticLayer = NULL, 
+    # Survey: 
+    SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
+    SurveyDefinitionMethod = c("AllStrata", "SurveyTable"), 
+    SurveyTable = data.table::data.table(), 
+    Survey = NULL, 
     # Parameters of the mean part:
+    # PSU: 
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
     PSUDefinitionMethod = c("StationToPSU", "None"), 
     StratumPolygon = NULL, 
@@ -570,9 +577,16 @@ MeanLengthDistribution <- function(
     # Run the mean part:
     MeanLengthDistributionData <- meanRawResolutionData(
         data = SumLengthDistributionData, dataType = "SumLengthDistributionData", 
+        # PSU:
         PSUDefinition = PSUDefinition, 
         PSUProcessData = BioticPSU, 
         PSUDefinitionMethod = PSUDefinitionMethod, 
+        # Survey:
+        SurveyDefinition = SurveyDefinition, 
+        SurveyProcessData = Survey, 
+        SurveyDefinitionMethod = SurveyDefinitionMethod, 
+        SurveyTable = SurveyTable, 
+        # General:
         StratumPolygon = StratumPolygon, 
         PSUType = "Biotic"
     )
@@ -674,7 +688,8 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     
     
     # Subset to the unique rows (since the sum was by reference):
-    thisLengthDistributionData <- unique(thisLengthDistributionData)
+    #thisLengthDistributionData <- unique(thisLengthDistributionData)
+    thisLengthDistributionData <- unique(thisLengthDistributionData, by = by)
     
     # Normalize for each species category:
     bySpecies <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable"), unlist = TRUE)

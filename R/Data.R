@@ -76,6 +76,7 @@ NULL
 #' The process data of a StoX model are data that are saved to the project description (project.json file), typically manual settings (tagging of \code{\link{EDSU}}s to \code{\link{PSU}}s) or data read from resource files other than acoustic, biotic and landing input data files stored in the input folder. 
 #' 
 #' @param StratumPolygon The \code{\link{StratumPolygon}} process data.
+#' @param Survey The \code{\link{Survey}} process data.
 #' @param AcousticLayer The \code{\link{AcousticLayer}} process data.
 #' @param AcousticPSU The \code{\link{AcousticPSU}} process data.
 #' @param BioticLayer The \code{\link{BioticLayer}} process data.
@@ -209,6 +210,22 @@ NULL
 #' @seealso This data type is produced by \code{\link{DefineStratumPolygon}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name StratumPolygon
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' StoX data type Survey
+#' 
+#' The Survey data is a table of the columns Stratum and Survey, defining which strata comprise the different surveys. 
+#' 
+#' @details
+#' This data type can be useful if there are particular strata that are e.g. experimental, and others that are to be included in the official estimate, and replaces the "include in total" concept of StoX 2.7.
+#' 
+#' @seealso This data type is produced by \code{\link{DefineSurvey}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name Survey
 #' 
 NULL
 

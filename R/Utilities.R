@@ -222,6 +222,24 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
     return(data)
 }
 
+# Function to add Stratum and PSU:
+addSurveyProcessData <- function(data, SurveyProcessData = NULL, ...) {
+    
+    # If present, add the PSUProcessData to the start of the data
+    if(length(SurveyProcessData)) {
+        # Merge the SurveyProcessData into the data:
+        data <- RstoxData::mergeByIntersect(SurveyProcessData, data, ...)
+    }
+    else if(! "Stratum" %in% names(data)) {
+        # Add NA columns for Survey and Stratum if "Stratum" is not a column:
+        data.table::setDT(data)
+        toAdd <- c("Survey", "Stratum")
+        data.table::set(data, j = toAdd, value = NA_character_)
+    }
+    
+    return(data)
+}
+
 # Function to add Layer:
 addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptNA = TRUE) {
     
@@ -351,9 +369,16 @@ sumRawResolutionData <- function(
 
 meanRawResolutionData <- function(
     data, dataType, 
+    # PSU: 
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
     PSUProcessData = NULL, 
     PSUDefinitionMethod = c("Identity", "None"), 
+    # Survey:
+    SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
+    SurveyProcessData = NULL, 
+    SurveyDefinitionMethod = c("AllStrata", "SurveyTable"), 
+    SurveyTable = data.table::data.table(), 
+    # General:
     StratumPolygon = NULL, 
     PSUType = c("Acoustic", "Biotic")
 ) {
@@ -380,6 +405,26 @@ meanRawResolutionData <- function(
     }
     else {
         stop("PSUProcessData must be given if PSUDefinition = \"FunctionInput\"")
+    }
+    
+    # Get the Surveys:
+    SurveyDefinition <- match.arg(SurveyDefinition)
+    
+    if(identical(SurveyDefinition, "FunctionParameter")) {
+        # Get the stratum names and the surveyTable:
+        stratumNames <- unique(dataCopy$Stratum)
+        SurveyProcessData <- getSurveyTable(
+            DefinitionMethod = SurveyDefinitionMethod, 
+            stratumNames = stratumNames, 
+            SurveyTable = SurveyTable
+        )
+    }
+    # Add the Survey:
+    if(length(SurveyProcessData)) {
+        dataCopy <- addSurveyProcessData(dataCopy, SurveyProcessData = SurveyProcessData, all = TRUE)
+    }
+    else {
+        stop("SurveyProcessData must be given if SurveyDefinition = \"FunctionInput\"")
     }
     
     # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:

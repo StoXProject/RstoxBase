@@ -195,7 +195,7 @@ SuperIndividuals <- function(
     # Get the variables to add from the AbundanceData, which are "Abundance", the vertical dimension and grouping variables, but not those which may be present in the IndividualsData ("IndividualTotalLength", "LengthResolution"), and also the abundanceGrouping:
     variablesToGetFromAbundanceData <- c(
         "Abundance", 
-        getDataTypeDefinition(dataType = "AbundanceData", elements = c("verticalLayerDimension", "groupingVariables"), unlist = TRUE)
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables"), unlist = TRUE)
     )
     variablesToGetFromAbundanceData <- setdiff(variablesToGetFromAbundanceData, names(SuperIndividualsData))
     variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData))

@@ -7,10 +7,9 @@
 DefineSurvey(
   processData,
   UseProcessData = FALSE,
+  DefinitionMethod = c("AllStrata", "SurveyTable"),
   StratumPolygon,
-  StoxData,
-  DefinitionMethod = c("Identity", "DeleteAllPSUs"),
-  PSUType = c("Acoustic", "Biotic")
+  SurveyTable = data.table::data.table()
 )
 }
 \arguments{
@@ -18,11 +17,9 @@ DefineSurvey(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
-
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
 
-\item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic".}
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 }
 \value{
 An object of StoX data type \code{\link{BioticPSU}}.

@@ -284,6 +284,11 @@ DefineAcousticPSUByTime <- function(
     StoxAcousticData
 ) {
     
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     
@@ -1351,10 +1356,9 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 #' 
 DefineSurvey <- function(
     processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("AllStrata", "SurveyTable"), 
     StratumPolygon, 
-    StoxData, 
-    DefinitionMethod = c("Identity", "DeleteAllPSUs"), 
-    PSUType = c("Acoustic", "Biotic")
+    SurveyTable = data.table::data.table()
 ) {
     
     # Return immediately if UseProcessData = TRUE:
@@ -1362,9 +1366,57 @@ DefineSurvey <- function(
         return(processData)
     }
     
-    # Get the DefinitionMethod and PSUType:
-    #DefinitionMethod <- match.arg(DefinitionMethod)
-    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
-    PSUType <- match.arg(PSUType)
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    # Get the survey table using the stratum names:
+    stratumNames <- getStratumNames(StratumPolygon)
+    getSurveyTable(
+        DefinitionMethod = DefinitionMethod, 
+        stratumNames = stratumNames, 
+        SurveyTable = SurveyTable
+    )
+        
+    return(SurveyTable)
 }
+
+
+getSurveyTable <- function(
+    DefinitionMethod, 
+    stratumNames, 
+    SurveyTable = data.table::data.table()
+) {
+    
+    # Define one single survey:
+    if(DefinitionMethod == "AllStrata") {
+        SurveyTable <- data.table::data.table(
+            Stratum = stratumNames, 
+            Survey = "Survey"
+        )
+    }
+    # Or accept/reject the input SurveyTable:
+    else if(DefinitionMethod == "SurveyTable") {
+        # Delete rows with missing Survey:
+        if(any(is.na(SurveyTable$Survey))) {
+            warning("Removing rows of missing Survey in SurveyTable")
+            SurveyTable <- SurveyTable[!is.na(Survey)]
+        }
+        if(any(is.na(SurveyTable$Stratum))) {
+            warning("Removing rows of missing Stratum in SurveyTable")
+            SurveyTable <- SurveyTable[!is.na(Stratum)]
+        }
+        # Delete also rows with unrecognized Stratum:
+        if(!all(SurveyTable$Stratum %in% stratumNames)) {
+            warning("Removing rows of Stratum not present in the SurveyTable")
+            SurveyTable <- SurveyTable[Stratum %in% stratumNames, ]
+        }
+        # If no rows in the SurveyTable, issue an error:
+        if(!nrow(SurveyTable)) {
+            stop("SurveyTable must be a table of at least one row, with Stratum and Survey as columns")
+        }
+    }
+    
+    return(SurveyTable)
+}
+
 

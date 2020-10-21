@@ -6,6 +6,27 @@
 #' 
 stoxFunctionAttributes <- list(
     
+    ##### Survey: #####
+    DefineSurvey = list(
+        functionType = "processData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "Survey",
+        functionParameterFormat = list(
+            SurveyTable = "surveyTable"
+        ), 
+        functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
+            SurveyTable = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "SurveyTable"
+            )
+        )
+    ), 
+    ##########
+    
+    
     ##### Stratum polygons: #####
     DefineStratumPolygon = list(
         functionType = "processData", 
@@ -20,8 +41,8 @@ stoxFunctionAttributes <- list(
             ), 
             # These two are joined with AND, and must both be fulfilled:
             FileName = list(
-                DefinitionMethod = "ResourceFile", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
             )
         )
     ), 
@@ -42,7 +63,11 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
+            StoxAcousticData = list(
+                UseProcessData = FALSE
+            ), 
             StratumPolygon = list(
+                UseProcessData = FALSE, 
                 DefinitionMethod = "EDSUToPSU"
             )
         )
@@ -56,9 +81,11 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             AcousticPSU = list(
+                UseProcessData = FALSE, 
                 DefinitionMethod = "FunctionInput"
             ), 
             StoxAcousticData = list(
+                UseProcessData = FALSE, 
                 DefinitionMethod = "FunctionInput"
             )
         )
@@ -105,13 +132,13 @@ stoxFunctionAttributes <- list(
             ), 
             # These two are joined with AND, and must both be fulfilled:
             Resolution = list(
-                DefinitionMethod = "Resolution", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Resolution"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             LayerTable = list(
-                DefinitionMethod = "LayerTable", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "LayerTable"
             )
         )
     ), 
@@ -125,13 +152,13 @@ stoxFunctionAttributes <- list(
             ), 
             # These two are joined with AND, and must both be fulfilled:
             Resolution = list(
-                DefinitionMethod = "Resolution", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Resolution"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             LayerTable = list(
-                DefinitionMethod = "LayerTable", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "LayerTable"
             )
         )
     ), 
@@ -157,72 +184,72 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             AcousticLayer = list(
-                LayerDefinition = "FunctionInput", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                LayerDefinition = "FunctionInput"
             ), 
             LayerDefinitionMethod = list(
-                LayerDefinition = "FunctionParameter", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                LayerDefinition = "FunctionParameter"
             ), 
             Resolution = list(
-                LayerDefinitionMethod = "Resolution", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                LayerDefinitionMethod = "Resolution"
             ), 
             LayerTable = list(
-                LayerDefinitionMethod = "LayerTable", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                LayerDefinitionMethod = "LayerTable"
             ), 
             #AcousticLayer = list(
             #    UseProcessData = FALSE
             #), 
             # These two are joined with AND, and must both be fulfilled:
             StratumPolygon = list(
-                DefinitionMethod = "Stratum", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Stratum"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             StoxAcousticData = list(
-                DefinitionMethod = c("Radius", "EllipsoidalDistance"), 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = c("Radius", "EllipsoidalDistance")
             ), 
             StoxAcousticData = list(
-                LayerDefinition = "FunctionParameter", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                LayerDefinition = "FunctionParameter"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             Radius = list(
-                DefinitionMethod = "Radius", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Radius"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             MinNumberOfHauls = list(
-                DefinitionMethod = c("Radius", "EllipsoidalDistance"), 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = c("Radius", "EllipsoidalDistance")
             ), 
             # These two are joined with AND, and must both be fulfilled:
             Distance = list(
-                DefinitionMethod = "EllipsoidalDistance", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "EllipsoidalDistance"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             TimeDifference = list(
-                DefinitionMethod = "EllipsoidalDistance", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "EllipsoidalDistance"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             BottomDepthDifference = list(
-                DefinitionMethod = "EllipsoidalDistance", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "EllipsoidalDistance"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             LongitudeDifference = list(
-                DefinitionMethod = "EllipsoidalDistance", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "EllipsoidalDistance"
             ), 
             # These two are joined with AND, and must both be fulfilled:
             LatitudeDifference = list(
-                DefinitionMethod = "EllipsoidalDistance", 
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "EllipsoidalDistance"
             )
         )
     ), 
@@ -356,6 +383,17 @@ stoxFunctionAttributes <- list(
             ), 
             StratumPolygon = list(
                 PSUDefinitionMethod = "StationToPSU"
+            ), 
+            # Survey:
+            Survey = list(
+                SurveyDefinition = "FunctionInput"
+            ), 
+            SurveyDefinitionMethod = list(
+                SurveyDefinition = "FunctionParameter"
+            ), 
+            SurveyTable = list(
+                SurveyDefinition = "FunctionParameter", 
+                SurveyDefinitionMethod = "SurveyTable"
             )
         )
     ), 
@@ -424,6 +462,17 @@ stoxFunctionAttributes <- list(
             ), 
             StratumPolygon = list(
                 PSUDefinitionMethod = "EDSUToPSU"
+            ), 
+            # Survey:
+            Survey = list(
+                SurveyDefinition = "FunctionInput"
+            ), 
+            SurveyDefinitionMethod = list(
+                SurveyDefinition = "FunctionParameter"
+            ), 
+            SurveyTable = list(
+                SurveyDefinition = "FunctionParameter", 
+                SurveyDefinitionMethod = "SurveyTable"
             )
         )
     ),
@@ -776,6 +825,27 @@ processPropertyFormats <- list(
             sort(names(SuperIndividualsData))
         }, 
         variableTypes <- "character"
+    ), 
+    
+    surveyTable = list(
+        class = "table", 
+        title = "Link strata to different surveys", 
+        columnNames = c(
+            "Stratum",
+            "Survey"
+        ), 
+        variableTypes = c(
+            "character", 
+            "character"
+        ), 
+        possibleValues = function(StratumPolygon) {
+            # Must be an unnamed list:
+            list(
+                getStratumNames(StratumPolygon), # Stratum
+                # This results in the JSON string "[]" as is expected by the GUI:
+                list() # Survey
+            )
+        }
     )
     
 )

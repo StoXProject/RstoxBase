@@ -47,6 +47,7 @@ initiateRstoxBase <- function(){
         ), 
         MeanNASCData = list(
             Data = list(
+                surveyDefinition = "Survey", 
                 horizontalResolution = c("Stratum", "PSU"), 
                 verticalResolution = "Layer", 
                 categoryVariable = "AcousticCategory", 
@@ -96,6 +97,7 @@ initiateRstoxBase <- function(){
         ), 
         MeanLengthDistributionData = list(
             Data = list(
+                surveyDefinition = "Survey", 
                 horizontalResolution = c("Stratum", "PSU"), 
                 verticalResolution = "Layer", 
                 categoryVariable = "SpeciesCategory", 
@@ -125,6 +127,7 @@ initiateRstoxBase <- function(){
         ), 
         # Density:
         DensityData = list(
+            surveyDefinition = "Survey", 
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
@@ -138,7 +141,8 @@ initiateRstoxBase <- function(){
             other = NULL
         ), 
         MeanDensityData = list(
-            horizontalResolution = c("Stratum"), 
+            surveyDefinition = "Survey", 
+            horizontalResolution = "Stratum", 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c(
@@ -152,7 +156,8 @@ initiateRstoxBase <- function(){
         ), 
         # Abundance:
         AbundanceData = list(
-            horizontalResolution = c("Stratum"), 
+            surveyDefinition = "Survey", 
+            horizontalResolution = "Stratum", 
             verticalResolution = c("Layer"), 
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c(
@@ -166,7 +171,7 @@ initiateRstoxBase <- function(){
         ), 
         IndividualsData = list(
             Data = list(
-                horizontalResolution = "Stratum", 
+                horizontalResolution = c("Stratum"), 
                 #verticalResolution = c("Layer", "Haul"), 
                 verticalResolution = c("Layer"), 
                 #categoryVariable = "SpeciesCategory", 
@@ -182,6 +187,7 @@ initiateRstoxBase <- function(){
         # Prioritise the aggregation variables (horizontalResolution, verticalResolution, categoryVariable and groupingVariables) of the AbundanceData, followed by the IndividualRoundWeight, which is used to calculate Biomass (dividing Abundance by it); and finally the aggregation variables of the IndividualsData, as the purpose of the SuperIndividualsData is to distribute Abundance and Biomass onto the individuals:
         SuperIndividualsData = list(
             Data = list(
+                surveyDefinition = "Survey", 
                 horizontalResolution = "Stratum", 
                 #verticalResolution = c("Layer", "Haul"), 
                 verticalResolution = c("Layer"), 

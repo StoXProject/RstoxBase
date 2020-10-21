@@ -136,19 +136,26 @@ MeanNASC <- function(
     NASCData, 
     SumNASCData, 
     # Parameters of the sum part:
+    # Layer: 
     LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"), 
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     AcousticLayer = NULL, 
+    # Survey: 
+    SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
+    SurveyDefinitionMethod = c("AllStrata", "SurveyTable"), 
+    SurveyTable = data.table::data.table(), 
+    Survey = NULL, 
     # Parameters of the mean part:
+    # PSU: 
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
     PSUDefinitionMethod = c("EDSUToPSU"), 
     StratumPolygon = NULL, 
     AcousticPSU = NULL
 ) {
     
-    # Skip the sum part if predefined:
+    # Get the layer definition:
     LayerDefinition <- match.arg(LayerDefinition)
     if(LayerDefinition != "PreDefined") {
         SumNASCData <- SumNASC(
@@ -170,13 +177,19 @@ MeanNASC <- function(
     # Run the mean part:
     MeanNASCData <- meanRawResolutionData(
         data = SumNASCData, dataType = "SumNASCData", 
+        # PSU:
         PSUDefinition = PSUDefinition, 
         PSUProcessData = AcousticPSU, 
         PSUDefinitionMethod = PSUDefinitionMethod, 
+        # Survey:
+        SurveyDefinition = SurveyDefinition, 
+        SurveyProcessData = Survey, 
+        SurveyDefinitionMethod = SurveyDefinitionMethod, 
+        SurveyTable = SurveyTable, 
+        # General:
         StratumPolygon = StratumPolygon, 
         PSUType = "Acoustic"
     )
-    
     
     # Format the output:
     formatOutput(MeanNASCData, dataType = "MeanNASCData", keep.all = FALSE)
