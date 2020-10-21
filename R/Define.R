@@ -1371,7 +1371,7 @@ DefineSurvey <- function(
     
     # Get the survey table using the stratum names:
     stratumNames <- getStratumNames(StratumPolygon)
-    getSurveyTable(
+    SurveyTable <- getSurveyTable(
         DefinitionMethod = DefinitionMethod, 
         stratumNames = stratumNames, 
         SurveyTable = SurveyTable
