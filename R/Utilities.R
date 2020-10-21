@@ -411,8 +411,11 @@ meanRawResolutionData <- function(
     SurveyDefinition <- match.arg(SurveyDefinition)
     
     if(identical(SurveyDefinition, "FunctionParameter")) {
-        # Get the stratum names and the surveyTable:
+        # Get the stratum names and the SurveyTable:
         stratumNames <- unique(dataCopy$Stratum)
+        # Remove missing Stratum names:
+        stratumNames <- stratumNames[!is.na(stratumNames)]
+        # Get the SurveyTable
         SurveyProcessData <- getSurveyTable(
             DefinitionMethod = SurveyDefinitionMethod, 
             stratumNames = stratumNames, 
