@@ -126,6 +126,9 @@ aggregateBaselineDataOneTable <- function(
     weightingVariable = character()
 )
 {
+    if(!length(stoxData)) {
+        return(stoxData)
+    }
     
     # Get the aggregation function:
     aggregationFunction <- match.arg(aggregationFunction)
@@ -168,6 +171,10 @@ aggregateBaselineDataOneTable <- function(
     }
     
     outputData <- stoxData[, fun(.SD), by = groupingVariables]
+    
+    # Order by the grouping variables:
+    data.table::setorderv(outputData, groupingVariables)
+    
     
     return(outputData)
 }

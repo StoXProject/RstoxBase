@@ -245,6 +245,7 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
     
     # Insert the Layer column from the layerProcessData input, and otherwise by NAs:
     if(length(layerProcessData)) {
+        
         # Get the variables to aggregate by etc.:
         dataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
         varMin <- dataTypeDefinition$verticalRawDimension[1]

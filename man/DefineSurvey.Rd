@@ -17,9 +17,11 @@ DefineSurvey(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the \code{SurveyTable} to be given.}
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+
+\item{SurveyTable}{A table of the two columns Stratum and Survey.}
 }
 \value{
 An object of StoX data type \code{\link{BioticPSU}}.

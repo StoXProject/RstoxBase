@@ -181,22 +181,22 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             LayerDefinition = list(
-                UseProcessData = FALSE
+                #UseProcessData = FALSE
             ), 
             AcousticLayer = list(
-                UseProcessData = FALSE, 
+                #UseProcessData = FALSE, 
                 LayerDefinition = "FunctionInput"
             ), 
             LayerDefinitionMethod = list(
-                UseProcessData = FALSE, 
+                #UseProcessData = FALSE, 
                 LayerDefinition = "FunctionParameter"
             ), 
             Resolution = list(
-                UseProcessData = FALSE, 
+                #UseProcessData = FALSE, 
                 LayerDefinitionMethod = "Resolution"
             ), 
             LayerTable = list(
-                UseProcessData = FALSE, 
+                #UseProcessData = FALSE, 
                 LayerDefinitionMethod = "LayerTable"
             ), 
             #AcousticLayer = list(
@@ -209,11 +209,11 @@ stoxFunctionAttributes <- list(
             ), 
             # These two are joined with AND, and must both be fulfilled:
             StoxAcousticData = list(
-                UseProcessData = FALSE, 
+                #UseProcessData = FALSE, 
                 DefinitionMethod = c("Radius", "EllipsoidalDistance")
             ), 
             StoxAcousticData = list(
-                UseProcessData = FALSE, 
+                #UseProcessData = FALSE, 
                 LayerDefinition = "FunctionParameter"
             ), 
             # These two are joined with AND, and must both be fulfilled:
@@ -700,7 +700,14 @@ processPropertyFormats <- list(
             # Changed on 2020-06-30 from integer to character. There is no need to bring the integer definition of LUF20 on to StoxAcoustic!:
             "character", 
             "character"
-        )
+        )#, 
+        #possibleValues = function(AcousticTargetStrength, AssignmentLengthDistributionData) {
+        #    # Must be an unnamed list:
+        #    list(
+        #        unique(AcousticTargetStrength$TargetStrengthTable$AcousticCategory), 
+        #        unique(AssignmentLengthDistributionData$SpeciesCategory)
+        #    )
+        #}
     ), 
     targetStrengthDefinitionTable = list(
         class = "table", 
@@ -812,8 +819,8 @@ processPropertyFormats <- list(
     groupingVariables_ReportBootstrap = list(
         class = "vector", 
         title = "One or more variables to group super-individuals by when reporting BootstrapData", 
-        possibleValues = function(Bootstrap) {
-            sort(setdiff(names(BioticData), "BootstrapID"))
+        possibleValues = function(BootstrapData, BaselineProcess) {
+            sort(setdiff(names(BootstrapData[[BaselineProcess]]), "BootstrapID"))
         }, 
         variableTypes <- "character"
     ), 

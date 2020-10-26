@@ -336,7 +336,6 @@ getPSUStartStopDateTime <- function(AcousticPSU, StoxAcousticData) {
 # Function to get the start and end times of one acoustic PSU:
 getPSUStartStopDateTimeByPSU <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
     
-    #browser()
     # For conevnience get the EDSUs of the current PSU:
     thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
     
@@ -763,9 +762,22 @@ DefineBioticAssignment <- function(
 )
 {
     
+    # Get the DefinitionMethod:
+    LayerDefinition <- match.arg(LayerDefinition)
+    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
-        return(processData)
+        # Special action since we have included Layer in the BioticAssignment but have not yet opened for the possibility to assign differently to different layers. Re-add the Layer column:
+        BioticAssignment <- addLayerToBioticAssignmentAndFormat(
+            BioticAssignment = processData$BioticAssignment, 
+            LayerDefinition = LayerDefinition, 
+            AcousticLayer = AcousticLayer, 
+            StoxAcousticData = StoxAcousticData, 
+            LayerDefinitionMethod = LayerDefinitionMethod, 
+            Resolution = Resolution, 
+            LayerTable = LayerTable
+        )
+        return(BioticAssignment)
     }
     
     # Get the DefinitionMethod:
@@ -910,8 +922,47 @@ DefineBioticAssignment <- function(
         stop("Inavlid DefinitionMethod")
     }
     
-    # Add all Layers to each assigned haul:
-    LayerDefinition <- match.arg(LayerDefinition)
+    ## Add all Layers to each assigned haul:
+    #LayerDefinition <- match.arg(LayerDefinition)
+    ## Get the Layers:
+    #if(identical(LayerDefinition, "FunctionParameter")) {
+    #    AcousticLayer <- DefineLayer(
+    #        StoxData = StoxAcousticData, 
+    #        DefinitionMethod = LayerDefinitionMethod, 
+    #        Resolution = Resolution, 
+    #        LayerTable = LayerTable, 
+    #        LayerType = "Acoustic"
+    #    )
+    #}
+    ## Add the layers:
+    #Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
+    #BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
+    
+    
+    BioticAssignment <- addLayerToBioticAssignmentAndFormat(
+        BioticAssignment = BioticAssignment, 
+        LayerDefinition = LayerDefinition, 
+        AcousticLayer = AcousticLayer, 
+        StoxAcousticData = StoxAcousticData, 
+        LayerDefinitionMethod = LayerDefinitionMethod, 
+        Resolution = Resolution, 
+        LayerTable = LayerTable
+    )
+    
+    return(BioticAssignment)
+}
+
+# Function to add Layer to BioticAssignment:
+addLayerToBioticAssignmentAndFormat <- function(
+    BioticAssignment, 
+    LayerDefinition, 
+    AcousticLayer, 
+    StoxAcousticData, 
+    LayerDefinitionMethod, 
+    Resolution, 
+    LayerTable
+) {
+    
     # Get the Layers:
     if(identical(LayerDefinition, "FunctionParameter")) {
         AcousticLayer <- DefineLayer(
@@ -922,8 +973,12 @@ DefineBioticAssignment <- function(
             LayerType = "Acoustic"
         )
     }
-    # Add the layers:
+    # Add the Layers:
     Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
+    # .. but remove the existing Layers first:
+    if("Layer" %in% names(BioticAssignment)) {
+        BioticAssignment[, Layer := NULL]
+    }
     BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
     
     # Add weighting  = 1:
@@ -1338,8 +1393,8 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
-#' @inheritParams ModelData
-#' @param DefinitionMethod Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
+#' @param DefinitionMethod Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the \code{SurveyTable} to be given.
+#' @param SurveyTable A table of the two columns Stratum and Survey.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
