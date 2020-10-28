@@ -73,7 +73,8 @@ DefinePSU <- function(
         
         # Define PSUIDs and PSUNames:
         PSUID <- seq_along(SSU)
-        PSUName <- paste0(prefix, formatC(PSUID, width = max(nchar(PSUID)), format = "d", flag = "0"))
+        #PSUName <- paste0(prefix, formatC(PSUID, width = max(nchar(PSUID)), format = "d", flag = "0"))
+        PSUName <- getPSUName(PSUID, prefix)
         
         # Set each SSU as a PSU:
         SSU_PSU <- data.table::data.table(
@@ -148,6 +149,12 @@ DefinePSU <- function(
     return(out)
 }
 
+#' 
+#' @export
+#' 
+getPSUName <- function(ind, prefix) {
+    paste0(prefix, formatC(ind, width = max(nchar(ind)), format = "d", flag = "0"))
+}
 
 ##################################################
 ##################################################
@@ -336,7 +343,7 @@ getPSUStartStopDateTime <- function(AcousticPSU, StoxAcousticData) {
 # Function to get the start and end times of one acoustic PSU:
 getPSUStartStopDateTimeByPSU <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
     
-    # For conevnience get the EDSUs of the current PSU:
+    # For conevnience extract the EDSUs of the current PSU:
     thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
     
     # Match the EDSUs of the AcousticPSU with EDSUs of the StoxAcousticData:
@@ -980,6 +987,8 @@ addLayerToBioticAssignmentAndFormat <- function(
         BioticAssignment[, Layer := NULL]
     }
     BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
+    # Remove duplicates (which may be generated when removing the Layer column):
+    BioticAssignment <- unique(BioticAssignment)
     
     # Add weighting  = 1:
     BioticAssignment[, WeightingFactor := 1]
