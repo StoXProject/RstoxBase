@@ -22,6 +22,7 @@
 NASC <- function(
     StoxAcousticData = NULL
 ) {
+    
     # Merge the StoxAcousticData:
     NASCData <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
     
@@ -38,7 +39,7 @@ NASC <- function(
     # Add weights:
     NASCData[, NASCWeight := EffectiveLogDistance]
     
-    # Set the order of the columns:
+    # Format the output:
     formatOutput(NASCData, dataType = "NASCData", keep.all = FALSE)
     
     # Not needed here, since we only copy data: 
@@ -90,7 +91,7 @@ SumNASC <- function(
     AcousticLayer = NULL
 ) {
     
-    sumRawResolutionData(
+    SumNASCData <- sumRawResolutionData(
         data = NASCData, dataType = "NASCData", 
         LayerDefinition = LayerDefinition, 
         LayerProcessData = AcousticLayer, 
@@ -99,6 +100,15 @@ SumNASC <- function(
         LayerTable = LayerTable, 
         LayerType = "Acoustic"
     )
+    
+    # Format the output:
+    formatOutput(SumNASCData, dataType = "SumNASCData", keep.all = FALSE)
+    
+    # Not needed here, since we only aggregate data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(SumNASCData)
+    
+    return(SumNASCData)
 }
 
 
@@ -126,19 +136,27 @@ MeanNASC <- function(
     NASCData, 
     SumNASCData, 
     # Parameters of the sum part:
+    # Layer: 
     LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"), 
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     AcousticLayer = NULL, 
+    # Survey: 
+    SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
+    SurveyDefinitionMethod = c("AllStrata", "SurveyTable"), 
+    SurveyTable = data.table::data.table(), 
+    Survey = NULL, 
     # Parameters of the mean part:
+    # PSU: 
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
     PSUDefinitionMethod = c("EDSUToPSU"), 
     StratumPolygon = NULL, 
     AcousticPSU = NULL
 ) {
     
-    # Skip the sum part if predefined:
+
+    # Get the layer definition:
     LayerDefinition <- match.arg(LayerDefinition)
     if(LayerDefinition != "PreDefined") {
         SumNASCData <- SumNASC(
@@ -158,12 +176,27 @@ MeanNASC <- function(
     }
     
     # Run the mean part:
-    meanRawResolutionData(
+    MeanNASCData <- meanRawResolutionData(
         data = SumNASCData, dataType = "SumNASCData", 
+        # PSU:
         PSUDefinition = PSUDefinition, 
         PSUProcessData = AcousticPSU, 
         PSUDefinitionMethod = PSUDefinitionMethod, 
+        # Survey:
+        SurveyDefinition = SurveyDefinition, 
+        SurveyProcessData = Survey, 
+        SurveyDefinitionMethod = SurveyDefinitionMethod, 
+        SurveyTable = SurveyTable, 
+        # General:
         StratumPolygon = StratumPolygon, 
         PSUType = "Acoustic"
     )
+    
+    # Format the output:
+    formatOutput(MeanNASCData, dataType = "MeanNASCData", keep.all = FALSE)
+    
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(MeanNASCData)
+    
+    return(MeanNASCData)
 }

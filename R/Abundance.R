@@ -30,9 +30,10 @@ Abundance <- function(
     # Multiply the area and the density:
     AbundanceData[, Abundance := Area * Density]
     
-    # Keep only the releavnt columns:
-    #keepOnlyRelevantColumns(AbundanceData, "AbundanceData")
-    formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE)
+    # Format the output:
+    # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
+    #formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE)
+    formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(AbundanceData)
@@ -75,7 +76,7 @@ Individuals <- function(
     AbundanceType <- match.arg(AbundanceType)
     
     # Merge StoxBtiotic:
-    MergedStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
+    MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
     
     # Get the resolution variables of AbundanceData:
     abundanceResolutionVariables <- getResolutionVariables("AbundanceData")
@@ -106,8 +107,8 @@ Individuals <- function(
     # Expand the vectors of hauls:
     #usedHauls <- expandDT(usedHauls)
     
-    # Merge individuals into the Stratum, Layer, Haul table:
-    IndividualsData <- merge(usedHauls, MergedStoxBioticData, by = "Haul", allow.cartesian = TRUE)
+    # Merge individuals into the Stratum, Layer, Haul table, for the purpose of gettinig all individuals used in the model, possibly repeating individuals if the same hauls are used for several Stratum-Layer combinations (which can be the case e.g. for several layers):
+    IndividualsData <- merge(usedHauls, MergeStoxBioticData, by = "Haul", allow.cartesian = TRUE)
     
     ## Remove rows with SpeciesCategory NA (change added on 2020-04-20, since NAs in SpeciesCategory are vital for including all Stations, PSUs# and Strata when using meanData(), but should not present when considering individuals):
     #IndividualsData <- IndividualsData[!is.na(SpeciesCategory), ]
@@ -115,17 +116,17 @@ Individuals <- function(
     # Remove rows with missing IndividualKey, indicating they are not individuals but merely rows for Hauls included in the PSU/Layer:
     IndividualsData <- IndividualsData[!is.na(IndividualKey), ]
     
-    # Order the columns, but keep all columns:
-    formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE)
+    # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
+    formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = names(MergeStoxBioticData))
     
     # Add the attribute 'variableNames':
     setattr(
         IndividualsData, 
         "stoxDataVariableNames",
-        attr(MergedStoxBioticData, "stoxDataVariableNames")
+        attr(MergeStoxBioticData, "stoxDataVariableNames")
     )
     
-    attr(IndividualsData, "stoxDataVariableNames") <- attr(MergedStoxBioticData, "stoxDataVariableNames")
+    attr(IndividualsData, "stoxDataVariableNames") <- attr(MergeStoxBioticData, "stoxDataVariableNames")
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:
@@ -185,14 +186,28 @@ SuperIndividuals <- function(
     # Add length groups also to the AbundanceData:
     addLengthGroupsByReference(data = AbundanceData, master = AbundanceData)
     
-    # Merge the abundance into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups():
+    # Merge the abundance into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups(). This is akward coding, with two instances of getDataTypeDefinition(), but the problem is the LengthGroup, and that we do not need "the columns IndividualTotalLength" and "LengthResolution":
+    
     abundanceGrouping <- c(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "LengthGroup"
     )
+    # Get the variables to add from the AbundanceData, which are "Abundance", the vertical dimension and grouping variables, but not those which may be present in the IndividualsData ("IndividualTotalLength", "LengthResolution"), and also the abundanceGrouping:
+    variablesToGetFromAbundanceData <- c(
+        "Abundance", 
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables"), unlist = TRUE)
+    )
+    variablesToGetFromAbundanceData <- setdiff(variablesToGetFromAbundanceData, names(SuperIndividualsData))
+    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData))
+    variablesToGetFromAbundanceData <- c(
+        abundanceGrouping, 
+        variablesToGetFromAbundanceData
+    )
+    
+    # Merge AbundanceData into the IndividualsData
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
-        AbundanceData[, c(..abundanceGrouping, "Abundance")], 
+        AbundanceData[, ..variablesToGetFromAbundanceData], 
         by = abundanceGrouping, 
         allow.cartesian = TRUE
     )
@@ -281,8 +296,8 @@ SuperIndividuals <- function(
     # Add Biomass:
     SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
     
-    # Order the columns, but keep all columns:
-    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE)
+    # Format the output but keep all columns:
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     SuperIndividualsData[, haulWeightFactor := NULL]
@@ -291,8 +306,8 @@ SuperIndividuals <- function(
     #SuperIndividualsData[, abundanceWeightFactor := NULL]
     SuperIndividualsData[, LengthGroup := NULL]
     
-    # Order the rows:
-    orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
+    ## Order the rows:
+    #orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
     
     # Add the attribute 'variableNames':
     setattr(
@@ -428,14 +443,21 @@ addLengthGroupsByReference <- function(
     # Keep only the common species:    
     species <- intersect(speciesInData, speciesInMaster)
     
-    for(thisspecies in species) {
-        addLengthGroupsByReferenceOneSpecies(
-            data = data, 
-            master = master, 
-            species = thisspecies, 
-            lengthVar = lengthVar, 
-            resolutionVar = resolutionVar)
+    if(!length(species)) {
+        data[, LengthGroup := NA]
     }
+    else {
+        for(thisspecies in species) {
+            addLengthGroupsByReferenceOneSpecies(
+                data = data, 
+                master = master, 
+                species = thisspecies, 
+                lengthVar = lengthVar, 
+                resolutionVar = resolutionVar
+            )
+        }
+    }
+    
     
     return(TRUE)
 }
@@ -482,7 +504,7 @@ ImputeSuperIndividuals <- function(
     IndividualKeys <- setdiff(individualNames, RstoxData::getStoxKeys("StoxBiotic"))
     
     # Impute the SuperIndividualsData:
-    ImputeSuperIndividualsData <- ImputeData(
+    SuperIndividualsData <- ImputeData(
         data = SuperIndividualsData, 
         imputeAtMissing = "IndividualAge", 
         imputeByEqual = "IndividualTotalLength", 
@@ -492,16 +514,16 @@ ImputeSuperIndividuals <- function(
     )
     
     # Re-calculate the Biomass:
-    ImputeSuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
 
-    # Order the columns, but keep all columns:
-    formatOutput(ImputeSuperIndividualsData, dataType = "ImputeSuperIndividualsData", keep.all = TRUE)
+    # Format the output but keep all columns:
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(ImputeSuperIndividualsData)
+    #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
     
-    return(ImputeSuperIndividualsData)
+    return(SuperIndividualsData)
 }
 
 
@@ -511,7 +533,12 @@ ImputeData <- function(
     imputeByEqual = "IndividualTotalLength", 
     groupBy = "SpeciesCategory", 
     seed = 1, 
-    columnNames = NULL
+    columnNames = NULL, 
+    levels = list(
+        "Haul", 
+        "Stratum", 
+        "AllStrata"
+    )
 ) {
     
     # Get the data and add the RowIndex foor use when identifying which rows to impute from:
@@ -522,11 +549,6 @@ ImputeData <- function(
     # Introduce an Individual index for use in the sorted sampling:
     dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]
     
-    levels <- list(
-        "Haul", 
-        "Stratum", 
-        "AllStrata"
-    )
     # Add an AllStrata column to the data to facilitate the AllStrata level: 
     dataCopy[, AllStrata := "AllStrata"]
     #setcolorder(dataCopy, neworder = "AllStrata")

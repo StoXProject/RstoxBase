@@ -12,8 +12,8 @@ BioticAssignmentWeighting(
   LengthDistributionData,
   MaxNumberOfLengthSamples = 100,
   StoxAcousticData,
-  Radius,
-  LengthExponent
+  Radius = double(),
+  LengthExponent = double()
 )
 }
 \arguments{

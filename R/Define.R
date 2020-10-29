@@ -73,7 +73,8 @@ DefinePSU <- function(
         
         # Define PSUIDs and PSUNames:
         PSUID <- seq_along(SSU)
-        PSUName <- paste0(prefix, formatC(PSUID, width = max(nchar(PSUID)), format = "d", flag = "0"))
+        #PSUName <- paste0(prefix, formatC(PSUID, width = max(nchar(PSUID)), format = "d", flag = "0"))
+        PSUName <- getPSUName(PSUID, prefix)
         
         # Set each SSU as a PSU:
         SSU_PSU <- data.table::data.table(
@@ -148,6 +149,12 @@ DefinePSU <- function(
     return(out)
 }
 
+#' 
+#' @export
+#' 
+getPSUName <- function(ind, prefix) {
+    paste0(prefix, formatC(ind, width = max(nchar(ind)), format = "d", flag = "0"))
+}
 
 ##################################################
 ##################################################
@@ -247,6 +254,9 @@ DefineAcousticPSU <- function(
         PSUType = "Acoustic"
     )
     
+    # Format the output:
+    formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
+    
     return(AcousticPSU)
 }
 
@@ -281,6 +291,11 @@ DefineAcousticPSUByTime <- function(
     StoxAcousticData
 ) {
     
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     
@@ -291,6 +306,9 @@ DefineAcousticPSUByTime <- function(
     else {
         stop("Inavlid DefinitionMethod")
     }
+    
+    # Format the output:
+    formatOutput(AcousticPSUByTime, dataType = "AcousticPSUByTime", keep.all = FALSE)
     
     return(AcousticPSUByTime)
 }
@@ -325,8 +343,7 @@ getPSUStartStopDateTime <- function(AcousticPSU, StoxAcousticData) {
 # Function to get the start and end times of one acoustic PSU:
 getPSUStartStopDateTimeByPSU <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
     
-    #browser()
-    # For conevnience get the EDSUs of the current PSU:
+    # For conevnience extract the EDSUs of the current PSU:
     thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
     
     # Match the EDSUs of the AcousticPSU with EDSUs of the StoxAcousticData:
@@ -410,7 +427,6 @@ DefineAcousticPSUFromPSUByTime <- function(
     AcousticPSUByTime, 
     StoxAcousticData
 ) {
-    
     warning("This function should be included as a DefinitionMethod in DefineAcousticPSU() in the future")
     
     # Return immediately if UseProcessData = TRUE:
@@ -450,6 +466,9 @@ DefineAcousticPSUFromPSUByTime <- function(
         EDSU_PSU = EDSU_PSU
     )
 
+    # Format the output:
+    formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
+    
     return(AcousticPSU)
 }
 
@@ -741,34 +760,47 @@ DefineBioticAssignment <- function(
     StoxAcousticData, 
     Radius = double(), 
     # (Additional) for DefinitionMethod "EllipsoidalDistance": 
-    MinNumberOfHauls,
-    Distance, 
-    TimeDifference, 
-    BottomDepthDifference, 
-    LongitudeDifference, 
-    LatitudeDifference
+    MinNumberOfHauls = double(),
+    Distance = double(), 
+    TimeDifference = double(), 
+    BottomDepthDifference = double(), 
+    LongitudeDifference = double(), 
+    LatitudeDifference = double()
 )
 {
     
+    # Get the DefinitionMethod:
+    LayerDefinition <- match.arg(LayerDefinition)
+    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
-        return(processData)
+        # Special action since we have included Layer in the BioticAssignment but have not yet opened for the possibility to assign differently to different layers. Re-add the Layer column:
+        BioticAssignment <- addLayerToBioticAssignmentAndFormat(
+            BioticAssignment = processData$BioticAssignment, 
+            LayerDefinition = LayerDefinition, 
+            AcousticLayer = AcousticLayer, 
+            StoxAcousticData = StoxAcousticData, 
+            LayerDefinitionMethod = LayerDefinitionMethod, 
+            Resolution = Resolution, 
+            LayerTable = LayerTable
+        )
+        return(BioticAssignment)
     }
     
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     
     # Merge the StoxBioticData:
-    MergedStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
+    MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
     
     
     # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
     if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         # Create a spatial points object of the positions of the hauls:
-        SpatialHauls <- sp::SpatialPoints(MergedStoxBioticData[, c("Longitude", "Latitude")])
+        SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
         # Get the stratum for each haul:
         Stratum <- unname(unlist(sp::over(SpatialHauls, StratumPolygon)))
-        BioticAssignment <- MergedStoxBioticData
+        BioticAssignment <- MergeStoxBioticData
         BioticAssignment[, Stratum := ..Stratum]
         
         # Add the PSUs to the BioticAssignment:
@@ -781,12 +813,12 @@ DefineBioticAssignment <- function(
     else if(grepl("Radius|EllipsoidalDistance", DefinitionMethod, 
                   ignore.case = TRUE)) {
         # Merge the StoxBioticData:
-        MergedStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
+        MergeStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
         
         # Get a table of EDSUs and Hauls:
         BioticAssignment <- data.table::CJ(
-            EDSU = MergedStoxAcousticData$EDSU, 
-            Haul = MergedStoxBioticData$Haul
+            EDSU = MergeStoxAcousticData$EDSU, 
+            Haul = MergeStoxBioticData$Haul
         )
         
         # Merge PSUs and strata into the table:
@@ -801,8 +833,8 @@ DefineBioticAssignment <- function(
             
             differenceTable = data.table::data.table(
                 distance = getDistance(
-                    MergedStoxAcousticData = MergedStoxAcousticData, 
-                    MergedStoxBioticData = MergedStoxBioticData
+                    MergeStoxAcousticData = MergeStoxAcousticData, 
+                    MergeStoxBioticData = MergeStoxBioticData
                 )
             )
             
@@ -815,24 +847,24 @@ DefineBioticAssignment <- function(
                 # Get the distance between the EDSUs and Hauls:
                 if(length(Distance)) {
                     Distance = getSquaredRelativeDistance(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         Distance = Distance
                     )
                 }, 
                 # Get the time difference between the EDSUs and Hauls:
                 if(length(TimeDifference)) {
                     TimeDifference = getSquaredRelativeTimeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         TimeDifference = TimeDifference
                     )
                 }, 
                 # Get the difference in bottom depth between the EDSUs and Hauls:
                 if(length(BottomDepthDifference)) {
                     BottomDepthDifference = getSquaredRelativeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         variableName = "BottomDepth", 
                         axisLength = BottomDepthDifference
                     )
@@ -840,8 +872,8 @@ DefineBioticAssignment <- function(
                 # Get the longitude difference between the EDSUs and Hauls:
                 if(length(LongitudeDifference)) {
                     LongitudeDifference = getSquaredRelativeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         variableName = "Longitude", 
                         axisLength = LongitudeDifference
                     )
@@ -849,8 +881,8 @@ DefineBioticAssignment <- function(
                 # Get the latitude differerence between the EDSUs and Hauls:
                 if(length(LatitudeDifference)) {
                     LatitudeDifference = getSquaredRelativeDiff(
-                        MergedStoxAcousticData = MergedStoxAcousticData, 
-                        MergedStoxBioticData = MergedStoxBioticData, 
+                        MergeStoxAcousticData = MergeStoxAcousticData, 
+                        MergeStoxBioticData = MergeStoxBioticData, 
                         variableName = "Latitude", 
                         axisLength = LatitudeDifference
                     )
@@ -897,8 +929,47 @@ DefineBioticAssignment <- function(
         stop("Inavlid DefinitionMethod")
     }
     
-    # Add all Layers to each assigned haul:
-    LayerDefinition <- match.arg(LayerDefinition)
+    ## Add all Layers to each assigned haul:
+    #LayerDefinition <- match.arg(LayerDefinition)
+    ## Get the Layers:
+    #if(identical(LayerDefinition, "FunctionParameter")) {
+    #    AcousticLayer <- DefineLayer(
+    #        StoxData = StoxAcousticData, 
+    #        DefinitionMethod = LayerDefinitionMethod, 
+    #        Resolution = Resolution, 
+    #        LayerTable = LayerTable, 
+    #        LayerType = "Acoustic"
+    #    )
+    #}
+    ## Add the layers:
+    #Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
+    #BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
+    
+    
+    BioticAssignment <- addLayerToBioticAssignmentAndFormat(
+        BioticAssignment = BioticAssignment, 
+        LayerDefinition = LayerDefinition, 
+        AcousticLayer = AcousticLayer, 
+        StoxAcousticData = StoxAcousticData, 
+        LayerDefinitionMethod = LayerDefinitionMethod, 
+        Resolution = Resolution, 
+        LayerTable = LayerTable
+    )
+    
+    return(BioticAssignment)
+}
+
+# Function to add Layer to BioticAssignment:
+addLayerToBioticAssignmentAndFormat <- function(
+    BioticAssignment, 
+    LayerDefinition, 
+    AcousticLayer, 
+    StoxAcousticData, 
+    LayerDefinitionMethod, 
+    Resolution, 
+    LayerTable
+) {
+    
     # Get the Layers:
     if(identical(LayerDefinition, "FunctionParameter")) {
         AcousticLayer <- DefineLayer(
@@ -909,24 +980,30 @@ DefineBioticAssignment <- function(
             LayerType = "Acoustic"
         )
     }
-    # Add the layers:
+    # Add the Layers:
     Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
+    # .. but remove the existing Layers first:
+    if("Layer" %in% names(BioticAssignment)) {
+        BioticAssignment[, Layer := NULL]
+    }
     BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
+    # Remove duplicates (which may be generated when removing the Layer column):
+    BioticAssignment <- unique(BioticAssignment)
     
     # Add weighting  = 1:
     BioticAssignment[, WeightingFactor := 1]
     
-    # Extract only the relevant columns:
+    # Format the output:
     formatOutput(BioticAssignment, dataType = "BioticAssignment", keep.all = FALSE)
     
     return(BioticAssignment)
 }
 
-# Function to get the great circle distance between EDSUs in the MergedStoxAcousticData and Hauls in the MergedStoxBioticData: 
-getDistance <- function(MergedStoxAcousticData, MergedStoxBioticData) {
+# Function to get the great circle distance between EDSUs in the MergeStoxAcousticData and Hauls in the MergeStoxBioticData: 
+getDistance <- function(MergeStoxAcousticData, MergeStoxBioticData) {
     # Extract the goegraphical positions:
-    EDSUPositions <- as.matrix(MergedStoxAcousticData[, c("Longitude", "Latitude")])
-    HaulPositions <- as.matrix(MergedStoxBioticData[, c("Longitude", "Latitude")])
+    EDSUPositions <- as.matrix(MergeStoxAcousticData[, c("Longitude", "Latitude")])
+    HaulPositions <- as.matrix(MergeStoxBioticData[, c("Longitude", "Latitude")])
     # Get the distances between EDUSs and Hauls:
     EDSUToHaulDistance <- c(sp::spDists(EDSUPositions, HaulPositions, longlat = TRUE))
     # Convert to nautical miles:
@@ -935,20 +1012,20 @@ getDistance <- function(MergedStoxAcousticData, MergedStoxBioticData) {
 }
 
 # Function to ge the squared distance in units of the Distance squared:
-getSquaredRelativeDistance <- function(MergedStoxAcousticData, MergedStoxBioticData, Distance) {
+getSquaredRelativeDistance <- function(MergeStoxAcousticData, MergeStoxBioticData, Distance) {
     # Get the distances between EDUSs and Hauls:
-    EDSUToHaulDistance <- getDistance(MergedStoxAcousticData, MergedStoxBioticData)
+    EDSUToHaulDistance <- getDistance(MergeStoxAcousticData, MergeStoxBioticData)
     # Square and return:
     SquaredRelativeDistance <- EDSUToHaulDistance^2 / Distance^2
     return(SquaredRelativeDistance)
 }
 
 # Function to ge the squared time difference in units of the TimeDifference squared:
-getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, TimeDifference, variableName = "DateTime") {
+getSquaredRelativeTimeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, TimeDifference, variableName = "DateTime") {
     # Get the time difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
-        x = MergedStoxAcousticData[[variableName]], 
-        y = MergedStoxBioticData[[variableName]]
+        x = MergeStoxAcousticData[[variableName]], 
+        y = MergeStoxBioticData[[variableName]]
     )
     TimeDiff <- as.numeric(out[, difftime(x, y, units = "hours")])
     # Square and return:
@@ -956,11 +1033,11 @@ getSquaredRelativeTimeDiff <- function(MergedStoxAcousticData, MergedStoxBioticD
     return(SquaredTimeDiff)
 }
 
-getSquaredRelativeDiff <- function(MergedStoxAcousticData, MergedStoxBioticData, variableName, axisLength) {
+getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, variableName, axisLength) {
     # Get the absolute difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
-        x = MergedStoxAcousticData[[variableName]], 
-        y = MergedStoxBioticData[[variableName]]
+        x = MergeStoxAcousticData[[variableName]], 
+        y = MergeStoxBioticData[[variableName]]
     )
     # Square and return:
     SquaredRelativeDiff <- c(out[, x - y])^2 / axisLength^2
@@ -1005,7 +1082,7 @@ BioticAssignmentWeighting <- function(
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    StoxAcousticData, Radius, LengthExponent
+    StoxAcousticData, Radius = double(), LengthExponent = double()
 ) {
     
     # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.
@@ -1126,7 +1203,7 @@ BioticAssignmentWeighting <- function(
         )
     }
     
-    # Keep only relevant columns:
+    # Format the output:
     formatOutput(BioticAssignmentCopy, dataType = "BioticAssignment", keep.all = FALSE)
     
     return(BioticAssignmentCopy)
@@ -1297,7 +1374,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
         TargetStrengthMethod = data.table::data.table(TargetStrengthMethod = TargetStrengthMethod), 
         TargetStrengthTable = TargetStrengthTable
     )
-        
+    
     return(AcousticTargetStrength)
 }
 
@@ -1314,5 +1391,96 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
     }
 }
 
+
+
+
+##################################################
+##################################################
+#' Biotic Survey
+#' 
+#' This function defines the Strata associated to different surveys (in the sense that a separate estimate should be made for those strata). 
+#' 
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @param DefinitionMethod Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the \code{SurveyTable} to be given.
+#' @param SurveyTable A table of the two columns Stratum and Survey.
+#' 
+#' @details
+#' This function is awesome and does excellent stuff.
+#' 
+#' @return
+#' An object of StoX data type \code{\link{BioticPSU}}.
+#' 
+#' @examples
+#' x <- 1
+#' 
+#' @seealso Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
+#' 
+#' @export
+#' 
+DefineSurvey <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("AllStrata", "SurveyTable"), 
+    StratumPolygon, 
+    SurveyTable = data.table::data.table()
+) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    # Get the survey table using the stratum names:
+    stratumNames <- getStratumNames(StratumPolygon)
+    SurveyTable <- getSurveyTable(
+        DefinitionMethod = DefinitionMethod, 
+        stratumNames = stratumNames, 
+        SurveyTable = SurveyTable
+    )
+        
+    return(SurveyTable)
+}
+
+
+getSurveyTable <- function(
+    DefinitionMethod, 
+    stratumNames, 
+    SurveyTable = data.table::data.table()
+) {
+    
+    # Define one single survey:
+    if(DefinitionMethod == "AllStrata") {
+        SurveyTable <- data.table::data.table(
+            Stratum = stratumNames, 
+            Survey = "Survey"
+        )
+    }
+    # Or accept/reject the input SurveyTable:
+    else if(DefinitionMethod == "SurveyTable") {
+        # Delete rows with missing Survey:
+        if(any(is.na(SurveyTable$Survey))) {
+            warning("Removing rows of missing Survey in SurveyTable")
+            SurveyTable <- SurveyTable[!is.na(Survey)]
+        }
+        if(any(is.na(SurveyTable$Stratum))) {
+            warning("Removing rows of missing Stratum in SurveyTable")
+            SurveyTable <- SurveyTable[!is.na(Stratum)]
+        }
+        # Delete also rows with unrecognized Stratum:
+        if(!all(SurveyTable$Stratum %in% stratumNames)) {
+            warning("Removing rows of Stratum not present in the SurveyTable")
+            SurveyTable <- SurveyTable[Stratum %in% stratumNames, ]
+        }
+        # If no rows in the SurveyTable, issue an error:
+        if(!nrow(SurveyTable)) {
+            stop("SurveyTable must be a table of at least one row, with Stratum and Survey as columns")
+        }
+    }
+    
+    return(SurveyTable)
+}
 
 

@@ -35,10 +35,10 @@ ReportBootstrap(
 \item{BootstrapReportWeightingVariable}{The variable to weight by in the \code{BootstrapReportFunction}.}
 }
 \value{
-A \code{\link{ReportImputeSuperIndividualsData}} object.
+A \code{\link{ReportBootstrapData}} object.
 }
 \description{
-Reports the sum, mean or other functions on a variable of the \code{\link{ImputeSuperIndividualsData}}.
+Reports the sum, mean or other functions on a variable of the \code{\link{BootstrapData}}.
 }
 \details{
 This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.

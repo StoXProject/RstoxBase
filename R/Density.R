@@ -80,16 +80,27 @@ AcousticDensity <- function(
     MeanNASCData,
     AssignmentLengthDistributionData,
     AcousticTargetStrength,
-    SpeciesLink
+    SpeciesLink = data.table::data.table()
 ) {
     
     # Check that the input SpeciesLink has the appropriate types:
     checkTypes(table = SpeciesLink)
+    # Warning if the SpeciesLink does not contain all SpeciesCategory of the AssignmentLengthDistributionData:
+    allSpeciesCategory <- unique(AssignmentLengthDistributionData$SpeciesCategory)
+    if(!all(allSpeciesCategory %in% SpeciesLink$SpeciesCategory)) {
+        notPresent <- setdiff(allSpeciesCategory, SpeciesLink$SpeciesCategory)
+        notPresent <- notPresent[!is.na(notPresent)]
+        warning("StoX: The following SpeciesCategory are present in the AssignmentLengthDistributionData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+    }
+    allAcousticCategory <- unique(AcousticTargetStrength$TargetStrengthTable$AcousticCategory)
+    if(!all(allAcousticCategory %in% SpeciesLink$AcousticCategory)) {
+        notPresent <- setdiff(allSpeciesCategory, SpeciesLink$SpeciesCategory)
+        notPresent <- notPresent[!is.na(notPresent)]
+warning("StoX: The following AcousticCategory are present in the AcousticTargetStrength but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+    }
     
-    # Check that the MeanNASCData has PSU and Layer resolution:
-    #checkResolutionPSU_Layer(MeanNASCData, "MeanNASCData")
     # Merge TargetStrength with SpeciesLink in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
-    AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLink, by='AcousticCategory', all = TRUE, allow.cartesian = TRUE)
+    AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLink, by = "AcousticCategory", all = TRUE, allow.cartesian = TRUE)
     # Define the resolution on which to distribute the NASC:
     resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     
@@ -104,9 +115,10 @@ AcousticDensity <- function(
     # Introduce the DensityWeight as a copy of the NASCWeight:
     DensityData[, DensityWeight := MeanNASCWeight]
     
-    # Keep only the releavnt columns:
-    #keepOnlyRelevantColumns(DensityData, "DensityData")
-    formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
+    # Format the output:
+    # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
+    #formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
+    formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(DensityData)
@@ -116,7 +128,6 @@ AcousticDensity <- function(
 
 NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTargetStrength, resolution) {
     # Merge the TargetStrength into the NASCData to form the DensityData. This adds the parameters of the target strength to length relationship. This step is important, as merging is done by the AcousticCategory, Frequency and possibly other grouping columns.:
-    
     
     # Take special care of TargetStrengthMethods that are tables of length instead of functions, in which we apply constant interpolation to the lengths in the data here, to facilitate correct merging:
     if(getRstoxBaseDefinitions("targetStrengthMethodTypes")[[AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod]] == "Table") {
@@ -147,7 +158,12 @@ NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTa
     
     # Merge the AssignmentLengthDistributionData into the DensityData. This adds the length distribution:
     mergeBy <- intersect(names(DensityData), names(AssignmentLengthDistributionData))
-    DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE)
+    # Error if there are any of the mergeBy that have no intersections:
+    intersecting <- checkIntersect(DensityData, AssignmentLengthDistributionData)
+    if(any(!intersecting)) {
+        stop("The NASCData and AssignmentLengthDistributionData no intersecting values for the following columns: ", paste0(mergeBy[!intersecting], collapse = ", "), ". A possible reason is that the LayerDefinition in the MeanNASCData has changed. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC().")
+    }
+    DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
     # Calculate the target strength of each length group:
     getTargetStrength(DensityData, TargetStrengthMethod = AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod)
@@ -169,6 +185,14 @@ NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTa
     return(DensityData[])
 }
 
+checkIntersect <- function(x, y, by = NULL) {
+    if(length(by)) (
+        FALSE
+    )
+    else {
+        lapply(by, function(thisBy) length(intersect(x[[thisBy]], y[[thisBy]])) > 0)
+    }
+}
 
 # Convert a table of lenght and TS to a funciton:
 getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "constant", rule = 2) {
@@ -396,13 +420,20 @@ SweptAreaDensity <- function(
         stop("Invalid LengthDistributionType.")
     }
     
+    # Remove the WeightedCount:
+    DensityData[, WeightedCount := NULL]
+    
     # Convert to density per nautical mile atwarthship:
     #DensityData[, Density := Density * lengthOfOneNauticalMile]
     
     # Extract the relevant variables only:
     #relevantVariables <- getAllDataTypeVariables(dataType = "DensityData")
     #DensityData <- DensityData[, ..relevantVariables]
-    formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
+    
+    # Format the output:
+    # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
+    #formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
+    formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(DensityData)
@@ -436,8 +467,10 @@ SweptAreaDensity <- function(
 MeanDensity <- function(
     DensityData
 ) {
-    #meanData(DensityData, dataType = "DensityData", targetResolution = "Stratum")
     MeanDensityData <- applyMeanToData(data = DensityData, dataType = "DensityData", targetResolution = "Stratum")
+    
+    # Format the output:
+    formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(MeanDensityData)

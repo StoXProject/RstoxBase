@@ -1,8 +1,8 @@
 ##################################################
 ##################################################
-#' Report ImputeSuperIndividualsData
+#' Report SuperIndividualsData
 #' 
-#' Reports the sum, mean or other functions on a variable of the \code{\link{ImputeSuperIndividualsData}}.
+#' Reports the sum, mean or other functions on a variable of the \code{\link{SuperIndividualsData}}.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
@@ -12,7 +12,7 @@
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
 #' @return
-#' A \code{\link{ReportImputeSuperIndividualsData}} object.
+#' A \code{\link{ReportSuperIndividualsData}} object.
 #' 
 #' @examples
 #' 
@@ -20,8 +20,8 @@
 #' 
 #' @export
 #' 
-ReportImputeSuperIndividuals <- function(
-    ImputeSuperIndividualsData, 
+ReportSuperIndividuals <- function(
+    SuperIndividualsData, 
     TargetVariable, 
     ReportFunction = getRstoxBaseDefinitions("reportFunctions")$functionName, 
     GroupingVariables = character(), 
@@ -30,7 +30,7 @@ ReportImputeSuperIndividuals <- function(
 ) 
 {
     aggregateBaselineDataOneTable(
-        stoxData = ImputeSuperIndividualsData, 
+        stoxData = SuperIndividualsData, 
         targetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
         groupingVariables = GroupingVariables, 
@@ -45,7 +45,7 @@ ReportImputeSuperIndividuals <- function(
 ##################################################
 #' Report Bootstrap
 #' 
-#' Reports the sum, mean or other functions on a variable of the \code{\link{ImputeSuperIndividualsData}}.
+#' Reports the sum, mean or other functions on a variable of the \code{\link{BootstrapData}}.
 #' 
 ##' @inheritParams ModelData
 #' @inheritParams general_report_arguments
@@ -58,7 +58,7 @@ ReportImputeSuperIndividuals <- function(
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
 #' @return
-#' A \code{\link{ReportImputeSuperIndividualsData}} object.
+#' A \code{\link{ReportBootstrapData}} object.
 #' 
 #' @examples
 #' 
@@ -126,6 +126,9 @@ aggregateBaselineDataOneTable <- function(
     weightingVariable = character()
 )
 {
+    if(!length(stoxData)) {
+        return(stoxData)
+    }
     
     # Get the aggregation function:
     aggregationFunction <- match.arg(aggregationFunction)
@@ -168,6 +171,10 @@ aggregateBaselineDataOneTable <- function(
     }
     
     outputData <- stoxData[, fun(.SD), by = groupingVariables]
+    
+    # Order by the grouping variables:
+    data.table::setorderv(outputData, groupingVariables)
+    
     
     return(outputData)
 }
@@ -224,9 +231,9 @@ getReportFunctionPackage <- function(x) {
 
 ##################################################
 ##################################################
-#' Report ImputeSuperIndividualsData
+#' Report SpeciesCategoryCatch
 #' 
-#' Reports the sum, mean or other functions on a variable of the \code{\link{ImputeSuperIndividualsData}}.
+#' Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 #' 
 #' @inheritParams ModelData
 #' @param TargetVariable The variable to report.
@@ -238,7 +245,7 @@ getReportFunctionPackage <- function(x) {
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
 #' @return
-#' A \code{\link{ReportImputeSuperIndividualsData}} object.
+#' A \code{\link{ReportSpeciesCategoryCatchData}} object.
 #' 
 #' @examples
 #' 

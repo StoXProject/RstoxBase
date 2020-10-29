@@ -20,12 +20,12 @@ DefineBioticAssignment(
   AcousticLayer = NULL,
   StoxAcousticData,
   Radius = double(),
-  MinNumberOfHauls,
-  Distance,
-  TimeDifference,
-  BottomDepthDifference,
-  LongitudeDifference,
-  LatitudeDifference
+  MinNumberOfHauls = double(),
+  Distance = double(),
+  TimeDifference = double(),
+  BottomDepthDifference = double(),
+  LongitudeDifference = double(),
+  LatitudeDifference = double()
 )
 }
 \arguments{

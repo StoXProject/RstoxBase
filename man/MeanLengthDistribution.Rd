@@ -13,6 +13,10 @@ MeanLengthDistribution(
   Resolution = double(),
   LayerTable = data.table::data.table(),
   BioticLayer = NULL,
+  SurveyDefinition = c("FunctionParameter", "FunctionInput"),
+  SurveyDefinitionMethod = c("AllStrata", "SurveyTable"),
+  SurveyTable = data.table::data.table(),
+  Survey = NULL,
   PSUDefinition = c("FunctionParameter", "FunctionInput"),
   PSUDefinitionMethod = c("StationToPSU", "None"),
   StratumPolygon = NULL,
@@ -25,6 +29,8 @@ MeanLengthDistribution(
 \item{SumLengthDistributionData}{The \code{\link{SumLengthDistributionData}} data.}
 
 \item{BioticLayer}{The \code{\link{BioticLayer}} process data.}
+
+\item{Survey}{The \code{\link{Survey}} process data.}
 
 \item{PSUDefinition}{A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.}
 
