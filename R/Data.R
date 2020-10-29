@@ -62,6 +62,8 @@ NULL
 #' @param AbundanceData The \code{\link{AbundanceData}} data.
 #' @param IndividualsData The \code{\link{IndividualsData}} data.
 #' @param SuperIndividualsData The \code{\link{SuperIndividualsData}} data.
+#' @param ReportSuperIndividualsData The \code{\link{ReportSuperIndividualsData}} data.
+#' 
 #' 
 #' @name ModelData
 #' 
@@ -479,17 +481,17 @@ NULL
 NULL
 
 
-### ##################################################
-### ##################################################
-### #' Imputed super-individuals data
-### #' 
-### #' The ImputeSuperIndividualsData model data is the \code{\link{SuperIndividualsData}} imputed ### to fill inn missing data from individual in the same dataset.
-### #' 
-### #' @seealso This data type is produced by \code{\link{ImputeSuperIndividuals}}. See \code{\link{### DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
-### #' 
-### #' @name ImputeSuperIndividualsData
-### #' 
-### NULL
+##################################################
+##################################################
+#' Reported super-individuals data
+#' 
+#' The ReportSuperIndividualsData model data is a report of the \code{\link{SuperIndividualsData}}.
+#' 
+#' @seealso This data type is produced by \code{\link{ReportSuperIndividuals}}. See \code{\link{DataTypes}} for a list of all  data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ReportSuperIndividualsData
+#' 
+NULL
 
 
 
