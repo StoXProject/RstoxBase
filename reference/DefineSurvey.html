@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sum length distribution vertically — SumLengthDistribution • RstoxBase</title>
+<title>Biotic Survey — DefineSurvey • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Sum length distribution vertically — SumLengthDistribution" />
-<meta property="og:description" content="This function summes LengthDistributionData data vertically." />
+<meta property="og:title" content="Biotic Survey — DefineSurvey" />
+<meta property="og:description" content="This function defines the Strata associated to different surveys (in the sense that a separate estimate should be made for those strata)." />
 
 
 
@@ -102,60 +102,57 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sum length distribution vertically</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
-    <div class="hidden name"><code>SumLengthDistribution.Rd</code></div>
+    <h1>Biotic Survey</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R'><code>R/Define.R</code></a></small>
+    <div class="hidden name"><code>DefineSurvey.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function summes LengthDistributionData data vertically.</p>
+    <p>This function defines the Strata associated to different surveys (in the sense that a separate estimate should be made for those strata).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SumLengthDistribution</span><span class='op'>(</span>
-  <span class='va'>LengthDistributionData</span>,
-  LayerDefinition <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span><span class='op'>)</span>,
-  LayerDefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"WaterColumn"</span>, <span class='st'>"HighestResolution"</span>, <span class='st'>"Resolution"</span>,
-    <span class='st'>"LayerTable"</span><span class='op'>)</span>,
-  Resolution <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span><span class='op'>(</span><span class='op'>)</span>,
-  LayerTable <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>,
-  BioticLayer <span class='op'>=</span> <span class='cn'>NULL</span>
+    <pre class="usage"><span class='fu'>DefineSurvey</span><span class='op'>(</span>
+  <span class='va'>processData</span>,
+  UseProcessData <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AllStrata"</span>, <span class='st'>"SurveyTable"</span><span class='op'>)</span>,
+  <span class='va'>StratumPolygon</span>,
+  SurveyTable <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>LengthDistributionData</th>
-      <td><p>The <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> data.</p></td>
+      <th>processData</th>
+      <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr>
     <tr>
-      <th>LayerDefinition</th>
-      <td><p>A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring <code>LayerDefinitionMethod</code> or <code>PSUDefinitionMethod</code> and the conditionally <code>Resolution</code>, <code>LayerTableLayerTable</code> or <code>StratumPolygon</code> to be set, or "FunctionInput", requiring the inputs <code>BioticLayer</code> or <code>BioticPSU</code>.</p></td>
+      <th>UseProcessData</th>
+      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
     </tr>
     <tr>
-      <th>LayerDefinitionMethod</th>
-      <td><p>See <code>DefinitionMethod</code> of <code><a href='DefineBioticLayer.html'>DefineBioticLayer</a></code>.</p></td>
+      <th>DefinitionMethod</th>
+      <td><p>Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the <code>SurveyTable</code> to be given.</p></td>
     </tr>
     <tr>
-      <th>Resolution</th>
-      <td><p>Numeric: A single numeric giving the thickness of the layers.</p></td>
+      <th>StratumPolygon</th>
+      <td><p>The <code><a href='StratumPolygon.html'>StratumPolygon</a></code> process data.</p></td>
     </tr>
     <tr>
-      <th>LayerTable</th>
-      <td><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></td>
-    </tr>
-    <tr>
-      <th>BioticLayer</th>
-      <td><p>The <code><a href='BioticLayer.html'>BioticLayer</a></code> process data.</p></td>
+      <th>SurveyTable</th>
+      <td><p>A table of the two columns Stratum and Survey.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An <code><a href='SumLengthDistributionData.html'>SumLengthDistributionData</a></code> object.</p>
+    <p>An object of StoX data type <code><a href='BioticPSU.html'>BioticPSU</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function is awesome and does excellent stuff.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Acousic PSUs are generated using <code><a href='DefineAcousticPSU.html'>DefineAcousticPSU</a></code>. For the vertical resolution (Layer) see <code><a href='DefineBioticLayer.html'>DefineBioticLayer</a></code> and <code><a href='DefineAcousticLayer.html'>DefineAcousticLayer</a></code>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>

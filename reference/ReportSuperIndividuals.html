@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sum length distribution vertically — SumLengthDistribution • RstoxBase</title>
+<title>Report SuperIndividualsData — ReportSuperIndividuals • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Sum length distribution vertically — SumLengthDistribution" />
-<meta property="og:description" content="This function summes LengthDistributionData data vertically." />
+<meta property="og:title" content="Report SuperIndividualsData — ReportSuperIndividuals" />
+<meta property="og:description" content="Reports the sum, mean or other functions on a variable of the SuperIndividualsData." />
 
 
 
@@ -102,64 +102,67 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sum length distribution vertically</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
-    <div class="hidden name"><code>SumLengthDistribution.Rd</code></div>
+    <h1>Report SuperIndividualsData</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R'><code>R/Report.R</code></a></small>
+    <div class="hidden name"><code>ReportSuperIndividuals.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function summes LengthDistributionData data vertically.</p>
+    <p>Reports the sum, mean or other functions on a variable of the <code><a href='SuperIndividualsData.html'>SuperIndividualsData</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SumLengthDistribution</span><span class='op'>(</span>
-  <span class='va'>LengthDistributionData</span>,
-  LayerDefinition <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"FunctionParameter"</span>, <span class='st'>"FunctionInput"</span><span class='op'>)</span>,
-  LayerDefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"WaterColumn"</span>, <span class='st'>"HighestResolution"</span>, <span class='st'>"Resolution"</span>,
-    <span class='st'>"LayerTable"</span><span class='op'>)</span>,
-  Resolution <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/double.html'>double</a></span><span class='op'>(</span><span class='op'>)</span>,
-  LayerTable <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>,
-  BioticLayer <span class='op'>=</span> <span class='cn'>NULL</span>
+    <pre class="usage"><span class='fu'>ReportSuperIndividuals</span><span class='op'>(</span>
+  <span class='va'>SuperIndividualsData</span>,
+  <span class='va'>TargetVariable</span>,
+  ReportFunction <span class='op'>=</span> <span class='fu'><a href='getRstoxBaseDefinitions.html'>getRstoxBaseDefinitions</a></span><span class='op'>(</span><span class='st'>"reportFunctions"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>functionName</span>,
+  GroupingVariables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  RemoveMissingValues <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  WeightingVariable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>LengthDistributionData</th>
-      <td><p>The <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> data.</p></td>
+      <th>SuperIndividualsData</th>
+      <td><p>The <code><a href='SuperIndividualsData.html'>SuperIndividualsData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>LayerDefinition</th>
-      <td><p>A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring <code>LayerDefinitionMethod</code> or <code>PSUDefinitionMethod</code> and the conditionally <code>Resolution</code>, <code>LayerTableLayerTable</code> or <code>StratumPolygon</code> to be set, or "FunctionInput", requiring the inputs <code>BioticLayer</code> or <code>BioticPSU</code>.</p></td>
+      <th>TargetVariable</th>
+      <td><p>The variable to report.</p></td>
     </tr>
     <tr>
-      <th>LayerDefinitionMethod</th>
-      <td><p>See <code>DefinitionMethod</code> of <code><a href='DefineBioticLayer.html'>DefineBioticLayer</a></code>.</p></td>
+      <th>ReportFunction</th>
+      <td><p>The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".</p></td>
     </tr>
     <tr>
-      <th>Resolution</th>
-      <td><p>Numeric: A single numeric giving the thickness of the layers.</p></td>
+      <th>GroupingVariables</th>
+      <td><p>The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).</p></td>
     </tr>
     <tr>
-      <th>LayerTable</th>
-      <td><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></td>
+      <th>RemoveMissingValues</th>
+      <td><p>Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA.</p></td>
     </tr>
     <tr>
-      <th>BioticLayer</th>
-      <td><p>The <code><a href='BioticLayer.html'>BioticLayer</a></code> process data.</p></td>
+      <th>WeightingVariable</th>
+      <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An <code><a href='SumLengthDistributionData.html'>SumLengthDistributionData</a></code> object.</p>
+    <p>A <code><a href='ReportSuperIndividualsData.html'>ReportSuperIndividualsData</a></code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'>
+
+</div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-
+    <pre class="examples"><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

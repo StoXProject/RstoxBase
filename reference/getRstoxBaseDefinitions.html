@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.32</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.33</span>
       </span>
     </div>
 
@@ -179,7 +179,7 @@
 #&gt; [1] "AcousticCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$groupingVariables
-#&gt; [1] "Frequency"
+#&gt; [1] "Beam"      "Frequency"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$data
 #&gt; [1] "NASC"
@@ -197,73 +197,99 @@
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$other
-#&gt; [1] "Cruise"               "EffectiveLogDistance" "DateTime"            
-#&gt; [4] "Longitude"            "Latitude"            
+#&gt; [1] "ChannelReferenceDepth"       "ChannelReferenceOrientation"
+#&gt; [3] "Cruise"                      "EffectiveLogDistance"       
+#&gt; [5] "DateTime"                    "Longitude"                  
+#&gt; [7] "Latitude"                   
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumNASCData
-#&gt; $dataTypeDefinition$SumNASCData$horizontalResolution
+#&gt; $dataTypeDefinition$SumNASCData$Data
+#&gt; $dataTypeDefinition$SumNASCData$Data$horizontalResolution
 #&gt; [1] "EDSU"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$verticalResolution
+#&gt; $dataTypeDefinition$SumNASCData$Data$verticalResolution
 #&gt; [1] "Layer"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$categoryVariable
+#&gt; $dataTypeDefinition$SumNASCData$Data$categoryVariable
 #&gt; [1] "AcousticCategory"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$groupingVariables
-#&gt; [1] "Frequency"
+#&gt; $dataTypeDefinition$SumNASCData$Data$groupingVariables
+#&gt; [1] "Beam"      "Frequency"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$data
+#&gt; $dataTypeDefinition$SumNASCData$Data$data
 #&gt; [1] "NASC"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$verticalRawDimension
+#&gt; $dataTypeDefinition$SumNASCData$Data$verticalRawDimension
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$verticalLayerDimension
+#&gt; $dataTypeDefinition$SumNASCData$Data$verticalLayerDimension
 #&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$weighting
+#&gt; $dataTypeDefinition$SumNASCData$Data$weighting
 #&gt; [1] "SumNASCWeight"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$type
+#&gt; $dataTypeDefinition$SumNASCData$Data$type
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$other
-#&gt; [1] "EffectiveLogDistance" "DateTime"             "Longitude"           
-#&gt; [4] "Latitude"            
+#&gt; $dataTypeDefinition$SumNASCData$Data$other
+#&gt; [1] "ChannelReferenceDepth"       "ChannelReferenceOrientation"
+#&gt; [3] "EffectiveLogDistance"        "DateTime"                   
+#&gt; [5] "Longitude"                   "Latitude"                   
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$Resolution
+#&gt; $dataTypeDefinition$SumNASCData$Resolution$horizontalResolution
+#&gt; [1] "EDSU"
+#&gt; 
+#&gt; $dataTypeDefinition$SumNASCData$Resolution$verticalResolution
+#&gt; [1] "Layer"   "Channel"
+#&gt; 
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$MeanNASCData
-#&gt; $dataTypeDefinition$MeanNASCData$horizontalResolution
+#&gt; $dataTypeDefinition$MeanNASCData$Data
+#&gt; $dataTypeDefinition$MeanNASCData$Data$surveyDefinition
+#&gt; [1] "Survey"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$Data$horizontalResolution
 #&gt; [1] "Stratum" "PSU"    
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$verticalResolution
+#&gt; $dataTypeDefinition$MeanNASCData$Data$verticalResolution
 #&gt; [1] "Layer"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$categoryVariable
+#&gt; $dataTypeDefinition$MeanNASCData$Data$categoryVariable
 #&gt; [1] "AcousticCategory"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$groupingVariables
-#&gt; [1] "Frequency"
+#&gt; $dataTypeDefinition$MeanNASCData$Data$groupingVariables
+#&gt; [1] "Beam"      "Frequency"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$data
+#&gt; $dataTypeDefinition$MeanNASCData$Data$data
 #&gt; [1] "NASC"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$verticalRawDimension
+#&gt; $dataTypeDefinition$MeanNASCData$Data$verticalRawDimension
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$verticalLayerDimension
+#&gt; $dataTypeDefinition$MeanNASCData$Data$verticalLayerDimension
 #&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$weighting
+#&gt; $dataTypeDefinition$MeanNASCData$Data$weighting
 #&gt; [1] "MeanNASCWeight"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$type
+#&gt; $dataTypeDefinition$MeanNASCData$Data$type
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$other
-#&gt; NULL
+#&gt; $dataTypeDefinition$MeanNASCData$Data$other
+#&gt; [1] "ChannelReferenceDepth"       "ChannelReferenceOrientation"
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$Resolution
+#&gt; $dataTypeDefinition$MeanNASCData$Resolution$horizontalResolution
+#&gt; [1] "Stratum" "PSU"     "EDSU"   
+#&gt; 
+#&gt; $dataTypeDefinition$MeanNASCData$Resolution$verticalResolution
+#&gt; [1] "Layer"   "Channel"
+#&gt; 
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData
@@ -301,69 +327,92 @@
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumLengthDistributionData
-#&gt; $dataTypeDefinition$SumLengthDistributionData$horizontalResolution
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$horizontalResolution
 #&gt; [1] "Station"
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$verticalResolution
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$verticalResolution
 #&gt; [1] "Layer"
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$categoryVariable
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$categoryVariable
 #&gt; [1] "SpeciesCategory"
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$groupingVariables
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$groupingVariables
 #&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$data
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$data
 #&gt; [1] "WeightedCount"
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$verticalRawDimension
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$verticalRawDimension
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$verticalLayerDimension
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$verticalLayerDimension
 #&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$weighting
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$weighting
 #&gt; [1] "SumLengthDistributionWeight"
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$type
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$type
 #&gt; [1] "LengthDistributionType"
 #&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$other
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$other
 #&gt; [1] "EffectiveTowedDistance" "DateTime"               "Longitude"             
 #&gt; [4] "Latitude"               "VerticalNetOpening"     "HorizontalNetOpening"  
 #&gt; [7] "TrawlDoorSpread"       
 #&gt; 
 #&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution$horizontalResolution
+#&gt; [1] "Station"
+#&gt; 
+#&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution$verticalResolution
+#&gt; [1] "Layer" "Haul" 
+#&gt; 
+#&gt; 
+#&gt; 
 #&gt; $dataTypeDefinition$MeanLengthDistributionData
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$horizontalResolution
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$surveyDefinition
+#&gt; [1] "Survey"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$horizontalResolution
 #&gt; [1] "Stratum" "PSU"    
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$verticalResolution
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$verticalResolution
 #&gt; [1] "Layer"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$categoryVariable
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$categoryVariable
 #&gt; [1] "SpeciesCategory"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$groupingVariables
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$groupingVariables
 #&gt; [1] "IndividualTotalLength" "LengthResolution"     
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$data
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$data
 #&gt; [1] "WeightedCount"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$verticalRawDimension
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$verticalRawDimension
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$verticalLayerDimension
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$verticalLayerDimension
 #&gt; [1] "MinLayerDepth" "MaxLayerDepth"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$weighting
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$weighting
 #&gt; [1] "MeanLengthDistributionWeight"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$type
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$type
 #&gt; [1] "LengthDistributionType"
 #&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$other
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$other
 #&gt; NULL
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Resolution
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Resolution$horizontalResolution
+#&gt; [1] "Stratum" "PSU"     "Station"
+#&gt; 
+#&gt; $dataTypeDefinition$MeanLengthDistributionData$Resolution$verticalResolution
+#&gt; [1] "Layer" "Haul" 
+#&gt; 
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$AssignmentLengthDistributionData
@@ -396,6 +445,9 @@
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData
+#&gt; $dataTypeDefinition$DensityData$surveyDefinition
+#&gt; [1] "Survey"
+#&gt; 
 #&gt; $dataTypeDefinition$DensityData$horizontalResolution
 #&gt; [1] "Stratum" "PSU"    
 #&gt; 
@@ -406,7 +458,8 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 
+#&gt; [4] "Frequency"            
 #&gt; 
 #&gt; $dataTypeDefinition$DensityData$data
 #&gt; [1] "Density"
@@ -422,6 +475,9 @@
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$MeanDensityData
+#&gt; $dataTypeDefinition$MeanDensityData$surveyDefinition
+#&gt; [1] "Survey"
+#&gt; 
 #&gt; $dataTypeDefinition$MeanDensityData$horizontalResolution
 #&gt; [1] "Stratum"
 #&gt; 
@@ -432,7 +488,8 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$MeanDensityData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 
+#&gt; [4] "Frequency"            
 #&gt; 
 #&gt; $dataTypeDefinition$MeanDensityData$data
 #&gt; [1] "Density"
@@ -448,6 +505,9 @@
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData
+#&gt; $dataTypeDefinition$AbundanceData$surveyDefinition
+#&gt; [1] "Survey"
+#&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$horizontalResolution
 #&gt; [1] "Stratum"
 #&gt; 
@@ -458,7 +518,8 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
+#&gt; [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 
+#&gt; [4] "Frequency"            
 #&gt; 
 #&gt; $dataTypeDefinition$AbundanceData$data
 #&gt; [1] "Abundance"
@@ -474,81 +535,63 @@
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$IndividualsData
-#&gt; $dataTypeDefinition$IndividualsData$horizontalResolution
+#&gt; $dataTypeDefinition$IndividualsData$Data
+#&gt; $dataTypeDefinition$IndividualsData$Data$horizontalResolution
 #&gt; [1] "Stratum"
 #&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$verticalResolution
-#&gt; [1] "Layer" "Haul" 
+#&gt; $dataTypeDefinition$IndividualsData$Data$verticalResolution
+#&gt; [1] "Layer"
 #&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$data
+#&gt; $dataTypeDefinition$IndividualsData$Data$data
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$verticalLayerDimension
+#&gt; $dataTypeDefinition$IndividualsData$Data$verticalLayerDimension
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$weighting
+#&gt; $dataTypeDefinition$IndividualsData$Data$weighting
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$other
+#&gt; $dataTypeDefinition$IndividualsData$Data$other
 #&gt; NULL
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$IndividualsData$VariableNames
+#&gt; list()
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData
-#&gt; $dataTypeDefinition$SuperIndividualsData$horizontalResolution
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$surveyDefinition
+#&gt; [1] "Survey"
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$horizontalResolution
 #&gt; [1] "Stratum"
 #&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$verticalResolution
-#&gt; [1] "Layer" "Haul" 
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$verticalResolution
+#&gt; [1] "Layer"
 #&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$categoryVariable
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$categoryVariable
 #&gt; [1] "SpeciesCategory"
 #&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$groupingVariables
+#&gt; [1] "IndividualTotalLength" "LengthResolution"      "IndividualRoundWeight"
+#&gt; [4] "Beam"                  "Frequency"            
 #&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$data
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$data
 #&gt; [1] "Abundance" "Biomass"  
 #&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$verticalLayerDimension
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$verticalLayerDimension
+#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
+#&gt; 
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$weighting
 #&gt; NULL
 #&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$weighting
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$other
+#&gt; $dataTypeDefinition$SuperIndividualsData$Data$other
 #&gt; NULL
 #&gt; 
 #&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$horizontalResolution
-#&gt; [1] "Stratum"
-#&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$verticalResolution
-#&gt; [1] "Layer" "Haul" 
-#&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$data
-#&gt; [1] "Abundance" "Biomass"  
-#&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$verticalLayerDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$weighting
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$ImputeSuperIndividualsData$other
-#&gt; NULL
+#&gt; $dataTypeDefinition$SuperIndividualsData$VariableNames
+#&gt; list()
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$BioticAssignment
@@ -558,7 +601,7 @@
 #&gt; $dataTypeDefinition$BioticAssignment$verticalResolution
 #&gt; [1] "Layer"
 #&gt; 
-#&gt; $dataTypeDefinition$BioticAssignment$data
+#&gt; $dataTypeDefinition$BioticAssignment$categoryVariable
 #&gt; [1] "Haul"
 #&gt; 
 #&gt; $dataTypeDefinition$BioticAssignment$weighting
@@ -568,65 +611,28 @@
 #&gt; NULL
 #&gt; 
 #&gt; 
+#&gt; $dataTypeDefinition$AcousticPSU
+#&gt; $dataTypeDefinition$AcousticPSU$Stratum_PSU
+#&gt; $dataTypeDefinition$AcousticPSU$Stratum_PSU$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
 #&gt; 
-#&gt; $dataTypeRequiredVariables
-#&gt; $dataTypeRequiredVariables$NASCData
-#&gt; [1] "EDSU"             "Channel"          "AcousticCategory" "Frequency"       
-#&gt; [5] "NASCWeight"      
 #&gt; 
-#&gt; $dataTypeRequiredVariables$SumNASCData
-#&gt; [1] "EDSU"             "Layer"            "AcousticCategory" "Frequency"       
-#&gt; [5] "SumNASCWeight"   
+#&gt; $dataTypeDefinition$AcousticPSU$EDSU_PSU
+#&gt; $dataTypeDefinition$AcousticPSU$EDSU_PSU$horizontalResolution
+#&gt; [1] "EDSU" "PSU" 
 #&gt; 
-#&gt; $dataTypeRequiredVariables$MeanNASCData
-#&gt; [1] "PSU"              "Layer"            "AcousticCategory" "Frequency"       
-#&gt; [5] "MeanNASCWeight"  
 #&gt; 
-#&gt; $dataTypeRequiredVariables$LengthDistributionData
-#&gt; [1] "Station"                  "Haul"                    
-#&gt; [3] "SpeciesCategory"          "IndividualTotalLength"   
-#&gt; [5] "LengthResolution"         "LengthDistributionWeight"
 #&gt; 
-#&gt; $dataTypeRequiredVariables$SumLengthDistributionData
-#&gt; [1] "Station"                     "Layer"                      
-#&gt; [3] "SpeciesCategory"             "IndividualTotalLength"      
-#&gt; [5] "LengthResolution"            "SumLengthDistributionWeight"
+#&gt; $dataTypeDefinition$AcousticPSUByTime
+#&gt; $dataTypeDefinition$AcousticPSUByTime$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
 #&gt; 
-#&gt; $dataTypeRequiredVariables$MeanLengthDistributionData
-#&gt; [1] "PSU"                          "Layer"                       
-#&gt; [3] "SpeciesCategory"              "IndividualTotalLength"       
-#&gt; [5] "LengthResolution"             "MeanLengthDistributionWeight"
+#&gt; $dataTypeDefinition$AcousticPSUByTime$categoryVariable
+#&gt; [1] "Cruise"
 #&gt; 
-#&gt; $dataTypeRequiredVariables$AssignmentLengthDistributionData
-#&gt; [1] "PSU"                   "Layer"                 "SpeciesCategory"      
-#&gt; [4] "IndividualTotalLength" "LengthResolution"     
+#&gt; $dataTypeDefinition$AcousticPSUByTime$groupingVariables
+#&gt; [1] "StartDateTime" "StopDateTime" 
 #&gt; 
-#&gt; $dataTypeRequiredVariables$DensityData
-#&gt; [1] "PSU"                   "Layer"                 "SpeciesCategory"      
-#&gt; [4] "IndividualTotalLength" "LengthResolution"      "DensityWeight"        
-#&gt; 
-#&gt; $dataTypeRequiredVariables$MeanDensityData
-#&gt; [1] "Stratum"               "Layer"                 "SpeciesCategory"      
-#&gt; [4] "IndividualTotalLength" "LengthResolution"      "MeanDensityWeight"    
-#&gt; 
-#&gt; $dataTypeRequiredVariables$AbundanceData
-#&gt; [1] "Stratum"               "Layer"                 "SpeciesCategory"      
-#&gt; [4] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeRequiredVariables$IndividualsData
-#&gt; [1] "Stratum"               "Haul"                  "SpeciesCategory"      
-#&gt; [4] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeRequiredVariables$SuperIndividualsData
-#&gt; [1] "Stratum"               "Haul"                  "SpeciesCategory"      
-#&gt; [4] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeRequiredVariables$ImputeSuperIndividualsData
-#&gt; [1] "Stratum"               "Haul"                  "SpeciesCategory"      
-#&gt; [4] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeRequiredVariables$BioticAssignment
-#&gt; [1] "PSU"             "Layer"           "WeightingFactor"
 #&gt; 
 #&gt; 
 #&gt; $emptyStratumPolygon
@@ -649,21 +655,11 @@
 #&gt; CRS arguments: NA 
 #&gt; 
 #&gt; 
-#&gt; $getRequiredVariables
-#&gt; function (x) 
-#&gt; {
-#&gt;     c(utils::tail(x$horizontalResolution, 1), utils::tail(x$verticalResolution, 
-#&gt;         1), x$categoryVariable, x$groupingVariables, x$weighting)
-#&gt; }
-#&gt; &lt;bytecode: 0x7fb0a963e990&gt;
-#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
-#&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
 #&gt; 
 #&gt; $proj4string
-#&gt; CRS arguments:
-#&gt;  +proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs 
+#&gt; CRS arguments: +proj=longlat +datum=WGS84 +no_defs 
 #&gt; 
 #&gt; $reportFunctions
 #&gt;        functionName packageName weighted weightingParameter multiple
@@ -722,8 +718,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb0a963db58&gt;
-#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
+#&gt; &lt;bytecode: 0x7fab3dc40d00&gt;
+#&gt; &lt;environment: 0x7fab3dc43c50&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -731,16 +727,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb0a963ded8&gt;
-#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
+#&gt; &lt;bytecode: 0x7fab3dc41080&gt;
+#&gt; &lt;environment: 0x7fab3dc43c50&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb0a963d538&gt;
-#&gt; &lt;environment: 0x7fb0a9640aa8&gt;
+#&gt; &lt;bytecode: 0x7fab3dc406e0&gt;
+#&gt; &lt;environment: 0x7fab3dc43c50&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
