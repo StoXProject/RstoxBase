@@ -871,3 +871,18 @@ determineAggregationVariables <- function(
 #}
 #
 #
+
+
+#' 
+#' @export
+#' 
+getReportFunctions <- function(getMultiple = NULL) {
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    if(length(getMultiple)) {
+        reportFunctions[multiple == getMultiple, functionName]
+    }
+    else {
+        reportFunctions$functionName
+    }
+    
+}

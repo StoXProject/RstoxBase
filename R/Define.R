@@ -1118,7 +1118,9 @@ BioticAssignmentWeighting <- function(
             BioticAssignment = BioticAssignmentCopy, 
             toMerge = NumberOfLengthSamples, 
             variable = "NumberOfLengthSamples", 
-            weightingVariable = weightingVariable
+            weightingVariable = weightingVariable, 
+            # Important: We need to preserve all Hauls of the BioticAssignmentCopy:
+            all.x = TRUE
         )
     }
     # Search around each station for the NASC values inside the range 'Radius':
@@ -1210,8 +1212,8 @@ BioticAssignmentWeighting <- function(
 }
 
 
-mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weightingVariable) {
-    BioticAssignment <- merge(BioticAssignment, toMerge, by = "Haul")
+mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weightingVariable, ...) {
+    BioticAssignment <- merge(BioticAssignment, toMerge, by = "Haul", ...)
     BioticAssignment[, eval(weightingVariable) := as.double(get(variable)) * get(weightingVariable)]
     return(BioticAssignment)
 }
