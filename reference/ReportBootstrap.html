@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.33</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.34</span>
       </span>
     </div>
 
@@ -115,9 +115,8 @@
   <span class='va'>BootstrapData</span>,
   <span class='va'>BaselineProcess</span>,
   <span class='va'>TargetVariable</span>,
-  AggregationFunction <span class='op'>=</span> <span class='fu'><a href='getRstoxBaseDefinitions.html'>getRstoxBaseDefinitions</a></span><span class='op'>(</span><span class='st'>"reportFunctions"</span><span class='op'>)</span><span class='op'>[</span><span class='va'>multiple</span> <span class='op'>==</span> <span class='cn'>FALSE</span>,
-    <span class='va'>functionName</span><span class='op'>]</span>,
-  BootstrapReportFunction <span class='op'>=</span> <span class='fu'><a href='getRstoxBaseDefinitions.html'>getRstoxBaseDefinitions</a></span><span class='op'>(</span><span class='st'>"reportFunctions"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>functionName</span>,
+  AggregationFunction <span class='op'>=</span> <span class='fu'>getReportFunctions</span><span class='op'>(</span>getMultiple <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>,
+  BootstrapReportFunction <span class='op'>=</span> <span class='fu'>getReportFunctions</span><span class='op'>(</span><span class='op'>)</span>,
   GroupingVariables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
   RemoveMissingValues <span class='op'>=</span> <span class='cn'>FALSE</span>,
   AggregationWeightingVariable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
