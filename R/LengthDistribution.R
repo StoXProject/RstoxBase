@@ -664,7 +664,7 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
     
     # Extract the subset of the data given by the hauls:
-    BioticAssignment <- data.table::fread(text = assignmentPasted, col.names = c("Haul", "WeightingFactor"))
+    BioticAssignment <- data.table::fread(text = assignmentPasted, col.names = c("Haul", "WeightingFactor"), colClasses = c("character", "double"))
     Hauls <- BioticAssignment$Haul
     WeightingFactors <- BioticAssignment$WeightingFactor
     thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
