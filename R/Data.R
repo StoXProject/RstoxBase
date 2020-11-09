@@ -472,7 +472,7 @@ NULL
 ##################################################
 #' Super-individuals data
 #' 
-#' The SuperIndividualsData model data is the \code{\link{IndivdualsData}} added Abundance and Biomass.
+#' The SuperIndividualsData model data is the \code{\link{IndividualsData}} added Abundance and Biomass.
 #' 
 #' @seealso This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -490,20 +490,6 @@ NULL
 #' @seealso This data type is produced by \code{\link{ReportSuperIndividuals}}. See \code{\link{DataTypes}} for a list of all  data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name ReportSuperIndividualsData
-#' 
-NULL
-
-
-
-##################################################
-##################################################
-#' Output from Bootstrap
-#' 
-#' The BootstrapData model data is a list of data from one or more baseline processes stacked for all bootstrap runs.
-#' 
-#' @seealso This data type is produced by \code{\link{Bootstrap}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
-#' 
-#' @name BootstrapData
 #' 
 NULL
 
@@ -546,3 +532,17 @@ NULL
 #' 
 NULL
 
+
+
+
+##################################################
+##################################################
+#' Output from Bootstrap
+#' 
+#' The BootstrapData model data is a list of data from one or more baseline processes stacked for all bootstrap runs.
+#' 
+#' @seealso See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name BootstrapData
+#' 
+NULL

@@ -7,5 +7,5 @@
 The BootstrapData model data is a list of data from one or more baseline processes stacked for all bootstrap runs.
 }
 \seealso{
-This data type is produced by \code{\link{Bootstrap}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

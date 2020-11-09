@@ -404,52 +404,6 @@ initiateRstoxBase <- function(){
     names(definitions) <- definitionsNames
     
     #### Create the RstoxBaseEnv environment, holding definitions on folder structure and all the projects. This environment cna be accesses using RstoxBase:::RstoxBaseEnv: ####
-    #utils::globalVariables("RstoxBaseEnv")
-    utils::globalVariables(c(
-        "RstoxBaseEnv", 
-        ":=", ".", ".N", 
-        "..abundanceGrouping", 
-        "..atMissingLengthGroup", 
-        "..by", 
-        "..columnOrder",
-        "..haulGrouping", 
-        "..Hauls", 
-        "..intervalVector", 
-        "..keys", 
-        "..keysSansSample", 
-        "..LengthInterval", 
-        "..LengthIntervalWidths", 
-        "..lengthVar", 
-        "..refvar", 
-        "..relevantVariables",
-        "..resolutionVar", 
-        "..toAdd", 
-        "..validVariables", 
-        "..vars", 
-        "..VerticalResolutionMax", 
-        "..VerticalResolutionMin", 
-        "..WeightingFactors", 
-        "abundanceWeightFactor", 
-        "Area", 
-        "assignmentID", 
-        "Density", 
-        "DensityWeight", 
-        "EffectiveLogDistance", 
-        "Haul", 
-        "individualCount", 
-        "IndividualTotalLength", 
-        "IndividualTotalLengthMiddle", 
-        "intervalIndex", 
-        "LengthDistributionType", 
-        "LengthDistributionWeight", 
-        "LengthGroup", 
-        "LengthResolution", 
-        "NASCWeight", 
-        "PSU", 
-        "raisingFactor", 
-        "WeightedCount", 
-        "WeightingFactor"
-    ))
     assign("RstoxBaseEnv", new.env(), parent.env(environment()))
     assign("definitions", definitions, envir = get("RstoxBaseEnv"))
     
