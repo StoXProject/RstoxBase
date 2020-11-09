@@ -76,7 +76,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' @param FileName The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension. 
 #' 
 #' @details
-#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment). 
+#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment). Det finnes bare en espen
 #' 
 #' @return
 #' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
