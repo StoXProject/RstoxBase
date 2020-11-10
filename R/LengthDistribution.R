@@ -8,7 +8,60 @@
 #' @param LengthDistributionType The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
 #' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".
 #'
-#' @details *********
+#' @details 
+#' #' The \emph{LengthDistribution} function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionCount is calculated in the same manner.
+#' 
+#' From each CatchFraction, a Sample is usually taken. Various types of individual characteristics or population parameters are measures. The most common parameters are individual length followed by weight. Other parameters are age, sex, maturity etc. The Sample weight and number is recorded. From the CatchFractionWeight and the SampleWeight, a raising factor (\emph{r}) is calculated as:
+#' 
+#' \deqn{r = \frac{CatchFractionWeight}{SampleWeight}}
+#' 
+#' alternatively, the raising factor r can be calculated as:
+#' 
+#' \deqn{r = \frac{CatchFractionCount}{SampleCount}}
+#' 
+#' A \emph{RaisingFactorPriority} parameter determines whether to make the first attempt on calculating the raising factor by weight or count variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.
+#' 
+#' To produce a length frequency distribution for the Haul by SpeciesCategory, each Sample length distribution is first multiplied with the raising factor of the Sample. A total length distribution for the entire catch, is produced by adding the adjusted length distributions from all the Samples into one common length distribution for the SpeciesCategory in a Haul.
+#' 
+#' The Samples may have different length group intervals. If this is the case the intervals may overlap between Samples.The combination of length frequencies from all Samples of a SpeciesCategory can be expressed as:
+#' 
+#'   
+#' \deqn{d_s = \displaystyle\sum_{i=1}^{n} r_{s,i} \times d_{s,i}}
+#' 
+#' where  
+#' 
+#'\eqn{d_s}    is the resultant length distribution for the station or Haul \eqn{s},
+#' 
+#'\eqn{d_{s,i}}  is the length distribution of Sample no \eqn{i} at Haul \eqn{s}, 
+#' 
+#'\eqn{r_{s,i}}   is a raising factor for Sample no \eqn{i} at Haul \eqn{s},
+#' 
+#'\eqn{n}     is the number of Samples
+#' 
+#' The LengthDistribution function can generate three different distributions types:
+#' 
+#'1) \strong{Standard}
+#' 
+#' A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionCount and SampleCount. If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.
+
+
+#' 
+#' 2) \strong{Normalized}
+#' 
+#' Normalized length distribution to one nautical mile towing distance. This distribution shows the length distribution as if the towing distance had been one nautical mile long and the entire catch had been length measured. The length distributions Standard is used together with the towing distance of the trawl station, to calculate this distribution. The number of fish from Standard in each length group is divided by the towing distance. It is worth noting that length distributions of type Normalied from several stations may be compared since they are independent of effort (towing distance). Each of the length distributions reflects the CPUE of the trawl hauls. They are in other words implicitly weighted by CPUE. If towing distance is lacking for a station, length distributions of type Normalized cannot be made.
+#' 
+#'3) \strong{Percent}
+#' 
+#'Length distribution in percent. Length distributions of this type reflects the shape of the length distribution and contains therefore no implicit weighting.The calculation of percent length distributions is done as follows:
+#'
+#'A) If a SpeciesCategory at a station only have one Sample, the percent distribution is generated directly from the Sample length distribution. There is no need for knowing the raising factor.
+#'
+#'B) If a SpeciesCategory in a Hauls have more than one Sample, the percent distributions are generated by converting the Standard into percent distribution. This implies that distributions with more than one Sample and with missing raising factors will not be generated as no Standard distribution exist for these.
+#'   
+#'\strong{General comments on the function}
+#'   
+#'Note that some StoX models require one specific LengthDistributionType as output from the process and as input to other processes in the model.
+#' 
 #' 
 #' @return
 #' A \code{\link{LengthDistributionData}} object.
