@@ -194,13 +194,23 @@ getStratumPolygonList <- function(StratumPolygon) {
 ##################################################
 #' Calculate area of each stratum
 #' 
-#' This function calculated the area of each stratum.
+#' The StratumArea function calculates the area of all the strata in the chosen geographical strata system.
 #' 
 #' @inheritParams ProcessData
 #' @param AreaMethod The method to use for the area calculation, defaulted to "Accurate", which applied a lambert azimuthal equal area projection. 
 #' 
 #' @details
-#' The \code{AreaMethod} "Simple" is deprecated, but kept for backwards campatibility.
+#' The \emph{StratumArea} function calculates the area of all the strata in the chosen strata system as square nautical miles.  The function uses the existing strata boundary definitions of the project (StratumPolygon object) as input to the area calculations.
+#' 
+#' The \emph{AreaMethod} parameter is used to choose which area calculation method to use. The methods are:
+#' 
+#' \strong{Accurate}
+#' 
+#' This is the recommended method since it gives the most accurate area calculation. The calculation method used is “Lambert azimuthal equal area projection”. The methods accuracy is dependent on a reference point close to the area which is to be calculated. The midpoint of the stratum is calculated and used as reference point.
+#' 
+#' \strong{Simple}
+#' 
+#' This method is deprecated as it is inaccurate and does not handle strata with holes. It has only been made available to facilitate backward compatibility to projects generated in previous versions of StoX. 
 #' 
 #' @return
 #' A table of stratum name and area.

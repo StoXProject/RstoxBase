@@ -15,10 +15,12 @@ RegroupLengthDistribution(LengthDistributionData, LengthInterval = numeric())
 A \code{\link{LengthDistributionData}} object.
 }
 \description{
-This function aggregates the \code{WeightedCount} of the LengthDistributionData
+The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the \code{WeightedCount} of the LengthDistributionData
 }
 \details{
-This function is awesome and does excellent stuff.
+NOTE. Function parameter \emph{SpeciesCategory} is NOT YET IMPLEMENTED. Consequently, a common LengthInterval is applied to all SpeciesCategories in the input data.
+
+The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the length distributions in the output dataset and across all Hauls.A function parameter \emph{SpeciesCategory} is used to choose either All or one SpeciesCategory from the input LengthDistribution data set. A dropdown list of available SpeciesCategories in the input data is available for the selection. The function parameter \emph{LengthInterval} is used to set the desired output length interval in centimeters.  The new length interval can never have finer resolution than the coarsest resolution found in the data that are due to be regrouped. A least common multiple of the length group intervals in the input is calculated. This value is the highest resolution possible. If the user chooses a finer resolution than this for the parameter LengthInterval, a warning will be given, and the least common multiple will be applied for the output LengthDistribution dataset from the process.
 }
 \examples{
 x <- 1
