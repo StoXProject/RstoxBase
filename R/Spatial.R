@@ -70,13 +70,13 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 ##################################################
 #' Define stratum multipolygon
 #' 
-#' This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
+#' This function reads a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} or a \code{\link{StoX_multipolygon_WKT}} file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
 #' 
 #' @inheritParams general_arguments
-#' @param FileName The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension. 
+#' @param FileName The path to a GeoJSON file, shapefile (may be a folder) or a StoX multipolygon WKT file.  
 #' 
 #' @details
-#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment). Det finnes bare en espen
+#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
 #' 
 #' @return
 #' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
