@@ -10,11 +10,11 @@
 #' @param SpeciesLink A table of the two columns AcousticCategory and SpeciesCategory.
 #' 
 #' @details
-#' The AcousticDensity function calculates length distributed densities as number of fish per square nautical mile by vertical layer. Length based density distributions are calculated for each NASC value of the input acoustic data set (MacLennan \emph{et al}, 2002) . Usually, the NASC values have a horizontal resolution at PSU level (e.g. transect). By combining a NASC value with a length distribution (usually a total combined length distribution derived from more than one biotic station) and applying a TS vslength relationship, a corresponding density length distribution can be calculated.
+#' The AcousticDensity function calculates length distributed densities as number of fish per square nautical mile by vertical layer. Length based density distributions are calculated for each NASC value of the input acoustic data set \href{https://www.researchgate.net/publication/228787678_A_consistent_approach_to_definitions_and_symbols_in_fisheries_acoustics}{(MacLennan et al, 2002)}. Usually, the NASC values have a horizontal resolution at PSU level (e.g. transect). By combining a NASC value with a length distribution (usually a total combined length distribution derived from more than one biotic station) and applying a TS vs length relationship, a corresponding density length distribution can be calculated.
 #' 
 #' The horizontal resolution (EDSU, PSU or Stratum) of the NASC object determines the horizontal resolution of the densities. The same principal applies for the vertical layer resolution.
 #' 
-#' To combine a NASC value and a length distribution into a density distribution, the TS vs length relationship for the actual species and acoustic frequency, needs to be known.Constants in the TS vs length formula has to be given. If the vertical layer resolution is channels referred from surface and with a fixed thickness, the mean depth of each channel can be calculated and a depth dependent TS vs length formula may be applied. The calculation of densities by length from a NASC value and a corresponding length distribution (as percentage or proportion) is performed as follows (Ona, 2003, Simmond and MacLennan, 2005, Johnsen \emph{et al}, 2019):
+#' To combine a NASC value and a length distribution into a density distribution, the TS vs length relationship for the actual species and acoustic frequency, needs to be known. Constants in the TS vs length formula has to be given as input to the function.The function parameter \emph{SpeciesLink} is used to define which AcousticCategory is linked to which biotic SpeciesCategory. If the vertical layer resolution is channels referred from surface and with a fixed thickness, the mean depth of each channel can be calculated and a depth dependent TS vs length formula may be applied. The calculation of densities by length from a NASC value and a corresponding length distribution (as percentage or proportion) is performed as follows (\href{https://doi.org/10.1016/S1054-3139(03)00031-6}{Ona, 2003}, Simmond and MacLennan, 2005, \href{https://doi.org/10.1111/2041-210X.13250}{Johnsen et al, 2019}):
 #'
 #' \deqn{TS_l = m \log_{10}{(l)}+a + d \log_{10}{(1 + \frac{r_y}{10})}}
 #'
@@ -56,11 +56,11 @@
 #'
 #' \eqn{\rho_l} = area density of fish (ind. per sqare nautical mile) in length group \eqn{l}
 #'
-#' References:
+#' @references
 #'
-#' Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  \url{https://doi.org/10.1111/2041-210X.13250}
+#' Johnsen, E,.Totland, A.,Skaalevik, A., Holmin, A. J., Dingsor, G., Fuglebakk, E., Handegard, N. O.,  2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  \url{https://doi.org/10.1111/2041-210X.13250}
 #'
-#' MacLennan, D. N., Fernandes, P. G., and Dalen, J. 2002. A consistent approach to definitions and symbols in fisheries acoustics. ICES Journal of Marine Science, 59: 365_369.
+#' MacLennan, D. N., Fernandes, P. G., and Dalen, J. 2002. A consistent approach to definitions and symbols in fisheries acoustics. ICES Journal of Marine Science, 59: 365_369.\url{https://www.researchgate.net/publication/228787678_A_consistent_approach_to_definitions_and_symbols_in_fisheries_acoustics}
 #'
 #' Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, \url{https://doi.org/10.1016/S1054-3139(03)00031-6}
 #'
