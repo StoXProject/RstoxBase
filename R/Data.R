@@ -2,7 +2,7 @@
 ##################################################
 #' StoX multipolygon WKT
 #'
-#'This data format is used in \eqn{$\leq$}\href{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250}{StoX 2.7} to define stratum polygons. 
+#'This data format is used in \href{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250}{StoX 2.7} to define stratum polygons. 
 #' 
 #' @details 
 #' A data frame used in earlier version of StoX (\eqn{$\leq$}StoX 2.7), which combine one variable with strata names and variable consisting of \href{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}{multipolygon.wkt} strings. Well-known text (WKT) is a text markup language for representing vector geometry objects.
