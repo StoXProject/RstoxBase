@@ -81,6 +81,8 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' @return
 #' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
 #' 
+#' @references 
+#' 
 #' @examples
 #' 
 #' @seealso \code{\link{StratumArea}} for calculating the area of the strata.
