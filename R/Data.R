@@ -8,7 +8,7 @@
 #' Well-known text (WKT) is a text markup language for representing vector geometry objects.
 #' 
 #' @references 
-#' Additonal inforamtion on WKT multipolygon specification and StoX can be found here:
+#' Additonal information on WKT multipolygon specification and StoX can be found here:
 #' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 #' 
 #' \url{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250
