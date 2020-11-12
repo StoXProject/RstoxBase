@@ -1064,7 +1064,81 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @param LengthExponent For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' The BioStationWeighting function is used to update the weighting variables of the biotic stations that are associated with assignment IDs. An \emph{assignment ID} is a unique combination of one or more biotic stations and their corresponding weighting variables. Refer to function BioStationAssignement for details on assignment ID (NEED UPDATE: link to BioStationAssignment). The list of assigned biotic stations and weighting variables of an ID, will in another function be used to make a total combined length frequency distribution from all the individual station distributions of the ID.
+#' 
+#' A set of automatic methods are available to update the weighing variables:
+#' 
+#'\emph{Equal}
+#' 
+#' All assigned biotic stations are given equal weight by assigning the value 1 to the weighting variables.
+#' 
+#'\emph{NumberOfLengthSamples}
+#'The assigned biotic stations are given a weighting value according to the number of individual length samples of the target species at the biotic station. The individual sample information is extracted from the input \emph{BioticData}. The parameter \emph{MaxNumLengthSamples} is also associated with this method and is used to limit the weighting to a maximum number of length samples. 
+#' 
+#' \emph{NormTotalWeight}
+#' 
+#' The assigned biotic stations are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated from the input \emph{BioticData} as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+#' 
+#'\emph{NormTotalCount}
+#'
+#'The assigned biotic stations are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated from the input \emph{BioticData} as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+#'
+#'\emph{SumWeightedCount}
+#'
+#'The assigned biotic stations are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. The weighting value is calculated from the input \emph{LengthDist}. It is a requirement that the LengthDist data is of distribution type NormLengthDist (normalized to one nautical mile towing distance) or SweepWNormLengthDist (NormLengthDist that has been modified due to varying lengthbased catchability or other reasons). (NEED UPDATE: name change??)
+#'
+#'\emph{InvSumWeightedCount}
+#'
+#'The assigned biotic stations are given a weighting value as the inverse sum of the count of all length groups and all species in the input \emph{LengthDist} data. The weighting value \eqn{w_b} is calculated as:
+#'
+#'\deqn{w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }}
+#'
+#'where:
+#'
+#'\eqn{w_b} = weighting value of biotic station \emph{b}
+#'
+#'\eqn{s_b} = species in the LengthDist input data on biotic station \emph{b}
+#'
+#'\eqn{n_b} = number of species in LengthDist input data on biotic station \emph{b}
+#'
+#'\eqn{l} =  length group number
+#'
+#'\eqn{m_{s,b}}  =	number of length groups for species \emph{s} in biotic station \emph{b}
+#'
+#'\eqn{c_{l,s,b}} = count in length group \emph{l} for species \emph{s} in biotic station \emph{b}
+#' 
+#'The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distribution (from biotic data) of the same species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.
+#'
+#'\emph{NASC}
+#'
+#'The assigned biotic stations are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic station, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic station.
+#'
+#'A search for acoustic NASC values (at EDSU resolution) is performed within a given radius around a biotic station. A weighted (by integrator distance of the EDSUs) mean NASC is calculated from the surrounding NASC values and this is used in the further weighting value calculations. Using this combined NASC value, the length distribution of the biotic station and a target strength (TS) versus length empirical relationship, the weighting variable density of the biotic station is first calculated by length group. The sum of densities (number per square nautical mile) for all length groups of the target species at the given biotic station, is than calculated and applied as the weighting variable for the biotic station.
+#'
+#'The method is associated with the following user parameters:
+#'
+#'\emph{Radius:} Search radius for NASC values (at EDSU resolution) around a biotic station
+#'
+#'\emph{NASC:} Input NASC data at EDSU resolution
+#'
+#'\emph{AcousticData:}Input data type containing the geographical position and integrator distance of the acoustic EDSUs. This information is needed since the NASC data type does not contain such variables. AcousticData and NASC data are merged to get position and integrator distance variables into the NASC dataset.
+#'
+#'\emph{LengthDist:}	Input length distribution data of the target species by biotic station
+#'
+#'\emph{BioticData:}	Input biotic data containing the geographical position of the biotic stations. This information is needed since the LengthDist data type does not contain this variable. BioticData and LengthDist data are merged to get the position variable into the LengthDist dataset.
+#'
+#'\emph{m:}	Constant in the target strength versus length formula:
+#'
+#'\deqn{TS = m \log_{10}{l} + a}
+#'
+#'where \emph{l} is the fish "total length" in centimeters given as the lower value of the length group interval. 
+#'
+#'\emph{a:}	Constant in the target strength versus length formula
+#'
+#'The parameter \emph{LengthDist} contains the input length distribution of the biotic stations (all distribution types are valid; NormLengthDist, PercentLengthDist or LengthDist. See function StationLengthDist for details. NEED UPDATE: link to StationLengthDist function).
+#'
+#'The positions of the biotic stations are found in the input BioticData and are  linked to the station LengthDist object which is then used in the calculations. The positions of the acoustic records are found in the input AcousticData and are linked to the NASC object which is then used in the calculations.NASC data within a given radius is associated with each biotic length distribution. Densities by biotic station are used as the weighting variable value. Densities are calculated using a standard TS length relationship for the species in question. 
+#'  
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
