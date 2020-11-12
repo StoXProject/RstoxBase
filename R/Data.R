@@ -10,9 +10,9 @@
 #' @references 
 #' Additonal information on WKT multipolygon specification and StoX can be found here:
 #' 
-#' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
+#' \href{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 #' 
-#' \url{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250
+#' \href{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250}{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250
 #' 
 #' @name StoX_multipolygon_WKT}
 #'
