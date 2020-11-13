@@ -2,10 +2,10 @@
 ##################################################
 #' StoX multipolygon WKT
 #'
-#'This data format is used in \href{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250}{StoX 2.7} to define stratum polygons. 
+#'This data format is used in \eqn{\le} \href{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250}{StoX 2.7} to define strata polygons. 
 #' 
 #' @details 
-#' A data frame used in earlier version of StoX, which combine one variable with strata names and variable consisting of \href{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}{multipolygon.wkt} strings. Well-known text (WKT) is a text markup language for representing vector geometry objects.
+#' A data frame used in early versions of \href{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.13250}{StoX} to define strata polygons, which combine one variable with strata names and one variable consisting of \href{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}{multipolygon.wkt} strings. Well-known text (WKT) is a text markup language for representing vector geometry objects.
 #' 
 #' @references 
 #' Additonal information on WKT multipolygon specification and StoX can be found here:
@@ -14,7 +14,7 @@
 #' 
 #' Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528.  \url{https://doi.org/10.1111/2041-210X.13250}
 #' 
-#' @name StoX_multipolygon_WKT}
+#' @name StoX_multipolygon_WKT
 #'
 NULL
 

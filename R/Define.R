@@ -718,7 +718,7 @@ DefineBioticLayer <- function(
 ##################################################
 #' Assignnment of biotic hauls to acoustic PSUs
 #' 
-#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls to acoustic PSUs.
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
@@ -733,11 +733,20 @@ DefineBioticLayer <- function(
 #' @param LatitudeDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.
 #' 
 #' @details
-#' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
+#' The assignment of biotic Hauls to acoustic PSU can be done manually in the StoX graphical user interface (Johnsen et al. 2019) and \code{UserProcessData} = TRUE, or automatically using one of the \code{DefinitionMethods}.
+#' #' \itemize{
+#'   \item \code{Stratum} The acoustic PSUs in each stratum are linked to all biotic Hauls of  their respective Strata
+#'   \item \code{Radius} The acoustic PSUs are linked to all biotic Hauls within the distance radius in \code{nautical mile} given in Radius
+#'   \item \code{EllipsoidalDistance} The acoustic PSUs are linked to all the biotic Hauls which are within an ellipsoidal distance of 1 (see Equation 8 Johnsen and Iilende, 2007). A set of user defined normalized variables estimate the ellipsoidal distances between biotic Haul and acoustic PSU.
+#' } 
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
 #' 
+#' @references 
+#' Johnsen, E., & Iilende, T. (2007). Factors affecting the diel variation in commercial CPUE of Namibian hake—Can new information improve standard survey estimates?. Fisheries Research, 88(1-3), 70-79. \url{https://doi.org/10.1016/j.fishres.2007.07.013}
+#' 
+#' Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528. \url{https://doi.org/10.1111/2041-210X.13250}
 #' @examples
 #' x <- 1
 #' 
