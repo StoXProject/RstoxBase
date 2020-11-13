@@ -81,7 +81,11 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' @return
 #' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
 #' 
-#' @references 
+#' @references
+#' Additonal information on GeoJSON and shapefiles specification can be found here:
+#' 
+#' 
+#' Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528.  \url{https://doi.org/10.1111/2041-210X.13250} 
 #' 
 #' @examples
 #' 

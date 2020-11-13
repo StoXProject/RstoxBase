@@ -2,12 +2,12 @@
 ##################################################
 #' Calculate abundance of a stratum
 #' 
-#' This function calcualtes abundance as the product of density and area of each stratum.
+#' This function calculates abundance as the product of density and area of each stratum.
 #' 
 #' @inheritParams ModelData
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' The function merge the \code{\link{MeanDensityData}} with the \code{\link{StratumAreaData}} by Stratum and calculates the abundance by Stratum and IndividualTotalLength as the product of density [number by square nautical miles] and area [square nautical miles].
 #' 
 #' @return
 #' An object of StoX data type \code{\link{AbundanceData}}. 
