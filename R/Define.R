@@ -755,15 +755,15 @@ DefineBioticLayer <- function(
 #'   
 #' The available automatic assignment methods are:
 #' 
-#'\stong{Stratum}
+#'\strong{Stratum}
 #'
 #'All biotic hauls within each stratum  are assigned to all the acoustic PSUs of the stratum.
 #'
-#'\emph{Radius}
+#'\strong{Radius}
 #'
 #'All biotic stations within the given radius (function parameter \emph{Radius} (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system. The function parameter \emph{MinNumberOfHauls} set a minimum number of hauls for each assignment. This implies that the search for hauls may go beyond the given radius.
 #'
-#'\emph{EllipsoidalDistance}
+#'\strong{EllipsoidalDistance}
 #'
 #'This assignment method uses the ellipsoidal distance \href{https://doi.org/10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
 #'
