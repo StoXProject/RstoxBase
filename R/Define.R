@@ -1,6 +1,6 @@
 ##################################################
 ##################################################
-#' Definne PSU
+#' Define PSU
 #' 
 #' Underlying function for \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
@@ -716,9 +716,9 @@ DefineBioticLayer <- function(
 
 ##################################################
 ##################################################
-#' Assignnment of biotic hauls to acoustic PSUs
+#' Assignment of biotic hauls to acoustic PSUs by layer
 #' 
-#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs by Layer.
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
@@ -733,7 +733,62 @@ DefineBioticLayer <- function(
 #' @param LatitudeDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.
 #' 
 #' @details
-#' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
+#' The BioStationAssignment function creates a list of which biotic stations are assigned to each acoustic primary sampling unit (PSU) and assignment layer. An \emph{assignment layer} is made up of one or more \emph{layers} (NEED UPDATE: link to definition of layer). Each unique combination of assigned biotic stations is given an ID and the assigned biotic stations are given the default weighting factor of 1. The list of assigned biotic stations of an ID will in another function be used to make a total combined length frequency distribution from all the individual station distributions of the ID.
+#' 
+#' In addition to the option of modifying assignments manually through the StoX graphically user interface, several automatic assignment methods are available. The automated methods are applied by assignment layer on the biotic stations that are associated with each assignment layer. The available automatic methods are:
+#' 
+#'\emph{Stratum}
+#'
+#'All biotic stations within each stratum (NEED UPDATE: link to stratum R function) are assigned to all the acoustic PSUs of the stratum.
+#'
+#'\emph{Radius}
+#'
+#'All biotic stations within the given radius (parameter \emph{Radius} (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system.
+#'
+#'\emph{EllipsoidalDistance}
+#'
+#'This assignment method uses the ellipsoidal distance \href{https://doi.org/10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
+#'
+#' \deqn{f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
+#' \left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
+#' \left(\frac{\Delta o}{r_0}\right)^2}
+#' 
+#' where:
+#' 
+#' \eqn{f} = scalar product
+#' 
+#' \eqn{\Delta d} = great circle distance between the acoustic EDSU position  and the biotic station (nautical miles). Start positions for the biotic station and the EDSU are used.
+#' 
+#' \eqn{\Delta t} = time difference between the acoustic EDSU and the biotic station recordings (hours). Start time for the biotic station and the EDSU are used.
+#' 
+#' \eqn{\Delta b} = difference in bottom depth at the locations of the acoustic EDSU and the biotic station (meters). For the EDSU, the bottom depth is calculated as the average depth from the minimum and maximum depth recorded over the EDSU distance. The biotic station depth is calculated as the average at the start and stop of the station.
+#' 
+#'\eqn{\Delta l} = difference in latitude between the acoustic EDSU and the biotic station (degrees)
+#'
+#'\eqn{\Delta o} = difference in longitude between the acoustic EDSU and the biotic station (degrees) 
+#'
+#'\eqn{r_d} = reference value for great circle distance difference (nautical miles). Defined in parameter \emph{RefGCDistance}
+#'
+#'\eqn{r_t} = reference value for time difference (hours). Defined in parameter \emph{RefTime}
+#'
+#'\eqn{r_b} = reference value for bottom depth difference (meters). Defined in parameter \emph{RefBotDepth}
+#'
+#'\eqn{r_l} = reference value for latitude difference (degrees). Defined in parameter \emph{RefLatitude}
+#'
+#'\eqn{r_o} = reference value for longitude difference (degrees). Defined in parameter \emph{RefLongitude}
+#'
+#'The parameter \emph{MinNumStation} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned stations are lower than the MinNumStation parameter value. Station/s with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
+#'
+#'\emph{UseProcessData}
+#'
+#'This method does not perform any assignment. It is only a method to import and use the assignments stored (as process data) during the previous execution of the BioStationAssignment process.
+#'
+#'NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic stations.
+#'
+#' @references
+#'
+#'Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, \url{https://doi.org/10.1016/j.fishres.2007.07.013}
+#' 
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
