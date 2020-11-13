@@ -2,7 +2,7 @@
 % Please edit documentation in R/Define.R
 \name{DefineBioticAssignment}
 \alias{DefineBioticAssignment}
-\title{Assignnment of biotic hauls to acoustic PSUs}
+\title{Assignment of biotic hauls to acoustic PSUs by layer}
 \usage{
 DefineBioticAssignment(
   processData,
@@ -63,14 +63,81 @@ DefineBioticAssignment(
 An object of StoX data type \code{\link{BioticAssignment}}.
 }
 \description{
-This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs by Layer.
 }
 \details{
-See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
+The \emph{DefineBioticAssignment} function creates a list of which biotic hauls are assigned to each acoustic primary sampling unit (PSU) and assignment layer. An \emph{assignment layer} is made up of one or more \emph{layers}. The assigned biotic hauls are given the default weighting factor of 1. The list of assigned biotic stations will in another function be used to make a total combined length frequency distribution from all the individual haul distributions that have been assigned.
+
+In addition to the option of modifying assignments manually through the StoX graphically user interface, several automatic assignment methods are available. The automated methods are applied by assignment layer on the biotic stations that are associated with each assignment layer. By default, the function parameter \emph{UseProcessData} is set to true, ensuring that assignment from previous execution is availabe upon execution. UseProcessData may be set to false to redo or update assignemts.
+
+Layer definitions needed for assignment can be done in two ways using the function parameter:
+
+\strong{LayerDefinition} 
+
+The available parameters are:
+\emph{FunctionInput} which utelizes input \code{\link{AcousticLayer}} process data generated in a previous process. This object contains the layer definitions
+
+alternatively,
+
+\emph{FunctionParameter} which use function input data type \code{\link{AcousticData}} and function parameter \emph{LayerDefinitionMethod}. The available methods are:
+
+\emph{Watercolomn} method which defines one layer for the entire watercolumn
+\emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
+\emph{Resolution} method is assosiated with function parameter \emph{Resolution} which gives the desired thickness (in meters) of the layers.
+\emph{LayerTable} method is assosiated with function parameter \emph{LayerTable} which \strong{??? NEED TO BE COMPLETED ???}
+  
+The available automatic assignment methods are:
+
+\stong{Stratum}
+
+All biotic hauls within each stratum  are assigned to all the acoustic PSUs of the stratum.
+
+\emph{Radius}
+
+All biotic stations within the given radius (function parameter \emph{Radius} (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system. The function parameter \emph{MinNumberOfHauls} set a minimum number of hauls for each assignment. This implies that the search for hauls may go beyond the given radius.
+
+\emph{EllipsoidalDistance}
+
+This assignment method uses the ellipsoidal distance \href{https://doi.org/10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
+
+\deqn{f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
+\left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
+\left(\frac{\Delta o}{r_0}\right)^2}
+
+where:
+
+\eqn{f} = scalar product
+
+\eqn{\Delta d} = great circle distance between the acoustic EDSU position  and the biotic station (nautical miles). Start positions for the biotic station and the EDSU are used.
+
+\eqn{\Delta t} = time difference between the acoustic EDSU and the biotic station recordings (hours). Start time for the biotic station and the EDSU are used.
+
+\eqn{\Delta b} = difference in bottom depth at the locations of the acoustic EDSU and the biotic station (meters). For the EDSU, the bottom depth is calculated as the average depth from the minimum and maximum depth recorded over the EDSU distance. The biotic station depth is calculated as the average at the start and stop of the station.
+
+\eqn{\Delta l} = difference in latitude between the acoustic EDSU and the biotic station (degrees)
+
+\eqn{\Delta o} = difference in longitude between the acoustic EDSU and the biotic station (degrees) 
+
+\eqn{r_d} = reference value for great circle distance difference (nautical miles). Defined by function parameter \emph{Distance}) 
+
+\eqn{r_t} = reference value for time difference (hours). Defined by function parameter \emph{TimeDifference}) 
+
+\eqn{r_b} = reference value for bottom depth difference (meters). Defined  by function parameter \emph{BottomDepthDifference})
+
+\eqn{r_l} = reference value for latitude difference (degrees). Defined by function parameter \emph{LatitudeDifference})
+
+\eqn{r_o} = reference value for longitude difference (degrees). Defined by function parameter \emph{LongitudeDifference})
+
+The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned haulss are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
+
+NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.
 }
 \examples{
 x <- 1
 
+}
+\references{
+Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, \url{https://doi.org/10.1016/j.fishres.2007.07.013}
 }
 \seealso{
 \code{\link{BioticAssignmentWeighting}} for weighting BioticAssignment.
