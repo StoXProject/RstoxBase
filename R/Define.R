@@ -733,17 +733,35 @@ DefineBioticLayer <- function(
 #' @param LatitudeDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.
 #' 
 #' @details
-#' The BioStationAssignment function creates a list of which biotic stations are assigned to each acoustic primary sampling unit (PSU) and assignment layer. An \emph{assignment layer} is made up of one or more \emph{layers} (NEED UPDATE: link to definition of layer). Each unique combination of assigned biotic stations is given an ID and the assigned biotic stations are given the default weighting factor of 1. The list of assigned biotic stations of an ID will in another function be used to make a total combined length frequency distribution from all the individual station distributions of the ID.
+#' The \emph{DefineBioticAssignment} function creates a list of which biotic hauls are assigned to each acoustic primary sampling unit (PSU) and assignment layer. An \emph{assignment layer} is made up of one or more \emph{layers}. The assigned biotic hauls are given the default weighting factor of 1. The list of assigned biotic stations will in another function be used to make a total combined length frequency distribution from all the individual haul distributions that have been assigned.
 #' 
-#' In addition to the option of modifying assignments manually through the StoX graphically user interface, several automatic assignment methods are available. The automated methods are applied by assignment layer on the biotic stations that are associated with each assignment layer. The available automatic methods are:
+#' In addition to the option of modifying assignments manually through the StoX graphically user interface, several automatic assignment methods are available. The automated methods are applied by assignment layer on the biotic stations that are associated with each assignment layer. By default, the function parameter \emph{UseProcessData} is set to true, ensuring that assignment from previous execution is availabe upon execution. UseProcessData may be set to false to redo or update assignemts.
 #' 
-#'\emph{Stratum}
+#' Layer definitions needed for assignment can be done in two ways using the function parameter:
+#' 
+#' \strong{LayerDefinition} 
+#' 
+#' The available parameters are:
+#' \emph{FunctionInput} which utelizes input \code{\link{AcousticLayer}} process data generated in a previous process. This object contains the layer definitions
+#' 
+#' alternatively,
+#' 
+#' \emph{FunctionParameter} which use function input data type \code{\link{AcousticData}} and function parameter \emph{LayerDefinitionMethod}. The available methods are:
+#' 
+#' \emph{Watercolomn} method which defines one layer for the entire watercolumn
+#' \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
+#' \emph{Resolution} method is assosiated with function parameter \emph{Resolution} which gives the desired thickness (in meters) of the layers.
+#' \emph{LayerTable} method is assosiated with function parameter \emph{LayerTable} which \strong{??? NEED TO BE COMPLETED ???}
+#'   
+#' The available automatic assignment methods are:
+#' 
+#'\stong{Stratum}
 #'
-#'All biotic stations within each stratum (NEED UPDATE: link to stratum R function) are assigned to all the acoustic PSUs of the stratum.
+#'All biotic hauls within each stratum  are assigned to all the acoustic PSUs of the stratum.
 #'
 #'\emph{Radius}
 #'
-#'All biotic stations within the given radius (parameter \emph{Radius} (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system.
+#'All biotic stations within the given radius (function parameter \emph{Radius} (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system. The function parameter \emph{MinNumberOfHauls} set a minimum number of hauls for each assignment. This implies that the search for hauls may go beyond the given radius.
 #'
 #'\emph{EllipsoidalDistance}
 #'
@@ -767,23 +785,19 @@ DefineBioticLayer <- function(
 #'
 #'\eqn{\Delta o} = difference in longitude between the acoustic EDSU and the biotic station (degrees) 
 #'
-#'\eqn{r_d} = reference value for great circle distance difference (nautical miles). Defined in parameter \emph{RefGCDistance}
+#'\eqn{r_d} = reference value for great circle distance difference (nautical miles). Defined by function parameter \emph{Distance}) 
 #'
-#'\eqn{r_t} = reference value for time difference (hours). Defined in parameter \emph{RefTime}
+#'\eqn{r_t} = reference value for time difference (hours). Defined by function parameter \emph{TimeDifference}) 
 #'
-#'\eqn{r_b} = reference value for bottom depth difference (meters). Defined in parameter \emph{RefBotDepth}
+#'\eqn{r_b} = reference value for bottom depth difference (meters). Defined  by function parameter \emph{BottomDepthDifference})
 #'
-#'\eqn{r_l} = reference value for latitude difference (degrees). Defined in parameter \emph{RefLatitude}
+#'\eqn{r_l} = reference value for latitude difference (degrees). Defined by function parameter \emph{LatitudeDifference})
 #'
-#'\eqn{r_o} = reference value for longitude difference (degrees). Defined in parameter \emph{RefLongitude}
+#'\eqn{r_o} = reference value for longitude difference (degrees). Defined by function parameter \emph{LongitudeDifference})
 #'
-#'The parameter \emph{MinNumStation} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned stations are lower than the MinNumStation parameter value. Station/s with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
+#'The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned haulss are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
 #'
-#'\emph{UseProcessData}
-#'
-#'This method does not perform any assignment. It is only a method to import and use the assignments stored (as process data) during the previous execution of the BioStationAssignment process.
-#'
-#'NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic stations.
+#'NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.
 #'
 #' @references
 #'
