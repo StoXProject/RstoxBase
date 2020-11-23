@@ -10,14 +10,14 @@
 
 # Global variables
 utils::globalVariables(c(
-	 ":=", ".", "..abundanceGrouping", "..atMissingLengthGroup", "..by", "..columnOrder",
-	 "..extract", "..extractFromDataCopy", "..haulGrouping", "..Hauls", "..intervalVector",
-	 "..keys", "..keysSansSample", "..LengthDistributionType", "..LengthInterval",
-	 "..LengthIntervalWidths", "..lengthVar", "..presentResolutionVariables", "..refvar",
-	 "..relevantVariables", "..resolutionVar", "..RowIndex", "..Stratum", "..sumWeigthsBy",
-	 "..toAdd", "..validVariables", "..variablesToGetFromAbundanceData", "..vars",
-	 "..VerticalResolutionMax", "..VerticalResolutionMin", "..WeightingFactors", ".N",
-	 "abundanceWeightFactor", "AllStrata", "approx", "Area", "assignmentID", "assignmentPasted",
+	 ".", "..abundanceGrouping", "..atMissingLengthGroup", "..by", "..columnOrder", "..extract",
+	 "..extractFromDataCopy", "..haulGrouping", "..Hauls", "..intervalVector", "..keys",
+	 "..keysSansSample", "..LengthDistributionType", "..LengthInterval", "..LengthIntervalWidths",
+	 "..lengthVar", "..presentResolutionVariables", "..refvar", "..relevantVariables",
+	 "..resolutionVar", "..RowIndex", "..Stratum", "..sumWeigthsBy", "..toAdd", "..validVariables",
+	 "..variablesToGetFromAbundanceData", "..vars", "..VerticalResolutionMax",
+	 "..VerticalResolutionMin", "..WeightingFactors", ".N", ":=", "abundanceWeightFactor",
+	 "AllStrata", "approx", "Area", "assignmentID", "assignmentPasted",
 	 "backscatteringCrossSection", "Biomass", "CatchFractionCount", "CatchFractionWeight",
 	 "ChannelReferenceDepth", "ChannelReferenceOrientation", "crossSection", "Cruise", "Density",
 	 "DensityWeight", "Depth", "DepthExponent", "distance", "EDSU", "EDSUIIndex",

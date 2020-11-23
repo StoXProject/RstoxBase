@@ -285,6 +285,11 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
 
 
 # Stolen from https://stackoverflow.com/questions/4752275/test-for-equality-among-all-elements-of-a-single-vector:
+#' Test whether all values are equal.
+#' 
+#' @param x An R object coercable to numeric.
+#' @param tol The tolerance of the equality
+#' @param ... Arguments passed on to range and mean, particularly na.rm.
 #' 
 #' @export
 #' 
@@ -395,7 +400,7 @@ meanRawResolutionData <- function(
     if(identical(PSUDefinition, "FunctionParameter")) {
         PSUProcessData <- DefinePSU(
             StratumPolygon = StratumPolygon, 
-            StoxData = dataCopy, 
+            MergedStoxDataStationLevel = dataCopy, 
             DefinitionMethod = PSUDefinitionMethod, 
             PSUType = PSUType
         )
@@ -447,7 +452,7 @@ meanRawResolutionData <- function(
         )
     )
     
-    # Average the data horizonally:
+    # Average the data horizontally:
     aggregatedData <- applyMeanToData(data = dataCopy, dataType = dataType, targetResolution = "PSU")
     
     # Ensure that the numeric values are rounded to the defined number of digits:
@@ -826,6 +831,11 @@ percentile_5_95 = function(x) {
 
 
 # Define report functions:
+
+#' The summary function introduced in StoX <= 2.7.
+#' 
+#' @param x A numeric object
+#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
 #' 
 #' @export
 #' 
@@ -837,12 +847,20 @@ summaryStox <- function(x, na.rm = FALSE) {
         cv = cv(x, na.rm = na.rm)
     )
 }
+#' The coefficient of variation, i.e., the standard deviation divided by the mean.
+#' 
+#' @param x A numeric object
+#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
 #' 
 #' @export
 #' 
 cv <- function(x, na.rm = FALSE) {
     sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
 }
+#' The 5 and 95 percentile.
+#' 
+#' @param x A numeric object
+#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
 #' 
 #' @export
 #' 
@@ -856,5 +874,43 @@ isEmptyString <- function(x) {
         !length(x) || 
             (length(x) == 1 && nchar(x) == 0)
         )
+}
+
+#' Generate Start, Middle and Stop DateTime variables
+#'
+#' @param StoxData Either \code{\link{StoxAcousticData}} or \code{\link{StoxBioticData}}, depending on \code{type}.
+#' @param type A string naming the type of StoX data, one of "Acoustic" and "Biotic".
+#' 
+#' @return An object of StoX data type \code{\link{MergeStoxAcousticData}}.
+#'
+#' @export
+#' 
+StoxDataStartMiddleStopDateTime <- function(StoxDataStationLevel, type = c("Acoustic", "Biotic")) {
+    type <- match.arg(type)
+    
+    if(type == "Acoustic") {
+        # Fill the start, middle and end DateTime with the DateTime directly, given the LogOrigin:
+        # Fill the StartDateTime with the DateTime directly, given the LogOrigin:
+        StoxDataStationLevel[LogOrigin == "start", StartDateTime := DateTime]
+        # Interpret StartDateTime from LogDuration and LogOrigin:
+        StoxDataStationLevel[LogOrigin == "middle", StartDateTime := DateTime - LogDuration / 2]
+        StoxDataStationLevel[LogOrigin == "end", StartDateTime := DateTime - LogDuration]
+        
+        # Extrapolate to the middle and end times:
+        StoxDataStationLevel[, MiddleDateTime := StartDateTime + LogDuration / 2]
+        StoxDataStationLevel[, StopDateTime := StartDateTime + LogDuration]
+    }
+    else if(type == "Biotic") {
+        # Biotic stations are defined with a single time point. Duration in given for each Haul, whereas StoxAcoustic has duration on the Log:
+        StoxDataStationLevel[, StartDateTime := DateTime]
+        StoxDataStationLevel[, MiddleDateTime := DateTime]
+        StoxDataStationLevel[, StopDateTime := DateTime]
+    }
+    else {
+        stop("Invalid type. Must be either Acoustic or Biotic.")
+    }
+    
+    
+    return(StoxDataStationLevel)
 }
 

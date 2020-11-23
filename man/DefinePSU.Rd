@@ -8,9 +8,14 @@ DefinePSU(
   processData,
   UseProcessData = FALSE,
   StratumPolygon,
-  StoxData,
-  DefinitionMethod = c("Identity", "DeleteAllPSUs"),
-  PSUType = c("Acoustic", "Biotic")
+  StoxData = NULL,
+  MergedStoxDataStationLevel = NULL,
+  DefinitionMethod = c("Identity", "DeleteAllPSUs", "Interval", "ByTime"),
+  IntervalVariable = character(),
+  Interval = double(),
+  PSUType = c("Acoustic", "Biotic"),
+  SavePSUByTime = FALSE,
+  PSUProcessData
 )
 }
 \arguments{

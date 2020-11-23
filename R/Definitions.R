@@ -218,13 +218,18 @@ initiateRstoxBase <- function(){
             ), 
             EDSU_PSU = list(
                 horizontalResolution = c("EDSU", "PSU")
+            ), 
+            PSUByTime = list(
+                horizontalResolution = c("Stratum", "PSU"), 
+                categoryVariable = "Cruise", 
+                groupingVariables = c("StartDateTime", "StopDateTime")
             )
-        ), 
-        AcousticPSUByTime = list(
-            horizontalResolution = c("Stratum", "PSU"), 
-            categoryVariable = "Cruise", 
-            groupingVariables = c("StartDateTime", "StopDateTime")
-        )
+        )#, 
+        #AcousticPSUByTime = list(
+        #    horizontalResolution = c("Stratum", "PSU"), 
+        #    categoryVariable = "Cruise", 
+        #    groupingVariables = c("StartDateTime", "StopDateTime")
+        #)
     )
     
     resolutionClasses <- list(
@@ -313,8 +318,43 @@ initiateRstoxBase <- function(){
         LengthExponent * log10(midIndividualTotalLength)
     }
     
-    AcousticPSUPrefix <- "PSU"
-    BioticPSUPrefix <- "PSU"
+    # Define the PSU prefix and the SSU label:
+    getPSUPrefix <- function(PSUType) {
+        if(PSUType  == "Acoustic") {
+            prefix <- "PSU"
+        }
+        else if(PSUType == "Biotic") {
+            prefix <- "PSU"
+        }
+        else {
+            stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+        }
+        return(prefix)
+    }
+    getSSULabel <- function(PSUType) {
+        if(PSUType  == "Acoustic") {
+            SSULabel <- "EDSU"
+        }
+        else if(PSUType == "Biotic") {
+            SSULabel <- "Station"
+        }
+        else {
+            stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+        }
+        return(SSULabel)
+    }
+    getStationLevel <- function(PSUType) {
+        if(PSUType  == "Acoustic") {
+            SSULabel <- "Log"
+        }
+        else if(PSUType == "Biotic") {
+            SSULabel <- "Station"
+        }
+        else {
+            stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+        }
+        return(SSULabel)
+    }
     
     nauticalMileInMeters <- 1852
     

@@ -155,7 +155,6 @@ MeanNASC <- function(
     AcousticPSU = NULL
 ) {
     
-
     # Get the layer definition:
     LayerDefinition <- match.arg(LayerDefinition)
     if(LayerDefinition != "PreDefined") {
@@ -169,10 +168,14 @@ MeanNASC <- function(
         )
     }
     
+    SurveyDefinition <- match.arg(SurveyDefinition)
+    PSUDefinition <- match.arg(PSUDefinition)
     # Convert the PSUDefinitionMethod to "Identity" if "EDSUToPSU":
-    PSUDefinitionMethod <- match.arg(PSUDefinitionMethod)
-    if(grepl("EDSUToPSU", PSUDefinitionMethod, ignore.case = TRUE)) {
-        PSUDefinitionMethod <- "Identity"
+    if(PSUDefinition == "FunctionParameter") {
+        PSUDefinitionMethod <- match.arg(PSUDefinitionMethod)
+        if(grepl("EDSUToPSU", PSUDefinitionMethod, ignore.case = TRUE)) {
+            PSUDefinitionMethod <- "Identity"
+        }
     }
     
     # Run the mean part:

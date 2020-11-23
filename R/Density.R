@@ -72,7 +72,7 @@
 #' @examples
 #' x <- 1
 #' 
-#' @seealso To modify AcousticCategory use \code{\link[RstoxData]{DefineStoxAcousticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxAcousticVariables}} and to modify SpeciesCategory use \code{\link[RstoxData]{DefineStoxBioticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxBioticVariables}}. See \code{\link{SweptAreaDensity}} for swept-area density.
+#' @seealso To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}.
 #' 
 #' @export
 #' 
@@ -90,13 +90,17 @@ AcousticDensity <- function(
     if(!all(allSpeciesCategory %in% SpeciesLink$SpeciesCategory)) {
         notPresent <- setdiff(allSpeciesCategory, SpeciesLink$SpeciesCategory)
         notPresent <- notPresent[!is.na(notPresent)]
-        warning("StoX: The following SpeciesCategory are present in the AssignmentLengthDistributionData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        if(length(notPresent)) {
+            warning("StoX: The following SpeciesCategory are present in the AssignmentLengthDistributionData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        }
     }
     allAcousticCategory <- unique(AcousticTargetStrength$TargetStrengthTable$AcousticCategory)
     if(!all(allAcousticCategory %in% SpeciesLink$AcousticCategory)) {
         notPresent <- setdiff(allSpeciesCategory, SpeciesLink$SpeciesCategory)
         notPresent <- notPresent[!is.na(notPresent)]
-warning("StoX: The following AcousticCategory are present in the AcousticTargetStrength but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        if(length(notPresent)) {
+            warning("StoX: The following AcousticCategory are present in the AcousticTargetStrength but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        }
     }
     
     # Merge TargetStrength with SpeciesLink in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):

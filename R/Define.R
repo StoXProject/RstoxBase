@@ -25,9 +25,14 @@
 DefinePSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
-    StoxData, 
-    DefinitionMethod = c("Identity", "DeleteAllPSUs"), 
-    PSUType = c("Acoustic", "Biotic")
+    StoxData = NULL, 
+    MergedStoxDataStationLevel = NULL, 
+    DefinitionMethod = c("Identity", "DeleteAllPSUs", "Interval", "ByTime"), 
+    IntervalVariable = character(),
+    Interval = double(), 
+    PSUType = c("Acoustic", "Biotic"), 
+    SavePSUByTime = FALSE, 
+    PSUProcessData
 ) {
     
     # Return immediately if UseProcessData = TRUE:
@@ -39,41 +44,42 @@ DefinePSU <- function(
     #DefinitionMethod <- match.arg(DefinitionMethod)
     DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
     PSUType <- match.arg(PSUType)
+    # Define the PSU prefix and the SSU label, which is the name of the SSU column:
+    prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
+    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
-    # SSULevel
-    if(PSUType == "Acoustic") {
-        #SSULevel <- "Log"
-        SSUName <- "EDSU"
-        #prefix <- "T"
-        prefix <- getRstoxBaseDefinitions("AcousticPSUPrefix")
+    # Get the MergedStoxDataStationLevel if not given directly:
+    if(!length(MergedStoxDataStationLevel)) {
+        if(length(StoxData)) {
+            MergedStoxDataStationLevel <- RstoxData::mergeDataTables(
+                MergedStoxDataStationLevel, 
+                tableNames = c(
+                    "Cruise", 
+                    getRstoxBaseDefinitions("getStationLevel")(PSUType)
+                ), 
+                output.only.last = TRUE, 
+                all = TRUE
+            )
+        }
+        else {
+            stop("One of MergedStoxDataStationLevel and StoxData must be given")
+        }
     }
-    else if(PSUType == "Biotic") {
-        #SSULevel <- "Station"
-        SSUName <- "Station"
-        #prefix <- "S"
-        prefix <- getRstoxBaseDefinitions("BioticPSUPrefix")
-    }
-    else {
-        stop("Unknown model type")
-    }
+    
+    #StationLevel <- getRstoxBaseDefinitions("getStationLevel")(PSUType)
     
     # Make sure that there is only one row per SSU:
-    notDuplicatedSSUs <- !duplicated(StoxData[[SSUName]])
-    StoxData <- StoxData[notDuplicatedSSUs, ]
+    notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
+    MergedStoxDataStationLevel <- MergedStoxDataStationLevel[notDuplicatedSSUs, ]
     
     # Get SSUs:
-    #SSU <- StoxData[[SSULevel]][[SSUName]]
-    SSU <- StoxData[[SSUName]]
-    
-    # Get the stratum names:
-    #StratumNames = getStratumNames(StratumPolygon)
+    SSU <- MergedStoxDataStationLevel[[SSULabel]]
     
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
         # Define PSUIDs and PSUNames:
         PSUID <- seq_along(SSU)
-        #PSUName <- paste0(prefix, formatC(PSUID, width = max(nchar(PSUID)), format = "d", flag = "0"))
         PSUName <- getPSUName(PSUID, prefix)
         
         # Set each SSU as a PSU:
@@ -83,31 +89,81 @@ DefinePSU <- function(
         )
         
         # Find the stratum of each PSU:
-        #SpatialPSUs <- sp::SpatialPoints(StoxData[[SSULevel]][, c("Longitude", "Latitude")])
-        SpatialPSUs <- sp::SpatialPoints(StoxData[, c("Longitude", "Latitude")])
+        Stratum_PSU <- getStratumOfPSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel)
+    }
+    # Use each SSU as a PSU:
+    else if(grepl("ByTime", DefinitionMethod, ignore.case = TRUE)) {
         
-        StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
+        # Interpret middle times:
+        #StoxData <- RstoxData::mergeDataTables(
+        #    StoxData, 
+        #    tableNames = c("Cruise", StationLevel), 
+        #    output.only.last = FALSE, 
+        #    all = TRUE
+        #)
+        MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
         
+        # Rename to the SSULabel:
+        MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
         
-        #StratumIndex <- sp::over(SpatialPSUs, StratumPolygon)
-        ## Converting from data frame to character vector 
-        #StratumIndex <- as.numeric(unlist(StratumIndex))
-        #NonEmptyStrata <- StratumNames[StratumIndex]
+        # Get the SSU indices for each PSU:
+        Stratum_PSU_SSU <- PSUProcessData$PSUByTime[, data.table::data.table(
+            Stratum, 
+            PSU, 
+            Cruise, 
+            # Use closed interval on both sides here to allow for time points and not only time interavls:
+            SSUIndex = which(
+                MergedStoxDataStationLevel$MiddleDateTime >= StartDateTime & 
+                MergedStoxDataStationLevel$MiddleDateTime <= StopDateTime &
+                MergedStoxDataStationLevel$Cruise == Cruise
+                )
+            ), 
+            by = seq_len(nrow(PSUProcessData$PSUByTime))]
         
-        # Create the Stratum_PSU data.table:
-        Stratum_PSU <- data.table::data.table(
-            #Stratum = NonEmptyStrata, 
-            Stratum = unlist(StratumNames), 
-            PSU = PSUName
+        # Remove PSUs with no SSUs:
+        Stratum_PSU_SSU <- Stratum_PSU_SSU[!is.na(SSUIndex), ]
+        
+        # Add the SSUs:
+        Stratum_PSU_SSU[, SSU := MergedStoxDataStationLevel$SSU[SSUIndex]]
+        
+        # Split into Stratum_PSU and SSU_PSU:
+        Stratum_PSU <- unique(Stratum_PSU_SSU[, c("Stratum", "PSU")])
+        SSU_PSU <- unique(Stratum_PSU_SSU[, c("SSU", "PSU")])
+        
+        # Add all SSUs:
+        SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
+    }
+    
+    else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
+        
+        # Find intervals:
+        # Extract the interavl axis variable, such as DateTime or Log:
+        IntervalAxis <- MergedStoxDataStationLevel[[IntervalVariable]]
+        # Define the breaks, covering the range of the IntervalAxis, by steps defined by Interval:
+        IntervalBreaks <- seq(
+            Interval * floor(min(IntervalAxis/Interval)), 
+            Interval * ceiling(max(IntervalAxis/Interval)), 
+            Interval
+        )
+        # Find which intervals the IntervalAxis falls inside:
+        intervals <- findInterval(IntervalAxis, IntervalBreaks)
+        # Convert the intervals to 1, 2, 3, ...:
+        intervals <- match(intervals, unique(intervals))
+        # - and use these to define PSUs:
+        PSU <- getPSUName(intervals, prefix)
+        
+        # Return the PSU definition with empty stratum links:
+        SSU_PSU <- data.table::data.table(
+            SSU = SSU, 
+            PSU = PSU
         )
         
-        # Remove PSUs that do not have a stratum:
-        validPSUs <- unique(Stratum_PSU$PSU[!is.na(Stratum_PSU$Stratum)])
-        Stratum_PSU <- Stratum_PSU[ PSU %in% validPSUs ]
-        SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
+        # Find the stratum of each PSU:
+        Stratum_PSU <- getStratumOfPSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel)
     }
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
     else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
+        
         SSU_PSU <- data.table::data.table(
             SSU = SSU, 
             PSU = NA_character_
@@ -116,6 +172,14 @@ DefinePSU <- function(
     }
     else if(isEmptyString(DefinitionMethod)){
         if(length(processData)) {
+            # Add the PSU time information:
+            if(SavePSUByTime) {
+                processData$PSUByTime <- getPSUByTime(
+                    PSUProcessData = processData, 
+                    MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                    PSUType = PSUType
+                )
+            }
             return(processData)
         }
         else {
@@ -130,15 +194,38 @@ DefinePSU <- function(
         stop("Inavlid DefinitionMethod")
     }
     
-    # Rename the data according to the model type:
-    data.table::setnames(SSU_PSU, "SSU", SSUName)
-    out <- structure(
-        list(
-            Stratum_PSU, 
-            SSU_PSU
-        ), 
-        names = c("Stratum_PSU", paste(SSUName, "PSU", sep = "_"))
+    # Define the PSUProcessData:
+    PSUProcessData <- list(
+        Stratum_PSU = Stratum_PSU, 
+        SSU_PSU = SSU_PSU
     )
+    # Remove PSUs that do not have a stratum:
+    PSUProcessData <- removePSUsWithMissingStratum(PSUProcessData)
+    
+    # Rename the data according to the model type:
+    PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData = PSUProcessData, PSUType = PSUType)
+    
+    # Add the PSU time information:
+    if(SavePSUByTime) {
+        PSUProcessData$PSUByTime <- getPSUByTime(
+            PSUProcessData = PSUProcessData, 
+            MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+            PSUType = PSUType
+        )
+    }
+    
+    ### data.table::setnames(PSUProcessData$SSU_PSU, "SSU", SSULabel)
+    ### names(PSUProcessData) <- sub(names(PSUProcessData), "SSU", SSULabel)
+    #names(PSUProcessData)[names(PSUProcessData) == "SSU_PSU"] <- paste(SSULabel, "PSU", sep = "_")
+    
+    #out <- structure(
+    #    list(
+    #        Stratum_PSU, 
+    #        SSU_PSU
+    #    ), 
+    #    names = c("Stratum_PSU", paste(SSULabel, "PSU", sep = "_"))
+    #)
+    
     
     # No longer neede, as the GUI gets stratum names from DefineStratumPolygon instead:
     # Add a list of all strata:
@@ -146,7 +233,93 @@ DefinePSU <- function(
     #    Stratum = getStratumNames(StratumPolygon)
     #)
     
-    return(out)
+    return(PSUProcessData)
+}
+
+# Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU i loacted geographically:
+getStratumOfPSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
+    # Get unique PSUs:
+    allPSUs <- unique(SSU_PSU$PSU)
+    allPSUs <- allPSUs[!is.na(allPSUs)]
+    # Get the strata:
+    Stratum_PSU <- data.table::rbindlist(
+        lapply(
+            X = allPSUs, 
+            FUN = getStratumOfPSU, 
+            SSU_PSU = SSU_PSU, 
+            MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+            StratumPolygon = StratumPolygon, 
+            SSULabel = SSULabel, 
+            StationLevel = StationLevel
+        )
+    )
+    
+    return(Stratum_PSU)
+}
+getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
+    
+    # Get the MergedStoxDataStationLevel of the specified PSU:
+    SSUs <- SSU_PSU[PSU == thisPSU, SSU]
+    pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSUs, c("Longitude", "Latitude")]
+    SpatialPSUs <- sp::SpatialPoints(pos)
+    
+    # Find the stratum of each PSU:
+    StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
+    # Select the most frequent:
+    MostFrequentStratumName <- names(which.max(table(StratumNames)))
+    
+    # Create the Stratum_PSU data.table:
+    Stratum_PSU <- data.table::data.table(
+        #Stratum = NonEmptyStrata, 
+        Stratum = if(length(MostFrequentStratumName)) MostFrequentStratumName else NA, 
+        PSU = thisPSU
+    )
+    
+    return(Stratum_PSU)
+}
+
+# Function to remove PSUs with missing Stratum:
+removePSUsWithMissingStratum <- function(PSUProcessData) {
+    validPSUs <- unique(PSUProcessData$Stratum_PSU$PSU[!is.na(PSUProcessData$Stratum_PSU$Stratum)])
+    PSUProcessData$Stratum_PSU <- PSUProcessData$Stratum_PSU[ PSU %in% validPSUs ]
+    PSUProcessData$SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
+    return(PSUProcessData)
+}
+
+renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
+    PSUType <- match.arg(PSUType)
+    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
+    
+    if(reverse) {
+        names(PSUProcessData) <- sub(SSULabel, "SSU", names(PSUProcessData))
+        PSUProcessData$SSU_PSU <- renameSSUToSSULabelInTable(PSUProcessData$SSU_PSU, PSUType = PSUType, reverse = TRUE)
+        #data.table::setnames(PSUProcessData$SSU_PSU, SSULabel, "SSU")
+    }
+    else {
+        PSUProcessData$SSU_PSU <- renameSSUToSSULabelInTable(PSUProcessData$SSU_PSU, PSUType = PSUType, reverse = FALSE)
+        #data.table::setnames(PSUProcessData$SSU_PSU, "SSU", SSULabel)
+        names(PSUProcessData) <- sub("SSU", SSULabel, names(PSUProcessData))
+    }
+    
+    
+    return(PSUProcessData)
+}
+
+
+renameSSUToSSULabelInTable <- function(table, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
+    PSUType <- match.arg(PSUType)
+    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
+    
+    # Make a copy, since we are using setnames:
+    table <- data.table::copy(table)
+    if(reverse) {
+        data.table::setnames(table, SSULabel, "SSU")
+    }
+    else {
+        data.table::setnames(table, "SSU", SSULabel)
+    }
+    
+    return(table)
 }
 
 #' 
@@ -194,12 +367,13 @@ DefineBioticPSU <- function(
         DefinitionMethod <- "Identity"
     }
     
+    # Define the PSUs:
     BioticPSU <- DefinePSU(
         processData = processData, 
-        StratumPolygon = StratumPolygon, 
-        StoxData = StoxBioticData$Station, 
-        DefinitionMethod = DefinitionMethod, 
         UseProcessData = UseProcessData, 
+        StratumPolygon = StratumPolygon, 
+        StoxData = StoxBioticData, 
+        DefinitionMethod = DefinitionMethod, 
         PSUType = "Biotic"
     )
     
@@ -235,7 +409,11 @@ DefineAcousticPSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxAcousticData, 
-    DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs")
+    DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "Interval", "ByTime"), 
+    IntervalVariable = character(),
+    Interval = double(), 
+    SavePSUByTime = FALSE, 
+    AcousticPSU
 ) {
     
     # Get the DefinitionMethod:
@@ -245,13 +423,18 @@ DefineAcousticPSU <- function(
         DefinitionMethod <- "Identity"
     }
     
+    # Define the PSUs:
     AcousticPSU <- DefinePSU(
         processData = processData, 
-        StratumPolygon = StratumPolygon, 
-        StoxData = StoxAcousticData$Log, 
-        DefinitionMethod = DefinitionMethod, 
         UseProcessData = UseProcessData, 
-        PSUType = "Acoustic"
+        StratumPolygon = StratumPolygon, 
+        StoxData = StoxAcousticData, 
+        DefinitionMethod = DefinitionMethod, 
+        IntervalVariable = IntervalVariable, 
+        Interval = Interval, 
+        PSUType = "Acoustic", 
+        SavePSUByTime = SavePSUByTime, 
+        PSUProcessData = AcousticPSU
     )
     
     # Format the output:
@@ -260,111 +443,174 @@ DefineAcousticPSU <- function(
     return(AcousticPSU)
 }
 
-##################################################
-##################################################
-#' Define Acoustic PSU by time
-#' 
-#' This function defines Acoustic PSUs by start and stop times.
-#' 
-#' @inheritParams general_arguments
-#' @inheritParams ProcessData
-#' @inheritParams ModelData
-#' @param DefinitionMethod  Character: A string naming the method to use. Currently, only "FunctionInput" is available, implying to take previously defined AcousticPSU definition and the StoxAcousticData used in that definition as input and determine start and stop times of unbroken sequences of EDSUs
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' An object of StoX data type \code{\link{AcousticPSU}}.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
-#' 
-#' @export
-#' 
-DefineAcousticPSUByTime <- function(
-    processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("FunctionInput"), 
-    AcousticPSU, 
-    StoxAcousticData
+### ##################################################
+### ##################################################
+### #' Define Acoustic PSU by time
+### #' 
+### #' This function defines Acoustic PSUs by start and stop times.
+### #' 
+### #' @inheritParams ProcessData
+### #' @inheritParams ModelData
+### #' 
+### #' @details
+### #' This function is awesome and does excellent stuff.
+### #' 
+### #' @return
+### #' An object of StoX data type \code{\link{AcousticPSU}}.
+### #' 
+### #' @examples
+### #' x <- 1
+### #' 
+### #' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
+### #' 
+### #' @export
+### #' 
+### ExtractAcousticPSUByTime <- function(
+###     AcousticPSU, 
+###     StoxAcousticData
+### ) {
+###     
+###     # Get the times of the PSUs:
+###     #AcousticPSUByTime <- getPSUStartStopDateTime(AcousticPSU, StoxAcousticData)
+###     AcousticPSUByTime <- getPSUByTime(
+###         PSUProcessData = AcousticPSU, 
+###         StoxData = StoxAcousticData, 
+###         PSUType = "Acoustic"
+###     )
+###     
+###     # Format the output:
+###     formatOutput(AcousticPSUByTime, dataType = "AcousticPSUByTime", keep.all = FALSE)
+###     
+###     return(AcousticPSUByTime)
+### }
+
+
+
+### ##################################################
+### ##################################################
+### #' Define Biotic PSU by time
+### #' 
+### #' This function defines Biotic PSUs by start and stop times.
+### #' 
+### #' @inheritParams ProcessData
+### #' @inheritParams ModelData
+### #' 
+### #' @details
+### #' This function is awesome and does excellent stuff.
+### #' 
+### #' @return
+### #' An object of StoX data type \code{\link{AcousticPSU}}.
+### #' 
+### #' @examples
+### #' x <- 1
+### #' 
+### #' @seealso \code{\link{DefineBioticPSU}} for defining BioticPSU in the first place.
+### #' 
+### #' @export
+### #' 
+### ExtractBioticPSUByTime <- function(
+###     BioticPSU, 
+###     StoxBioticData
+### ) {
+###     
+###     # Get the times of the PSUs:
+###     #AcousticPSUByTime <- getPSUStartStopDateTime(AcousticPSU, StoxAcousticData)
+###     BioticPSUByTime <- getPSUByTime(
+###         PSUProcessData = BioticPSU, 
+###         StoxData = StoxBioticData, 
+###         PSUType = "Biotic"
+###     )
+###     
+###     # Format the output:
+###     formatOutput(BioticPSUByTime, dataType = "BioticPSUByTime", keep.all = FALSE)
+###     
+###     return(BioticPSUByTime)
+### }
+
+
+
+getPSUByTime <- function(
+    PSUProcessData, 
+    MergedStoxDataStationLevel, 
+    PSUType
 ) {
+    # Get the times of the PSUs:
+    PSUByTime <- getPSUStartStopDateTime(
+        PSUProcessData = PSUProcessData, 
+        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+        PSUType = PSUType
+    )
     
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
-    
-    # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
-    
-    if(DefinitionMethod == "FunctionInput") {
-        # Get the times of the PSUs:
-        AcousticPSUByTime <- getPSUStartStopDateTime(AcousticPSU, StoxAcousticData)
-    }
-    else {
-        stop("Inavlid DefinitionMethod")
-    }
-    
-    # Format the output:
-    formatOutput(AcousticPSUByTime, dataType = "AcousticPSUByTime", keep.all = FALSE)
-    
-    return(AcousticPSUByTime)
+    return(PSUByTime)
 }
 
-# Function to get the start and 
-getPSUStartStopDateTime <- function(AcousticPSU, StoxAcousticData) {
+
+# Function to get the start and stop time:
+getPSUStartStopDateTime <- function(PSUProcessData, MergedStoxDataStationLevel, PSUType) {
+    
+    # Rename to the general SSU label:
+    PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData, PSUType = PSUType, reverse = TRUE)
     
     # Interpret start and end times:
-    StoxAcousticDataCopy <- data.table::copy(StoxAcousticData)
-    StoxAcousticDataCopy <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticDataCopy)
+    StationLevel <- getRstoxBaseDefinitions("getStationLevel")(PSUType)
+    #StoxData <- RstoxData::mergeDataTables(
+    #    StoxData, 
+    #    tableNames = c("Cruise", StationLevel), 
+    #    output.only.last = FALSE, 
+    #    all = TRUE
+    #)
+    MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel, type = PSUType)
+    StationTable <- data.table::copy(MergedStoxDataStationLevel)
     
-    # Split the EDSU_PSU table into PSUs:
-    EDSU_PSU_ByPSU <- AcousticPSU$EDSU_PSU[!is.na(PSU) & nchar(PSU) > 0]
-    EDSU_PSU_ByPSU <- split(EDSU_PSU_ByPSU, by = "PSU")
+    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
+    data.table::setnames(StationTable, SSULabel, "SSU")
+    
+    # Split the SSU_PSU table into PSUs:
+    SSU_PSU_ByPSU <- PSUProcessData$SSU_PSU[!is.na(PSU) & nchar(PSU) > 0]
+    SSU_PSU_ByPSU <- split(SSU_PSU_ByPSU, by = "PSU")
     
     # Get the table of start and stop times of each PSUs and combine to a table:
     PSUStartStopDateTime <- lapply(
-        X = names(EDSU_PSU_ByPSU), 
+        X = names(SSU_PSU_ByPSU), 
         FUN = getPSUStartStopDateTimeByPSU, 
         # Parameters of getPSUStartStopDateTimeByPSU(): 
-        EDSU_PSU_ByPSU = EDSU_PSU_ByPSU, 
-        StoxAcousticData = StoxAcousticDataCopy
+        SSU_PSU_ByPSU = SSU_PSU_ByPSU, 
+        StationTable = StationTable
     )
     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
     
     # Add the Stratum:
-    PSUStartStopDateTime <- RstoxData::mergeByIntersect(AcousticPSU$Stratum_PSU, PSUStartStopDateTime)
+    PSUStartStopDateTime <- RstoxData::mergeByIntersect(PSUProcessData$Stratum_PSU, PSUStartStopDateTime)
     
     return(PSUStartStopDateTime)
 }
 
 # Function to get the start and end times of one acoustic PSU:
-getPSUStartStopDateTimeByPSU <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
+getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     
-    # For conevnience extract the EDSUs of the current PSU:
-    thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
+    # For convenience extract the SSUs of the current PSU:
+    thisSSU_PSU <- SSU_PSU_ByPSU[[PSU]]
     
-    # Match the EDSUs of the AcousticPSU with EDSUs of the StoxAcousticData:
-    atEDSUInStoxAcousticData <- match(thisEDSU_PSU$EDSU, StoxAcousticData$Log$EDSU)
-    if(any(is.na(atEDSUInStoxAcousticData))) {
-        stop("The StoxAcousticData must be the same data that were used to generate the AcousticPSU.")
+    # Match the SSUs of the PSUProcessData with SSUs of the StationTable:
+    atSSUInStoxData <- match(thisSSU_PSU$SSU, StationTable$SSU)
+    if(any(is.na(atSSUInStoxData))) {
+        warning("The StoxData must be the same data that were used to generate the PSUProcessData.")
+        atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
     }
     
-    # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data):
-    atEDSUInStoxAcousticDataByCruise <- split(atEDSUInStoxAcousticData, StoxAcousticData$Log$Cruise[atEDSUInStoxAcousticData])
+    # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data?????):
+    atSSUInStoxDataByCruise <- split(atSSUInStoxData, StationTable$Cruise[atSSUInStoxData])
     
     # Get the table of start and stop times of all Cruises and combine to a table:
     PSUStartStopDateTime <- lapply(
-        X = names(atEDSUInStoxAcousticDataByCruise), 
+        X = names(atSSUInStoxDataByCruise), 
         FUN = getPSUStartStopDateTimeOneCruise, 
         # Parameters of getPSUStartStopDateTimeOneCruise(): 
-        atEDSUInStoxAcousticDataByCruise = atEDSUInStoxAcousticDataByCruise, 
-        StoxAcousticData = StoxAcousticData
+        atSSUInStoxDataByCruise = atSSUInStoxDataByCruise, 
+        StationTable = StationTable
     )
     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
-    
+
     # Add the PSU:
     PSUStartStopDateTime <- data.table::data.table(
         PSU = PSU, 
@@ -375,15 +621,16 @@ getPSUStartStopDateTimeByPSU <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) 
 }
 
 # Function to get the table of start and stop times of one Cruise:
-getPSUStartStopDateTimeOneCruise <- function(Cruise, atEDSUInStoxAcousticDataByCruise, StoxAcousticData) {
-    # Get start and stop of unbroken sequences fo EDSUs:
-    thisEDSU <- atEDSUInStoxAcousticDataByCruise[[Cruise]]
-    steps <- which(diff(thisEDSU) > 1)
+getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, StationTable) {
+    
+    # Get start and stop of unbroken sequences fo SSUs:
+    thisSSU <- atSSUInStoxDataByCruise[[Cruise]]
+    steps <- which(diff(thisSSU) > 1)
     startInd <- c(1, steps + 1)
-    stopInd <- c(steps, length(thisEDSU))
+    stopInd <- c(steps, length(thisSSU))
     # Get start and stop times of the unbroken sequences:
-    startTimes <- StoxAcousticData$Log$StartDateTime[thisEDSU[startInd]]
-    stopTimes <- StoxAcousticData$Log$StopDateTime[thisEDSU[stopInd]]
+    startTimes <- StationTable$StartDateTime[thisSSU[startInd]]
+    stopTimes <- StationTable$StopDateTime[thisSSU[stopInd]]
     
     # Create the output table:
     PSUStartStopDateTimeOneCruise <- data.table::data.table(
@@ -398,79 +645,156 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atEDSUInStoxAcousticDataByC
 
 
 
-##################################################
-##################################################
-#' Re-define Acoustic PSU
-#' 
-#' Re- defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs, based on the start and end time of preivously defined acoustic PSUs.
-#' 
-#' @inheritParams general_arguments
-#' @inheritParams ProcessData
-#' @inheritParams ModelData
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' An object of StoX data type \code{\link{AcousticPSU}}.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
-#' 
-#' @export
-#' 
-DefineAcousticPSUFromPSUByTime <- function(
-    processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("FunctionInput"), 
-    AcousticPSUByTime, 
-    StoxAcousticData
-) {
-    warning("This function should be included as a DefinitionMethod in DefineAcousticPSU() in the future")
-    
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
-    
-    # Interpret middle times:
-    StoxAcousticData <- data.table::copy(StoxAcousticData)
-    StoxAcousticData <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticData)
-    # Extract only the Cruise, EDSU and MiddleDateTime: 
-    Log <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")[, c("Cruise", "EDSU", "MiddleDateTime")]
-    
-    # Get the EDSU indices for each PSU:
-    StratumPSUEDSU <- AcousticPSUByTime[, data.table::data.table(
-        Stratum, 
-        PSU, 
-        Cruise, 
-        EDSUIIndex = which(Log$MiddleDateTime >= StartDateTime & Log$MiddleDateTime < StopDateTime)), 
-        by = seq_len(nrow(AcousticPSUByTime))]
-    
-    # Remove PSUs with no EDSUs:
-    StratumPSUEDSU <- StratumPSUEDSU[!is.na(EDSUIIndex), ]
-    
-    # Add the EDSUs:
-    StratumPSUEDSU[, EDSU := Log$EDSU[EDSUIIndex]]
-    
-    # Split into Stratum_PSU and EDSU_PSU:
-    Stratum_PSU <- unique(StratumPSUEDSU[, c("Stratum", "PSU")])
-    EDSU_PSU <- unique(StratumPSUEDSU[, c("EDSU", "PSU")])
-    # Add all EDSUs:
-    EDSU_PSU <- merge(Log[, "EDSU"], EDSU_PSU, all = TRUE)
-    
-    # Create the output list as from DefineAcousticPSU. In fact, the present function will be implemented as a DefintionMethod in DefnieAcousticPSU() in the future:
-    AcousticPSU <- list(
-        Stratum_PSU = Stratum_PSU,
-        EDSU_PSU = EDSU_PSU
-    )
+### # Function to get the start and 
+### getPSUStartStopDateTime_Acoustic <- function(AcousticPSU, StoxAcousticData) {
+###     
+###     # Interpret start and end times:
+###     StoxAcousticDataCopy <- data.table::copy(StoxAcousticData)
+###     StoxAcousticDataCopy <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticDataCopy)
+###     
+###     # Split the EDSU_PSU table into PSUs:
+###     EDSU_PSU_ByPSU <- AcousticPSU$EDSU_PSU[!is.na(PSU) & nchar(PSU) > 0]
+###     EDSU_PSU_ByPSU <- split(EDSU_PSU_ByPSU, by = "PSU")
+###     
+###     # Get the table of start and stop times of each PSUs and combine to a table:
+###     PSUStartStopDateTime <- lapply(
+###         X = names(EDSU_PSU_ByPSU), 
+###         FUN = getPSUStartStopDateTimeByPSU, 
+###         # Parameters of getPSUStartStopDateTimeByPSU(): 
+###         EDSU_PSU_ByPSU = EDSU_PSU_ByPSU, 
+###         StoxAcousticData = StoxAcousticDataCopy
+###     )
+###     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
+###     
+###     # Add the Stratum:
+###     PSUStartStopDateTime <- RstoxData::mergeByIntersect(AcousticPSU$Stratum_PSU, PSUStartStopDateTime)
+###     
+###     return(PSUStartStopDateTime)
+### }
+### 
+### # Function to get the start and end times of one acoustic PSU:
+### getPSUStartStopDateTimeByPSU_Acoustic <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
+###     
+###     # For conevnience extract the EDSUs of the current PSU:
+###     thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
+###     
+###     # Match the EDSUs of the AcousticPSU with EDSUs of the StoxAcousticData:
+###     atEDSUInStoxAcousticData <- match(thisEDSU_PSU$EDSU, StoxAcousticData$Log$EDSU)
+###     if(any(is.na(atEDSUInStoxAcousticData))) {
+###         stop("The StoxAcousticData must be the same data that were used to generate the AcousticPSU.")
+###     }
+###     
+###     # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data):
+###     atEDSUInStoxAcousticDataByCruise <- split(atEDSUInStoxAcousticData, StoxAcousticData$Log$Cruise[atEDSUInStoxAcousticData### ])
+###     
+###     # Get the table of start and stop times of all Cruises and combine to a table:
+###     PSUStartStopDateTime <- lapply(
+###         X = names(atEDSUInStoxAcousticDataByCruise), 
+###         FUN = getPSUStartStopDateTimeOneCruise, 
+###         # Parameters of getPSUStartStopDateTimeOneCruise(): 
+###         atEDSUInStoxAcousticDataByCruise = atEDSUInStoxAcousticDataByCruise, 
+###         StoxAcousticData = StoxAcousticData
+###     )
+###     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
+###     
+###     # Add the PSU:
+###     PSUStartStopDateTime <- data.table::data.table(
+###         PSU = PSU, 
+###         PSUStartStopDateTime
+###     )
+###     
+###     return(PSUStartStopDateTime)
+### }
 
-    # Format the output:
-    formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
-    
-    return(AcousticPSU)
-}
+### # Function to get the table of start and stop times of one Cruise:
+### getPSUStartStopDateTimeOneCruise_Acoustic <- function(Cruise, atEDSUInStoxAcousticDataByCruise, StoxAcousticData) {
+###     # Get start and stop of unbroken sequences fo EDSUs:
+###     thisEDSU <- atEDSUInStoxAcousticDataByCruise[[Cruise]]
+###     steps <- which(diff(thisEDSU) > 1)
+###     startInd <- c(1, steps + 1)
+###     stopInd <- c(steps, length(thisEDSU))
+###     # Get start and stop times of the unbroken sequences:
+###     startTimes <- StoxAcousticData$Log$StartDateTime[thisEDSU[startInd]]
+###     stopTimes <- StoxAcousticData$Log$StopDateTime[thisEDSU[stopInd]]
+###     
+###     # Create the output table:
+###     PSUStartStopDateTimeOneCruise <- data.table::data.table(
+###         Cruise = Cruise, 
+###         StartDateTime = startTimes, 
+###         StopDateTime = stopTimes
+###     )
+###     
+###     return(PSUStartStopDateTimeOneCruise)
+### }
+
+
+
+
+### ##################################################
+### ##################################################
+### #' Re-define Acoustic PSU
+### #' 
+### #' Re- defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs, based on the start and ### end time of preivously defined acoustic PSUs.
+### #' 
+### #' @inheritParams ProcessData
+### #' @inheritParams ModelData
+### #' 
+### #' @details
+### #' This function is awesome and does excellent stuff.
+### #' 
+### #' @return
+### #' An object of StoX data type \code{\link{AcousticPSU}}.
+### #' 
+### #' @examples
+### #' x <- 1
+### #' 
+### #' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
+### #' 
+### #' @export
+### #' 
+### DefineAcousticPSUFromPSUByTime <- function(
+###     AcousticPSUByTime, 
+###     StoxAcousticData
+### ) {
+###     
+###     # Interpret middle times:
+###     StoxAcousticData <- data.table::copy(StoxAcousticData)
+###     StoxAcousticData <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticData)
+###     # Extract only the Cruise, EDSU and MiddleDateTime: 
+###     Log <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")[, c("Cruise", "EDSU", "MiddleDateTime")]
+###     
+###     # Get the EDSU indices for each PSU:
+###     StratumPSUEDSU <- AcousticPSUByTime[, data.table::data.table(
+###         Stratum, 
+###         PSU, 
+###         Cruise, 
+###         # Use closed interavl on both sides here to allow for time points and not only time interavls:
+###         EDSUIIndex = which(Log$MiddleDateTime >= StartDateTime & Log$MiddleDateTime <= StopDateTime)), 
+###         by = seq_len(nrow(AcousticPSUByTime))]
+###     
+###     # Remove PSUs with no EDSUs:
+###     StratumPSUEDSU <- StratumPSUEDSU[!is.na(EDSUIIndex), ]
+###     
+###     # Add the EDSUs:
+###     StratumPSUEDSU[, EDSU := Log$EDSU[EDSUIIndex]]
+###     
+###     # Split into Stratum_PSU and EDSU_PSU:
+###     Stratum_PSU <- unique(StratumPSUEDSU[, c("Stratum", "PSU")])
+###     EDSU_PSU <- unique(StratumPSUEDSU[, c("EDSU", "PSU")])
+###     # Add all EDSUs:
+###     EDSU_PSU <- merge(Log[, "EDSU"], EDSU_PSU, all = TRUE)
+###     
+###     # Create the output list as from DefineAcousticPSU. In fact, the present function will be implemented as a DefintionMeth### od in DefnieAcousticPSU() in the future:
+###     AcousticPSU <- list(
+###         Stratum_PSU = Stratum_PSU,
+###         EDSU_PSU = EDSU_PSU
+###     )
+### 
+###     # Format the output:
+###     formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
+###     
+###     return(AcousticPSU)
+### }
 
 
 ##################################################
@@ -520,7 +844,7 @@ DefineLayer <- function(
     # If given as a list of data.tables, extract the table holding the vertical resolution:
     if(is.list(StoxData) && all(sapply(StoxData, data.table::is.data.table))) {
         # Merge the tables of the input data:
-        data <- mergeDataTables(StoxData, output.only.last = TRUE, all = TRUE)
+        data <- RstoxData::mergeDataTables(StoxData, output.only.last = TRUE, all = TRUE)
         #data <- StoxData[[VerticalResolutionLevel]]
     }
     else {
@@ -1078,7 +1402,8 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 BioticAssignmentWeighting <- function(
     BioticAssignment, 
-    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
+    #WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
+    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 

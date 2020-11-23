@@ -113,9 +113,7 @@ ReportBootstrap <- function(
 
 
 
-#' 
-#' @export
-#' 
+# Function to aggregate baseline data:
 aggregateBaselineDataOneTable <- function(
     stoxData, 
     targetVariable, 
