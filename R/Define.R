@@ -52,7 +52,7 @@ DefinePSU <- function(
     if(!length(MergedStoxDataStationLevel)) {
         if(length(StoxData)) {
             MergedStoxDataStationLevel <- RstoxData::mergeDataTables(
-                MergedStoxDataStationLevel, 
+                StoxData, 
                 tableNames = c(
                     "Cruise", 
                     getRstoxBaseDefinitions("getStationLevel")(PSUType)
@@ -280,9 +280,13 @@ getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, Stratu
 
 # Function to remove PSUs with missing Stratum:
 removePSUsWithMissingStratum <- function(PSUProcessData) {
+    
     validPSUs <- unique(PSUProcessData$Stratum_PSU$PSU[!is.na(PSUProcessData$Stratum_PSU$Stratum)])
-    PSUProcessData$Stratum_PSU <- PSUProcessData$Stratum_PSU[ PSU %in% validPSUs ]
-    PSUProcessData$SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
+    if(length(validPSUs)) {
+        PSUProcessData$Stratum_PSU <- PSUProcessData$Stratum_PSU[ PSU %in% validPSUs ]
+        PSUProcessData$SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
+    }
+    
     return(PSUProcessData)
 }
 
@@ -567,6 +571,11 @@ getPSUStartStopDateTime <- function(PSUProcessData, MergedStoxDataStationLevel, 
     
     # Split the SSU_PSU table into PSUs:
     SSU_PSU_ByPSU <- PSUProcessData$SSU_PSU[!is.na(PSU) & nchar(PSU) > 0]
+    if(!nrow(SSU_PSU_ByPSU)) {
+        # Create an empty table with the names defined in dataTypeDefinition:
+        PSUStartStopDateTime <- data.table(1)[,`:=`(unlist(getRstoxBaseDefinitions("PSUByTime")), NA)][, V1 := NULL][.0]
+        return(PSUStartStopDateTime)
+    }
     SSU_PSU_ByPSU <- split(SSU_PSU_ByPSU, by = "PSU")
     
     # Get the table of start and stop times of each PSUs and combine to a table:

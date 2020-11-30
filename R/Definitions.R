@@ -13,6 +13,12 @@
 initiateRstoxBase <- function(){
     
     # Define the variables of the main data types used in estimation models:
+    PSUByTime = list(
+        horizontalResolution = c("Stratum", "PSU"), 
+        categoryVariable = "Cruise", 
+        groupingVariables = c("StartDateTime", "StopDateTime")
+    )
+    
     dataTypeDefinition <- list(
         # NASC: 
         NASCData = list(
@@ -212,6 +218,15 @@ initiateRstoxBase <- function(){
             weighting = "WeightingFactor", 
             other = NULL
         ), 
+        BioticPSU = list(
+            Stratum_PSU = list(
+                horizontalResolution = c("Stratum", "PSU")
+            ), 
+            StationPSU = list(
+                horizontalResolution = c("EDSU", "PSU")
+            ), 
+            PSUByTime = PSUByTime
+        ), 
         AcousticPSU = list(
             Stratum_PSU = list(
                 horizontalResolution = c("Stratum", "PSU")
@@ -219,11 +234,7 @@ initiateRstoxBase <- function(){
             EDSU_PSU = list(
                 horizontalResolution = c("EDSU", "PSU")
             ), 
-            PSUByTime = list(
-                horizontalResolution = c("Stratum", "PSU"), 
-                categoryVariable = "Cruise", 
-                groupingVariables = c("StartDateTime", "StopDateTime")
-            )
+            PSUByTime = PSUByTime
         )#, 
         #AcousticPSUByTime = list(
         #    horizontalResolution = c("Stratum", "PSU"), 
