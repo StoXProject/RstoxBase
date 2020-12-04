@@ -73,6 +73,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
 #' 
 #' @inheritParams general_arguments
+#' @param DefinitionMethod A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "None" to start off with no strata. Strata can be added, modified and removed in the StoX GUI.
 #' @param FileName The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension. 
 #' 
 #' @details
@@ -140,6 +141,11 @@ DefineStratumPolygon <- function(
 }
 
 
+#' Extract stratum names from a SpatialPolygonsDataFrame
+#' 
+#'  The stratum names must be stored as the column polygonName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
+#' 
+#' @param stratum A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column polygonName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' 
 #' @export
 #' 

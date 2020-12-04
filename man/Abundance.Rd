@@ -7,6 +7,8 @@
 Abundance(MeanDensityData, StratumAreaData)
 }
 \arguments{
+\item{MeanDensityData}{The \code{\link{MeanDensityData}} data.}
+
 \item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
 }
 \value{

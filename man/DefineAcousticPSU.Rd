@@ -9,9 +9,7 @@ DefineAcousticPSU(
   UseProcessData = FALSE,
   StratumPolygon,
   StoxAcousticData,
-  DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "Interval", "ByTime"),
-  IntervalVariable = character(),
-  Interval = double(),
+  DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "ByTime"),
   SavePSUByTime = FALSE,
   AcousticPSU
 )
@@ -26,6 +24,8 @@ DefineAcousticPSU(
 \item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
+
+\item{SavePSUByTime}{Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.}
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 }

@@ -7,7 +7,10 @@
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @param MergedStoxDataStationLevel The merged StoxData at the station level. Used in \code{meanRawResolutionData}.
+#' @param DefinitionMethod A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @param SavePSUByTime Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.
+#' @param PSUProcessData Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -26,10 +29,11 @@ DefinePSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxData = NULL, 
+    #MergedStoxDataStationLevel = NULL, 
     MergedStoxDataStationLevel = NULL, 
-    DefinitionMethod = c("Identity", "DeleteAllPSUs", "Interval", "ByTime"), 
-    IntervalVariable = character(),
-    Interval = double(), 
+    DefinitionMethod = c("Identity", "DeleteAllPSUs", "ByTime"), 
+    #IntervalVariable = character(),
+    #Interval = double(), 
     PSUType = c("Acoustic", "Biotic"), 
     SavePSUByTime = FALSE, 
     PSUProcessData
@@ -71,6 +75,9 @@ DefinePSU <- function(
     # Make sure that there is only one row per SSU:
     notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
     MergedStoxDataStationLevel <- MergedStoxDataStationLevel[notDuplicatedSSUs, ]
+    
+    # And order the SSUs by time:
+    data.table::setorderv(MergedStoxDataStationLevel, "DateTime")
     
     # Get SSUs:
     SSU <- MergedStoxDataStationLevel[[SSULabel]]
@@ -134,33 +141,35 @@ DefinePSU <- function(
         SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
     }
     
-    else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
-        
-        # Find intervals:
-        # Extract the interavl axis variable, such as DateTime or Log:
-        IntervalAxis <- MergedStoxDataStationLevel[[IntervalVariable]]
-        # Define the breaks, covering the range of the IntervalAxis, by steps defined by Interval:
-        IntervalBreaks <- seq(
-            Interval * floor(min(IntervalAxis/Interval)), 
-            Interval * ceiling(max(IntervalAxis/Interval)), 
-            Interval
-        )
-        # Find which intervals the IntervalAxis falls inside:
-        intervals <- findInterval(IntervalAxis, IntervalBreaks)
-        # Convert the intervals to 1, 2, 3, ...:
-        intervals <- match(intervals, unique(intervals))
-        # - and use these to define PSUs:
-        PSU <- getPSUName(intervals, prefix)
-        
-        # Return the PSU definition with empty stratum links:
-        SSU_PSU <- data.table::data.table(
-            SSU = SSU, 
-            PSU = PSU
-        )
-        
-        # Find the stratum of each PSU:
-        Stratum_PSU <- getStratumOfPSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel)
-    }
+    #else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
+    #    
+    #    # Find intervals:
+    #    # Extract the interavl axis variable, such as DateTime or Log:
+    #    IntervalAxis <- MergedStoxDataStationLevel[[IntervalVariable]]
+    #    # Define the breaks, covering the range of the IntervalAxis, by steps defined by Interval:
+    #    IntervalBreaks <- seq(
+    #        Interval * floor(min(IntervalAxis/Interval)), 
+    #        Interval * ceiling(max(IntervalAxis/Interval)), 
+    #        Interval
+    #    )
+    #    # Find which intervals the IntervalAxis falls inside:
+    #    intervals <- findInterval(IntervalAxis, IntervalBreaks)
+    #    # Convert the intervals to 1, 2, 3, ...:
+    #    intervals <- match(intervals, unique(intervals))
+    #    # - and use these to define PSUs:
+    #    PSU <- getPSUName(intervals, prefix)
+    #    
+    #    # Return the PSU definition with empty stratum links:
+    #    SSU_PSU <- data.table::data.table(
+    #        SSU = SSU, 
+    #        PSU = PSU
+    #    )
+    #    
+    #    # Find the stratum of each PSU:
+    #    Stratum_PSU <- getStratumOfPSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, Stat#ionLevel)
+    #}
+    
+    
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
     else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
         
@@ -326,9 +335,7 @@ renameSSUToSSULabelInTable <- function(table, PSUType = c("Acoustic", "Biotic"),
     return(table)
 }
 
-#' 
-#' @export
-#' 
+# Function to paste PSU prefix and integer index to a PSU name:
 getPSUName <- function(ind, prefix) {
     paste0(prefix, formatC(ind, width = max(nchar(ind)), format = "d", flag = "0"))
 }
@@ -340,8 +347,8 @@ getPSUName <- function(ind, prefix) {
 #' This function defines the \code{\link{BioticPSU}} process data, linking strata, biotic PSUs and Stations 
 #' 
 #' @inheritParams general_arguments
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param DefinitionMethod Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
 #' @details
@@ -392,8 +399,9 @@ DefineBioticPSU <- function(
 #' Defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs. 
 #' 
 #' @inheritParams general_arguments
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' @inheritParams DefinePSU
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
 #' @details
@@ -413,9 +421,10 @@ DefineAcousticPSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxAcousticData, 
-    DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "Interval", "ByTime"), 
-    IntervalVariable = character(),
-    Interval = double(), 
+    #DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "Interval", "ByTime"), 
+    DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "ByTime"), 
+    #IntervalVariable = character(),
+    #Interval = double(), 
     SavePSUByTime = FALSE, 
     AcousticPSU
 ) {
@@ -434,8 +443,8 @@ DefineAcousticPSU <- function(
         StratumPolygon = StratumPolygon, 
         StoxData = StoxAcousticData, 
         DefinitionMethod = DefinitionMethod, 
-        IntervalVariable = IntervalVariable, 
-        Interval = Interval, 
+        #IntervalVariable = IntervalVariable, 
+        #Interval = Interval, 
         PSUType = "Acoustic", 
         SavePSUByTime = SavePSUByTime, 
         PSUProcessData = AcousticPSU
@@ -453,8 +462,8 @@ DefineAcousticPSU <- function(
 ### #' 
 ### #' This function defines Acoustic PSUs by start and stop times.
 ### #' 
-### #' @inheritParams ProcessData
 ### #' @inheritParams ModelData
+### #' @inheritParams ProcessData
 ### #' 
 ### #' @details
 ### #' This function is awesome and does excellent stuff.
@@ -496,8 +505,8 @@ DefineAcousticPSU <- function(
 ### #' 
 ### #' This function defines Biotic PSUs by start and stop times.
 ### #' 
+### #' #' @inheritParams ModelData
 ### #' @inheritParams ProcessData
-### #' @inheritParams ModelData
 ### #' 
 ### #' @details
 ### #' This function is awesome and does excellent stuff.
@@ -745,8 +754,8 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 ### #' 
 ### #' Re- defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs, based on the start and ### end time of preivously defined acoustic PSUs.
 ### #' 
+### #' #' @inheritParams ModelData
 ### #' @inheritParams ProcessData
-### #' @inheritParams ModelData
 ### #' 
 ### #' @details
 ### #' This function is awesome and does excellent stuff.
@@ -968,6 +977,7 @@ getDefaultLayerNames <- function(x) {
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @inheritParams DefineLayer
 #' 
 #' @details
@@ -1011,6 +1021,7 @@ DefineAcousticLayer <- function(
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @inheritParams DefineLayer
 #' 
 #' @details
@@ -1054,9 +1065,11 @@ DefineBioticLayer <- function(
 #' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
 #' 
 #' @inheritParams general_arguments
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference} and \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
+#' @inheritParams SumNASC
+#' @inheritParams DefineAcousticLayer
 #' @param Radius Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
 #' @param MinNumberOfHauls For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the \code{MinNumberOfHauls}, the \code{MinNumberOfHauls} closest Hauls will be used (in ellipsoidal distance). 
 #' @param Distance For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.
@@ -1389,8 +1402,8 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' This function puts weights to the hauls assigned to acoustic PSUs in \code{\link{BioticAssignment}} process data.
 #' 
 #' @inheritParams general_arguments
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 

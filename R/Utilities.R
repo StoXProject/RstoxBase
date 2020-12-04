@@ -1,52 +1,3 @@
-
-## Function to get the least common multiple of a vector of integers:
-#getLeastCommonMultiple <- function(x, max = NULL, N = 100) {
-#    multiples <- lapply(x, function(y) y * seq_len(N))
-#    commonMultiples <- multiples[[1]]
-#    for(i in seq_len(length(l) - 1)) {
-#        commonMultiples <- intersect(commonMultiples, multiples[[i + 1]])
-#    }
-#    
-#    if(length(max)) {
-#        subset(commonMultiples, commonMultiples <= max)
-#    }
-#    else {
-#        min(commonMultiples)
-#    }
-#    
-#}
-
-#' 
-#' @export
-#' 
-# Function to expand a data table so that the cells that are vectors are transposed and the rest repeated to fill the gaps:
-expandDT <- function(DT, toExpand = NULL) {
-    # Set the columns to expand:
-    if(length(toExpand) == 0) {
-        lens <- lapply(DT, lengths)
-        lensLargerThan1 <- sapply(lens, function(l) any(l > 1))
-        toExpand <- names(DT)[lensLargerThan1]
-    }
-    
-    if(length(toExpand)) {
-        expanded <- lapply(toExpand, function(x) DT[, unlist(get(x))])
-        names(expanded) <- toExpand
-        DT <- do.call(
-            cbind, 
-            c(
-                list(
-                    DT[rep(1:.N, lengths(get(toExpand[1]))), !toExpand, with = FALSE]
-                ), 
-                #lapply(toExpand, function(x) DT[, unlist(get(x))])
-                expanded
-            )
-        )
-    }
-    
-    DT
-}
-
-
 ##################################################
 ##################################################
 #' Get the common intervals of possibly overlapping intervals:
@@ -762,7 +713,15 @@ removeColumnsByReference <- function(data, toRemove) {
 
 #### Tools to perform resampling: ####
 
-# Function to sample after sorting:
+#' Function to sample after sorting:
+#' 
+#' @param x The vector to sample from.
+#' @param size The length of the sampled vector.
+#' @param seed The seed to use for the sampling.
+#' @param replace Logical: If TRUE sample with replacement.
+#' @param sorted Sort the vector before sampling.
+#' @param index.out Return indices at which to sample rather than the actual samples.
+#' @param redraw.seed Logical: If TRUE make seeds dependent on the length of the vector to sample from. Used in StoX to approximatetly reproduce the variability included when first bootstrapping and then imputing data. In the new StoX the imputation is included in the baseline, with a fixed seed for all bootstrap replicates. But setting the seed dependent on the length seeds will for the most part be not equal.
 #' 
 #' @export
 #' 
@@ -790,6 +749,12 @@ sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out
     return(sampled)
 }
 
+#' Generate a seed vector consistently
+#' 
+#' This function should be used for all random sampling in all Rstox packages.
+#' 
+#' @param seed A single integer setting the seed of the seed vector generation.
+#' @param size A single integer giving the length of the seed vector.
 #' 
 #' @export
 #' 
@@ -799,7 +764,7 @@ getSeedVector <- function(seed, size = 1) {
 }
 
 getSequenceToSampleFrom <- function(){
-    seedSequenceLength <- getRstoxFrameworkDefinitions("seedSequenceLength")
+    seedSequenceLength <- getRstoxBaseDefinitions("seedSequenceLength")
     seq_len(seedSequenceLength)
 }
 
@@ -823,7 +788,7 @@ summaryStox <- function(x, na.rm = FALSE) {
     return(summaryStox)
 }
 CV = function(x, na.rm = FALSE) {
-    sd(x) / mean(x, na.rm = na.rm)
+    stats::sd(x) / mean(x, na.rm = na.rm)
 }
 percentile_5_95 = function(x) {
     quantiile(x, c(5, 95) / 100)
@@ -841,7 +806,7 @@ percentile_5_95 = function(x) {
 #' 
 summaryStox <- function(x, na.rm = FALSE) {
     c(
-        quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
+        stats::quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
         mean = mean(x, na.rm = na.rm),
         sd = sd(x, na.rm = na.rm),
         cv = cv(x, na.rm = na.rm)
@@ -865,7 +830,7 @@ cv <- function(x, na.rm = FALSE) {
 #' @export
 #' 
 percentile_5_95 <- function(x, na.rm = FALSE) {
-    quantile(x, c(0.05, 0.95), na.rm = na.rm)
+    stats::quantile(x, c(0.05, 0.95), na.rm = na.rm)
 }
 
 
@@ -878,14 +843,15 @@ isEmptyString <- function(x) {
 
 #' Generate Start, Middle and Stop DateTime variables
 #'
-#' @param StoxData Either \code{\link{StoxAcousticData}} or \code{\link{StoxBioticData}}, depending on \code{type}.
+#' @param StoxDataStationLevel Either \code{\link{StoxAcousticData}} or \code{\link{StoxBioticData}}, depending on \code{type}.
 #' @param type A string naming the type of StoX data, one of "Acoustic" and "Biotic".
 #' 
 #' @return An object of StoX data type \code{\link{MergeStoxAcousticData}}.
 #'
-#' @export
-#' 
-StoxDataStartMiddleStopDateTime <- function(StoxDataStationLevel, type = c("Acoustic", "Biotic")) {
+StoxDataStartMiddleStopDateTime <- function(
+    StoxDataStationLevel, 
+    type = c("Acoustic", "Biotic")
+) {
     type <- match.arg(type)
     
     if(type == "Acoustic") {

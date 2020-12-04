@@ -448,6 +448,9 @@ initiateRstoxBase <- function(){
         )
     )
     
+    # Define the length of the sequence to draw seeds from:
+    seedSequenceLength <- 1e7
+    
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
@@ -501,62 +504,15 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 
 
 
-
-
-
-#getColumnOrder <- function(dataType) {
-#    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-#    #columns <- unlist(dataTypeDefinition[[dataType]])
-#    #return(columns)
-#    getDataTypeDefinition(dataType, unlist = TRUE)
-#}
-
-#setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
-# secondaryColumnOrder can be used to tidy a datatype beyond the variables specified by getDataTypeDefinition().
-formatOutputOld <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
-    
-    # Remove any duplicated columns:
-    if(any(duplicated(names(data)))) {
-        data[, which(duplicated(names(data))) := NULL]
-    }
-    
-    # Get the column order:
-    #columnOrder <- getColumnOrder(dataType)
-    columnOrder <- c(
-        getDataTypeDefinition(dataType, unlist = TRUE), 
-        secondaryColumnOrder
-    )
-    if(allow.missing) {
-        columnOrder <- intersect(columnOrder, names(data))
-    }
-    
-    if(!keep.all) {
-        #toRemove <- setdiff(names(data), columnOrder)
-        #if(length(toRemove)) {
-        #    data[, eval(toRemove) := NULL]
-        #}
-        
-        removeColumnsByReference(
-            data = data, 
-            toRemove =  setdiff(names(data), columnOrder)
-        )
-        
-        #data <- data[, ..columnOrder]
-    }
-    
-    # Order the columns:
-    data.table::setcolorder(data, columnOrder)
-    
-    # Order the rows:
-    data.table::setorder(data, na.last = TRUE)
-    
-    # Delete any keys, as we use the argument 'by' for all merging and aggregation:
-    data.table::setkey(data, NULL)
-}
-
-
-
-
+#' Function to format the output of a function returning StoX data (ModelData or ProcessData).
+#' 
+#' The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables.
+#' 
+#' @param data A table or list of tables to return from the StoX function.
+#' @param dataType The data type to format against.
+#' @param keep.all Logical: If TRUE keep all columns, and if FALSE delete undefined columns.
+#' @param allow.missing Logical: If TRUE allow for unrelevant column names defined in \code{secondaryColumnOrder}.
+#' @param secondaryColumnOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}}.
 #' 
 #' @export
 #' 
@@ -721,7 +677,13 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
     }
 }
 
-# dataType can be NULL, implying all data types, a vector of data type names or a logical function of data type names, such as endswith(x, "NASCData"):
+#' Get data type definitions
+#' 
+#' @param dataType The name of the data type to get definitions from, or a logical function of one input DataType.
+#' @param subTable The sub table to extract, if any. Defaulted to "Data" to return the most relevant part of the data type definition.
+#' @param elements A vector of specific elements to extract from the definition.
+#' @param unlist Logical: If TRUE unlist the list of column names.
+#' 
 getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
@@ -878,6 +840,9 @@ determineAggregationVariables <- function(
 #
 
 
+#' Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.
+#' 
+#' @param getMultiple If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.
 #' 
 #' @export
 #' 

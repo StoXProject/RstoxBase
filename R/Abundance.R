@@ -5,6 +5,7 @@
 #' This function calcualtes abundance as the product of density and area of each stratum.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -48,8 +49,8 @@ Abundance <- function(
 #' 
 #' This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
 #' 
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
 #' 
 #' @details
@@ -94,7 +95,7 @@ Individuals <- function(
         usedHauls <- usedHauls[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
         
         # Remove rows with any NAs:
-        usedHauls <- na.omit(usedHauls)
+        usedHauls <- stats::na.omit(usedHauls)
         ## Extract only the Haul column:
         #usedHauls <- usedHauls$Haul
         
@@ -145,6 +146,7 @@ Individuals <- function(
 #' This function distributes Abundance to the individuals defined by \code{\link{Individuals}}.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.
 #' 
 #' @details
@@ -430,12 +432,12 @@ addLengthGroupsByReference <- function(
     speciesInMaster <- unique(master[[speciesVar]])
     
     # If there are species in the master that are not in the data, report a warning:
-    speciesOnlyInMaster <- na.omit(setdiff(speciesInMaster, speciesInData))
+    speciesOnlyInMaster <- stats::na.omit(setdiff(speciesInMaster, speciesInData))
     if(length(speciesOnlyInMaster)) {
         warning("StoX: The species categories ", paste(speciesOnlyInMaster, collapse = ", "), " are present in the master but not in the data")
     }
     # If there are species in the data that are not in the master, report a warning:
-    speciesOnlyInData <- na.omit(setdiff(speciesInMaster, speciesInData))
+    speciesOnlyInData <- stats::na.omit(setdiff(speciesInMaster, speciesInData))
     if(length(speciesOnlyInData)) {
         warning("StoX: The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
     }
@@ -471,9 +473,8 @@ addLengthGroupsByReference <- function(
 #' 
 #' This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
 #' 
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
+#' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.

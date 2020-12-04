@@ -9,15 +9,7 @@ ReportSpeciesCategoryCatch(SpeciesCategoryCatchData, StoxBioticTranslation)
 \arguments{
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
 
-\item{TargetVariable}{The variable to report.}
-
-\item{ReportFunction}{The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".}
-
-\item{GroupingVariables}{The variables to report by, e.g. "Stratum" or "SpeciesCategory".}
-
-\item{RemoveMissingValues}{Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA.}
-
-\item{WeightingVariable}{The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".}
+\item{StoxBioticTranslation}{The \code{\link[RstoxData]{StoxBioticTranslation}} process data.}
 }
 \value{
 A \code{\link{ReportSpeciesCategoryCatchData}} object.

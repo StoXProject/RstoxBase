@@ -1,6 +1,6 @@
-# A list of the attributes of the exported StoX functions:
-# The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
-# The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
+#' A list of the attributes of the exported StoX functions:
+#' The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
+#' The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
 #' 
 #' @export
 #' 
@@ -633,7 +633,7 @@ stoxFunctionAttributes <- list(
     ##########
 )
 
-# Define the process property formats:
+#' Define the process property formats:
 #' 
 #' @export
 #' 

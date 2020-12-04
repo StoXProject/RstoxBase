@@ -28,13 +28,27 @@ MeanLengthDistribution(
 
 \item{SumLengthDistributionData}{The \code{\link{SumLengthDistributionData}} data.}
 
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process by the input \code{BioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.}
+
+\item{LayerDefinitionMethod}{See \code{\link{DefineBioticLayer}}}
+
+\item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
+
+\item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
+
 \item{BioticLayer}{The \code{\link{BioticLayer}} process data.}
+
+\item{SurveyDefinition}{The method to use for defining the Survey, one of \code{FunctionParameter} to define the Survey on the fly in this function, or \code{FunctionInput} to import Survey process data from a previously run process by the input \code{Survey}.}
+
+\item{SurveyDefinitionMethod}{See \code{\link{DefineSurvey}}}
+
+\item{SurveyTable}{A table of the two columns Stratum and Survey.}
 
 \item{Survey}{The \code{\link{Survey}} process data.}
 
-\item{PSUDefinition}{A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.}
+\item{PSUDefinition}{The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{BioticPSU}.}
 
-\item{PSUDefinitionMethod}{See \code{DefinitionMethod} of \code{\link{DefineBioticPSU}}.}
+\item{PSUDefinitionMethod}{See \code{\link{DefineBioticPSU}}}
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 

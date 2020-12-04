@@ -9,7 +9,7 @@ ImputeSuperIndividuals(SuperIndividualsData, Seed = 1)
 \arguments{
 \item{SuperIndividualsData}{The \code{\link{SuperIndividualsData}} data.}
 
-\item{AbundanceType}{The type of abundance, one of "Acoustic" and "SweptArea".}
+\item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
 }
 \value{
 A data.table is returned with awesome stuff.

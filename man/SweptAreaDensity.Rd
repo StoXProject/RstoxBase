@@ -16,7 +16,9 @@ SweptAreaDensity(
 
 \item{SweepWidthMethod}{The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidth} to be given.}
 
-\item{SweepWidth}{A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.}
+\item{SweepWidth}{The constant sweep width in meters.}
+
+\item{SweepWidthByCruise}{A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.}
 }
 \value{
 A data.table is returned with awesome stuff.

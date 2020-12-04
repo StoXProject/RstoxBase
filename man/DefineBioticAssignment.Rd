@@ -41,6 +41,14 @@ DefineBioticAssignment(
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process by \code{AcousticLayer}.}
+
+\item{LayerDefinitionMethod}{See \code{\link{DefineAcousticLayer}}}
+
+\item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
+
+\item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
+
 \item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
 
 \item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}

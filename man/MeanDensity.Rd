@@ -6,11 +6,14 @@
 \usage{
 MeanDensity(DensityData)
 }
+\arguments{
+\item{DensityData}{The \code{\link{DensityData}} data.}
+}
 \value{
 A data.table is returned with awesome stuff.
 }
 \description{
-This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.
+This function calculates the weighted average of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.
 }
 \details{
 This function is awesome and does excellent stuff.

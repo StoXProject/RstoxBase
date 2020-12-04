@@ -14,6 +14,8 @@ AcousticDensity(
 \arguments{
 \item{MeanNASCData}{The \code{\link{MeanNASCData}} data.}
 
+\item{AssignmentLengthDistributionData}{The \code{\link{AssignmentLengthDistributionData}} data.}
+
 \item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
 
 \item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}

@@ -5,6 +5,7 @@
 #' Reports the sum, mean or other functions on a variable of the \code{\link{SuperIndividualsData}}.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @inheritParams general_report_arguments
 #' @param ReportFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
 #' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
@@ -47,7 +48,8 @@ ReportSuperIndividuals <- function(
 #' 
 #' Reports the sum, mean or other functions on a variable of the \code{\link{BootstrapData}}.
 #' 
-##' @inheritParams ModelData
+#' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @inheritParams general_report_arguments
 #' @param BaselineProcess A vector of character strings naming the baseline processes to report from the boostrap output.
 #' @param AggregationFunction The function to apply to each bootstrap run. This must be a function returning a single value.
@@ -207,9 +209,9 @@ isWeightingFunction <- function(x) {
     getRstoxBaseDefinitions("reportFunctions")[functionName == x, weighted]
 }
 
-#' 
-#' @export
-#'
+
+
+
 getWeightingFunctions <- function() {
     getRstoxBaseDefinitions("reportFunctions")[weighted == TRUE, functionName]
 }
@@ -234,12 +236,8 @@ getReportFunctionPackage <- function(x) {
 #' Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 #' 
 #' @inheritParams ModelData
-#' @param TargetVariable The variable to report.
-#' @param ReportFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
-#' @param GroupingVariables The variables to report by, e.g. "Stratum" or "SpeciesCategory".
-#' @param RemoveMissingValues Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA.  
-#' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
-#'
+#' @param StoxBioticTranslation The \code{\link[RstoxData]{StoxBioticTranslation}} process data.
+#' 
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
 #' @return

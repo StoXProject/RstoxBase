@@ -17,9 +17,9 @@ SumLengthDistribution(
 \arguments{
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
-\item{LayerDefinition}{A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.}
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process by \code{BioticLayer}.}
 
-\item{LayerDefinitionMethod}{See \code{DefinitionMethod} of \code{\link{DefineBioticLayer}}.}
+\item{LayerDefinitionMethod}{See \code{\link{DefineBioticLayer}}}
 
 \item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
 

@@ -5,10 +5,8 @@
 #' 
 #' NASC function converts the StoxAcousticData into NASCData format
 #' 
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @param IncludePSU Logical: If TRUE the \code{AcousticLayer} is added to the NASC data
-#' @param IncludeLayer input in a StoxAcoustcdata format
+#' @inheritParams ProcessData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -67,7 +65,11 @@ getDepth <- function(depth0, range, angle) {
 #' 
 #' This function summes NASC data vertically.
 #' 
-#' @inheritParams MeanNASC
+#' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process by \code{AcousticLayer}.
+#' @param LayerDefinitionMethod See \code{\link{DefineAcousticLayer}}
+#' @inheritParams DefineAcousticLayer
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -117,7 +119,17 @@ SumNASC <- function(
 #' 
 #' This function summes NASC data vertically.
 #' 
-#' @inheritParams MeanNASC
+#' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process by the input \code{AcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.
+#' @param LayerDefinitionMethod See \code{\link{DefineAcousticLayer}}
+#' @inheritParams DefineAcousticLayer
+#' @param SurveyDefinition The method to use for defining the Survey, one of \code{FunctionParameter} to define the Survey on the fly in this function, or \code{FunctionInput} to import Survey process data from a previously run process by the input \code{Survey}.
+#' @param SurveyDefinitionMethod See \code{\link{DefineSurvey}}
+#' @inheritParams DefineSurvey
+#' @param PSUDefinition The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{AcousticPSU}.
+#' @param PSUDefinitionMethod See \code{\link{DefineAcousticPSU}}
+#' @inheritParams DefineAcousticPSU
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.

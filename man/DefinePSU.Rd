@@ -10,9 +10,7 @@ DefinePSU(
   StratumPolygon,
   StoxData = NULL,
   MergedStoxDataStationLevel = NULL,
-  DefinitionMethod = c("Identity", "DeleteAllPSUs", "Interval", "ByTime"),
-  IntervalVariable = character(),
-  Interval = double(),
+  DefinitionMethod = c("Identity", "DeleteAllPSUs", "ByTime"),
   PSUType = c("Acoustic", "Biotic"),
   SavePSUByTime = FALSE,
   PSUProcessData
@@ -27,9 +25,15 @@ DefinePSU(
 
 \item{StoxData}{Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.}
+\item{MergedStoxDataStationLevel}{The merged StoxData at the station level. Used in \code{meanRawResolutionData}.}
 
-\item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic".}
+\item{DefinitionMethod}{A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.}
+
+\item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic"}
+
+\item{SavePSUByTime}{Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.}
+
+\item{PSUProcessData}{Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.}
 }
 \value{
 An list of two objects, Stratum_PSU and SSU_PSU.

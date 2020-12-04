@@ -10,9 +10,9 @@ StoxDataStartMiddleStopDateTime(
 )
 }
 \arguments{
-\item{type}{A string naming the type of StoX data, one of "Acoustic" and "Biotic".}
+\item{StoxDataStationLevel}{Either \code{\link{StoxAcousticData}} or \code{\link{StoxBioticData}}, depending on \code{type}.}
 
-\item{StoxData}{Either \code{\link{StoxAcousticData}} or \code{\link{StoxBioticData}}, depending on \code{type}.}
+\item{type}{A string naming the type of StoX data, one of "Acoustic" and "Biotic".}
 }
 \value{
 An object of StoX data type \code{\link{MergeStoxAcousticData}}.
