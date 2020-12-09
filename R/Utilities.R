@@ -139,8 +139,8 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
     # If present, add the PSUProcessData to the start of the data
     if(length(PSUProcessData) && length(PSUProcessData$Stratum_PSU)) {
         # Merge first the PSUProcessData (except the PSUStartEndDateTime, which is used for matching new data into the same PSU definitions):
-        notPSUStartEndDateTime <- names(PSUProcessData) != "PSUStartEndDateTime"
-        PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData[notPSUStartEndDateTime], output.only.last = TRUE, ...)
+        notPSUByTime <- names(PSUProcessData) != "PSUByTime"
+        PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData[notPSUByTime], output.only.last = TRUE, ...)
         # Then merge the result with the data:
         by <- intersect(names(PSUProcessData), names(data))
         # Remove columns with only NAs in the data in 'by':
@@ -855,16 +855,17 @@ StoxDataStartMiddleStopDateTime <- function(
     type <- match.arg(type)
     
     if(type == "Acoustic") {
+        
         # Fill the start, middle and end DateTime with the DateTime directly, given the LogOrigin:
         # Fill the StartDateTime with the DateTime directly, given the LogOrigin:
         StoxDataStationLevel[LogOrigin == "start", StartDateTime := DateTime]
         # Interpret StartDateTime from LogDuration and LogOrigin:
-        StoxDataStationLevel[LogOrigin == "middle", StartDateTime := DateTime - LogDuration / 2]
-        StoxDataStationLevel[LogOrigin == "end", StartDateTime := DateTime - LogDuration]
+        StoxDataStationLevel[LogOrigin == "middle", StartDateTime := DateTime - fifelse(is.na(LogDuration), 0, LogDuration) / 2]
+        StoxDataStationLevel[LogOrigin == "end", StartDateTime := DateTime - fifelse(is.na(LogDuration), 0, LogDuration)]
         
         # Extrapolate to the middle and end times:
-        StoxDataStationLevel[, MiddleDateTime := StartDateTime + LogDuration / 2]
-        StoxDataStationLevel[, StopDateTime := StartDateTime + LogDuration]
+        StoxDataStationLevel[, MiddleDateTime := StartDateTime + fifelse(is.na(LogDuration), 0, LogDuration) / 2]
+        StoxDataStationLevel[, StopDateTime := StartDateTime + fifelse(is.na(LogDuration), 0, LogDuration)]
     }
     else if(type == "Biotic") {
         # Biotic stations are defined with a single time point. Duration in given for each Haul, whereas StoxAcoustic has duration on the Log:

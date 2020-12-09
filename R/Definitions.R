@@ -31,7 +31,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = NULL, 
             weighting = "NASCWeight", 
             type = c("ChannelReferenceType"), 
-            other = c("ChannelReferenceDepth", "ChannelReferenceOrientation", "Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+            other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
         ), 
         SumNASCData = list(
             Data = list(
@@ -44,7 +44,7 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumNASCWeight", 
                 type = c("ChannelReferenceType"), 
-                other = c("ChannelReferenceDepth", "ChannelReferenceOrientation", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+                other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
             ), 
             Resolution = list(
                 horizontalResolution = "EDSU", 
@@ -63,7 +63,7 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "MeanNASCWeight", 
                 type = c("ChannelReferenceType"), 
-                other = c("ChannelReferenceDepth", "ChannelReferenceOrientation")
+                other = c("ChannelReferenceDepth", "ChannelReferenceTilt")
             ), 
             Resolution = list(
                 horizontalResolution = c("Stratum", "PSU", "EDSU"), 

@@ -211,16 +211,33 @@ isWeightingFunction <- function(x) {
 
 
 
-
+#' List weighting functions
+#' 
+#' @export
+#' @noRd
+#' 
 getWeightingFunctions <- function() {
     getRstoxBaseDefinitions("reportFunctions")[weighted == TRUE, functionName]
 }
 
-
+#' List weighting parameters
+#' 
+#' @param x The name of the report function for which to list parameters.
+#' 
+#' @export
+#' @noRd
+#' 
 getWeightingParameter <- function(x) {
     getRstoxBaseDefinitions("reportFunctions")[functionName == x, weightingParameter]
 }
 
+#' List report function packages
+#' 
+#' @param x The name of the report function for which to return package name.
+#' 
+#' @export
+#' @noRd
+#' 
 getReportFunctionPackage <- function(x) {
     getRstoxBaseDefinitions("reportFunctions")[functionName == x, packageName]
 }

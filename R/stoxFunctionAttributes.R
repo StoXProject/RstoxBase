@@ -74,14 +74,14 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "EDSUToPSU"
             ), 
-            IntervalVariable = list(
-                UseProcessData = FALSE, 
-                DefinitionMethod = "Interval"
-            ), 
-            Interval = list(
-                UseProcessData = FALSE, 
-                DefinitionMethod = "Interval"
-            ), 
+            #IntervalVariable = list(
+            #    UseProcessData = FALSE, 
+            #    DefinitionMethod = "Interval"
+            #), 
+            #Interval = list(
+            #    UseProcessData = FALSE, 
+            #    DefinitionMethod = "Interval"
+            #), 
             AcousticPSU = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "ByTime"
@@ -597,7 +597,8 @@ stoxFunctionAttributes <- list(
         functionParameterFormat = list(
             #TargetVariable = "targetVariable_ReportSuperIndividuals", 
             GroupingVariables = "groupingVariables_ReportSuperIndividuals"
-        ), functionArgumentHierarchy = list(
+        ), 
+        functionArgumentHierarchy = list(
             WeightingVariable = list(
                 ReportFunction = expression(RstoxBase::getWeightingFunctions())
             )

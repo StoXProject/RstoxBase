@@ -50,8 +50,8 @@ NASC <- function(
 
 getChannelDepth <- function(NASC, force = FALSE) {
     if(force || !any(c("MinChannelDepth", "MaxChannelDepth") %in% names(NASC))) {
-        NASC[, MinChannelDepth := getDepth(ChannelReferenceDepth, MinChannelRange, ChannelReferenceOrientation) ]
-        NASC[, MaxChannelDepth := getDepth(ChannelReferenceDepth, MaxChannelRange, ChannelReferenceOrientation) ]
+        NASC[, MinChannelDepth := getDepth(ChannelReferenceDepth, MinChannelRange, ChannelReferenceTilt) ]
+        NASC[, MaxChannelDepth := getDepth(ChannelReferenceDepth, MaxChannelRange, ChannelReferenceTilt) ]
     }
 }
 
