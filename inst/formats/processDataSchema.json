@@ -43,6 +43,30 @@
         ]
     }, 
     
+    "AcousticPSUByTime": {
+    	"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "array",
+		"items": [
+			{
+				"type": "object",
+				"properties": {
+					"Stratum": { "type": "string" },
+					"PSU": { "type": "string" },
+					"Cruise": { "type": "string" },
+					"StartDateTime": { "type": "string" },
+					"StopDateTime": { "type": "string" }
+				},
+				"required": [
+					"Stratum",
+					"PSU",
+					"Cruise",
+					"StartDateTime",
+					"StopDateTime"
+				]
+			}
+		]
+	}, 
+    
     "BioticPSU": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
@@ -201,7 +225,25 @@
 			}
 		]
 	}, 
-
+	
+	"Survey": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "array",
+		"items": [
+			{
+				"type": "object",
+				"properties": {
+					"Stratum": { "type": "string" },
+					"Survey": { "type": "string" }
+				},
+				"required": [
+					"Stratum",
+					"Survey"
+				]
+			}
+		]
+	}, 
+	
     "StratumPolygon": {
 		"$schema": "http://json-schema.org/draft-07/schema#",
 		"$id": "https://geojson.org/schema/FeatureCollection.json",

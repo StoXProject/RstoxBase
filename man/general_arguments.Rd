@@ -10,7 +10,7 @@
 
 \item{LayerType}{Character: A string naming the type of model, either "Acoustic" or "Biotic".}
 
-\item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic".}
+\item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic"}
 }
 \description{
 All functions referring to a project, a model, a process or an output table use the same parameters, listed here.

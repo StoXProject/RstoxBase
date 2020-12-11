@@ -1,52 +1,3 @@
-
-## Function to get the least common multiple of a vector of integers:
-#getLeastCommonMultiple <- function(x, max = NULL, N = 100) {
-#    multiples <- lapply(x, function(y) y * seq_len(N))
-#    commonMultiples <- multiples[[1]]
-#    for(i in seq_len(length(l) - 1)) {
-#        commonMultiples <- intersect(commonMultiples, multiples[[i + 1]])
-#    }
-#    
-#    if(length(max)) {
-#        subset(commonMultiples, commonMultiples <= max)
-#    }
-#    else {
-#        min(commonMultiples)
-#    }
-#    
-#}
-
-#' 
-#' @export
-#' 
-# Function to expand a data table so that the cells that are vectors are transposed and the rest repeated to fill the gaps:
-expandDT <- function(DT, toExpand = NULL) {
-    # Set the columns to expand:
-    if(length(toExpand) == 0) {
-        lens <- lapply(DT, lengths)
-        lensLargerThan1 <- sapply(lens, function(l) any(l > 1))
-        toExpand <- names(DT)[lensLargerThan1]
-    }
-    
-    if(length(toExpand)) {
-        expanded <- lapply(toExpand, function(x) DT[, unlist(get(x))])
-        names(expanded) <- toExpand
-        DT <- do.call(
-            cbind, 
-            c(
-                list(
-                    DT[rep(1:.N, lengths(get(toExpand[1]))), !toExpand, with = FALSE]
-                ), 
-                #lapply(toExpand, function(x) DT[, unlist(get(x))])
-                expanded
-            )
-        )
-    }
-    
-    DT
-}
-
-
 ##################################################
 ##################################################
 #' Get the common intervals of possibly overlapping intervals:
@@ -188,8 +139,8 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
     # If present, add the PSUProcessData to the start of the data
     if(length(PSUProcessData) && length(PSUProcessData$Stratum_PSU)) {
         # Merge first the PSUProcessData (except the PSUStartEndDateTime, which is used for matching new data into the same PSU definitions):
-        notPSUStartEndDateTime <- names(PSUProcessData) != "PSUStartEndDateTime"
-        PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData[notPSUStartEndDateTime], output.only.last = TRUE, ...)
+        notPSUByTime <- names(PSUProcessData) != "PSUByTime"
+        PSUProcessData <- RstoxData::mergeDataTables(PSUProcessData[notPSUByTime], output.only.last = TRUE, ...)
         # Then merge the result with the data:
         by <- intersect(names(PSUProcessData), names(data))
         # Remove columns with only NAs in the data in 'by':
@@ -285,6 +236,11 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
 
 
 # Stolen from https://stackoverflow.com/questions/4752275/test-for-equality-among-all-elements-of-a-single-vector:
+#' Test whether all values are equal.
+#' 
+#' @param x An R object coercable to numeric.
+#' @param tol The tolerance of the equality
+#' @param ... Arguments passed on to range and mean, particularly na.rm.
 #' 
 #' @export
 #' 
@@ -395,7 +351,7 @@ meanRawResolutionData <- function(
     if(identical(PSUDefinition, "FunctionParameter")) {
         PSUProcessData <- DefinePSU(
             StratumPolygon = StratumPolygon, 
-            StoxData = dataCopy, 
+            MergedStoxDataStationLevel = dataCopy, 
             DefinitionMethod = PSUDefinitionMethod, 
             PSUType = PSUType
         )
@@ -447,7 +403,7 @@ meanRawResolutionData <- function(
         )
     )
     
-    # Average the data horizonally:
+    # Average the data horizontally:
     aggregatedData <- applyMeanToData(data = dataCopy, dataType = dataType, targetResolution = "PSU")
     
     # Ensure that the numeric values are rounded to the defined number of digits:
@@ -757,7 +713,15 @@ removeColumnsByReference <- function(data, toRemove) {
 
 #### Tools to perform resampling: ####
 
-# Function to sample after sorting:
+#' Function to sample after sorting:
+#' 
+#' @param x The vector to sample from.
+#' @param size The length of the sampled vector.
+#' @param seed The seed to use for the sampling.
+#' @param replace Logical: If TRUE sample with replacement.
+#' @param sorted Sort the vector before sampling.
+#' @param index.out Return indices at which to sample rather than the actual samples.
+#' @param redraw.seed Logical: If TRUE make seeds dependent on the length of the vector to sample from. Used in StoX to approximatetly reproduce the variability included when first bootstrapping and then imputing data. In the new StoX the imputation is included in the baseline, with a fixed seed for all bootstrap replicates. But setting the seed dependent on the length seeds will for the most part be not equal.
 #' 
 #' @export
 #' 
@@ -785,6 +749,12 @@ sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out
     return(sampled)
 }
 
+#' Generate a seed vector consistently
+#' 
+#' This function should be used for all random sampling in all Rstox packages.
+#' 
+#' @param seed A single integer setting the seed of the seed vector generation.
+#' @param size A single integer giving the length of the seed vector.
 #' 
 #' @export
 #' 
@@ -794,7 +764,7 @@ getSeedVector <- function(seed, size = 1) {
 }
 
 getSequenceToSampleFrom <- function(){
-    seedSequenceLength <- getRstoxFrameworkDefinitions("seedSequenceLength")
+    seedSequenceLength <- getRstoxBaseDefinitions("seedSequenceLength")
     seq_len(seedSequenceLength)
 }
 
@@ -818,7 +788,7 @@ summaryStox <- function(x, na.rm = FALSE) {
     return(summaryStox)
 }
 CV = function(x, na.rm = FALSE) {
-    sd(x) / mean(x, na.rm = na.rm)
+    stats::sd(x) / mean(x, na.rm = na.rm)
 }
 percentile_5_95 = function(x) {
     quantiile(x, c(5, 95) / 100)
@@ -826,28 +796,41 @@ percentile_5_95 = function(x) {
 
 
 # Define report functions:
+
+#' The summary function introduced in StoX <= 2.7.
+#' 
+#' @param x A numeric object
+#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
 #' 
 #' @export
 #' 
 summaryStox <- function(x, na.rm = FALSE) {
     c(
-        quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
+        stats::quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
         mean = mean(x, na.rm = na.rm),
         sd = sd(x, na.rm = na.rm),
         cv = cv(x, na.rm = na.rm)
     )
 }
+#' The coefficient of variation, i.e., the standard deviation divided by the mean.
+#' 
+#' @param x A numeric object
+#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
 #' 
 #' @export
 #' 
 cv <- function(x, na.rm = FALSE) {
     sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
 }
+#' The 5 and 95 percentile.
+#' 
+#' @param x A numeric object
+#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
 #' 
 #' @export
 #' 
 percentile_5_95 <- function(x, na.rm = FALSE) {
-    quantile(x, c(0.05, 0.95), na.rm = na.rm)
+    stats::quantile(x, c(0.05, 0.95), na.rm = na.rm)
 }
 
 
@@ -856,5 +839,45 @@ isEmptyString <- function(x) {
         !length(x) || 
             (length(x) == 1 && nchar(x) == 0)
         )
+}
+
+#' Generate Start, Middle and Stop DateTime variables
+#'
+#' @param StoxDataStationLevel Either \code{\link{StoxAcousticData}} or \code{\link{StoxBioticData}}, depending on \code{type}.
+#' @param type A string naming the type of StoX data, one of "Acoustic" and "Biotic".
+#' 
+#' @return An object of StoX data type \code{\link{MergeStoxAcousticData}}.
+#'
+StoxDataStartMiddleStopDateTime <- function(
+    StoxDataStationLevel, 
+    type = c("Acoustic", "Biotic")
+) {
+    type <- match.arg(type)
+    
+    if(type == "Acoustic") {
+        
+        # Fill the start, middle and end DateTime with the DateTime directly, given the LogOrigin:
+        # Fill the StartDateTime with the DateTime directly, given the LogOrigin:
+        StoxDataStationLevel[LogOrigin == "start", StartDateTime := DateTime]
+        # Interpret StartDateTime from LogDuration and LogOrigin:
+        StoxDataStationLevel[LogOrigin == "middle", StartDateTime := DateTime - fifelse(is.na(LogDuration), 0, LogDuration) / 2]
+        StoxDataStationLevel[LogOrigin == "end", StartDateTime := DateTime - fifelse(is.na(LogDuration), 0, LogDuration)]
+        
+        # Extrapolate to the middle and end times:
+        StoxDataStationLevel[, MiddleDateTime := StartDateTime + fifelse(is.na(LogDuration), 0, LogDuration) / 2]
+        StoxDataStationLevel[, StopDateTime := StartDateTime + fifelse(is.na(LogDuration), 0, LogDuration)]
+    }
+    else if(type == "Biotic") {
+        # Biotic stations are defined with a single time point. Duration in given for each Haul, whereas StoxAcoustic has duration on the Log:
+        StoxDataStationLevel[, StartDateTime := DateTime]
+        StoxDataStationLevel[, MiddleDateTime := DateTime]
+        StoxDataStationLevel[, StopDateTime := DateTime]
+    }
+    else {
+        stop("Invalid type. Must be either Acoustic or Biotic.")
+    }
+    
+    
+    return(StoxDataStationLevel)
 }
 

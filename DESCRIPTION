@@ -1,10 +1,35 @@
 Package: RstoxBase
-Version: 1.2.34
-Date: 2020-11-02
+Version: 1.2.35
+Date: 2020-12-11
 Title: Base StoX Functions
 Authors@R: c(
-  person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "arnejh@hi.no"), 
-  person(given = "Espen", family = "Johnsen", role = "aut"))
+  person(given = "Arne Johannes", 
+    family = "Holmin", 
+    role = c("cre", "aut"), 
+    email = "arnejh@hi.no"), 
+  person(given = "Ibrahim", 
+    family = "Umar", 
+    role = "aut"), 
+  person(given = "Sindre", 
+    family = "Vatnehol", 
+    role = "aut"), 
+  person(given = "Edvin", 
+    family = "Fuglebakk", 
+    role = "aut"), 
+  person(given = "Aasmund", 
+    family = "Skaalevik", 
+    role = "aut"), 
+  person(given = "Esmael Musema", 
+    family = "Hassen", 
+    role = "aut"), 
+  person(given = "Espen", 
+    family = "Johnsen", 
+    role = "aut"), 
+  person(given = "Atle", 
+    family = "Totland", 
+    role = "aut"), 
+  person(given = "Norwegian Institute of Marine Research", 
+    role = c("cph", "fnd")))
 Depends: R (>= 3.6)
 Description: Base StoX functions used for survey estimation.
 URL: https://github.com/StoXProject/RstoxBase
@@ -17,7 +42,7 @@ Imports:
     rgdal (>= 1.4.7),
     rgeos (>= 0.5.2),
     sp (>= 1.3.2),
-    RstoxData (>= 1.0.14)
+    RstoxData (>= 1.0.18)
 Suggests: 
     testthat
 Additional_repositories: 

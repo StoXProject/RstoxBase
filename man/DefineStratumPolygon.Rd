@@ -16,6 +16,8 @@ DefineStratumPolygon(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
+\item{DefinitionMethod}{A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "None" to start off with no strata. Strata can be added, modified and removed in the StoX GUI.}
+
 \item{FileName}{The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.}
 }
 \value{

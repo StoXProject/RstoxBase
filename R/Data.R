@@ -7,7 +7,7 @@
 #' @param processData The current data produced by a previous instance of the function.
 #' @param UseProcessData Logical: If TRUE use the existing function output in the process. 
 #' @param LayerType Character: A string naming the type of model, either "Acoustic" or "Biotic".
-#' @param PSUType Character: A string naming the type of model, either "Acoustic" or "Biotic".
+#' @param PSUType Character: A string naming the type of model, either "Acoustic" or "Biotic" 
 #' 
 #' @name general_arguments
 #' 
@@ -24,16 +24,6 @@ NULL
 #' @param RemoveMissingValues Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA.  
 #' 
 #' @name general_report_arguments
-#' 
-NULL
-
-##################################################
-##################################################
-#' StoX data types of the RstoxBase package
-#' 
-#' StoX data types are the data types used to transfer data and information between processes in a StoX estimation model. The data types are divided into two types, the \code{\link{ModelData}} and \code{\link{ProcessData}}.
-#' 
-#' @name DataTypes
 #' 
 NULL
 
@@ -56,13 +46,15 @@ NULL
 #' @param LengthDistributionData The \code{\link{LengthDistributionData}} data.
 #' @param SumLengthDistributionData The \code{\link{SumLengthDistributionData}} data.
 #' @param MeanLengthDistributionData The \code{\link{MeanLengthDistributionData}} data.
-#' @param AssignmentLengthDistribution The \code{\link{AssignmentLengthDistribution}} data.
+#' @param AssignmentLengthDistributionData The \code{\link{AssignmentLengthDistributionData}} data.
 #' @param DensityData The \code{\link{DensityData}} data.
+#' @param MeanDensityData The \code{\link{MeanDensityData}} data.
 #' @param SpeciesCategoryCatchData The \code{\link{SpeciesCategoryCatchData}} data.
 #' @param AbundanceData The \code{\link{AbundanceData}} data.
 #' @param IndividualsData The \code{\link{IndividualsData}} data.
 #' @param SuperIndividualsData The \code{\link{SuperIndividualsData}} data.
 #' @param ReportSuperIndividualsData The \code{\link{ReportSuperIndividualsData}} data.
+#' @param BootstrapData The \code{\link{BootstrapData}} data.
 #' 
 #' 
 #' @name ModelData
@@ -89,6 +81,20 @@ NULL
 #' @name ProcessData
 #' 
 #' @seealso \code{\link{ModelData}} for model data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}.
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' StoX data types of the RstoxBase package
+#' 
+#' StoX data types are the data types used to transfer data and information between processes in a StoX estimation model. The data types are divided into two types, the \code{\link{ModelData}} and \code{\link{ProcessData}}.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' 
+#' @name DataTypes
 #' 
 NULL
 
@@ -406,11 +412,24 @@ NULL
 ##################################################
 #' Density data
 #' 
-#' The DensityData model data holds the density of individuals as number per square nautical mile, by PSU or Stratum, and by Layer. 
+#' The DensityData model data holds the density of individuals as number per square nautical mile, by PSU and Layer. 
 #' 
 #' @seealso This data type is produced by \code{\link{AcousticDensity}} and \code{\link{SweptAreaDensity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name DensityData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Mean density data
+#' 
+#' The MeanDensityData model data holds the density of individuals as number per square nautical mile, by Stratum and Layer. 
+#' 
+#' @seealso This data type is produced by \code{\link{MeanDensity}} based on \code{\link{DensityData}} See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name MeanDensityData
 #' 
 NULL
 
@@ -472,7 +491,7 @@ NULL
 ##################################################
 #' Super-individuals data
 #' 
-#' The SuperIndividualsData model data is the \code{\link{IndivdualsData}} added Abundance and Biomass.
+#' The SuperIndividualsData model data is the \code{\link{IndividualsData}} added Abundance and Biomass.
 #' 
 #' @seealso This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -487,21 +506,20 @@ NULL
 #' 
 #' The ReportSuperIndividualsData model data is a report of the \code{\link{SuperIndividualsData}}.
 #' 
-#' @seealso This data type is produced by \code{\link{ReportSuperIndividuals}}. See \code{\link{DataTypes}} for a list of all  data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{ReportSuperIndividuals}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name ReportSuperIndividualsData
 #' 
 NULL
 
 
-
 ##################################################
 ##################################################
-#' Output from Bootstrap
+#' Bootstrap data
 #' 
-#' The BootstrapData model data is a list of data from one or more baseline processes stacked for all bootstrap runs.
+#' The BootstrapData model data is a list of outputs from the baseline generated by re-running baseline with random sampling of the PSUs and assignments (in the case of acoustic-trawl estimates).
 #' 
-#' @seealso This data type is produced by \code{\link{Bootstrap}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by the Bootstrap function of RstoxFramework. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name BootstrapData
 #' 
@@ -546,3 +564,17 @@ NULL
 #' 
 NULL
 
+
+
+
+##################################################
+##################################################
+#' Output from Bootstrap
+#' 
+#' The BootstrapData model data is a list of data from one or more baseline processes stacked for all bootstrap runs.
+#' 
+#' @seealso See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name BootstrapData
+#' 
+NULL

@@ -5,8 +5,8 @@
 #' 
 #' This function converts NASC to number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
 #' 
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param SpeciesLink A table of the two columns AcousticCategory and SpeciesCategory.
 #' 
 #' @details
@@ -72,7 +72,7 @@
 #' @examples
 #' x <- 1
 #' 
-#' @seealso To modify AcousticCategory use \code{\link[RstoxData]{DefineStoxAcousticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxAcousticVariables}} and to modify SpeciesCategory use \code{\link[RstoxData]{DefineStoxBioticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxBioticVariables}}. See \code{\link{SweptAreaDensity}} for swept-area density.
+#' @seealso To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}.
 #' 
 #' @export
 #' 
@@ -90,13 +90,17 @@ AcousticDensity <- function(
     if(!all(allSpeciesCategory %in% SpeciesLink$SpeciesCategory)) {
         notPresent <- setdiff(allSpeciesCategory, SpeciesLink$SpeciesCategory)
         notPresent <- notPresent[!is.na(notPresent)]
-        warning("StoX: The following SpeciesCategory are present in the AssignmentLengthDistributionData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        if(length(notPresent)) {
+            warning("StoX: The following SpeciesCategory are present in the AssignmentLengthDistributionData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        }
     }
     allAcousticCategory <- unique(AcousticTargetStrength$TargetStrengthTable$AcousticCategory)
     if(!all(allAcousticCategory %in% SpeciesLink$AcousticCategory)) {
         notPresent <- setdiff(allSpeciesCategory, SpeciesLink$SpeciesCategory)
         notPresent <- notPresent[!is.na(notPresent)]
-warning("StoX: The following AcousticCategory are present in the AcousticTargetStrength but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        if(length(notPresent)) {
+            warning("StoX: The following AcousticCategory are present in the AcousticTargetStrength but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+        }
     }
     
     # Merge TargetStrength with SpeciesLink in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
@@ -118,6 +122,7 @@ warning("StoX: The following AcousticCategory are present in the AcousticTargetS
     # Format the output:
     # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
     #formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
+    # 2020-12-02: This had keep.all = FALSE. Is this an error????????????????????? We should clearly describe the justifications for which data types are rigid and which are not rigid:
     formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
@@ -216,7 +221,7 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
     
     # Define the target strength function as a function of length and length interval:
     targetStrengthByLengthFunctionOne <- function(TotalLength) {
-        output <- approx(
+        output <- stats::approx(
             x = TargetStrengthTable$TotalLength, 
             y = TargetStrengthTable$TargetStrength, 
             xout = TotalLength, 
@@ -332,9 +337,10 @@ getMidIndividualTotalLength <- function(x) {
 #' This function calculates the area density of fish as number of individuals per square nautical mile.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, by using LengthDistributionType == "SweepWidthCompensatedNormalized" in the function \code{\link{LengthDependentCatchCompensation}}, and (3) "CruiseDependent", which requires the \code{SweepWidth} to be given.
 #' @param SweepWidth The constant sweep width in meters.
-#' @param SweepWidth A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
+#' @param SweepWidthByCruise A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -447,9 +453,9 @@ SweptAreaDensity <- function(
 ##################################################
 #' Mean density in each stratum
 #' 
-#' This function calculates the weighted avverage of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.
+#' This function calculates the weighted average of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.
 #' 
-#' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -486,6 +492,7 @@ MeanDensity <- function(
 #' This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram) of each species category in columns.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param CatchVariable Specifies whether to output catch or weight (kilogram).
 #' 
 #' @return

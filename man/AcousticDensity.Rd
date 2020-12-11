@@ -14,6 +14,8 @@ AcousticDensity(
 \arguments{
 \item{MeanNASCData}{The \code{\link{MeanNASCData}} data.}
 
+\item{AssignmentLengthDistributionData}{The \code{\link{AssignmentLengthDistributionData}} data.}
+
 \item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
 
 \item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
@@ -86,5 +88,5 @@ x <- 1
 
 }
 \seealso{
-To modify AcousticCategory use \code{\link[RstoxData]{DefineStoxAcousticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxAcousticVariables}} and to modify SpeciesCategory use \code{\link[RstoxData]{DefineStoxBioticVariableConversion}} and \code{\link[RstoxData]{ConvertStoxBioticVariables}}. See \code{\link{SweptAreaDensity}} for swept-area density.
+To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}.
 }

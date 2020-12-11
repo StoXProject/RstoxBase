@@ -1,6 +1,6 @@
-# A list of the attributes of the exported StoX functions:
-# The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
-# The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
+#' A list of the attributes of the exported StoX functions:
+#' The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
+#' The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
 #' 
 #' @export
 #' 
@@ -63,51 +63,49 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
+            # Require UseProcessData = FALSE OR SavePSUByTime = TRUE for StoxAcousticData to show:
             StoxAcousticData = list(
                 UseProcessData = FALSE
+            ), 
+            StoxAcousticData = list(
+                SavePSUByTime = TRUE
             ), 
             StratumPolygon = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "EDSUToPSU"
-            )
-        )
-    ), 
-    DefineAcousticPSUByTime = list(
-        functionType = "processData", 
-        functionCategory = "baseline", 
-        functionOutputDataType = "AcousticPSUByTime",
-        functionArgumentHierarchy = list(
-            DefinitionMethod = list(
-                UseProcessData = FALSE
             ), 
+            #IntervalVariable = list(
+            #    UseProcessData = FALSE, 
+            #    DefinitionMethod = "Interval"
+            #), 
+            #Interval = list(
+            #    UseProcessData = FALSE, 
+            #    DefinitionMethod = "Interval"
+            #), 
             AcousticPSU = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "FunctionInput"
+                DefinitionMethod = "ByTime"
             ), 
-            StoxAcousticData = list(
-                UseProcessData = FALSE, 
-                DefinitionMethod = "FunctionInput"
-            )
-        )
-    ), 
-    DefineAcousticPSUFromPSUByTime = list(
-        functionType = "processData", 
-        functionCategory = "baseline", 
-        functionOutputDataType = "AcousticPSU",
-        functionArgumentHierarchy = list(
-            DefinitionMethod = list(
+            SavePSUByTime = list(
                 UseProcessData = FALSE
-            ), 
-            AcousticPSUByTime = list(
-                UseProcessData = FALSE, 
-                DefinitionMethod = "FunctionInput"
-            ), 
-            StoxAcousticData = list(
-                UseProcessData = FALSE, 
-                DefinitionMethod = "FunctionInput"
             )
         )
     ), 
+    #ExtractAcousticPSUByTime = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "AcousticPSUByTime"
+    #), 
+    #BioticPSUByTime = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "AcousticPSUByTime"
+    #), 
+    #DefineAcousticPSUFromPSUByTime = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "AcousticPSU"
+    #), 
     DefineBioticPSU = list(
         functionType = "processData", 
         functionCategory = "baseline", 
@@ -599,7 +597,8 @@ stoxFunctionAttributes <- list(
         functionParameterFormat = list(
             #TargetVariable = "targetVariable_ReportSuperIndividuals", 
             GroupingVariables = "groupingVariables_ReportSuperIndividuals"
-        ), functionArgumentHierarchy = list(
+        ), 
+        functionArgumentHierarchy = list(
             WeightingVariable = list(
                 ReportFunction = expression(RstoxBase::getWeightingFunctions())
             )
@@ -635,7 +634,7 @@ stoxFunctionAttributes <- list(
     ##########
 )
 
-# Define the process property formats:
+#' Define the process property formats:
 #' 
 #' @export
 #' 

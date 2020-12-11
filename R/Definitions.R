@@ -13,6 +13,12 @@
 initiateRstoxBase <- function(){
     
     # Define the variables of the main data types used in estimation models:
+    PSUByTime = list(
+        horizontalResolution = c("Stratum", "PSU"), 
+        categoryVariable = "Cruise", 
+        groupingVariables = c("StartDateTime", "StopDateTime")
+    )
+    
     dataTypeDefinition <- list(
         # NASC: 
         NASCData = list(
@@ -25,7 +31,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = NULL, 
             weighting = "NASCWeight", 
             type = c("ChannelReferenceType"), 
-            other = c("ChannelReferenceDepth", "ChannelReferenceOrientation", "Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+            other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
         ), 
         SumNASCData = list(
             Data = list(
@@ -38,7 +44,7 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumNASCWeight", 
                 type = c("ChannelReferenceType"), 
-                other = c("ChannelReferenceDepth", "ChannelReferenceOrientation", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+                other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
             ), 
             Resolution = list(
                 horizontalResolution = "EDSU", 
@@ -57,7 +63,7 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "MeanNASCWeight", 
                 type = c("ChannelReferenceType"), 
-                other = c("ChannelReferenceDepth", "ChannelReferenceOrientation")
+                other = c("ChannelReferenceDepth", "ChannelReferenceTilt")
             ), 
             Resolution = list(
                 horizontalResolution = c("Stratum", "PSU", "EDSU"), 
@@ -212,19 +218,29 @@ initiateRstoxBase <- function(){
             weighting = "WeightingFactor", 
             other = NULL
         ), 
+        BioticPSU = list(
+            Stratum_PSU = list(
+                horizontalResolution = c("Stratum", "PSU")
+            ), 
+            StationPSU = list(
+                horizontalResolution = c("EDSU", "PSU")
+            ), 
+            PSUByTime = PSUByTime
+        ), 
         AcousticPSU = list(
             Stratum_PSU = list(
                 horizontalResolution = c("Stratum", "PSU")
             ), 
             EDSU_PSU = list(
                 horizontalResolution = c("EDSU", "PSU")
-            )
-        ), 
-        AcousticPSUByTime = list(
-            horizontalResolution = c("Stratum", "PSU"), 
-            categoryVariable = "Cruise", 
-            groupingVariables = c("StartDateTime", "StopDateTime")
-        )
+            ), 
+            PSUByTime = PSUByTime
+        )#, 
+        #AcousticPSUByTime = list(
+        #    horizontalResolution = c("Stratum", "PSU"), 
+        #    categoryVariable = "Cruise", 
+        #    groupingVariables = c("StartDateTime", "StopDateTime")
+        #)
     )
     
     resolutionClasses <- list(
@@ -313,8 +329,43 @@ initiateRstoxBase <- function(){
         LengthExponent * log10(midIndividualTotalLength)
     }
     
-    AcousticPSUPrefix <- "PSU"
-    BioticPSUPrefix <- "PSU"
+    # Define the PSU prefix and the SSU label:
+    getPSUPrefix <- function(PSUType) {
+        if(PSUType  == "Acoustic") {
+            prefix <- "PSU"
+        }
+        else if(PSUType == "Biotic") {
+            prefix <- "PSU"
+        }
+        else {
+            stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+        }
+        return(prefix)
+    }
+    getSSULabel <- function(PSUType) {
+        if(PSUType  == "Acoustic") {
+            SSULabel <- "EDSU"
+        }
+        else if(PSUType == "Biotic") {
+            SSULabel <- "Station"
+        }
+        else {
+            stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+        }
+        return(SSULabel)
+    }
+    getStationLevel <- function(PSUType) {
+        if(PSUType  == "Acoustic") {
+            SSULabel <- "Log"
+        }
+        else if(PSUType == "Biotic") {
+            SSULabel <- "Station"
+        }
+        else {
+            stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+        }
+        return(SSULabel)
+    }
     
     nauticalMileInMeters <- 1852
     
@@ -397,6 +448,9 @@ initiateRstoxBase <- function(){
         )
     )
     
+    # Define the length of the sequence to draw seeds from:
+    seedSequenceLength <- 1e7
+    
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
@@ -404,52 +458,6 @@ initiateRstoxBase <- function(){
     names(definitions) <- definitionsNames
     
     #### Create the RstoxBaseEnv environment, holding definitions on folder structure and all the projects. This environment cna be accesses using RstoxBase:::RstoxBaseEnv: ####
-    #utils::globalVariables("RstoxBaseEnv")
-    utils::globalVariables(c(
-        "RstoxBaseEnv", 
-        ":=", ".", ".N", 
-        "..abundanceGrouping", 
-        "..atMissingLengthGroup", 
-        "..by", 
-        "..columnOrder",
-        "..haulGrouping", 
-        "..Hauls", 
-        "..intervalVector", 
-        "..keys", 
-        "..keysSansSample", 
-        "..LengthInterval", 
-        "..LengthIntervalWidths", 
-        "..lengthVar", 
-        "..refvar", 
-        "..relevantVariables",
-        "..resolutionVar", 
-        "..toAdd", 
-        "..validVariables", 
-        "..vars", 
-        "..VerticalResolutionMax", 
-        "..VerticalResolutionMin", 
-        "..WeightingFactors", 
-        "abundanceWeightFactor", 
-        "Area", 
-        "assignmentID", 
-        "Density", 
-        "DensityWeight", 
-        "EffectiveLogDistance", 
-        "Haul", 
-        "individualCount", 
-        "IndividualTotalLength", 
-        "IndividualTotalLengthMiddle", 
-        "intervalIndex", 
-        "LengthDistributionType", 
-        "LengthDistributionWeight", 
-        "LengthGroup", 
-        "LengthResolution", 
-        "NASCWeight", 
-        "PSU", 
-        "raisingFactor", 
-        "WeightedCount", 
-        "WeightingFactor"
-    ))
     assign("RstoxBaseEnv", new.env(), parent.env(environment()))
     assign("definitions", definitions, envir = get("RstoxBaseEnv"))
     
@@ -496,62 +504,15 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 
 
 
-
-
-
-#getColumnOrder <- function(dataType) {
-#    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-#    #columns <- unlist(dataTypeDefinition[[dataType]])
-#    #return(columns)
-#    getDataTypeDefinition(dataType, unlist = TRUE)
-#}
-
-#setColumnOrder <- function(data, dataType, allow.partial = TRUE, keep.all = TRUE) {
-# secondaryColumnOrder can be used to tidy a datatype beyond the variables specified by getDataTypeDefinition().
-formatOutputOld <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
-    
-    # Remove any duplicated columns:
-    if(any(duplicated(names(data)))) {
-        data[, which(duplicated(names(data))) := NULL]
-    }
-    
-    # Get the column order:
-    #columnOrder <- getColumnOrder(dataType)
-    columnOrder <- c(
-        getDataTypeDefinition(dataType, unlist = TRUE), 
-        secondaryColumnOrder
-    )
-    if(allow.missing) {
-        columnOrder <- intersect(columnOrder, names(data))
-    }
-    
-    if(!keep.all) {
-        #toRemove <- setdiff(names(data), columnOrder)
-        #if(length(toRemove)) {
-        #    data[, eval(toRemove) := NULL]
-        #}
-        
-        removeColumnsByReference(
-            data = data, 
-            toRemove =  setdiff(names(data), columnOrder)
-        )
-        
-        #data <- data[, ..columnOrder]
-    }
-    
-    # Order the columns:
-    data.table::setcolorder(data, columnOrder)
-    
-    # Order the rows:
-    data.table::setorder(data, na.last = TRUE)
-    
-    # Delete any keys, as we use the argument 'by' for all merging and aggregation:
-    data.table::setkey(data, NULL)
-}
-
-
-
-
+#' Function to format the output of a function returning StoX data (ModelData or ProcessData).
+#' 
+#' The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables.
+#' 
+#' @param data A table or list of tables to return from the StoX function.
+#' @param dataType The data type to format against.
+#' @param keep.all Logical: If TRUE keep all columns, and if FALSE delete undefined columns.
+#' @param allow.missing Logical: If TRUE allow for unrelevant column names defined in \code{secondaryColumnOrder}.
+#' @param secondaryColumnOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}}.
 #' 
 #' @export
 #' 
@@ -716,7 +677,13 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
     }
 }
 
-# dataType can be NULL, implying all data types, a vector of data type names or a logical function of data type names, such as endswith(x, "NASCData"):
+#' Get data type definitions
+#' 
+#' @param dataType The name of the data type to get definitions from, or a logical function of one input DataType.
+#' @param subTable The sub table to extract, if any. Defaulted to "Data" to return the most relevant part of the data type definition.
+#' @param elements A vector of specific elements to extract from the definition.
+#' @param unlist Logical: If TRUE unlist the list of column names.
+#' 
 getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
@@ -873,6 +840,9 @@ determineAggregationVariables <- function(
 #
 
 
+#' Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.
+#' 
+#' @param getMultiple If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.
 #' 
 #' @export
 #' 

@@ -8,10 +8,6 @@ NASC(StoxAcousticData = NULL)
 }
 \arguments{
 \item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
-
-\item{IncludePSU}{Logical: If TRUE the \code{AcousticLayer} is added to the NASC data}
-
-\item{IncludeLayer}{input in a StoxAcoustcdata format}
 }
 \value{
 A \code{\link{NASCData}} object.

@@ -6,9 +6,8 @@
 \usage{
 BioticAssignmentWeighting(
   BioticAssignment,
-  WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC",
-    "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount",
-    "InverseSumWeightedCount"),
+  WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight",
+    "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"),
   StoxBioticData,
   LengthDistributionData,
   MaxNumberOfLengthSamples = 100,

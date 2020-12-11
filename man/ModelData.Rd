@@ -30,9 +30,11 @@
 
 \item{MeanLengthDistributionData}{The \code{\link{MeanLengthDistributionData}} data.}
 
-\item{AssignmentLengthDistribution}{The \code{\link{AssignmentLengthDistribution}} data.}
+\item{AssignmentLengthDistributionData}{The \code{\link{AssignmentLengthDistributionData}} data.}
 
 \item{DensityData}{The \code{\link{DensityData}} data.}
+
+\item{MeanDensityData}{The \code{\link{MeanDensityData}} data.}
 
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
 
@@ -43,6 +45,8 @@
 \item{SuperIndividualsData}{The \code{\link{SuperIndividualsData}} data.}
 
 \item{ReportSuperIndividualsData}{The \code{\link{ReportSuperIndividualsData}} data.}
+
+\item{BootstrapData}{The \code{\link{BootstrapData}} data.}
 }
 \description{
 The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.

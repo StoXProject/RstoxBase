@@ -5,6 +5,7 @@
 #' This function calculates length frequency distribution per Stratum, biotic PSU, biotic layer, SpeciesCategory and length group defined by the combination of IndividualTotalLength and LengthResolution.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param LengthDistributionType The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
 #' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".
 #'
@@ -156,6 +157,7 @@ LengthDistribution <- function(
 #' This function aggregates the \code{WeightedCount} of the LengthDistributionData
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param LengthInterval Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.
 #' 
 #' @details
@@ -253,6 +255,7 @@ RegroupLengthDistribution <- function(
 #' This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param CompensationMethod Parameter descrption.
 #' @param LengthDependentSweepWidthParameters A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
 #' @param LengthDependentSelectivityParameters A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
@@ -427,6 +430,7 @@ extractColumnsBy <- function(values, table, refvar, vars) {
 #' This function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and verticacl resolution.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -462,11 +466,11 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' 
 #' This function summes LengthDistributionData data vertically.
 #' 
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @inheritParams DefineLayer
-#' @param LayerDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.
-#' @param LayerDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineBioticLayer}}.
+#' @inheritParams ProcessData
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process by \code{BioticLayer}.
+#' @param LayerDefinitionMethod See \code{\link{DefineBioticLayer}}
+#' @inheritParams DefineBioticLayer
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -515,11 +519,17 @@ SumLengthDistribution <- function(
 #' 
 #' This function averages LengthDistributionData data horizontally, weighted by the effective towed distance.
 #' 
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
-#' @inheritParams DefinePSU
-#' @param PSUDefinition A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring \code{LayerDefinitionMethod} or \code{PSUDefinitionMethod} and the conditionally \code{Resolution}, \code{LayerTableLayerTable} or \code{StratumPolygon} to be set, or "FunctionInput", requiring the inputs \code{BioticLayer} or \code{BioticPSU}.
-#' @param PSUDefinitionMethod See \code{DefinitionMethod} of \code{\link{DefineBioticPSU}}.
+#' @inheritParams ProcessData
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process by the input \code{BioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.
+#' @param LayerDefinitionMethod See \code{\link{DefineBioticLayer}}
+#' @inheritParams DefineBioticLayer
+#' @param SurveyDefinition The method to use for defining the Survey, one of \code{FunctionParameter} to define the Survey on the fly in this function, or \code{FunctionInput} to import Survey process data from a previously run process by the input \code{Survey}.
+#' @param SurveyDefinitionMethod See \code{\link{DefineSurvey}}
+#' @inheritParams DefineSurvey
+#' @param PSUDefinition The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{BioticPSU}.
+#' @param PSUDefinitionMethod See \code{\link{DefineBioticPSU}}
+#' @inheritParams DefineBioticPSU
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -608,8 +618,8 @@ MeanLengthDistribution <- function(
 #' 
 #' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
 #' 
-#' @inheritParams ProcessData
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
