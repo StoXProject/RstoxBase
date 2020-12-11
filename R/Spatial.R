@@ -152,7 +152,7 @@ DefineStratumPolygon <- function(
 getStratumNames <- function(stratum) {
     if("SpatialPolygonsDataFrame" %in% class(stratum)) {
         as.character(stratum$polygonName)
-        #sapply(slot(stratum, "polygons"), function(x) methods::slot(x, "ID"))
+        #sapply(methods::slot(stratum, "polygons"), function(x) methods::slot(x, "ID"))
     }
     else {
         stop("Stratum polygon must be of class SpatialPolygonsDataFrame")
