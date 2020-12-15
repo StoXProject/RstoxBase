@@ -9,7 +9,7 @@ DefineBioticPSU(
   UseProcessData = FALSE,
   StratumPolygon,
   StoxBioticData,
-  DefinitionMethod = c("StationToPSU", "DeleteAllPSUs")
+  DefinitionMethod = c("Manual", "StationToPSU", "DeleteAllPSUs")
 )
 }
 \arguments{

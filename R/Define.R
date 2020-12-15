@@ -31,7 +31,7 @@ DefinePSU <- function(
     StoxData = NULL, 
     #MergedStoxDataStationLevel = NULL, 
     MergedStoxDataStationLevel = NULL, 
-    DefinitionMethod = c("Identity", "DeleteAllPSUs", "ByTime"), 
+    DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "ByTime"), 
     #IntervalVariable = character(),
     #Interval = double(), 
     PSUType = c("Acoustic", "Biotic"), 
@@ -39,36 +39,47 @@ DefinePSU <- function(
     PSUProcessData
 ) {
     
+    # Get the DefinitionMethod and PSUType:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    PSUType <- match.arg(PSUType)
+    
+    # Get the MergedStoxDataStationLevel if not given directly:
+    if(!UseProcessData || (UseProcessData && SavePSUByTime)) {
+        if(!length(MergedStoxDataStationLevel)) {
+            if(length(StoxData)) {
+                MergedStoxDataStationLevel <- RstoxData::mergeDataTables(
+                    StoxData, 
+                    tableNames = c(
+                        "Cruise", 
+                        getRstoxBaseDefinitions("getStationLevel")(PSUType)
+                    ), 
+                    output.only.last = TRUE, 
+                    all = TRUE
+                )
+            }
+            else {
+                stop("One of MergedStoxDataStationLevel and StoxData must be given")
+            }
+        }
+    }
+    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
+        if(SavePSUByTime) {
+            processData$PSUByTime <- getPSUByTime(
+                PSUProcessData = processData, 
+                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                PSUType = PSUType
+            )
+        }
+        
         return(processData)
     }
     
-    # Get the DefinitionMethod and PSUType:
-    #DefinitionMethod <- match.arg(DefinitionMethod)
-    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
-    PSUType <- match.arg(PSUType)
+    
     # Define the PSU prefix and the SSU label, which is the name of the SSU column:
     prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
-    
-    # Get the MergedStoxDataStationLevel if not given directly:
-    if(!length(MergedStoxDataStationLevel)) {
-        if(length(StoxData)) {
-            MergedStoxDataStationLevel <- RstoxData::mergeDataTables(
-                StoxData, 
-                tableNames = c(
-                    "Cruise", 
-                    getRstoxBaseDefinitions("getStationLevel")(PSUType)
-                ), 
-                output.only.last = TRUE, 
-                all = TRUE
-            )
-        }
-        else {
-            stop("One of MergedStoxDataStationLevel and StoxData must be given")
-        }
-    }
     
     #StationLevel <- getRstoxBaseDefinitions("getStationLevel")(PSUType)
     
@@ -179,7 +190,7 @@ DefinePSU <- function(
         )
         Stratum_PSU <- data.table::data.table()
     }
-    else if(isEmptyString(DefinitionMethod)){
+    else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         if(length(processData)) {
             # Add the PSU time information:
             if(SavePSUByTime) {
@@ -368,7 +379,7 @@ DefineBioticPSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxBioticData, 
-    DefinitionMethod = c("StationToPSU", "DeleteAllPSUs")
+    DefinitionMethod = c("Manual", "StationToPSU", "DeleteAllPSUs")
 ) {
     
     # Get the DefinitionMethod:
@@ -403,6 +414,7 @@ DefineBioticPSU <- function(
 #' @inheritParams ProcessData
 #' @inheritParams DefinePSU
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.
+#' @param SavePSUByTime Logical: If TRUE store the start and end times of sequences of EDSUs for each PSU as an additional table.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
@@ -422,7 +434,7 @@ DefineAcousticPSU <- function(
     StratumPolygon, 
     StoxAcousticData, 
     #DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "Interval", "ByTime"), 
-    DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "ByTime"), 
+    DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "ByTime"), 
     #IntervalVariable = character(),
     #Interval = double(), 
     SavePSUByTime = FALSE, 
@@ -610,7 +622,9 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     thisSSU_PSU <- SSU_PSU_ByPSU[[PSU]]
     
     # Match the SSUs of the PSUProcessData with SSUs of the StationTable:
-    atSSUInStoxData <- match(thisSSU_PSU$SSU, StationTable$SSU)
+    # Order both since it may happen that the EDSUs of the StoxAocusticData are not ordered, e.g. if there are mmultiple instruments from the same cruise, and these instruments have both identical and differing times:
+    
+    atSSUInStoxData <- match(sort(thisSSU_PSU$SSU), sort(StationTable$SSU))
     if(any(is.na(atSSUInStoxData))) {
         warning("The StoxData must be the same data that were used to generate the PSUProcessData.")
         atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
