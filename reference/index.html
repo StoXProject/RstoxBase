@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.35</span>
       </span>
     </div>
 
@@ -80,11 +80,14 @@
         <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/StoXProject/RstoxBase/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -201,7 +204,7 @@
         <td>
           <p><code><a href="BootstrapData.html">BootstrapData</a></code> </p>
         </td>
-        <td><p>Output from Bootstrap</p></td>
+        <td><p>Bootstrap data</p></td>
       </tr><tr>
         
         <td>
@@ -226,18 +229,6 @@
           <p><code><a href="DefineAcousticPSU.html">DefineAcousticPSU()</a></code> </p>
         </td>
         <td><p>Acoustic PSU</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="DefineAcousticPSUByTime.html">DefineAcousticPSUByTime()</a></code> </p>
-        </td>
-        <td><p>Define Acoustic PSU by time</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="DefineAcousticPSUFromPSUByTime.html">DefineAcousticPSUFromPSUByTime()</a></code> </p>
-        </td>
-        <td><p>Re-define Acoustic PSU</p></td>
       </tr><tr>
         
         <td>
@@ -352,6 +343,12 @@
           <p><code><a href="MeanDensity.html">MeanDensity()</a></code> </p>
         </td>
         <td><p>Mean density in each stratum</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="MeanDensityData.html">MeanDensityData</a></code> </p>
+        </td>
+        <td><p>Mean density data</p></td>
       </tr><tr>
         
         <td>
@@ -487,6 +484,12 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="StoxDataStartMiddleStopDateTime.html">StoxDataStartMiddleStopDateTime()</a></code> </p>
+        </td>
+        <td><p>Generate Start, Middle and Stop DateTime variables</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="Stratum.html">Stratum</a></code> </p>
         </td>
         <td><p>Stratum horizontal resolution</p></td>
@@ -559,6 +562,24 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="allEqual.html">allEqual()</a></code> </p>
+        </td>
+        <td><p>Test whether all values are equal.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cv.html">cv()</a></code> </p>
+        </td>
+        <td><p>The coefficient of variation, i.e., the standard deviation divided by the mean.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="formatOutput.html">formatOutput()</a></code> </p>
+        </td>
+        <td><p>Function to format the output of a function returning StoX data (ModelData or ProcessData).</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="general_arguments.html">general_arguments</a></code> </p>
         </td>
         <td><p>General parameters of RstoxBase</p></td>
@@ -577,15 +598,89 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="getDataTypeDefinition.html">getDataTypeDefinition()</a></code> </p>
+        </td>
+        <td><p>Get data type definitions</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getReportFunctionPackage.html">getReportFunctionPackage()</a></code> </p>
+        </td>
+        <td><p>List report function packages</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getReportFunctions.html">getReportFunctions()</a></code> </p>
+        </td>
+        <td><p>Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="getRstoxBaseDefinitions.html">getRstoxBaseDefinitions()</a></code> </p>
         </td>
         <td><p>Get RstoxBase definitions</p></td>
       </tr><tr>
         
         <td>
+          <p><code><a href="getSeedVector.html">getSeedVector()</a></code> </p>
+        </td>
+        <td><p>Generate a seed vector consistently</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getStratumNames.html">getStratumNames()</a></code> </p>
+        </td>
+        <td><p>Extract stratum names from a SpatialPolygonsDataFrame</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="getStratumPolygonList.html">getStratumPolygonList()</a></code> </p>
         </td>
         <td><p>Convert StratumPolygon to list of polygon tables</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getWeightingFunctions.html">getWeightingFunctions()</a></code> </p>
+        </td>
+        <td><p>List weighting functions</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="getWeightingParameter.html">getWeightingParameter()</a></code> </p>
+        </td>
+        <td><p>List weighting parameters</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="percentile_5_95.html">percentile_5_95()</a></code> </p>
+        </td>
+        <td><p>The 5 and 95 percentile.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="processPropertyFormats.html">processPropertyFormats</a></code> </p>
+        </td>
+        <td><p>Define the process property formats:</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sampleSorted.html">sampleSorted()</a></code> </p>
+        </td>
+        <td><p>Function to sample after sorting:</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="stoxFunctionAttributes.html">stoxFunctionAttributes</a></code> </p>
+        </td>
+        <td><p>A list of the attributes of the exported StoX functions:
+The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
+The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="summaryStox.html">summaryStox()</a></code> </p>
+        </td>
+        <td><p>The summary function introduced in StoX &lt;= 2.7.</p></td>
       </tr>
     </tbody>
     </table>
@@ -601,7 +696,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
+  <p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">

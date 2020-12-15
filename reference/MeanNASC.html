@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.35</span>
       </span>
     </div>
 
@@ -81,11 +81,14 @@
         <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/StoXProject/RstoxBase/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -130,6 +133,70 @@
   AcousticPSU <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>NASCData</th>
+      <td><p>The <code><a href='NASCData.html'>NASCData</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>SumNASCData</th>
+      <td><p>The <code><a href='SumNASCData.html'>SumNASCData</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>LayerDefinition</th>
+      <td><p>The method to use for defining the Layers, one of <code>FunctionParameter</code> to define the Layers on the fly in this function, <code>FunctionInput</code> to import Layer process data from a previously run process by the input <code>AcousticLayer</code>, or <code>PreDefined</code> whihc requires <code>SumNASCData</code> as input.</p></td>
+    </tr>
+    <tr>
+      <th>LayerDefinitionMethod</th>
+      <td><p>See <code><a href='DefineAcousticLayer.html'>DefineAcousticLayer</a></code></p></td>
+    </tr>
+    <tr>
+      <th>Resolution</th>
+      <td><p>Numeric: A single numeric giving the thickness of the layers.</p></td>
+    </tr>
+    <tr>
+      <th>LayerTable</th>
+      <td><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></td>
+    </tr>
+    <tr>
+      <th>AcousticLayer</th>
+      <td><p>The <code><a href='AcousticLayer.html'>AcousticLayer</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>SurveyDefinition</th>
+      <td><p>The method to use for defining the Survey, one of <code>FunctionParameter</code> to define the Survey on the fly in this function, or <code>FunctionInput</code> to import Survey process data from a previously run process by the input <code>Survey</code>.</p></td>
+    </tr>
+    <tr>
+      <th>SurveyDefinitionMethod</th>
+      <td><p>See <code><a href='DefineSurvey.html'>DefineSurvey</a></code></p></td>
+    </tr>
+    <tr>
+      <th>SurveyTable</th>
+      <td><p>A table of the two columns Stratum and Survey.</p></td>
+    </tr>
+    <tr>
+      <th>Survey</th>
+      <td><p>The <code><a href='Survey.html'>Survey</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>PSUDefinition</th>
+      <td><p>The method to use for defining the PSUs, one of <code>FunctionParameter</code> to define the PSUs on the fly in this function, or <code>FunctionInput</code> to import PSU process data from a previously run process by <code>AcousticPSU</code>.</p></td>
+    </tr>
+    <tr>
+      <th>PSUDefinitionMethod</th>
+      <td><p>See <code><a href='DefineAcousticPSU.html'>DefineAcousticPSU</a></code></p></td>
+    </tr>
+    <tr>
+      <th>StratumPolygon</th>
+      <td><p>The <code><a href='StratumPolygon.html'>StratumPolygon</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>AcousticPSU</th>
+      <td><p>The <code><a href='AcousticPSU.html'>AcousticPSU</a></code> process data.</p></td>
+    </tr>
+    </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
@@ -156,7 +223,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
+  <p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.35</span>
       </span>
     </div>
 
@@ -81,11 +81,14 @@
         <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/StoXProject/RstoxBase/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -132,10 +135,7 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $AcousticPSUPrefix
-#&gt; [1] "PSU"
-#&gt; 
-#&gt; $allResolution
+</div><div class='output co'>#&gt; $allResolution
 #&gt; $allResolution$NASCData
 #&gt; [1] "NASC"
 #&gt; 
@@ -163,9 +163,6 @@
 #&gt; $allResolution$AbundanceData
 #&gt; [1] "Abundance"
 #&gt; 
-#&gt; 
-#&gt; $BioticPSUPrefix
-#&gt; [1] "PSU"
 #&gt; 
 #&gt; $dataTypeDefinition
 #&gt; $dataTypeDefinition$NASCData
@@ -197,10 +194,9 @@
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
 #&gt; $dataTypeDefinition$NASCData$other
-#&gt; [1] "ChannelReferenceDepth"       "ChannelReferenceOrientation"
-#&gt; [3] "Cruise"                      "EffectiveLogDistance"       
-#&gt; [5] "DateTime"                    "Longitude"                  
-#&gt; [7] "Latitude"                   
+#&gt; [1] "ChannelReferenceDepth" "ChannelReferenceTilt"  "Cruise"               
+#&gt; [4] "EffectiveLogDistance"  "DateTime"              "Longitude"            
+#&gt; [7] "Latitude"             
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumNASCData
@@ -233,9 +229,8 @@
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
 #&gt; $dataTypeDefinition$SumNASCData$Data$other
-#&gt; [1] "ChannelReferenceDepth"       "ChannelReferenceOrientation"
-#&gt; [3] "EffectiveLogDistance"        "DateTime"                   
-#&gt; [5] "Longitude"                   "Latitude"                   
+#&gt; [1] "ChannelReferenceDepth" "ChannelReferenceTilt"  "EffectiveLogDistance" 
+#&gt; [4] "DateTime"              "Longitude"             "Latitude"             
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumNASCData$Resolution
@@ -280,7 +275,7 @@
 #&gt; [1] "ChannelReferenceType"
 #&gt; 
 #&gt; $dataTypeDefinition$MeanNASCData$Data$other
-#&gt; [1] "ChannelReferenceDepth"       "ChannelReferenceOrientation"
+#&gt; [1] "ChannelReferenceDepth" "ChannelReferenceTilt" 
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$MeanNASCData$Resolution
@@ -611,6 +606,29 @@
 #&gt; NULL
 #&gt; 
 #&gt; 
+#&gt; $dataTypeDefinition$BioticPSU
+#&gt; $dataTypeDefinition$BioticPSU$Stratum_PSU
+#&gt; $dataTypeDefinition$BioticPSU$Stratum_PSU$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$BioticPSU$StationPSU
+#&gt; $dataTypeDefinition$BioticPSU$StationPSU$horizontalResolution
+#&gt; [1] "EDSU" "PSU" 
+#&gt; 
+#&gt; 
+#&gt; $dataTypeDefinition$BioticPSU$PSUByTime
+#&gt; $dataTypeDefinition$BioticPSU$PSUByTime$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
+#&gt; 
+#&gt; $dataTypeDefinition$BioticPSU$PSUByTime$categoryVariable
+#&gt; [1] "Cruise"
+#&gt; 
+#&gt; $dataTypeDefinition$BioticPSU$PSUByTime$groupingVariables
+#&gt; [1] "StartDateTime" "StopDateTime" 
+#&gt; 
+#&gt; 
+#&gt; 
 #&gt; $dataTypeDefinition$AcousticPSU
 #&gt; $dataTypeDefinition$AcousticPSU$Stratum_PSU
 #&gt; $dataTypeDefinition$AcousticPSU$Stratum_PSU$horizontalResolution
@@ -622,16 +640,16 @@
 #&gt; [1] "EDSU" "PSU" 
 #&gt; 
 #&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$AcousticPSUByTime
-#&gt; $dataTypeDefinition$AcousticPSUByTime$horizontalResolution
+#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime
+#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime$horizontalResolution
 #&gt; [1] "Stratum" "PSU"    
 #&gt; 
-#&gt; $dataTypeDefinition$AcousticPSUByTime$categoryVariable
+#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime$categoryVariable
 #&gt; [1] "Cruise"
 #&gt; 
-#&gt; $dataTypeDefinition$AcousticPSUByTime$groupingVariables
+#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime$groupingVariables
 #&gt; [1] "StartDateTime" "StopDateTime" 
+#&gt; 
 #&gt; 
 #&gt; 
 #&gt; 
@@ -655,11 +673,73 @@
 #&gt; CRS arguments: NA 
 #&gt; 
 #&gt; 
+#&gt; $getPSUPrefix
+#&gt; function (PSUType) 
+#&gt; {
+#&gt;     if (PSUType == "Acoustic") {
+#&gt;         prefix &lt;- "PSU"
+#&gt;     }
+#&gt;     else if (PSUType == "Biotic") {
+#&gt;         prefix &lt;- "PSU"
+#&gt;     }
+#&gt;     else {
+#&gt;         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+#&gt;     }
+#&gt;     return(prefix)
+#&gt; }
+#&gt; &lt;bytecode: 0x7fba539fd030&gt;
+#&gt; &lt;environment: 0x7fba539f7e40&gt;
+#&gt; 
+#&gt; $getSSULabel
+#&gt; function (PSUType) 
+#&gt; {
+#&gt;     if (PSUType == "Acoustic") {
+#&gt;         SSULabel &lt;- "EDSU"
+#&gt;     }
+#&gt;     else if (PSUType == "Biotic") {
+#&gt;         SSULabel &lt;- "Station"
+#&gt;     }
+#&gt;     else {
+#&gt;         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+#&gt;     }
+#&gt;     return(SSULabel)
+#&gt; }
+#&gt; &lt;bytecode: 0x7fba539fd8f0&gt;
+#&gt; &lt;environment: 0x7fba539f7e40&gt;
+#&gt; 
+#&gt; $getStationLevel
+#&gt; function (PSUType) 
+#&gt; {
+#&gt;     if (PSUType == "Acoustic") {
+#&gt;         SSULabel &lt;- "Log"
+#&gt;     }
+#&gt;     else if (PSUType == "Biotic") {
+#&gt;         SSULabel &lt;- "Station"
+#&gt;     }
+#&gt;     else {
+#&gt;         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
+#&gt;     }
+#&gt;     return(SSULabel)
+#&gt; }
+#&gt; &lt;bytecode: 0x7fba539fa2d8&gt;
+#&gt; &lt;environment: 0x7fba539f7e40&gt;
+#&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
 #&gt; 
 #&gt; $proj4string
 #&gt; CRS arguments: +proj=longlat +datum=WGS84 +no_defs 
+#&gt; 
+#&gt; $PSUByTime
+#&gt; $PSUByTime$horizontalResolution
+#&gt; [1] "Stratum" "PSU"    
+#&gt; 
+#&gt; $PSUByTime$categoryVariable
+#&gt; [1] "Cruise"
+#&gt; 
+#&gt; $PSUByTime$groupingVariables
+#&gt; [1] "StartDateTime" "StopDateTime" 
+#&gt; 
 #&gt; 
 #&gt; $reportFunctions
 #&gt;        functionName packageName weighted weightingParameter multiple
@@ -711,6 +791,9 @@
 #&gt; 
 #&gt; 
 #&gt; 
+#&gt; $seedSequenceLength
+#&gt; [1] 1e+07
+#&gt; 
 #&gt; $TargetStrengthFunction_LengthAndDepthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
 #&gt;     Depth) 
@@ -718,8 +801,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fc2902728a8&gt;
-#&gt; &lt;environment: 0x7fc2902757f8&gt;
+#&gt; &lt;bytecode: 0x7fba539fc770&gt;
+#&gt; &lt;environment: 0x7fba539f7e40&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -727,16 +810,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fc290272c28&gt;
-#&gt; &lt;environment: 0x7fc2902757f8&gt;
+#&gt; &lt;bytecode: 0x7fba539fc3b8&gt;
+#&gt; &lt;environment: 0x7fba539f7e40&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fc290276198&gt;
-#&gt; &lt;environment: 0x7fc2902757f8&gt;
+#&gt; &lt;bytecode: 0x7fba539fcdc8&gt;
+#&gt; &lt;environment: 0x7fba539f7e40&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
@@ -778,7 +861,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
+  <p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">

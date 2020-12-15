@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.35</span>
       </span>
     </div>
 
@@ -81,11 +81,14 @@
         <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/StoXProject/RstoxBase/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -142,8 +145,36 @@
       <td><p>The <code><a href='SumLengthDistributionData.html'>SumLengthDistributionData</a></code> data.</p></td>
     </tr>
     <tr>
+      <th>LayerDefinition</th>
+      <td><p>The method to use for defining the Layers, one of <code>FunctionParameter</code> to define the Layers on the fly in this function, <code>FunctionInput</code> to import Layer process data from a previously run process by the input <code>BioticLayer</code>, or <code>PreDefined</code> whihc requires <code>SumLengthDistributionData</code> as input.</p></td>
+    </tr>
+    <tr>
+      <th>LayerDefinitionMethod</th>
+      <td><p>See <code><a href='DefineBioticLayer.html'>DefineBioticLayer</a></code></p></td>
+    </tr>
+    <tr>
+      <th>Resolution</th>
+      <td><p>Numeric: A single numeric giving the thickness of the layers.</p></td>
+    </tr>
+    <tr>
+      <th>LayerTable</th>
+      <td><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></td>
+    </tr>
+    <tr>
       <th>BioticLayer</th>
       <td><p>The <code><a href='BioticLayer.html'>BioticLayer</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>SurveyDefinition</th>
+      <td><p>The method to use for defining the Survey, one of <code>FunctionParameter</code> to define the Survey on the fly in this function, or <code>FunctionInput</code> to import Survey process data from a previously run process by the input <code>Survey</code>.</p></td>
+    </tr>
+    <tr>
+      <th>SurveyDefinitionMethod</th>
+      <td><p>See <code><a href='DefineSurvey.html'>DefineSurvey</a></code></p></td>
+    </tr>
+    <tr>
+      <th>SurveyTable</th>
+      <td><p>A table of the two columns Stratum and Survey.</p></td>
     </tr>
     <tr>
       <th>Survey</th>
@@ -151,11 +182,11 @@
     </tr>
     <tr>
       <th>PSUDefinition</th>
-      <td><p>A string naming the method to use for defining the Layers, one of "FunctionParameter", requiring <code>LayerDefinitionMethod</code> or <code>PSUDefinitionMethod</code> and the conditionally <code>Resolution</code>, <code>LayerTableLayerTable</code> or <code>StratumPolygon</code> to be set, or "FunctionInput", requiring the inputs <code>BioticLayer</code> or <code>BioticPSU</code>.</p></td>
+      <td><p>The method to use for defining the PSUs, one of <code>FunctionParameter</code> to define the PSUs on the fly in this function, or <code>FunctionInput</code> to import PSU process data from a previously run process by <code>BioticPSU</code>.</p></td>
     </tr>
     <tr>
       <th>PSUDefinitionMethod</th>
-      <td><p>See <code>DefinitionMethod</code> of <code><a href='DefineBioticPSU.html'>DefineBioticPSU</a></code>.</p></td>
+      <td><p>See <code><a href='DefineBioticPSU.html'>DefineBioticPSU</a></code></p></td>
     </tr>
     <tr>
       <th>StratumPolygon</th>
@@ -189,7 +220,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
+  <p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">

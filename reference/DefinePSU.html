@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.35</span>
       </span>
     </div>
 
@@ -81,11 +81,14 @@
         <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/StoXProject/RstoxBase/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -115,9 +118,12 @@
   <span class='va'>processData</span>,
   UseProcessData <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>StratumPolygon</span>,
-  <span class='va'>StoxData</span>,
-  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Identity"</span>, <span class='st'>"DeleteAllPSUs"</span><span class='op'>)</span>,
-  PSUType <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Acoustic"</span>, <span class='st'>"Biotic"</span><span class='op'>)</span>
+  StoxData <span class='op'>=</span> <span class='cn'>NULL</span>,
+  MergedStoxDataStationLevel <span class='op'>=</span> <span class='cn'>NULL</span>,
+  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Manual"</span>, <span class='st'>"Identity"</span>, <span class='st'>"DeleteAllPSUs"</span>, <span class='st'>"ByTime"</span><span class='op'>)</span>,
+  PSUType <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Acoustic"</span>, <span class='st'>"Biotic"</span><span class='op'>)</span>,
+  SavePSUByTime <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>PSUProcessData</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -140,12 +146,24 @@
       <td><p>Either <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html'>StoxBioticData</a></code> or <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data.</p></td>
     </tr>
     <tr>
+      <th>MergedStoxDataStationLevel</th>
+      <td><p>The merged StoxData at the station level. Used in <code>meanRawResolutionData</code>.</p></td>
+    </tr>
+    <tr>
       <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, see <code><a href='DefineBioticPSU.html'>DefineBioticPSU</a></code> and <code><a href='DefineAcousticPSU.html'>DefineAcousticPSU</a></code>.</p></td>
+      <td><p>A string naming the method to use, see <code><a href='DefineBioticPSU.html'>DefineBioticPSU</a></code> and <code><a href='DefineAcousticPSU.html'>DefineAcousticPSU</a></code>.</p></td>
     </tr>
     <tr>
       <th>PSUType</th>
-      <td><p>Character: A string naming the type of model, either "Acoustic" or "Biotic".</p></td>
+      <td><p>Character: A string naming the type of model, either "Acoustic" or "Biotic"</p></td>
+    </tr>
+    <tr>
+      <th>SavePSUByTime</th>
+      <td><p>Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.</p></td>
+    </tr>
+    <tr>
+      <th>PSUProcessData</th>
+      <td><p>Previously generated PSU process data, one of <code><a href='AcousticPSU.html'>AcousticPSU</a></code> or <code><a href='BioticPSU.html'>BioticPSU</a></code>.</p></td>
     </tr>
     </table>
 
@@ -174,7 +192,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Arne Johannes Holmin, Espen Johnsen.</p>
+  <p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">
