@@ -63,11 +63,12 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            # Require UseProcessData = FALSE OR SavePSUByTime = TRUE for StoxAcousticData to show:
+            # Require UseProcessData = FALSE OR UseProcessData = TRUE and SavePSUByTime = TRUE for StoxAcousticData to show:
             StoxAcousticData = list(
                 UseProcessData = FALSE
             ), 
             StoxAcousticData = list(
+                UseProcessData = TRUE, 
                 SavePSUByTime = TRUE
             ), 
             StratumPolygon = list(
@@ -85,10 +86,10 @@ stoxFunctionAttributes <- list(
             AcousticPSU = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "ByTime"
-            ), 
-            SavePSUByTime = list(
-                UseProcessData = FALSE
-            )
+            )#, 
+            #SavePSUByTime = list(
+            #    UseProcessData = FALSE
+            #)
         )
     ), 
     #ExtractAcousticPSUByTime = list(

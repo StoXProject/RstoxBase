@@ -10,7 +10,7 @@ DefinePSU(
   StratumPolygon,
   StoxData = NULL,
   MergedStoxDataStationLevel = NULL,
-  DefinitionMethod = c("Identity", "DeleteAllPSUs", "ByTime"),
+  DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "ByTime"),
   PSUType = c("Acoustic", "Biotic"),
   SavePSUByTime = FALSE,
   PSUProcessData

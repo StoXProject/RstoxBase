@@ -9,7 +9,7 @@ DefineAcousticPSU(
   UseProcessData = FALSE,
   StratumPolygon,
   StoxAcousticData,
-  DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "ByTime"),
+  DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "ByTime"),
   SavePSUByTime = FALSE,
   AcousticPSU
 )
