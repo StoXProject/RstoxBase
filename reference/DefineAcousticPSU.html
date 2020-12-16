@@ -119,8 +119,7 @@
   UseProcessData <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>StratumPolygon</span>,
   <span class='va'>StoxAcousticData</span>,
-  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Manual"</span>, <span class='st'>"EDSUToPSU"</span>, <span class='st'>"DeleteAllPSUs"</span>, <span class='st'>"ByTime"</span><span class='op'>)</span>,
-  SavePSUByTime <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Manual"</span>, <span class='st'>"EDSUToPSU"</span>, <span class='st'>"DeleteAllPSUs"</span>, <span class='st'>"PreDefined"</span><span class='op'>)</span>,
   <span class='va'>AcousticPSU</span>
 <span class='op'>)</span></pre>
 
@@ -148,12 +147,12 @@
       <td><p>Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.</p></td>
     </tr>
     <tr>
-      <th>SavePSUByTime</th>
-      <td><p>Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.</p></td>
-    </tr>
-    <tr>
       <th>AcousticPSU</th>
       <td><p>The <code><a href='AcousticPSU.html'>AcousticPSU</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>SavePSUByTime</th>
+      <td><p>Logical: If TRUE store the start and end times of sequences of EDSUs for each PSU as an additional table.</p></td>
     </tr>
     </table>
 
