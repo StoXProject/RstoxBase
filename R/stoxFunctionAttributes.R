@@ -67,10 +67,6 @@ stoxFunctionAttributes <- list(
             StoxAcousticData = list(
                 UseProcessData = FALSE
             ), 
-            StoxAcousticData = list(
-                UseProcessData = TRUE, 
-                SavePSUByTime = TRUE
-            ), 
             StratumPolygon = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "EDSUToPSU"
@@ -85,7 +81,7 @@ stoxFunctionAttributes <- list(
             #), 
             AcousticPSU = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "ByTime"
+                DefinitionMethod = "PreDefined"
             )#, 
             #SavePSUByTime = list(
             #    UseProcessData = FALSE

@@ -22,8 +22,8 @@ jobs:
           - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
           - {os: windows-latest, r: 'oldrel',  pkgext: '.zip', rtools: '35'}
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
-          - {os: ubuntu-18.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
-          - {os: ubuntu-18.04,   r: 'release', pkgext: '.tar.gz', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
+          - {os: ubuntu-16.04,   r: 'release', pkgext: '.tar.gz', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
+          - {os: ubuntu-16.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -40,19 +40,20 @@ jobs:
           curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output deploy.sh
           chmod +x ./checktag.sh ./deploy.sh
           . checktag.sh
-          echo "::set-env name=FINAL_TAG::${FINAL_TAG}"
-          echo "::set-env name=PKG_FILE_PREFIX::${PKG_FILE_PREFIX}"
-          echo "::set-env name=PKG_FILE::${PKG_FILE_PREFIX}${{ matrix.config.pkgext }}"
-          echo "::set-env name=PKG_FREL::${PKG_FILE_PREFIX}-R.${{ matrix.config.r }}-${{ runner.os }}${{ matrix.config.pkgext }}"
-          echo "::set-env name=PKG_REPO::${GITHUB_WORKSPACE}"
+          echo "FINAL_TAG=${FINAL_TAG}" >> $GITHUB_ENV
+          echo "PKG_FILE_PREFIX=${PKG_FILE_PREFIX}" >> $GITHUB_ENV
+          echo "PKG_FILE=${PKG_FILE_PREFIX}${{ matrix.config.pkgext }}" >> $GITHUB_ENV
+          echo "PKG_FREL=${PKG_FILE_PREFIX}-R.${{ matrix.config.r }}-${{ runner.os }}${{ matrix.config.pkgext }}" >> $GITHUB_ENV
+          echo "PKG_REPO=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
         shell: bash
 
-      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-r@v1
         with:
           r-version: ${{ matrix.config.r }}
           rtools-version: ${{ matrix.config.rtools }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
 
-      - uses: r-lib/actions/setup-pandoc@master
+      - uses: r-lib/actions/setup-pandoc@v1
 
       - name: Query dependencies
         run: |
@@ -63,7 +64,7 @@ jobs:
 
       - name: Cache R packages
         if: runner.os != 'Windows'
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
@@ -71,12 +72,11 @@ jobs:
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          Rscript -e "remotes::install_github('r-hub/sysreqs')"
-          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
-          sudo -s eval "$sysreqs"
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "16.04"))')
 
       - name: Install dependencies
         run: |
@@ -106,16 +106,16 @@ jobs:
 
       - name: Upload check results
         if: failure()
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@main
         with:
-          name: ${{ runner.os }}-${{ matrix.config.r }}-results
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
 
       - name: Build package source archive
         if: runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           pkgbuild::build(".", dest_path = ".", binary = FALSE)
-          cat(paste0("::set-env name=PKG_FREL::", Sys.getenv("PKG_FILE"), "\n"))
+          system(paste0("PKG_FREL=", Sys.getenv("PKG_FILE"), " >> ", Sys.getenv("GITHUB_ENV")))
         shell: Rscript {0}
 
       - name: Build package binary archive
