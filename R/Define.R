@@ -29,9 +29,8 @@ DefinePSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxData = NULL, 
-    #MergedStoxDataStationLevel = NULL, 
     MergedStoxDataStationLevel = NULL, 
-    DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "ByTime"), 
+    DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "PreDefined"), 
     #IntervalVariable = character(),
     #Interval = double(), 
     PSUType = c("Acoustic", "Biotic"), 
@@ -43,45 +42,33 @@ DefinePSU <- function(
     DefinitionMethod <- match.arg(DefinitionMethod)
     PSUType <- match.arg(PSUType)
     
-    # Get the MergedStoxDataStationLevel if not given directly:
-    if(!UseProcessData || (UseProcessData && SavePSUByTime)) {
-        if(!length(MergedStoxDataStationLevel)) {
-            if(length(StoxData)) {
-                MergedStoxDataStationLevel <- RstoxData::mergeDataTables(
-                    StoxData, 
-                    tableNames = c(
-                        "Cruise", 
-                        getRstoxBaseDefinitions("getStationLevel")(PSUType)
-                    ), 
-                    output.only.last = TRUE, 
-                    all = TRUE
-                )
-            }
-            else {
-                stop("One of MergedStoxDataStationLevel and StoxData must be given")
-            }
-        }
-    }
-    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
-        if(SavePSUByTime) {
-            processData$PSUByTime <- getPSUByTime(
-                PSUProcessData = processData, 
-                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-                PSUType = PSUType
+        return(processData)
+    }
+    
+    # Get the MergedStoxDataStationLevel if not given directly, needed :
+    if(!length(MergedStoxDataStationLevel)) {
+        if(length(StoxData)) {
+            MergedStoxDataStationLevel <- RstoxData::mergeDataTables(
+                StoxData, 
+                tableNames = c(
+                    "Cruise", 
+                    getRstoxBaseDefinitions("getStationLevel")(PSUType)
+                ), 
+                output.only.last = TRUE, 
+                all = TRUE
             )
         }
-        
-        return(processData)
+        else {
+            stop("One of MergedStoxDataStationLevel and StoxData must be given")
+        }
     }
     
     
     # Define the PSU prefix and the SSU label, which is the name of the SSU column:
     prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
-    
-    #StationLevel <- getRstoxBaseDefinitions("getStationLevel")(PSUType)
     
     # Make sure that there is only one row per SSU:
     notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
@@ -110,18 +97,12 @@ DefinePSU <- function(
         Stratum_PSU <- getStratumOfPSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel)
     }
     # Use each SSU as a PSU:
-    else if(grepl("ByTime", DefinitionMethod, ignore.case = TRUE)) {
+    else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
         
         # Interpret middle times:
-        #StoxData <- RstoxData::mergeDataTables(
-        #    StoxData, 
-        #    tableNames = c("Cruise", StationLevel), 
-        #    output.only.last = FALSE, 
-        #    all = TRUE
-        #)
         MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
         
-        # Rename to the SSULabel:
+        # Rename the SSULabel to "SSU":
         MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
         
         # Get the SSU indices for each PSU:
@@ -150,6 +131,9 @@ DefinePSU <- function(
         
         # Add all SSUs:
         SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
+        
+        # Restore SSULabel:
+        MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType)
     }
     
     #else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
@@ -192,14 +176,6 @@ DefinePSU <- function(
     }
     else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         if(length(processData)) {
-            # Add the PSU time information:
-            if(SavePSUByTime) {
-                processData$PSUByTime <- getPSUByTime(
-                    PSUProcessData = processData, 
-                    MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-                    PSUType = PSUType
-                )
-            }
             return(processData)
         }
         else {
@@ -233,25 +209,6 @@ DefinePSU <- function(
             PSUType = PSUType
         )
     }
-    
-    ### data.table::setnames(PSUProcessData$SSU_PSU, "SSU", SSULabel)
-    ### names(PSUProcessData) <- sub(names(PSUProcessData), "SSU", SSULabel)
-    #names(PSUProcessData)[names(PSUProcessData) == "SSU_PSU"] <- paste(SSULabel, "PSU", sep = "_")
-    
-    #out <- structure(
-    #    list(
-    #        Stratum_PSU, 
-    #        SSU_PSU
-    #    ), 
-    #    names = c("Stratum_PSU", paste(SSULabel, "PSU", sep = "_"))
-    #)
-    
-    
-    # No longer neede, as the GUI gets stratum names from DefineStratumPolygon instead:
-    # Add a list of all strata:
-    #out$Stratum <- data.table::data.table(
-    #    Stratum = getStratumNames(StratumPolygon)
-    #)
     
     return(PSUProcessData)
 }
@@ -434,10 +391,10 @@ DefineAcousticPSU <- function(
     StratumPolygon, 
     StoxAcousticData, 
     #DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "Interval", "ByTime"), 
-    DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "ByTime"), 
+    DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "PreDefined"), 
     #IntervalVariable = character(),
     #Interval = double(), 
-    SavePSUByTime = FALSE, 
+    #SavePSUByTime = FALSE, 
     AcousticPSU
 ) {
     
@@ -458,7 +415,7 @@ DefineAcousticPSU <- function(
         #IntervalVariable = IntervalVariable, 
         #Interval = Interval, 
         PSUType = "Acoustic", 
-        SavePSUByTime = SavePSUByTime, 
+        SavePSUByTime = TRUE, 
         PSUProcessData = AcousticPSU
     )
     
