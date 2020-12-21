@@ -116,15 +116,30 @@ DefineStratumPolygon <- function(
             StratumPolygon <- stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
         }
         else if(tolower(FileExt) == "shp") {
-            StratumPolygon <- rgdal::readOGR(FileName, verbose = FALSE)
+            # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
+            #StratumPolygon <- rgdal::readOGR(FileName, verbose = FALSE)
+            
+            # FileName can the the path to one of the shapefile or to the directory holding the shapefiles:
+            StratumPolygon <- sf::as_Spatial(sf::read_sf(FileName))
         }
         else if(tolower(FileExt) == "json") {
-            if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
-                stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change file format.")
-            }
+            # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
+            #if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
+            #    stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change fi#le format.")
+            #}
+            #
+            #StratumPolygon <- rgdal::readOGR(FileName, "OGRGeoJSON")
             
-            StratumPolygon <- rgdal::readOGR(FileName, "OGRGeoJSON")
+            #StratumPolygon <- geojsonio::geojson_sp(
+            #    toJSON_Rstox(
+            #        geojsonio::geojson_read(
+            #            FileName
+            #        ), 
+            #        pretty = TRUE
+            #    )
+            #)
             
+            StratumPolygon <-  sf::as_Spatial(geojsonsf::geojson_sf(FileName))
         }
         else {
             stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
@@ -371,19 +386,4 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
     )
     return(output)
 }
-
-
-
-# Try this e.g. with the files downloaded from this link: https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/physical/ne_110m_land.zip:
-
-#readShapeFilesToSpatialPolygons <- function(FilePath) {
-readShapeFilesToSpatialPolygonsDataFrame <- function(FilePath) {
-    shape <- rgdal::readOGR(dsn = FilePath)
-    shape
-}
-
-
-
-
-
 

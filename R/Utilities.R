@@ -881,3 +881,42 @@ StoxDataStartMiddleStopDateTime <- function(
     return(StoxDataStationLevel)
 }
 
+
+#' Convert to JSON
+#' 
+#' This function takes care of the defaults preferred by the Rstox packages
+#' 
+#' @param x An object to convert to JSON.
+#' @param ... Parameters overriding the defaults digits = NA, auto_unbox = TRUE, na = "null", null = "null".
+#' 
+#' @export
+#' 
+toJSON_Rstox <- function(x, ...) {
+    # Define defaults:
+    digits <- NA
+    auto_unbox <- TRUE
+    na <- "null"
+    null <- "null"
+    
+    # Override by ...:
+    lll <- list(...)
+    
+    if(!"digits" %in% names(lll)) {
+        lll$digits <- digits
+    }
+    if(!"auto_unbox" %in% names(lll)) {
+        lll$auto_unbox <- auto_unbox
+    }
+    if(!"na" %in% names(lll)) {
+        lll$na <- na
+    }
+    if(!"null" %in% names(lll)) {
+        lll$null <- null
+    }
+    
+    #lll$x <- x
+    lll <- c(list(x = x), lll
+    )
+    
+    do.call(jsonlite::toJSON, lll)
+}

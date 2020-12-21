@@ -67,6 +67,10 @@ stoxFunctionAttributes <- list(
             StoxAcousticData = list(
                 UseProcessData = FALSE
             ), 
+            StoxAcousticData = list(
+                UseProcessData = TRUE, 
+                SavePSUByTime = TRUE
+            ), 
             StratumPolygon = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "EDSUToPSU"
@@ -81,7 +85,7 @@ stoxFunctionAttributes <- list(
             #), 
             AcousticPSU = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "PreDefined"
+                DefinitionMethod = "ByTime"
             )#, 
             #SavePSUByTime = list(
             #    UseProcessData = FALSE
@@ -603,26 +607,6 @@ stoxFunctionAttributes <- list(
     ), 
     
     
-    ReportBootstrap = list(
-        functionType = "modelData", 
-        functionCategory = "report", 
-        functionOutputDataType = "ReportBootstrapData", 
-        # This is an example of using an expression to determine when to show a parameter:
-        functionParameterFormat = list(
-            #TargetVariable = "targetVariable_ReportBootstrap", 
-            GroupingVariables = "groupingVariables_ReportBootstrap"
-        ), 
-        functionArgumentHierarchy = list(
-            AggregationWeightingVariable = list(
-                ReportFunction = expression(RstoxBase::getWeightingFunctions())
-            ), 
-            BootstrapReportWeightingVariable = list(
-                ReportFunction = expression(RstoxBase::getWeightingFunctions())
-            )
-        )
-    ), 
-    
-    
     ReportSpeciesCategoryCatch = list(
         functionType = "modelData", 
         functionCategory = "report", 
@@ -814,27 +798,11 @@ processPropertyFormats <- list(
         }
     ), 
     
-    targetVariable_ReportBootstrap = list(
-        class = "single", 
-        possibleValues = function(BootstrapData, BaselineProcess) {
-            sort(setdiff(names(BootstrapData[[BaselineProcess]]), "BootstrapID"))
-        }
-    ), 
-    
     targetVariable_ReportSuperIndividuals = list(
         class = "single", 
         possibleValues = function(SuperIndividualsData) {
             sort(names(SuperIndividualsData))
         }
-    ), 
-    
-    groupingVariables_ReportBootstrap = list(
-        class = "vector", 
-        title = "One or more variables to group super-individuals by when reporting BootstrapData", 
-        possibleValues = function(BootstrapData, BaselineProcess) {
-            sort(setdiff(names(BootstrapData[[BaselineProcess]]), "BootstrapID"))
-        }, 
-        variableTypes <- "character"
     ), 
     
     groupingVariables_ReportSuperIndividuals = list(
