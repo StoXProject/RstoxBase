@@ -1700,14 +1700,28 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
 
 
 checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
+    
     # Get and check the TargetStrengthMethod:
     targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
     if(! TargetStrengthMethod %in% names(targetStrengthParameters)) {
         stop("Wrong TargetStrengthMethod. Must be one of ", paste(names(targetStrengthParameters), collapse = ", "))
     }
+    
     # Check that the TargetStrengthTable contains the required columns:
     if(! all(targetStrengthParameters[[TargetStrengthMethod]] %in% names(TargetStrengthTable))) {
         stop("The ", TargetStrengthMethod, "Table must contain the required column; ", paste(targetStrengthParameters[[TargetStrengthMethod]], collapse = ", "))
+    }
+    
+    # Check for duplicated keys:
+    keys <- setdiff(
+        names(TargetStrengthTable), 
+        targetStrengthParameters[[TargetStrengthMethod]]
+    )
+    dup <- duplicated(TargetStrengthTable[, ..keys])
+    if(any(dup)) {
+        duprev <- duplicated(TargetStrengthTable[, ..keys], fromLast = TRUE)
+        alldup <- sort(unique(c(which(dup), which(duprev))))
+        stop("The output from DefineAcousticTargetStrength contains duplicated keys (", paste(keys, collapse = ", "), ")", " in rows ", paste(alldup, collapse = ", "), ".")
     }
 }
 
