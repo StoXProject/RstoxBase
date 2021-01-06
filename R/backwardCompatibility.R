@@ -8,5 +8,14 @@ backwardCompatibility <- list(
 			modelName = "baseline", 
 			parameterName = "SavePSUByTime"
 		)
+	),  
+	
+	renameFunction = list(
+	    list(
+	        changeVersion = "1.2.36", 
+	        functionName = "ReportBootstrap", 
+	        modelName = "report", 
+	        newFunctionName = "RstoxFramework::ReportBootstrap"
+	    )
 	)
 )

@@ -85,7 +85,7 @@ stoxFunctionAttributes <- list(
             #), 
             AcousticPSU = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "ByTime"
+                DefinitionMethod = "PreDefined"
             )#, 
             #SavePSUByTime = list(
             #    UseProcessData = FALSE

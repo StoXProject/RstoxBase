@@ -5,7 +5,6 @@
 #' Reports the sum, mean or other functions on a variable of the \code{\link{SuperIndividualsData}}.
 #' 
 #' @inheritParams ModelData
-#' @inheritParams ProcessData
 #' @inheritParams general_report_arguments
 #' @param ReportFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
 #' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
@@ -32,25 +31,41 @@ ReportSuperIndividuals <- function(
 {
     aggregateBaselineDataOneTable(
         stoxData = SuperIndividualsData, 
-        targetVariable = TargetVariable, 
+        TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
-        groupingVariables = GroupingVariables, 
+        GroupingVariables = GroupingVariables, 
         na.rm = RemoveMissingValues, 
-        weightingVariable = WeightingVariable
+        WeightingVariable = WeightingVariable
     ) 
 }
 
 
-
-# Function to aggregate baseline data:
+##################################################
+#' Function to aggregate baseline data
+#' 
+#' @param stoxData Output from any StoX function.
+#' @inheritParams general_report_arguments
+#' @param aggregationFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
+#' @param subTable The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.
+#' @param na.rm Used in the function specified by \code{aggregationFunction}.
+#' @inheritParams ReportSuperIndividuals
+#'
+#' @return
+#' An aggregated version of the input \code{stoxData}.
+#' 
+#' @seealso 
+#' \code{\link{ReportSuperIndividuals}}
+#' 
+#' @export
+#' 
 aggregateBaselineDataOneTable <- function(
     stoxData, 
-    targetVariable, 
+    TargetVariable, 
     aggregationFunction = getRstoxBaseDefinitions("reportFunctions")$functionName, 
     subTable = character(), 
-    groupingVariables = character(), 
+    GroupingVariables = character(), 
     na.rm = FALSE, 
-    weightingVariable = character()
+    WeightingVariable = character()
 )
 {
     if(!length(stoxData)) {
@@ -72,15 +87,15 @@ aggregateBaselineDataOneTable <- function(
     fun <- function(x) {
         # Create the list of inputs to the function:
         args <- list(
-            x[[targetVariable]], 
+            x[[TargetVariable]], 
             na.rm = na.rm
         )
         # Add weightin to the list of inputs to the function:
         if(isWeightingFunction(aggregationFunction)) {
-            if(!length(weightingVariable)) {
+            if(!length(WeightingVariable)) {
                 stop("WeightingVariable must be given.")
             }
-            args[[getWeightingParameter(aggregationFunction)]] = x[[weightingVariable]]
+            args[[getWeightingParameter(aggregationFunction)]] = x[[WeightingVariable]]
         }
         # Call the function in the appropriate enivronment:
         out <- do.call(
@@ -90,17 +105,17 @@ aggregateBaselineDataOneTable <- function(
         )
         
         # Add the function name as names if the function does not name the output:
-        names(out) <- getReportFunctionVariableName(aggregationFunction, targetVariable)
+        names(out) <- getReportFunctionVariableName(aggregationFunction, TargetVariable)
         # Convert to list to insert each element to a named column of the data table:
         out <- as.list(out)
         
         return(out)
     }
     
-    outputData <- stoxData[, fun(.SD), by = groupingVariables]
+    outputData <- stoxData[, fun(.SD), by = GroupingVariables]
     
     # Order by the grouping variables:
-    data.table::setorderv(outputData, groupingVariables)
+    data.table::setorderv(outputData, GroupingVariables)
     
     
     return(outputData)
@@ -123,12 +138,21 @@ getReportFunctionOutputNames <- function(functionName, packageName) {
     return(result)
 }
 
-getReportFunctionVariableName <- function(functionName, targetVariable) {
+
+##################################################
+#' Get the name of the target variable after aggregating.
+#' 
+#' @inheritParams general_report_arguments
+#' @param functionName The aggregation function name.
+#'
+#' @export
+#' 
+getReportFunctionVariableName <- function(functionName, TargetVariable) {
     suffix <- getReportFunctionOutputNames(
         functionName = functionName, 
         packageName = getReportFunctionPackage(functionName)
     )
-    paste(targetVariable, suffix, sep = "_")
+    paste(TargetVariable, suffix, sep = "_")
 }
 
 
