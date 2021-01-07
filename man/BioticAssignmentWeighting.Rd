@@ -40,7 +40,68 @@ An object of StoX data type \code{\link{BioticAssignment}}.
 This function puts weights to the hauls assigned to acoustic PSUs in \code{\link{BioticAssignment}} process data.
 }
 \details{
-This function is awesome and does excellent stuff.
+The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
+
+A set of automatic \emph{WeightingMethod}s are available to update the haul weighing variables:
+
+\strong{Equal}
+
+All assigned biotic hauls are given equal weight by assigning the value 1 to the weighting variables.
+
+\strong{NumberOfLengthSamples}
+The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station.  The parameter \emph{MaxNumberOfLengthSamples} is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. 
+
+\strong{NormTotalWeight}
+
+The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+
+\strong{NormTotalCount}
+
+The assigned biotic haulss are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+
+\strong{SumWeightedCount}
+
+The assigned biotic haulss are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Normalized} (normalized to one nautical mile towing distance).
+
+\strong{InvSumWeightedCount}
+
+The assigned biotic haulss are given a weighting value as the inverse sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
+
+\deqn{w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }}
+
+where:
+
+\eqn{w_b} = weighting value of biotic haul \emph{b}
+
+\eqn{s_b} = species in the  biotic haul \emph{b}
+
+\eqn{n_b} = number of species in the input data off biotic haul \emph{b}
+
+\eqn{l} =  length group number
+
+\eqn{m_{s,b}}  =	number of length groups for species \emph{s} in biotic haul \emph{b}
+
+\eqn{c_{l,s,b}} = count in length group \emph{l} for species \emph{s} in biotic haul \emph{b}
+
+The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.
+
+\strong{NASC}
+
+The assigned biotic haulss are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
+
+A search for acoustic NASC values (at EDSU resolution) is performed within a given radius around a biotic station. A weighted (by integrator distance of the EDSUs) mean NASC is calculated from the surrounding NASC values and this is used in the further weighting value calculations. Using this combined NASC value, the length distribution of the biotic station and a target strength (TS) versus length empirical relationship, the weighting variable density of the biotic station is first calculated by length group. The sum of densities (number per square nautical mile) for all length groups of the target species at the given biotic haul, is than calculated and applied as the weighting variable for the biotic haul.Note that if an EDSU NASC value is used for assignment to several biotic stations, the NASC value is split and devided between these biotic stations.
+
+The NASC WeightingMethod is associated with the following user parameters:
+
+\emph{Radius}: Search radius (nautical miles) for NASC values (at EDSU resolution) around a biotic station
+
+\emph{LengthExponent}: LengthExponent in the target stregth versus length formula.
+
+\emph{TargetStrength0}:  TargetStrength0 in the target stregth versus length formula as:
+
+\deqn{TS = LengthExponent \log_{10}{l} + TargetStrength0}
+
+where \emph{l} is the fish "total length" in centimeters given as the lower value of the length group interval.
 }
 \examples{
 x <- 1

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Abundance.R
 \name{Abundance}
 \alias{Abundance}
-\title{Calculate abundance of a stratum}
+\title{Calculate abundance in the strata}
 \usage{
 Abundance(MeanDensityData, StratumAreaData)
 }
@@ -15,13 +15,15 @@ Abundance(MeanDensityData, StratumAreaData)
 An object of StoX data type \code{\link{AbundanceData}}.
 }
 \description{
-This function calcualtes abundance as the product of density and area of each stratum.
+This function calculates abundance as the product of density and stratum area
 }
 \details{
-This function is awesome and does excellent stuff.
+The function merge the \code{\link{MeanDensityData}} with the \code{\link{StratumAreaData}} by Stratum and calculates the abundance  as the product of density (number by square nautical miles) and area (square nautical miles). 
+For acoustic-trawl surveys the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
+In swept-area surveys the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength
 }
 \examples{
-x <- 1
+
 
 }
 \seealso{

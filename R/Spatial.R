@@ -70,17 +70,23 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 ##################################################
 #' Define stratum multipolygon
 #' 
-#' This function reads a goejson file, shape file or a \code{\link{StratumPolygon}} Stox multipolygon WKT file and returns an object of StoX data type \code{\link{StratumPolygon}} object.
+#' This function reads a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} or a \code{\link{StoX_multipolygon_WKT}} file and returns an object of StoX data type \code{\link{StratumPolygon}} file.
 #' 
 #' @inheritParams general_arguments
 #' @param DefinitionMethod A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "None" to start off with no strata. Strata can be added, modified and removed in the StoX GUI.
-#' @param FileName The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension. 
+#' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} (may be a folder) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.
 #' 
 #' @details
-#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment). 
+#' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
 #' 
 #' @return
 #' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
+#' 
+#' @references
+#' Additonal information on GeoJSON and shapefiles specification can be found here:
+#' 
+#' 
+#' Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528.  \url{https://doi.org/10.1111/2041-210X.13250} 
 #' 
 #' @examples
 #' 
@@ -221,14 +227,24 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' @param AreaMethod The method to use for the area calculation, defaulted to "Accurate", which applied a lambert azimuthal equal area projection. 
 #' 
 #' @details
-#' The \code{AreaMethod} "Simple" is deprecated, but kept for backwards campatibility.
+#' The area output is given in international square nautical miles. 
+#' 
+#' The \code{AreaMethod} "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calcualted using \code{\link{rgeos::gArea}}. ??? hvordan setter jeg inn link til annen pakke?	
+#' 
+#' The \code{AreaMethod} "Simple" is used in StoX 2.7 and earlier versions and kept for backwards campatibility. The area of each stratum polygon is calculated as simple great circle distance polygon area (REF_to be inserted ???), where any hole in a stratum is substracted. The substraction of holes was not implemented in StoX 2.7 and earlier versions ??? Is this correct ???.
+#'  
+#' @references To be inserted
 #' 
 #' @return
 #' A table of stratum name and area.
 #' 
+#' 
+#' 
 #' @examples
 #' 
 #' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
+#' \code{\link{rgeos::gArea}}
+#' \code{\link{sp::CRS}}
 #' 
 #' @export
 #' 
