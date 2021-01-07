@@ -2,7 +2,7 @@
 % Please edit documentation in R/Define.R
 \name{DefinePSU}
 \alias{DefinePSU}
-\title{Definne PSU}
+\title{Define PSU}
 \usage{
 DefinePSU(
   processData,
