@@ -371,7 +371,6 @@ DefineBioticPSU <- function(
 #' @inheritParams ProcessData
 #' @inheritParams DefinePSU
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.
-#' @param SavePSUByTime Logical: If TRUE store the start and end times of sequences of EDSUs for each PSU as an additional table.
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
