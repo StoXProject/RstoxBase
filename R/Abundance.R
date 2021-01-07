@@ -1,20 +1,23 @@
 ##################################################
 ##################################################
-#' Calculate abundance of a stratum
+#' Calculate abundance in the strata
 #' 
-#' This function calcualtes abundance as the product of density and area of each stratum.
+#' This function calculates abundance as the product of density and stratum area 
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' 
+# Missing Arguments of MeanDensityData---- 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' The function merge the \code{\link{MeanDensityData}} with the \code{\link{StratumAreaData}} by Stratum and calculates the abundance  as the product of density (number by square nautical miles) and area (square nautical miles). 
+#' For acoustic-trawl surveys the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
+#' In swept-area surveys the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength 
 #' 
 #' @return
 #' An object of StoX data type \code{\link{AbundanceData}}. 
 #' 
 #' @examples
-#' x <- 1
+#' 
 #' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to individuals.
 #' 

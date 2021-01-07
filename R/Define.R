@@ -1,6 +1,6 @@
 ##################################################
 ##################################################
-#' Definne PSU
+#' Define PSU
 #' 
 #' Underlying function for \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
@@ -1030,9 +1030,9 @@ DefineBioticLayer <- function(
 
 ##################################################
 ##################################################
-#' Assignnment of biotic hauls to acoustic PSUs
+#' Assignment of biotic hauls to acoustic PSUs by layer
 #' 
-#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs.
+#' This function defines the \code{\link{BioticAssignment}} process data, linking biotic Hauls with acoustic PSUs by Layer.
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
@@ -1049,7 +1049,76 @@ DefineBioticLayer <- function(
 #' @param LatitudeDifference For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.
 #' 
 #' @details
-#' See Equation 8 in "Factors affecting the diel variation in commercial CPUE of Namibian hake - Can new information improve standard survey estimates?".
+#' The \emph{DefineBioticAssignment} function creates a list of which biotic hauls are assigned to each acoustic primary sampling unit (PSU) and assignment layer. An \emph{assignment layer} is made up of one or more \emph{layers}. The assigned biotic hauls are given the default weighting factor of 1. The list of assigned biotic stations will in another function be used to make a total combined length frequency distribution from all the individual haul distributions that have been assigned.
+#' 
+#' In addition to the option of modifying assignments manually through the StoX graphically user interface, several automatic assignment methods are available. The automated methods are applied by assignment layer on the biotic stations that are associated with each assignment layer. By default, the function parameter \emph{UseProcessData} is set to true, ensuring that assignment from previous execution is availabe upon execution. UseProcessData may be set to false to redo or update assignemts.
+#' 
+#' Layer definitions needed for assignment can be done in two ways using the function parameter:
+#' 
+#' \strong{LayerDefinition} 
+#' 
+#' The available parameters are:
+#' \emph{FunctionInput} which utelizes input \code{\link{AcousticLayer}} process data generated in a previous process. This object contains the layer definitions
+#' 
+#' alternatively,
+#' 
+#' \emph{FunctionParameter} which use function input data type \code{\link{AcousticData}} and function parameter \emph{LayerDefinitionMethod}. The available methods are:
+#' 
+#' \emph{Watercolomn} method which defines one layer for the entire watercolumn
+#' \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
+#' \emph{Resolution} method is assosiated with function parameter \emph{Resolution} which gives the desired thickness (in meters) of the layers.
+#' \emph{LayerTable} method is assosiated with function parameter \emph{LayerTable} which \strong{??? NEED TO BE COMPLETED ???}
+#'   
+#' The available automatic assignment methods are:
+#' 
+#'\strong{Stratum}
+#'
+#'All biotic hauls within each stratum  are assigned to all the acoustic PSUs of the stratum.
+#'
+#'\strong{Radius}
+#'
+#'All biotic stations within the given radius (function parameter \emph{Radius} (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system. The function parameter \emph{MinNumberOfHauls} set a minimum number of hauls for each assignment. This implies that the search for hauls may go beyond the given radius.
+#'
+#'\strong{EllipsoidalDistance}
+#'
+#'This assignment method uses the ellipsoidal distance \href{https://doi.org/10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
+#'
+#' \deqn{f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
+#' \left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
+#' \left(\frac{\Delta o}{r_0}\right)^2}
+#' 
+#' where:
+#' 
+#' \eqn{f} = scalar product
+#' 
+#' \eqn{\Delta d} = great circle distance between the acoustic EDSU position  and the biotic station (nautical miles). Start positions for the biotic station and the EDSU are used.
+#' 
+#' \eqn{\Delta t} = time difference between the acoustic EDSU and the biotic station recordings (hours). Start time for the biotic station and the EDSU are used.
+#' 
+#' \eqn{\Delta b} = difference in bottom depth at the locations of the acoustic EDSU and the biotic station (meters). For the EDSU, the bottom depth is calculated as the average depth from the minimum and maximum depth recorded over the EDSU distance. The biotic station depth is calculated as the average at the start and stop of the station.
+#' 
+#'\eqn{\Delta l} = difference in latitude between the acoustic EDSU and the biotic station (degrees)
+#'
+#'\eqn{\Delta o} = difference in longitude between the acoustic EDSU and the biotic station (degrees) 
+#'
+#'\eqn{r_d} = reference value for great circle distance difference (nautical miles). Defined by function parameter \emph{Distance}) 
+#'
+#'\eqn{r_t} = reference value for time difference (hours). Defined by function parameter \emph{TimeDifference}) 
+#'
+#'\eqn{r_b} = reference value for bottom depth difference (meters). Defined  by function parameter \emph{BottomDepthDifference})
+#'
+#'\eqn{r_l} = reference value for latitude difference (degrees). Defined by function parameter \emph{LatitudeDifference})
+#'
+#'\eqn{r_o} = reference value for longitude difference (degrees). Defined by function parameter \emph{LongitudeDifference})
+#'
+#'The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned haulss are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
+#'
+#'NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.
+#'
+#' @references
+#'
+#'Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, \url{https://doi.org/10.1016/j.fishres.2007.07.013}
+#' 
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
@@ -1380,7 +1449,69 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @param LengthExponent For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
+#' 
+#' A set of automatic \emph{WeightingMethod}s are available to update the haul weighing variables:
+#' 
+#'\strong{Equal}
+#' 
+#' All assigned biotic hauls are given equal weight by assigning the value 1 to the weighting variables.
+#' 
+#'\strong{NumberOfLengthSamples}
+#'The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station.  The parameter \emph{MaxNumberOfLengthSamples} is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. 
+#' 
+#' \strong{NormTotalWeight}
+#' 
+#' The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+#' 
+#'\strong{NormTotalCount}
+#'
+#'The assigned biotic haulss are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+#'
+#'\strong{SumWeightedCount}
+#'
+#'The assigned biotic haulss are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Normalized} (normalized to one nautical mile towing distance).
+#'
+#'\strong{InvSumWeightedCount}
+#'
+#'The assigned biotic haulss are given a weighting value as the inverse sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
+#'
+#'\deqn{w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }}
+#'
+#'where:
+#'
+#'\eqn{w_b} = weighting value of biotic haul \emph{b}
+#'
+#'\eqn{s_b} = species in the  biotic haul \emph{b}
+#'
+#'\eqn{n_b} = number of species in the input data off biotic haul \emph{b}
+#'
+#'\eqn{l} =  length group number
+#'
+#'\eqn{m_{s,b}}  =	number of length groups for species \emph{s} in biotic haul \emph{b}
+#'
+#'\eqn{c_{l,s,b}} = count in length group \emph{l} for species \emph{s} in biotic haul \emph{b}
+#' 
+#'The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.
+#'
+#'\strong{NASC}
+#'
+#'The assigned biotic haulss are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
+#'
+#'A search for acoustic NASC values (at EDSU resolution) is performed within a given radius around a biotic station. A weighted (by integrator distance of the EDSUs) mean NASC is calculated from the surrounding NASC values and this is used in the further weighting value calculations. Using this combined NASC value, the length distribution of the biotic station and a target strength (TS) versus length empirical relationship, the weighting variable density of the biotic station is first calculated by length group. The sum of densities (number per square nautical mile) for all length groups of the target species at the given biotic haul, is than calculated and applied as the weighting variable for the biotic haul.Note that if an EDSU NASC value is used for assignment to several biotic stations, the NASC value is split and devided between these biotic stations.
+#'
+#'The NASC WeightingMethod is associated with the following user parameters:
+#'
+#'\emph{Radius}: Search radius (nautical miles) for NASC values (at EDSU resolution) around a biotic station
+#'
+#'\emph{LengthExponent}: LengthExponent in the target stregth versus length formula.
+#'
+#' \emph{TargetStrength0}:  TargetStrength0 in the target stregth versus length formula as:
+#'
+#'\deqn{TS = LengthExponent \log_{10}{l} + TargetStrength0}
+#'
+#'where \emph{l} is the fish "total length" in centimeters given as the lower value of the length group interval. 
+#'  
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
