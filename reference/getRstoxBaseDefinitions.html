@@ -45,6 +45,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -72,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.39</span>
       </span>
     </div>
 
@@ -687,8 +689,8 @@
 #&gt;     }
 #&gt;     return(prefix)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe80b131dc8&gt;
-#&gt; &lt;environment: 0x7fe80b12cc48&gt;
+#&gt; &lt;bytecode: 0x7fa8bb35d708&gt;
+#&gt; &lt;environment: 0x7fa8bb361778&gt;
 #&gt; 
 #&gt; $getSSULabel
 #&gt; function (PSUType) 
@@ -704,8 +706,8 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe80b12f3f0&gt;
-#&gt; &lt;environment: 0x7fe80b12cc48&gt;
+#&gt; &lt;bytecode: 0x7fa8bb35cf28&gt;
+#&gt; &lt;environment: 0x7fa8bb361778&gt;
 #&gt; 
 #&gt; $getStationLevel
 #&gt; function (PSUType) 
@@ -721,14 +723,15 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe80b12fc08&gt;
-#&gt; &lt;environment: 0x7fe80b12cc48&gt;
+#&gt; &lt;bytecode: 0x7fa8bb35c748&gt;
+#&gt; &lt;environment: 0x7fa8bb361778&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
 #&gt; 
 #&gt; $proj4string
-#&gt; CRS arguments: +proj=longlat +datum=WGS84 +no_defs 
+#&gt; CRS arguments:
+#&gt;  +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
 #&gt; 
 #&gt; $PSUByTime
 #&gt; $PSUByTime$horizontalResolution
@@ -801,8 +804,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe80b1313f0&gt;
-#&gt; &lt;environment: 0x7fe80b12cc48&gt;
+#&gt; &lt;bytecode: 0x7fa8bb35df58&gt;
+#&gt; &lt;environment: 0x7fa8bb361778&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -810,16 +813,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe80b131038&gt;
-#&gt; &lt;environment: 0x7fe80b12cc48&gt;
+#&gt; &lt;bytecode: 0x7fa8bb359bc8&gt;
+#&gt; &lt;environment: 0x7fa8bb361778&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe80b131b60&gt;
-#&gt; &lt;environment: 0x7fe80b12cc48&gt;
+#&gt; &lt;bytecode: 0x7fa8bb35d938&gt;
+#&gt; &lt;environment: 0x7fa8bb361778&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent

@@ -45,6 +45,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -72,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.39</span>
       </span>
     </div>
 
@@ -134,10 +136,17 @@
     <p>A table of stratum name and area.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The <code>AreaMethod</code> "Simple" is deprecated, but kept for backwards campatibility.</p>
+    <p>The area output is given in international square nautical miles.</p>
+<p>The <code>AreaMethod</code> "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calcualted using <code><a href='https://rdrr.io/pkg/rgeos/man/misc-gArea.html'>rgeos::gArea</a></code>. ??? hvordan setter jeg inn link til annen pakke?</p>
+<p>The <code>AreaMethod</code> "Simple" is used in StoX 2.7 and earlier versions and kept for backwards campatibility. The area of each stratum polygon is calculated as simple great circle distance polygon area (REF_to be inserted ???), where any hole in a stratum is substracted. The substraction of holes was not implemented in StoX 2.7 and earlier versions ??? Is this correct ???.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>To be inserted</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='DefineStratumPolygon.html'>DefineStratumPolygon</a></code> for the <code>StratumPolygon</code> input to the function.</p></div>
+    <div class='dont-index'><p><code><a href='DefineStratumPolygon.html'>DefineStratumPolygon</a></code> for the <code>StratumPolygon</code> input to the function.
+<code><a href='https://rdrr.io/pkg/rgeos/man/misc-gArea.html'>rgeos::gArea</a></code>
+<code><a href='https://rdrr.io/pkg/sp/man/CRS-class.html'>sp::CRS</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>

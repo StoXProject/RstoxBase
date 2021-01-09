@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The 5 and 95 percentile. — percentile_5_95 • RstoxBase</title>
+<title>Function to aggregate baseline data — aggregateBaselineDataOneTable • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="The 5 and 95 percentile. — percentile_5_95" />
-<meta property="og:description" content="The 5 and 95 percentile." />
+<meta property="og:title" content="Function to aggregate baseline data — aggregateBaselineDataOneTable" />
+<meta property="og:description" content="Function to aggregate baseline data" />
 
 
 
@@ -107,30 +107,64 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The 5 and 95 percentile.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Utilities.R'><code>R/Utilities.R</code></a></small>
-    <div class="hidden name"><code>percentile_5_95.Rd</code></div>
+    <h1>Function to aggregate baseline data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R'><code>R/Report.R</code></a></small>
+    <div class="hidden name"><code>aggregateBaselineDataOneTable.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>The 5 and 95 percentile.</p>
+    <p>Function to aggregate baseline data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>percentile_5_95</span><span class='op'>(</span><span class='va'>x</span>, na.rm <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>aggregateBaselineDataOneTable</span><span class='op'>(</span>
+  <span class='va'>stoxData</span>,
+  <span class='va'>TargetVariable</span>,
+  aggregationFunction <span class='op'>=</span> <span class='fu'><a href='getRstoxBaseDefinitions.html'>getRstoxBaseDefinitions</a></span><span class='op'>(</span><span class='st'>"reportFunctions"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>functionName</span>,
+  subTable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  GroupingVariables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  WeightingVariable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>A numeric object</p></td>
+      <th>stoxData</th>
+      <td><p>Output from any StoX function.</p></td>
+    </tr>
+    <tr>
+      <th>TargetVariable</th>
+      <td><p>The variable to report.</p></td>
+    </tr>
+    <tr>
+      <th>aggregationFunction</th>
+      <td><p>The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".</p></td>
+    </tr>
+    <tr>
+      <th>subTable</th>
+      <td><p>The name of the sub table to aggregate on, if <code>stoxData</code> is a list of tables.</p></td>
+    </tr>
+    <tr>
+      <th>GroupingVariables</th>
+      <td><p>The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).</p></td>
     </tr>
     <tr>
       <th>na.rm</th>
-      <td><p>Logical: If TRUE remove the missing values prior to calculation.</p></td>
+      <td><p>Used in the function specified by <code>aggregationFunction</code>.</p></td>
+    </tr>
+    <tr>
+      <th>WeightingVariable</th>
+      <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>An aggregated version of the input <code>stoxData</code>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='ReportSuperIndividuals.html'>ReportSuperIndividuals</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

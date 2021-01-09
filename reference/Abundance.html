@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate abundance of a stratum — Abundance • RstoxBase</title>
+<title>Calculate abundance in the strata — Abundance • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,10 @@
 
 
 
-<meta property="og:title" content="Calculate abundance of a stratum — Abundance" />
-<meta property="og:description" content="This function calcualtes abundance as the product of density and area of each stratum." />
+<meta property="og:title" content="Calculate abundance in the strata — Abundance" />
+<meta property="og:description" content="This function calculates abundance as the product of density and stratum area" />
+
+
 
 
 
@@ -72,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.39</span>
       </span>
     </div>
 
@@ -105,13 +107,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate abundance of a stratum</h1>
+    <h1>Calculate abundance in the strata</h1>
     <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R'><code>R/Abundance.R</code></a></small>
     <div class="hidden name"><code>Abundance.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function calcualtes abundance as the product of density and area of each stratum.</p>
+    <p>This function calculates abundance as the product of density and stratum area</p>
     </div>
 
     <pre class="usage"><span class='fu'>Abundance</span><span class='op'>(</span><span class='va'>MeanDensityData</span>, <span class='va'>StratumAreaData</span><span class='op'>)</span></pre>
@@ -134,13 +136,15 @@
     <p>An object of StoX data type <code><a href='AbundanceData.html'>AbundanceData</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>The function merge the <code><a href='MeanDensityData.html'>MeanDensityData</a></code> with the <code><a href='StratumAreaData.html'>StratumAreaData</a></code> by Stratum and calculates the abundance  as the product of density (number by square nautical miles) and area (square nautical miles). 
+For acoustic-trawl surveys the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
+In swept-area surveys the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='SuperIndividuals.html'>SuperIndividuals</a></code> for distributing Abundance to individuals.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+    <pre class="examples"><div class='input'>
 
 </div></pre>
   </div>

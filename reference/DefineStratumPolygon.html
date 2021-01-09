@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="Define stratum multipolygon — DefineStratumPolygon" />
-<meta property="og:description" content="This function reads a goejson file, shape file or a StratumPolygon Stox multipolygon WKT file and returns an object of StoX data type StratumPolygon object." />
+<meta property="og:description" content="This function reads a GeoJSON file, shapefile or a StoX_multipolygon_WKT file and returns an object of StoX data type StratumPolygon file." />
+
+
 
 
 
@@ -72,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.36</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.39</span>
       </span>
     </div>
 
@@ -111,7 +113,7 @@
     </div>
 
     <div class="ref-description">
-    <p>This function reads a goejson file, shape file or a <code><a href='StratumPolygon.html'>StratumPolygon</a></code> Stox multipolygon WKT file and returns an object of StoX data type <code><a href='StratumPolygon.html'>StratumPolygon</a></code> object.</p>
+    <p>This function reads a <a href='https://geojson.org/'>GeoJSON</a> file, <a href='https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm'>shapefile</a> or a <code><a href='StoX_multipolygon_WKT.html'>StoX_multipolygon_WKT</a></code> file and returns an object of StoX data type <code><a href='StratumPolygon.html'>StratumPolygon</a></code> file.</p>
     </div>
 
     <pre class="usage"><span class='fu'>DefineStratumPolygon</span><span class='op'>(</span>
@@ -138,7 +140,7 @@
     </tr>
     <tr>
       <th>FileName</th>
-      <td><p>The path to a geoJSON file, shape file (folder) or a Stox multipolygon WKT file. Must include file extension.</p></td>
+      <td><p>The path to a <a href='https://geojson.org/'>GeoJSON</a> file, <a href='https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm'>shapefile</a> (may be a folder) or a <code><a href='StoX_multipolygon_WKT.html'>StoX_multipolygon_WKT</a></code> file. Must include file extension.</p></td>
     </tr>
     </table>
 
@@ -148,6 +150,11 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The parameter <code>UseProcessData</code> is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Additonal information on GeoJSON and shapefiles specification can be found here:</p>
+
+<p>Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., &amp; Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528.  <a href='https://doi.org/10.1111/2041-210X.13250'>https://doi.org/10.1111/2041-210X.13250</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='StratumArea.html'>StratumArea</a></code> for calculating the area of the strata.</p></div>
