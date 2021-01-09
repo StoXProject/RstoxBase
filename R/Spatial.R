@@ -377,24 +377,46 @@ polygonAreaSP_simple <- function(stratumPolygon) {
 
 polygonAreaSP_accurate <- function(stratumPolygon) {
     
+    
+    stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
+    sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+    #stratumPolygon1 <- sf::st_transform(ss, sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
+    
+    
     # Define projection:
-    sp::proj4string(stratumPolygon) <- sp::CRS("+proj=longlat +ellps=WGS84")	
+            #sp::proj4string(stratumPolygon) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
     
     # Define the proj4 definition of Lambert Azimuthal Equal Area (laea) CRS with origo in wkt center:
     # Units: international nautical miles:
-    laea.CRS <- sp::CRS(
-        paste0(
-            "+proj=laea +lat_0=", 
-            stratumPolygon@polygons[[1]]@labpt[2], 
-            " +lon_0=", 
-            stratumPolygon@polygons[[1]]@labpt[1], 
-            " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
-        )
+            #laea.CRS <- sp::CRS(
+            #    paste0(
+            #        "+proj=laea +lat_0=", 
+            #        stratumPolygon@polygons[[1]]@labpt[2], 
+            #        " +lon_0=", 
+            #        stratumPolygon@polygons[[1]]@labpt[1], 
+            #        " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
+            #    )
+            #)
+    
+    laea.CRS <- paste0(
+        "+proj=laea +lat_0=", 
+        stratumPolygon@polygons[[1]]@labpt[2], 
+        " +lon_0=", 
+        stratumPolygon@polygons[[1]]@labpt[1], 
+        " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
     )
     
+    
+    stratumPolygonSF <- sf::st_transform(stratumPolygonSF, laea.CRS)
+    
+    
     # Project data points from longlat to given laea
-    stratumPolygon <- sp::spTransform(stratumPolygon, laea.CRS)
+            #stratumPolygon <- sp::spTransform(stratumPolygon, laea.CRS)
+            #area <- rgeos::gArea(stratumPolygon, byid = TRUE)
+    stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
     area <- rgeos::gArea(stratumPolygon, byid = TRUE)
+    
+    
     
     output <- data.table::data.table(
         Stratum = stratumPolygon$polygonName,
