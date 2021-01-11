@@ -229,7 +229,7 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' @details
 #' The area output is given in international square nautical miles. 
 #' 
-#' The \code{AreaMethod} "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calcualted using \code{\link{rgeos::gArea}}. ??? hvordan setter jeg inn link til annen pakke?	
+#' The \code{AreaMethod} "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calcualted using \code{\link[rgeos]{gArea}}. ??? hvordan setter jeg inn link til annen pakke?	
 #' 
 #' The \code{AreaMethod} "Simple" is used in StoX 2.7 and earlier versions and kept for backwards campatibility. The area of each stratum polygon is calculated as simple great circle distance polygon area (REF_to be inserted ???), where any hole in a stratum is substracted. The substraction of holes was not implemented in StoX 2.7 and earlier versions ??? Is this correct ???.
 #'  
@@ -243,8 +243,8 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' @examples
 #' 
 #' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
-#' \code{\link{rgeos::gArea}}
-#' \code{\link{sp::CRS}}
+#' \code{\link[rgeos]{gArea}}
+#' \code{\link[sp]{CRS}}
 #' 
 #' @export
 #' 
