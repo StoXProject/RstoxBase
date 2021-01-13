@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.41</span>
       </span>
     </div>
 
@@ -133,24 +133,16 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A table of stratum name and area.</p>
+    <p>An object of StoX data type <code><a href='StratumAreaData.html'>StratumAreaData</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The area output is given in international square nautical miles.</p>
-<p>The <code>AreaMethod</code> "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calcualted using <code><a href='https://rdrr.io/pkg/rgeos/man/misc-gArea.html'>gArea</a></code>. ??? hvordan setter jeg inn link til annen pakke?</p>
-<p>The <code>AreaMethod</code> "Simple" is used in StoX 2.7 and earlier versions and kept for backwards campatibility. The area of each stratum polygon is calculated as simple great circle distance polygon area (REF_to be inserted ???), where any hole in a stratum is substracted. The substraction of holes was not implemented in StoX 2.7 and earlier versions ??? Is this correct ???.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>To be inserted</p>
+<p>The <code>AreaMethod</code> "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calculated using <code><a href='https://rdrr.io/pkg/rgeos/man/misc-gArea.html'>gArea</a></code>.</p>
+<p>The <code>AreaMethod</code> "Simple" is used in StoX 2.7 and earlier versions and kept for backwards compatibility.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='DefineStratumPolygon.html'>DefineStratumPolygon</a></code> for the <code>StratumPolygon</code> input to the function.
-<code><a href='https://rdrr.io/pkg/rgeos/man/misc-gArea.html'>gArea</a></code>
-<code><a href='https://rdrr.io/pkg/sp/man/CRS-class.html'>CRS</a></code></p></div>
+    <div class='dont-index'><p><code><a href='DefineStratumPolygon.html'>DefineStratumPolygon</a></code> for the <code>StratumPolygon</code> input to the function.</p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

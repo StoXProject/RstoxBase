@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Regroup length distribution to common intervals — RegroupLengthDistribution" />
-<meta property="og:description" content="This function aggregates the WeightedCount of the LengthDistributionData" />
+<meta property="og:description" content="The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the WeightedCount of the LengthDistributionData" />
 
 
 
@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.41</span>
       </span>
     </div>
 
@@ -113,7 +113,7 @@
     </div>
 
     <div class="ref-description">
-    <p>This function aggregates the <code>WeightedCount</code> of the LengthDistributionData</p>
+    <p>The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the <code>WeightedCount</code> of the LengthDistributionData</p>
     </div>
 
     <pre class="usage"><span class='fu'>RegroupLengthDistribution</span><span class='op'>(</span><span class='va'>LengthDistributionData</span>, LengthInterval <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></pre>
@@ -133,15 +133,12 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> object.</p>
+    <p>An object of StoX data type <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is awesome and does excellent stuff.</p>
+    <p>NOTE. Function parameter <em>SpeciesCategory</em> is NOT YET IMPLEMENTED. Consequently, a common LengthInterval is applied to all SpeciesCategories in the input data.</p>
+<p>The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the length distributions in the output dataset and across all Hauls.A function parameter <em>SpeciesCategory</em> is used to choose either All or one SpeciesCategory from the input LengthDistribution data set. A dropdown list of available SpeciesCategories in the input data is available for the selection. The function parameter <em>LengthInterval</em> is used to set the desired output length interval in centimeters.  The new length interval can never have finer resolution than the coarsest resolution found in the data that are due to be regrouped. A least common multiple of the length group intervals in the input is calculated. This value is the highest resolution possible. If the user chooses a finer resolution than this for the parameter LengthInterval, a warning will be given, and the least common multiple will be applied for the output LengthDistribution dataset from the process.</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
