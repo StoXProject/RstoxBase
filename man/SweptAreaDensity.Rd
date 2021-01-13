@@ -20,18 +20,8 @@ SweptAreaDensity(
 
 \item{SweepWidthByCruise}{A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.}
 }
-\value{
-A data.table is returned with awesome stuff.
-}
 \description{
 This function calculates the area density of fish as number of individuals per square nautical mile.
-}
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
 }
 \seealso{
 See \code{\link{AcousticDensity}} for acoustic density.

@@ -43,10 +43,6 @@ The \code{TargetStrengthMethod} has the following possible values:
 }
 The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.
 }
-\examples{
-x <- 1
-
-}
 \seealso{
 \code{\link{AcousticDensity}} for applying the AcousticTargetStrength.
 }

@@ -21,7 +21,7 @@ DefineStratumPolygon(
 \item{FileName}{The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} (may be a folder) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.}
 }
 \value{
-A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
+An object of StoX data type \code{\link{StratumPolygon}}.
 }
 \description{
 This function reads a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} or a \code{\link{StoX_multipolygon_WKT}} file and returns an object of StoX data type \code{\link{StratumPolygon}} file.
@@ -29,14 +29,11 @@ This function reads a \href{https://geojson.org/}{GeoJSON} file, \href{https://d
 \details{
 The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
 }
-\examples{
-
-}
 \references{
 Additonal information on GeoJSON and shapefiles specification can be found here:
+\url{https://geojson.org/}
 
-
-Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528.  \url{https://doi.org/10.1111/2041-210X.13250}
+\url{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}
 }
 \seealso{
 \code{\link{StratumArea}} for calculating the area of the strata.

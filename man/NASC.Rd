@@ -15,9 +15,6 @@ A \code{\link{NASCData}} object.
 \description{
 NASC function converts the StoxAcousticData into NASCData format
 }
-\details{
-This function is awesome and does excellent stuff.
-}
 \seealso{
 \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 }

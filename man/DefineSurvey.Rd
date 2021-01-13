@@ -29,13 +29,6 @@ An object of StoX data type \code{\link{BioticPSU}}.
 \description{
 This function defines the Strata associated to different surveys (in the sense that a separate estimate should be made for those strata).
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
 \seealso{
 Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 }

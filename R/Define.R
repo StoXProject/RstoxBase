@@ -12,14 +12,8 @@
 #' @param SavePSUByTime Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.
 #' @param PSUProcessData Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An list of two objects, Stratum_PSU and SSU_PSU.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso \code{\link{DefineAcousticPSU}} and \code{\link{DefineBioticPSU}}..
 #' 
@@ -319,14 +313,8 @@ getPSUName <- function(ind, prefix) {
 #' @inheritParams ProcessData
 #' @param DefinitionMethod Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An object of StoX data type \code{\link{BioticPSU}}.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 #' 
@@ -372,14 +360,8 @@ DefineBioticPSU <- function(
 #' @inheritParams DefinePSU
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An object of StoX data type \code{\link{AcousticPSU}}.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso Biotic PSUs are generated using \code{\link{DefineBioticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 #' 
@@ -424,89 +406,6 @@ DefineAcousticPSU <- function(
     return(AcousticPSU)
 }
 
-### ##################################################
-### ##################################################
-### #' Define Acoustic PSU by time
-### #' 
-### #' This function defines Acoustic PSUs by start and stop times.
-### #' 
-### #' @inheritParams ModelData
-### #' @inheritParams ProcessData
-### #' 
-### #' @details
-### #' This function is awesome and does excellent stuff.
-### #' 
-### #' @return
-### #' An object of StoX data type \code{\link{AcousticPSU}}.
-### #' 
-### #' @examples
-### #' x <- 1
-### #' 
-### #' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
-### #' 
-### #' @export
-### #' 
-### ExtractAcousticPSUByTime <- function(
-###     AcousticPSU, 
-###     StoxAcousticData
-### ) {
-###     
-###     # Get the times of the PSUs:
-###     #AcousticPSUByTime <- getPSUStartStopDateTime(AcousticPSU, StoxAcousticData)
-###     AcousticPSUByTime <- getPSUByTime(
-###         PSUProcessData = AcousticPSU, 
-###         StoxData = StoxAcousticData, 
-###         PSUType = "Acoustic"
-###     )
-###     
-###     # Format the output:
-###     formatOutput(AcousticPSUByTime, dataType = "AcousticPSUByTime", keep.all = FALSE)
-###     
-###     return(AcousticPSUByTime)
-### }
-
-
-
-### ##################################################
-### ##################################################
-### #' Define Biotic PSU by time
-### #' 
-### #' This function defines Biotic PSUs by start and stop times.
-### #' 
-### #' #' @inheritParams ModelData
-### #' @inheritParams ProcessData
-### #' 
-### #' @details
-### #' This function is awesome and does excellent stuff.
-### #' 
-### #' @return
-### #' An object of StoX data type \code{\link{AcousticPSU}}.
-### #' 
-### #' @examples
-### #' x <- 1
-### #' 
-### #' @seealso \code{\link{DefineBioticPSU}} for defining BioticPSU in the first place.
-### #' 
-### #' @export
-### #' 
-### ExtractBioticPSUByTime <- function(
-###     BioticPSU, 
-###     StoxBioticData
-### ) {
-###     
-###     # Get the times of the PSUs:
-###     #AcousticPSUByTime <- getPSUStartStopDateTime(AcousticPSU, StoxAcousticData)
-###     BioticPSUByTime <- getPSUByTime(
-###         PSUProcessData = BioticPSU, 
-###         StoxData = StoxBioticData, 
-###         PSUType = "Biotic"
-###     )
-###     
-###     # Format the output:
-###     formatOutput(BioticPSUByTime, dataType = "BioticPSUByTime", keep.all = FALSE)
-###     
-###     return(BioticPSUByTime)
-### }
 
 
 
@@ -631,160 +530,6 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 }
 
 
-
-
-### # Function to get the start and 
-### getPSUStartStopDateTime_Acoustic <- function(AcousticPSU, StoxAcousticData) {
-###     
-###     # Interpret start and end times:
-###     StoxAcousticDataCopy <- data.table::copy(StoxAcousticData)
-###     StoxAcousticDataCopy <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticDataCopy)
-###     
-###     # Split the EDSU_PSU table into PSUs:
-###     EDSU_PSU_ByPSU <- AcousticPSU$EDSU_PSU[!is.na(PSU) & nchar(PSU) > 0]
-###     EDSU_PSU_ByPSU <- split(EDSU_PSU_ByPSU, by = "PSU")
-###     
-###     # Get the table of start and stop times of each PSUs and combine to a table:
-###     PSUStartStopDateTime <- lapply(
-###         X = names(EDSU_PSU_ByPSU), 
-###         FUN = getPSUStartStopDateTimeByPSU, 
-###         # Parameters of getPSUStartStopDateTimeByPSU(): 
-###         EDSU_PSU_ByPSU = EDSU_PSU_ByPSU, 
-###         StoxAcousticData = StoxAcousticDataCopy
-###     )
-###     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
-###     
-###     # Add the Stratum:
-###     PSUStartStopDateTime <- RstoxData::mergeByIntersect(AcousticPSU$Stratum_PSU, PSUStartStopDateTime)
-###     
-###     return(PSUStartStopDateTime)
-### }
-### 
-### # Function to get the start and end times of one acoustic PSU:
-### getPSUStartStopDateTimeByPSU_Acoustic <- function(PSU, EDSU_PSU_ByPSU, StoxAcousticData) {
-###     
-###     # For conevnience extract the EDSUs of the current PSU:
-###     thisEDSU_PSU <- EDSU_PSU_ByPSU[[PSU]]
-###     
-###     # Match the EDSUs of the AcousticPSU with EDSUs of the StoxAcousticData:
-###     atEDSUInStoxAcousticData <- match(thisEDSU_PSU$EDSU, StoxAcousticData$Log$EDSU)
-###     if(any(is.na(atEDSUInStoxAcousticData))) {
-###         stop("The StoxAcousticData must be the same data that were used to generate the AcousticPSU.")
-###     }
-###     
-###     # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data):
-###     atEDSUInStoxAcousticDataByCruise <- split(atEDSUInStoxAcousticData, StoxAcousticData$Log$Cruise[atEDSUInStoxAcousticData### ])
-###     
-###     # Get the table of start and stop times of all Cruises and combine to a table:
-###     PSUStartStopDateTime <- lapply(
-###         X = names(atEDSUInStoxAcousticDataByCruise), 
-###         FUN = getPSUStartStopDateTimeOneCruise, 
-###         # Parameters of getPSUStartStopDateTimeOneCruise(): 
-###         atEDSUInStoxAcousticDataByCruise = atEDSUInStoxAcousticDataByCruise, 
-###         StoxAcousticData = StoxAcousticData
-###     )
-###     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
-###     
-###     # Add the PSU:
-###     PSUStartStopDateTime <- data.table::data.table(
-###         PSU = PSU, 
-###         PSUStartStopDateTime
-###     )
-###     
-###     return(PSUStartStopDateTime)
-### }
-
-### # Function to get the table of start and stop times of one Cruise:
-### getPSUStartStopDateTimeOneCruise_Acoustic <- function(Cruise, atEDSUInStoxAcousticDataByCruise, StoxAcousticData) {
-###     # Get start and stop of unbroken sequences fo EDSUs:
-###     thisEDSU <- atEDSUInStoxAcousticDataByCruise[[Cruise]]
-###     steps <- which(diff(thisEDSU) > 1)
-###     startInd <- c(1, steps + 1)
-###     stopInd <- c(steps, length(thisEDSU))
-###     # Get start and stop times of the unbroken sequences:
-###     startTimes <- StoxAcousticData$Log$StartDateTime[thisEDSU[startInd]]
-###     stopTimes <- StoxAcousticData$Log$StopDateTime[thisEDSU[stopInd]]
-###     
-###     # Create the output table:
-###     PSUStartStopDateTimeOneCruise <- data.table::data.table(
-###         Cruise = Cruise, 
-###         StartDateTime = startTimes, 
-###         StopDateTime = stopTimes
-###     )
-###     
-###     return(PSUStartStopDateTimeOneCruise)
-### }
-
-
-
-
-### ##################################################
-### ##################################################
-### #' Re-define Acoustic PSU
-### #' 
-### #' Re- defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs, based on the start and ### end time of preivously defined acoustic PSUs.
-### #' 
-### #' #' @inheritParams ModelData
-### #' @inheritParams ProcessData
-### #' 
-### #' @details
-### #' This function is awesome and does excellent stuff.
-### #' 
-### #' @return
-### #' An object of StoX data type \code{\link{AcousticPSU}}.
-### #' 
-### #' @examples
-### #' x <- 1
-### #' 
-### #' @seealso \code{\link{DefineAcousticPSU}} for defining AcouosticPSU in the first place.
-### #' 
-### #' @export
-### #' 
-### DefineAcousticPSUFromPSUByTime <- function(
-###     AcousticPSUByTime, 
-###     StoxAcousticData
-### ) {
-###     
-###     # Interpret middle times:
-###     StoxAcousticData <- data.table::copy(StoxAcousticData)
-###     StoxAcousticData <- RstoxData::StoxAcousticStartMiddleStopDateTime(StoxAcousticData)
-###     # Extract only the Cruise, EDSU and MiddleDateTime: 
-###     Log <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")[, c("Cruise", "EDSU", "MiddleDateTime")]
-###     
-###     # Get the EDSU indices for each PSU:
-###     StratumPSUEDSU <- AcousticPSUByTime[, data.table::data.table(
-###         Stratum, 
-###         PSU, 
-###         Cruise, 
-###         # Use closed interavl on both sides here to allow for time points and not only time interavls:
-###         EDSUIIndex = which(Log$MiddleDateTime >= StartDateTime & Log$MiddleDateTime <= StopDateTime)), 
-###         by = seq_len(nrow(AcousticPSUByTime))]
-###     
-###     # Remove PSUs with no EDSUs:
-###     StratumPSUEDSU <- StratumPSUEDSU[!is.na(EDSUIIndex), ]
-###     
-###     # Add the EDSUs:
-###     StratumPSUEDSU[, EDSU := Log$EDSU[EDSUIIndex]]
-###     
-###     # Split into Stratum_PSU and EDSU_PSU:
-###     Stratum_PSU <- unique(StratumPSUEDSU[, c("Stratum", "PSU")])
-###     EDSU_PSU <- unique(StratumPSUEDSU[, c("EDSU", "PSU")])
-###     # Add all EDSUs:
-###     EDSU_PSU <- merge(Log[, "EDSU"], EDSU_PSU, all = TRUE)
-###     
-###     # Create the output list as from DefineAcousticPSU. In fact, the present function will be implemented as a DefintionMeth### od in DefnieAcousticPSU() in the future:
-###     AcousticPSU <- list(
-###         Stratum_PSU = Stratum_PSU,
-###         EDSU_PSU = EDSU_PSU
-###     )
-### 
-###     # Format the output:
-###     formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
-###     
-###     return(AcousticPSU)
-### }
-
-
 ##################################################
 ##################################################
 #' Define Layers
@@ -797,14 +542,8 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 #' @param Resolution  Numeric: A single numeric giving the thickness of the layers.
 #' @param LayerTable A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An object of StoX data type \code{\link{BioticLayer}}.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso \code{\link{DefineAcousticLayer}} and \code{\link{DefineBioticLayer}}.
 #' 
@@ -950,14 +689,8 @@ getDefaultLayerNames <- function(x) {
 #' @inheritParams ProcessData
 #' @inheritParams DefineLayer
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An object of StoX data type \code{\link{AcousticLayer}}.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso Biotic Layers are generated using \code{\link{DefineBioticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
@@ -994,14 +727,8 @@ DefineAcousticLayer <- function(
 #' @inheritParams ProcessData
 #' @inheritParams DefineLayer
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An object of StoX data type \code{\link{BioticLayer}}.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso Acoustic Layers are generated using \code{\link{DefineAcousticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 #' 
@@ -1067,7 +794,8 @@ DefineBioticLayer <- function(
 #' \emph{Watercolomn} method which defines one layer for the entire watercolumn
 #' \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
 #' \emph{Resolution} method is assosiated with function parameter \emph{Resolution} which gives the desired thickness (in meters) of the layers.
-#' \emph{LayerTable} method is assosiated with function parameter \emph{LayerTable} which \strong{??? NEED TO BE COMPLETED ???}
+#'
+# Atle to fix this: \emph{LayerTable} method is assosiated with function parameter \emph{LayerTable} which \strong{??? NEED TO BE COMPLETED ???}
 #'   
 #' The available automatic assignment methods are:
 #' 
@@ -1122,9 +850,6 @@ DefineBioticLayer <- function(
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso \code{\link{BioticAssignmentWeighting}} for weighting BioticAssignment.
 #' 
@@ -1516,9 +1241,6 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.
 #' 
-#' @examples
-#' x <- 1
-#' 
 #' @seealso \code{\link{DefineBioticAssignment}} for generating BioticAssignment.
 #' 
 #' @export
@@ -1767,9 +1489,6 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' @return
 #' An \code{\link{AcousticTargetStrength}} object.
 #' 
-#' @examples
-#' x <- 1
-#' 
 #' @seealso \code{\link{AcousticDensity}} for applying the AcousticTargetStrength.
 #' 
 #' @export
@@ -1869,14 +1588,8 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 #' @param DefinitionMethod Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the \code{SurveyTable} to be given.
 #' @param SurveyTable A table of the two columns Stratum and Survey.
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An object of StoX data type \code{\link{BioticPSU}}.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso Acousic PSUs are generated using \code{\link{DefineAcousticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 #' 

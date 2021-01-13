@@ -80,20 +80,18 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
 #' 
 #' @return
-#' A \code{\link[sp]{SpatialPolygonsDataFrame}} object.
+#' An object of StoX data type \code{\link{StratumPolygon}}.
 #' 
 #' @references
 #' Additonal information on GeoJSON and shapefiles specification can be found here:
+#' \url{https://geojson.org/}
 #' 
-#' 
-#' Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528.  \url{https://doi.org/10.1111/2041-210X.13250} 
-#' 
-#' @examples
+#' \url{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}
 #' 
 #' @seealso \code{\link{StratumArea}} for calculating the area of the strata.
 #' 
 #' @export
-#' 
+#'
 DefineStratumPolygon <- function(
     processData, UseProcessData = FALSE, 
     DefinitionMethod = c("ResourceFile", "None"), 
@@ -229,25 +227,17 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' @details
 #' The area output is given in international square nautical miles. 
 #' 
-#' The \code{AreaMethod} "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calcualted using \code{\link[rgeos]{gArea}}. ??? hvordan setter jeg inn link til annen pakke?	
+#' The \code{AreaMethod} "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calculated using \code{\link[rgeos]{gArea}}.
 #' 
-#' The \code{AreaMethod} "Simple" is used in StoX 2.7 and earlier versions and kept for backwards campatibility. The area of each stratum polygon is calculated as simple great circle distance polygon area (REF_to be inserted ???), where any hole in a stratum is substracted. The substraction of holes was not implemented in StoX 2.7 and earlier versions ??? Is this correct ???.
+#' The \code{AreaMethod} "Simple" is used in StoX 2.7 and earlier versions and kept for backwards compatibility.
 #'  
-#' @references To be inserted
-#' 
 #' @return
-#' A table of stratum name and area.
-#' 
-#' 
-#' 
-#' @examples
+#' An object of StoX data type \code{\link{StratumAreaData}}.
 #' 
 #' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
-#' \code{\link[rgeos]{gArea}}
-#' \code{\link[sp]{CRS}}
 #' 
 #' @export
-#' 
+#'
 StratumArea <- function(
     StratumPolygon, 
     AreaMethod = c("Accurate", "Simple")

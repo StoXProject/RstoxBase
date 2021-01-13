@@ -60,10 +60,3 @@ An \code{\link{MeanLengthDistributionData}} object.
 \description{
 This function averages LengthDistributionData data horizontally, weighted by the effective towed distance.
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}

@@ -41,13 +41,6 @@ An list of two objects, Stratum_PSU and SSU_PSU.
 \description{
 Underlying function for \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
 \seealso{
 \code{\link{DefineAcousticPSU}} and \code{\link{DefineBioticPSU}}..
 }

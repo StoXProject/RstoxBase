@@ -32,13 +32,6 @@ An object of StoX data type \code{\link{BioticLayer}}.
 \description{
 This function defines the \code{\link{BioticLayer}} process data, which sets the range intervals of the swetp-area layers used in biotic estimation models in StoX.
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
 \seealso{
 Acoustic Layers are generated using \code{\link{DefineAcousticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 }

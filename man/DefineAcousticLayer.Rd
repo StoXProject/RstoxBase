@@ -32,13 +32,6 @@ An object of StoX data type \code{\link{AcousticLayer}}.
 \description{
 This function defines the \code{\link{AcousticLayer}} process data, which sets the range intervals of the acoustic layers used in acoustic-trawl estimation models in StoX.
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
 \seealso{
 Biotic Layers are generated using \code{\link{DefineBioticLayer}}. For the horizontal resolution (Stratum/PSU) see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
 }

@@ -83,10 +83,6 @@ Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal
 
 Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.
 }
-\examples{
-x <- 1
-
-}
 \seealso{
 To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}.
 }

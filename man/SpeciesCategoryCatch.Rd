@@ -11,13 +11,6 @@ SpeciesCategoryCatch(StoxBioticData, CatchVariable = c("Count", "Weight"))
 
 \item{CatchVariable}{Specifies whether to output catch or weight (kilogram).}
 }
-\value{
-A data.table is returned with awesome stuff.
-}
 \description{
 This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram) of each species category in columns.
-}
-\examples{
-x <- 1
-
 }

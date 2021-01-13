@@ -10,18 +10,11 @@ RelativeLengthDistribution(LengthDistributionData)
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 }
 \value{
-A data.table is returned with awesome stuff.
+An object of StoX data type \code{\link{LengthDistributionData}}.
 }
 \description{
-This function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and verticacl resolution.
+This function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and vertical resolution.
 }
 \details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
-\seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+This \emph{RelativeLengthDistribution} function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and vertical resolution. Depending on the \emph{LengthDistributionType} of the input LengthDistributionData, there may be small differences in this functions output data even if they originate from the same biotic dataset (Biotic.xml file). See function \code{\link{LengthDistribution}} for a detailed explanation on how different LengthDistributionTypes are created, leading to differences in the output from the RelativeLengthDistribution function.
 }

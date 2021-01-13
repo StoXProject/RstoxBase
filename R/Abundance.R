@@ -56,15 +56,6 @@ Abundance <- function(
 #' @inheritParams ProcessData
 #' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 #' 
 #' @export
@@ -151,15 +142,6 @@ Individuals <- function(
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
@@ -478,15 +460,6 @@ addLengthGroupsByReference <- function(
 #' 
 #' @inheritParams ModelData
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 #' 

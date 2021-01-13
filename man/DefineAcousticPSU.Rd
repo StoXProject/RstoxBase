@@ -32,13 +32,6 @@ An object of StoX data type \code{\link{AcousticPSU}}.
 \description{
 Defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs.
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
 \seealso{
 Biotic PSUs are generated using \code{\link{DefineBioticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.
 }

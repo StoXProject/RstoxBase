@@ -2,21 +2,67 @@
 ##################################################
 #' Length distribution
 #' 
-#' This function calculates length frequency distribution per Stratum, biotic PSU, biotic layer, SpeciesCategory and length group defined by the combination of IndividualTotalLength and LengthResolution.
+#' This function calculates length frequency distributions for each biotic Station and Haul by SpeciesCategory.
 #' 
 #' @inheritParams ModelData
-#' @inheritParams ProcessData
-#' @param LengthDistributionType The type of length distribution to use, one of "LengthDist", "NormLengthDist" and "PercentLengthDist" (see 'Details').
+#' @param LengthDistributionType The type of length distribution to use, one of "Standard", "Normalized" and "Percent" (see 'Details').
 #' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".
 #'
-#' @details *********
+#' @details 
+#' The \emph{LengthDistribution} function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionCount is calculated in the same manner.
+#' 
+#' From each CatchFraction, a Sample is usually taken. Various types of individual characteristics or population parameters are measures. The most common parameters are individual length followed by weight. Other parameters are age, sex, maturity etc. The Sample weight and number is recorded. From the CatchFractionWeight and the SampleWeight, a raising factor (\emph{r}) is calculated as:
+#' 
+#' \deqn{r = \frac{CatchFractionWeight}{SampleWeight}}
+#' 
+#' alternatively, the raising factor r can be calculated as:
+#' 
+#' \deqn{r = \frac{CatchFractionCount}{SampleCount}}
+#' 
+#' A \emph{RaisingFactorPriority} parameter determines whether to make the first attempt on calculating the raising factor by weight or count variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.
+#' 
+#' To produce a length frequency distribution for the Haul by SpeciesCategory, each Sample length distribution is first multiplied with the raising factor of the Sample. A total length distribution for the entire catch, is produced by adding the adjusted length distributions from all the Samples into one common length distribution for the SpeciesCategory in a Haul.
+#' 
+#' The Samples may have different length group intervals. If this is the case the intervals may overlap between Samples.The combination of length frequencies from all Samples of a SpeciesCategory can be expressed as:
+#' 
+#'   
+#' \deqn{d_s = \displaystyle\sum_{i=1}^{n} r_{s,i} \times d_{s,i}}
+#' 
+#' where  
+#' 
+#'\eqn{d_s}    is the resultant length distribution for the station or Haul \eqn{s},
+#' 
+#'\eqn{d_{s,i}}  is the length distribution of Sample no \eqn{i} at Haul \eqn{s}, 
+#' 
+#'\eqn{r_{s,i}}   is a raising factor for Sample no \eqn{i} at Haul \eqn{s},
+#' 
+#'\eqn{n}     is the number of Samples
+#' 
+#' The LengthDistribution function can generate three different distributions types:
+#' 
+#'1) \strong{Standard}
+#' 
+#' A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionCount and SampleCount. If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.
+#' 
+#' 2) \strong{Normalized}
+#' 
+#' Normalized length distribution to one nautical mile towing distance. This distribution shows the length distribution as if the towing distance had been one nautical mile long and the entire catch had been length measured. The length distributions Standard is used together with the towing distance of the trawl station, to calculate this distribution. The number of fish from Standard in each length group is divided by the towing distance. It is worth noting that length distributions of type Normalied from several stations may be compared since they are independent of effort (towing distance). Each of the length distributions reflects the CPUE of the trawl hauls. They are in other words implicitly weighted by CPUE. If towing distance is lacking for a station, length distributions of type Normalized cannot be made.
+#' 
+#' 3) \strong{Percent}
+#' 
+#' Length distribution in percent. Length distributions of this type reflects the shape of the length distribution and contains therefore no implicit weighting.The calculation of percent length distributions is done as follows:
+#'
+#' A) If a SpeciesCategory at a station only have one Sample, the percent distribution is generated directly from the Sample length distribution. There is no need for knowing the raising factor.
+#'
+#' B) If a SpeciesCategory in a Hauls have more than one Sample, the percent distributions are generated by converting the Standard into percent distribution. This implies that distributions with more than one Sample and with missing raising factors will not be generated as no Standard distribution exist for these.
+#'   
+#'\strong{General comments on the function}
+#'   
+#' Note that some StoX models require one specific LengthDistributionType as output from the process and as input to other processes in the model.
+#' 
 #' 
 #' @return
-#' A \code{\link{LengthDistributionData}} object.
-#' 
-#' @examples
-#' 
-#' @seealso 
+#' An object of StoX data type \code{\link{LengthDistributionData}}.
 #' 
 #' @export
 #' 
@@ -154,20 +200,18 @@ LengthDistribution <- function(
 ##################################################
 #' Regroup length distribution to common intervals
 #' 
-#' This function aggregates the \code{WeightedCount} of the LengthDistributionData
+#' The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the \code{WeightedCount} of the LengthDistributionData
 #' 
 #' @inheritParams ModelData
-#' @inheritParams ProcessData
 #' @param LengthInterval Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' NOTE. Function parameter \emph{SpeciesCategory} is NOT YET IMPLEMENTED. Consequently, a common LengthInterval is applied to all SpeciesCategories in the input data.
+#' 
+#' The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the length distributions in the output dataset and across all Hauls.A function parameter \emph{SpeciesCategory} is used to choose either All or one SpeciesCategory from the input LengthDistribution data set. A dropdown list of available SpeciesCategories in the input data is available for the selection. The function parameter \emph{LengthInterval} is used to set the desired output length interval in centimeters.  The new length interval can never have finer resolution than the coarsest resolution found in the data that are due to be regrouped. A least common multiple of the length group intervals in the input is calculated. This value is the highest resolution possible. If the user chooses a finer resolution than this for the parameter LengthInterval, a warning will be given, and the least common multiple will be applied for the output LengthDistribution dataset from the process.
 #' 
 #' @return
-#' A \code{\link{LengthDistributionData}} object.
-#' 
-#' @examples
-#' x <- 1
+#' An object of StoX data type \code{\link{LengthDistributionData}}.
 #' 
 #' @export
 #' 
@@ -427,24 +471,19 @@ extractColumnsBy <- function(values, table, refvar, vars) {
 ##################################################
 #' Relative length distribution
 #' 
-#' This function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and verticacl resolution.
+#' This function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and vertical resolution.
 #' 
 #' @inheritParams ModelData
-#' @inheritParams ProcessData
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' This \emph{RelativeLengthDistribution} function converts a length distribution to a relative length distribution as percent within each SpeciesCategory for the present horizontal and vertical resolution. Depending on the \emph{LengthDistributionType} of the input LengthDistributionData, there may be small differences in this functions output data even if they originate from the same biotic dataset (Biotic.xml file). See function \code{\link{LengthDistribution}} for a detailed explanation on how different LengthDistributionTypes are created, leading to differences in the output from the RelativeLengthDistribution function.
 #' 
 #' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' An object of StoX data type \code{\link{LengthDistributionData}}.
 #' 
 #' @export
 #' 
+
 RelativeLengthDistribution <- function(LengthDistributionData) {
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
@@ -472,14 +511,8 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' @param LayerDefinitionMethod See \code{\link{DefineBioticLayer}}
 #' @inheritParams DefineBioticLayer
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An \code{\link{SumLengthDistributionData}} object.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @export
 #' 
@@ -531,14 +564,8 @@ SumLengthDistribution <- function(
 #' @param PSUDefinitionMethod See \code{\link{DefineBioticPSU}}
 #' @inheritParams DefineBioticPSU
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' An \code{\link{MeanLengthDistributionData}} object.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @export
 #' 
@@ -618,19 +645,50 @@ MeanLengthDistribution <- function(
 #' 
 #' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
 #' 
-#' @inheritParams ModelData
 #' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' 
 #' @details
-#' This function is awesome and does excellent stuff.
+#' The purpose of the \emph{AssignmentLengthDistribution} function is to produces one total length distribution for each combination of assigned biotic stations with corresponding weighting variables. 
+#'
+#'If the biotic station length distributions which shall make up the total length distribution is of type \emph{Standard} (length distribution as if the complete catch on deck was measured), this will give an \emph{implicit weighting by catch as well as towing distance}.
+#'
+#'If the biotic station length distributions which shall make up the total length distribution is of type \emph{Normalized} (length distribution as if the complete catch on deck was measured and as if the towing distance had been 1 nautical mile), this will give an \emph{implicit weighting by catch}.
+#'
+#'If the biotic station length distributions which shall make up the total length distribution is of type \emph{Percent} (sum of percentages for all length groups in the distribution is 100 and the shape of the distribution is the aim), this will give \emph{NO implicit weighting}.
+#'
+#'One total length distribution is calculated as follows:
+#'
+#'1)	For each biotic station a weighting factor for each station is calculated from the weight variables of the assigned stations:
+#'
+#'\deqn{W_s = \frac{w_s}{\sum_{y=1}^{n} w_y}}
+#'
+#'where
+#'
+#'\eqn{W_s} 		= weighting factor for station \eqn{s}
+#'
+#'\eqn{n}		    = number of trawl stations to be combined
+#'
+#'\eqn{w_s}  		= the value of the weight variable for station \eqn{s}
+#'
+#'\eqn{w_y} 		= the value of the weight variable for station \eqn{y}
+#'
+#'
+#'2)	For each length distribution by biotic station (\eqn{d_s}), the number or percentage value in each length group is multiplied by \eqn{W_s}:
+#'
+#'\deqn{dw_s = W_s \times d_s}
+#'
+#'3)	The total length distribution \eqn{d_t} is finally calculated by adding the numbers in each length interval for all stations where \eqn{n} is the number of stations to be combined:
+#'
+#'\deqn{d_t = \displaystyle\sum_{y=1}^{n} dw_y}
+#'
+#'\eqn{d_t} is the total length distribution for one assignment.
+#'
 #' 
 #' @return
-#' A data.table is returned with awesome stuff.
+#' An object of StoX datatype \code{\link{AssignmentLengthDistributionData}}.
 #' 
-#' @examples
-#' x <- 1
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' @seealso \code{\link{LengthDistribution}} to produce the input LengthDistributionData, and \code{\link{DefineBioticAssignment}} to produce the input BioticAssignment.
 #' 
 #' @export
 #' 
