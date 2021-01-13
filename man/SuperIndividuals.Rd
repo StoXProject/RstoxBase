@@ -20,18 +20,8 @@ SuperIndividuals(
 
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 }
-\value{
-A data.table is returned with awesome stuff.
-}
 \description{
 This function distributes Abundance to the individuals defined by \code{\link{Individuals}}.
-}
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
 }
 \seealso{
 \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.

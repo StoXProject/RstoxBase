@@ -69,9 +69,6 @@
 #' @return
 #' An object of StoX data type \code{\link{DensityData}}.
 #' 
-#' @examples
-#' x <- 1
-#' 
 #' @seealso To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}.
 #' 
 #' @export
@@ -342,15 +339,6 @@ getMidIndividualTotalLength <- function(x) {
 #' @param SweepWidth The constant sweep width in meters.
 #' @param SweepWidthByCruise A table of two columns, \code{Cruise} and \code{SweepWidth}, giving the sweep width for each cruise.
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
 #' @seealso See \code{\link{AcousticDensity}} for acoustic density.
 #' 
 #' @export
@@ -457,15 +445,6 @@ SweptAreaDensity <- function(
 #' 
 #' @inheritParams ModelData
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
-#' 
 #' @seealso See \code{\link{AcousticDensity}} for acoustic density and  \code{\link{SweptAreaDensity}} for swept-area density.
 #' 
 #' @export
@@ -494,12 +473,6 @@ MeanDensity <- function(
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @param CatchVariable Specifies whether to output catch or weight (kilogram).
-#' 
-#' @return
-#' A data.table is returned with awesome stuff.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @export
 #' 

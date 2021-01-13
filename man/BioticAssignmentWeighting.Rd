@@ -103,10 +103,6 @@ The NASC WeightingMethod is associated with the following user parameters:
 
 where \emph{l} is the fish "total length" in centimeters given as the lower value of the length group interval.
 }
-\examples{
-x <- 1
-
-}
 \seealso{
 \code{\link{DefineBioticAssignment}} for generating BioticAssignment.
 }

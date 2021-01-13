@@ -33,13 +33,6 @@ A \code{\link{SumNASCData}} object.
 \description{
 This function summes NASC data vertically.
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
 \seealso{
 \code{\link{NASC}} and \code{\link{MeanNASC}}.
 }

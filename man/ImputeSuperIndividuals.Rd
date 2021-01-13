@@ -11,18 +11,8 @@ ImputeSuperIndividuals(SuperIndividualsData, Seed = 1)
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
 }
-\value{
-A data.table is returned with awesome stuff.
-}
 \description{
 This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
-}
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
 }
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.

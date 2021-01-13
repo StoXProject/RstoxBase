@@ -92,7 +92,7 @@ alternatively,
 \emph{Watercolomn} method which defines one layer for the entire watercolumn
 \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
 \emph{Resolution} method is assosiated with function parameter \emph{Resolution} which gives the desired thickness (in meters) of the layers.
-\emph{LayerTable} method is assosiated with function parameter \emph{LayerTable} which \strong{??? NEED TO BE COMPLETED ???}
+
   
 The available automatic assignment methods are:
 
@@ -139,10 +139,6 @@ where:
 The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned haulss are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
 
 NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.
-}
-\examples{
-x <- 1
-
 }
 \references{
 Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, \url{https://doi.org/10.1016/j.fishres.2007.07.013}

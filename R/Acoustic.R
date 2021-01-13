@@ -8,9 +8,6 @@
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' A \code{\link{NASCData}} object.
 #' 
@@ -71,14 +68,8 @@ getDepth <- function(depth0, range, angle) {
 #' @param LayerDefinitionMethod See \code{\link{DefineAcousticLayer}}
 #' @inheritParams DefineAcousticLayer
 #' 
-#' @details
-#' This function is awesome and does excellent stuff.
-#' 
 #' @return
 #' A \code{\link{SumNASCData}} object.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso \code{\link{NASC}} and \code{\link{MeanNASC}}.
 #' 
@@ -133,12 +124,6 @@ SumNASC <- function(
 #' 
 #' @details
 #' This function is awesome and does excellent stuff.
-#' 
-#' @return
-#' A \code{\link{SumNASCData}} object.
-#' 
-#' @examples
-#' x <- 1
 #' 
 #' @seealso \code{\link{NASC}} and \code{\link{MeanNASC}}.
 #' 

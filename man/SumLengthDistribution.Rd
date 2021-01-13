@@ -33,10 +33,3 @@ An \code{\link{SumLengthDistributionData}} object.
 \description{
 This function summes LengthDistributionData data vertically.
 }
-\details{
-This function is awesome and does excellent stuff.
-}
-\examples{
-x <- 1
-
-}
