@@ -52,6 +52,9 @@ dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
     spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data, match.ID = FALSE)
     #plot(SpP, col = 1:5, pbg="white")
     
+    # Define default projection:
+    sp::proj4string(spatialPolygonsDataFrame) <- getRstoxBaseDefinitions("proj4string")
+    
     return(spatialPolygonsDataFrame)
 }
 
@@ -78,6 +81,8 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' 
 #' @details
 #' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
+#' 
+#' Polygons are expected to have the the following projection: getRstoxBaseDefinitions("proj4string")
 #' 
 #' @return
 #' An object of StoX data type \code{\link{StratumPolygon}}.
@@ -369,7 +374,7 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
     
     
     stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
-    sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+    #sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
     #stratumPolygon1 <- sf::st_transform(ss, sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
     
     

@@ -233,6 +233,8 @@ getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, Stratu
     SSUs <- SSU_PSU[PSU == thisPSU, SSU]
     pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSUs, c("Longitude", "Latitude")]
     SpatialPSUs <- sp::SpatialPoints(pos)
+    # Det the default projection to the points:
+    sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
     
     # Find the stratum of each PSU:
     StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
