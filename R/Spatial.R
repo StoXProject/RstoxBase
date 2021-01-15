@@ -375,6 +375,7 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
     
     stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
     #sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+    sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string")
     #stratumPolygon1 <- sf::st_transform(ss, sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
     
     
