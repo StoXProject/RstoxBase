@@ -4,12 +4,12 @@
 \alias{ReportSpeciesCategoryCatch}
 \title{Report SpeciesCategoryCatch}
 \usage{
-ReportSpeciesCategoryCatch(SpeciesCategoryCatchData, StoxBioticTranslation)
+ReportSpeciesCategoryCatch(SpeciesCategoryCatchData, Translation)
 }
 \arguments{
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
 
-\item{StoxBioticTranslation}{The \code{\link[RstoxData]{StoxBioticTranslation}} process data.}
+\item{Translation}{The \code{\link[RstoxData]{Translation}} process data.}
 }
 \value{
 A \code{\link{ReportSpeciesCategoryCatchData}} object.

@@ -1474,9 +1474,9 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 #' 
 #' @inheritParams general_arguments
 #' @param TargetStrengthMethod  Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Table", for providing the acoustic target strength parameters in the table \code{TargetStrengthDefinition}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
-#' @param TargetStrengthDefinition A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
-#' @param FileName A file from which to read the \code{TargetStrengthDefinition}.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table \code{TargetStrengthTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
+#' @param TargetStrengthTable A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
+#' @param FileName A file from which to read the \code{TargetStrengthTable}.
 #' 
 #' @details
 #' The \code{TargetStrengthMethod} has the following possible values: 
@@ -1498,9 +1498,9 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 DefineAcousticTargetStrength <- function(
     processData, UseProcessData = FALSE, 
     # Note that "LengthExponent" is an option for TargetStrengthMethod (used by BioticAssignmentWeighting()), but this is not shown.
-    DefinitionMethod = c("Table", "ResourceFile"),
+    DefinitionMethod = c("ResourceFile", "TargetStrengthTable"),
     TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
-    TargetStrengthDefinition = data.table::data.table(), 
+    TargetStrengthTable = data.table::data.table(), 
     FileName
 ) {
     
@@ -1517,7 +1517,7 @@ DefineAcousticTargetStrength <- function(
     AcousticTargetStrength <- getAcousticTargetStrength(
         TargetStrengthMethod = TargetStrengthMethod, 
         DefinitionMethod = DefinitionMethod, 
-        TargetStrengthTable = TargetStrengthDefinition, 
+        TargetStrengthTable = TargetStrengthTable, 
         #TargetStrength = get(paste0(TargetStrengthMethod, "Table")), 
         FileName = FileName
     )
@@ -1530,7 +1530,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
     # Read the table if requested, or issue an error if not given:
     if(DefinitionMethod == "Table") {
         if(length(TargetStrengthTable) == 0) {
-            stop(TargetStrengthMethod, "TargetStrengthTable must be given if DefinitionMethod = \"Table\"")
+            stop(TargetStrengthMethod, "TargetStrengthTable must be given if DefinitionMethod = \"TargetStrengthTable\"")
         }
     }
     else if(DefinitionMethod == "ResourceFile") {

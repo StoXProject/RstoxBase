@@ -76,7 +76,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' This function reads a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} or a \code{\link{StoX_multipolygon_WKT}} file and returns an object of StoX data type \code{\link{StratumPolygon}} file.
 #' 
 #' @inheritParams general_arguments
-#' @param DefinitionMethod A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "None" to start off with no strata. Strata can be added, modified and removed in the StoX GUI.
+#' @param DefinitionMethod A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.
 #' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} (may be a folder) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.
 #' 
 #' @details
@@ -99,7 +99,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #'
 DefineStratumPolygon <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("ResourceFile", "None"), 
+    DefinitionMethod = c("ResourceFile", "Manual"), 
     FileName
 ) {
     #if(!is.null(processData) & UseProcessData) {
@@ -154,7 +154,7 @@ DefineStratumPolygon <- function(
             stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
         }
     }
-    else if(grepl("None", DefinitionMethod, ignore.case = TRUE)) {
+    else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
     }
     else {
