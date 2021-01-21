@@ -201,7 +201,7 @@ getReportFunctionPackage <- function(x) {
 #' Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 #' 
 #' @inheritParams ModelData
-#' @param StoxBioticTranslation The \code{\link[RstoxData]{StoxBioticTranslation}} process data.
+#' @param Translation The \code{\link[RstoxData]{Translation}} process data.
 #' 
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
@@ -216,24 +216,24 @@ getReportFunctionPackage <- function(x) {
 #' 
 ReportSpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData, 
-    StoxBioticTranslation
+    Translation
 ) 
 {
     
-    # Add a warining if there are empty cells in the NewValue column of the StoxBioticTranslation table:
-    ValueWithEmptyNewValue <- StoxBioticTranslation[nchar(NewValue) == 0, Value]
+    # Add a warining if there are empty cells in the NewValue column of the Translation table:
+    ValueWithEmptyNewValue <- Translation[nchar(NewValue) == 0, Value]
     if(length(ValueWithEmptyNewValue)) {
-        warning("StoX: The following Values had empty NewValue in the StoxBioticTranslation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
+        warning("StoX: The following Values had empty NewValue in the Translation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
         SpeciesCategoryCatchData$SpeciesCategoryCatch[, V1 := NULL]
     }
     
-    ValueNotPresentInStoxBioticTranslation <- setdiff(
+    ValueNotPresentInTranslation <- setdiff(
         setdiff(names(SpeciesCategoryCatchData$SpeciesCategoryCatch), "Haul"), 
-        StoxBioticTranslation$NewValue
+        Translation$NewValue
     )
-    if(length(ValueNotPresentInStoxBioticTranslation)) {
-        warning("StoX: The following SpeciesCategories were not found in the NewValue column of the StoxBioticTranslation, and were removed from the report: ", paste(ValueNotPresentInStoxBioticTranslation, collapse = ", "), ".")
-        SpeciesCategoryCatchData$SpeciesCategoryCatch[, (ValueNotPresentInStoxBioticTranslation) := NULL]
+    if(length(ValueNotPresentInTranslation)) {
+        warning("StoX: The following SpeciesCategories were not found in the NewValue column of the Translation, and were removed from the report: ", paste(ValueNotPresentInTranslation, collapse = ", "), ".")
+        SpeciesCategoryCatchData$SpeciesCategoryCatch[, (ValueNotPresentInTranslation) := NULL]
     }
     
     ReportSpeciesCategoryCatchData <- RstoxData::mergeDataTables(SpeciesCategoryCatchData, output.only.last = TRUE)

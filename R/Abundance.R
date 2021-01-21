@@ -161,7 +161,6 @@ SuperIndividuals <- function(
     # Make sure the AbundanceData is proper data.table:
     AbundanceData <- data.table::setDT(AbundanceData)
     
-    
     # Add common length group IDs in SuperIndividualsData and AbundanceData, given the length groups in AbundanceData (by referencem, so the inputs are modified):
     #AbundanceData <- as.data.table(AbundanceData)
     #addLengthGroups2(
@@ -196,7 +195,8 @@ SuperIndividuals <- function(
         SuperIndividualsData, 
         AbundanceData[, ..variablesToGetFromAbundanceData], 
         by = abundanceGrouping, 
-        allow.cartesian = TRUE
+        allow.cartesian = TRUE, 
+        all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species.
     )
     
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
