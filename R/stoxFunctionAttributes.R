@@ -565,8 +565,8 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            TargetStrengthDefinition = list(
-                DefinitionMethod = "Table", 
+            TargetStrengthTable = list(
+                DefinitionMethod = "TargetStrengthTable", 
                 UseProcessData = FALSE
             ), 
             FileName = list(
