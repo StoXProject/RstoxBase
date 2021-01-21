@@ -36,12 +36,7 @@ DefinePSU <- function(
     DefinitionMethod <- match.arg(DefinitionMethod)
     PSUType <- match.arg(PSUType)
     
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
-    
-    # Get the MergedStoxDataStationLevel if not given directly, needed :
+    # Get the MergedStoxDataStationLevel if not given directly:
     if(!length(MergedStoxDataStationLevel)) {
         if(length(StoxData)) {
             MergedStoxDataStationLevel <- RstoxData::mergeDataTables(
@@ -59,6 +54,17 @@ DefinePSU <- function(
         }
     }
     
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        if(SavePSUByTime) {
+            processData$PSUByTime <- getPSUByTime(
+                PSUProcessData = processData, 
+                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                PSUType = PSUType
+            )
+        }
+        return(processData)
+    }
     
     # Define the PSU prefix and the SSU label, which is the name of the SSU column:
     prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)

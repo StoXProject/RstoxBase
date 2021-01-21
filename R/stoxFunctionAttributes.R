@@ -64,13 +64,13 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE
             ), 
             # Require UseProcessData = FALSE OR UseProcessData = TRUE and SavePSUByTime = TRUE for StoxAcousticData to show:
-            StoxAcousticData = list(
-                UseProcessData = FALSE
-            ), 
-            StoxAcousticData = list(
-                UseProcessData = TRUE, 
-                SavePSUByTime = TRUE
-            ), 
+            #StoxAcousticData = list(
+            #    UseProcessData = FALSE
+            #), 
+            #StoxAcousticData = list(
+            #    UseProcessData = TRUE, 
+            #    SavePSUByTime = TRUE
+            #), 
             StratumPolygon = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "EDSUToPSU"
