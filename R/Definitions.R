@@ -549,16 +549,6 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
 
 formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
     
-    # Return immediately if empty table:
-    if(!nrow(table)) {
-        return(table)
-    }
-    
-    # Remove any duplicated columns:
-    if(any(duplicated(names(table)))) {
-        table[, which(duplicated(names(table))) := NULL]
-    }
-    
     # Get the column order:
     columnOrder <- c(
         tableDefinition, 
@@ -568,12 +558,29 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
         columnOrder <- intersect(columnOrder, names(table))
     }
     
+    # Return immediately if empty table, but add the columns given in the 'columnOrder':
+    if(!nrow(table)) {
+        table <- data.table::as.data.table(
+            structure(
+                rep(list(character()), length(columnOrder)), 
+                names = columnOrder
+            )
+        )
+        return(table)
+    }
+    
+    # Remove any duplicated columns:
+    if(any(duplicated(names(table)))) {
+        table[, which(duplicated(names(table))) := NULL]
+    }
+    # Remove undefined columns:
     if(!keep.all) {
         removeColumnsByReference(
             data = table, 
             toRemove =  setdiff(names(table), columnOrder)
         )
     }
+    
     
     # Order the columns:
     data.table::setcolorder(table, columnOrder)

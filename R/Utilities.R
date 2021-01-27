@@ -920,3 +920,9 @@ toJSON_Rstox <- function(x, ...) {
     
     do.call(jsonlite::toJSON, lll)
 }
+
+# Function to set attributes:
+setAtt <- function(x, ...) {
+    attributes(x) <- list(...)
+    return(x)
+}
