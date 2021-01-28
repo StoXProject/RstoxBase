@@ -556,7 +556,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "AcousticTargetStrength", 
         functionParameterFormat = list(
             FileName = "filePath",
-            TargetStrengthDefinition = "targetStrengthDefinitionTable"
+            TargetStrengthTable = "targetStrengthTable"
         ), 
         functionArgumentHierarchy = list(
             TargetStrengthMethod = list(
@@ -691,7 +691,7 @@ processPropertyFormats <- list(
         #    )
         #}
     ), 
-    targetStrengthDefinitionTable = list(
+    targetStrengthTable = list(
         class = "table", 
         title = function(TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
             TargetStrengthMethod <- match.arg(TargetStrengthMethod)
