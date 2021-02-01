@@ -141,7 +141,7 @@ Individuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density.
+#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{AbundanceData}} (via \code{link{DensityData}}).
 #' 
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
@@ -454,12 +454,15 @@ addLengthGroupsByReference <- function(
 
 ##################################################
 ##################################################
-#' Indivduals to distribute abundance to to create super-individuals
+#' Impute missing information from indivduals with present age for each each IndividualTotalLength
 #' 
-#' This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
+#' This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
 #' 
 #' @inheritParams ModelData
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
+#' 
+#' #' @return
+#' An object of StoX data type \code{\link{SuperIndividualsData}}. 
 #' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 #' 
@@ -514,7 +517,7 @@ ImputeData <- function(
     levels = list(
         "Haul", 
         "Stratum", 
-        "AllStrata"
+        "Survey"
     )
 ) {
     
@@ -526,9 +529,9 @@ ImputeData <- function(
     # Introduce an Individual index for use in the sorted sampling:
     dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]
     
-    # Add an AllStrata column to the data to facilitate the AllStrata level: 
-    dataCopy[, AllStrata := "AllStrata"]
-    #setcolorder(dataCopy, neworder = "AllStrata")
+    ## Add an AllStrata column to the data to facilitate the AllStrata level: 
+    #dataCopy[, AllStrata := "AllStrata"]
+    ##setcolorder(dataCopy, neworder = "AllStrata")
     
     # Get a vector with the seed of each level:
     seedVector <- structure(as.list(getSeedVector(size = length(levels), seed = seed)), names = levels)
@@ -571,7 +574,7 @@ ImputeData <- function(
     dataCopy[, IndividualIndex := NULL]
     dataCopy[, RowIndex := NULL]
     dataCopy[, ReplaceRowIndex := NULL]
-    dataCopy[, AllStrata := NULL]
+    #dataCopy[, AllStrata := NULL]
     
     return(dataCopy)
 }

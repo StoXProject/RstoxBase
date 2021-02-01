@@ -6,7 +6,7 @@
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param ReportFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
+#' @param ReportFunction The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.
 #' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
 #'
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
@@ -45,7 +45,7 @@ ReportSuperIndividuals <- function(
 #' 
 #' @param stoxData Output from any StoX function.
 #' @inheritParams general_report_arguments
-#' @param aggregationFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
+#' @param aggregationFunction The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.
 #' @param subTable The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.
 #' @param na.rm Used in the function specified by \code{aggregationFunction}.
 #' @inheritParams ReportSuperIndividuals

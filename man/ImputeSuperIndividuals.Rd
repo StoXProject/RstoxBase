@@ -2,17 +2,20 @@
 % Please edit documentation in R/Abundance.R
 \name{ImputeSuperIndividuals}
 \alias{ImputeSuperIndividuals}
-\title{Indivduals to distribute abundance to to create super-individuals}
+\title{Impute missing information from indivduals with present age for each each IndividualTotalLength}
 \usage{
 ImputeSuperIndividuals(SuperIndividualsData, Seed = 1)
 }
 \arguments{
 \item{SuperIndividualsData}{The \code{\link{SuperIndividualsData}} data.}
 
-\item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
+\item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.
+
+#' @return
+An object of StoX data type \code{\link{SuperIndividualsData}}.}
 }
 \description{
-This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
+This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
 }
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.

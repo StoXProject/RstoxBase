@@ -19,7 +19,7 @@ aggregateBaselineDataOneTable(
 
 \item{TargetVariable}{The variable to report.}
 
-\item{aggregationFunction}{The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".}
+\item{aggregationFunction}{The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.}
 
 \item{subTable}{The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.}
 
