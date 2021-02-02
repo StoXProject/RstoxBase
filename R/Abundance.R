@@ -222,16 +222,12 @@ SuperIndividuals <- function(
         LengthDistributionData <- unique(LengthDistributionData)
         
         
-        # Sum in each length group:
+        # Sum in each length group (in case lengths are grouped coearser than the original groups):
         haulGrouping <- c(
             "Haul", 
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
             "LengthGroup"
         )
-        LengthDistributionData[, WeightedCount := sum(WeightedCount), by = haulGrouping]
-        keep <- !duplicated(LengthDistributionData[, ..haulGrouping])
-        LengthDistributionData <- subset(LengthDistributionData, keep)
-        
         # Add the haul density as the WeightedCount to the SuperIndividualsData (requiring Normalized LengthDistributionType):
         SuperIndividualsData <- merge(
             SuperIndividualsData, 
@@ -241,10 +237,17 @@ SuperIndividuals <- function(
             by = haulGrouping
         )
         
+        
+        
+        SuperIndividualsData[, WeightedCount := sum(WeightedCount), by = abundanceGrouping]
+        keep <- !duplicated(SuperIndividualsData[, ..abundanceGrouping])
+        SuperIndividualsData <- subset(SuperIndividualsData, keep)
+        
+        
         # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup:
         SuperIndividualsData[, sumWeightedCount := sum(WeightedCount, na.rm = TRUE), by = abundanceGrouping]
         # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
-        SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount , by = haulGrouping]
+        SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount, by = haulGrouping]
         
         
         
