@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Indivduals to distribute abundance to to create super-individuals — ImputeSuperIndividuals • RstoxBase</title>
+<title>Impute missing information from indivduals with present age for each each IndividualTotalLength — ImputeSuperIndividuals • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Indivduals to distribute abundance to to create super-individuals — ImputeSuperIndividuals" />
-<meta property="og:description" content="This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals." />
+<meta property="og:title" content="Impute missing information from indivduals with present age for each each IndividualTotalLength — ImputeSuperIndividuals" />
+<meta property="og:description" content="This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the SuperIndividualsData) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from." />
 
 
 
@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.44</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.46</span>
       </span>
     </div>
 
@@ -107,13 +107,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Indivduals to distribute abundance to to create super-individuals</h1>
+    <h1>Impute missing information from indivduals with present age for each each IndividualTotalLength</h1>
     <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R'><code>R/Abundance.R</code></a></small>
     <div class="hidden name"><code>ImputeSuperIndividuals.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.</p>
+    <p>This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the <code>SuperIndividualsData</code>) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.</p>
     </div>
 
     <pre class="usage"><span class='fu'>ImputeSuperIndividuals</span><span class='op'>(</span><span class='va'>SuperIndividualsData</span>, Seed <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></pre>
@@ -127,7 +127,9 @@
     </tr>
     <tr>
       <th>Seed</th>
-      <td><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></td>
+      <td><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p>
+<p>#' @return
+An object of StoX data type <code><a href='SuperIndividualsData.html'>SuperIndividualsData</a></code>.</p></td>
     </tr>
     </table>
 

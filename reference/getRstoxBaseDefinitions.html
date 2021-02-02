@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.44</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.46</span>
       </span>
     </div>
 
@@ -689,8 +689,8 @@
 #&gt;     }
 #&gt;     return(prefix)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb2f1f597a0&gt;
-#&gt; &lt;environment: 0x7fb2f1f5b810&gt;
+#&gt; &lt;bytecode: 0x7fbbedf9e1e8&gt;
+#&gt; &lt;environment: 0x7fbbedfa0258&gt;
 #&gt; 
 #&gt; $getSSULabel
 #&gt; function (PSUType) 
@@ -706,8 +706,8 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb2f1f58fc0&gt;
-#&gt; &lt;environment: 0x7fb2f1f5b810&gt;
+#&gt; &lt;bytecode: 0x7fbbedf9da08&gt;
+#&gt; &lt;environment: 0x7fbbedfa0258&gt;
 #&gt; 
 #&gt; $getStationLevel
 #&gt; function (PSUType) 
@@ -723,8 +723,8 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb2f1f5c6f0&gt;
-#&gt; &lt;environment: 0x7fb2f1f5b810&gt;
+#&gt; &lt;bytecode: 0x7fbbedfa1138&gt;
+#&gt; &lt;environment: 0x7fbbedfa0258&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -744,20 +744,17 @@
 #&gt; 
 #&gt; 
 #&gt; $reportFunctions
-#&gt;        functionName packageName weighted weightingParameter multiple
-#&gt;  1:     summaryStox   RstoxBase    FALSE                        TRUE
-#&gt;  2:             sum        base    FALSE                       FALSE
-#&gt;  3:            mean        base    FALSE                       FALSE
-#&gt;  4:   weighted.mean       stats     TRUE                  w    FALSE
-#&gt;  5:          median       stats    FALSE                       FALSE
-#&gt;  6:             min        base    FALSE                       FALSE
-#&gt;  7:             max        base    FALSE                       FALSE
-#&gt;  8:              sd       stats    FALSE                       FALSE
-#&gt;  9:             var       stats    FALSE                       FALSE
-#&gt; 10:              cv   RstoxBase    FALSE                       FALSE
-#&gt; 11:         summary        base    FALSE                        TRUE
-#&gt; 12:        quantile       stats    FALSE                        TRUE
-#&gt; 13: percentile_5_95   RstoxBase    FALSE                        TRUE
+#&gt;      functionName packageName weighted weightingParameter multiple
+#&gt;  1:   summaryStox   RstoxBase    FALSE                        TRUE
+#&gt;  2:           sum        base    FALSE                       FALSE
+#&gt;  3:          mean        base    FALSE                       FALSE
+#&gt;  4: weighted.mean       stats     TRUE                  w    FALSE
+#&gt;  5:        median       stats    FALSE                       FALSE
+#&gt;  6:           min        base    FALSE                       FALSE
+#&gt;  7:           max        base    FALSE                       FALSE
+#&gt;  8:            sd       stats    FALSE                       FALSE
+#&gt;  9:           var       stats    FALSE                       FALSE
+#&gt; 10:            cv   RstoxBase    FALSE                       FALSE
 #&gt; 
 #&gt; $resolutionClasses
 #&gt; $resolutionClasses$NASC
@@ -803,8 +800,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb2f1f59ff0&gt;
-#&gt; &lt;environment: 0x7fb2f1f5b810&gt;
+#&gt; &lt;bytecode: 0x7fbbedf9ea38&gt;
+#&gt; &lt;environment: 0x7fbbedfa0258&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -812,16 +809,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb2f1f5a370&gt;
-#&gt; &lt;environment: 0x7fb2f1f5b810&gt;
+#&gt; &lt;bytecode: 0x7fbbedf9edb8&gt;
+#&gt; &lt;environment: 0x7fbbedfa0258&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb2f1f599d0&gt;
-#&gt; &lt;environment: 0x7fb2f1f5b810&gt;
+#&gt; &lt;bytecode: 0x7fbbedf9e418&gt;
+#&gt; &lt;environment: 0x7fbbedfa0258&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
