@@ -769,30 +769,6 @@ getSequenceToSampleFrom <- function(){
 }
 
 
-# Define report functions:
-summaryStox <- function(x, na.rm = FALSE) {
-    Percentile5 <- stats::quantile(x, 0.05, na.rm = na.rm)
-    Median <- stats::median(x, na.rm = na.rm)
-    Percentile95 <- stats::quantile(x, 0.95, na.rm = na.rm)
-    Mean <- base::mean(x, na.rm = na.rm)
-    SD <- stats::sd(x, na.rm = na.rm)
-    CV <- SD / Mean
-    summaryStox <- c(
-        Percentile5 = Percentile5, 
-        Median = Median, 
-        Percentile95 = Percentile95, 
-        Mean = Mean, 
-        SD = SD, 
-        CV = CV
-    )
-    return(summaryStox)
-}
-CV = function(x, na.rm = FALSE) {
-    stats::sd(x) / mean(x, na.rm = na.rm)
-}
-percentile_5_95 = function(x) {
-    quantiile(x, c(5, 95) / 100)
-}
 
 
 # Define report functions:
@@ -820,18 +796,18 @@ summaryStox <- function(x, na.rm = FALSE) {
 #' @export
 #' 
 cv <- function(x, na.rm = FALSE) {
-    sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
+    stats::sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
 }
-#' The 5 and 95 percentile.
-#' 
-#' @param x A numeric object
-#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
-#' 
-#' @export
-#' 
-percentile_5_95 <- function(x, na.rm = FALSE) {
-    stats::quantile(x, c(0.05, 0.95), na.rm = na.rm)
-}
+### #' The 5 and 95 percentile.
+### #' 
+### #' @param x A numeric object
+### #' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
+### #' 
+### #' @export
+### #' 
+### percentile_5_95 <- function(x, na.rm = FALSE) {
+###     stats::quantile(x, c(0.05, 0.95), na.rm = na.rm)
+### }
 
 
 isEmptyString <- function(x) {

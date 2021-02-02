@@ -153,6 +153,9 @@ DefineStratumPolygon <- function(
         else {
             stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
         }
+        
+        # Assume the default projection:
+        suppressWarnings(sp::proj4string(StratumPolygon) <- RstoxBase::getRstoxBaseDefinitions("proj4string"))
     }
     else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
@@ -375,7 +378,10 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
     
     stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
     #sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+    
+    # Removed this on 2021.02.01, as we rather should ensure that the projection is added in the stratumPolygon:
     sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string")
+    
     #stratumPolygon1 <- sf::st_transform(ss, sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
     
     

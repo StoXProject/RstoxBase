@@ -274,10 +274,6 @@ initiateRstoxBase <- function(){
         AbundanceData = "Abundance"
     )
     
-    emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
-        sp::SpatialPolygons(list()), 
-        data = data.frame()
-    )
     
     # This was in use for the discareded detectDataType():
     ## Define the variables of the main data types used in estimation models:
@@ -297,6 +293,14 @@ initiateRstoxBase <- function(){
     
     #proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
     proj4string <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    
+    # Define an empty SpatialPolygonsDataFrame, with no projection, as it is not possible to assign projection to an empty SpatialPolygonsDataFrame:
+    emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
+        sp::SpatialPolygons(list()), 
+        data = data.frame()
+    )
+    # This failed due to the above note:
+    #suppressWarnings(sp::proj4string(emptyStratumPolygon) <- proj4string)
     
     
     targetStrengthParameters <- list(
@@ -382,10 +386,10 @@ initiateRstoxBase <- function(){
             "max", 
             "sd", 
             "var", 
-            "cv", 
-            "summary", 
-            "quantile", 
-            "percentile_5_95"
+            "cv"#, 
+            #"summary", 
+            #"quantile", 
+            #"percentile_5_95"
         ), 
         packageName = c(
             "RstoxBase", 
@@ -397,10 +401,10 @@ initiateRstoxBase <- function(){
             "base", 
             "stats", 
             "stats", 
-            "RstoxBase", 
-            "base", 
-            "stats", 
-            "RstoxBase"
+            "RstoxBase"#, 
+            #"base", 
+            #"stats", 
+            #"RstoxBase"
         ), 
         weighted = c(
             FALSE, 
@@ -412,10 +416,10 @@ initiateRstoxBase <- function(){
             FALSE, 
             FALSE, 
             FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE
+            FALSE#, 
+            #FALSE, 
+            #FALSE, 
+            #FALSE
         ), 
         weightingParameter = c(
             "", 
@@ -427,10 +431,10 @@ initiateRstoxBase <- function(){
             "", 
             "", 
             "", 
-            "", 
-            "", 
-            "", 
-            ""
+            ""#, 
+            #"", 
+            #"", 
+            #""
         ), 
         multiple = c(
             TRUE, 
@@ -442,10 +446,10 @@ initiateRstoxBase <- function(){
             FALSE, 
             FALSE, 
             FALSE, 
-            FALSE, 
-            TRUE, 
-            TRUE, 
-            TRUE
+            FALSE#, 
+            #TRUE, 
+            #TRUE, 
+            #TRUE
         )
     )
     

@@ -18,7 +18,7 @@ ReportSuperIndividuals(
 
 \item{TargetVariable}{The variable to report.}
 
-\item{ReportFunction}{The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".}
+\item{ReportFunction}{The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.}
 
 \item{GroupingVariables}{The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).}
 

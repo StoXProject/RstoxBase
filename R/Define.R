@@ -489,7 +489,7 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     
     atSSUInStoxData <- match(sort(thisSSU_PSU$SSU), sort(StationTable$SSU))
     if(any(is.na(atSSUInStoxData))) {
-        warning("The StoxData must be the same data that were used to generate the PSUProcessData.")
+        warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData.")
         atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
     }
     

@@ -6,8 +6,6 @@
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param ReportFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
-#' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
 #'
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
@@ -62,8 +60,6 @@ PlotNASCData <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param ReportFunction The function to apply, one of "summaryStox", "sum", "mean", "weighted.mean", "median", "min", "max", "sd", "var", "cv", "summary", "quantile", "percentile_5_95".
-#' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
 #'
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
