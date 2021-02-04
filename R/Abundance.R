@@ -221,7 +221,6 @@ SuperIndividuals <- function(
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
         
-        
         # Sum in each length group (in case lengths are grouped coearser than the original groups):
         haulGrouping <- c(
             "Haul", 
@@ -234,14 +233,15 @@ SuperIndividuals <- function(
             #LengthDistributionData[, c(..haulGrouping, "WeightedCount", "sumWeightedCount", "haulWeightFactor")], 
             #LengthDistributionData[, ..haulGrouping], 
             LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
-            by = haulGrouping
+            by = haulGrouping, 
+            all.y = TRUE
         )
         
-        
-        
-        SuperIndividualsData[, WeightedCount := sum(WeightedCount), by = abundanceGrouping]
-        keep <- !duplicated(SuperIndividualsData[, ..abundanceGrouping])
-        SuperIndividualsData <- subset(SuperIndividualsData, keep)
+        # This seems totally a misunderstanding!!!!!!!!!!!!! We are supposed to distribute on the assigned hauls of each stratum, not necessary the acctual hauls. This is done below.
+        ## Sum the WeightedCount which represents the haul density: 
+        #SuperIndividualsData[, WeightedCount := sum(WeightedCount), by = abundanceGrouping]
+        #keep <- !duplicated(SuperIndividualsData[, ..abundanceGrouping])
+        #SuperIndividualsData <- subset(SuperIndividualsData, keep)
         
         
         # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup:
