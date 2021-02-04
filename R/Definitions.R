@@ -295,6 +295,7 @@ initiateRstoxBase <- function(){
     proj4string <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
     
     # Define an empty SpatialPolygonsDataFrame, with no projection, as it is not possible to assign projection to an empty SpatialPolygonsDataFrame:
+    # Should we use new("SpatialPolygonsDataFrame") instead???????????????
     emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
         sp::SpatialPolygons(list()), 
         data = data.frame()

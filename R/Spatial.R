@@ -400,15 +400,24 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
             #    )
             #)
     
+    # New as of 2021-02-04 (RstoxBase 1.2.48): Calculate the polygon centroids using rgeos::gCentroid, as the labpt is pre-calculated and can in principle be modified:
+    #laea.CRS <- paste0(
+    #    "+proj=laea +lat_0=", 
+    #    stratumPolygon@polygons[[1]]@labpt[2], 
+    #    " +lon_0=", 
+    #    stratumPolygon@polygons[[1]]@labpt[1], 
+    #    " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
+    #)
+    centroid <- rgeos::gCentroid(stratumPolygon)@coords
     laea.CRS <- paste0(
         "+proj=laea +lat_0=", 
-        stratumPolygon@polygons[[1]]@labpt[2], 
+        centroid[2], 
         " +lon_0=", 
-        stratumPolygon@polygons[[1]]@labpt[1], 
+        centroid[1], 
         " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
     )
     
-    
+    # Re-project:
     stratumPolygonSF <- sf::st_transform(stratumPolygonSF, laea.CRS)
     
     
