@@ -164,7 +164,7 @@ LengthDistribution <- function(
     ##### 6. Divide by the effective towed distance for normalized length distribution: #####
     #########################################################################################
     if(LengthDistributionType == "Normalized") {
-        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
+        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
     }
     
     # Add the LengthDistributionType to the LengthDistributionData:

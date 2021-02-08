@@ -196,7 +196,7 @@ SuperIndividuals <- function(
         AbundanceData[, ..variablesToGetFromAbundanceData], 
         by = abundanceGrouping, 
         allow.cartesian = TRUE, 
-        all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species.
+        all.y = TRUE # Keep all stata, even those with no AbundanceData of the requested species.
     )
     
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
@@ -228,12 +228,14 @@ SuperIndividuals <- function(
             "LengthGroup"
         )
         # Add the haul density as the WeightedCount to the SuperIndividualsData (requiring Normalized LengthDistributionType):
+        # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl:
         SuperIndividualsData <- merge(
             SuperIndividualsData, 
             #LengthDistributionData[, c(..haulGrouping, "WeightedCount", "sumWeightedCount", "haulWeightFactor")], 
             #LengthDistributionData[, ..haulGrouping], 
             LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
             by = haulGrouping, 
+            allow.cartesian = TRUE, 
             all.y = TRUE
         )
         
@@ -263,7 +265,10 @@ SuperIndividuals <- function(
         #SuperIndividualsData[, abundanceWeightFactor := WeightedCount / sumWeightedCount , by = haulGrouping]
         
         # Get the number of individuals in each Haul:
-        SuperIndividualsData[, individualCount := as.double(.N), by = haulGrouping]
+        #SuperIndividualsData[, individualCount := as.double(.N), by = haulGrouping]
+        
+        # Set the individualCount to 1 since the number of individuals is implicitely taken care off in haulWeightFactor:
+        SuperIndividualsData[, individualCount := 1]
         ###SuperIndividualsData[, individualCount := 1]
         
         # Remove WeightedCount and sumWeightedCount:
