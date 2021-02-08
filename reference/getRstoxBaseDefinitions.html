@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.48</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.49</span>
       </span>
     </div>
 
@@ -318,9 +318,9 @@
 #&gt; [1] "LengthDistributionType"
 #&gt; 
 #&gt; $dataTypeDefinition$LengthDistributionData$other
-#&gt; [1] "Cruise"                 "EffectiveTowedDistance" "DateTime"              
-#&gt; [4] "Longitude"              "Latitude"               "VerticalNetOpening"    
-#&gt; [7] "HorizontalNetOpening"   "TrawlDoorSpread"       
+#&gt; [1] "Cruise"               "EffectiveTowDistance" "DateTime"            
+#&gt; [4] "Longitude"            "Latitude"             "VerticalNetOpening"  
+#&gt; [7] "HorizontalNetOpening" "TrawlDoorSpread"     
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumLengthDistributionData
@@ -353,9 +353,9 @@
 #&gt; [1] "LengthDistributionType"
 #&gt; 
 #&gt; $dataTypeDefinition$SumLengthDistributionData$Data$other
-#&gt; [1] "EffectiveTowedDistance" "DateTime"               "Longitude"             
-#&gt; [4] "Latitude"               "VerticalNetOpening"     "HorizontalNetOpening"  
-#&gt; [7] "TrawlDoorSpread"       
+#&gt; [1] "EffectiveTowDistance" "DateTime"             "Longitude"           
+#&gt; [4] "Latitude"             "VerticalNetOpening"   "HorizontalNetOpening"
+#&gt; [7] "TrawlDoorSpread"     
 #&gt; 
 #&gt; 
 #&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution
@@ -689,8 +689,8 @@
 #&gt;     }
 #&gt;     return(prefix)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb55eb69358&gt;
-#&gt; &lt;environment: 0x7fb55eb6b3c8&gt;
+#&gt; &lt;bytecode: 0x7fe4129ca838&gt;
+#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
 #&gt; 
 #&gt; $getSSULabel
 #&gt; function (PSUType) 
@@ -706,8 +706,8 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb55eb68b78&gt;
-#&gt; &lt;environment: 0x7fb55eb6b3c8&gt;
+#&gt; &lt;bytecode: 0x7fe4129ca058&gt;
+#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
 #&gt; 
 #&gt; $getStationLevel
 #&gt; function (PSUType) 
@@ -723,8 +723,8 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb55eb6c2a8&gt;
-#&gt; &lt;environment: 0x7fb55eb6b3c8&gt;
+#&gt; &lt;bytecode: 0x7fe4129c9878&gt;
+#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -800,8 +800,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb55eb69ba8&gt;
-#&gt; &lt;environment: 0x7fb55eb6b3c8&gt;
+#&gt; &lt;bytecode: 0x7fe4129c7178&gt;
+#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -809,16 +809,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb55eb69f28&gt;
-#&gt; &lt;environment: 0x7fb55eb6b3c8&gt;
+#&gt; &lt;bytecode: 0x7fe4129c74f8&gt;
+#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fb55eb69588&gt;
-#&gt; &lt;environment: 0x7fb55eb6b3c8&gt;
+#&gt; &lt;bytecode: 0x7fe4129c6b58&gt;
+#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent
