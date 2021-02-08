@@ -81,7 +81,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = NULL, 
             weighting = "LengthDistributionWeight", 
             type = "LengthDistributionType", 
-            other = c("Cruise", "EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            other = c("Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
         ), 
         SumLengthDistributionData = list(
             Data = list(
@@ -94,7 +94,7 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumLengthDistributionWeight", 
                 type = "LengthDistributionType", 
-                other = c("EffectiveTowedDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+                other = c("EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             ), 
             Resolution = list(
                 horizontalResolution = "Station", 

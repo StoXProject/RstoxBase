@@ -1353,11 +1353,11 @@ BioticAssignmentWeighting <- function(
         
         stop("Unfinished method")
     }
-    # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowedDistance:
+    # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
         # Merge Haul and Sample, and sum the catch weight divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
-        NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeight) / EffectiveTowedDistance[1]), by = "Haul"]
+        NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeight) / EffectiveTowDistance[1]), by = "Haul"]
         # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
         BioticAssignmentCopy <- mergeIntoBioticAssignment(
             BioticAssignment = BioticAssignmentCopy, 
@@ -1369,11 +1369,11 @@ BioticAssignmentWeighting <- function(
         #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalWeight, by = "Haul")
         #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalWeight]        
     }
-    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowedDistance:
+    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
     else if(WeightingMethod == "NormalizedTotalCount") {
         # Merge Haul and Sample, and sum the catch count divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
-        NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowedDistance[1]), by = "Haul"]
+        NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowDistance[1]), by = "Haul"]
         # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
         BioticAssignmentCopy <- mergeIntoBioticAssignment(
             BioticAssignment = BioticAssignmentCopy, 
@@ -1384,7 +1384,7 @@ BioticAssignmentWeighting <- function(
         #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalCount, by = "Haul")
         #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalCount]
     }
-    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowedDistance:
+    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
     else if(WeightingMethod == "SumWeightedCount") {
         BioticAssignmentCopy <- addSumWeightedCount(
             BioticAssignment = BioticAssignmentCopy, 
@@ -1469,10 +1469,10 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     
     # Normalize the WeightedCount:
     if(isLengthDistributionType(LengthDistributionData, "Standard")) {
-        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowedDistance]
+        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
     } 
     else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
-        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowedDistance) or \"Normalized\"")
+        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or \"Normalized\"")
     }
     # Sum the normalized WeightedCount for each Haul:
     SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
