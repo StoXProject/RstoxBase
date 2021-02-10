@@ -196,7 +196,8 @@ SuperIndividuals <- function(
         AbundanceData[, ..variablesToGetFromAbundanceData], 
         by = abundanceGrouping, 
         allow.cartesian = TRUE, 
-        all.y = TRUE # Keep all stata, even those with no AbundanceData of the requested species.
+        ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
+        all = TRUE
     )
     
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
@@ -236,7 +237,9 @@ SuperIndividuals <- function(
             LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
             by = haulGrouping, 
             allow.cartesian = TRUE, 
-            all.y = TRUE
+            # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation:
+            # all.y = TRUE
+            all.x = TRUE
         )
         
         # This seems totally a misunderstanding!!!!!!!!!!!!! We are supposed to distribute on the assigned hauls of each stratum, not necessary the acctual hauls. This is done below.
@@ -264,12 +267,8 @@ SuperIndividuals <- function(
         # Divide the WeightedCount by the sum:
         #SuperIndividualsData[, abundanceWeightFactor := WeightedCount / sumWeightedCount , by = haulGrouping]
         
-        # Get the number of individuals in each Haul:
-        #SuperIndividualsData[, individualCount := as.double(.N), by = haulGrouping]
-        
         # Set the individualCount to 1 since the number of individuals is implicitely taken care off in haulWeightFactor:
         SuperIndividualsData[, individualCount := 1]
-        ###SuperIndividualsData[, individualCount := 1]
         
         # Remove WeightedCount and sumWeightedCount:
         SuperIndividualsData[, WeightedCount := NULL]
@@ -439,7 +438,7 @@ addLengthGroupsByReference <- function(
     species <- intersect(speciesInData, speciesInMaster)
     
     if(!length(species)) {
-        data[, LengthGroup := NA]
+        data[, LengthGroup := NA_integer_]
     }
     else {
         for(thisspecies in species) {
@@ -529,10 +528,10 @@ ImputeData <- function(
     )
 ) {
     
-    # Get the data and add the RowIndex foor use when identifying which rows to impute from:
+    # Get the data and add the RowIndex for use when identifying which rows to impute from:
     dataCopy <- data.table::copy(data)
-    RowIndex <- seq_len(nrow(dataCopy))
-    dataCopy[, RowIndex := ..RowIndex]
+    #RowIndex <- seq_len(nrow(dataCopy))
+    #dataCopy[, RowIndex := ..RowIndex]
     
     # Introduce an Individual index for use in the sorted sampling:
     dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]
@@ -544,7 +543,7 @@ ImputeData <- function(
     # Get a vector with the seed of each level:
     seedVector <- structure(as.list(getSeedVector(size = length(levels), seed = seed)), names = levels)
     
-    dataCopy[, ReplaceRowIndex := NA_integer_]
+    dataCopy[, ReplaceIndividualIndex := NA_integer_]
     dataCopy[, ReplaceLevel := NA_character_]
     
     for(level in levels) {
@@ -559,8 +558,8 @@ ImputeData <- function(
             imputeSeed = getSeedVector(size = nrow(seedTable), seed = seedVector[[level]])
         )
         
-        # Add the seeds to the data (recycled):
-        dataCopy <- merge(dataCopy, seedTable, by = by, all = TRUE, sort = FALSE)
+        # Add the seeds to the data (recycled). Use all.x = TRUE as there is no need to include any unwanted rows from the seedTable (althouhg this iss unlikely to happen):
+        dataCopy <- merge(dataCopy, seedTable, by = by, all.x = TRUE, sort = FALSE)
         
         # Perform the imputation:
         getImputeRowIndicesOneLevel(
@@ -577,11 +576,16 @@ ImputeData <- function(
     # Perform the imputation:
     dataCopy <- replaceMissingData(dataCopy, columnNames = columnNames)
     
-    # Delete the RowIndex and ReplaceRowIndex:
-    dataCopy$ReplaceIndividual <- dataCopy[(ReplaceRowIndex), "Individual"]
+    # Reset to original order:
+    data.table::setorderv(dataCopy, "IndividualIndex")
+    
+    # Get the ReplaceIndividual:
+    dataCopy[, ReplaceIndividual := Individual[match(ReplaceIndividualIndex, IndividualIndex)]]
+    
+    # Delete the IndividualIndex and ReplaceIndividualIndex:
     dataCopy[, IndividualIndex := NULL]
-    dataCopy[, RowIndex := NULL]
-    dataCopy[, ReplaceRowIndex := NULL]
+    #dataCopy[, RowIndex := NULL]
+    dataCopy[, ReplaceIndividualIndex := NULL]
     #dataCopy[, AllStrata := NULL]
     
     return(dataCopy)
@@ -595,9 +599,10 @@ getImputeRowIndicesOneLevel <- function(
     by
 ) {
     # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the groupBy input, the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
-    .SDcols <- c(imputeAtMissing, "ReplaceRowIndex", "ReplaceLevel", "IndividualIndex", "imputeSeed", "RowIndex")
+    .SDcols <- c(imputeAtMissing, "ReplaceIndividualIndex", "ReplaceLevel", "IndividualIndex", "imputeSeed")
+    
     dataCopy[, 
-         c("ReplaceRowIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
+         c("ReplaceIndividualIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
              .SD, 
              imputeAtMissing = imputeAtMissing, 
              level = level
@@ -613,36 +618,54 @@ getImputeRowIndicesOneGroup <- function(
     level
 ) {
     
-    # Get the super individuals with missing data (and which have not been given ReplaceRowIndex):
-    missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceRowIndex)]
+    # Get the super individuals with missing data (and which have not been given ReplaceIndividualIndex):
+    missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceIndividualIndex)]
+    # This is assuming unique individuals for each Stratum, Layer, SpeciesCategory and length group:
+    presentData <- dataCopyOneGroup[, !is.na(get(imputeAtMissing))]
+    
     # Get the number of missing and present rows:
     NMissingRows <- sum(missingData)
-    NPresentRows <- sum(!missingData)
+    NPresentRows <- sum(presentData)
     
-    # We chose (as it may be cleaner) to create the output row indices as a vector of NAs, instead of using data.table:
-    ReplaceRowIndex <- dataCopyOneGroup$ReplaceRowIndex
+    # We choose (as it may be cleaner) to create the output row indices as a vector of NAs, instead of using data.table:
+    ReplaceIndividualIndex <- dataCopyOneGroup$ReplaceIndividualIndex
     ReplaceLevel <- dataCopyOneGroup$ReplaceLevel
     
     if(NMissingRows > 0 && NPresentRows > 0) {
         # Sample the rows with present data:
         #sampleIndexInPresent <- sample.int(NPresentRows, NMissingRows, replace = TRUE)
-        sampleIndexInPresent <- sampleSorted(
-            dataCopyOneGroup[!missingData, IndividualIndex], 
+        ### sampleIndexInPresent <- sampleSorted(
+        ###     #dataCopyOneGroup[!missingData, IndividualIndex], 
+        ###     dataCopyOneGroup[presentData, IndividualIndex], 
+        ###     size = NMissingRows, 
+        ###     seed = dataCopyOneGroup$imputeSeed[1], 
+        ###     replace = TRUE, 
+        ###     index.out = TRUE, 
+        ###     redraw.seed = TRUE
+        ### )
+        ### ReplaceRowIndex[missingData] <- dataCopyOneGroup[presentData, RowIndex][sampleIndexInPresent]
+        
+        ReplaceIndividualIndex[missingData] <- sampleSorted(
+            #dataCopyOneGroup[!missingData, IndividualIndex], 
+            dataCopyOneGroup[presentData, IndividualIndex], 
             size = NMissingRows, 
             seed = dataCopyOneGroup$imputeSeed[1], 
             replace = TRUE, 
-            index.out = TRUE, 
-            redraw.seed = TRUE
+            #index.out = TRUE, 
+            index.out = FALSE#, 
+            #redraw.seed = TRUE
         )
-        ReplaceRowIndex[missingData] <- dataCopyOneGroup[!missingData, RowIndex][sampleIndexInPresent]
+        
         
         # Add also the replace level:
         ReplaceLevel[missingData] <- level
     }
     
+    
+    
     return(
         list(
-            ReplaceRowIndex = ReplaceRowIndex, 
+            ReplaceIndividualIndex = ReplaceIndividualIndex, 
             ReplaceLevel = ReplaceLevel
         )
     )
@@ -653,8 +676,16 @@ getImputeRowIndicesOneGroup <- function(
 replaceMissingData <- function(x, columnNames) {
     
     # Get the matrix indices of data to replace, which are those that are missing in the rows impute:
-    rowsToImpute <- x[!is.na(ReplaceRowIndex), RowIndex]
-    rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
+    #rowsToImpute <- x[!is.na(ReplaceRowIndex), RowIndex]
+    #rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
+    # Changed on 2021-02-09 to match the IndividualIndex and ReplaceIndividualIndex:
+    
+    
+    # Get the rows to impute, i.e., those with non-missing ReplaceIndividualIndex:
+    rowsToImpute <- x[, which(!is.na(ReplaceIndividualIndex))]
+    # Get the rows to replace from, by matching the ReplaceIndividualIndex with the IndividualIndex, and keep only those to impute:
+    rowsToImputeFrom <- match(x$ReplaceIndividualIndex, x$IndividualIndex)
+    rowsToImputeFrom <- rowsToImputeFrom[rowsToImpute]
     
     # Loop through the columns and replace missing data:
     namesx <- names(x)
@@ -664,6 +695,7 @@ replaceMissingData <- function(x, columnNames) {
     
     for(columnName in columnNames) {
         if(columnName %in% namesx) {
+            # Locate the inidices at which the data in the column given by columnName is NA in the rows to imput and not NA in the rows to impute from:
             atReplacement <- x[rowsToImpute, is.na(get(columnName))] & x[rowsToImputeFrom, !is.na(get(columnName))]
             if(any(atReplacement)) {
                 atMissing <- rowsToImpute[atReplacement]
@@ -673,6 +705,36 @@ replaceMissingData <- function(x, columnNames) {
             }
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    ### hasReplaceIndividualIndex <- x[, !is.na(ReplaceIndividualIndex)]
+    ### rowsToImpute <- match(x$IndividualIndex[hasReplaceIndividualIndex], x$IndividualIndex)
+    ### rowsToImputeFrom <- match(x$ReplaceIndividualIndex[hasReplaceIndividualIndex], x$IndividualIndex)
+    ### 
+    ### # Loop through the columns and replace missing data:
+    ### namesx <- names(x)
+    ### if(!length(columnNames)) {
+    ###     columnNames <- namesx
+    ### }
+    ### 
+    ### browser()
+    ### for(columnName in columnNames) {
+    ###     if(columnName %in% namesx) {
+    ###         # Locate the inidices at which the data in the column given by columnName is NA in the rows to impu### t and not NA in the rows to impute from:
+    ###         atReplacement <- x[rowsToImpute, is.na(get(columnName))] & x[rowsToImputeFrom, !is.na(get(col### umnName))]
+    ###         if(any(atReplacement)) {
+    ###             atMissing <- rowsToImpute[atReplacement]
+    ###             atPresent <- rowsToImputeFrom[atReplacement]
+    ###             replacement <- x[atPresent, get(columnName)]
+    ###             x[atMissing, eval(columnName) := replacement]
+    ###         }
+    ###     }
+    ### }
     
     #
     #x <- as.data.frame(x)

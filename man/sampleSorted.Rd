@@ -4,15 +4,7 @@
 \alias{sampleSorted}
 \title{Function to sample after sorting:}
 \usage{
-sampleSorted(
-  x,
-  size,
-  seed,
-  replace = TRUE,
-  sorted = TRUE,
-  index.out = FALSE,
-  redraw.seed = FALSE
-)
+sampleSorted(x, size, seed, replace = TRUE, sorted = TRUE, index.out = FALSE)
 }
 \arguments{
 \item{x}{The vector to sample from.}
@@ -26,8 +18,6 @@ sampleSorted(
 \item{sorted}{Sort the vector before sampling.}
 
 \item{index.out}{Return indices at which to sample rather than the actual samples.}
-
-\item{redraw.seed}{Logical: If TRUE make seeds dependent on the length of the vector to sample from. Used in StoX to approximatetly reproduce the variability included when first bootstrapping and then imputing data. In the new StoX the imputation is included in the baseline, with a fixed seed for all bootstrap replicates. But setting the seed dependent on the length seeds will for the most part be not equal.}
 }
 \description{
 Function to sample after sorting:

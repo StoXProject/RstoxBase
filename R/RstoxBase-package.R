@@ -18,7 +18,7 @@ utils::globalVariables(c(
 	 "..variablesToGetFromAbundanceData", "..vars", "AllStrata", "Area", "Biomass",
 	 "CatchFractionCount", "CatchFractionWeight", "ChannelReferenceDepth", "ChannelReferenceTilt",
 	 "Cruise", "DateTime", "Density", "DensityWeight", "Depth", "DepthExponent",
-	 "EffectiveLogDistance", "EffectiveTowedDistance", "Haul", "Individual", "IndividualIndex",
+	 "EffectiveLogDistance", "EffectiveTowDistance", "Haul", "Individual", "IndividualIndex",
 	 "IndividualKey", "IndividualRoundWeight", "IndividualTotalLength",
 	 "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent",
 	 "LengthGroup", "LengthResolution", "LogDuration", "LogOrigin", "MaxChannelDepth",

@@ -201,6 +201,13 @@ initiateRstoxBase <- function(){
                 #groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
                 #groupingVariables = c("IndividualTotalLength", "LengthResolution", "IndividualRoundWeight", "Haul", "Individual"), 
                 groupingVariables = c(
+                    # Add the keys here to comply with the column order of the IndividualsData, which is inherited from StoxBiotic:
+                    "CruiseKey", 
+                    "StationKey", 
+                    "HaulKey", 
+                    "SpeciesCategoryKey", 
+                    "SampleKey", 
+                    "IndividualKey", 
                     "IndividualTotalLength", "LengthResolution", "IndividualRoundWeight", 
                     "Beam", "Frequency" # The relevant acoustic variables
                 ), 
@@ -591,7 +598,8 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
     data.table::setcolorder(table, columnOrder)
     
     # Order the rows:
-    data.table::setorder(table, na.last = TRUE)
+    #data.table::setorder(table, na.last = TRUE)
+    RstoxData::setorderv_numeric(table, na.last = TRUE)
     
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
     data.table::setkey(table, NULL)
