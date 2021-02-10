@@ -721,11 +721,10 @@ removeColumnsByReference <- function(data, toRemove) {
 #' @param replace Logical: If TRUE sample with replacement.
 #' @param sorted Sort the vector before sampling.
 #' @param index.out Return indices at which to sample rather than the actual samples.
-#' @param redraw.seed Logical: If TRUE make seeds dependent on the length of the vector to sample from. Used in StoX to approximatetly reproduce the variability included when first bootstrapping and then imputing data. In the new StoX the imputation is included in the baseline, with a fixed seed for all bootstrap replicates. But setting the seed dependent on the length seeds will for the most part be not equal.
 #' 
 #' @export
 #' 
-sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out = FALSE, redraw.seed = FALSE){
+sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out = FALSE){
     # If not given, get the size of the sample as the length of the vector:
     lx <- length(x)
     if(missing(size)){
@@ -736,11 +735,12 @@ sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out
     }
     # Sample:
     set.seed(seed)
-    # To increase uniqueness in sampling, resample the seed from the length of the vector to sample:
-    if(redraw.seed) {
-        seed <- sample.int(lx, 1)
-        set.seed(seed)
-    }
+    ### # To increase uniqueness in sampling, resample the seed from the length of the vector to sample:
+    ### if(redraw.seed) {
+    ###     # Add a fixed number to the length in order to aviod reusing 
+    ###     seed <- sample.int(lx, 1)
+    ###     set.seed(seed)
+    ### }
     sampled <- x[sample.int(lx, size = size, replace = replace)]
     
     if(index.out) {
