@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.49</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.50</span>
       </span>
     </div>
 
@@ -571,8 +571,10 @@
 #&gt; [1] "SpeciesCategory"
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$Data$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"      "IndividualRoundWeight"
-#&gt; [4] "Beam"                  "Frequency"            
+#&gt;  [1] "CruiseKey"             "StationKey"            "HaulKey"              
+#&gt;  [4] "SpeciesCategoryKey"    "SampleKey"             "IndividualKey"        
+#&gt;  [7] "IndividualTotalLength" "LengthResolution"      "IndividualRoundWeight"
+#&gt; [10] "Beam"                  "Frequency"            
 #&gt; 
 #&gt; $dataTypeDefinition$SuperIndividualsData$Data$data
 #&gt; [1] "Abundance" "Biomass"  
@@ -689,8 +691,8 @@
 #&gt;     }
 #&gt;     return(prefix)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe4129ca838&gt;
-#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
+#&gt; &lt;bytecode: 0x7fabeaf7f6f8&gt;
+#&gt; &lt;environment: 0x7fabeaf81768&gt;
 #&gt; 
 #&gt; $getSSULabel
 #&gt; function (PSUType) 
@@ -706,8 +708,8 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe4129ca058&gt;
-#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
+#&gt; &lt;bytecode: 0x7fabeaf7ef18&gt;
+#&gt; &lt;environment: 0x7fabeaf81768&gt;
 #&gt; 
 #&gt; $getStationLevel
 #&gt; function (PSUType) 
@@ -723,8 +725,8 @@
 #&gt;     }
 #&gt;     return(SSULabel)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe4129c9878&gt;
-#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
+#&gt; &lt;bytecode: 0x7fabeaf7e738&gt;
+#&gt; &lt;environment: 0x7fabeaf81768&gt;
 #&gt; 
 #&gt; $nauticalMileInMeters
 #&gt; [1] 1852
@@ -800,8 +802,8 @@
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
 #&gt;         DepthExponent * log10(1 + Depth/10)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe4129c7178&gt;
-#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
+#&gt; &lt;bytecode: 0x7fabeaf7c038&gt;
+#&gt; &lt;environment: 0x7fabeaf81768&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthDependent
 #&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
@@ -809,16 +811,16 @@
 #&gt; {
 #&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe4129c74f8&gt;
-#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
+#&gt; &lt;bytecode: 0x7fabeaf7c3b8&gt;
+#&gt; &lt;environment: 0x7fabeaf81768&gt;
 #&gt; 
 #&gt; $TargetStrengthFunction_LengthExponent
 #&gt; function (midIndividualTotalLength, LengthExponent) 
 #&gt; {
 #&gt;     LengthExponent * log10(midIndividualTotalLength)
 #&gt; }
-#&gt; &lt;bytecode: 0x7fe4129c6b58&gt;
-#&gt; &lt;environment: 0x7fe4129ce8a8&gt;
+#&gt; &lt;bytecode: 0x7fabeaf7f928&gt;
+#&gt; &lt;environment: 0x7fabeaf81768&gt;
 #&gt; 
 #&gt; $targetStrengthMethodTypes
 #&gt; $targetStrengthMethodTypes$LengthDependent

@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.49</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.50</span>
       </span>
     </div>
 
@@ -116,15 +116,7 @@
     <p>Function to sample after sorting:</p>
     </div>
 
-    <pre class="usage"><span class='fu'>sampleSorted</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  <span class='va'>size</span>,
-  <span class='va'>seed</span>,
-  replace <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  sorted <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  index.out <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  redraw.seed <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>sampleSorted</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>size</span>, <span class='va'>seed</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span>, sorted <span class='op'>=</span> <span class='cn'>TRUE</span>, index.out <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,10 +144,6 @@
     <tr>
       <th>index.out</th>
       <td><p>Return indices at which to sample rather than the actual samples.</p></td>
-    </tr>
-    <tr>
-      <th>redraw.seed</th>
-      <td><p>Logical: If TRUE make seeds dependent on the length of the vector to sample from. Used in StoX to approximatetly reproduce the variability included when first bootstrapping and then imputing data. In the new StoX the imputation is included in the baseline, with a fixed seed for all bootstrap replicates. But setting the seed dependent on the length seeds will for the most part be not equal.</p></td>
     </tr>
     </table>
 
