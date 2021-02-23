@@ -632,9 +632,13 @@ DefineLayer <- function(
     
     # If "LayerTable" is requested match the Breaks against the possible breaks:
     else if(grepl("LayerTable", DefinitionMethod, ignore.case = TRUE)) {
-        # Error if any of the specified breaks are invalid:
-        if(any(! unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]) %in% unlist(possibleIntervals))) {
-            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
+        # See if tthere are breaks that are not valid. If this is the case we accept it if these are lower or higher than the range of the possible breaks:
+        invalidBreaks <- setdiff(
+            unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]), 
+            unlist((possibleIntervals))
+        )
+        if(!all(invalidBreaks < min(possibleIntervals) | invalidBreaks > max(possibleIntervals))) {
+            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(apply(possibleIntervals, 1, paste, collapse = " - "), collapse = ", "), "]", " but values outside of the range of possible braks are also valid.")
         }
         else {
             Layer <- LayerTable
@@ -1559,7 +1563,7 @@ getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, Ta
         }
     }
     else if(DefinitionMethod == "ResourceFile") {
-        TargetStrengthTable <- data.table::fread(FileName)
+        TargetStrengthTable <- data.table::fread(FileName, encoding = "UTF-8")
     }
     
     # Check the columns of the table:
