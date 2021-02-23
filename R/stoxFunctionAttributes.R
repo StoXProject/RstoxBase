@@ -125,6 +125,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "AcousticLayer", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable"
+        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -145,6 +148,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "BioticLayer", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable"
+        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -169,6 +175,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable"
+        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -327,21 +336,22 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SumLengthDistributionData", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable"
+        ), 
         functionArgumentHierarchy = list(
-            functionArgumentHierarchy = list(
-                # Layer: 
-                LayerDefinitionMethod = list(
-                    LayerDefinition = "FunctionParameter"
-                ), 
-                Resolution = list(
-                    LayerDefinitionMethod = "Resolution"
-                ), 
-                LayerTable = list(
-                    LayerDefinitionMethod = "LayerTable"
-                ), 
-                LayerProcessData = list(
-                    LayerDefinition = "FunctionInput"
-                )
+            # Layer: 
+            LayerDefinitionMethod = list(
+                LayerDefinition = "FunctionParameter"
+            ), 
+            Resolution = list(
+                LayerDefinitionMethod = "Resolution"
+            ), 
+            LayerTable = list(
+                LayerDefinitionMethod = "LayerTable"
+            ), 
+            LayerProcessData = list(
+                LayerDefinition = "FunctionInput"
             )
         )
     ), 
@@ -349,6 +359,10 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "MeanLengthDistributionData", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable", 
+            SurveyTable = "surveyTable"
+        ), 
         functionArgumentHierarchy = list(
             # Layer: 
             LengthDistributionData = list(
@@ -409,6 +423,9 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SumNASCData", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable"
+        ), 
         functionArgumentHierarchy = list(
             AcousticLayer = list(
                 LayerDefinition = "FunctionInput"
@@ -428,6 +445,10 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "MeanNASCData", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable", 
+            SurveyTable = "surveyTable"
+        ), 
         functionArgumentHierarchy = list(
             # Layer: 
             NASCData = list(
@@ -447,9 +468,11 @@ stoxFunctionAttributes <- list(
                 LayerDefinition = "FunctionParameter"
             ), 
             Resolution = list(
+                LayerDefinition = "FunctionParameter", 
                 LayerDefinitionMethod = "Resolution"
             ), 
             LayerTable = list(
+                LayerDefinition = "FunctionParameter", 
                 LayerDefinitionMethod = "LayerTable"
             ), 
             # PSU: 
@@ -833,6 +856,21 @@ processPropertyFormats <- list(
                 list() # Survey
             )
         }
+    ), 
+    
+    layerTable = list(
+        class = "table", 
+        title = "Define Layers by depth intervals", 
+        columnNames = c(
+            "Layer",
+            "MinLayerDepth", 
+            "MaxLayerDepth"
+        ), 
+        variableTypes = c(
+            "character", 
+            "double", 
+            "double"
+        )
     )
     
 )

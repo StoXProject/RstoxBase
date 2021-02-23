@@ -1,3 +1,10 @@
+# 1. plotMap
+# 2. plotTrack
+# 3. plotPoints
+# 4. plotSegments(, angle = 90, adjust = 0.5)
+# 5. plotMultipleSegments - for NASC with depth
+
+
 ##################################################
 ##################################################
 #' Plot NASCData
