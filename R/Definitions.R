@@ -705,6 +705,8 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
 #' @param elements A vector of specific elements to extract from the definition.
 #' @param unlist Logical: If TRUE unlist the list of column names.
 #' 
+#' @export
+#'
 getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, unlist = FALSE) {
     
     # Get the requested type:

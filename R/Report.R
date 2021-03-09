@@ -41,6 +41,46 @@ ReportSuperIndividuals <- function(
 
 
 ##################################################
+##################################################
+#' Report DensityData
+#' 
+#' Reports the sum, mean or other functions on a variable of the \code{\link{DensityData}}.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams general_report_arguments
+#' @inheritParams ReportSuperIndividuals
+#' 
+#' @return
+#' A \code{\link{ReportDensityData}} object.
+#' 
+#' @examples
+#' 
+#' @seealso 
+#' 
+#' @export
+#' 
+ReportDensity <- function(
+    DensityData, 
+    TargetVariable, 
+    ReportFunction = getRstoxBaseDefinitions("reportFunctions")$functionName, 
+    GroupingVariables = character(), 
+    RemoveMissingValues = FALSE, 
+    WeightingVariable = character()
+) 
+{
+    aggregateBaselineDataOneTable(
+        stoxData = DensityData, 
+        TargetVariable = TargetVariable, 
+        aggregationFunction = ReportFunction, 
+        GroupingVariables = GroupingVariables, 
+        na.rm = RemoveMissingValues, 
+        WeightingVariable = WeightingVariable
+    ) 
+}
+
+
+
+##################################################
 #' Function to aggregate baseline data
 #' 
 #' @param stoxData Output from any StoX function.
@@ -117,6 +157,8 @@ aggregateBaselineDataOneTable <- function(
     # Order by the grouping variables:
     data.table::setorderv(outputData, GroupingVariables)
     
+    # Set the number of digits. Added on 2021-03-04:
+    RstoxData::setRstoxPrecisionLevel(outputData)
     
     return(outputData)
 }

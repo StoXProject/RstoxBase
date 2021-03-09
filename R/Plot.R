@@ -24,7 +24,7 @@
 #' @seealso
 #' @noRd
 #' 
-PlotNASCData <- function(
+PlotNASC <- function(
     NASCData, 
     ColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
     Zoom = 1, 
@@ -78,7 +78,7 @@ PlotNASCData <- function(
 #' @seealso 
 #' @noRd
 #' 
-PlotSumNASCData <- function(
+PlotSumNASC <- function(
     SumNASCData, 
     ColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
     Zoom = 1, 

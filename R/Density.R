@@ -163,7 +163,7 @@ NASCToDensity <- function(NASCData, AssignmentLengthDistributionData, AcousticTa
     # Error if there are any of the mergeBy that have no intersections:
     intersecting <- checkIntersect(DensityData, AssignmentLengthDistributionData)
     if(any(!intersecting)) {
-        stop("The NASCData and AssignmentLengthDistributionData no intersecting values for the following columns: ", paste0(mergeBy[!intersecting], collapse = ", "), ". A possible reason is that the LayerDefinition in the MeanNASCData has changed. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC().")
+        stop("The NASCData and AssignmentLengthDistributionData have no intersecting values for the following columns: ", paste0(mergeBy[!intersecting], collapse = ", "), ". A possible reason is that the LayerDefinition in the MeanNASCData has changed. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC().")
     }
     DensityData <- merge(DensityData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     

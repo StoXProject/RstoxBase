@@ -629,6 +629,22 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
+    ReportDensity = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "ReportDensityData", 
+        # This is an example of using an expression to determine when to show a parameter:
+        functionParameterFormat = list(
+            #TargetVariable = "targetVariable_ReportSuperIndividuals", 
+            GroupingVariables = "groupingVariables_ReportDensity"
+        ), 
+        functionArgumentHierarchy = list(
+            WeightingVariable = list(
+                ReportFunction = expression(RstoxBase::getWeightingFunctions())
+            )
+        )
+    ), 
+    
     
     ReportSpeciesCategoryCatch = list(
         functionType = "modelData", 
@@ -833,6 +849,15 @@ processPropertyFormats <- list(
         title = "One or more variables to group super-individuals by when reporting SuperIndividualsData", 
         possibleValues = function(SuperIndividualsData) {
             sort(names(SuperIndividualsData))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
+    groupingVariables_ReportDensity = list(
+        class = "vector", 
+        title = "One or more variables to group by when reporting DensityData", 
+        possibleValues = function(DensityData) {
+            sort(names(DensityData))
         }, 
         variableTypes <- "character"
     ), 

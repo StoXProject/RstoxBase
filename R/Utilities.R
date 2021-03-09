@@ -902,3 +902,17 @@ setAtt <- function(x, ...) {
     attributes(x) <- list(...)
     return(x)
 }
+
+
+#' Replace all NAs in a data.table by reference
+#' 
+#' @param DT A data.table.
+#' @param replacement the object to replace by.
+#' 
+#' @export
+#' 
+replaceNAByReference <- function(DT, replacement = 0) {
+    for (j in names(DT)) {
+        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
+    }
+}

@@ -444,7 +444,8 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     )
     
     # Add also the mid point of each length interval:
-    data[, IndividualTotalLengthMiddle := IndividualTotalLength + LengthResolution / 2]
+    #data[, IndividualTotalLengthMiddle := IndividualTotalLength + LengthResolution / 2]
+    data[, IndividualTotalLengthMiddle := getMidIndividualTotalLength(.SD)]
     
     # Apply the compensationFunction:
     valid <- !is.na(data[[requiredParameters[1]]])
@@ -733,11 +734,7 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
     
     # Extract the subset of the data given by the hauls:
-    BioticAssignment <- data.table::fread(
-        text = assignmentPasted, 
-        col.names = c("Haul", "WeightingFactor"), 
-        colClasses = c("character", "double")
-    )
+    BioticAssignment <- data.table::fread(text = assignmentPasted, col.names = c("Haul", "WeightingFactor"), colClasses = c("character", "double"))
     Hauls <- BioticAssignment$Haul
     WeightingFactors <- BioticAssignment$WeightingFactor
     thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)

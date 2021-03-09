@@ -82,11 +82,12 @@ Individuals <- function(
         usedHauls <- BioticAssignment[WeightingFactor > 0, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
     else if(AbundanceType == "SweptArea") {
-        # Get the original resolution from the MeanLengthDistributionData:
-        usedHauls <- MeanLengthDistributionData$Resolution
+        # Get the PSUs that have positive WeightedCount (changed on 2021-03-09):
+        dataVariable <- getDataTypeDefinition("MeanLengthDistributionData", subTable = "Data", elements = "data", unlist = TRUE)
+        PSUs <- MeanLengthDistributionData$Data[get(dataVariable) > 0, unique(PSU)]
         
         # Get the unique rows, while extracting only the Haul and abundance resolution columns:
-        usedHauls <- usedHauls[, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
+        usedHauls <- MeanLengthDistributionData$Resolution[PSU %in% PSUs, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
         
         # Remove rows with any NAs:
         usedHauls <- stats::na.omit(usedHauls)
