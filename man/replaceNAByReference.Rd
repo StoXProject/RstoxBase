@@ -4,10 +4,12 @@
 \alias{replaceNAByReference}
 \title{Replace all NAs in a data.table by reference}
 \usage{
-replaceNAByReference(DT, replacement = 0)
+replaceNAByReference(DT, cols = NULL, replacement = 0)
 }
 \arguments{
 \item{DT}{A data.table.}
+
+\item{cols}{A vector of column names in which to replace the NAs.}
 
 \item{replacement}{the object to replace by.}
 }

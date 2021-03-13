@@ -200,3 +200,13 @@ MeanNASC <- function(
     
     return(MeanNASCData)
 }
+
+
+MeanNASCToNASC <- function(
+    MeanNASCData, 
+    AcousticTargetStrengths
+    ) {
+    
+}
+
+

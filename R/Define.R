@@ -54,8 +54,41 @@ DefinePSU <- function(
         }
     }
     
+    # Define the PSU prefix and the SSU label, which is the name of the SSU column:
+    prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
+    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
+    
+    # Make sure that there is only one row per SSU:
+    notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
+    MergedStoxDataStationLevel <- MergedStoxDataStationLevel[notDuplicatedSSUs, ]
+    
+    # This is taken care of in formatOutput():
+    ### # And order the SSUs by time:
+    ### data.table::setorderv(MergedStoxDataStationLevel, "DateTime")
+    
+    # Get SSUs:
+    SSU <- MergedStoxDataStationLevel[[SSULabel]]
+    
+    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
+        
+        processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+        # Add any SSUs present in the StoxData that are not present in the processData:
+        missingSSUs <- ! SSU %in% processData$SSU_PSU$SSU
+        if(any(missingSSUs)) {
+            SSU_PSU <- data.table::data.table(
+                SSU = SSU[missingSSUs], 
+                PSU = NA_character_
+            )
+            processData$SSU_PSU <- rbind(
+                processData$SSU_PSU, 
+                SSU_PSU
+            )
+        }
+        processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
+        
+        
         if(SavePSUByTime) {
             processData$PSUByTime <- getPSUByTime(
                 PSUProcessData = processData, 
@@ -66,19 +99,8 @@ DefinePSU <- function(
         return(processData)
     }
     
-    # Define the PSU prefix and the SSU label, which is the name of the SSU column:
-    prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
-    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
-    # Make sure that there is only one row per SSU:
-    notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
-    MergedStoxDataStationLevel <- MergedStoxDataStationLevel[notDuplicatedSSUs, ]
     
-    # And order the SSUs by time:
-    data.table::setorderv(MergedStoxDataStationLevel, "DateTime")
-    
-    # Get SSUs:
-    SSU <- MergedStoxDataStationLevel[[SSULabel]]
     
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
@@ -351,6 +373,9 @@ DefineBioticPSU <- function(
         DefinitionMethod = DefinitionMethod, 
         PSUType = "Biotic"
     )
+    
+    # Format the output:
+    formatOutput(BioticPSU, dataType = "BioticPSU", keep.all = FALSE)
     
     return(BioticPSU)
 }
@@ -632,13 +657,9 @@ DefineLayer <- function(
     
     # If "LayerTable" is requested match the Breaks against the possible breaks:
     else if(grepl("LayerTable", DefinitionMethod, ignore.case = TRUE)) {
-        # See if tthere are breaks that are not valid. If this is the case we accept it if these are lower or higher than the range of the possible breaks:
-        invalidBreaks <- setdiff(
-            unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]), 
-            unlist((possibleIntervals))
-        )
-        if(!all(invalidBreaks < min(possibleIntervals) | invalidBreaks > max(possibleIntervals))) {
-            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(apply(possibleIntervals, 1, paste, collapse = " - "), collapse = ", "), "]", " but values outside of the range of possible braks are also valid.")
+        # Error if any of the specified breaks are invalid:
+        if(any(! unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]) %in% unlist(possibleIntervals))) {
+            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
         }
         else {
             Layer <- LayerTable
@@ -896,6 +917,13 @@ DefineBioticAssignment <- function(
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
+        
+        # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs t obe included:
+        newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, processData$BioticAssignment$PSU)
+        if(length(newPSUs)) {
+            warning("StoX: There are PSUs in AcousticPSU that are not present in the processData. Please re-run the DefineBioticAssignment function with UseProcecssData set to FALSE (unchecked) to regenerate the assignemnt and include all PSUs. This will however overwrite any manually defined assignments, so re-run only if you used an automatic assignment methods only.")
+        }
+        
         # Special action since we have included Layer in the BioticAssignment but have not yet opened for the possibility to assign differently to different layers. Re-add the Layer column:
         BioticAssignment <- addLayerToBioticAssignmentAndFormat(
             BioticAssignment = processData$BioticAssignment, 

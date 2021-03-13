@@ -185,9 +185,9 @@ stoxFunctionAttributes <- list(
             StoxBioticData = list(
                 UseProcessData = FALSE
             ), 
-            AcousticPSU = list(
-                UseProcessData = FALSE
-            ), 
+            #AcousticPSU = list(
+            #    UseProcessData = FALSE
+            #), 
             LayerDefinition = list(
                 #UseProcessData = FALSE
             ), 

@@ -44,7 +44,7 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumNASCWeight", 
                 type = c("ChannelReferenceType"), 
-                other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+                other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
             ), 
             Resolution = list(
                 horizontalResolution = "EDSU", 
@@ -67,7 +67,8 @@ initiateRstoxBase <- function(){
             ), 
             Resolution = list(
                 horizontalResolution = c("Stratum", "PSU", "EDSU"), 
-                verticalResolution = c("Layer", "Channel")
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
             )
         ), 
         # LengthDistribution:
@@ -94,11 +95,12 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumLengthDistributionWeight", 
                 type = "LengthDistributionType", 
-                other = c("EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+                other = c("Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude")
             ), 
             Resolution = list(
                 horizontalResolution = "Station", 
-                verticalResolution = c("Layer", "Haul")
+                verticalResolution = c("Layer", "Haul"), 
+                other = c("VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             )
         ), 
         MeanLengthDistributionData = list(
@@ -117,7 +119,8 @@ initiateRstoxBase <- function(){
             ), 
             Resolution = list(
                 horizontalResolution = c("Stratum", "PSU", "Station"), 
-                verticalResolution = c("Layer", "Haul")
+                verticalResolution = c("Layer", "Haul"), 
+                other = c("Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             )
         ), 
         AssignmentLengthDistributionData = list(
@@ -737,7 +740,7 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
             thisDataTypeDefinition <- thisDataTypeDefinition[[subTable]]
         }
         else {
-            stop("The dataType may be non-existing, or the subTable may not be present for the given dataType")
+            stop("The dataType ", dataType, " may be non-existing, or the subTable may not be present for the given dataType")
         }
     }
     

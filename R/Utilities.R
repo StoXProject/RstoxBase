@@ -302,10 +302,14 @@ sumRawResolutionData <- function(
     }
     
     # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
-    resolutionVariables <- getAllResolutionVariables(
-        dataType = dataType#, 
-        #dimension = "vertical"
-    )
+    ### resolutionVariables <- getAllResolutionVariables(
+    ###     dataType = dataType#, 
+    ###     #dimension = "vertical"
+    ### )
+    
+    sumDataType <- paste0("Sum", dataType)
+    resolutionVariables <- unlist(getDataTypeDefinition(sumDataType, subTable = "Resolution"))
+    
     presentResolutionVariables <- intersect(resolutionVariables, names(dataCopy))
     Resolution <- unique(dataCopy[, ..presentResolutionVariables])
     
@@ -387,11 +391,15 @@ meanRawResolutionData <- function(
         stop("SurveyProcessData must be given if SurveyDefinition = \"FunctionInput\"")
     }
     
-    # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
-    resolutionVariables <- getAllResolutionVariables(
-        dataType = dataType#, 
-        #dimension = "horizontal"
-    )
+    ### # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
+    ### resolutionVariables <- getAllResolutionVariables(
+    ###     dataType = dataType#, 
+    ###     #dimension = "horizontal"
+    ### )
+    
+    meanDataType <- sub("Sum", "Mean", dataType)
+    resolutionVariables <- unlist(getDataTypeDefinition(meanDataType, subTable = "Resolution"))
+     
     extractFromDataCopy <- intersect(resolutionVariables, names(dataCopy))
     mergeBy <- intersect(names(data$Resolution), extractFromDataCopy)
     Resolution <- unique(
@@ -907,12 +915,16 @@ setAtt <- function(x, ...) {
 #' Replace all NAs in a data.table by reference
 #' 
 #' @param DT A data.table.
+#' @param cols A vector of column names in which to replace the NAs. 
 #' @param replacement the object to replace by.
 #' 
 #' @export
 #' 
-replaceNAByReference <- function(DT, replacement = 0) {
-    for (j in names(DT)) {
+replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
+    if(!length(cols)) {
+        cols <- names(DT)
+    }
+    for (j in cols) {
         data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
     }
 }

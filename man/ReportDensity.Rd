@@ -7,7 +7,7 @@
 ReportDensity(
   DensityData,
   TargetVariable,
-  ReportFunction = getRstoxBaseDefinitions("reportFunctions")$functionName,
+  ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
   RemoveMissingValues = FALSE,
   WeightingVariable = character()

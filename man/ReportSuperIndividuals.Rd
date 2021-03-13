@@ -7,7 +7,7 @@
 ReportSuperIndividuals(
   SuperIndividualsData,
   TargetVariable,
-  ReportFunction = getRstoxBaseDefinitions("reportFunctions")$functionName,
+  ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
   RemoveMissingValues = FALSE,
   WeightingVariable = character()
