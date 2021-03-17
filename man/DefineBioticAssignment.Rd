@@ -7,7 +7,7 @@
 DefineBioticAssignment(
   processData,
   UseProcessData = FALSE,
-  DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance",
+  DefinitionMethod = c("Manual", "Stratum", "Radius", "EllipsoidalDistance",
     "DeleteAllAssignments"),
   StoxBioticData,
   StratumPolygon,

@@ -890,7 +890,7 @@ DefineBioticLayer <- function(
 #'
 DefineBioticAssignment <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "DeleteAllAssignments"), 
+    DefinitionMethod = c("Manual", "Stratum", "Radius", "EllipsoidalDistance", "DeleteAllAssignments"), 
     StoxBioticData, 
     # For DefinitionMethod "Stratum": 
     StratumPolygon, AcousticPSU, #AcousticLayer, 
@@ -944,7 +944,15 @@ DefineBioticAssignment <- function(
     MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
     
     # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
-    if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
+    if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+        if(length(processData)) {
+            return(processData)
+        }
+        else {
+            BioticAssignment <- data.table::data.table()
+        }
+    }
+    else if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         # Create a spatial points object of the positions of the hauls:
         SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
         sp::proj4string(SpatialHauls) <- getRstoxBaseDefinitions("proj4string")
