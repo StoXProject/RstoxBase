@@ -84,7 +84,9 @@ Individuals <- function(
     else if(AbundanceType == "SweptArea") {
         # Get the PSUs that have positive WeightedCount (changed on 2021-03-09):
         dataVariable <- getDataTypeDefinition("MeanLengthDistributionData", subTable = "Data", elements = "data", unlist = TRUE)
-        PSUs <- MeanLengthDistributionData$Data[get(dataVariable) > 0, unique(PSU)]
+        # Make sure to omit NAs, which indicate hauls which are not tagged to any PSU (e.g. outside of any stratum):
+        #PSUs <- MeanLengthDistributionData$Data[get(dataVariable) > 0, unique(PSU)]
+        PSUs <- MeanLengthDistributionData$Data[get(dataVariable) > 0, stats::na.omit(unique(PSU))]
         
         # Get the unique rows, while extracting only the Haul and abundance resolution columns:
         usedHauls <- MeanLengthDistributionData$Resolution[PSU %in% PSUs, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
@@ -217,8 +219,12 @@ SuperIndividuals <- function(
         }
         
         # Add length group IDs also in in LengthDistributionData:
-        # Make sure the AbundanceData is proper data.table:
+        # Make sure the LengthDistributionData is proper data.table:
         LengthDistributionData <- data.table::setDT(LengthDistributionData)
+        
+        # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
+        LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
+        
         addLengthGroupsByReference(data = LengthDistributionData, master = AbundanceData)
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
@@ -347,7 +353,6 @@ addLengthGroupsByReferenceOneSpecies <- function(
     if(length(atSpeciesInData) == 0 || length(atSpeciesInMaster) == 0) {
         stop("The species ", species, " is not present in both data and master.")
     }
-    
     
     # Get the unique length intervals of the master:
     uniqueLengthGroups <- unique(master[atSpeciesInMaster, c(..lengthVar, ..resolutionVar)])

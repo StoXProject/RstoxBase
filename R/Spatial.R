@@ -18,7 +18,20 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
     }
     tab <- data.table::fread(FilePath, sep = "\t", header = FALSE, colClasses = list(character=1:2), encoding = "UTF-8")
     names(tab) <- c("Stratum", "Polygon")
-    tab
+    
+    ### # Do a check for scandinavian letters given as hex code, and issue an error stating that the file needs to be converted to UTF-8:
+    ### scandinavianLettersAsHex <- c("\xe6", "\xf8", "\xe5", "\xc6", "\xd8", "\xc5")
+    invalidUTF8 <- detectInvalidUTF8(tab$Stratum)
+    if(any(invalidUTF8)) {
+        stop("The file ", FilePath, " contains characters indicating that the file was saved with an encoding different from the required UTF-8 (scandinavian letters, possibly saved as Latin 1). Please open the file in a text editor, verify that all characters appear as exptected, and save the file with encodnig UTF-8.")
+    }
+    
+    # Stop also if stratum names are duplicated:
+    if(any(duplicated(tab$Stratum))) {
+        stop("The file ", FilePath, " contains duplicated polygon names (column 1). Please open the file in a text editor and rename or delete the duplicated strata: ", paste(paste0("\"", unique(tab$Stratum[duplicated(tab$Stratum)]), "\""), collapse = ", "), ".")
+    }
+    
+    return(tab)
 }
 
 

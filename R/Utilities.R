@@ -928,3 +928,13 @@ replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
         data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
     }
 }
+
+
+detectInvalidUTF8 <- function(x) {
+    areNA <- is.na(x)
+    Encoding(x) <- "UTF-8"
+    x <- iconv(x, "UTF-8", "UTF-8")
+    newNA <- areNA != is.na(x)
+    return(newNA)
+}
+
