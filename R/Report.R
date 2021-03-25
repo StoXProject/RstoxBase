@@ -69,7 +69,7 @@ ReportDensity <- function(
 ) 
 {
     aggregateBaselineDataOneTable(
-        stoxData = DensityData, 
+        stoxData = DensityData$Data, 
         TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
         GroupingVariables = GroupingVariables, 

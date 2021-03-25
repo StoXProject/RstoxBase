@@ -67,18 +67,20 @@ DefinePSU <- function(
     ### data.table::setorderv(MergedStoxDataStationLevel, "DateTime")
     
     # Get SSUs:
-    SSU <- MergedStoxDataStationLevel[[SSULabel]]
+    SSUs <- MergedStoxDataStationLevel[[SSULabel]]
     
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         
+        # Rename from "EDSU"/"Station" to "SSU": 
         processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+        
         # Add any SSUs present in the StoxData that are not present in the processData:
-        missingSSUs <- ! SSU %in% processData$SSU_PSU$SSU
+        missingSSUs <- ! SSUs %in% processData$SSU_PSU$SSU
         if(any(missingSSUs)) {
             SSU_PSU <- data.table::data.table(
-                SSU = SSU[missingSSUs], 
+                SSU = SSUs[missingSSUs], 
                 PSU = NA_character_
             )
             processData$SSU_PSU <- rbind(
@@ -86,9 +88,29 @@ DefinePSU <- function(
                 SSU_PSU
             )
         }
+        
+        # Remove any EDSUs that are not tagged to a PSU and that are missing in the StoxData:
+        unusedAndMissingInStoxData <- processData$SSU_PSU[, is.na(PSU) & ! SSU %in% SSUs]
+        if(any(unusedAndMissingInStoxData)) {
+            processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
+        }
+        
+        # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
+        usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
+        if(any(usedButMissingInStoxData)) {
+            warning(
+                "There are ", 
+                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", 
+                " that are present as tagged to one or more PSUs in the process data, but that are not present in the ", 
+                "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data of using a filter. StoX should take care to ignore these ", 
+                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", "but for clarity it is advised to remove them from the PSUs."
+            )
+        }
+        
+        # Rename back from "SSU" to "EDSU"/"Station": 
         processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
         
-        
+        # Add the PSUByTime:
         if(SavePSUByTime) {
             processData$PSUByTime <- getPSUByTime(
                 PSUProcessData = processData, 
@@ -106,12 +128,12 @@ DefinePSU <- function(
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
         # Define PSUIDs and PSUNames:
-        PSUID <- seq_along(SSU)
+        PSUID <- seq_along(SSUs)
         PSUName <- getPSUName(PSUID, prefix)
         
         # Set each SSU as a PSU:
         SSU_PSU <- data.table::data.table(
-            SSU = SSU, 
+            SSU = SSUs, 
             PSU = PSUName
         )
         
@@ -191,7 +213,7 @@ DefinePSU <- function(
     else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
         
         SSU_PSU <- data.table::data.table(
-            SSU = SSU, 
+            SSU = SSUs, 
             PSU = NA_character_
         )
         Stratum_PSU <- data.table::data.table()
@@ -202,7 +224,7 @@ DefinePSU <- function(
         }
         else {
             SSU_PSU <- data.table::data.table(
-                SSU = SSU, 
+                SSU = SSUs, 
                 PSU = NA_character_
             )
             Stratum_PSU <- data.table::data.table()
@@ -872,7 +894,7 @@ DefineBioticLayer <- function(
 #'
 #'\eqn{r_o} = reference value for longitude difference (degrees). Defined by function parameter \emph{LongitudeDifference})
 #'
-#'The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned haulss are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
+#'The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned hauls are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
 #'
 #'NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.
 #'
@@ -918,7 +940,7 @@ DefineBioticAssignment <- function(
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
         
-        # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs t obe included:
+        # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
         newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, processData$BioticAssignment$PSU)
         if(length(newPSUs)) {
             warning("StoX: There are PSUs in AcousticPSU that are not present in the processData. Please re-run the DefineBioticAssignment function with UseProcecssData set to FALSE (unchecked) to regenerate the assignemnt and include all PSUs. This will however overwrite any manually defined assignments, so re-run only if you used an automatic assignment methods only.")
@@ -973,7 +995,7 @@ DefineBioticAssignment <- function(
         # Merge the StoxBioticData:
         MergeStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
         
-        # Get a table of EDSUs and Hauls:
+        # Get a table of EDSUs and Hauls present in the StoxAcoustic and StoxBiotic data:
         EDSU_Haul <- data.table::CJ(
             EDSU = MergeStoxAcousticData$EDSU, 
             Haul = MergeStoxBioticData$Haul, 
@@ -982,7 +1004,8 @@ DefineBioticAssignment <- function(
         
         # Merge PSUs and strata into the table:
         EDSU_PSU_Stratum <- RstoxData::mergeDataTables(AcousticPSU[names(AcousticPSU)!= "PSUByTime"], all = TRUE, output.only.last = TRUE)
-        BioticAssignment <- merge(EDSU_PSU_Stratum, EDSU_Haul, by = "EDSU", all = TRUE)
+        # .. but make sure that we only keep EDSUs that are present in the StoxAcoustic data, as the AcousticPSU data type is free to contain any EDSUs tagged to or not tagged to PSUs (using all.y = TRUE):
+        BioticAssignment <- merge(EDSU_PSU_Stratum, EDSU_Haul, by = "EDSU", all.y = TRUE)
         
         # Get the distance units:
         if(grepl("Radius", DefinitionMethod, ignore.case = TRUE)) {
@@ -1243,30 +1266,30 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @details
 #' The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
 #' 
-#' A set of automatic \emph{WeightingMethod}s are available to update the haul weighing variables:
+#' A set of automatic \emph{WeightingMethod}s are available to update the haul weighing variables. Note that the weighting may change if an additional species is included for all WeightingMethods except "Equal":
 #' 
 #'\strong{Equal}
 #' 
 #' All assigned biotic hauls are given equal weight by assigning the value 1 to the weighting variables.
 #' 
 #'\strong{NumberOfLengthSamples}
-#'The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station.  The parameter \emph{MaxNumberOfLengthSamples} is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. 
+#'The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station. The parameter \emph{MaxNumberOfLengthSamples} is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. Note that the weighting may change if an additional species is included.
 #' 
-#' \strong{NormTotalWeight}
+#' \strong{NormalizedTotalWeight}
 #' 
 #' The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 #' 
-#'\strong{NormTotalCount}
+#'\strong{NormalizedTotalCount}
 #'
-#'The assigned biotic haulss are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+#'The assigned biotic hauls are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 #'
 #'\strong{SumWeightedCount}
 #'
-#'The assigned biotic haulss are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Normalized} (normalized to one nautical mile towing distance).
+#'The assigned biotic hauls are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 #'
-#'\strong{InvSumWeightedCount}
+#'\strong{InverseSumWeightedCount}
 #'
-#'The assigned biotic haulss are given a weighting value as the inverse sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
+#'The assigned biotic hauls are given a weighting value as the inverse of the sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
 #'
 #'\deqn{w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }}
 #'
@@ -1286,9 +1309,11 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' 
 #'The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.
 #'
-#'\strong{NASC}
+#'It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 #'
-#'The assigned biotic haulss are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
+#'\strong{NASC} Not yet implemented.
+#'
+#'The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
 #'
 #'A search for acoustic NASC values (at EDSU resolution) is performed within a given radius around a biotic station. A weighted (by integrator distance of the EDSUs) mean NASC is calculated from the surrounding NASC values and this is used in the further weighting value calculations. Using this combined NASC value, the length distribution of the biotic station and a target strength (TS) versus length empirical relationship, the weighting variable density of the biotic station is first calculated by length group. The sum of densities (number per square nautical mile) for all length groups of the target species at the given biotic haul, is than calculated and applied as the weighting variable for the biotic haul.Note that if an EDSU NASC value is used for assignment to several biotic stations, the NASC value is split and devided between these biotic stations.
 #'

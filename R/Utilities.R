@@ -902,6 +902,9 @@ toJSON_Rstox <- function(x, ...) {
     lll <- c(list(x = x), lll
     )
     
+    # Use ISO8601 for time:
+    lll$POSIXt ="ISO8601"
+    
     do.call(jsonlite::toJSON, lll)
 }
 

@@ -4,7 +4,7 @@
 \alias{AbundanceData}
 \title{Abundance data}
 \description{
-The Abundance model data holds the abundance of individuals as number per Stratum and Layer.
+The Abundance model data holds the abundance of individuals as number per Stratum and Layer. The data type contains the tables Data and Resolution.
 }
 \seealso{
 This data type is produced by \code{\link{Abundance}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}

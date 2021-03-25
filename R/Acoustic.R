@@ -201,12 +201,86 @@ MeanNASC <- function(
     return(MeanNASCData)
 }
 
-
-MeanNASCToNASC <- function(
+#' 
+#' @export
+#'
+SplitMeanNASC <- function(
     MeanNASCData, 
-    AcousticTargetStrengths
+    AssignmentLengthDistributionData, 
+    AcousticTargetStrength, 
+    SpeciesLink, 
+    AcousticCategoryLink
     ) {
     
+    # Require full resolution vertically and horizontally:
+    numberofUniquePSU_Layer <- nrow(unique(MeanNASCData$Resolution[!is.na(PSU), c("PSU", "Layer")]))
+    numberofUniqueEDSU_Channel <- nrow(unique(MeanNASCData$Resolution[!is.na(PSU), c("EDSU", "Channel")]))
+    
+    if(numberofUniquePSU_Layer != numberofUniqueEDSU_Channel) {
+        stop("The MeanNASCData must have maximum horizontal and vertical resolution for use in SplitMeanNASC")
+    }
+    
+    # Find the mix categories in the MeanNASCData.
+    allAcousticCategory <- unique(MeanNASCData$Data$AcousticCategory)
+    presentMixAcousticCategory <- AcousticCategoryLink$AcousticCategory %in% allAcousticCategory
+    if(any(!presentMixAcousticCategory)) {
+        warning("The following mix AcousticCategory are not present in the MeanNASCData.")
+    }
+    # Keep only rows with mix categories present in the data:
+    AcousticCategoryLink <- subset(AcousticCategoryLink, AcousticCategory %in% allAcousticCategory)
+    # Add all species that will not be split to the AcousticCategoryLink:
+    AcousticCategoryNotToBeSplit <- setdiff(
+        unique(MeanNASCData$Data$AcousticCategory), 
+        unique(AcousticCategoryLink$AcousticCategory)
+    )
+    AcousticCategoryLink <- rbind(
+        AcousticCategoryLink, 
+        data.table::data.table(
+            MixAcousticCategory = AcousticCategoryNotToBeSplit, 
+            SplitAcousticCategory = AcousticCategoryNotToBeSplit
+        )
+    )
+    
+    # Copy the NASC from the MixAcousticCategory to the SplitAcousticCategory, and remove the MixAcousticCategory:
+    MeanNASCDataToSplit <- subset(MeanNASCData$Data, AcousticCategory %in% AcousticCategoryLink$AcousticCategory)
+    MeanNASCDataNotToSplit <- subset(MeanNASCData$Data, ! AcousticCategory %in% AcousticCategoryLink$AcousticCategory)
+    
+    # Add the SplitAcousticCategory:
+    MeanNASCDataToSplit <- merge(MeanNASCDataToSplit, AcousticCategoryLink, all = TRUE, allow.cartesian = TRUE, sort = FALSE)
+    # Replace the AcousticCategory column by the SplitAcousticCategory column:
+    MeanNASCDataToSplit[, AcousticCategory := SplitAcousticCategory][, SplitAcousticCategory := NULL]
+    
+    # Define the resolution on which to distribute the NASC:
+    resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    # Split the NASC by the AssignmentLengthDistributionData:
+    MeanNASCDataSplit <- DistributeNASC(
+        NASCData = MeanNASCDataToSplit, 
+        AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
+        AcousticTargetStrength = AcousticTargetStrength, 
+        SpeciesLink = SpeciesLink, 
+        sumBy = resolution
+    )
+    
+    # Then add to the MeanNASCDataNotToSplit and sum for each species of each Stratum, PSU and Layer:
+    columnsToKeep <- names(MeanNASCDataNotToSplit)
+    MeanNASCData$Data <- rbind(
+        MeanNASCDataNotToSplit, 
+        MeanNASCDataSplit[, ..columnsToKeep]
+    )
+    # Sum the NASC:
+    sumBy <- c(resolution, "AcousticCategory")
+    MeanNASCData$Data <- MeanNASCData$Data[, NASC := sum(NASC), by = sumBy]
+    # Uniquify:
+    MeanNASCData$Data <- unique(MeanNASCData$Data, by = sumBy)
+    
+    # Keep only the AcousticCategory specified in SpeciesLink$AcousticCategory
+    MeanNASCData$Data <- subset(MeanNASCData$Data, AcousticCategory %in% SpeciesLink$AcousticCategory)
+    
+    ### # Convert from MeanNASCData to NASCData, assuming full resolution:
+    ### NASCData <-  merge(MeanNASCData,  MeanNASCData$Resolution, by = c("PSU", "Layer"))
+    
+    
+    return(MeanNASCData)
 }
 
 

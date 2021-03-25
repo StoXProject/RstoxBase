@@ -498,6 +498,16 @@ stoxFunctionAttributes <- list(
             )
         )
     ),
+    
+    SplitMeanNASC = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "MeanNASCData", 
+        functionParameterFormat = list(
+            SpeciesLink = "speciesLinkTable",
+            AcousticCategoryLink = "acousticCategoryLinkTable"
+        )
+    ),
     ##########
     
     
@@ -730,6 +740,22 @@ processPropertyFormats <- list(
         #    )
         #}
     ), 
+    
+    acousticCategoryLinkTable = list(
+        class = "table", 
+        title = "Define acoustic categories to split mix categories into", 
+        columnNames = c(
+            "AcousticCategory",
+            "SplitAcousticCategory"
+        ), 
+        variableTypes = c(
+            "character", 
+            "character"
+        )
+    ), 
+    
+    
+    
     targetStrengthTable = list(
         class = "table", 
         title = function(TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
@@ -857,7 +883,7 @@ processPropertyFormats <- list(
         class = "vector", 
         title = "One or more variables to group by when reporting DensityData", 
         possibleValues = function(DensityData) {
-            sort(names(DensityData))
+            sort(names(DensityData$Data))
         }, 
         variableTypes <- "character"
     ), 

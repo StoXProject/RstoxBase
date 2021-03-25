@@ -7,7 +7,6 @@
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' 
-# Missing Arguments of MeanDensityData---- 
 #' @details
 #' The function merge the \code{\link{MeanDensityData}} with the \code{\link{StratumAreaData}} by Stratum and calculates the abundance  as the product of density (number by square nautical miles) and area (square nautical miles). 
 #' For acoustic-trawl surveys the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
@@ -29,10 +28,11 @@ Abundance <- function(
 ) {
 	
     # Merge the stratum area with the DensityData to an AbundanceData (remove the area at the end of the function):
-    AbundanceData <- merge(MeanDensityData, StratumAreaData, by ="Stratum")
+    AbundanceData <- data.table::copy(MeanDensityData)
+    AbundanceData$Data <- merge(AbundanceData$Data, StratumAreaData, by ="Stratum")
     
     # Multiply the area and the density:
-    AbundanceData[, Abundance := Area * Density]
+    AbundanceData$Data[, Abundance := Area * Density]
     
     # Format the output:
     # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
@@ -161,19 +161,13 @@ SuperIndividuals <- function(
     
     # Make a copy of the IndividualsData:
     SuperIndividualsData <- data.table::copy(IndividualsData)
-    # Make sure the AbundanceData is proper data.table:
-    AbundanceData <- data.table::setDT(AbundanceData)
-    
-    # Add common length group IDs in SuperIndividualsData and AbundanceData, given the length groups in AbundanceData (by referencem, so the inputs are modified):
-    #AbundanceData <- as.data.table(AbundanceData)
-    #addLengthGroups2(
-    #    AbundanceData
-    #)
+    # Make sure the AbundanceData is proper data.table. Comment on 2021-03-18: Why is this needed????:
+    AbundanceData$Data <- data.table::setDT(AbundanceData$Data)
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the AbundanceData:
-    addLengthGroupsByReference(data = SuperIndividualsData, master = AbundanceData)
+    addLengthGroupsByReference(data = SuperIndividualsData, master = AbundanceData$Data)
     # Add length groups also to the AbundanceData:
-    addLengthGroupsByReference(data = AbundanceData, master = AbundanceData)
+    addLengthGroupsByReference(data = AbundanceData$Data, master = AbundanceData$Data)
     
     # Merge the abundance into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups(). This is akward coding, with two instances of getDataTypeDefinition(), but the problem is the LengthGroup, and that we do not need "the columns IndividualTotalLength" and "LengthResolution":
     
@@ -187,7 +181,7 @@ SuperIndividuals <- function(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables"), unlist = TRUE)
     )
     variablesToGetFromAbundanceData <- setdiff(variablesToGetFromAbundanceData, names(SuperIndividualsData))
-    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData))
+    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData$Data))
     variablesToGetFromAbundanceData <- c(
         abundanceGrouping, 
         variablesToGetFromAbundanceData
@@ -196,7 +190,7 @@ SuperIndividuals <- function(
     # Merge AbundanceData into the IndividualsData
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
-        AbundanceData[, ..variablesToGetFromAbundanceData], 
+        AbundanceData$Data[, ..variablesToGetFromAbundanceData], 
         by = abundanceGrouping, 
         allow.cartesian = TRUE, 
         ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
@@ -219,13 +213,13 @@ SuperIndividuals <- function(
         }
         
         # Add length group IDs also in in LengthDistributionData:
-        # Make sure the LengthDistributionData is proper data.table:
+        # Make sure the LengthDistributionData is proper data.table. Comment on 2021-03-18: Why is this needed????:
         LengthDistributionData <- data.table::setDT(LengthDistributionData)
         
         # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
         LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
         
-        addLengthGroupsByReference(data = LengthDistributionData, master = AbundanceData)
+        addLengthGroupsByReference(data = LengthDistributionData, master = AbundanceData$Data)
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
         
@@ -317,18 +311,6 @@ SuperIndividuals <- function(
         attr(IndividualsData, "stoxDataVariableNames")
     )
     
-    
-    ### # Remove the temporary columns:
-    ### toRemove <- c("LengthGroup", "abundanceWeightFactor", "individualCount")
-    ### #SuperIndividualsData[, c(toRemove) := NULL]
-    ### 
-    ### # Order 
-    ### toOrderFirst <- c(
-    ###     getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
-    ###     "Haul"
-    ### )
-    ### data.table::setcolorder(SuperIndividualsData, toOrderFirst)
-
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:
     #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
