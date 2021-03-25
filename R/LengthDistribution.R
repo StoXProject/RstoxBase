@@ -106,6 +106,12 @@ LengthDistribution <- function(
     )
     # Declare the variables used below:
     LengthDistributionData <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
+    if(!nrow(LengthDistributionData)) {
+        warning("Empty Individual table.")
+        return(LengthDistributionData)
+    }
+    # Remove rows with NA in 'keys' and subsequently remove duplicates:
+    LengthDistributionData <- subset(LengthDistributionData, rowSums(is.na(LengthDistributionData[, ..keys])) == 0)
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
     ####################################################
     
@@ -696,10 +702,10 @@ MeanLengthDistribution <- function(
 #' 
 AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignment) {
     
-    # Require LengthDistributionType "Percent":
-    if(!isLengthDistributionType(LengthDistributionData, "Percent")) {
-        stop("LengthDistributionData used as input to AssignmentLengthDistribution() must be of LengthDistributionType \"Percent\"")
-    }
+    ### # Require LengthDistributionType "Percent":
+    ### if(!isLengthDistributionType(LengthDistributionData, "Percent")) {
+    ###     stop("LengthDistributionData used as input to AssignmentLengthDistribution() must be of LengthDistributionType \"Percent\"")
+    ### }
     
     # Determine assignment IDs:
     BioticAssignmentCollapsed <- BioticAssignment[, .(assignmentPasted = paste0(paste(Haul, WeightingFactor, sep = ",", collapse = "\n"), "\n")), by = c("Stratum", "PSU", "Layer")]

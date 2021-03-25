@@ -136,47 +136,68 @@ initiateRstoxBase <- function(){
         ), 
         # Density:
         DensityData = list(
-            surveyDefinition = "Survey", 
-            horizontalResolution = c("Stratum", "PSU"), 
-            verticalResolution = c("Layer"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c(
-                "IndividualTotalLength", "LengthResolution", 
-                "Beam", "Frequency" # The relevant acoustic variables
+            Data = list(
+                surveyDefinition = "Survey", 
+                horizontalResolution = c("Stratum", "PSU"), 
+                verticalResolution = c("Layer"), 
+                categoryVariable = "SpeciesCategory", 
+                groupingVariables = c(
+                    "IndividualTotalLength", "LengthResolution", 
+                    "Beam", "Frequency" # The relevant acoustic variables
+                ), 
+                data = "Density",
+                verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+                weighting = "DensityWeight", 
+                other = NULL
             ), 
-            data = "Density",
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = "DensityWeight", 
-            other = NULL
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "EDSU", "Station"), 
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            )
         ), 
         MeanDensityData = list(
-            surveyDefinition = "Survey", 
-            horizontalResolution = "Stratum", 
-            verticalResolution = c("Layer"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c(
-                "IndividualTotalLength", "LengthResolution", 
-                "Beam", "Frequency" # The relevant acoustic variables
+            Data = list(
+                surveyDefinition = "Survey", 
+                horizontalResolution = "Stratum", 
+                verticalResolution = c("Layer"), 
+                categoryVariable = "SpeciesCategory", 
+                groupingVariables = c(
+                    "IndividualTotalLength", "LengthResolution", 
+                    "Beam", "Frequency" # The relevant acoustic variables
+                ), 
+                data = "Density",
+                verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+                weighting = "MeanDensityWeight", 
+                other = NULL
             ), 
-            data = "Density",
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = "MeanDensityWeight", 
-            other = NULL
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "EDSU", "Station"), 
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            )
         ), 
         # Abundance:
         AbundanceData = list(
-            surveyDefinition = "Survey", 
-            horizontalResolution = "Stratum", 
-            verticalResolution = c("Layer"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c(
-                "IndividualTotalLength", "LengthResolution", 
-                "Beam", "Frequency" # The relevant acoustic variables
+            Data = list(
+                surveyDefinition = "Survey", 
+                horizontalResolution = "Stratum", 
+                verticalResolution = c("Layer"), 
+                categoryVariable = "SpeciesCategory", 
+                groupingVariables = c(
+                    "IndividualTotalLength", "LengthResolution", 
+                    "Beam", "Frequency" # The relevant acoustic variables
+                ), 
+                data = "Abundance", 
+                verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+                weighting = NULL, 
+                other = NULL
             ), 
-            data = "Abundance", 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = NULL, 
-            other = NULL
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "EDSU", "Station"), 
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            )
         ), 
         IndividualsData = list(
             Data = list(

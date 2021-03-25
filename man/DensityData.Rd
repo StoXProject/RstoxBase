@@ -4,7 +4,7 @@
 \alias{DensityData}
 \title{Density data}
 \description{
-The DensityData model data holds the density of individuals as number per square nautical mile, by PSU and Layer.
+The DensityData model data holds the density of individuals as number per square nautical mile, by PSU and Layer. The data type contains the tables Data and Resolution.
 }
 \seealso{
 This data type is produced by \code{\link{AcousticDensity}} and \code{\link{SweptAreaDensity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}

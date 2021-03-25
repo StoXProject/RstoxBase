@@ -430,7 +430,7 @@ NULL
 ##################################################
 #' Density data
 #' 
-#' The DensityData model data holds the density of individuals as number per square nautical mile, by PSU and Layer. 
+#' The DensityData model data holds the density of individuals as number per square nautical mile, by PSU and Layer. The data type contains the tables Data and Resolution.
 #' 
 #' @seealso This data type is produced by \code{\link{AcousticDensity}} and \code{\link{SweptAreaDensity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -443,7 +443,7 @@ NULL
 ##################################################
 #' Mean density data
 #' 
-#' The MeanDensityData model data holds the density of individuals as number per square nautical mile, by Stratum and Layer. 
+#' The MeanDensityData model data holds the density of individuals as number per square nautical mile, by Stratum and Layer. The data type contains the tables Data and Resolution.
 #' 
 #' @seealso This data type is produced by \code{\link{MeanDensity}} based on \code{\link{DensityData}} See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -483,7 +483,7 @@ NULL
 ##################################################
 #' Abundance data
 #' 
-#' The Abundance model data holds the abundance of individuals as number per Stratum and Layer. 
+#' The Abundance model data holds the abundance of individuals as number per Stratum and Layer. The data type contains the tables Data and Resolution.
 #' 
 #' @seealso This data type is produced by \code{\link{Abundance}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
