@@ -767,10 +767,11 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     #thisLengthDistributionData <- unique(thisLengthDistributionData)
     thisLengthDistributionData <- unique(thisLengthDistributionData, by = by)
     
-    # Normalize for each species category:
-    bySpecies <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable"), unlist = TRUE)
-    scaling <- if(percent) 100 else 1
-    thisLengthDistributionData[, c(dataVariable) := get(dataVariable) / sum(get(dataVariable), na.rm = TRUE) * scaling, by = bySpecies]
+    # This was a misunderstanding: 
+    ### # Normalize for each species category:
+    ### bySpecies <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable"), unlist = TRUE)
+    ### scaling <- if(percent) 100 else 1
+    ### thisLengthDistributionData[, c(dataVariable) := get(dataVariable) / sum(get(dataVariable), na.rm = TRUE) * scaling, by = bySpecies]
     
     # Order by the category and grouping variables:
     orderBy <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)

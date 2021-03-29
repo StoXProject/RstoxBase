@@ -487,6 +487,7 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
         targetResolution = targetResolution, 
         dimension = "horizontal"
     )
+    
     # Extract the 'by' element:
     by <- aggregationVariables$by
     
@@ -494,6 +495,16 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     dataVariable <- aggregationVariables$dataVariable
     targetWeightingVariable <- aggregationVariables$weightingVariable
     weightingVariable <- originalDataTypeDefinition$weighting
+    
+    
+    ## Do nothing if the target resolution is the same as the present resolution:
+    #presentResolution <- aggregationVariables$presentResolution
+    #nrowPresent <- nrow(data[, ..presentResolution])
+    #nrowTarget <- nrow(data[, ..targetResolution])
+    #if(nrowPresent == nrowTarget) {
+    #    data[, c(targetWeightingVariable) := get(weightingVariable)]
+    #    return(data)
+    #}
     
     
     #### Step 1: ####

@@ -152,7 +152,7 @@ DistributeNASC <- function(
     }
     allAcousticCategory <- unique(AcousticTargetStrength$TargetStrengthTable$AcousticCategory)
     if(!all(allAcousticCategory %in% SpeciesLink$AcousticCategory)) {
-        notPresent <- setdiff(allAcousticCategory, SpeciesLink$SpeciesCategory)
+        notPresent <- setdiff(allAcousticCategory, SpeciesLink$AcousticCategory)
         notPresent <- notPresent[!is.na(notPresent)]
         if(length(notPresent)) {
             warning("StoX: The following AcousticCategory are present in the AcousticTargetStrength but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
@@ -199,6 +199,11 @@ DistributeNASC <- function(
         stop("The NASCData and AssignmentLengthDistributionData have no intersecting values for the following columns: ", paste0(mergeBy[!intersecting], collapse = ", "), ". A possible reason is that the LayerDefinition in the MeanNASCData has changed. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC().")
     }
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
+    
+    # Check whether there are any non-missing length distribution frequencies:
+    if(! NASCData[, sum(!is.na(WeightedCount))]) {
+        warning("No lenght distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
+    }
     
     # Calculate the target strength of each length group:
     getTargetStrength(NASCData, TargetStrengthMethod = AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod)
