@@ -7,7 +7,7 @@
 DefineBioticAssignment(
   processData,
   UseProcessData = FALSE,
-  DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance",
+  DefinitionMethod = c("Manual", "Stratum", "Radius", "EllipsoidalDistance",
     "DeleteAllAssignments"),
   StoxBioticData,
   StratumPolygon,
@@ -136,7 +136,7 @@ where:
 
 \eqn{r_o} = reference value for longitude difference (degrees). Defined by function parameter \emph{LongitudeDifference})
 
-The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned haulss are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
+The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned hauls are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
 
 NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.
 }

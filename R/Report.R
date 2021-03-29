@@ -23,7 +23,7 @@
 ReportSuperIndividuals <- function(
     SuperIndividualsData, 
     TargetVariable, 
-    ReportFunction = getRstoxBaseDefinitions("reportFunctions")$functionName, 
+    ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character()
@@ -38,6 +38,46 @@ ReportSuperIndividuals <- function(
         WeightingVariable = WeightingVariable
     ) 
 }
+
+
+##################################################
+##################################################
+#' Report DensityData
+#' 
+#' Reports the sum, mean or other functions on a variable of the \code{\link{DensityData}}.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams general_report_arguments
+#' @inheritParams ReportSuperIndividuals
+#' 
+#' @return
+#' A \code{\link{ReportDensityData}} object.
+#' 
+#' @examples
+#' 
+#' @seealso 
+#' 
+#' @export
+#' 
+ReportDensity <- function(
+    DensityData, 
+    TargetVariable, 
+    ReportFunction = getReportFunctions(getMultiple = FALSE), 
+    GroupingVariables = character(), 
+    RemoveMissingValues = FALSE, 
+    WeightingVariable = character()
+) 
+{
+    aggregateBaselineDataOneTable(
+        stoxData = DensityData$Data, 
+        TargetVariable = TargetVariable, 
+        aggregationFunction = ReportFunction, 
+        GroupingVariables = GroupingVariables, 
+        na.rm = RemoveMissingValues, 
+        WeightingVariable = WeightingVariable
+    ) 
+}
+
 
 
 ##################################################
@@ -61,10 +101,11 @@ ReportSuperIndividuals <- function(
 aggregateBaselineDataOneTable <- function(
     stoxData, 
     TargetVariable, 
-    aggregationFunction = getRstoxBaseDefinitions("reportFunctions")$functionName, 
+    aggregationFunction = getReportFunctions(), 
     subTable = character(), 
     GroupingVariables = character(), 
     na.rm = FALSE, 
+    padWithZeros = FALSE, 
     WeightingVariable = character()
 )
 {
@@ -112,11 +153,25 @@ aggregateBaselineDataOneTable <- function(
         return(out)
     }
     
+    # Add a CJ operation here like in StoX 2.7 (function reportAbundanceAtLevel). This needs an option, so that it is only used across bootstrap iterations:
+    if(padWithZeros) {
+        # Add NAs for missing combinations of the GroupingVariables:
+        #stoxData <- stoxData[do.call(CJ, lapply(GroupingVariables, unique)), allow.cartesian = TRUE]
+        stoxData <- stoxData[do.call(CJ,lapply(stoxData[, ..GroupingVariables], unique)), on = GroupingVariables]
+        # Convert the NAs to 0 for the abundance and biomass columns:
+        abudanceVariables <- RstoxBase::getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
+        replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
+    }
+    
     outputData <- stoxData[, fun(.SD), by = GroupingVariables]
     
     # Order by the grouping variables:
-    data.table::setorderv(outputData, GroupingVariables)
+    if(length(GroupingVariables)) {
+        data.table::setorderv(outputData, GroupingVariables)
+    }
     
+    # Set the number of digits. Added on 2021-03-04:
+    RstoxData::setRstoxPrecisionLevel(outputData)
     
     return(outputData)
 }

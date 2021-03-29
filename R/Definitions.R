@@ -44,7 +44,7 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumNASCWeight", 
                 type = c("ChannelReferenceType"), 
-                other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
+                other = c("ChannelReferenceDepth", "ChannelReferenceTilt", "Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
             ), 
             Resolution = list(
                 horizontalResolution = "EDSU", 
@@ -67,7 +67,8 @@ initiateRstoxBase <- function(){
             ), 
             Resolution = list(
                 horizontalResolution = c("Stratum", "PSU", "EDSU"), 
-                verticalResolution = c("Layer", "Channel")
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "DateTime", "Longitude", "Latitude")
             )
         ), 
         # LengthDistribution:
@@ -94,11 +95,12 @@ initiateRstoxBase <- function(){
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumLengthDistributionWeight", 
                 type = "LengthDistributionType", 
-                other = c("EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+                other = c("Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude")
             ), 
             Resolution = list(
                 horizontalResolution = "Station", 
-                verticalResolution = c("Layer", "Haul")
+                verticalResolution = c("Layer", "Haul"), 
+                other = c("VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             )
         ), 
         MeanLengthDistributionData = list(
@@ -117,7 +119,8 @@ initiateRstoxBase <- function(){
             ), 
             Resolution = list(
                 horizontalResolution = c("Stratum", "PSU", "Station"), 
-                verticalResolution = c("Layer", "Haul")
+                verticalResolution = c("Layer", "Haul"), 
+                other = c("Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             )
         ), 
         AssignmentLengthDistributionData = list(
@@ -133,47 +136,68 @@ initiateRstoxBase <- function(){
         ), 
         # Density:
         DensityData = list(
-            surveyDefinition = "Survey", 
-            horizontalResolution = c("Stratum", "PSU"), 
-            verticalResolution = c("Layer"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c(
-                "IndividualTotalLength", "LengthResolution", 
-                "Beam", "Frequency" # The relevant acoustic variables
+            Data = list(
+                surveyDefinition = "Survey", 
+                horizontalResolution = c("Stratum", "PSU"), 
+                verticalResolution = c("Layer"), 
+                categoryVariable = "SpeciesCategory", 
+                groupingVariables = c(
+                    "IndividualTotalLength", "LengthResolution", 
+                    "Beam", "Frequency" # The relevant acoustic variables
+                ), 
+                data = "Density",
+                verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+                weighting = "DensityWeight", 
+                other = NULL
             ), 
-            data = "Density",
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = "DensityWeight", 
-            other = NULL
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "EDSU", "Station"), 
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            )
         ), 
         MeanDensityData = list(
-            surveyDefinition = "Survey", 
-            horizontalResolution = "Stratum", 
-            verticalResolution = c("Layer"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c(
-                "IndividualTotalLength", "LengthResolution", 
-                "Beam", "Frequency" # The relevant acoustic variables
+            Data = list(
+                surveyDefinition = "Survey", 
+                horizontalResolution = "Stratum", 
+                verticalResolution = c("Layer"), 
+                categoryVariable = "SpeciesCategory", 
+                groupingVariables = c(
+                    "IndividualTotalLength", "LengthResolution", 
+                    "Beam", "Frequency" # The relevant acoustic variables
+                ), 
+                data = "Density",
+                verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+                weighting = "MeanDensityWeight", 
+                other = NULL
             ), 
-            data = "Density",
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = "MeanDensityWeight", 
-            other = NULL
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "EDSU", "Station"), 
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            )
         ), 
         # Abundance:
         AbundanceData = list(
-            surveyDefinition = "Survey", 
-            horizontalResolution = "Stratum", 
-            verticalResolution = c("Layer"), 
-            categoryVariable = "SpeciesCategory", 
-            groupingVariables = c(
-                "IndividualTotalLength", "LengthResolution", 
-                "Beam", "Frequency" # The relevant acoustic variables
+            Data = list(
+                surveyDefinition = "Survey", 
+                horizontalResolution = "Stratum", 
+                verticalResolution = c("Layer"), 
+                categoryVariable = "SpeciesCategory", 
+                groupingVariables = c(
+                    "IndividualTotalLength", "LengthResolution", 
+                    "Beam", "Frequency" # The relevant acoustic variables
+                ), 
+                data = "Abundance", 
+                verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
+                weighting = NULL, 
+                other = NULL
             ), 
-            data = "Abundance", 
-            verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
-            weighting = NULL, 
-            other = NULL
+            Resolution = list(
+                horizontalResolution = c("Stratum", "PSU", "EDSU", "Station"), 
+                verticalResolution = c("Layer", "Channel"), 
+                other = c("Cruise", "EffectiveLogDistance", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            )
         ), 
         IndividualsData = list(
             Data = list(
@@ -705,6 +729,8 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
 #' @param elements A vector of specific elements to extract from the definition.
 #' @param unlist Logical: If TRUE unlist the list of column names.
 #' 
+#' @export
+#'
 getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
@@ -735,7 +761,7 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
             thisDataTypeDefinition <- thisDataTypeDefinition[[subTable]]
         }
         else {
-            stop("The dataType may be non-existing, or the subTable may not be present for the given dataType")
+            stop("The dataType ", dataType, " may be non-existing, or the subTable may not be present for the given dataType")
         }
     }
     

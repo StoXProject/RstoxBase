@@ -302,10 +302,14 @@ sumRawResolutionData <- function(
     }
     
     # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
-    resolutionVariables <- getAllResolutionVariables(
-        dataType = dataType#, 
-        #dimension = "vertical"
-    )
+    ### resolutionVariables <- getAllResolutionVariables(
+    ###     dataType = dataType#, 
+    ###     #dimension = "vertical"
+    ### )
+    
+    sumDataType <- paste0("Sum", dataType)
+    resolutionVariables <- unlist(getDataTypeDefinition(sumDataType, subTable = "Resolution"))
+    
     presentResolutionVariables <- intersect(resolutionVariables, names(dataCopy))
     Resolution <- unique(dataCopy[, ..presentResolutionVariables])
     
@@ -387,11 +391,15 @@ meanRawResolutionData <- function(
         stop("SurveyProcessData must be given if SurveyDefinition = \"FunctionInput\"")
     }
     
-    # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
-    resolutionVariables <- getAllResolutionVariables(
-        dataType = dataType#, 
-        #dimension = "horizontal"
-    )
+    ### # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
+    ### resolutionVariables <- getAllResolutionVariables(
+    ###     dataType = dataType#, 
+    ###     #dimension = "horizontal"
+    ### )
+    
+    meanDataType <- sub("Sum", "Mean", dataType)
+    resolutionVariables <- unlist(getDataTypeDefinition(meanDataType, subTable = "Resolution"))
+     
     extractFromDataCopy <- intersect(resolutionVariables, names(dataCopy))
     mergeBy <- intersect(names(data$Resolution), extractFromDataCopy)
     Resolution <- unique(
@@ -479,6 +487,7 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
         targetResolution = targetResolution, 
         dimension = "horizontal"
     )
+    
     # Extract the 'by' element:
     by <- aggregationVariables$by
     
@@ -486,6 +495,16 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     dataVariable <- aggregationVariables$dataVariable
     targetWeightingVariable <- aggregationVariables$weightingVariable
     weightingVariable <- originalDataTypeDefinition$weighting
+    
+    
+    ## Do nothing if the target resolution is the same as the present resolution:
+    #presentResolution <- aggregationVariables$presentResolution
+    #nrowPresent <- nrow(data[, ..presentResolution])
+    #nrowTarget <- nrow(data[, ..targetResolution])
+    #if(nrowPresent == nrowTarget) {
+    #    data[, c(targetWeightingVariable) := get(weightingVariable)]
+    #    return(data)
+    #}
     
     
     #### Step 1: ####
@@ -894,6 +913,9 @@ toJSON_Rstox <- function(x, ...) {
     lll <- c(list(x = x), lll
     )
     
+    # Use ISO8601 for time:
+    lll$POSIXt ="ISO8601"
+    
     do.call(jsonlite::toJSON, lll)
 }
 
@@ -902,3 +924,31 @@ setAtt <- function(x, ...) {
     attributes(x) <- list(...)
     return(x)
 }
+
+
+#' Replace all NAs in a data.table by reference
+#' 
+#' @param DT A data.table.
+#' @param cols A vector of column names in which to replace the NAs. 
+#' @param replacement the object to replace by.
+#' 
+#' @export
+#' 
+replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
+    if(!length(cols)) {
+        cols <- names(DT)
+    }
+    for (j in cols) {
+        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
+    }
+}
+
+
+detectInvalidUTF8 <- function(x) {
+    areNA <- is.na(x)
+    Encoding(x) <- "UTF-8"
+    x <- iconv(x, "UTF-8", "UTF-8")
+    newNA <- areNA != is.na(x)
+    return(newNA)
+}
+

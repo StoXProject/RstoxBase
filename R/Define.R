@@ -54,8 +54,63 @@ DefinePSU <- function(
         }
     }
     
+    # Define the PSU prefix and the SSU label, which is the name of the SSU column:
+    prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
+    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
+    
+    # Make sure that there is only one row per SSU:
+    notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
+    MergedStoxDataStationLevel <- MergedStoxDataStationLevel[notDuplicatedSSUs, ]
+    
+    # This is taken care of in formatOutput():
+    ### # And order the SSUs by time:
+    ### data.table::setorderv(MergedStoxDataStationLevel, "DateTime")
+    
+    # Get SSUs:
+    SSUs <- MergedStoxDataStationLevel[[SSULabel]]
+    
+    
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
+        
+        # Rename from "EDSU"/"Station" to "SSU": 
+        processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+        
+        # Add any SSUs present in the StoxData that are not present in the processData:
+        missingSSUs <- ! SSUs %in% processData$SSU_PSU$SSU
+        if(any(missingSSUs)) {
+            SSU_PSU <- data.table::data.table(
+                SSU = SSUs[missingSSUs], 
+                PSU = NA_character_
+            )
+            processData$SSU_PSU <- rbind(
+                processData$SSU_PSU, 
+                SSU_PSU
+            )
+        }
+        
+        # Remove any EDSUs that are not tagged to a PSU and that are missing in the StoxData:
+        unusedAndMissingInStoxData <- processData$SSU_PSU[, is.na(PSU) & ! SSU %in% SSUs]
+        if(any(unusedAndMissingInStoxData)) {
+            processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
+        }
+        
+        # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
+        usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
+        if(any(usedButMissingInStoxData)) {
+            warning(
+                "There are ", 
+                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", 
+                " that are present as tagged to one or more PSUs in the process data, but that are not present in the ", 
+                "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data of using a filter. StoX should take care to ignore these ", 
+                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", "but for clarity it is advised to remove them from the PSUs."
+            )
+        }
+        
+        # Rename back from "SSU" to "EDSU"/"Station": 
+        processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
+        
+        # Add the PSUByTime:
         if(SavePSUByTime) {
             processData$PSUByTime <- getPSUByTime(
                 PSUProcessData = processData, 
@@ -66,30 +121,19 @@ DefinePSU <- function(
         return(processData)
     }
     
-    # Define the PSU prefix and the SSU label, which is the name of the SSU column:
-    prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
-    SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
-    # Make sure that there is only one row per SSU:
-    notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
-    MergedStoxDataStationLevel <- MergedStoxDataStationLevel[notDuplicatedSSUs, ]
     
-    # And order the SSUs by time:
-    data.table::setorderv(MergedStoxDataStationLevel, "DateTime")
-    
-    # Get SSUs:
-    SSU <- MergedStoxDataStationLevel[[SSULabel]]
     
     # Use each SSU as a PSU:
     if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
         
         # Define PSUIDs and PSUNames:
-        PSUID <- seq_along(SSU)
+        PSUID <- seq_along(SSUs)
         PSUName <- getPSUName(PSUID, prefix)
         
         # Set each SSU as a PSU:
         SSU_PSU <- data.table::data.table(
-            SSU = SSU, 
+            SSU = SSUs, 
             PSU = PSUName
         )
         
@@ -169,7 +213,7 @@ DefinePSU <- function(
     else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
         
         SSU_PSU <- data.table::data.table(
-            SSU = SSU, 
+            SSU = SSUs, 
             PSU = NA_character_
         )
         Stratum_PSU <- data.table::data.table()
@@ -180,7 +224,7 @@ DefinePSU <- function(
         }
         else {
             SSU_PSU <- data.table::data.table(
-                SSU = SSU, 
+                SSU = SSUs, 
                 PSU = NA_character_
             )
             Stratum_PSU <- data.table::data.table()
@@ -352,6 +396,9 @@ DefineBioticPSU <- function(
         PSUType = "Biotic"
     )
     
+    # Format the output:
+    formatOutput(BioticPSU, dataType = "BioticPSU", keep.all = FALSE)
+    
     return(BioticPSU)
 }
 
@@ -485,12 +532,22 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     thisSSU_PSU <- SSU_PSU_ByPSU[[PSU]]
     
     # Match the SSUs of the PSUProcessData with SSUs of the StationTable:
-    # Order both since it may happen that the EDSUs of the StoxAocusticData are not ordered, e.g. if there are mmultiple instruments from the same cruise, and these instruments have both identical and differing times:
-    
+    # Order both since it may happen that the EDSUs of the StoxAocusticData are not ordered, e.g. if there are multiple instruments from the same cruise, and these instruments have both identical and differing times:
     atSSUInStoxData <- match(sort(thisSSU_PSU$SSU), sort(StationTable$SSU))
     if(any(is.na(atSSUInStoxData))) {
         warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData.")
         atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
+        
+        # It may happen that an SSU of the SSU_PSU is not present in the station data (StoxAcoustic$Log or StoxBiotic$Station). In these cases return NAs for cruise and times: 
+        if(all()) {
+            #PSUStartStopDateTimeOneCruise <- data.table::data.table(
+            #    PSU = PSU, 
+            #    Cruise = NA_character_, 
+            #    StartDateTime = NA, # What should this be as POSIXct????
+            #    StopDateTime = NA # What should this be as POSIXct????
+            #)
+            return(NULL)
+        }
     }
     
     # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data?????):
@@ -632,13 +689,9 @@ DefineLayer <- function(
     
     # If "LayerTable" is requested match the Breaks against the possible breaks:
     else if(grepl("LayerTable", DefinitionMethod, ignore.case = TRUE)) {
-        # See if tthere are breaks that are not valid. If this is the case we accept it if these are lower or higher than the range of the possible breaks:
-        invalidBreaks <- setdiff(
-            unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]), 
-            unlist((possibleIntervals))
-        )
-        if(!all(invalidBreaks < min(possibleIntervals) | invalidBreaks > max(possibleIntervals))) {
-            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(apply(possibleIntervals, 1, paste, collapse = " - "), collapse = ", "), "]", " but values outside of the range of possible braks are also valid.")
+        # Error if any of the specified breaks are invalid:
+        if(any(! unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]) %in% unlist(possibleIntervals))) {
+            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
         }
         else {
             Layer <- LayerTable
@@ -851,7 +904,7 @@ DefineBioticLayer <- function(
 #'
 #'\eqn{r_o} = reference value for longitude difference (degrees). Defined by function parameter \emph{LongitudeDifference})
 #'
-#'The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned haulss are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
+#'The function parameter \emph{MinNumberOfHauls} can override the requirement to fulfill the selection criteria (scalar product f <=1) if the number of assigned hauls are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.
 #'
 #'NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.
 #'
@@ -869,7 +922,7 @@ DefineBioticLayer <- function(
 #'
 DefineBioticAssignment <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("Stratum", "Radius", "EllipsoidalDistance", "DeleteAllAssignments"), 
+    DefinitionMethod = c("Manual", "Stratum", "Radius", "EllipsoidalDistance", "DeleteAllAssignments"), 
     StoxBioticData, 
     # For DefinitionMethod "Stratum": 
     StratumPolygon, AcousticPSU, #AcousticLayer, 
@@ -896,6 +949,13 @@ DefineBioticAssignment <- function(
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
+        
+        # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
+        newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, processData$BioticAssignment$PSU)
+        if(length(newPSUs)) {
+            warning("StoX: There are PSUs in AcousticPSU that are not present in the processData. Please re-run the DefineBioticAssignment function with UseProcecssData set to FALSE (unchecked) to regenerate the assignemnt and include all PSUs. This will however overwrite any manually defined assignments, so re-run only if you used an automatic assignment methods only.")
+        }
+        
         # Special action since we have included Layer in the BioticAssignment but have not yet opened for the possibility to assign differently to different layers. Re-add the Layer column:
         BioticAssignment <- addLayerToBioticAssignmentAndFormat(
             BioticAssignment = processData$BioticAssignment, 
@@ -916,7 +976,15 @@ DefineBioticAssignment <- function(
     MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
     
     # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
-    if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
+    if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+        if(length(processData)) {
+            return(processData)
+        }
+        else {
+            BioticAssignment <- data.table::data.table()
+        }
+    }
+    else if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         # Create a spatial points object of the positions of the hauls:
         SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
         sp::proj4string(SpatialHauls) <- getRstoxBaseDefinitions("proj4string")
@@ -937,7 +1005,7 @@ DefineBioticAssignment <- function(
         # Merge the StoxBioticData:
         MergeStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
         
-        # Get a table of EDSUs and Hauls:
+        # Get a table of EDSUs and Hauls present in the StoxAcoustic and StoxBiotic data:
         EDSU_Haul <- data.table::CJ(
             EDSU = MergeStoxAcousticData$EDSU, 
             Haul = MergeStoxBioticData$Haul, 
@@ -946,7 +1014,8 @@ DefineBioticAssignment <- function(
         
         # Merge PSUs and strata into the table:
         EDSU_PSU_Stratum <- RstoxData::mergeDataTables(AcousticPSU[names(AcousticPSU)!= "PSUByTime"], all = TRUE, output.only.last = TRUE)
-        BioticAssignment <- merge(EDSU_PSU_Stratum, EDSU_Haul, by = "EDSU", all = TRUE)
+        # .. but make sure that we only keep EDSUs that are present in the StoxAcoustic data, as the AcousticPSU data type is free to contain any EDSUs tagged to or not tagged to PSUs (using all.y = TRUE):
+        BioticAssignment <- merge(EDSU_PSU_Stratum, EDSU_Haul, by = "EDSU", all.y = TRUE)
         
         # Get the distance units:
         if(grepl("Radius", DefinitionMethod, ignore.case = TRUE)) {
@@ -1207,30 +1276,30 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @details
 #' The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
 #' 
-#' A set of automatic \emph{WeightingMethod}s are available to update the haul weighing variables:
+#' A set of automatic \emph{WeightingMethod}s are available to update the haul weighing variables. Note that the weighting may change if an additional species is included for all WeightingMethods except "Equal":
 #' 
 #'\strong{Equal}
 #' 
 #' All assigned biotic hauls are given equal weight by assigning the value 1 to the weighting variables.
 #' 
 #'\strong{NumberOfLengthSamples}
-#'The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station.  The parameter \emph{MaxNumberOfLengthSamples} is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. 
+#'The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station. The parameter \emph{MaxNumberOfLengthSamples} is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. Note that the weighting may change if an additional species is included.
 #' 
-#' \strong{NormTotalWeight}
+#' \strong{NormalizedTotalWeight}
 #' 
 #' The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 #' 
-#'\strong{NormTotalCount}
+#'\strong{NormalizedTotalCount}
 #'
-#'The assigned biotic haulss are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+#'The assigned biotic hauls are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 #'
 #'\strong{SumWeightedCount}
 #'
-#'The assigned biotic haulss are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Normalized} (normalized to one nautical mile towing distance).
+#'The assigned biotic hauls are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 #'
-#'\strong{InvSumWeightedCount}
+#'\strong{InverseSumWeightedCount}
 #'
-#'The assigned biotic haulss are given a weighting value as the inverse sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
+#'The assigned biotic hauls are given a weighting value as the inverse of the sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
 #'
 #'\deqn{w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }}
 #'
@@ -1250,9 +1319,11 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' 
 #'The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.
 #'
-#'\strong{NASC}
+#'It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 #'
-#'The assigned biotic haulss are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
+#'\strong{NASC} Not yet implemented.
+#'
+#'The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
 #'
 #'A search for acoustic NASC values (at EDSU resolution) is performed within a given radius around a biotic station. A weighted (by integrator distance of the EDSUs) mean NASC is calculated from the surrounding NASC values and this is used in the further weighting value calculations. Using this combined NASC value, the length distribution of the biotic station and a target strength (TS) versus length empirical relationship, the weighting variable density of the biotic station is first calculated by length group. The sum of densities (number per square nautical mile) for all length groups of the target species at the given biotic haul, is than calculated and applied as the weighting variable for the biotic haul.Note that if an EDSU NASC value is used for assignment to several biotic stations, the NASC value is split and devided between these biotic stations.
 #'
@@ -1306,6 +1377,10 @@ BioticAssignmentWeighting <- function(
     ## Weight hauls by the number of length samples (count the length samples for which IndividualTotalLength is not NA):
     #else 
     if(WeightingMethod == "NumberOfLengthSamples") {
+        
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NumberOfLengthSamples")
+        
         # Merge Haul and Individual, and count individuals with length for each Haul:
         Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
         NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLength)))), by = "Haul"]
@@ -1359,6 +1434,10 @@ BioticAssignmentWeighting <- function(
     }
     # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
+        
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalWeight")
+        
         # Merge Haul and Sample, and sum the catch weight divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
         NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeight) / EffectiveTowDistance[1]), by = "Haul"]
@@ -1375,6 +1454,10 @@ BioticAssignmentWeighting <- function(
     }
     # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
     else if(WeightingMethod == "NormalizedTotalCount") {
+        
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalCount")
+        
         # Merge Haul and Sample, and sum the catch count divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
         NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowDistance[1]), by = "Haul"]
@@ -1390,6 +1473,9 @@ BioticAssignmentWeighting <- function(
     }
     # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
     else if(WeightingMethod == "SumWeightedCount") {
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInLengthDistributionData(LengthDistributionData, "SumWeightedCount")
+        
         BioticAssignmentCopy <- addSumWeightedCount(
             BioticAssignment = BioticAssignmentCopy, 
             LengthDistributionData = LengthDistributionData, 
@@ -1421,7 +1507,7 @@ mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weigh
 
 
 isLengthDistributionType <- function(LengthDistributionData, LengthDistributionType) {
-    LengthDistributionData$LengthDistributionType[1] == LengthDistributionType
+    LengthDistributionData$LengthDistributionType[1] %in% LengthDistributionType
 }
 
 # Function to get great circle distance between a Haul and the EDSUs:
@@ -1471,20 +1557,23 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     # Make a copy of the LengthDistributionData to enable safe modification by reference:
     LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
     
-    # Normalize the WeightedCount:
-    if(isLengthDistributionType(LengthDistributionData, "Standard")) {
-        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
-    } 
-    else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
-        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or \"Normalized\"")
+    ### # Normalize the WeightedCount:
+    ### if(isLengthDistributionType(LengthDistributionData, "Standard")) {
+    ###     LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
+    ### } 
+    ### else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
+    ###     stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or###  \"Normalized\"")
+    ### }
+    if(!isLengthDistributionType(LengthDistributionData, c("Standard", "Normalized"))) {
+        stop("The LengthDistributionType must be \"Standard\" or \"Normalized\"")
     }
-    # Sum the normalized WeightedCount for each Haul:
+    # Sum the WeightedCount for each Haul:
     SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
     
-    # Merge the NormalizedTotalWeight into the BioticAssignment by the Haul identifyer: 
+    # Merge the SumWeightedCount into the BioticAssignment by the Haul identifyer: 
     BioticAssignment <- merge(BioticAssignment, SumWeightedCount, by = "Haul")
     
-    # Copy the NormalizedTotalWeight into the weightingVariable:
+    # Copy the SumWeightedCount into the weightingVariable:
     if(inverse) {
         BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedCount]
     }
@@ -1494,6 +1583,23 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     
     BioticAssignment[]
 }
+
+
+checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, WeightingMethod) {
+    numSpecies <- length(unique(LengthDistributionData$SpeciesCategory))
+    if(numSpecies > 1) {
+        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
+    }
+}
+
+
+checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
+    numSpecies <- length(unique(StoxBioticData$SpeciesCategory$SpeciesCategory))
+    if(numSpecies > 1) {
+        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
+    }
+}
+
 
 
 ##################################################

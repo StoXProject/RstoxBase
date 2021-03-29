@@ -106,6 +106,12 @@ LengthDistribution <- function(
     )
     # Declare the variables used below:
     LengthDistributionData <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
+    if(!nrow(LengthDistributionData)) {
+        warning("Empty Individual table.")
+        return(LengthDistributionData)
+    }
+    # Remove rows with NA in 'keys' and subsequently remove duplicates:
+    LengthDistributionData <- subset(LengthDistributionData, rowSums(is.na(LengthDistributionData[, ..keys])) == 0)
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
     ####################################################
     
@@ -444,7 +450,8 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     )
     
     # Add also the mid point of each length interval:
-    data[, IndividualTotalLengthMiddle := IndividualTotalLength + LengthResolution / 2]
+    #data[, IndividualTotalLengthMiddle := IndividualTotalLength + LengthResolution / 2]
+    data[, IndividualTotalLengthMiddle := getMidIndividualTotalLength(.SD)]
     
     # Apply the compensationFunction:
     valid <- !is.na(data[[requiredParameters[1]]])
@@ -695,10 +702,10 @@ MeanLengthDistribution <- function(
 #' 
 AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignment) {
     
-    # Require LengthDistributionType "Percent":
-    if(!isLengthDistributionType(LengthDistributionData, "Percent")) {
-        stop("LengthDistributionData used as input to AssignmentLengthDistribution() must be of LengthDistributionType \"Percent\"")
-    }
+    ### # Require LengthDistributionType "Percent":
+    ### if(!isLengthDistributionType(LengthDistributionData, "Percent")) {
+    ###     stop("LengthDistributionData used as input to AssignmentLengthDistribution() must be of LengthDistributionType \"Percent\"")
+    ### }
     
     # Determine assignment IDs:
     BioticAssignmentCollapsed <- BioticAssignment[, .(assignmentPasted = paste0(paste(Haul, WeightingFactor, sep = ",", collapse = "\n"), "\n")), by = c("Stratum", "PSU", "Layer")]
@@ -733,11 +740,7 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     dataVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
     
     # Extract the subset of the data given by the hauls:
-    BioticAssignment <- data.table::fread(
-        text = assignmentPasted, 
-        col.names = c("Haul", "WeightingFactor"), 
-        colClasses = c("character", "double")
-    )
+    BioticAssignment <- data.table::fread(text = assignmentPasted, col.names = c("Haul", "WeightingFactor"), colClasses = c("character", "double"))
     Hauls <- BioticAssignment$Haul
     WeightingFactors <- BioticAssignment$WeightingFactor
     thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
@@ -764,10 +767,11 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     #thisLengthDistributionData <- unique(thisLengthDistributionData)
     thisLengthDistributionData <- unique(thisLengthDistributionData, by = by)
     
-    # Normalize for each species category:
-    bySpecies <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable"), unlist = TRUE)
-    scaling <- if(percent) 100 else 1
-    thisLengthDistributionData[, c(dataVariable) := get(dataVariable) / sum(get(dataVariable), na.rm = TRUE) * scaling, by = bySpecies]
+    # This was a misunderstanding: 
+    ### # Normalize for each species category:
+    ### bySpecies <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable"), unlist = TRUE)
+    ### scaling <- if(percent) 100 else 1
+    ### thisLengthDistributionData[, c(dataVariable) := get(dataVariable) / sum(get(dataVariable), na.rm = TRUE) * scaling, by = bySpecies]
     
     # Order by the category and grouping variables:
     orderBy <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)

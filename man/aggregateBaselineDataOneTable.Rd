@@ -7,10 +7,11 @@
 aggregateBaselineDataOneTable(
   stoxData,
   TargetVariable,
-  aggregationFunction = getRstoxBaseDefinitions("reportFunctions")$functionName,
+  aggregationFunction = getReportFunctions(),
   subTable = character(),
   GroupingVariables = character(),
   na.rm = FALSE,
+  padWithZeros = FALSE,
   WeightingVariable = character()
 )
 }
