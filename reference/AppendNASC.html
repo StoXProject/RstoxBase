@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Base StoX Functions — RstoxBase • RstoxBase</title>
+<title>Append to NASCData — AppendNASC • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Base StoX Functions — RstoxBase" />
-<meta property="og:description" content="Base StoX functions used for survey estimation." />
+<meta property="og:title" content="Append to NASCData — AppendNASC" />
+<meta property="og:description" content="This function converts a StoxAcousticData to NASCData and appends to another NASCData." />
 
 
 
@@ -114,46 +114,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Base StoX Functions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/RstoxBase-package.R'><code>R/RstoxBase-package.R</code></a></small>
-    <div class="hidden name"><code>RstoxBase.Rd</code></div>
+    <h1>Append to NASCData</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Acoustic.R'><code>R/Acoustic.R</code></a></small>
+    <div class="hidden name"><code>AppendNASC.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Base StoX functions used for survey estimation.</p>
+    <p>This function converts a StoxAcousticData to NASCData and appends to another NASCData.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>AppendNASC</span><span class='op'>(</span><span class='va'>NASCData</span>, <span class='va'>StoxAcousticData</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>NASCData</th>
+      <td><p>The <code><a href='NASCData.html'>NASCData</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>StoxAcousticData</th>
+      <td><p>The <code><a href='https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html'>StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The StoX functions defined in RstoxBase are those for defining resolution (e.g., PSUs and Layers), assignment, NASC data and StationLengthDistribution data, density, abundance and superindividual abundance</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/StoXProject/RstoxBase'>https://github.com/StoXProject/RstoxBase</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/StoXProject/RstoxBase/issues'>https://github.com/StoXProject/RstoxBase/issues</a></p></li>
-</ul>
-
-</div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p><strong>Maintainer</strong>: Arne Johannes Holmin <a href='mailto:arnejh@hi.no'>arnejh@hi.no</a></p>
-<p>Authors:</p><ul>
-<li><p>Ibrahim Umar</p></li>
-<li><p>Sindre Vatnehol</p></li>
-<li><p>Edvin Fuglebakk</p></li>
-<li><p>Aasmund Skaalevik</p></li>
-<li><p>Esmael Musema Hassen</p></li>
-<li><p>Espen Johnsen</p></li>
-<li><p>Atle Totland</p></li>
-</ul>
-
-<p>Other contributors:</p><ul>
-<li><p>Norwegian Institute of Marine Research [copyright holder, funder]</p></li>
-</ul>
-
-
+    <div class='dont-index'><p><code><a href='NASC.html'>NASC</a></code> and <code>StoxAcousticData</code>.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

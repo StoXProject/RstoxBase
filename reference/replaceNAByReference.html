@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Base StoX Functions — RstoxBase • RstoxBase</title>
+<title>Replace all NAs in a data.table by reference — replaceNAByReference • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Base StoX Functions — RstoxBase" />
-<meta property="og:description" content="Base StoX functions used for survey estimation." />
+<meta property="og:title" content="Replace all NAs in a data.table by reference — replaceNAByReference" />
+<meta property="og:description" content="Replace all NAs in a data.table by reference" />
 
 
 
@@ -114,45 +114,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Base StoX Functions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/RstoxBase-package.R'><code>R/RstoxBase-package.R</code></a></small>
-    <div class="hidden name"><code>RstoxBase.Rd</code></div>
+    <h1>Replace all NAs in a data.table by reference</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Utilities.R'><code>R/Utilities.R</code></a></small>
+    <div class="hidden name"><code>replaceNAByReference.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Base StoX functions used for survey estimation.</p>
+    <p>Replace all NAs in a data.table by reference</p>
     </div>
 
+    <pre class="usage"><span class='fu'>replaceNAByReference</span><span class='op'>(</span><span class='va'>DT</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span>, replacement <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span></pre>
 
-
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The StoX functions defined in RstoxBase are those for defining resolution (e.g., PSUs and Layers), assignment, NASC data and StationLengthDistribution data, density, abundance and superindividual abundance</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/StoXProject/RstoxBase'>https://github.com/StoXProject/RstoxBase</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/StoXProject/RstoxBase/issues'>https://github.com/StoXProject/RstoxBase/issues</a></p></li>
-</ul>
-
-</div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p><strong>Maintainer</strong>: Arne Johannes Holmin <a href='mailto:arnejh@hi.no'>arnejh@hi.no</a></p>
-<p>Authors:</p><ul>
-<li><p>Ibrahim Umar</p></li>
-<li><p>Sindre Vatnehol</p></li>
-<li><p>Edvin Fuglebakk</p></li>
-<li><p>Aasmund Skaalevik</p></li>
-<li><p>Esmael Musema Hassen</p></li>
-<li><p>Espen Johnsen</p></li>
-<li><p>Atle Totland</p></li>
-</ul>
-
-<p>Other contributors:</p><ul>
-<li><p>Norwegian Institute of Marine Research [copyright holder, funder]</p></li>
-</ul>
-
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>DT</th>
+      <td><p>A data.table.</p></td>
+    </tr>
+    <tr>
+      <th>cols</th>
+      <td><p>A vector of column names in which to replace the NAs.</p></td>
+    </tr>
+    <tr>
+      <th>replacement</th>
+      <td><p>the object to replace by.</p></td>
+    </tr>
+    </table>
 
 
   </div>

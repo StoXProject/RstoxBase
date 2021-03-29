@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Base StoX Functions — RstoxBase • RstoxBase</title>
+<title>Report DensityData — ReportDensity • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Base StoX Functions — RstoxBase" />
-<meta property="og:description" content="Base StoX functions used for survey estimation." />
+<meta property="og:title" content="Report DensityData — ReportDensity" />
+<meta property="og:description" content="Reports the sum, mean or other functions on a variable of the DensityData." />
 
 
 
@@ -57,6 +57,8 @@
 <![endif]-->
 
 
+
+<!-- dependencies from examples -->
 
 
   
@@ -114,47 +116,65 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Base StoX Functions</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/RstoxBase-package.R'><code>R/RstoxBase-package.R</code></a></small>
-    <div class="hidden name"><code>RstoxBase.Rd</code></div>
+    <h1>Report DensityData</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R'><code>R/Report.R</code></a></small>
+    <div class="hidden name"><code>ReportDensity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Base StoX functions used for survey estimation.</p>
+    <p>Reports the sum, mean or other functions on a variable of the <code><a href='DensityData.html'>DensityData</a></code>.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>ReportDensity</span><span class='op'>(</span>
+  <span class='va'>DensityData</span>,
+  <span class='va'>TargetVariable</span>,
+  ReportFunction <span class='op'>=</span> <span class='fu'><a href='getReportFunctions.html'>getReportFunctions</a></span><span class='op'>(</span>getMultiple <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>,
+  GroupingVariables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  RemoveMissingValues <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  WeightingVariable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>DensityData</th>
+      <td><p>The <code><a href='DensityData.html'>DensityData</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>TargetVariable</th>
+      <td><p>The variable to report.</p></td>
+    </tr>
+    <tr>
+      <th>ReportFunction</th>
+      <td><p>The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.</p></td>
+    </tr>
+    <tr>
+      <th>GroupingVariables</th>
+      <td><p>The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).</p></td>
+    </tr>
+    <tr>
+      <th>RemoveMissingValues</th>
+      <td><p>Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA.</p></td>
+    </tr>
+    <tr>
+      <th>WeightingVariable</th>
+      <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The StoX functions defined in RstoxBase are those for defining resolution (e.g., PSUs and Layers), assignment, NASC data and StationLengthDistribution data, density, abundance and superindividual abundance</p>
+    <p>A <code><a href='ReportDensityData.html'>ReportDensityData</a></code> object.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/StoXProject/RstoxBase'>https://github.com/StoXProject/RstoxBase</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/StoXProject/RstoxBase/issues'>https://github.com/StoXProject/RstoxBase/issues</a></p></li>
-</ul>
+    <div class='dont-index'>
 
 </div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p><strong>Maintainer</strong>: Arne Johannes Holmin <a href='mailto:arnejh@hi.no'>arnejh@hi.no</a></p>
-<p>Authors:</p><ul>
-<li><p>Ibrahim Umar</p></li>
-<li><p>Sindre Vatnehol</p></li>
-<li><p>Edvin Fuglebakk</p></li>
-<li><p>Aasmund Skaalevik</p></li>
-<li><p>Esmael Musema Hassen</p></li>
-<li><p>Espen Johnsen</p></li>
-<li><p>Atle Totland</p></li>
-</ul>
-
-<p>Other contributors:</p><ul>
-<li><p>Norwegian Institute of Marine Research [copyright holder, funder]</p></li>
-</ul>
-
-
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
