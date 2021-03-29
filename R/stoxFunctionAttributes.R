@@ -502,11 +502,24 @@ stoxFunctionAttributes <- list(
     SplitMeanNASC = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "MeanNASCData", 
+        functionOutputDataType = "NASCData", 
         functionParameterFormat = list(
             SpeciesLink = "speciesLinkTable",
             AcousticCategoryLink = "acousticCategoryLinkTable"
         )
+    ),
+    
+    NASCToStoxAcoustic = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "StoxAcousticData"
+    ),
+    
+    
+    AppendNASC = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "NASCData"
     ),
     ##########
     

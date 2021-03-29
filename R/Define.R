@@ -532,12 +532,22 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     thisSSU_PSU <- SSU_PSU_ByPSU[[PSU]]
     
     # Match the SSUs of the PSUProcessData with SSUs of the StationTable:
-    # Order both since it may happen that the EDSUs of the StoxAocusticData are not ordered, e.g. if there are mmultiple instruments from the same cruise, and these instruments have both identical and differing times:
-    
+    # Order both since it may happen that the EDSUs of the StoxAocusticData are not ordered, e.g. if there are multiple instruments from the same cruise, and these instruments have both identical and differing times:
     atSSUInStoxData <- match(sort(thisSSU_PSU$SSU), sort(StationTable$SSU))
     if(any(is.na(atSSUInStoxData))) {
         warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData.")
         atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
+        
+        # It may happen that an SSU of the SSU_PSU is not present in the station data (StoxAcoustic$Log or StoxBiotic$Station). In these cases return NAs for cruise and times: 
+        if(all()) {
+            #PSUStartStopDateTimeOneCruise <- data.table::data.table(
+            #    PSU = PSU, 
+            #    Cruise = NA_character_, 
+            #    StartDateTime = NA, # What should this be as POSIXct????
+            #    StopDateTime = NA # What should this be as POSIXct????
+            #)
+            return(NULL)
+        }
     }
     
     # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data?????):
@@ -1367,6 +1377,10 @@ BioticAssignmentWeighting <- function(
     ## Weight hauls by the number of length samples (count the length samples for which IndividualTotalLength is not NA):
     #else 
     if(WeightingMethod == "NumberOfLengthSamples") {
+        
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NumberOfLengthSamples")
+        
         # Merge Haul and Individual, and count individuals with length for each Haul:
         Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
         NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLength)))), by = "Haul"]
@@ -1420,6 +1434,10 @@ BioticAssignmentWeighting <- function(
     }
     # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
+        
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalWeight")
+        
         # Merge Haul and Sample, and sum the catch weight divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
         NormalizedTotalWeight <- Haul_Sample[, .(NormalizedTotalWeight = sum(CatchFractionWeight) / EffectiveTowDistance[1]), by = "Haul"]
@@ -1436,6 +1454,10 @@ BioticAssignmentWeighting <- function(
     }
     # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
     else if(WeightingMethod == "NormalizedTotalCount") {
+        
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalCount")
+        
         # Merge Haul and Sample, and sum the catch count divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
         NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowDistance[1]), by = "Haul"]
@@ -1451,6 +1473,9 @@ BioticAssignmentWeighting <- function(
     }
     # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
     else if(WeightingMethod == "SumWeightedCount") {
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInLengthDistributionData(LengthDistributionData, "SumWeightedCount")
+        
         BioticAssignmentCopy <- addSumWeightedCount(
             BioticAssignment = BioticAssignmentCopy, 
             LengthDistributionData = LengthDistributionData, 
@@ -1482,7 +1507,7 @@ mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weigh
 
 
 isLengthDistributionType <- function(LengthDistributionData, LengthDistributionType) {
-    LengthDistributionData$LengthDistributionType[1] == LengthDistributionType
+    LengthDistributionData$LengthDistributionType[1] %in% LengthDistributionType
 }
 
 # Function to get great circle distance between a Haul and the EDSUs:
@@ -1532,20 +1557,23 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     # Make a copy of the LengthDistributionData to enable safe modification by reference:
     LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
     
-    # Normalize the WeightedCount:
-    if(isLengthDistributionType(LengthDistributionData, "Standard")) {
-        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
-    } 
-    else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
-        stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or \"Normalized\"")
+    ### # Normalize the WeightedCount:
+    ### if(isLengthDistributionType(LengthDistributionData, "Standard")) {
+    ###     LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
+    ### } 
+    ### else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
+    ###     stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or###  \"Normalized\"")
+    ### }
+    if(!isLengthDistributionType(LengthDistributionData, c("Standard", "Normalized"))) {
+        stop("The LengthDistributionType must be \"Standard\" or \"Normalized\"")
     }
-    # Sum the normalized WeightedCount for each Haul:
+    # Sum the WeightedCount for each Haul:
     SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
     
-    # Merge the NormalizedTotalWeight into the BioticAssignment by the Haul identifyer: 
+    # Merge the SumWeightedCount into the BioticAssignment by the Haul identifyer: 
     BioticAssignment <- merge(BioticAssignment, SumWeightedCount, by = "Haul")
     
-    # Copy the NormalizedTotalWeight into the weightingVariable:
+    # Copy the SumWeightedCount into the weightingVariable:
     if(inverse) {
         BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedCount]
     }
@@ -1555,6 +1583,23 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     
     BioticAssignment[]
 }
+
+
+checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, WeightingMethod) {
+    numSpecies <- length(unique(LengthDistributionData$SpeciesCategory))
+    if(numSpecies > 1) {
+        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
+    }
+}
+
+
+checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
+    numSpecies <- length(unique(StoxBioticData$SpeciesCategory$SpeciesCategory))
+    if(numSpecies > 1) {
+        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
+    }
+}
+
 
 
 ##################################################
