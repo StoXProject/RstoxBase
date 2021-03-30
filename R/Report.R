@@ -105,7 +105,7 @@ aggregateBaselineDataOneTable <- function(
     subTable = character(), 
     GroupingVariables = character(), 
     na.rm = FALSE, 
-    padWithZeros = FALSE, 
+    padWithZerosOn = character(), 
     WeightingVariable = character()
 )
 {
@@ -154,10 +154,11 @@ aggregateBaselineDataOneTable <- function(
     }
     
     # Add a CJ operation here like in StoX 2.7 (function reportAbundanceAtLevel). This needs an option, so that it is only used across bootstrap iterations:
-    if(padWithZeros) {
+    if(length(padWithZerosOn)) {
         # Add NAs for missing combinations of the GroupingVariables:
         #stoxData <- stoxData[do.call(CJ, lapply(GroupingVariables, unique)), allow.cartesian = TRUE]
-        stoxData <- stoxData[do.call(CJ,lapply(stoxData[, ..GroupingVariables], unique)), on = GroupingVariables]
+        paddingVariables <- c(GroupingVariables, padWithZerosOn)
+        stoxData <- stoxData[do.call(CJ, lapply(stoxData[, ..paddingVariables], unique)), on = paddingVariables]
         # Convert the NAs to 0 for the abundance and biomass columns:
         abudanceVariables <- RstoxBase::getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
         replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
