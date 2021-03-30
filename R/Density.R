@@ -193,16 +193,12 @@ DistributeNASC <- function(
     
     # Merge the AssignmentLengthDistributionData into the NASCData. This adds the length distribution:
     mergeBy <- intersect(names(NASCData), names(AssignmentLengthDistributionData))
-    # Error if there are any of the mergeBy that have no intersections:
-    intersecting <- checkIntersect(NASCData, AssignmentLengthDistributionData)
-    if(any(!intersecting)) {
-        stop("The NASCData and AssignmentLengthDistributionData have no intersecting values for the following columns: ", paste0(mergeBy[!intersecting], collapse = ", "), ". A possible reason is that the LayerDefinition in the MeanNASCData has changed. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC().")
-    }
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
     # Check whether there are any non-missing length distribution frequencies:
     if(! NASCData[, sum(!is.na(WeightedCount))]) {
-        warning("No lenght distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
+        stop("The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), ". A possible reason is that the LayerDefinition differs between the MeanNASCData and the AssignmentLengthDistributionData. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC().")
+        #"No lenght distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
     }
     
     # Calculate the target strength of each length group:

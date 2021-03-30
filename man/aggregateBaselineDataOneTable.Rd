@@ -11,7 +11,7 @@ aggregateBaselineDataOneTable(
   subTable = character(),
   GroupingVariables = character(),
   na.rm = FALSE,
-  padWithZeros = FALSE,
+  padWithZerosOn = character(),
   WeightingVariable = character()
 )
 }
