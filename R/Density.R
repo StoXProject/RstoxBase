@@ -399,9 +399,12 @@ SweptAreaDensity <- function(
     LengthDistributionType <- utils::head(MeanLengthDistributionData$Data$LengthDistributionType, 1)
     
     # Issue an error if the LengthDistributionType is "Percent" or "Standard":
-    validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
-    if(! LengthDistributionType %in% validLengthDistributionType) {
-        stop("The LengthDistributionType of the input MeanLengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
+    #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
+    #if(! LengthDistributionType %in% validLengthDistributionType) {
+    #    stop("The LengthDistributionType of the input MeanLengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
+    #}
+    if(!any(endsWith(LengthDistributionData$LengthDistributionType, c("Standard", "Normalized")))) {
+        stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
     }
     
     # Make a copy of the input, since we are averaging and setting values by reference:
@@ -410,7 +413,7 @@ SweptAreaDensity <- function(
     # Introduce the DensityWeight as a copy of the MeanLengthDistributionWeight:
     DensityData[, DensityWeight := MeanLengthDistributionWeight]
     
-    # If LengthDistributionType is "NormalizedLengthDistribution", the effectivev towed distance has been accounted for, but there is still need to account for the sweep width:
+    # If LengthDistributionType is "NormalizedLengthDistribution", the effective towed distance has been accounted for, but there is still need to account for the sweep width:
     if(LengthDistributionType %in% c("Normalized", "SelectivityCompensatedNormalized")) {
         
         # Use a constant sweep width for all data by default:
