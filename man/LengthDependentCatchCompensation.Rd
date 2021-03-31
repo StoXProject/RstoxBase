@@ -7,8 +7,8 @@
 LengthDependentCatchCompensation(
   LengthDistributionData,
   CompensationMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"),
-  LengthDependentSweepWidthParameters = NULL,
-  LengthDependentSelectivityParameters = NULL
+  LengthDependentSweepWidthParameters = data.table::data.table(),
+  LengthDependentSelectivityParameters = data.table::data.table()
 )
 }
 \arguments{

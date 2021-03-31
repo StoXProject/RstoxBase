@@ -318,8 +318,8 @@ RegroupLengthDistribution <- function(
 LengthDependentCatchCompensation <- function(
     LengthDistributionData, 
     CompensationMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"), 
-    LengthDependentSweepWidthParameters = NULL, 
-    LengthDependentSelectivityParameters = NULL
+    LengthDependentSweepWidthParameters = data.table::data.table(), 
+    LengthDependentSelectivityParameters = data.table::data.table()
 ) {
     # Get the catchability method:
     CompensationMethod <- match.arg(CompensationMethod)

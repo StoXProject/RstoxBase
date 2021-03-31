@@ -11,7 +11,7 @@ DefineAcousticTargetStrength(
   TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent",
     "TargetStrengthByLength"),
   TargetStrengthTable = data.table::data.table(),
-  FileName
+  FileName = character()
 )
 }
 \arguments{
