@@ -1506,10 +1506,6 @@ mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weigh
 }
 
 
-isLengthDistributionType <- function(LengthDistributionData, LengthDistributionType) {
-    LengthDistributionData$LengthDistributionType[1] %in% LengthDistributionType
-}
-
 # Function to get great circle distance between a Haul and the EDSUs:
 getHaulToEDSUDistance <- function(thisHaul, stationInfo, EDSUInfo) {
     # Get the distance from the station of the Haul to the EDSUs:
@@ -1564,8 +1560,9 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     ### else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
     ###     stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or###  \"Normalized\"")
     ### }
-    if(!isLengthDistributionType(LengthDistributionData, c("Standard", "Normalized"))) {
-        stop("The LengthDistributionType must be \"Standard\" or \"Normalized\"")
+    #if(!isLengthDistributionType(LengthDistributionData, c("Standard", "Normalized"))) {
+    if(!any(endsWith(LengthDistributionData$LengthDistributionType, c("Standard", "Normalized")))) {
+        stop("The LengthDistributionType must be \"Standard\" or \"Normalized\" (ending with \"Standard\" or \"Normalized\")")
     }
     # Sum the WeightedCount for each Haul:
     SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
@@ -1583,6 +1580,7 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     
     BioticAssignment[]
 }
+
 
 
 checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, WeightingMethod) {
@@ -1636,7 +1634,7 @@ DefineAcousticTargetStrength <- function(
     DefinitionMethod = c("ResourceFile", "TargetStrengthTable"),
     TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
     TargetStrengthTable = data.table::data.table(), 
-    FileName
+    FileName = character()
 ) {
     
     # Return immediately if UseProcessData = TRUE:

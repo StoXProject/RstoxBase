@@ -207,9 +207,10 @@ SuperIndividuals <- function(
     else if(DistributionMethod == "HaulDensity") {
         
         # Give an error if the LengthDistributionType is "Percent" or "Standard":
-        validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
-        if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
-            stop("The LengthDistributionType of the input LengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
+        #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
+        #if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
+        if(!any(endsWith(LengthDistributionData$LengthDistributionType, c("Standard", "Normalized")))) {
+            stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
         }
         
         # Add length group IDs also in in LengthDistributionData:
