@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.4</span>
       </span>
     </div>
 
@@ -126,8 +126,8 @@
     <pre class="usage"><span class='fu'>LengthDependentCatchCompensation</span><span class='op'>(</span>
   <span class='va'>LengthDistributionData</span>,
   CompensationMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"LengthDependentSweepWidth"</span>, <span class='st'>"LengthDependentSelectivity"</span><span class='op'>)</span>,
-  LengthDependentSweepWidthParameters <span class='op'>=</span> <span class='cn'>NULL</span>,
-  LengthDependentSelectivityParameters <span class='op'>=</span> <span class='cn'>NULL</span>
+  LengthDependentSweepWidthParameters <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>,
+  LengthDependentSelectivityParameters <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -139,7 +139,7 @@
     </tr>
     <tr>
       <th>CompensationMethod</th>
-      <td><p>Parameter descrption.</p></td>
+      <td><p>The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).</p></td>
     </tr>
     <tr>
       <th>LengthDependentSweepWidthParameters</th>
