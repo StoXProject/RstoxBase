@@ -306,7 +306,7 @@ RegroupLengthDistribution <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param CompensationMethod Parameter descrption.
+#' @param CompensationMethod The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).
 #' @param LengthDependentSweepWidthParameters A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
 #' @param LengthDependentSelectivityParameters A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
 #' 
@@ -365,7 +365,7 @@ LengthDependentCatchCompensation <- function(
 }
 
 # Function to apply the length dependent sweep width function.
-#   w = w * 1852 / (Alpha * L^Beta), 
+#   w = w / 1852 / (Alpha * L^Beta), 
 # where 
 #   L = LMin if L < LMin 
 # and 
