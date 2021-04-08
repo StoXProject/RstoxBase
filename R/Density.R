@@ -403,7 +403,7 @@ SweptAreaDensity <- function(
     #if(! LengthDistributionType %in% validLengthDistributionType) {
     #    stop("The LengthDistributionType of the input MeanLengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
     #}
-    if(!any(endsWith(LengthDistributionData$LengthDistributionType, c("Standard", "Normalized")))) {
+    if(!any(endsWith(MeanLengthDistributionData$Data$LengthDistributionType, c("Standard", "Normalized")))) {
         stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
     }
     
