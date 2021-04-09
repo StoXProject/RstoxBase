@@ -16,6 +16,12 @@ backwardCompatibility <- list(
             functionName = "DefineAcousticPSU", 
             modelName = "baseline", 
             parameterName = "SavePSUByTime"
+        ),  
+        list(
+            changeVersion = "1.3.6", 
+            functionName = "SweptAreaDensity", 
+            modelName = "baseline", 
+            parameterName = "SweepWidthByCruise"
         )
     ),  
     

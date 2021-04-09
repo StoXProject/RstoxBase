@@ -209,7 +209,7 @@ SuperIndividuals <- function(
         # Give an error if the LengthDistributionType is "Percent" or "Standard":
         #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
         #if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
-        if(!any(endsWith(LengthDistributionData$LengthDistributionType, c("Standard", "Normalized")))) {
+        if(!endsWith(LengthDistributionData$LengthDistributionType, "Normalized")) {
             stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
         }
         
