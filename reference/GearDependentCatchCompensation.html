@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Define the process property formats: — processPropertyFormats • RstoxBase</title>
+<title>Apply the sweep of different gear (and cruise) — GearDependentCatchCompensation • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Define the process property formats: — processPropertyFormats" />
-<meta property="og:description" content="Define the process property formats:" />
+<meta property="og:title" content="Apply the sweep of different gear (and cruise) — GearDependentCatchCompensation" />
+<meta property="og:description" content="This function multiplies the WeightedCount of a LengthDistributionData by the sweep width given by CompensationTable. The result is a sweep width compensated length distribution (LengthDistributionType starting with &quot;SweepWidthCompensated&quot;)." />
 
 
 
@@ -114,21 +114,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Define the process property formats:</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/stoxFunctionAttributes.R'><code>R/stoxFunctionAttributes.R</code></a></small>
-    <div class="hidden name"><code>processPropertyFormats.Rd</code></div>
+    <h1>Apply the sweep of different gear (and cruise)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
+    <div class="hidden name"><code>GearDependentCatchCompensation.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Define the process property formats:</p>
+    <p>This function multiplies the WeightedCount of a LengthDistributionData by the sweep width given by <code>CompensationTable</code>. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").</p>
     </div>
 
-    <pre class="usage"><span class='va'>processPropertyFormats</span></pre>
+    <pre class="usage"><span class='fu'>GearDependentCatchCompensation</span><span class='op'>(</span>
+  <span class='va'>LengthDistributionData</span>,
+  CompensationMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Gear"</span>, <span class='st'>"Cruise"</span>, <span class='st'>"GearAndCruise"</span><span class='op'>)</span>,
+  CompensationTable <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>LengthDistributionData</th>
+      <td><p>The <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>CompensationMethod</th>
+      <td><p>The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.</p></td>
+    </tr>
+    <tr>
+      <th>CompensationTable</th>
+      <td><p>A table of the sweep width per combination of the variables specified in <code>CompensationMethod</code>. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>list</code> of length 13.</p>
+    <p>A <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> object.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
