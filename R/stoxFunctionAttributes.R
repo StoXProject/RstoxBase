@@ -310,6 +310,14 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData"
     ), 
+    GearDependentCatchCompensation = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "LengthDistributionData", 
+        functionParameterFormat = list(
+            CompensationTable = "gearCompensationTable"
+        )
+    ), 
     LengthDependentCatchCompensation = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
@@ -529,15 +537,9 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "DensityData", 
-        functionParameterFormat = list(
-            SweepWidthByCruise = "sweepWidthByCruiseTable"
-        ), 
         functionArgumentHierarchy = list(
             SweepWidth = list(
                 SweepWidthMethod = "Constant"
-            ), 
-            SweepWidthByCruise = list(
-                SweepWidthMethod = "CruiseDependent"
             )
         )
     ), 
@@ -767,7 +769,47 @@ processPropertyFormats <- list(
         )
     ), 
     
-    
+    gearCompensationTable =  list(
+        class = "table", 
+        title = "Sweep width for all gear", 
+        columnNames = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
+            CompensationMethod <- match.arg(CompensationMethod)
+            columnNames <- c(
+                strsplit(CompensationMethod, "And")[[1]], 
+                "SweepWidth"
+            )
+            
+            return(columnNames)
+        }, 
+        variableTypes = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
+            CompensationMethod <- match.arg(CompensationMethod)
+            columnNames <- strsplit(CompensationMethod, "And")[[1]]
+            variableTypes <- c(
+                rep("character", length(columnNames)), 
+                "double"
+            )
+            
+            return(variableTypes)
+        }, 
+        possibleValues = function(LengthDistributionData, CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
+            CompensationMethod <- match.arg(CompensationMethod)
+            CompensationMethod <- strsplit(CompensationMethod, "And")[[1]]
+            
+            if(!length(LengthDistributionData)) {
+                return(return(vector("list", length(CompensationMethod) + 1)))
+            }
+            
+            # Get all unique combinations:
+            listOfUniqueCombinations <- as.list(uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..CompensationMethod]))
+            
+            # Output must be an unnamed list:
+            c(
+                unname(listOfUniqueCombinations), 
+                list(NULL)
+            )
+            
+        }
+    ), 
     
     targetStrengthTable = list(
         class = "table", 
@@ -913,6 +955,9 @@ processPropertyFormats <- list(
             "character"
         ), 
         possibleValues = function(StratumPolygon) {
+            if(!length(StratumPolygon)) {
+                return(vector("list", 2))
+            }
             # Must be an unnamed list:
             list(
                 getStratumNames(StratumPolygon), # Stratum

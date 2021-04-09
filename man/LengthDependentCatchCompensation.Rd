@@ -16,9 +16,9 @@ LengthDependentCatchCompensation(
 
 \item{CompensationMethod}{The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).}
 
-\item{LengthDependentSweepWidthParameters}{A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).}
+\item{LengthDependentSweepWidthParameters}{A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).}
 
-\item{LengthDependentSelectivityParameters}{A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).}
+\item{LengthDependentSelectivityParameters}{A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.

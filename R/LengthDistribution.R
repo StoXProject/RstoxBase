@@ -298,6 +298,75 @@ RegroupLengthDistribution <- function(
 }
 
 
+
+##################################################
+##################################################
+#' Apply the sweep of different gear (and cruise)
+#' 
+#' This function multiplies the WeightedCount of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
+#' 
+#' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' @param CompensationMethod The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.
+#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.
+#' 
+#' @return
+#' A \code{\link{LengthDistributionData}} object.
+#' 
+#' @export
+#' 
+GearDependentCatchCompensation <- function(
+    LengthDistributionData, 
+    CompensationMethod = c("Gear", "Cruise", "GearAndCruise"), 
+    CompensationTable = data.table::data.table()
+) {
+    
+    # Sweep width compensation cannot be performed on olready sweep width compensated LengthDistributionData:
+    if(startsWith(LengthDistributionData$LengthDistributionType, "SweepWidthCompensated")) {
+        stop("The LengthDistributionData are already sweep width compensated (LengthDistributionType starting with \"SweepWidthCompensated\")")
+    }
+    
+    # Get the catchability method:
+    CompensationMethod <- match.arg(CompensationMethod)
+    # Split by "And":
+    CompensationMethod <- strsplit(CompensationMethod, "And")[[1]]
+    
+    # Accept only the columns "SweepWidth" and those given by CompensationMethod:
+    acceptedColumns <- c("SweepWidth", CompensationMethod)
+    if(!all(acceptedColumns %in% names(CompensationTable))) {
+        stop("The CompensationTable must contain the columns ", paste(acceptedColumns, collapse = ", "))
+    }
+    CompensationTable <- CompensationTable[, ..acceptedColumns]
+    
+    # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in CompensationTable:
+    uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..CompensationMethod])
+    uniqueCombinationsInCompensationTable <- unique(CompensationTable[, ..CompensationMethod])
+    if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInCompensationTable)) {
+        stop("All combinations of the variables ", paste(CompensationMethod, collapse = ", "), " that are present in the LengthDistributionData must be present also in the CompensationTable.")
+    }
+    
+    # Merge the CompensationTable into the LengthDistributionData:
+    LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
+    # Use all.x = TRUE as we should keep all rows of the LengthDistributionData, but not necessaroily all rows of the CompensationTable:
+    LengthDistributionDataCopy <- merge(LengthDistributionDataCopy, CompensationTable, by = CompensationMethod, all.x = TRUE)
+    
+    # Multiply by the sweep width in nautical miles, as normalizaion in the direcion of the vessel involves dividing by disance in nautical miles:
+    LengthDistributionDataCopy[, WeightedCount := WeightedCount * SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")]
+    
+    # Set the LengthDistributionType
+    LengthDistributionDataCopy[, LengthDistributionType := paste0("SweepWidthCompensated", LengthDistributionType)]
+    
+    # Format the output:
+    formatOutput(LengthDistributionDataCopy, dataType = "LengthDistributionData", keep.all = FALSE)
+    
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    RstoxData::setRstoxPrecisionLevel(LengthDistributionDataCopy)
+    
+    return(LengthDistributionDataCopy)
+}
+
+
+
 ##################################################
 ##################################################
 #' Catchability of trawls by fish length
@@ -307,8 +376,8 @@ RegroupLengthDistribution <- function(
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @param CompensationMethod The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).
-#' @param LengthDependentSweepWidthParameters A data.frame or data.table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
-#' @param LengthDependentSelectivityParameters A data.frame or data.table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
+#' @param LengthDependentSweepWidthParameters A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
+#' @param LengthDependentSelectivityParameters A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
 #' 
 #' @return
 #' A \code{\link{LengthDistributionData}} object.
@@ -329,6 +398,12 @@ LengthDependentCatchCompensation <- function(
     
     # Run the appropriate method:
     if(CompensationMethod == "LengthDependentSweepWidth") {
+        
+        # Sweep width compensation cannot be performed on olready sweep width compensated LengthDistributionData:
+        if(startsWith(LengthDistributionData$LengthDistributionType, "SweepWidthCompensated")) {
+            stop("The LengthDistributionData are already sweep width compensated (LengthDistributionType starting with \"SweepWidthCompensated\")")
+        }
+        
         LengthDistributionDataCopy <- runLengthDependentCompensationFunction(
             data = LengthDistributionDataCopy, 
             compensationMethod = CompensationMethod, 
@@ -351,8 +426,10 @@ LengthDependentCatchCompensation <- function(
             groupingVariable = "SpeciesCategory"
         )
         
+        # Change added on 2021-04-09:
+        # Do not add SelectivityCompensated to LengthDistributionType:
         # Finally, set the LengthDistributionType:
-        LengthDistributionDataCopy[, LengthDistributionType := paste0("SelectivityCompensated", LengthDistributionType)]
+        #LengthDistributionDataCopy[, LengthDistributionType := paste0("SelectivityCompensated", LengthDistributionType)]
     }
     
     # Format the output:
