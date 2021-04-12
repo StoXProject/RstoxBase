@@ -339,11 +339,16 @@ GearDependentCatchCompensation <- function(
     CompensationTable <- CompensationTable[, ..acceptedColumns]
     
     # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in CompensationTable:
-    uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..CompensationMethod])
-    uniqueCombinationsInCompensationTable <- unique(CompensationTable[, ..CompensationMethod])
-    if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInCompensationTable)) {
-        stop("All combinations of the variables ", paste(CompensationMethod, collapse = ", "), " that are present in the LengthDistributionData must be present also in the CompensationTable.")
-    }
+    #uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..CompensationMethod])
+    #uniqueCombinationsInCompensationTable <- unique(CompensationTable[, ..CompensationMethod])
+    #if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInCompensationTable)) {
+    #    stop("All combinations of the variables ", paste(CompensationMethod, collapse = ", "), " that are present in the LengthDistributionData must be present also in the CompensationTable.")
+    #}
+    checkAllCombinations(
+        LengthDistributionData = LengthDistributionData, 
+        table = CompensationTable, 
+        variables = CompensationMethod
+    )
     
     # Merge the CompensationTable into the LengthDistributionData:
     LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
@@ -351,7 +356,7 @@ GearDependentCatchCompensation <- function(
     LengthDistributionDataCopy <- merge(LengthDistributionDataCopy, CompensationTable, by = CompensationMethod, all.x = TRUE)
     
     # Multiply by the sweep width in nautical miles, as normalizaion in the direcion of the vessel involves dividing by disance in nautical miles:
-    LengthDistributionDataCopy[, WeightedCount := WeightedCount * SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")]
+    LengthDistributionDataCopy[, WeightedCount := WeightedCount / (SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters"))]
     
     # Set the LengthDistributionType
     LengthDistributionDataCopy[, LengthDistributionType := paste0("SweepWidthCompensated", LengthDistributionType)]
@@ -366,6 +371,14 @@ GearDependentCatchCompensation <- function(
 }
 
 
+checkAllCombinations <- function(LengthDistributionData, table, variables) {
+    # Check that all combinations in the LengthDistributionData of the variablas specified by variables are present in CompensationTable:
+    uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..variables])
+    uniqueCombinationsInTable <- unique(table[, ..variables])
+    if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInTable)) {
+        stop("All combinations of the variables ", paste(variables, collapse = ", "), " that are present in the LengthDistributionData must be present also in the ", deparse(substitute(table)))
+    }
+}
 
 ##################################################
 ##################################################
@@ -399,6 +412,13 @@ LengthDependentCatchCompensation <- function(
     # Run the appropriate method:
     if(CompensationMethod == "LengthDependentSweepWidth") {
         
+        # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in LengthDependentSweepWidthParameters:
+        checkAllCombinations(
+            LengthDistributionData = LengthDistributionData, 
+            table = LengthDependentSweepWidthParameters, 
+            variables = "SpeciesCategory"
+        )
+        
         # Sweep width compensation cannot be performed on olready sweep width compensated LengthDistributionData:
         if(startsWith(LengthDistributionData$LengthDistributionType, "SweepWidthCompensated")) {
             stop("The LengthDistributionData are already sweep width compensated (LengthDistributionType starting with \"SweepWidthCompensated\")")
@@ -417,6 +437,14 @@ LengthDependentCatchCompensation <- function(
         LengthDistributionDataCopy[, LengthDistributionType := paste0("SweepWidthCompensated", LengthDistributionType)]
     }
     else if(CompensationMethod == "LengthDependentSelectivity") {
+        
+        # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in LengthDependentSweepWidthParameters:
+        checkAllCombinations(
+            LengthDistributionData = LengthDistributionData, 
+            table = LengthDependentSelectivityParameters, 
+            variables = "SpeciesCategory"
+        )
+        
         LengthDistributionDataCopy <- runLengthDependentCompensationFunction(
             data = LengthDistributionDataCopy, 
             compensationMethod = CompensationMethod, 
