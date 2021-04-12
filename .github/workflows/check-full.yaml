@@ -31,6 +31,12 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      - name: Anticipate Bintray shutdown
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+        shell: bash
+
       - uses: actions/checkout@v2
 
       - name: Do autorelease increment, tagging, and environment setup

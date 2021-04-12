@@ -716,7 +716,21 @@ processPropertyFormats <- list(
             "double", 
             "double", 
             "double"
-        )
+        ), 
+        possibleValues = function(LengthDistributionData) {
+            if(!length(LengthDistributionData)) {
+                return(vector("list", 5))
+            }
+            
+            # Get all unique combinations:
+            listOfUniqueCombinations <- as.list(unique(LengthDistributionData$SpeciesCategory))
+            
+            # Output must be an unnamed list:
+            c(
+                unname(listOfUniqueCombinations), 
+                rep(list(list()), 4)
+            )
+        }
     ), 
     selectivityTable = list(
         class = "table", 
@@ -732,7 +746,21 @@ processPropertyFormats <- list(
             "double", 
             "double", 
             "double"
-        )
+        ), 
+        possibleValues = function(LengthDistributionData) {
+            if(!length(LengthDistributionData)) {
+                return(vector("list", 4))
+            }
+            
+            # Get all unique combinations:
+            listOfUniqueCombinations <- as.list(unique(LengthDistributionData$SpeciesCategory))
+            
+            # Output must be an unnamed list:
+            c(
+                unname(listOfUniqueCombinations), 
+                rep(list(list()), 3)
+            )
+        }
     ), 
     speciesLinkTable = list(
         class = "table", 
@@ -796,18 +824,17 @@ processPropertyFormats <- list(
             CompensationMethod <- strsplit(CompensationMethod, "And")[[1]]
             
             if(!length(LengthDistributionData)) {
-                return(return(vector("list", length(CompensationMethod) + 1)))
+                return(vector("list", length(CompensationMethod) + 1))
             }
             
             # Get all unique combinations:
-            listOfUniqueCombinations <- as.list(uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..CompensationMethod]))
+            listOfUniqueCombinations <- as.list(unique(LengthDistributionData[, ..CompensationMethod]))
             
             # Output must be an unnamed list:
             c(
                 unname(listOfUniqueCombinations), 
                 list(NULL)
             )
-            
         }
     ), 
     
