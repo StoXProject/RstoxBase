@@ -373,8 +373,8 @@ GearDependentCatchCompensation <- function(
 
 checkAllCombinations <- function(LengthDistributionData, table, variables) {
     # Check that all combinations in the LengthDistributionData of the variablas specified by variables are present in CompensationTable:
-    uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..variables])
-    uniqueCombinationsInTable <- unique(table[, ..variables])
+    uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, do.call(paste, .SD),.SDcols =  variables])
+    uniqueCombinationsInTable <- unique(table[, do.call( paste, .SD),.SDcols =  variables])
     if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInTable)) {
         stop("All combinations of the variables ", paste(variables, collapse = ", "), " that are present in the LengthDistributionData must be present also in the ", deparse(substitute(table)))
     }
