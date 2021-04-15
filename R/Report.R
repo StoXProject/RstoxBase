@@ -160,7 +160,8 @@ aggregateBaselineDataOneTable <- function(
         paddingVariables <- c(GroupingVariables, padWithZerosOn)
         stoxData <- stoxData[do.call(CJ, lapply(stoxData[, ..paddingVariables], unique)), on = paddingVariables]
         # Convert the NAs to 0 for the abundance and biomass columns:
-        abudanceVariables <- RstoxBase::getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
+        #abudanceVariables <- RstoxBase::getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
+        abudanceVariables <- setdiff(names(stoxData), paddingVariables)
         replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
     }
     
