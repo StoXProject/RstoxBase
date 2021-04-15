@@ -158,10 +158,18 @@ aggregateBaselineDataOneTable <- function(
         # Add NAs for missing combinations of the GroupingVariables:
         #stoxData <- stoxData[do.call(CJ, lapply(GroupingVariables, unique)), allow.cartesian = TRUE]
         paddingVariables <- c(GroupingVariables, padWithZerosOn)
-        stoxData <- stoxData[do.call(CJ, lapply(stoxData[, ..paddingVariables], unique)), on = paddingVariables]
+        stoxData <- stoxData[do.call(data.table::CJ, lapply(stoxData[, ..paddingVariables], unique)), on = paddingVariables]
         # Convert the NAs to 0 for the abundance and biomass columns:
-        abudanceVariables <- RstoxBase::getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
-        replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
+        abudanceVariables <- setdiff(names(stoxData), paddingVariables)
+        # Convvert NA to 0 only for Biomass or Abundance:
+        abudanceVariableKeys <- RstoxBase::getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
+        isAbudanceVariable <- rowSums(outer(abudanceVariables, abudanceVariableKeys, startsWith)) > 0
+        abudanceVariables <- abudanceVariables[isAbudanceVariable]
+        
+        if(length(abudanceVariables)) {
+            replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
+        }
+        
     }
     
     outputData <- stoxData[, fun(.SD), by = GroupingVariables]
