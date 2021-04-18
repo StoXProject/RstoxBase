@@ -255,15 +255,31 @@ RegroupLengthDistribution <- function(
     #possibleIntervals <- getCommonIntervals(data = lengthGroupMinMax)
     
     strictlyInside <- function(x, table, margin = 1e-6) {
-        any(x - margin > table[, 1] & x + margin < table[, 2], na.rm=TRUE)
+        which(x - margin > table[, 1] & x + margin < table[, 2])
     }
     
-    invalidIntervalBreaks <- sapply(LengthInterval, strictlyInside, lengthGroupMinMax)
+    invalidIntervalBreaks <- lapply(LengthInterval, strictlyInside, lengthGroupMinMax)
+    atInvalidIntervalBreaks <- lengths(invalidIntervalBreaks) > 0
     
     # Check whether any of the new interval limits are inside the possible intervals:
-    if(any(invalidIntervalBreaks)) {
-        at <- which(invalidIntervalBreaks)
-        stop("The following intervals intersect partially with the possible intervals: ", paste(paste(LengthInterval[at], LengthInterval[at + 1], sep = " - "), collapse = ", "))
+    if(any(atInvalidIntervalBreaks)) {
+        at <- which(atInvalidIntervalBreaks)
+        stop("The following intervals intersect partially with the possible intervals: \n", 
+            paste(
+                paste0(
+                    "Regroup interval ", 
+                    paste(
+                        LengthInterval[at], 
+                        LengthInterval[at + 1], 
+                        sep = " - "
+                    ), 
+                    " intersecting with possible intervals ", 
+                    sapply(invalidIntervalBreaks[at], function(this) paste(lengthGroupMinMax[this, do.call(paste, c(.SD, sep = "-"))], collapse = ", "))
+                ), 
+            collapse = "\n"
+            ), 
+            "\nChange the regroup intervals or search for possible errors in the data."
+        )
     }
     
      # Temporary add the index of the length intervals:
