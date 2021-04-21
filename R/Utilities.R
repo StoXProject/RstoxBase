@@ -890,7 +890,8 @@ toJSON_Rstox <- function(x, ...) {
     # Define defaults:
     digits <- NA
     auto_unbox <- TRUE
-    na <- "null"
+    #na <- "null"
+    na <- "string"
     null <- "null"
     
     # Override by ...:
