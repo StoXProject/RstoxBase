@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.12</span>
       </span>
     </div>
 
@@ -160,6 +160,10 @@
     <tr>
       <th>na.rm</th>
       <td><p>Used in the function specified by <code>aggregationFunction</code>.</p></td>
+    </tr>
+    <tr>
+      <th>padWithZerosOn</th>
+      <td><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></td>
     </tr>
     <tr>
       <th>WeightingVariable</th>

@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.12</span>
       </span>
     </div>
 
@@ -145,779 +145,1207 @@
     <p>A list of definitions.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>getRstoxBaseDefinitions</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $allResolution
-#&gt; $allResolution$NASCData
-#&gt; [1] "NASC"
-#&gt; 
-#&gt; $allResolution$SumNASCData
-#&gt; [1] "NASC"
-#&gt; 
-#&gt; $allResolution$MeanNASCData
-#&gt; [1] "NASC"
-#&gt; 
-#&gt; $allResolution$LengthDistributionData
-#&gt; [1] "LengthDistribution"
-#&gt; 
-#&gt; $allResolution$SumLengthDistributionData
-#&gt; [1] "LengthDistribution"
-#&gt; 
-#&gt; $allResolution$MeanLengthDistributionData
-#&gt; [1] "LengthDistribution"
-#&gt; 
-#&gt; $allResolution$DensityData
-#&gt; [1] "Density"
-#&gt; 
-#&gt; $allResolution$MeanDensityData
-#&gt; [1] "Density"
-#&gt; 
-#&gt; $allResolution$AbundanceData
-#&gt; [1] "Abundance"
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition
-#&gt; $dataTypeDefinition$NASCData
-#&gt; $dataTypeDefinition$NASCData$horizontalResolution
-#&gt; [1] "EDSU"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$verticalResolution
-#&gt; [1] "Channel"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$categoryVariable
-#&gt; [1] "AcousticCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$groupingVariables
-#&gt; [1] "Beam"      "Frequency"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$data
-#&gt; [1] "NASC"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$verticalRawDimension
-#&gt; [1] "MinChannelDepth" "MaxChannelDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$verticalLayerDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$weighting
-#&gt; [1] "NASCWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$type
-#&gt; [1] "ChannelReferenceType"
-#&gt; 
-#&gt; $dataTypeDefinition$NASCData$other
-#&gt; [1] "ChannelReferenceDepth" "ChannelReferenceTilt"  "Cruise"               
-#&gt; [4] "EffectiveLogDistance"  "DateTime"              "Longitude"            
-#&gt; [7] "Latitude"             
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData
-#&gt; $dataTypeDefinition$SumNASCData$Data
-#&gt; $dataTypeDefinition$SumNASCData$Data$horizontalResolution
-#&gt; [1] "EDSU"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$categoryVariable
-#&gt; [1] "AcousticCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$groupingVariables
-#&gt; [1] "Beam"      "Frequency"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$data
-#&gt; [1] "NASC"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$verticalRawDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$weighting
-#&gt; [1] "SumNASCWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$type
-#&gt; [1] "ChannelReferenceType"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Data$other
-#&gt; [1] "ChannelReferenceDepth" "ChannelReferenceTilt"  "Cruise"               
-#&gt; [4] "EffectiveLogDistance"  "DateTime"              "Longitude"            
-#&gt; [7] "Latitude"             
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Resolution
-#&gt; $dataTypeDefinition$SumNASCData$Resolution$horizontalResolution
-#&gt; [1] "EDSU"
-#&gt; 
-#&gt; $dataTypeDefinition$SumNASCData$Resolution$verticalResolution
-#&gt; [1] "Layer"   "Channel"
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData
-#&gt; $dataTypeDefinition$MeanNASCData$Data
-#&gt; $dataTypeDefinition$MeanNASCData$Data$surveyDefinition
-#&gt; [1] "Survey"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$categoryVariable
-#&gt; [1] "AcousticCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$groupingVariables
-#&gt; [1] "Beam"      "Frequency"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$data
-#&gt; [1] "NASC"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$verticalRawDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$weighting
-#&gt; [1] "MeanNASCWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$type
-#&gt; [1] "ChannelReferenceType"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Data$other
-#&gt; [1] "ChannelReferenceDepth" "ChannelReferenceTilt" 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Resolution
-#&gt; $dataTypeDefinition$MeanNASCData$Resolution$horizontalResolution
-#&gt; [1] "Stratum" "PSU"     "EDSU"   
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Resolution$verticalResolution
-#&gt; [1] "Layer"   "Channel"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanNASCData$Resolution$other
-#&gt; [1] "Cruise"               "EffectiveLogDistance" "DateTime"            
-#&gt; [4] "Longitude"            "Latitude"            
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData
-#&gt; $dataTypeDefinition$LengthDistributionData$horizontalResolution
-#&gt; [1] "Station"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$verticalResolution
-#&gt; [1] "Haul"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$data
-#&gt; [1] "WeightedCount"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$verticalRawDimension
-#&gt; [1] "MinHaulDepth" "MaxHaulDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$verticalLayerDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$weighting
-#&gt; [1] "LengthDistributionWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$type
-#&gt; [1] "LengthDistributionType"
-#&gt; 
-#&gt; $dataTypeDefinition$LengthDistributionData$other
-#&gt; [1] "Cruise"               "EffectiveTowDistance" "DateTime"            
-#&gt; [4] "Longitude"            "Latitude"             "Gear"                
-#&gt; [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$horizontalResolution
-#&gt; [1] "Station"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$data
-#&gt; [1] "WeightedCount"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$verticalRawDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$weighting
-#&gt; [1] "SumLengthDistributionWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$type
-#&gt; [1] "LengthDistributionType"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Data$other
-#&gt; [1] "Cruise"               "EffectiveTowDistance" "DateTime"            
-#&gt; [4] "Longitude"            "Latitude"            
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution$horizontalResolution
-#&gt; [1] "Station"
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution$verticalResolution
-#&gt; [1] "Layer" "Haul" 
-#&gt; 
-#&gt; $dataTypeDefinition$SumLengthDistributionData$Resolution$other
-#&gt; [1] "Gear"                 "VerticalNetOpening"   "HorizontalNetOpening"
-#&gt; [4] "TrawlDoorSpread"     
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$surveyDefinition
-#&gt; [1] "Survey"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$data
-#&gt; [1] "WeightedCount"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$verticalRawDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$weighting
-#&gt; [1] "MeanLengthDistributionWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$type
-#&gt; [1] "LengthDistributionType"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Data$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Resolution
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Resolution$horizontalResolution
-#&gt; [1] "Stratum" "PSU"     "Station"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Resolution$verticalResolution
-#&gt; [1] "Layer" "Haul" 
-#&gt; 
-#&gt; $dataTypeDefinition$MeanLengthDistributionData$Resolution$other
-#&gt; [1] "Cruise"               "EffectiveTowDistance" "DateTime"            
-#&gt; [4] "Longitude"            "Latitude"             "Gear"                
-#&gt; [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"     
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$data
-#&gt; [1] "WeightedCount"
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$verticalLayerDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$weighting
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$type
-#&gt; [1] "LengthDistributionType"
-#&gt; 
-#&gt; $dataTypeDefinition$AssignmentLengthDistributionData$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData
-#&gt; $dataTypeDefinition$DensityData$Data
-#&gt; $dataTypeDefinition$DensityData$Data$surveyDefinition
-#&gt; [1] "Survey"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 
-#&gt; [4] "Frequency"            
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$data
-#&gt; [1] "Density"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$weighting
-#&gt; [1] "DensityWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Data$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Resolution
-#&gt; $dataTypeDefinition$DensityData$Resolution$horizontalResolution
-#&gt; [1] "Stratum" "PSU"     "EDSU"    "Station"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Resolution$verticalResolution
-#&gt; [1] "Layer"   "Channel"
-#&gt; 
-#&gt; $dataTypeDefinition$DensityData$Resolution$other
-#&gt; [1] "Cruise"               "EffectiveLogDistance" "EffectiveTowDistance"
-#&gt; [4] "DateTime"             "Longitude"            "Latitude"            
-#&gt; [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData
-#&gt; $dataTypeDefinition$MeanDensityData$Data
-#&gt; $dataTypeDefinition$MeanDensityData$Data$surveyDefinition
-#&gt; [1] "Survey"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$horizontalResolution
-#&gt; [1] "Stratum"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 
-#&gt; [4] "Frequency"            
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$data
-#&gt; [1] "Density"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$weighting
-#&gt; [1] "MeanDensityWeight"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Data$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Resolution
-#&gt; $dataTypeDefinition$MeanDensityData$Resolution$horizontalResolution
-#&gt; [1] "Stratum" "PSU"     "EDSU"    "Station"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Resolution$verticalResolution
-#&gt; [1] "Layer"   "Channel"
-#&gt; 
-#&gt; $dataTypeDefinition$MeanDensityData$Resolution$other
-#&gt; [1] "Cruise"               "EffectiveLogDistance" "EffectiveTowDistance"
-#&gt; [4] "DateTime"             "Longitude"            "Latitude"            
-#&gt; [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData
-#&gt; $dataTypeDefinition$AbundanceData$Data
-#&gt; $dataTypeDefinition$AbundanceData$Data$surveyDefinition
-#&gt; [1] "Survey"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$horizontalResolution
-#&gt; [1] "Stratum"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$groupingVariables
-#&gt; [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 
-#&gt; [4] "Frequency"            
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$data
-#&gt; [1] "Abundance"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$weighting
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Data$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Resolution
-#&gt; $dataTypeDefinition$AbundanceData$Resolution$horizontalResolution
-#&gt; [1] "Stratum" "PSU"     "EDSU"    "Station"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Resolution$verticalResolution
-#&gt; [1] "Layer"   "Channel"
-#&gt; 
-#&gt; $dataTypeDefinition$AbundanceData$Resolution$other
-#&gt; [1] "Cruise"               "EffectiveLogDistance" "EffectiveTowDistance"
-#&gt; [4] "DateTime"             "Longitude"            "Latitude"            
-#&gt; [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData
-#&gt; $dataTypeDefinition$IndividualsData$Data
-#&gt; $dataTypeDefinition$IndividualsData$Data$horizontalResolution
-#&gt; [1] "Stratum"
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$Data$data
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$Data$verticalLayerDimension
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$Data$weighting
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$Data$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$IndividualsData$VariableNames
-#&gt; list()
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$surveyDefinition
-#&gt; [1] "Survey"
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$horizontalResolution
-#&gt; [1] "Stratum"
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$categoryVariable
-#&gt; [1] "SpeciesCategory"
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$groupingVariables
-#&gt;  [1] "CruiseKey"             "StationKey"            "HaulKey"              
-#&gt;  [4] "SpeciesCategoryKey"    "SampleKey"             "IndividualKey"        
-#&gt;  [7] "IndividualTotalLength" "LengthResolution"      "IndividualRoundWeight"
-#&gt; [10] "Beam"                  "Frequency"            
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$data
-#&gt; [1] "Abundance" "Biomass"  
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$verticalLayerDimension
-#&gt; [1] "MinLayerDepth" "MaxLayerDepth"
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$weighting
-#&gt; NULL
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$Data$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$SuperIndividualsData$VariableNames
-#&gt; list()
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$BioticAssignment
-#&gt; $dataTypeDefinition$BioticAssignment$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $dataTypeDefinition$BioticAssignment$verticalResolution
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $dataTypeDefinition$BioticAssignment$categoryVariable
-#&gt; [1] "Haul"
-#&gt; 
-#&gt; $dataTypeDefinition$BioticAssignment$weighting
-#&gt; [1] "WeightingFactor"
-#&gt; 
-#&gt; $dataTypeDefinition$BioticAssignment$other
-#&gt; NULL
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$BioticPSU
-#&gt; $dataTypeDefinition$BioticPSU$Stratum_PSU
-#&gt; $dataTypeDefinition$BioticPSU$Stratum_PSU$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$BioticPSU$StationPSU
-#&gt; $dataTypeDefinition$BioticPSU$StationPSU$horizontalResolution
-#&gt; [1] "EDSU" "PSU" 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$BioticPSU$PSUByTime
-#&gt; $dataTypeDefinition$BioticPSU$PSUByTime$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $dataTypeDefinition$BioticPSU$PSUByTime$categoryVariable
-#&gt; [1] "Cruise"
-#&gt; 
-#&gt; $dataTypeDefinition$BioticPSU$PSUByTime$groupingVariables
-#&gt; [1] "StartDateTime" "StopDateTime" 
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$AcousticPSU
-#&gt; $dataTypeDefinition$AcousticPSU$Stratum_PSU
-#&gt; $dataTypeDefinition$AcousticPSU$Stratum_PSU$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$AcousticPSU$EDSU_PSU
-#&gt; $dataTypeDefinition$AcousticPSU$EDSU_PSU$horizontalResolution
-#&gt; [1] "EDSU" "PSU" 
-#&gt; 
-#&gt; 
-#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime
-#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime$categoryVariable
-#&gt; [1] "Cruise"
-#&gt; 
-#&gt; $dataTypeDefinition$AcousticPSU$PSUByTime$groupingVariables
-#&gt; [1] "StartDateTime" "StopDateTime" 
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $emptyStratumPolygon
-#&gt; An object of class "SpatialPolygonsDataFrame"
-#&gt; Slot "data":
-#&gt; data frame with 0 columns and 0 rows
-#&gt; 
-#&gt; Slot "polygons":
-#&gt; list()
-#&gt; 
-#&gt; Slot "plotOrder":
-#&gt; integer(0)
-#&gt; 
-#&gt; Slot "bbox":
-#&gt;              min           max
-#&gt; x -1.797693e+308 1.797693e+308
-#&gt; y -1.797693e+308 1.797693e+308
-#&gt; 
-#&gt; Slot "proj4string":
-#&gt; CRS arguments: NA 
-#&gt; 
-#&gt; 
-#&gt; $getPSUPrefix
-#&gt; function (PSUType) 
-#&gt; {
-#&gt;     if (PSUType == "Acoustic") {
-#&gt;         prefix &lt;- "PSU"
-#&gt;     }
-#&gt;     else if (PSUType == "Biotic") {
-#&gt;         prefix &lt;- "PSU"
-#&gt;     }
-#&gt;     else {
-#&gt;         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
-#&gt;     }
-#&gt;     return(prefix)
-#&gt; }
-#&gt; &lt;bytecode: 0x7f99a08f0be8&gt;
-#&gt; &lt;environment: 0x7f99a08f2c58&gt;
-#&gt; 
-#&gt; $getSSULabel
-#&gt; function (PSUType) 
-#&gt; {
-#&gt;     if (PSUType == "Acoustic") {
-#&gt;         SSULabel &lt;- "EDSU"
-#&gt;     }
-#&gt;     else if (PSUType == "Biotic") {
-#&gt;         SSULabel &lt;- "Station"
-#&gt;     }
-#&gt;     else {
-#&gt;         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
-#&gt;     }
-#&gt;     return(SSULabel)
-#&gt; }
-#&gt; &lt;bytecode: 0x7f99a08f0408&gt;
-#&gt; &lt;environment: 0x7f99a08f2c58&gt;
-#&gt; 
-#&gt; $getStationLevel
-#&gt; function (PSUType) 
-#&gt; {
-#&gt;     if (PSUType == "Acoustic") {
-#&gt;         SSULabel &lt;- "Log"
-#&gt;     }
-#&gt;     else if (PSUType == "Biotic") {
-#&gt;         SSULabel &lt;- "Station"
-#&gt;     }
-#&gt;     else {
-#&gt;         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")
-#&gt;     }
-#&gt;     return(SSULabel)
-#&gt; }
-#&gt; &lt;bytecode: 0x7f99a08f3b38&gt;
-#&gt; &lt;environment: 0x7f99a08f2c58&gt;
-#&gt; 
-#&gt; $nauticalMileInMeters
-#&gt; [1] 1852
-#&gt; 
-#&gt; $proj4string
-#&gt; [1] "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
-#&gt; 
-#&gt; $PSUByTime
-#&gt; $PSUByTime$horizontalResolution
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; $PSUByTime$categoryVariable
-#&gt; [1] "Cruise"
-#&gt; 
-#&gt; $PSUByTime$groupingVariables
-#&gt; [1] "StartDateTime" "StopDateTime" 
-#&gt; 
-#&gt; 
-#&gt; $reportFunctions
-#&gt;      functionName packageName weighted weightingParameter multiple
-#&gt;  1:   summaryStox   RstoxBase    FALSE                        TRUE
-#&gt;  2:           sum        base    FALSE                       FALSE
-#&gt;  3:          mean        base    FALSE                       FALSE
-#&gt;  4: weighted.mean       stats     TRUE                  w    FALSE
-#&gt;  5:        median       stats    FALSE                       FALSE
-#&gt;  6:           min        base    FALSE                       FALSE
-#&gt;  7:           max        base    FALSE                       FALSE
-#&gt;  8:            sd       stats    FALSE                       FALSE
-#&gt;  9:           var       stats    FALSE                       FALSE
-#&gt; 10:            cv   RstoxBase    FALSE                       FALSE
-#&gt; 
-#&gt; $resolutionClasses
-#&gt; $resolutionClasses$NASC
-#&gt; $resolutionClasses$NASC$vertical
-#&gt; [1] "Layer"   "Channel"
-#&gt; 
-#&gt; $resolutionClasses$NASC$horizontal
-#&gt; [1] "Stratum" "PSU"     "EDSU"   
-#&gt; 
-#&gt; 
-#&gt; $resolutionClasses$LengthDistribution
-#&gt; $resolutionClasses$LengthDistribution$vertical
-#&gt; [1] "Layer" "Haul" 
-#&gt; 
-#&gt; $resolutionClasses$LengthDistribution$horizontal
-#&gt; [1] "Stratum" "PSU"     "Station"
-#&gt; 
-#&gt; 
-#&gt; $resolutionClasses$Density
-#&gt; $resolutionClasses$Density$vertical
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $resolutionClasses$Density$horizontal
-#&gt; [1] "Stratum" "PSU"    
-#&gt; 
-#&gt; 
-#&gt; $resolutionClasses$Abundance
-#&gt; $resolutionClasses$Abundance$vertical
-#&gt; [1] "Layer"
-#&gt; 
-#&gt; $resolutionClasses$Abundance$horizontal
-#&gt; [1] "Stratum"
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; $seedSequenceLength
-#&gt; [1] 1e+07
-#&gt; 
-#&gt; $TargetStrengthFunction_LengthAndDepthDependent
-#&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
-#&gt;     Depth) 
-#&gt; {
-#&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + 
-#&gt;         DepthExponent * log10(1 + Depth/10)
-#&gt; }
-#&gt; &lt;bytecode: 0x7f99a08f1438&gt;
-#&gt; &lt;environment: 0x7f99a08f2c58&gt;
-#&gt; 
-#&gt; $TargetStrengthFunction_LengthDependent
-#&gt; function (midIndividualTotalLength, TargetStrength0, LengthExponent, 
-#&gt;     Depth) 
-#&gt; {
-#&gt;     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)
-#&gt; }
-#&gt; &lt;bytecode: 0x7f99a08f17b8&gt;
-#&gt; &lt;environment: 0x7f99a08f2c58&gt;
-#&gt; 
-#&gt; $TargetStrengthFunction_LengthExponent
-#&gt; function (midIndividualTotalLength, LengthExponent) 
-#&gt; {
-#&gt;     LengthExponent * log10(midIndividualTotalLength)
-#&gt; }
-#&gt; &lt;bytecode: 0x7f99a08f0e18&gt;
-#&gt; &lt;environment: 0x7f99a08f2c58&gt;
-#&gt; 
-#&gt; $targetStrengthMethodTypes
-#&gt; $targetStrengthMethodTypes$LengthDependent
-#&gt; [1] "Function"
-#&gt; 
-#&gt; $targetStrengthMethodTypes$LengthAndDepthDependent
-#&gt; [1] "Function"
-#&gt; 
-#&gt; $targetStrengthMethodTypes$LengthExponent
-#&gt; [1] "Function"
-#&gt; 
-#&gt; $targetStrengthMethodTypes$TargetStrengthByLength
-#&gt; [1] "Table"
-#&gt; 
-#&gt; 
-#&gt; $targetStrengthParameters
-#&gt; $targetStrengthParameters$LengthDependent
-#&gt; [1] "TargetStrength0" "LengthExponent" 
-#&gt; 
-#&gt; $targetStrengthParameters$LengthAndDepthDependent
-#&gt; [1] "TargetStrength0" "LengthExponent"  "DepthExponent"  
-#&gt; 
-#&gt; $targetStrengthParameters$LengthExponent
-#&gt; [1] "LengthExponent"
-#&gt; 
-#&gt; $targetStrengthParameters$TargetStrengthByLength
-#&gt; [1] "TargetStrength" "TotalLength"   
-#&gt; 
-#&gt; </div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'>getRstoxBaseDefinitions</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$NASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "NASC"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$SumNASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "NASC"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$MeanNASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "NASC"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$LengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistribution"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$SumLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistribution"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$MeanLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistribution"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$DensityData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Density"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$MeanDensityData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Density"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $allResolution$AbundanceData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Abundance"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "EDSU"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Channel"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "AcousticCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Beam"      "Frequency"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "NASC"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$verticalRawDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinChannelDepth" "MaxChannelDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "NASCWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ChannelReferenceType"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$NASCData$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ChannelReferenceDepth" "ChannelReferenceTilt"  "Cruise"               </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "EffectiveLogDistance"  "DateTime"              "Longitude"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [7] "Latitude"             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "EDSU"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "AcousticCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Beam"      "Frequency"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "NASC"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$verticalRawDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SumNASCWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ChannelReferenceType"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ChannelReferenceDepth" "ChannelReferenceTilt"  "Cruise"               </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "EffectiveLogDistance"  "DateTime"              "Longitude"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [7] "Latitude"             </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Resolution$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "EDSU"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumNASCData$Resolution$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"   "Channel"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$surveyDefinition</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Survey"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "AcousticCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Beam"      "Frequency"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "NASC"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$verticalRawDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MeanNASCWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ChannelReferenceType"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ChannelReferenceDepth" "ChannelReferenceTilt" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Resolution$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"     "EDSU"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Resolution$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"   "Channel"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanNASCData$Resolution$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"               "EffectiveLogDistance" "DateTime"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Longitude"            "Latitude"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Haul"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "WeightedCount"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$verticalRawDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinHaulDepth" "MaxHaulDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistributionWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistributionType"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$LengthDistributionData$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"               "EffectiveTowDistance" "DateTime"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Longitude"            "Latitude"             "Gear"                </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "WeightedCount"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$verticalRawDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SumLengthDistributionWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistributionType"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"               "EffectiveTowDistance" "DateTime"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Longitude"            "Latitude"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Resolution$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Resolution$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer" "Haul" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SumLengthDistributionData$Resolution$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Gear"                 "VerticalNetOpening"   "HorizontalNetOpening"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "TrawlDoorSpread"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$surveyDefinition</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Survey"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "WeightedCount"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$verticalRawDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MeanLengthDistributionWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistributionType"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Resolution$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"     "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Resolution$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer" "Haul" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanLengthDistributionData$Resolution$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"               "EffectiveTowDistance" "DateTime"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Longitude"            "Latitude"             "Gear"                </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "WeightedCount"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$type</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthDistributionType"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AssignmentLengthDistributionData$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$surveyDefinition</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Survey"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Frequency"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$groupingVariables_biotic</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$groupingVariables_acoustic</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Beam"      "Frequency"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Density"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "DensityWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Resolution$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"     "EDSU"    "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Resolution$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"   "Channel"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$DensityData$Resolution$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"               "EffectiveLogDistance" "EffectiveTowDistance"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "DateTime"             "Longitude"            "Latitude"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$surveyDefinition</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Survey"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Frequency"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$groupingVariables_biotic</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$groupingVariables_acoustic</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Beam"      "Frequency"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Density"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MeanDensityWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Resolution$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"     "EDSU"    "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Resolution$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"   "Channel"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$MeanDensityData$Resolution$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"               "EffectiveLogDistance" "EffectiveTowDistance"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "DateTime"             "Longitude"            "Latitude"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$surveyDefinition</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Survey"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"      "Beam"                 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "Frequency"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$groupingVariables_biotic</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "IndividualTotalLength" "LengthResolution"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$groupingVariables_acoustic</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Beam"      "Frequency"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Abundance"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Resolution$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"     "EDSU"    "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Resolution$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"   "Channel"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AbundanceData$Resolution$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"               "EffectiveLogDistance" "EffectiveTowDistance"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4] "DateTime"             "Longitude"            "Latitude"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [7] "VerticalNetOpening"   "HorizontalNetOpening" "TrawlDoorSpread"     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$IndividualsData$VariableNames</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$surveyDefinition</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Survey"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "SpeciesCategory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] "CruiseKey"             "StationKey"            "HaulKey"              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] "SpeciesCategoryKey"    "SampleKey"             "IndividualKey"        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] "IndividualTotalLength" "LengthResolution"      "IndividualRoundWeight"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10] "Beam"                  "Frequency"            </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Abundance" "Biomass"  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$verticalLayerDimension</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "MinLayerDepth" "MaxLayerDepth"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$Data$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$SuperIndividualsData$VariableNames</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticAssignment</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticAssignment$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticAssignment$verticalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticAssignment$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Haul"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticAssignment$weighting</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "WeightingFactor"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticAssignment$other</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$Stratum_PSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$Stratum_PSU$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$StationPSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$StationPSU$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "EDSU" "PSU" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$PSUByTime</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$PSUByTime$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$PSUByTime$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$BioticPSU$PSUByTime$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "StartDateTime" "StopDateTime" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$Stratum_PSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$Stratum_PSU$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$EDSU_PSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$EDSU_PSU$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "EDSU" "PSU" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$PSUByTime</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$PSUByTime$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$PSUByTime$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeDefinition$AcousticPSU$PSUByTime$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "StartDateTime" "StopDateTime" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$Frequency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Hz"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$NASC</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "sA"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$MinChannelDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$MaxChannelDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$ChannelReferenceDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$ChannelReferenceTilt</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$EffectiveLogDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$NASCData$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$Frequency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Hz"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$NASC</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "sA"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$ChannelReferenceDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$ChannelReferenceTilt</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$EffectiveLogDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Data$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumNASCData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Data$Frequency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Hz"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Data$NASC</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "sA"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Data$ChannelReferenceDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Data$ChannelReferenceTilt</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Resolution$EffectiveLogDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Resolution$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanNASCData$Resolution$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$WeightedCount</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "individual"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$MinHaulDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$MaxHaulDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$EffectiveTowDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$VerticalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$HorizontalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$LengthDistributionData$TrawlDoorSpread</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$WeightedCount</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "individual"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$EffectiveTowDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Data$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Resolution$VerticalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Resolution$HorizontalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SumLengthDistributionData$Resolution$TrawlDoorSpread</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$WeightedCount</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "individual"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$EffectiveTowDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Data$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Resolution$EffectiveTowDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Resolution$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Resolution$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Resolution$VerticalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Resolution$HorizontalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanLengthDistributionData$Resolution$TrawlDoorSpread</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AssignmentLengthDistributionData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AssignmentLengthDistributionData$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AssignmentLengthDistributionData$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AssignmentLengthDistributionData$WeightedCount</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "individual"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Data$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Data$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Data$Frequency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Hz"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Data$Density</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_areal_number_density"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution$EffectiveLogDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution$EffectiveTowDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution$VerticalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution$HorizontalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$DensityData$Resolution$TrawlDoorSpread</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Data$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Data$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Data$Frequency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Hz"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Data$Density</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_areal_number_density"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution$EffectiveLogDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution$EffectiveTowDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution$VerticalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution$HorizontalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$MeanDensityData$Resolution$TrawlDoorSpread</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Data$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Data$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Data$Frequency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Hz"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Data$Abundance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ind"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution$EffectiveLogDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution$EffectiveTowDistance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "nautical_mile"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution$Longitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution$Latitude</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "degrees"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution$VerticalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution$HorizontalNetOpening</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AbundanceData$Resolution$TrawlDoorSpread</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$IndividualsData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$IndividualTotalLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$LengthResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "cm"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$IndividualRoundWeight</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "g"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$Frequency</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Hz"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$Abundance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "ind"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$Biomass</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "g"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$MinLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$Data$MaxLayerDepth</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "m"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$SuperIndividualsData$VariableNames</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$BioticAssignment</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$BioticPSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $dataTypeUnits$AcousticPSU</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $emptyStratumPolygon</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> An object of class "SpatialPolygonsDataFrame"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Slot "data":</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> data frame with 0 columns and 0 rows</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Slot "polygons":</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Slot "plotOrder":</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> integer(0)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Slot "bbox":</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              min           max</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> x -1.797693e+308 1.797693e+308</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> y -1.797693e+308 1.797693e+308</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Slot "proj4string":</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CRS arguments: NA </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $getPSUPrefix</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> function (PSUType) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     if (PSUType == "Acoustic") {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         prefix &lt;- "PSU"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     else if (PSUType == "Biotic") {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         prefix &lt;- "PSU"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     else {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     return(prefix)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;bytecode: 0x7faf62aa5698&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x7faf62aa96d0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $getSSULabel</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> function (PSUType) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     if (PSUType == "Acoustic") {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         SSULabel &lt;- "EDSU"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     else if (PSUType == "Biotic") {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         SSULabel &lt;- "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     else {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     return(SSULabel)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;bytecode: 0x7faf62aa4eb8&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x7faf62aa96d0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $getStationLevel</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> function (PSUType) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     if (PSUType == "Acoustic") {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         SSULabel &lt;- "Log"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     else if (PSUType == "Biotic") {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         SSULabel &lt;- "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     else {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         stop("PSUType must be one of \"Acoustic\" or \"Biotic\"")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     return(SSULabel)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;bytecode: 0x7faf62aa46a0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x7faf62aa96d0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $nauticalMileInMeters</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1852</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $proj4string</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $PSUByTime</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $PSUByTime$horizontalResolution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $PSUByTime$categoryVariable</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Cruise"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $PSUByTime$groupingVariables</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "StartDateTime" "StopDateTime" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $reportFunctions</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      functionName packageName weighted weightingParameter multiple</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  1:   summaryStox   RstoxBase    FALSE                        TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  2:           sum        base    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  3:          mean        base    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  4: weighted.mean       stats     TRUE                  w    FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  5:        median       stats    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6:           min        base    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  7:           max        base    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  8:            sd       stats    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  9:           var       stats    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10:            cv   RstoxBase    FALSE                       FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$NASC</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$NASC$vertical</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"   "Channel"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$NASC$horizontal</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"     "EDSU"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$LengthDistribution</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$LengthDistribution$vertical</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer" "Haul" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$LengthDistribution$horizontal</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"     "Station"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$Density</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$Density$vertical</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$Density$horizontal</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum" "PSU"    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$Abundance</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$Abundance$vertical</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Layer"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $resolutionClasses$Abundance$horizontal</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Stratum"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $seedSequenceLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1e+07</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $TargetStrengthFunction_LengthAndDepthDependent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     Depth) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         DepthExponent * log10(1 + Depth/10)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;bytecode: 0x7faf62aa5ee8&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x7faf62aa96d0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $TargetStrengthFunction_LengthDependent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     Depth) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;bytecode: 0x7faf62aa0358&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x7faf62aa96d0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $TargetStrengthFunction_LengthExponent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> function (midIndividualTotalLength, LengthExponent) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     LengthExponent * log10(midIndividualTotalLength)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;bytecode: 0x7faf62aa58c8&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x7faf62aa96d0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthMethodTypes</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthMethodTypes$LengthDependent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Function"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthMethodTypes$LengthAndDepthDependent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Function"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthMethodTypes$LengthExponent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Function"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthMethodTypes$TargetStrengthByLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Table"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthParameters</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthParameters$LengthDependent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "TargetStrength0" "LengthExponent" </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthParameters$LengthAndDepthDependent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "TargetStrength0" "LengthExponent"  "DepthExponent"  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthParameters$LengthExponent</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LengthExponent"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $targetStrengthParameters$TargetStrengthByLength</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "TargetStrength" "TotalLength"   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
