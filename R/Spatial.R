@@ -214,8 +214,6 @@ getStratumNames <- function(stratum) {
 #' @return
 #' A table of stratum name and area.
 #' 
-#' @examples
-#' 
 #' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
 #' 
 #' @export

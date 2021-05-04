@@ -32,9 +32,3 @@ A \code{\link{ReportDensityData}} object.
 \description{
 Reports the sum, mean or other functions on a variable of the \code{\link{DensityData}}.
 }
-\examples{
-
-}
-\seealso{
-
-}

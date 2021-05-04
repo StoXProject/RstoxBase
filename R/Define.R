@@ -518,6 +518,9 @@ getPSUStartStopDateTime <- function(PSUProcessData, MergedStoxDataStationLevel, 
         StationTable = StationTable
     )
     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
+    if(!length(PSUStartStopDateTime)) {
+        stop("The StoxData does not contain any EDSUs/Stations matching the PSUs. This can happen if the PSUs were created using one StoxData and then DefinePSU() is run with a different StoxData.")
+    }
     
     # Add the Stratum:
     PSUStartStopDateTime <- RstoxData::mergeByIntersect(PSUProcessData$Stratum_PSU, PSUStartStopDateTime)

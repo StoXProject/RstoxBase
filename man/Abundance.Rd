@@ -22,10 +22,6 @@ The function merge the \code{\link{MeanDensityData}} with the \code{\link{Stratu
 For acoustic-trawl surveys the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
 In swept-area surveys the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength
 }
-\examples{
-
-
-}
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to individuals.
 }

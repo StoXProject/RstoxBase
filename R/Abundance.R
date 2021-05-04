@@ -15,9 +15,6 @@
 #' @return
 #' An object of StoX data type \code{\link{AbundanceData}}. 
 #' 
-#' @examples
-#' 
-#' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to individuals.
 #' 
 #' @export
@@ -115,7 +112,9 @@ Individuals <- function(
     IndividualsData <- IndividualsData[!is.na(IndividualKey), ]
     
     # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
-    formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = names(MergeStoxBioticData))
+    areKeys <- endsWith(names(MergeStoxBioticData), "Key")
+    keys <- names(MergeStoxBioticData)[areKeys]
+    formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
     
     # Add the attribute 'variableNames':
     setattr(
