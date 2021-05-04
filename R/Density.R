@@ -79,7 +79,6 @@ AcousticDensity <- function(
     AcousticTargetStrength,
     SpeciesLink = data.table::data.table()
 ) {
-    
     # Check that the input SpeciesLink has the appropriate types (this function reads the functionName from the function in is placed in):
     checkTypes(table = SpeciesLink)
     
@@ -96,7 +95,7 @@ AcousticDensity <- function(
     #    SpeciesLink = SpeciesLink, 
     #    sumBy = sumBy
     #)
-    sumBy <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE)
+    sumBy <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE)
     # Split the NASC by the AssignmentLengthDistributionData:
     NASCData <- DistributeNASC(
         NASCData = MeanNASCData$Data, 
@@ -197,7 +196,7 @@ DistributeNASC <- function(
     
     # Check whether there are any non-missing length distribution frequencies:
     if(! NASCData[, sum(!is.na(WeightedCount))]) {
-        stop("The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), ". A possible reason is that the LayerDefinition differs between the MeanNASCData and the AssignmentLengthDistributionData. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC().")
+        stop("The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), ". A possible reason is that the LayerDefinition differs between the MeanNASCData and the AssignmentLengthDistributionData. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC(). Another reasonn may be that the AcousticCategory of the AcousticTargetStrength process data and the parameter SpeciesLing of the AcousticDensity function do not match.")
         #"No lenght distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
     }
     

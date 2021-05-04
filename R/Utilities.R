@@ -203,16 +203,17 @@ addLayerProcessData <- function(data, dataType, layerProcessData = NULL, acceptN
         varMax <- dataTypeDefinition$verticalRawDimension[2]
         
         # Get min and max depth of the raw vertical distribution, either as a copy of the depths, or a calculation of the depths given the depth and orientation of the coordinate system:
-        if(length(dataTypeDefinition$coordinateSystemOrigin)) {
-            minDepth <- data[[dataTypeDefinition$coordinateSystemOrigin]] - 
-                data[[varMin]] * cos(data[[dataTypeDefinition$coordinateSystemOrientation]] * pi/ 180)
-            maxDepth <- data[[dataTypeDefinition$coordinateSystemOrigin]] - 
-                data[[varMax]] * cos(data[[dataTypeDefinition$coordinateSystemOrientation]] * pi/ 180)
-        }
-        else {
+        # ... NOTE (2021-04-29) The element coordinateSystemOrigin is not defined, and only the else is active here:
+        #if(length(dataTypeDefinition$coordinateSystemOrigin)) {
+        #    minDepth <- data[[dataTypeDefinition$coordinateSystemOrigin]] - 
+        #        data[[varMin]] * cos(data[[dataTypeDefinition$coordinateSystemOrientation]] #* pi/ 180)
+        #    maxDepth <- data[[dataTypeDefinition$coordinateSystemOrigin]] - 
+        #        data[[varMax]] * cos(data[[dataTypeDefinition$coordinateSystemOrientation]] #* pi/ 180)
+        #}
+        #else {
             minDepth <- data[[varMin]]
             maxDepth <- data[[varMax]]
-        }
+        #}
         
         layerData <- findLayer(
             minDepth = minDepth, 
@@ -545,49 +546,6 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
 }
 
 
-
-
-applyMeanToDataWrongSinceWeightingIsDoneOnEachCategoryAndGroup <- function(data, dataType, targetResolution = "PSU") {
-    
-    # Store the original data type defnition, particularly for summing the weights:
-    originalDataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
-    
-    # Get the variables to aggregate by etc.:
-    targetDataType <- paste0("Mean", sub("Sum", "", dataType))
-    aggregationVariables <- determineAggregationVariables(
-        data = data, 
-        dataType = targetDataType, 
-        targetResolution = targetResolution, 
-        dimension = "horizontal"
-    )
-    
-    # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
-    dataVariable <- aggregationVariables$dataVariable
-    targetWeightingVariable <- aggregationVariables$weightingVariable
-    weightingVariable <- originalDataTypeDefinition$weighting
-    
-    # Sum the weights for each combination of the desired horizontal and vertical resolution and the category and grouping variables, discarding variables that are not present for this data:
-    sumWeigthsBy <- intersect(
-        aggregationVariables$by, 
-        names(data)
-    )
-    
-    # Sum the weights:
-    summedWeighting <- data[, .(SummedWeights = sum(get(weightingVariable), na.rm = TRUE)), by = sumWeigthsBy]
-    
-    # Merge the resulting summed weights with the data, by the next resolution:
-    data <- RstoxData::mergeByIntersect(data, summedWeighting, all = TRUE)
-    
-    # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
-    data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = sumWeigthsBy]
-    # Store the new weights by the summed original weights:
-    data[, c(targetWeightingVariable) := SummedWeights]
-    
-    # Remove duplicated rows:
-    data <- subset(data, !duplicated(data[, ..sumWeigthsBy]))
-    
-    return(data)
-}
 
 # https://stackoverflow.com/questions/24833247/how-can-one-work-fully-generically-in-data-table-in-r-with-column-names-in-varia:
 quote.convert <- function(x) {

@@ -145,6 +145,8 @@ initiateRstoxBase <- function(){
                     "IndividualTotalLength", "LengthResolution", 
                     "Beam", "Frequency" # The relevant acoustic variables
                 ), 
+                groupingVariables_biotic = c("IndividualTotalLength", "LengthResolution"), 
+                groupingVariables_acoustic = c("Beam", "Frequency"), 
                 data = "Density",
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "DensityWeight", 
@@ -166,6 +168,8 @@ initiateRstoxBase <- function(){
                     "IndividualTotalLength", "LengthResolution", 
                     "Beam", "Frequency" # The relevant acoustic variables
                 ), 
+                groupingVariables_biotic = c("IndividualTotalLength", "LengthResolution"), 
+                groupingVariables_acoustic = c("Beam", "Frequency"), 
                 data = "Density",
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "MeanDensityWeight", 
@@ -188,6 +192,8 @@ initiateRstoxBase <- function(){
                     "IndividualTotalLength", "LengthResolution", 
                     "Beam", "Frequency" # The relevant acoustic variables
                 ), 
+                groupingVariables_biotic = c("IndividualTotalLength", "LengthResolution"), 
+                groupingVariables_acoustic = c("Beam", "Frequency"), 
                 data = "Abundance", 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = NULL, 
@@ -274,6 +280,184 @@ initiateRstoxBase <- function(){
         #)
     )
     
+    
+    dataTypeUnits <- list(
+        # NASC: 
+        NASCData = list(
+            Frequency = "Hz", 
+            NASC = "sA", 
+            MinChannelDepth = "m", 
+            MaxChannelDepth = "m",
+            ChannelReferenceDepth = "m", 
+            ChannelReferenceTilt = "degrees", 
+            EffectiveLogDistance = "nautical_mile", 
+            Longitude = "degrees", 
+            Latitude = "degrees"
+        ), 
+        SumNASCData = list(
+            Data = list(
+                Frequency = "Hz", 
+                NASC = "sA", 
+                MinLayerDepth = "m", 
+                MaxLayerDepth = "m",
+                ChannelReferenceDepth = "m", 
+                ChannelReferenceTilt = "degrees", 
+                EffectiveLogDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees"
+            ), 
+            Resolution = list()
+        ), 
+        MeanNASCData = list(
+            Data = list(
+                Frequency = "Hz", 
+                NASC = "sA", 
+                MinLayerDepth = "m", 
+                MaxLayerDepth = "m",
+                ChannelReferenceDepth = "m", 
+                ChannelReferenceTilt = "degrees"
+            ), 
+            Resolution = list(
+                EffectiveLogDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees"
+            )
+        ), 
+        # LengthDistribution:
+        LengthDistributionData = list(
+            IndividualTotalLength = "cm", 
+            LengthResolution = "cm", 
+            WeightedCount = "individual", 
+            MinHaulDepth = "m",
+            MaxHaulDepth = "m",
+            EffectiveTowDistance = "nautical_mile", 
+            Longitude = "degrees", 
+            Latitude = "degrees",
+            VerticalNetOpening = "m",
+            HorizontalNetOpening = "m",
+            TrawlDoorSpread = "m"
+        ), 
+        SumLengthDistributionData = list(
+            Data = list(
+                IndividualTotalLength = "cm", 
+                LengthResolution = "cm", 
+                WeightedCount = "individual", 
+                MinLayerDepth = "m",
+                MaxLayerDepth = "m",
+                EffectiveTowDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees"
+            ), 
+            Resolution = list(
+                VerticalNetOpening = "m",
+                HorizontalNetOpening = "m",
+                TrawlDoorSpread = "m"
+            )
+        ), 
+        MeanLengthDistributionData = list(
+            Data = list(
+                IndividualTotalLength = "cm", 
+                LengthResolution = "cm", 
+                WeightedCount = "individual", 
+                MinLayerDepth = "m",
+                MaxLayerDepth = "m",
+                EffectiveTowDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees"
+            ), 
+            Resolution = list(
+                EffectiveTowDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees", 
+                VerticalNetOpening = "m",
+                HorizontalNetOpening = "m",
+                TrawlDoorSpread = "m"
+            )
+        ), 
+        AssignmentLengthDistributionData = list(
+            IndividualTotalLength = "cm", 
+            LengthResolution = "cm", 
+            WeightedCount = "individual"
+        ), 
+        # Density:
+        DensityData = list(
+            Data = list(
+                IndividualTotalLength = "cm", 
+                LengthResolution = "cm", 
+                Frequency = "Hz", 
+                Density = "nautical_areal_number_density", 
+                MinLayerDepth = "m",
+                MaxLayerDepth = "m"
+            ), 
+            Resolution = list(
+                EffectiveLogDistance = "nautical_mile", 
+                EffectiveTowDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees", 
+                VerticalNetOpening = "m",
+                HorizontalNetOpening = "m",
+                TrawlDoorSpread = "m"
+            )
+        ), 
+        MeanDensityData = list(
+            Data = list(
+                IndividualTotalLength = "cm", 
+                LengthResolution = "cm", 
+                Frequency = "Hz", 
+                Density = "nautical_areal_number_density", 
+                MinLayerDepth = "m",
+                MaxLayerDepth = "m"
+            ), 
+            Resolution = list(
+                EffectiveLogDistance = "nautical_mile", 
+                EffectiveTowDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees", 
+                VerticalNetOpening = "m",
+                HorizontalNetOpening = "m",
+                TrawlDoorSpread = "m"
+            )
+        ), 
+        # Abundance:
+        AbundanceData = list(
+            Data = list(
+                IndividualTotalLength = "cm", 
+                LengthResolution = "cm", 
+                Frequency = "Hz", 
+                Abundance = "ind", 
+                MinLayerDepth = "m",
+                MaxLayerDepth = "m"
+            ), 
+            Resolution = list(
+                EffectiveLogDistance = "nautical_mile", 
+                EffectiveTowDistance = "nautical_mile", 
+                Longitude = "degrees", 
+                Latitude = "degrees", 
+                VerticalNetOpening = "m",
+                HorizontalNetOpening = "m",
+                TrawlDoorSpread = "m"
+            )
+        ), 
+        IndividualsData = list(), 
+        SuperIndividualsData = list(
+            Data = list(
+                IndividualTotalLength = "cm", 
+                LengthResolution = "cm", 
+                IndividualRoundWeight = "g", 
+                Frequency = "Hz", 
+                Abundance = "ind", 
+                Biomass = "g", 
+                MinLayerDepth = "m",
+                MaxLayerDepth = "m"
+            ), 
+            VariableNames = list()
+        ), 
+        BioticAssignment = list(), 
+        BioticPSU = list(), 
+        AcousticPSU = list()
+    )
+    
+     
     resolutionClasses <- list(
         NASC = list(
             vertical= c("Layer", "Channel"), 
@@ -623,7 +807,7 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
     
     # Order the rows:
     #data.table::setorder(table, na.last = TRUE)
-    RstoxData::setorderv_numeric(table, na.last = TRUE)
+    RstoxData::setorderv_numeric(table, by = columnOrder, na.last = TRUE)
     
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
     data.table::setkey(table, NULL)
@@ -772,7 +956,7 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
         
     # Unlist if specified:
     if(unlist) {
-        thisDataTypeDefinition <- unlist(thisDataTypeDefinition)
+        thisDataTypeDefinition <- unique(unlist(thisDataTypeDefinition))
     }
     
     return(thisDataTypeDefinition)

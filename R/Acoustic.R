@@ -22,10 +22,10 @@ NASC <- function(
     NASCData <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
     
     # Check that the input StoxAcousticData has the same ChannelReferenceType throughout:
-    dataTypeDefinition <- getDataTypeDefinition(dataType = "NASCData")
-    ChannelReferenceType <- NASCData[[dataTypeDefinition$type]]
+    type <- getDataTypeDefinition(dataType = "NASCData", elements = "type", unlist = TRUE)
+    ChannelReferenceType <- NASCData[[type]]
     if(!allEqual(ChannelReferenceType, na.rm = TRUE)) {
-        stop("The StoxAcousticData must have only one ", dataTypeDefinition$type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
+        stop("The StoxAcousticData must have only one ", type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
     }
     
     # Interpret the ChannelDepths:
@@ -207,6 +207,8 @@ MeanNASC <- function(
 #' This function splits NASCData of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' @inheritParams AcousticDensity
 #' @param AcousticCategoryLink A table linking the acoustic categories to split and those to split into.
 #' 
 #' @seealso This functions uses similar methods as \code{\link{AcousticDensity}}. Convert back to \code{\link{StoxAcousticData}} with \code{\link{NASCToStoxAcoustic}}.

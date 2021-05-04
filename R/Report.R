@@ -14,10 +14,6 @@
 #' @return
 #' A \code{\link{ReportSuperIndividualsData}} object.
 #' 
-#' @examples
-#' 
-#' @seealso 
-#' 
 #' @export
 #' 
 ReportSuperIndividuals <- function(
@@ -53,10 +49,6 @@ ReportSuperIndividuals <- function(
 #' @return
 #' A \code{\link{ReportDensityData}} object.
 #' 
-#' @examples
-#' 
-#' @seealso 
-#' 
 #' @export
 #' 
 ReportDensity <- function(
@@ -88,6 +80,7 @@ ReportDensity <- function(
 #' @param aggregationFunction The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.
 #' @param subTable The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.
 #' @param na.rm Used in the function specified by \code{aggregationFunction}.
+#' @param padWithZerosOn Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}. 
 #' @inheritParams ReportSuperIndividuals
 #'
 #' @return
@@ -162,7 +155,7 @@ aggregateBaselineDataOneTable <- function(
         # Convert the NAs to 0 for the abundance and biomass columns:
         abudanceVariables <- setdiff(names(stoxData), paddingVariables)
         # Convvert NA to 0 only for Biomass or Abundance:
-        abudanceVariableKeys <- RstoxBase::getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
+        abudanceVariableKeys <- getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
         isAbudanceVariable <- rowSums(outer(abudanceVariables, abudanceVariableKeys, startsWith)) > 0
         abudanceVariables <- abudanceVariables[isAbudanceVariable]
         
@@ -271,10 +264,6 @@ getReportFunctionPackage <- function(x) {
 #' 
 #' @return
 #' A \code{\link{ReportSpeciesCategoryCatchData}} object.
-#' 
-#' @examples
-#' 
-#' @seealso 
 #' 
 #' @export
 #' 

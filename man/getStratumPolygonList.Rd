@@ -15,9 +15,6 @@ A table of stratum name and area.
 \description{
 This function extracts the polygons as a named list of tables of class \code{\link[data.table]{data.table}}
 }
-\examples{
-
-}
 \seealso{
 \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
 }

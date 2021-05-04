@@ -20,9 +20,3 @@ Reports the sum, mean or other functions on a variable of the \code{\link{Specie
 \details{
 This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 }
-\examples{
-
-}
-\seealso{
-
-}

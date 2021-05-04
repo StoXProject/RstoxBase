@@ -17,6 +17,10 @@ SplitMeanNASC(
 
 \item{AssignmentLengthDistributionData}{The \code{\link{AssignmentLengthDistributionData}} data.}
 
+\item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
+
+\item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
+
 \item{AcousticCategoryLink}{A table linking the acoustic categories to split and those to split into.}
 }
 \description{
