@@ -692,8 +692,14 @@ DefineLayer <- function(
     
     # If "LayerTable" is requested match the Breaks against the possible breaks:
     else if(grepl("LayerTable", DefinitionMethod, ignore.case = TRUE)) {
+        # Detect invalid breaks:
+        allBreaks <- unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")])
+        rangeOfPossibleIntervals <- range((possibleIntervals))
+        # Accept values outside of the range of the possibleIntervals:
+        validBreaks <- allBreaks %in% unlist(possibleIntervals) | allBreaks < rangeOfPossibleIntervals[1] | allBreaks > rangeOfPossibleIntervals[2]
+        
         # Error if any of the specified breaks are invalid:
-        if(any(! unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")]) %in% unlist(possibleIntervals))) {
+        if(any(!validBreaks)) {
             stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
         }
         else {
