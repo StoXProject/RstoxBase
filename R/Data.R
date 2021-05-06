@@ -109,9 +109,6 @@ NULL
 #' 
 #' StoX data types are the data types used to transfer data and information between processes in a StoX estimation model. The data types are divided into two types, the \code{\link{ModelData}} and \code{\link{ProcessData}}.
 #' 
-#' @inheritParams ModelData
-#' @inheritParams ProcessData
-#' 
 #' @name DataTypes
 #' 
 NULL
