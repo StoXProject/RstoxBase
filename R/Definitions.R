@@ -24,6 +24,7 @@ initiateRstoxBase <- function(){
         NASCData = list(
             horizontalResolution = "EDSU", 
             verticalResolution = "Channel", 
+            obserationVariable = "Beam",
             categoryVariable = "AcousticCategory", 
             groupingVariables = c("Beam", "Frequency"), 
             data = "NASC", 
@@ -37,6 +38,7 @@ initiateRstoxBase <- function(){
             Data = list(
                 horizontalResolution = "EDSU", 
                 verticalResolution = "Layer", 
+                obserationVariable = "Beam",
                 categoryVariable = "AcousticCategory", 
                 groupingVariables = c("Beam", "Frequency"), 
                 data = "NASC", 
@@ -56,6 +58,7 @@ initiateRstoxBase <- function(){
                 surveyDefinition = "Survey", 
                 horizontalResolution = c("Stratum", "PSU"), 
                 verticalResolution = "Layer", 
+                obserationVariable = "Beam",
                 categoryVariable = "AcousticCategory", 
                 groupingVariables = c("Beam", "Frequency"), 
                 data = "NASC", 
@@ -75,6 +78,7 @@ initiateRstoxBase <- function(){
         LengthDistributionData = list(
             horizontalResolution = "Station", 
             verticalResolution = "Haul", 
+            obserationVariable = NULL,
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "WeightedCount",
@@ -88,6 +92,7 @@ initiateRstoxBase <- function(){
             Data = list(
                 horizontalResolution = "Station", 
                 verticalResolution = "Layer", 
+                obserationVariable = NULL,
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
                 data = "WeightedCount",
@@ -108,6 +113,7 @@ initiateRstoxBase <- function(){
                 surveyDefinition = "Survey", 
                 horizontalResolution = c("Stratum", "PSU"), 
                 verticalResolution = "Layer", 
+                obserationVariable = NULL,
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
                 data = "WeightedCount",
@@ -126,6 +132,7 @@ initiateRstoxBase <- function(){
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = c("Layer"), 
+            obserationVariable = NULL,
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
             data = "WeightedCount",
@@ -140,6 +147,7 @@ initiateRstoxBase <- function(){
                 surveyDefinition = "Survey", 
                 horizontalResolution = c("Stratum", "PSU"), 
                 verticalResolution = c("Layer"), 
+                obserationVariable = "Beam",
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = c(
                     "IndividualTotalLength", "LengthResolution", 
@@ -737,7 +745,7 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 #' 
 #' @export
 #' 
-formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
+formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL, secondaryRowOrder = NULL) {
     
     # If data is only one table:
     if(data.table::is.data.table(data)) {
@@ -747,7 +755,8 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
             tableDefinition = dataTypeDefinition, 
             keep.all = keep.all, 
             allow.missing = allow.missing, 
-            secondaryColumnOrder = secondaryColumnOrder
+            secondaryColumnOrder = secondaryColumnOrder, 
+            secondaryRowOrder = secondaryRowOrder
         ) 
     }
     # ... or a list of tables:
@@ -760,22 +769,31 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
             MoreArgs = list(
                 keep.all = keep.all, 
                 allow.missing = allow.missing, 
-                secondaryColumnOrder = secondaryColumnOrder
+                secondaryColumnOrder = secondaryColumnOrder, 
+                secondaryRowOrder = secondaryRowOrder
             )
         )
     }
 }
 
 
-formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL) {
+formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL, secondaryRowOrder = NULL) {
     
     # Get the column order:
     columnOrder <- c(
         tableDefinition, 
         secondaryColumnOrder
     )
+    rowOrder <- c(
+        tableDefinition, 
+        secondaryRowOrder
+    )
     if(allow.missing) {
         columnOrder <- intersect(columnOrder, names(table))
+        rowOrder <- intersect(rowOrder, names(table))
+    }
+    if(any(!rowOrder %in% columnOrder)) {
+        stop("secondaryRowOrder cannot contain values that are not present in the secondaryColumnOrder or tableDefinition.")
     }
     
     # Return immediately if empty table, but add the columns given in the 'columnOrder':
@@ -807,7 +825,7 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
     
     # Order the rows:
     #data.table::setorder(table, na.last = TRUE)
-    RstoxData::setorderv_numeric(table, by = columnOrder, na.last = TRUE)
+    RstoxData::setorderv_numeric(table, by = rowOrder, na.last = TRUE)
     
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
     data.table::setkey(table, NULL)
@@ -980,86 +998,86 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
 #    return(dataTypeDefinition)
 #}
 
-determineAggregationVariables <- function(
-        data, 
-        dataType, 
-        targetResolution, 
-        dimension = c("vertical", "horizontal"),
-        subTable = "Data"
-        ) {
-    
-    # Get the requested type:
-    dimension <- match.arg(dimension)
-    #dataType <- detectDataType(data)
-    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
-    #thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
-    dataTypeDefinition <- getDataTypeDefinition(dataType, subTable = subTable)
-    
-    # Get the relevant resolution variables:
-    thisResolution <- getAllResolutionVariables(
-        dataType = dataType, 
-        dimension = dimension
-    )
-    thisResolution <- intersect(thisResolution, names(data))
-    otherResolution <- getAllResolutionVariables(
-        dataType = dataType, 
-        dimension = dimension, 
-        other = TRUE
-    )
-    otherResolution <- intersect(otherResolution, names(data))
-    
-    # Get the present resolution variables:
-    hasAnyNonNA <- unlist(data[, lapply(.SD, function(x) any(!is.na(x))), .SDcols = thisResolution])
-    presentResolution <- thisResolution[hasAnyNonNA]
-    
-    ## Get the finest resolution variable:
-    #finestResolution <- utils::tail(presentResolution, 1)
-    #
-    ## Get the higher resolution than the finest:
-    #allButFinestResolution <- setdiff(presentResolution, finestResolution)
-    
-    # Get the next resolution, that is the resolution one level higher than the present resolution:
-    nextResolution <- if(length(presentResolution) == 1) NA else presentResolution[length(presentResolution) - 1]
-    
-    # And the resolution variables to aggregate by:
-    # If the target resolution is not in the presen resolution, abort:
-    presentIsTarget <- presentResolution == targetResolution
-    if(!any(presentIsTarget)) {
-        stop("TargetResolution (", targetResolution, ") is not one of the columns of the present resolution (", paste(presentResolution, collapse = ", "), "). Possibly, the specified TargetResolution has not been added to the data. In that case, specify the function inputs *PSU or *Layer, where * can be Acoustic or Biotic")
-    }
-    aggregationResolution <- presentResolution[seq_len(min(which(presentIsTarget)))]
-    
-    # Get the variables NOT to aggregate by:
-    setToNA <- setdiff(thisResolution, aggregationResolution)
-    
-    # ... and diff these from all possigle grouping variables:
-    aggregateBy <- setdiff(
-        c(
-            aggregationResolution, 
-            otherResolution, 
-            dataTypeDefinition$categoryVariable, 
-            dataTypeDefinition$groupingVariables
-        ), 
-        setToNA
-    )
-    
-    out <- list(
-        #dataTypeDefinition = dataTypeDefinition, 
-        by = aggregateBy, 
-        setToNA = setToNA, 
-        targetResolution = targetResolution, 
-        presentResolution = presentResolution, 
-        #finestResolution = finestResolution, 
-        #allButFinestResolution = allButFinestResolution, 
-        nextResolution = nextResolution, 
-        dataVariable = dataTypeDefinition$data, 
-        weightingVariable = dataTypeDefinition$weighting, 
-        otherVariables = dataTypeDefinition$other, 
-        verticalRawDimension = dataTypeDefinition$verticalRawDimension, 
-        verticalLayerDimension = dataTypeDefinition$verticalLayerDimension
-    )
-    return(out)
-}
+#determineAggregationVariables <- function(
+#        data, 
+#        dataType, 
+#        targetResolution, 
+#        dimension = c("vertical", "horizontal"),
+#        subTable = "Data"
+#        ) {
+#    
+#    # Get the requested type:
+#    dimension <- match.arg(dimension)
+#    #dataType <- detectDataType(data)
+#    #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
+#    #thisDataTypeDefinition <- dataTypeDefinition[[dataType]]
+#    dataTypeDefinition <- getDataTypeDefinition(dataType, subTable = subTable)
+#    
+#    # Get the relevant resolution variables:
+#    thisResolution <- getAllResolutionVariables(
+#        dataType = dataType, 
+#        dimension = dimension
+#    )
+#    thisResolution <- intersect(thisResolution, names(data))
+#    otherResolution <- getAllResolutionVariables(
+#        dataType = dataType, 
+#        dimension = dimension, 
+#        other = TRUE
+#    )
+#    otherResolution <- intersect(otherResolution, names(data))
+#    
+#    # Get the present resolution variables:
+#    hasAnyNonNA <- unlist(data[, lapply(.SD, function(x) any(!is.na(x))), .SDcols = thisResolution])
+#    presentResolution <- thisResolution[hasAnyNonNA]
+#    
+#    ## Get the finest resolution variable:
+#    #finestResolution <- utils::tail(presentResolution, 1)
+#    #
+#    ## Get the higher resolution than the finest:
+#    #allButFinestResolution <- setdiff(presentResolution, finestResolution)
+#    
+#    # Get the next resolution, that is the resolution one level higher than the present resolution:
+#    nextResolution <- if(length(presentResolution) == 1) NA else presentResolution[length(presentResolution) - 1]
+#    
+#    # And the resolution variables to aggregate by:
+#    # If the target resolution is not in the presen resolution, abort:
+#    presentIsTarget <- presentResolution == targetResolution
+#    if(!any(presentIsTarget)) {
+#        stop("TargetResolution (", targetResolution, ") is not one of the columns of the present resolution (", paste(presentResolution, collapse = ", "), "). Possibly, the specified TargetResolution has not been added to the data. In that case, specify the function inputs *PSU or *Layer, where * can be Acoustic or Biotic")
+#    }
+#    aggregationResolution <- presentResolution[seq_len(min(which(presentIsTarget)))]
+#    
+#    # Get the variables NOT to aggregate by:
+#    setToNA <- setdiff(thisResolution, aggregationResolution)
+#    
+#    # ... and diff these from all possigle grouping variables:
+#    aggregateBy <- setdiff(
+#        c(
+#            aggregationResolution, 
+#            otherResolution, 
+#            dataTypeDefinition$categoryVariable, 
+#            dataTypeDefinition$groupingVariables
+#        ), 
+#        setToNA
+#    )
+#    
+#    out <- list(
+#        #dataTypeDefinition = dataTypeDefinition, 
+#        by = aggregateBy, 
+#        setToNA = setToNA, 
+#        targetResolution = targetResolution, 
+#        presentResolution = presentResolution, 
+#        #finestResolution = finestResolution, 
+#        #allButFinestResolution = allButFinestResolution, 
+#        nextResolution = nextResolution, 
+#        dataVariable = dataTypeDefinition$data, 
+#        weightingVariable = dataTypeDefinition$weighting, 
+#        otherVariables = dataTypeDefinition$other, 
+#        verticalRawDimension = dataTypeDefinition$verticalRawDimension, 
+#        verticalLayerDimension = dataTypeDefinition$verticalLayerDimension
+#    )
+#    return(out)
+#}
 
 
 
