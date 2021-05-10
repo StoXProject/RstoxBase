@@ -297,3 +297,56 @@ ReportSpeciesCategoryCatch <- function(
 
 
 
+##################################################
+##################################################
+#' Write StratumPolygon
+#' 
+#' Writes a StratumPolygon to GeoJSON, StoX_WKT or shapefile.
+#' 
+#' @inheritParams ModelData
+#' @param FileFormat The format of the files to write the StratumPolygon to. \code{\link{StoX_multipolygon_WKT}} is the table of stratum name and WKT multipolygon used by StoX. 
+#' 
+#' @details The actual writing takes place in RstoxFramework. This function only converts the data to appropriate classes interpreted by RstoxFramework.
+#' 
+#' @return
+#' A \code{\link{WriteStratumPolygonData}} object.
+#' 
+#' @noRd
+# #' @export
+# #' 
+WriteStratumPolygon <- function(
+    StratumPolygon, 
+    FileFormat = c("GeoJSON", "StoX_multipolygon_WKT", "StoX_shapefile")
+) 
+{
+    
+    FileFormat <- match.arg(FileFormat)
+    output <- StratumPolygon
+    
+    if(FileFormat == "GeoJSON") {
+        # Do nonthing, as RstoxFramework wrirtes GeoJSON from SpatialPolygonsDataFrame.
+    }
+    else if(FileFormat == "StoX_multipolygon_WKT") {
+        # Convert to WKT character vector:
+        StoX_WKT <- sf::st_as_text(sf::st_as_sfc(StratumPolygon, forceMulti = TRUE))
+        # Add stratum names in a matrix:
+        output <- cbind(
+            getStratumNames(StratumPolygon), 
+            StoX_WKT
+        )
+        class(output) <- FileFormat
+    }
+    else if(FileFormat == "StoX_shapefile") {
+        class(output) <- FileFormat
+    }
+    else {
+        stop("Wrong FileFormat")
+    }
+    
+    return(output)
+}
+
+
+
+
+

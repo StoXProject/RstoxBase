@@ -275,7 +275,12 @@ SuperIndividuals <- function(
     SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
     
     # Format the output but keep all columns:
-    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
+    #formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
+    # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
+    areKeys <- endsWith(names(SuperIndividualsData), "Key")
+    keys <- names(SuperIndividualsData)[areKeys]
+    #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     SuperIndividualsData[, haulWeightFactor := NULL]
@@ -286,6 +291,7 @@ SuperIndividuals <- function(
     
     ## Order the rows:
     #orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
+    
     
     # Add the attribute 'variableNames':
     setattr(
@@ -458,11 +464,11 @@ ImputeSuperIndividuals <- function(
     
     # Get the columns to impute:
     individualNames <- attr(SuperIndividualsData, "stoxDataVariableNames")$Individual
-    # Subtract the keys: 
-    IndividualKeys <- setdiff(individualNames, RstoxData::getStoxKeys("StoxBiotic"))
+    ## Subtract the keys: 
+    #IndividualKeys <- setdiff(individualNames, RstoxData::getStoxKeys("StoxBiotic"))
     
     # Impute the SuperIndividualsData:
-    SuperIndividualsData <- ImputeData(
+    ImputeSuperIndividualsData <- ImputeData(
         data = SuperIndividualsData, 
         imputeAtMissing = "IndividualAge", 
         imputeByEqual = "IndividualTotalLength", 
@@ -472,16 +478,21 @@ ImputeSuperIndividuals <- function(
     )
     
     # Re-calculate the Biomass:
-    SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    ImputeSuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
 
     # Format the output but keep all columns:
-    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
+    #formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
+    # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
+    areKeys <- endsWith(names(ImputeSuperIndividualsData), "Key")
+    keys <- names(ImputeSuperIndividualsData)[areKeys]
+    #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
+    formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, secondaryColumnOrder = unlist(attr(SuperIndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:
     #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
     
-    return(SuperIndividualsData)
+    return(ImputeSuperIndividualsData)
 }
 
 
