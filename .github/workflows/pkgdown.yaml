@@ -48,6 +48,7 @@ jobs:
       - name: Install MacOS dependencies
         if: runner.os == 'macOS'
         run: |
+          rm '/usr/local/bin/gfortran'
           brew install gdal
         shell: bash
 

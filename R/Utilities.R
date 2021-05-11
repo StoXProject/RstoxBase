@@ -351,8 +351,6 @@ meanRawResolutionData <- function(
     
     # Add the PSUs either from function input or by automatic method using function parameter:
     PSUDefinition <- match.arg(PSUDefinition)
-    
-    # Get the PSUs:
     if(identical(PSUDefinition, "FunctionParameter")) {
         PSUProcessData <- DefinePSU(
             StratumPolygon = StratumPolygon, 
@@ -371,7 +369,6 @@ meanRawResolutionData <- function(
     
     # Get the Surveys:
     SurveyDefinition <- match.arg(SurveyDefinition)
-    
     if(identical(SurveyDefinition, "FunctionParameter")) {
         # Get the stratum names and the SurveyTable:
         stratumNames <- unique(dataCopy$Stratum)
@@ -439,34 +436,28 @@ applySumToData <- function(data, dataType) {
     targetDataType <- paste0("Sum", dataType)
     
     # Get the variables to aggregate by etc.:
-    aggregationVariables <- determineAggregationVariables(
-        data = data, 
-        dataType = targetDataType, 
-        targetResolution = "Layer", 
-        dimension = "vertical"
-    )
-    # Extract the 'by' element:
-    by <- aggregationVariables$by
+    #aggregationVariables <- determineAggregationVariables(
+    #    data = data, 
+    #    dataType = targetDataType, 
+    #    targetResolution = "Layer", 
+    #    dimension = "vertical"
+    #)
+    #print(aggregationVariables)
+    ## Extract the 'by' element:
+    #by <- aggregationVariables$by
     
-    # Sum of the data variable over the grouping variables:
-    dataVariable <- aggregationVariables$dataVariable
-    data[, c(dataVariable) := sum(x = get(dataVariable)), by = by]
+    # Sum of the data variable for each horizontalResolution, categoryVariable and groupingVariables:
+    dataVariable <- getDataTypeDefinition(dataType, elements = "data", unlist = TRUE)
+    sumBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
+    data[, c(dataVariable) := sum(x = get(dataVariable)), by = sumBy]
     
     # Add the weighting variable:
-    oldWeightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
-    weightingVariable <- aggregationVariables$weightingVariable
-    data[, c(weightingVariable) := get(oldWeightingVariable)]
-    
-    # Remove the resolution variables which were summed over, and the verticalRawDimension:
-    data[, (c(aggregationVariables$setToNA, aggregationVariables$verticalRawDimension)) := NULL] 
+    weightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
+    targetWeightingVariable <- getDataTypeDefinition(targetDataType, elements = "weighting", unlist = TRUE)
+    data[, c(targetWeightingVariable) := get(weightingVariable)]
     
     # Remove duplicated rows:
-    data <- subset(data, !duplicated(data[, ..by]))
-    
-    ## Keep only the releavnt columns:
-    #formatOutput(data, dataType = targetDataType, keep.all = FALSE)
-    ## Order the rows:
-    #orderDataByReference(data, targetDataType)
+    data <- subset(data, !duplicated(data[, ..sumBy]))
     
     return(data)
 }
@@ -478,43 +469,94 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     ##########
     
     # Store the original data type defnition, particularly for summing the weights:
-    originalDataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
+    #originalDataTypeDefinition <- getDataTypeDefinition(dataType = dataType)
     
     # Get the variables to aggregate by etc.:
     targetDataType <- paste0("Mean", sub("Sum", "", dataType))
-    aggregationVariables <- determineAggregationVariables(
-        data = data, 
-        dataType = targetDataType, 
-        targetResolution = targetResolution, 
-        dimension = "horizontal"
-    )
+    #aggregationVariables <- determineAggregationVariables(
+    #    data = data, 
+    #    dataType = targetDataType, 
+    #    targetResolution = targetResolution, 
+    #    dimension = "horizontal"
+    #)
     
     # Extract the 'by' element:
-    by <- aggregationVariables$by
     
     # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
-    dataVariable <- aggregationVariables$dataVariable
-    targetWeightingVariable <- aggregationVariables$weightingVariable
-    weightingVariable <- originalDataTypeDefinition$weighting
+    dataVariable <- getDataTypeDefinition(dataType, elements = "data", unlist = TRUE)
+    weightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
+    targetWeightingVariable <- getDataTypeDefinition(targetDataType, elements = "weighting", unlist = TRUE)
     
     
-    ## Do nothing if the target resolution is the same as the present resolution:
-    #presentResolution <- aggregationVariables$presentResolution
-    #nrowPresent <- nrow(data[, ..presentResolution])
-    #nrowTarget <- nrow(data[, ..targetResolution])
-    #if(nrowPresent == nrowTarget) {
-    #    data[, c(targetWeightingVariable) := get(weightingVariable)]
-    #    return(data)
-    #}
+    #targetWeightingVariable <- aggregationVariables$weightingVariable
+    #weightingVariable <- originalDataTypeDefinition$weighting
     
     
-    #### Step 1: ####
+    #### Step 1: Sum the weights: ####
+    # Extract the horizontal resolution of the input and output data type, and weighting variable:
+    horizontalResolution <- getDataTypeDefinition(dataType, elements = c("horizontalResolution"), unlist = TRUE)
+    targetHorizontalResolution <- c(
+        getDataTypeDefinition(targetDataType, elements = c("horizontalResolution"), unlist = TRUE), 
+        # Add the Beam for NASCData and DensiyData:
+        getDataTypeDefinition(targetDataType, elements = "obserationVariable", unlist = TRUE)
+    )
+    extract <- c(
+        horizontalResolution, 
+        targetHorizontalResolution, 
+        weightingVariable
+    )
+    # Beam is not presen for LengthDistributionData:
+    extract <- intersect(extract, names(data))
+    
+    summedWeighting <- data[, ..extract]
+    # Uniquify so that we get only one value per Station/EDSU:
+    summedWeighting <- unique(summedWeighting)
+    # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
+    summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = targetHorizontalResolution]
+    
+    # Extract the next resolution and the summed weights and uniquify:
+    extract <- c(targetHorizontalResolution, "SummedWeights")
+    summedWeighting <- summedWeighting[, ..extract]
+    summedWeighting <- unique(summedWeighting)
+    ########
+    
+    
+    #### Step 2: ####
+    # Merge the resulting summed weights with the data, by the next resolution:
+    data <- merge(data, summedWeighting, by = targetHorizontalResolution, all = TRUE)
+    ########
+    
+    
+    
+    #sumBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
+    #data[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = sumBy]
+    
+    #### Step 2: Sum the data and divide by the summed weights: ####
+    # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
+    meanBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
+    data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = meanBy]
+    # Store the new weights by the summed original weights:
+    data[, c(targetWeightingVariable) := SummedWeights]
+    ########
+    
+    # Remove duplicated rows:
+    data <- subset(data, !duplicated(data[, ..meanBy]))
+    
+    return(data)
+    
+    
+    
+    
+    
+    
+    
     # Extract the resolution and weighting variables:
-    extract <- c(aggregationVariables$presentResolution, weightingVariable)
+    extract <- c(meanBy, weightingVariable)
     summedWeighting <- data[, ..extract]
     # Finally uniquify to the Stratum/Layer:
     summedWeighting <- unique(summedWeighting)
     # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
+    sumBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
     summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = eval(aggregationVariables$nextResolution)]
     
     # Extract the next resolution and the summed weights and uniquify:
@@ -534,6 +576,9 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     #### Step 3: ####
     # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
     by <- intersect(names(data), by)
+    print(aggregationVariables)
+    print(by)
+    print(subset(data, Beam == "38000/2" & PSU == "T27"))
     data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
     # Store the new weights by the summed original weights:
     data[, c(targetWeightingVariable) := SummedWeights]

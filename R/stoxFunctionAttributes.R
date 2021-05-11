@@ -675,7 +675,14 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "report", 
         functionOutputDataType = "ReportSpeciesCategoryCatchData"
-    )
+    )#,
+    
+    
+    #WriteStratumPolygon = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "report", 
+    #    functionOutputDataType = "WriteStratumPolygonData"
+    #)
     ##########
 )
 

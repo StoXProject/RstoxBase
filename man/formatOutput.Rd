@@ -9,7 +9,8 @@ formatOutput(
   dataType,
   keep.all = TRUE,
   allow.missing = FALSE,
-  secondaryColumnOrder = NULL
+  secondaryColumnOrder = NULL,
+  secondaryRowOrder = NULL
 )
 }
 \arguments{

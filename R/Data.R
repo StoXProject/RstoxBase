@@ -566,3 +566,17 @@ NULL
 #' @name ReportDensityData
 #' 
 NULL
+
+
+# ##################################################
+# ##################################################
+# #' Write StratumPolygon data
+# #' 
+# #' The WriteStratumPolygonData model data is used to write \code{\link{StratumPolygon}}.
+# #' 
+# #' @seealso This data type is produced by \code{\link{WriteStratumPolygon}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
+# #' 
+# #' @name WriteStratumPolygonData
+# #' 
+# NULL
+
