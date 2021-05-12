@@ -183,6 +183,8 @@ SuperIndividuals <- function(
     )
     # Add the mergeBy since these are needed in the merging:
     variablesToGetFromAbundanceData <- unique(c(variablesToGetFromAbundanceData, mergeBy))
+    # AbundanceData is a flexible datatype, as it may or may not contain Beam and Frequency:
+    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData$Data))
     
     # Merge AbundanceData into the IndividualsData
     SuperIndividualsData <- merge(
@@ -200,6 +202,8 @@ SuperIndividuals <- function(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
         "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
+    # AbundanceData is a flexible datatype, as it may or may not contain Beam and Frequency:
+    distributeAbundanceBy <- intersect(distributeAbundanceBy, names(SuperIndividualsData))
     
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(DistributionMethod == "Equal") {
@@ -211,7 +215,7 @@ SuperIndividuals <- function(
         # Give an error if the LengthDistributionType is "Percent" or "Standard":
         #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
         #if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
-        if(!endsWith(LengthDistributionData$LengthDistributionType, "Normalized")) {
+        if(!endsWith(LengthDistributionData$LengthDistributionType[1], "Normalized")) {
             stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
         }
         
@@ -280,7 +284,7 @@ SuperIndividuals <- function(
     areKeys <- endsWith(names(SuperIndividualsData), "Key")
     keys <- names(SuperIndividualsData)[areKeys]
     #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
-    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     SuperIndividualsData[, haulWeightFactor := NULL]
@@ -486,7 +490,7 @@ ImputeSuperIndividuals <- function(
     areKeys <- endsWith(names(ImputeSuperIndividualsData), "Key")
     keys <- names(ImputeSuperIndividualsData)[areKeys]
     #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
-    formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, secondaryColumnOrder = unlist(attr(SuperIndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
+    formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(SuperIndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:

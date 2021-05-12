@@ -534,6 +534,9 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     #### Step 2: Sum the data and divide by the summed weights: ####
     # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
     meanBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
+    # DensityData is a flexible datatype, as it may or may not contain Beam and Frequency:
+    meanBy <- intersect(meanBy, names(data))
+    
     data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = meanBy]
     # Store the new weights by the summed original weights:
     data[, c(targetWeightingVariable) := SummedWeights]
