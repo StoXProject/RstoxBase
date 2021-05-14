@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Impute missing information from indivduals with present age for each each IndividualTotalLength — ImputeSuperIndividuals" />
-<meta property="og:description" content="This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the SuperIndividualsData) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from." />
+<meta property="og:description" content="This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the SuperIndividualsData) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
+This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the SuperIndividualsData) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from." />
 
 
 
@@ -81,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.16</span>
       </span>
     </div>
 
@@ -121,9 +122,26 @@
 
     <div class="ref-description">
     <p>This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the <code>SuperIndividualsData</code>) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.</p>
+<p>This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the <code>SuperIndividualsData</code>) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ImputeSuperIndividuals</span><span class='op'>(</span><span class='va'>SuperIndividualsData</span>, Seed <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>ImputeSuperIndividuals</span><span class='op'>(</span>
+  <span class='va'>SuperIndividualsData</span>,
+  ImputationMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"RandomSampling"</span><span class='op'>)</span>,
+  ImputeAtMissing <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  ImputeByEqual <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  ToImpute <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  Seed <span class='op'>=</span> <span class='fl'>1</span>
+<span class='op'>)</span>
+
+<span class='fu'>ImputeSuperIndividuals</span><span class='op'>(</span>
+  <span class='va'>SuperIndividualsData</span>,
+  ImputationMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"RandomSampling"</span><span class='op'>)</span>,
+  ImputeAtMissing <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  ImputeByEqual <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  ToImpute <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  Seed <span class='op'>=</span> <span class='fl'>1</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -131,6 +149,22 @@
     <tr>
       <th>SuperIndividualsData</th>
       <td><p>The <code><a href='SuperIndividualsData.html'>SuperIndividualsData</a></code> data.</p></td>
+    </tr>
+    <tr>
+      <th>ImputationMethod</th>
+      <td><p>The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.</p></td>
+    </tr>
+    <tr>
+      <th>ImputeAtMissing</th>
+      <td><p>The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndivdualAge.</p></td>
+    </tr>
+    <tr>
+      <th>ImputeByEqual</th>
+      <td><p>The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndivdualTotalLength.</p></td>
+    </tr>
+    <tr>
+      <th>ToImpute</th>
+      <td><p>The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available vaiables of the BioticData contained in the <code><a href='SuperIndividualsData.html'>SuperIndividualsData</a></code>.</p></td>
     </tr>
     <tr>
       <th>Seed</th>
@@ -142,7 +176,8 @@ An object of StoX data type <code><a href='SuperIndividualsData.html'>SuperIndiv
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='SuperIndividuals.html'>SuperIndividuals</a></code> for distributing Abundance to the Individuals.</p></div>
+    <div class='dont-index'><p><code><a href='SuperIndividuals.html'>SuperIndividuals</a></code> for distributing Abundance to the Individuals.</p>
+<p><code><a href='SuperIndividuals.html'>SuperIndividuals</a></code> for distributing Abundance to the Individuals.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
