@@ -628,7 +628,6 @@ ImputeData <- function(
         # Remove the imputeSeed column:
         dataCopy[, imputeSeed := NULL]
     }
-    browser()
     # Perform the imputation:
     dataCopy <- replaceMissingData(dataCopy, columnNames = columnNames)
     
@@ -736,7 +735,6 @@ replaceMissingData <- function(x, columnNames) {
     #rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
     # Changed on 2021-02-09 to match the IndividualIndex and ReplaceIndividualIndex:
     
-    browser()
     # Get the rows to impute, i.e., those with non-missing ReplaceIndividualIndex:
     rowsToImpute <- x[, which(!is.na(ReplaceIndividualIndex))]
     # Get the rows to replace from, by matching the ReplaceIndividualIndex with the IndividualIndex, and keep only those to impute:
