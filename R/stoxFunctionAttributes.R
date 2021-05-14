@@ -1,3 +1,17 @@
+
+getIndividualNames <- function(SuperIndividualsData, ImputeByEqual, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) {
+    individualNames <- unlist(attr(SuperIndividualsData, "stoxDataVariableNames")[tables])
+    if(removeKeys) {
+        individualNames <- individualNames[!endsWith(individualNames, "Key")]
+    }
+    # Remove the unique Individual ID:
+    individualNames <- setdiff(individualNames, "Individual")
+    # Remove the variables selected as ImputeByEqual:
+    individualNames <- setdiff(individualNames, ImputeByEqual)
+    
+    return(individualNames)
+}
+
 #' A list of the attributes of the exported StoX functions:
 #' The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
 #' The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
@@ -589,10 +603,17 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
+    
     ImputeSuperIndividuals = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "SuperIndividualsData"
+        functionOutputDataType = "SuperIndividualsData", 
+        functionParameterFormat = list(
+            #ImputeAtMissing = "getIndividualVaiableNamesSingle", 
+            ImputeAtMissing = "getIndividualVaiableNamesVector", 
+            ImputeByEqual = "getIndividualAndSpeciesCategoryVaiableNamesVector", 
+            ToImpute = "getIndividualVaiableNamesVector"
+        )
     ),
     ##########
     
@@ -1014,6 +1035,25 @@ processPropertyFormats <- list(
             "double", 
             "double"
         )
+    ), 
+    
+    getIndividualVaiableNamesSingle = list(
+        class = "single", 
+        possibleValues = getIndividualNames
+    ), 
+    
+    getIndividualAndSpeciesCategoryVaiableNamesVector = list(
+        class = "vector", 
+        possibleValues = function(SuperIndividualsData, ImputeByEqual) {
+            getIndividualNames(SuperIndividualsData, ImputeByEqual, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) 
+        }
+    ), 
+    
+    getIndividualVaiableNamesVector = list(
+        class = "vector", 
+        possibleValues = function(SuperIndividualsData, ImputeByEqual) {
+            getIndividualNames(SuperIndividualsData, ImputeByEqual, tables = "Individual", removeKeys = TRUE) 
+        }
     )
     
 )
