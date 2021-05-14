@@ -183,8 +183,6 @@ SuperIndividuals <- function(
     )
     # Add the mergeBy since these are needed in the merging:
     variablesToGetFromAbundanceData <- unique(c(variablesToGetFromAbundanceData, mergeBy))
-    # AbundanceData is a flexible datatype, as it may or may not contain Beam and Frequency:
-    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData$Data))
     
     # Merge AbundanceData into the IndividualsData
     SuperIndividualsData <- merge(
@@ -202,8 +200,6 @@ SuperIndividuals <- function(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
         "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
-    # AbundanceData is a flexible datatype, as it may or may not contain Beam and Frequency:
-    distributeAbundanceBy <- intersect(distributeAbundanceBy, names(SuperIndividualsData))
     
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(DistributionMethod == "Equal") {
@@ -215,7 +211,7 @@ SuperIndividuals <- function(
         # Give an error if the LengthDistributionType is "Percent" or "Standard":
         #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
         #if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
-        if(!endsWith(LengthDistributionData$LengthDistributionType[1], "Normalized")) {
+        if(!endsWith(LengthDistributionData$LengthDistributionType, "Normalized")) {
             stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
         }
         
@@ -284,7 +280,7 @@ SuperIndividuals <- function(
     areKeys <- endsWith(names(SuperIndividualsData), "Key")
     keys <- names(SuperIndividualsData)[areKeys]
     #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
-    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     SuperIndividualsData[, haulWeightFactor := NULL]
@@ -475,8 +471,7 @@ ImputeSuperIndividuals <- function(
     ImputeSuperIndividualsData <- ImputeData(
         data = SuperIndividualsData, 
         imputeAtMissing = "IndividualAge", 
-        imputeByEqual = "IndividualTotalLength", 
-        groupBy = "SpeciesCategory", 
+        imputeByEqual = c("IndividualTotalLength", "SpeciesCategory"), 
         seed = Seed, 
         columnNames = individualNames
     )
@@ -490,7 +485,7 @@ ImputeSuperIndividuals <- function(
     areKeys <- endsWith(names(ImputeSuperIndividualsData), "Key")
     keys <- names(ImputeSuperIndividualsData)[areKeys]
     #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
-    formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(SuperIndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
+    formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, secondaryColumnOrder = unlist(attr(SuperIndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:
@@ -500,11 +495,86 @@ ImputeSuperIndividuals <- function(
 }
 
 
+
+
+##################################################
+##################################################
+#' Impute missing information from indivduals with present age for each each IndividualTotalLength
+#' 
+#' This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
+#' 
+#' @inheritParams ModelData
+#' @param ImputationMethod The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.
+#' @param ImputeAtMissing The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndivdualAge.
+#' @param ImputeByEqual The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndivdualTotalLength.
+#' @param ToImpute The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available vaiables of the BioticData contained in the \code{\link{SuperIndividualsData}}.
+#' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
+#' 
+#' #' @return
+#' An object of StoX data type \code{\link{SuperIndividualsData}}. 
+#' 
+#' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
+#' 
+#' @export
+#' 
+ImputeSuperIndividuals <- function(
+    SuperIndividualsData, 
+    ImputationMethod = c("RandomSampling"), 
+    ImputeAtMissing = character(), 
+    ImputeByEqual = character(), 
+    ToImpute = character(), 
+    Seed = 1
+) {
+    
+    # Check that the length resolution is constant: 
+    if(!allEqual(SuperIndividualsData$LengthResolution)) {
+        stop("All individuals must have identical LengthResolution in the current version.")
+    }
+    
+    if(!length(ToImpute)) {
+        warning("StoX: Empty ToImpute is deprecated. Please select the variables to impute explicitely.")
+        ToImpute <- getIndividualNames(SuperIndividualsData, ImputeByEqual,  tables = "Individual")
+    }
+    
+    if(length(ImputeAtMissing) != 1) {
+        stop("ImputeAtMissing must have length 1.")
+    }
+    
+    # Impute the SuperIndividualsData:
+    ImputeSuperIndividualsData <- ImputeData(
+        data = SuperIndividualsData, 
+        imputeAtMissing = ImputeAtMissing, 
+        imputeByEqual = ImputeByEqual, 
+        seed = Seed, 
+        columnNames = ToImpute
+    )
+    
+    # Re-calculate the Biomass:
+    ImputeSuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    
+    # Format the output but keep all columns:
+    #formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
+    # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
+    areKeys <- endsWith(names(ImputeSuperIndividualsData), "Key")
+    keys <- names(ImputeSuperIndividualsData)[areKeys]
+    #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
+    formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, secondaryColumnOrder = unlist(attr(SuperIndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
+    
+    # Not needed here, since we only copy data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
+    
+    return(ImputeSuperIndividualsData)
+}
+
+
+
+
+
 ImputeData <- function(
     data, 
     imputeAtMissing = "IndividualAge", 
-    imputeByEqual = "IndividualTotalLength", 
-    groupBy = "SpeciesCategory", 
+    imputeByEqual = c("IndividualTotalLength", "SpeciesCategory"), 
     seed = 1, 
     columnNames = NULL, 
     levels = list(
@@ -534,7 +604,7 @@ ImputeData <- function(
     
     for(level in levels) {
         # Get the vector of columns to impute by:
-        by <- c(groupBy, level, imputeByEqual)
+        by <- c(level, imputeByEqual)
         
         # Get the table of seeds for each unique combination of the columns defined by 'by':
         seedTable <- unique(dataCopy[, ..by])
@@ -558,7 +628,7 @@ ImputeData <- function(
         # Remove the imputeSeed column:
         dataCopy[, imputeSeed := NULL]
     }
-    
+    browser()
     # Perform the imputation:
     dataCopy <- replaceMissingData(dataCopy, columnNames = columnNames)
     
@@ -584,7 +654,7 @@ getImputeRowIndicesOneLevel <- function(
     level = "Haul", 
     by
 ) {
-    # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the groupBy input, the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
+    # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
     .SDcols <- c(imputeAtMissing, "ReplaceIndividualIndex", "ReplaceLevel", "IndividualIndex", "imputeSeed")
     
     dataCopy[, 
@@ -666,7 +736,7 @@ replaceMissingData <- function(x, columnNames) {
     #rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
     # Changed on 2021-02-09 to match the IndividualIndex and ReplaceIndividualIndex:
     
-    
+    browser()
     # Get the rows to impute, i.e., those with non-missing ReplaceIndividualIndex:
     rowsToImpute <- x[, which(!is.na(ReplaceIndividualIndex))]
     # Get the rows to replace from, by matching the ReplaceIndividualIndex with the IndividualIndex, and keep only those to impute:

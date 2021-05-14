@@ -4,10 +4,34 @@
 \alias{ImputeSuperIndividuals}
 \title{Impute missing information from indivduals with present age for each each IndividualTotalLength}
 \usage{
-ImputeSuperIndividuals(SuperIndividualsData, Seed = 1)
+ImputeSuperIndividuals(
+  SuperIndividualsData,
+  ImputationMethod = c("RandomSampling"),
+  ImputeAtMissing = character(),
+  ImputeByEqual = character(),
+  ToImpute = character(),
+  Seed = 1
+)
+
+ImputeSuperIndividuals(
+  SuperIndividualsData,
+  ImputationMethod = c("RandomSampling"),
+  ImputeAtMissing = character(),
+  ImputeByEqual = character(),
+  ToImpute = character(),
+  Seed = 1
+)
 }
 \arguments{
 \item{SuperIndividualsData}{The \code{\link{SuperIndividualsData}} data.}
+
+\item{ImputationMethod}{The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.}
+
+\item{ImputeAtMissing}{The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndivdualAge.}
+
+\item{ImputeByEqual}{The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndivdualTotalLength.}
+
+\item{ToImpute}{The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available vaiables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.
 
@@ -16,7 +40,11 @@ An object of StoX data type \code{\link{SuperIndividualsData}}.}
 }
 \description{
 This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
+
+This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
 }
 \seealso{
+\code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
+
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 }

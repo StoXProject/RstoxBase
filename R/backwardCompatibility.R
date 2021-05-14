@@ -25,6 +25,30 @@ backwardCompatibility <- list(
         )
     ),  
     
+    addParameter = list(
+        list(
+            changeVersion = "1.3.16", 
+            functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "ImputationMethod", 
+            parameterValue = "RandomSampling"
+        ), 
+        list(
+            changeVersion = "1.3.16", 
+            functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "ImputeAtMissing", 
+            parameterValue = "IndividualAge"
+        ), 
+        list(
+            changeVersion = "1.3.16", 
+            functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "ImputeByEqual", 
+            parameterValue = c("SpeciesCategory", "IndividualTotalLength")
+        )
+    ),  
+    
     renameParameter = list(
         list(
             changeVersion = "1.2.43", 
