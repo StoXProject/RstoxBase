@@ -144,7 +144,7 @@ DefineStratumPolygon <- function(
             # FileName can the the path to one of the shapefile or to the directory holding the shapefiles:
             StratumPolygon <- sf::as_Spatial(sf::read_sf(FileName))
         }
-        else if(tolower(FileExt) == "json") {
+        else if(tolower(FileExt) %in% c("json", "geojson")) {
             # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
             #if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
             #    stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change fi#le format.")
