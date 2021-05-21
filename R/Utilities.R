@@ -505,11 +505,9 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
         targetHorizontalResolution, 
         weightingVariable
     )
-    # Beam is not presen for LengthDistributionData:
-    extract <- intersect(extract, names(data))
     
     summedWeighting <- data[, ..extract]
-    # Uniquify so that we get only one value per Station/EDSU:
+    # Uniquify so that we get only one value per Station/EDSU. This ignores the categoryVariable and groupingVariables, and assumes that the weightingVariable is constant across these variables (length group for swept area data and beam for acoustic data):
     summedWeighting <- unique(summedWeighting)
     # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
     summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = targetHorizontalResolution]
@@ -534,7 +532,7 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     #### Step 2: Sum the data and divide by the summed weights: ####
     # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
     meanBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
-    # DensityData is a flexible datatype, as it may or may not contain Beam and Frequency:
+    # Beam is not present for LengthDistributionData:
     meanBy <- intersect(meanBy, names(data))
     
     data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = meanBy]
@@ -896,6 +894,7 @@ toJSON_Rstox <- function(x, ...) {
     # Define defaults:
     digits <- NA
     auto_unbox <- TRUE
+    # Changed on 2021-04-21 to supports NA strings:
     #na <- "null"
     na <- "string"
     null <- "null"

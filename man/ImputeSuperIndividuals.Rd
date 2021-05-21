@@ -12,15 +12,6 @@ ImputeSuperIndividuals(
   ToImpute = character(),
   Seed = 1
 )
-
-ImputeSuperIndividuals(
-  SuperIndividualsData,
-  ImputationMethod = c("RandomSampling"),
-  ImputeAtMissing = character(),
-  ImputeByEqual = character(),
-  ToImpute = character(),
-  Seed = 1
-)
 }
 \arguments{
 \item{SuperIndividualsData}{The \code{\link{SuperIndividualsData}} data.}
@@ -40,11 +31,7 @@ An object of StoX data type \code{\link{SuperIndividualsData}}.}
 }
 \description{
 This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
-
-This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
 }
 \seealso{
-\code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
-
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 }

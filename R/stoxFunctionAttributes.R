@@ -1039,11 +1039,13 @@ processPropertyFormats <- list(
     
     getIndividualVaiableNamesSingle = list(
         class = "single", 
+        title = "Select variable", 
         possibleValues = getIndividualNames
     ), 
     
     getIndividualAndSpeciesCategoryVaiableNamesVector = list(
         class = "vector", 
+        title = "Select variables", 
         possibleValues = function(SuperIndividualsData, ImputeByEqual) {
             getIndividualNames(SuperIndividualsData, ImputeByEqual, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) 
         }
@@ -1051,6 +1053,7 @@ processPropertyFormats <- list(
     
     getIndividualVaiableNamesVector = list(
         class = "vector", 
+        title = "Select variables", 
         possibleValues = function(SuperIndividualsData, ImputeByEqual) {
             getIndividualNames(SuperIndividualsData, ImputeByEqual, tables = "Individual", removeKeys = TRUE) 
         }
