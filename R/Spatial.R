@@ -161,7 +161,9 @@ DefineStratumPolygon <- function(
             #    )
             #)
             
-            StratumPolygon <-  sf::as_Spatial(geojsonsf::geojson_sf(FileName))
+            # StratumPolygon <-  sf::as_Spatial(geojsonsf::geojson_sf(FileName))
+            
+            StratumPolygon <- reasdGeoJSON(FileName)
         }
         else {
             stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
@@ -179,6 +181,20 @@ DefineStratumPolygon <- function(
 
     return(StratumPolygon)
 }
+
+
+##################################################
+##################################################
+#' Read geojson file
+#' 
+#' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file.
+#' 
+#' @export
+#'
+reasdGeoJSON <- function(FileName) {
+    sf::as_Spatial(geojsonsf::geojson_sf(FileName))
+}
+
 
 
 #' Extract stratum names from a SpatialPolygonsDataFrame

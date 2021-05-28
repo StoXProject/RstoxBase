@@ -267,10 +267,9 @@ initiateRstoxBase <- function(){
             Stratum_PSU = list(
                 horizontalResolution = c("Stratum", "PSU")
             ), 
-            StationPSU = list(
-                horizontalResolution = c("EDSU", "PSU")
-            ), 
-            PSUByTime = PSUByTime
+            Station_PSU = list(
+                horizontalResolution = c("Station", "PSU")
+            )
         ), 
         AcousticPSU = list(
             Stratum_PSU = list(
