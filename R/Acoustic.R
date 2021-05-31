@@ -287,6 +287,9 @@ SplitMeanNASC <- function(
     ### # Keep only the AcousticCategory specified in SpeciesLink$AcousticCategory
     ### MeanNASCData$Data <- subset(MeanNASCData$Data, AcousticCategory %in% SpeciesLink$AcousticCategory)
     # Convert from MeanNASCData to NASCData, assuming full resolution:
+    if(sum(is.na(MeanNASCData$Data$PSU))) {
+        stop("All EDSUs must be inside a stratum.")
+    }
     NASCData <-  merge(MeanNASCData$Data ,  MeanNASCData$Resolution, by = c("Stratum", "PSU", "Layer"))
     
     
