@@ -350,6 +350,7 @@ meanRawResolutionData <- function(
     resolutionCopy = data.table::copy(data$Resolution)
     
     # Add the PSUs either from function input or by automatic method using function parameter:
+    # Define the PSUs:
     PSUDefinition <- match.arg(PSUDefinition)
     if(identical(PSUDefinition, "FunctionParameter")) {
         PSUProcessData <- DefinePSU(

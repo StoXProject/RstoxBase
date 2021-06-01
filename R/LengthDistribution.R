@@ -110,8 +110,11 @@ LengthDistribution <- function(
         warning("Empty Individual table.")
         return(LengthDistributionData)
     }
-    # Remove rows with NA in 'keys' and subsequently remove duplicates:
-    LengthDistributionData <- subset(LengthDistributionData, rowSums(is.na(LengthDistributionData[, ..keys])) == 0)
+    
+    # 2021-05-27: There does not seem to be any good reason for the following subset of NA keys. In fact it remoevs stations with zero fish, which biases the data!!!!!!!!!!!!!!:
+    ## Remove rows with NA in 'keys' and subsequently remove duplicates:
+    #LengthDistributionData <- subset(LengthDistributionData, rowSums(is.na(LengthDistributionData[, ..keys])) == 0)
+    
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keys]))
     ####################################################
     
@@ -388,9 +391,13 @@ GearDependentCatchCompensation <- function(
 
 
 checkAllCombinations <- function(LengthDistributionData, table, variables) {
+    # Ignore NAs:
+    containNA <- rowSums(LengthDistributionData[, lapply(.SD, is.na), .SDcols =  variables])
+    validRows <- containNA == 0
     # Check that all combinations in the LengthDistributionData of the variablas specified by variables are present in CompensationTable:
-    uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, do.call(paste, .SD),.SDcols =  variables])
+    uniqueCombinationsInLengthDistributionData <- unique(subset(LengthDistributionData, validRows)[, do.call(paste, .SD),.SDcols =  variables])
     uniqueCombinationsInTable <- unique(table[, do.call( paste, .SD),.SDcols =  variables])
+    
     if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInTable)) {
         stop("All combinations of the variables ", paste(variables, collapse = ", "), " that are present in the LengthDistributionData must be present also in the ", deparse(substitute(table)))
     }

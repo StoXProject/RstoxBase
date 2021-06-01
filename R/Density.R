@@ -504,9 +504,8 @@ MeanDensity <- function(
     MeanDensityData$Data <- applyMeanToData(data = MeanDensityData$Data, dataType = "DensityData", targetResolution = "Stratum")
     
     # Format the output:
-    # Changed to keep.all = TRUE on 2021-03-18 when introducing Data and Resolution for DensityData and onwards:
-    #formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE)
-    formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = TRUE, allow.missing = TRUE)
+    # Use keep.all = FALSE, as the difference between acoustic and swept area density is sorted out in the DensityData:
+    formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(MeanDensityData)
