@@ -740,7 +740,7 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 #' @param dataType The data type to format against.
 #' @param keep.all Logical: If TRUE keep all columns, and if FALSE delete undefined columns.
 #' @param allow.missing Logical: If TRUE allow for unrelevant column names defined in \code{secondaryColumnOrder}.
-#' @param secondaryColumnOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}}.
+#' @param secondaryColumnOrder,secondaryRowOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to proiritize when ordering columns and rows, respectively.
 #' 
 #' @export
 #' 

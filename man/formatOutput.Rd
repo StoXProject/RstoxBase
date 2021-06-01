@@ -22,7 +22,7 @@ formatOutput(
 
 \item{allow.missing}{Logical: If TRUE allow for unrelevant column names defined in \code{secondaryColumnOrder}.}
 
-\item{secondaryColumnOrder}{A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}}.}
+\item{secondaryColumnOrder, secondaryRowOrder}{A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to proiritize when ordering columns and rows, respectively.}
 }
 \description{
 The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables.
