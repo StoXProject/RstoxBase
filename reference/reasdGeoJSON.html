@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Catchability of trawls by fish length — LengthDependentCatchCompensation • RstoxBase</title>
+<title>Read geojson file — reasdGeoJSON • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Catchability of trawls by fish length — LengthDependentCatchCompensation" />
-<meta property="og:description" content="This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size." />
+<meta property="og:title" content="Read geojson file — reasdGeoJSON" />
+<meta property="og:description" content="Read geojson file" />
 
 
 
@@ -114,46 +114,26 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Catchability of trawls by fish length</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R'><code>R/LengthDistribution.R</code></a></small>
-    <div class="hidden name"><code>LengthDependentCatchCompensation.Rd</code></div>
+    <h1>Read geojson file</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Spatial.R'><code>R/Spatial.R</code></a></small>
+    <div class="hidden name"><code>reasdGeoJSON.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.</p>
+    <p>Read geojson file</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>LengthDependentCatchCompensation</span><span class='op'>(</span>
-  <span class='va'>LengthDistributionData</span>,
-  CompensationMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"LengthDependentSweepWidth"</span>, <span class='st'>"LengthDependentSelectivity"</span><span class='op'>)</span>,
-  LengthDependentSweepWidthParameters <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>,
-  LengthDependentSelectivityParameters <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>reasdGeoJSON</span><span class='op'>(</span><span class='va'>FileName</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>LengthDistributionData</th>
-      <td><p>The <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> data.</p></td>
-    </tr>
-    <tr>
-      <th>CompensationMethod</th>
-      <td><p>The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).</p></td>
-    </tr>
-    <tr>
-      <th>LengthDependentSweepWidthParameters</th>
-      <td><p>A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).</p></td>
-    </tr>
-    <tr>
-      <th>LengthDependentSelectivityParameters</th>
-      <td><p>A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).</p></td>
+      <th>FileName</th>
+      <td><p>The path to a <a href='https://geojson.org/'>GeoJSON</a> file.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> object.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
