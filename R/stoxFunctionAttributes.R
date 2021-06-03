@@ -755,7 +755,7 @@ processPropertyFormats <- list(
             
             # Output must be an unnamed list:
             c(
-                unname(listOfUniqueCombinations), 
+                list(unname(listOfUniqueCombinations)), 
                 rep(list(list()), 4)
             )
         }
@@ -785,7 +785,7 @@ processPropertyFormats <- list(
             
             # Output must be an unnamed list:
             c(
-                unname(listOfUniqueCombinations), 
+                list(unname(listOfUniqueCombinations)), 
                 rep(list(list()), 3)
             )
         }
@@ -860,7 +860,7 @@ processPropertyFormats <- list(
             
             # Output must be an unnamed list:
             c(
-                unname(listOfUniqueCombinations), 
+                list(unname(listOfUniqueCombinations)), 
                 list(NULL)
             )
         }
