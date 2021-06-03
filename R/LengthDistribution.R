@@ -546,8 +546,9 @@ applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLength
 # It is possible to simplify this function to only take the method as input, requiring that the function is named apply<methodname>, the parameter table is named <methodname>Parameters, and the function has the parameters WeightedCount and IndividualTotalLengthMiddle followed by the required parameters (then R would determine the required parameters from the formals of the function). We should discuss whether to proceed with this strategy:
 runLengthDependentCompensationFunction <- function(data, compensationMethod, compensationFunction, parametertable, requiredParameters, groupingVariable = "SpeciesCategory") {
     
+    
     # Check that the parametertable is given:
-    if(length(parametertable)) {
+    if(!length(parametertable)) {
         stop("The parameter table for ", compensationMethod, " must be given")
     }
     else if(!data.table::is.data.table(parametertable)) {
