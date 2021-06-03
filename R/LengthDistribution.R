@@ -547,7 +547,7 @@ applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLength
 runLengthDependentCompensationFunction <- function(data, compensationMethod, compensationFunction, parametertable, requiredParameters, groupingVariable = "SpeciesCategory") {
     
     # Check that the parametertable is given:
-    if(length(parametertable) == 0) {
+    if(length(parametertable)) {
         stop("The parameter table for ", compensationMethod, " must be given")
     }
     else if(!data.table::is.data.table(parametertable)) {
