@@ -149,12 +149,12 @@ DistributeNASC <- function(
             warning("StoX: The following SpeciesCategory are present in the AssignmentLengthDistributionData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
         }
     }
-    allAcousticCategory <- unique(AcousticTargetStrength$TargetStrengthTable$AcousticCategory)
-    if(!all(allAcousticCategory %in% SpeciesLink$AcousticCategory)) {
-        notPresent <- setdiff(allAcousticCategory, SpeciesLink$AcousticCategory)
+    allAcousticCategory <- unique(NASCData$AcousticCategory)
+    if(!all(allAcousticCategory %in% AcousticTargetStrength$TargetStrengthTable$AcousticCategory)) {
+        notPresent <- setdiff(allAcousticCategory, AcousticTargetStrength$TargetStrengthTable$AcousticCategory)
         notPresent <- notPresent[!is.na(notPresent)]
         if(length(notPresent)) {
-            warning("StoX: The following AcousticCategory are present in the AcousticTargetStrength but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
+            warning("StoX: The following AcousticCategory are present in the NASCData but not in the AcousticTargetStrength: ", paste(notPresent, collapse = ", "), ".")
         }
     }
     
