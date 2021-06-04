@@ -453,7 +453,7 @@ addLengthGroupsByReference <- function(
 #' @param ToImpute The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available vaiables of the BioticData contained in the \code{\link{SuperIndividualsData}}.
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
 #' 
-#' #' @return
+#' @return
 #' An object of StoX data type \code{\link{SuperIndividualsData}}. 
 #' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.

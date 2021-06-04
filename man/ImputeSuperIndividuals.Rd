@@ -24,10 +24,10 @@ ImputeSuperIndividuals(
 
 \item{ToImpute}{The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available vaiables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
 
-\item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.
-
-#' @return
-An object of StoX data type \code{\link{SuperIndividualsData}}.}
+\item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
+}
+\value{
+An object of StoX data type \code{\link{SuperIndividualsData}}.
 }
 \description{
 This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
