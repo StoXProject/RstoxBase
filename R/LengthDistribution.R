@@ -566,6 +566,12 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
         stop("None og the elements of the parametertable can be missing")
     }
     
+    # Check that all groupingVariable present in the data are present also in the  parametertable:
+    notPresent <- na.omit(setdiff(data[[groupingVariable]], parametertable[[groupingVariable]]))
+    if(length(notPresent)) {
+        warning("The following ", groupingVariable, " are not present in the parametertable. Length dependent compensation was not applied to these ", groupingVariable, ".")
+    }
+    
     
     # First add the columns LMin, LMax, Alpha, Beta and IndividualTotalLengthMiddle:
     data <- data.table::data.table(
@@ -584,9 +590,9 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     
     # Apply the compensationFunction:
     valid <- !is.na(data[[requiredParameters[1]]])
-    if(!all(valid)) {
-        warning("StoX: Length dependent compensation was not applied to all species categories in the length distribution data")
-    }
+    #if(!all(valid)) {
+    #    warning("StoX: Length dependent compensation was not applied to all species categories in the length distribution data")
+    #}
     functionInputColumns <- c("WeightedCount", "IndividualTotalLengthMiddle", requiredParameters)
     data[valid, WeightedCount := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]
     
