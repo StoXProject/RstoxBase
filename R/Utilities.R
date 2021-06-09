@@ -959,3 +959,19 @@ detectInvalidUTF8 <- function(x) {
     return(newNA)
 }
 
+firstNonNA <- function(x) {
+    if(!is.na(x[1])) {
+        return(x[1])
+    }
+    else {
+        areNA <- is.na(x)
+        if(all(areNA)) {
+            warning("All values are NA.")
+            return(x[1])
+        }
+        else {
+            return(x[min(which(!areNA))])
+        }
+    }
+}
+

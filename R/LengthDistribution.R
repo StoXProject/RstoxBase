@@ -341,7 +341,7 @@ GearDependentCatchCompensation <- function(
 ) {
     
     # Sweep width compensation cannot be performed on olready sweep width compensated LengthDistributionData:
-    if(startsWith(LengthDistributionData$LengthDistributionType[1], "SweepWidthCompensated")) {
+    if(startsWith(firstNonNA(LengthDistributionData$LengthDistributionType), "SweepWidthCompensated")) {
         stop("The LengthDistributionData are already sweep width compensated (LengthDistributionType starting with \"SweepWidthCompensated\")")
     }
     
@@ -443,7 +443,7 @@ LengthDependentCatchCompensation <- function(
         )
         
         # Sweep width compensation cannot be performed on olready sweep width compensated LengthDistributionData:
-        if(startsWith(LengthDistributionData$LengthDistributionType[1], "SweepWidthCompensated")) {
+        if(startsWith(firstNonNA(LengthDistributionData$LengthDistributionType), "SweepWidthCompensated")) {
             stop("The LengthDistributionData are already sweep width compensated (LengthDistributionType starting with \"SweepWidthCompensated\")")
         }
         
