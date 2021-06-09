@@ -197,7 +197,7 @@ DistributeNASC <- function(
     # Check whether there are any non-missing length distribution frequencies:
     if(! NASCData[, sum(!is.na(WeightedCount))]) {
         stop("The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), ". A possible reason is that the LayerDefinition differs between the MeanNASCData and the AssignmentLengthDistributionData. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC(). Another reasonn may be that the AcousticCategory of the AcousticTargetStrength process data and the parameter SpeciesLing of the AcousticDensity function do not match.")
-        #"No lenght distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
+        #"No length distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
     }
     
     # Calculate the target strength of each length group:
@@ -237,7 +237,7 @@ checkIntersect <- function(x, y, by = NULL) {
     }
 }
 
-# Convert a table of lenght and TS to a funciton:
+# Convert a table of length and TS to a funciton:
 getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "constant", rule = 2) {
     
     # Define the columns to modify:

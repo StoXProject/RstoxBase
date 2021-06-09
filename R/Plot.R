@@ -14,7 +14,7 @@
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
 #'
-#' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
+#' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLength, or average IndividualTotalLength for each IndiivdualAge and Stratum.
 #' 
 #' @return
 #' A \code{\link{ReportSuperIndividualsData}} object.
