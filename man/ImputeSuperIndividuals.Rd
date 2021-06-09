@@ -18,11 +18,11 @@ ImputeSuperIndividuals(
 
 \item{ImputationMethod}{The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.}
 
-\item{ImputeAtMissing}{The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndivdualAge.}
+\item{ImputeAtMissing}{The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndividualAge.}
 
-\item{ImputeByEqual}{The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndivdualTotalLength.}
+\item{ImputeByEqual}{The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndividualTotalLength.}
 
-\item{ToImpute}{The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available vaiables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
+\item{ToImpute}{The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
 }
@@ -30,7 +30,7 @@ ImputeSuperIndividuals(
 An object of StoX data type \code{\link{SuperIndividualsData}}.
 }
 \description{
-This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
+This function identifies individuals with missing value in the column gievn by \code{ImputeAtMissing} (defaulted to "IndividualAge"), and imputes the variables specified by \code{ToImpute} by the method specified by \code{ImputationMethod} (defaulted to "RandomSampling", which currently is the only option) from individuals with values identical to the target individual in all of the columns specified by \code{ImputeByEqual} (defaulted to c("IndividualTotalLength", "SpeciesCategory")). In the imputation, individual to impute from are randomly selected from individuals at the same Haul, then the same Stratum if no individuals with identical values in \code{ImputeByEqual} are found, and finally the same Survey. If no individuals are found, the missing values are not imputed, but kept as missing values (currently with no warning).
 }
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.

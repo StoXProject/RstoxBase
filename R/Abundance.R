@@ -444,13 +444,13 @@ addLengthGroupsByReference <- function(
 ##################################################
 #' Impute missing information from indivduals with present age for each each IndividualTotalLength
 #' 
-#' This function identifies individuals with missing IndividualAge and imputes all available variables of the Individual table of StoxBiotic (contained in the \code{SuperIndividualsData}) from individuals with present IndividualAge of the same IndividualTotalLength. In the imputation one individual is randomoly selected from individuals with present IndividualAge at the same Haul, then the same Stratum, and finally the same Survey, until at least one individual is found to sample from.
+#' This function identifies individuals with missing value in the column gievn by \code{ImputeAtMissing} (defaulted to "IndividualAge"), and imputes the variables specified by \code{ToImpute} by the method specified by \code{ImputationMethod} (defaulted to "RandomSampling", which currently is the only option) from individuals with values identical to the target individual in all of the columns specified by \code{ImputeByEqual} (defaulted to c("IndividualTotalLength", "SpeciesCategory")). In the imputation, individual to impute from are randomly selected from individuals at the same Haul, then the same Stratum if no individuals with identical values in \code{ImputeByEqual} are found, and finally the same Survey. If no individuals are found, the missing values are not imputed, but kept as missing values (currently with no warning).
 #' 
 #' @inheritParams ModelData
 #' @param ImputationMethod The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.
-#' @param ImputeAtMissing The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndivdualAge.
-#' @param ImputeByEqual The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndivdualTotalLength.
-#' @param ToImpute The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available vaiables of the BioticData contained in the \code{\link{SuperIndividualsData}}.
+#' @param ImputeAtMissing The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndividualAge.
+#' @param ImputeByEqual The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndividualTotalLength.
+#' @param ToImpute The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
 #' 
 #' @return
@@ -509,9 +509,6 @@ ImputeSuperIndividuals <- function(
     
     return(ImputeSuperIndividualsData)
 }
-
-
-
 
 
 ImputeData <- function(
@@ -653,13 +650,9 @@ getImputeRowIndicesOneGroup <- function(
             index.out = FALSE#, 
             #redraw.seed = TRUE
         )
-        
-        
         # Add also the replace level:
         ReplaceLevel[missingData] <- level
     }
-    
-    
     
     return(
         list(
@@ -703,42 +696,6 @@ replaceMissingData <- function(x, columnNames) {
         }
     }
     
-    
-    
-    
-    
-    
-    
-    ### hasReplaceIndividualIndex <- x[, !is.na(ReplaceIndividualIndex)]
-    ### rowsToImpute <- match(x$IndividualIndex[hasReplaceIndividualIndex], x$IndividualIndex)
-    ### rowsToImputeFrom <- match(x$ReplaceIndividualIndex[hasReplaceIndividualIndex], x$IndividualIndex)
-    ### 
-    ### # Loop through the columns and replace missing data:
-    ### namesx <- names(x)
-    ### if(!length(columnNames)) {
-    ###     columnNames <- namesx
-    ### }
-    ### 
-    ### browser()
-    ### for(columnName in columnNames) {
-    ###     if(columnName %in% namesx) {
-    ###         # Locate the inidices at which the data in the column given by columnName is NA in the rows to impu### t and not NA in the rows to impute from:
-    ###         atReplacement <- x[rowsToImpute, is.na(get(columnName))] & x[rowsToImputeFrom, !is.na(get(col### umnName))]
-    ###         if(any(atReplacement)) {
-    ###             atMissing <- rowsToImpute[atReplacement]
-    ###             atPresent <- rowsToImputeFrom[atReplacement]
-    ###             replacement <- x[atPresent, get(columnName)]
-    ###             x[atMissing, eval(columnName) := replacement]
-    ###         }
-    ###     }
-    ### }
-    
-    #
-    #x <- as.data.frame(x)
-    #atReplace <- is.na(x[rowsToImpute, ]) & !is.na(x[rowsToImputeFrom, ])
-    #x[rowsToImpute, ][atReplace] <- x[(rowsToImputeFrom), ][atReplace]
-    #
-    #x <- data.table::setDT(x)
     return(x)
 }
 
