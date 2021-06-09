@@ -244,13 +244,15 @@ SplitMeanNASC <- function(
         unique(MeanNASCData$Data$AcousticCategory), 
         unique(AcousticCategoryLink$AcousticCategory)
     )
-    AcousticCategoryLink <- rbind(
-        AcousticCategoryLink, 
-        data.table::data.table(
-            MixAcousticCategory = AcousticCategoryNotToBeSplit, 
-            SplitAcousticCategory = AcousticCategoryNotToBeSplit
+    if(lenght(AcousticCategoryNotToBeSplit)) {
+        AcousticCategoryLink <- rbind(
+            AcousticCategoryLink, 
+            data.table::data.table(
+                MixAcousticCategory = AcousticCategoryNotToBeSplit, 
+                SplitAcousticCategory = AcousticCategoryNotToBeSplit
+            )
         )
-    )
+    }
     
     # Copy the NASC from the MixAcousticCategory to the SplitAcousticCategory, and remove the MixAcousticCategory:
     MeanNASCDataToSplit <- subset(MeanNASCData$Data, AcousticCategory %in% AcousticCategoryLink$AcousticCategory)
