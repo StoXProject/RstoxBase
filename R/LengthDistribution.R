@@ -567,7 +567,7 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     }
     
     # Check that all groupingVariable present in the data are present also in the  parametertable:
-    notPresent <- na.omit(setdiff(data[[groupingVariable]], parametertable[[groupingVariable]]))
+    notPresent <- stats::na.omit(setdiff(data[[groupingVariable]], parametertable[[groupingVariable]]))
     if(length(notPresent)) {
         warning("The following ", groupingVariable, " are not present in the parametertable. Length dependent compensation was not applied to these ", groupingVariable, ".")
     }
