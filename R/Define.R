@@ -1570,7 +1570,7 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     ###     stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or###  \"Normalized\"")
     ### }
     #if(!isLengthDistributionType(LengthDistributionData, c("Standard", "Normalized"))) {
-    if(!any(endsWith(LengthDistributionData$LengthDistributionType[1], c("Standard", "Normalized")))) {
+    if(!any(endsWith(firstNonNA(LengthDistributionData$LengthDistributionType), c("Standard", "Normalized")))) {
         stop("The LengthDistributionType must be \"Standard\" or \"Normalized\" (ending with \"Standard\" or \"Normalized\")")
     }
     # Sum the WeightedCount for each Haul:
