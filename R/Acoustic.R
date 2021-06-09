@@ -244,7 +244,7 @@ SplitMeanNASC <- function(
         unique(MeanNASCData$Data$AcousticCategory), 
         unique(AcousticCategoryLink$AcousticCategory)
     )
-    if(lenght(AcousticCategoryNotToBeSplit)) {
+    if(length(AcousticCategoryNotToBeSplit)) {
         AcousticCategoryLink <- rbind(
             AcousticCategoryLink, 
             data.table::data.table(
