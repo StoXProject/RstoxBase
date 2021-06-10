@@ -22,7 +22,7 @@ ImputeSuperIndividuals(
 
 \item{ImputeByEqual}{The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndividualTotalLength.}
 
-\item{ToImpute}{The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
+\item{ToImpute}{The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}. The variable specified by \code{ImputeAtMissing} is always imputed, and need not be inclcuded in \code{ToImpute}.}
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
 }
