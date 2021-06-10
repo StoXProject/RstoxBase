@@ -215,7 +215,7 @@ SuperIndividuals <- function(
         # Give an error if the LengthDistributionType is "Percent" or "Standard":
         #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
         #if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
-        if(!endsWith(firstNonNA(LengthDistributionData$LengthDistributionType), "Normalized")) {
+        if(!endsWith(LengthDistributionData$LengthDistributionType[1], "Normalized")) {
             stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
         }
         
@@ -450,7 +450,7 @@ addLengthGroupsByReference <- function(
 #' @param ImputationMethod The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.
 #' @param ImputeAtMissing The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndividualAge.
 #' @param ImputeByEqual The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndividualTotalLength.
-#' @param ToImpute The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.
+#' @param ToImpute The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}. The variable specified by \code{ImputeAtMissing} is always imputed, and need not be included in \code{ToImpute}.
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
 #' 
 #' @return
@@ -478,6 +478,7 @@ ImputeSuperIndividuals <- function(
         warning("StoX: Empty ToImpute is deprecated. Please select the variables to impute explicitely.")
         ToImpute <- getIndividualNames(SuperIndividualsData, ImputeByEqual,  tables = "Individual")
     }
+    ToImpute <- unique(c(ToImpute, ImputeAtMissing))
     
     if(length(ImputeAtMissing) != 1) {
         stop("ImputeAtMissing must have length 1.")

@@ -1,13 +1,13 @@
 
-getIndividualNames <- function(SuperIndividualsData, ImputeByEqual, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) {
+getIndividualNames <- function(SuperIndividualsData, remove = NULL, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) {
     individualNames <- unlist(attr(SuperIndividualsData, "stoxDataVariableNames")[tables])
     if(removeKeys) {
         individualNames <- individualNames[!endsWith(individualNames, "Key")]
     }
     # Remove the unique Individual ID:
     individualNames <- setdiff(individualNames, "Individual")
-    # Remove the variables selected as ImputeByEqual:
-    individualNames <- setdiff(individualNames, ImputeByEqual)
+    # Remove the variables selected as remove:
+    individualNames <- setdiff(individualNames, remove)
     
     return(individualNames)
 }
@@ -610,9 +610,9 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "SuperIndividualsData", 
         functionParameterFormat = list(
             #ImputeAtMissing = "getIndividualVaiableNamesSingle", 
-            ImputeAtMissing = "getIndividualVaiableNamesVector", 
-            ImputeByEqual = "getIndividualAndSpeciesCategoryVaiableNamesVector", 
-            ToImpute = "getIndividualVaiableNamesVector"
+            ImputeAtMissing = "getImputeAtMissing", 
+            ImputeByEqual = "getImputeByEqual", 
+            ToImpute = "getToImpute"
         )
     ),
     ##########
@@ -1037,26 +1037,33 @@ processPropertyFormats <- list(
         )
     ), 
     
-    getIndividualVaiableNamesSingle = list(
-        class = "single", 
-        title = "Select variable", 
-        possibleValues = getIndividualNames
-    ), 
+    #getIndividualVaiableNamesSingle = list(
+    #    class = "single", 
+    #    title = "Select variable", 
+    #    possibleValues = getIndividualNames
+    #), 
     
-    getIndividualAndSpeciesCategoryVaiableNamesVector = list(
+    getImputeAtMissing = list(
         class = "vector", 
-        title = "Select variables", 
-        possibleValues = function(SuperIndividualsData, ImputeByEqual) {
-            getIndividualNames(SuperIndividualsData, ImputeByEqual, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) 
+        title = "Select a variable to impute", 
+        possibleValues = function(SuperIndividualsData) {
+            getIndividualNames(SuperIndividualsData, tables = "Individual", removeKeys = TRUE) 
         }
     ), 
     
-    getIndividualVaiableNamesVector = list(
+    getImputeByEqual = list(
         class = "vector", 
-        title = "Select variables", 
-        possibleValues = function(SuperIndividualsData, ImputeByEqual) {
-            getIndividualNames(SuperIndividualsData, ImputeByEqual, tables = "Individual", removeKeys = TRUE) 
+        title = "Select a variable to impute", 
+        possibleValues = function(SuperIndividualsData, ImputeAtMissing) {
+            getIndividualNames(SuperIndividualsData, remove = ImputeAtMissing, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) 
+        }
+    ), 
+    
+    getToImpute = list(
+        class = "vector", 
+        title = "Select variables to impute", 
+        possibleValues = function(SuperIndividualsData, ImputeByEqual, ImputeAtMissing) {
+            getIndividualNames(SuperIndividualsData, remove = c(ImputeByEqual, ImputeAtMissing), tables = "Individual", removeKeys = TRUE) 
         }
     )
-    
 )
