@@ -150,6 +150,180 @@ Individuals <- function(
 #' 
 #' @export
 #' 
+SuperIndividualsErrorInHaulDensity <- function(
+    IndividualsData, 
+    AbundanceData, 
+    DistributionMethod = c("Equal", "HaulDensity"), 
+    LengthDistributionData
+) {
+    # Get the DistributionMethod:
+    DistributionMethod <- match.arg(DistributionMethod)
+    
+    # Make a copy of the IndividualsData:
+    SuperIndividualsData <- data.table::copy(IndividualsData)
+    # Make sure the AbundanceData is proper data.table. Comment on 2021-03-18: Why is this needed????:
+    AbundanceData$Data <- data.table::setDT(AbundanceData$Data)
+    
+    # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the AbundanceData:
+    addLengthGroupsByReference(data = SuperIndividualsData, master = AbundanceData$Data)
+    # Add length groups also to the AbundanceData:
+    addLengthGroupsByReference(data = AbundanceData$Data, master = AbundanceData$Data)
+    
+    # Merge the AbundanceData into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups().
+    # Stratum/Layer/SpeciesCategory/LengthGroup
+    mergeBy <- c(
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
+        "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
+    )
+    # Get the variables to add from the AbundanceData, which are the Abundance, the surveyDefinition, the vertical dimension, and the acoustic grouping variables:
+    # Abundance/Survey/MinLayerDepth/MaxLayerDepth/Beam/Frequency
+    variablesToGetFromAbundanceData <- c(
+        "Abundance", 
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables_acoustic"), unlist = TRUE)
+    )
+    # Add the mergeBy since these are needed in the merging:
+    variablesToGetFromAbundanceData <- unique(c(variablesToGetFromAbundanceData, mergeBy))
+    # Keep only variables present in SuperIndividualsData:
+    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData$Data))
+    
+    
+    # Merge AbundanceData into the IndividualsData
+    SuperIndividualsData <- merge(
+        SuperIndividualsData, 
+        AbundanceData$Data[, ..variablesToGetFromAbundanceData], 
+        by = mergeBy, 
+        allow.cartesian = TRUE, 
+        ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
+        all = TRUE
+    )
+    
+    # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
+    distributeAbundanceBy <- c(
+        getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
+        "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
+    )
+    # Keep only the variables present in the AbundanceData, as AbundanceData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
+    distributeAbundanceBy <- intersect(distributeAbundanceBy, names(AbundanceData$Data))
+    
+    # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
+    if(DistributionMethod == "Equal") {
+        SuperIndividualsData[, individualCount := as.double(.N), by = distributeAbundanceBy]
+        SuperIndividualsData[, haulWeightFactor := 1]
+    }
+    else if(DistributionMethod == "HaulDensity") {
+        # Give an error if the LengthDistributionType is "Percent" or "Standard":
+        #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
+        #if(! LengthDistributionData$LengthDistributionType[1] %in% validLengthDistributionType) {
+        if(!endsWith(LengthDistributionData$LengthDistributionType[1], "Normalized")) {
+            stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
+        }
+        
+        # Add length group IDs also in in LengthDistributionData:
+        # Make sure the LengthDistributionData is proper data.table. Comment on 2021-03-18: Why is this needed????:
+        LengthDistributionData <- data.table::setDT(LengthDistributionData)
+        
+        # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
+        LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
+        
+        addLengthGroupsByReference(data = LengthDistributionData, master = AbundanceData$Data)
+        # We need to unique since there may have been multiple lines in the same length group:
+        LengthDistributionData <- unique(LengthDistributionData)
+        
+        # Sum in each length group (in case lengths are grouped coearser than the original groups):
+        haulGrouping <- c(
+            "Haul", 
+            getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
+            "LengthGroup"
+        )
+        # Add the haul density as the WeightedCount to the SuperIndividualsData (requiring Normalized LengthDistributionType):
+        # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl:
+        SuperIndividualsData <- merge(
+            SuperIndividualsData, 
+            #LengthDistributionData[, c(..haulGrouping, "WeightedCount", "sumWeightedCount", "haulWeightFactor")], 
+            #LengthDistributionData[, ..haulGrouping], 
+            LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
+            by = haulGrouping, 
+            allow.cartesian = TRUE, 
+            # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation:
+            # all.y = TRUE
+            all.x = TRUE
+        )
+        
+        # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
+        SuperIndividualsData[, sumWeightedCount := sum(WeightedCount, na.rm = TRUE), by = distributeAbundanceBy]
+        # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
+        SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount]
+        
+        # Set the individualCount to 1 since the number of individuals is implicitely taken care of in haulWeightFactor:
+        SuperIndividualsData[, individualCount := 1]
+        
+        # Remove WeightedCount and sumWeightedCount:
+        SuperIndividualsData[, WeightedCount := NULL]
+        SuperIndividualsData[, sumWeightedCount := NULL]
+    }
+    else{
+        stop("Invalid DistributionMethod")
+    }
+    
+    ## Order by the grouping variables:
+    #SuperIndividualsData <- setorderv(SuperIndividualsData, abundanceGrouping)
+    
+    # Multiply by abundance weighting factors:
+    SuperIndividualsData[, Abundance := Abundance * haulWeightFactor]
+    
+    # Divide by the number of individuals (regardless of DistributionMethod)
+    SuperIndividualsData[, Abundance := Abundance / individualCount]
+    
+    # Add Biomass:
+    SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    
+    # Format the output but keep all columns:
+    #formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
+    # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
+    areKeys <- endsWith(names(SuperIndividualsData), "Key")
+    keys <- names(SuperIndividualsData)[areKeys]
+    #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
+    formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
+    
+    # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
+    SuperIndividualsData[, haulWeightFactor := NULL]
+    
+    SuperIndividualsData[, individualCount := NULL]
+    #SuperIndividualsData[, abundanceWeightFactor := NULL]
+    SuperIndividualsData[, LengthGroup := NULL]
+    
+    ## Order the rows:
+    #orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
+    
+    
+    # Add the attribute 'variableNames':
+    setattr(
+        SuperIndividualsData, 
+        "stoxDataVariableNames",
+        attr(IndividualsData, "stoxDataVariableNames")
+    )
+    
+    # Not needed here, since we only copy data: 
+    #Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
+    
+    return(SuperIndividualsData)
+}
+
+##################################################
+##################################################
+#' Super-indivduals with abundance
+#' 
+#' This function distributes Abundance to the individuals defined by \code{\link{Individuals}}.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{AbundanceData}} (via \code{link{DensityData}}).
+#' 
+#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' 
+#' @export
+#' 
 SuperIndividuals <- function(
     IndividualsData, 
     AbundanceData, 
@@ -175,7 +349,7 @@ SuperIndividuals <- function(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
-    # Get the variables to add from the AbundanceData, which are the Abundance, the surveyDefinition, the vertical dimension, acoustic grouping variables and the:
+    # Get the variables to add from the AbundanceData, which are the Abundance, the surveyDefinition, the vertical dimension, and the acoustic grouping variables:
     # Abundance/Survey/MinLayerDepth/MaxLayerDepth/Beam/Frequency
     variablesToGetFromAbundanceData <- c(
         "Abundance", 
@@ -240,8 +414,6 @@ SuperIndividuals <- function(
         # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl:
         SuperIndividualsData <- merge(
             SuperIndividualsData, 
-            #LengthDistributionData[, c(..haulGrouping, "WeightedCount", "sumWeightedCount", "haulWeightFactor")], 
-            #LengthDistributionData[, ..haulGrouping], 
             LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
             by = haulGrouping, 
             allow.cartesian = TRUE, 
@@ -251,12 +423,13 @@ SuperIndividuals <- function(
         )
         
         # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
-        SuperIndividualsData[, sumWeightedCount := sum(WeightedCount, na.rm = TRUE), by = distributeAbundanceBy]
+        SuperIndividualsData[, sumWeightedCount := sum(unique(WeightedCount), na.rm = TRUE), by = distributeAbundanceBy]
+        
         # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
         SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount]
         
-        # Set the individualCount to 1 since the number of individuals is implicitely taken care off in haulWeightFactor:
-        SuperIndividualsData[, individualCount := 1]
+        # Get the number of length measured individuals of the length group:
+        SuperIndividualsData[, individualCount := .N, by = haulGrouping]
         
         # Remove WeightedCount and sumWeightedCount:
         SuperIndividualsData[, WeightedCount := NULL]
@@ -265,9 +438,6 @@ SuperIndividuals <- function(
     else{
         stop("Invalid DistributionMethod")
     }
-    
-    ## Order by the grouping variables:
-    #SuperIndividualsData <- setorderv(SuperIndividualsData, abundanceGrouping)
     
     # Multiply by abundance weighting factors:
     SuperIndividualsData[, Abundance := Abundance * haulWeightFactor]

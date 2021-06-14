@@ -603,6 +603,16 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
+    SuperIndividualsErrorInHaulDensity = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SuperIndividualsData", 
+        functionArgumentHierarchy = list(
+            LengthDistributionData = list(
+                DistributionMethod = "HaulDensity"
+            )
+        )
+    ), 
     
     ImputeSuperIndividuals = list(
         functionType = "modelData", 
