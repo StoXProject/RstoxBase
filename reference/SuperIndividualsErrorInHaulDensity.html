@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function to aggregate baseline data — aggregateBaselineDataOneTable • RstoxBase</title>
+<title>Super-indivduals with abundance — SuperIndividualsErrorInHaulDensity • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Function to aggregate baseline data — aggregateBaselineDataOneTable" />
-<meta property="og:description" content="Function to aggregate baseline data" />
+<meta property="og:title" content="Super-indivduals with abundance — SuperIndividualsErrorInHaulDensity" />
+<meta property="og:description" content="This function distributes Abundance to the individuals defined by Individuals." />
 
 
 
@@ -113,69 +113,46 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Function to aggregate baseline data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R'><code>R/Report.R</code></a></small>
-    <div class="hidden name"><code>aggregateBaselineDataOneTable.Rd</code></div>
+    <h1>Super-indivduals with abundance</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R'><code>R/Abundance.R</code></a></small>
+    <div class="hidden name"><code>SuperIndividualsErrorInHaulDensity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Function to aggregate baseline data</p>
+    <p>This function distributes Abundance to the individuals defined by <code><a href='Individuals.html'>Individuals</a></code>.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>aggregateBaselineDataOneTable</span><span class='op'>(</span>
-  <span class='va'>stoxData</span>,
-  <span class='va'>TargetVariable</span>,
-  aggregationFunction <span class='op'>=</span> <span class='fu'><a href='getReportFunctions.html'>getReportFunctions</a></span><span class='op'>(</span><span class='op'>)</span>,
-  subTable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
-  GroupingVariables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
-  na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  padWithZerosOn <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
-  WeightingVariable <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>SuperIndividualsErrorInHaulDensity</span><span class='op'>(</span>
+  <span class='va'>IndividualsData</span>,
+  <span class='va'>AbundanceData</span>,
+  DistributionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Equal"</span>, <span class='st'>"HaulDensity"</span><span class='op'>)</span>,
+  <span class='va'>LengthDistributionData</span>
 <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>stoxData</th>
-      <td><p>Output from any StoX function.</p></td>
+      <th>IndividualsData</th>
+      <td><p>The <code><a href='IndividualsData.html'>IndividualsData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>TargetVariable</th>
-      <td><p>The variable to report.</p></td>
+      <th>AbundanceData</th>
+      <td><p>The <code><a href='AbundanceData.html'>AbundanceData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>aggregationFunction</th>
-      <td><p>The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.</p></td>
+      <th>DistributionMethod</th>
+      <td><p>The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For <code>DistributionMethod</code> = "HaulDensity" the <code>LengthDistributionData</code> must be given. It is recommended to use the same <code>LengthDistributionData</code> that was used to produce the <code><a href='AbundanceData.html'>AbundanceData</a></code> (via <code>link{DensityData}</code>).</p></td>
     </tr>
     <tr>
-      <th>subTable</th>
-      <td><p>The name of the sub table to aggregate on, if <code>stoxData</code> is a list of tables.</p></td>
-    </tr>
-    <tr>
-      <th>GroupingVariables</th>
-      <td><p>The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).</p></td>
-    </tr>
-    <tr>
-      <th>na.rm</th>
-      <td><p>Used in the function specified by <code>aggregationFunction</code>.</p></td>
-    </tr>
-    <tr>
-      <th>padWithZerosOn</th>
-      <td><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></td>
-    </tr>
-    <tr>
-      <th>WeightingVariable</th>
-      <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
+      <th>LengthDistributionData</th>
+      <td><p>The <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> data.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>An aggregated version of the input <code>stoxData</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='ReportSuperIndividuals.html'>ReportSuperIndividuals</a></code></p></div>
+    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
