@@ -2,7 +2,7 @@
 % Please edit documentation in R/Abundance.R
 \name{ImputeSuperIndividuals}
 \alias{ImputeSuperIndividuals}
-\title{Impute missing information from indivduals with present age for each each IndividualTotalLength}
+\title{Impute missing individual data}
 \usage{
 ImputeSuperIndividuals(
   SuperIndividualsData,
