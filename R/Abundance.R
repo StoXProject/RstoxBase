@@ -423,7 +423,10 @@ SuperIndividuals <- function(
         )
         
         # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
-        SuperIndividualsData[, sumWeightedCount := sum(unique(WeightedCount), na.rm = TRUE), by = distributeAbundanceBy]
+        # No no, this was certainly wrong, as WeightedCount could be duplicated within a Stratum for one length group:
+        #SuperIndividualsData[, sumWeightedCount := sum(unique(WeightedCount), na.rm = TRUE), by = distributeAbundanceBy]
+        # Sum the WeightedCount over all hauls of the columns specified by distributeAbundanceBy:
+        SuperIndividualsData[, sumWeightedCount := sum(WeightedCount[!duplicated(Haul)], na.rm = TRUE), by = distributeAbundanceBy]
         
         # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
         SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount]
