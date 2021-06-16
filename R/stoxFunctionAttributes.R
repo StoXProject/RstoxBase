@@ -1061,8 +1061,11 @@ processPropertyFormats <- list(
     getToImpute = list(
         class = "vector", 
         title = "Select variables to impute", 
-        possibleValues = function(SuperIndividualsData, ImputeByEqual, ImputeAtMissing) {
-            getIndividualNames(SuperIndividualsData, remove = c(ImputeByEqual, ImputeAtMissing), tables = "Individual", removeKeys = TRUE) 
+        #possibleValues = function(SuperIndividualsData, ImputeByEqual, ImputeAtMissing) {
+        #    getIndividualNames(SuperIndividualsData, remove = c(ImputeByEqual, ImputeAtMissing), tables = "Individual", removeKeys = TRUE) 
+        #}
+        possibleValues = function(SuperIndividualsData, ImputeByEqual) {
+            getIndividualNames(SuperIndividualsData, remove = ImputeByEqual, tables = "Individual", removeKeys = TRUE) 
         }
     )
 )
