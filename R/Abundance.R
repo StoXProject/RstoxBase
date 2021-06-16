@@ -164,9 +164,9 @@ SuperIndividuals <- function(
     AbundanceData$Data <- data.table::setDT(AbundanceData$Data)
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the AbundanceData:
-    addLengthGroupsByReference(data = SuperIndividualsData, master = AbundanceData$Data)
+    addLengthGroup(data = SuperIndividualsData, master = AbundanceData$Data)
     # Add length groups also to the AbundanceData:
-    addLengthGroupsByReference(data = AbundanceData$Data, master = AbundanceData$Data)
+    addLengthGroup(data = AbundanceData$Data, master = AbundanceData$Data)
     
     # Merge the AbundanceData into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups().
     # Stratum/Layer/SpeciesCategory/LengthGroup
@@ -225,7 +225,7 @@ SuperIndividuals <- function(
         # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
         LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
         
-        addLengthGroupsByReference(data = LengthDistributionData, master = AbundanceData$Data)
+        addLengthGroup(data = LengthDistributionData, master = AbundanceData$Data)
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
         
@@ -311,7 +311,7 @@ SuperIndividuals <- function(
 
 
 # Function to add length group IDs in two tables given the length groups in the second:
-addLengthGroupsByReferenceOneSpecies <- function(
+addLengthGroupOneSpecies <- function(
     data, 
     master, 
     species, 
@@ -323,9 +323,11 @@ addLengthGroupsByReferenceOneSpecies <- function(
     speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
     atSpeciesInData <- which(data[[speciesVar]] %in% species)
     atSpeciesInMaster <- which(master[[speciesVar]] %in% species)
-    if(length(atSpeciesInData) == 0 || length(atSpeciesInMaster) == 0) {
-        stop("The species ", species, " is not present in both data and master.")
-    }
+    
+    # Not needed, as similar check is done in addLengthGroup():
+    #if(length(atSpeciesInData) == 0 || length(atSpeciesInMaster) == 0) {
+    #    stop("The species ", species, " is not present in both data and master.")
+    #}
     
     # Get the unique length intervals of the master:
     uniqueLengthGroups <- unique(master[atSpeciesInMaster, c(..lengthVar, ..resolutionVar)])
@@ -390,7 +392,7 @@ addLengthGroupsByReferenceOneSpecies <- function(
 
 
 # Function to add length group IDs in two tables given the length groups in the second:
-addLengthGroupsByReference <- function(
+addLengthGroup <- function(
     data, 
     master, 
     lengthVar = "IndividualTotalLength", 
@@ -421,7 +423,7 @@ addLengthGroupsByReference <- function(
     }
     else {
         for(thisspecies in species) {
-            addLengthGroupsByReferenceOneSpecies(
+            addLengthGroupOneSpecies(
                 data = data, 
                 master = master, 
                 species = thisspecies, 
@@ -475,7 +477,11 @@ ImputeSuperIndividuals <- function(
         warning("StoX: Empty ToImpute is deprecated. Please select the variables to impute explicitely.")
         ToImpute <- getIndividualNames(SuperIndividualsData, ImputeByEqual,  tables = "Individual")
     }
-    ToImpute <- unique(c(ToImpute, ImputeAtMissing))
+    if(!ImputeAtMissing %in% ToImpute) {
+        stop("Please specify the variable given by ImputeAtMissing (", ImputeAtMissing, ") in ToImpute. ")
+    }
+    # For safety uniquify:
+    ToImpute <- unique(ToImpute)
     
     if(length(ImputeAtMissing) != 1) {
         stop("ImputeAtMissing must have length 1.")
