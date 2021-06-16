@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.32</span>
       </span>
     </div>
 
@@ -116,6 +116,20 @@
       <small>Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="rstoxbase-v1332-2021-06-16" class="section level1">
+<h1 class="page-header" data-toc-text="1.3.32">
+<a href="#rstoxbase-v1332-2021-06-16" class="anchor" aria-hidden="true"></a>RstoxBase v1.3.32 (2021-06-16)</h1>
+<ul><li>Added error if the variable specified by ImputeAtMissing is not explicitely inclcuded in ToImpute</li>
+<li>Fixed bug in DistributionMethod == “HaulDensity”, where number of individuals in each length group was not taken into account.</li>
+<li>Fixed bug in SplitMeanNASC(), where now acoustic categories not to be split are added to the AcousticCategoryLink only if of positive length.</li>
+<li>Fixed warning ‘the condition has length &gt; 1 and only the first element will be used’</li>
+<li>Fixed bug with multiple species in catchCompensationTable, selectivityTable and gearCompensationTable parameter formats.</li>
+<li>Added stop if not all EDSUs are inside a stratum in SplitMeanNASC()Fixed bug where stations with 0 fish were removed in LenghtDistribution()</li>
+<li>Fixed several bugs related to DensityData and onwards being flexible datatypes which may or may not contain Beam and Frequency</li>
+<li>Added parameters to ImputeSuperIndividuals().</li>
+<li>Fixed column order for datatypes *IndividualsData</li>
+<li>Fixed bug ini SuperIndividuals, where number of individuals was counted over all Beams while it should be counted for each Beam.</li>
+</ul></div>
     <div id="rstoxbase-v1312-2021-05-04" class="section level1">
 <h1 class="page-header" data-toc-text="1.3.12">
 <a href="#rstoxbase-v1312-2021-05-04" class="anchor" aria-hidden="true"></a>RstoxBase v1.3.12 (2021-05-04)</h1>
