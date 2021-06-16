@@ -1,3 +1,15 @@
+# RstoxBase v1.3.32 (2021-06-16)
+* Added error if the variable specified by ImputeAtMissing is not explicitely inclcuded in ToImpute
+* Fixed bug in DistributionMethod == "HaulDensity", where number of individuals in each length group was not taken into account.
+* Fixed bug in SplitMeanNASC(), where now acoustic categories not to be split are added to the AcousticCategoryLink only if of positive length.
+* Fixed warning 'the condition has length > 1 and only the first element will be used'
+* Fixed bug with multiple species in catchCompensationTable, selectivityTable and gearCompensationTable parameter formats.
+* Added stop if not all EDSUs are inside a stratum in SplitMeanNASC()Fixed bug where stations with 0 fish were removed in LenghtDistribution()
+* Fixed several bugs related to DensityData and onwards being flexible datatypes which may or may not contain Beam and Frequency
+* Added parameters to ImputeSuperIndividuals().
+* Fixed column order for datatypes *IndividualsData
+* Fixed bug ini SuperIndividuals, where number of individuals was counted over all Beams while it should be counted for each Beam.
+
 # RstoxBase v1.3.12 (2021-05-04)
 * Changed to only use keys as secondaryColumnOrder in Individuals, speeding up the function.
 * Solved bug where estimates were reduced when including several Beams in acoustic-trawl models (added groupingVariables_biotic and groupingVariables_acoustic).
