@@ -1593,17 +1593,19 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 
 
 checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, WeightingMethod) {
-    numSpecies <- length(unique(LengthDistributionData$SpeciesCategory))
+    # Remove NA here, as this check for only one species should only count non-missing SpeciesCategory:
+    numSpecies <- length((unique(LengthDistributionData$SpeciesCategory)))
     if(numSpecies > 1) {
-        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
+        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "), ". ", "Please make sure that the column SpeciesCategory of LengthDistributionData contains only one unique value. If the column contains missing values (NA, shown as \"-\" in the StoX GUI) there are hauls with no individuals of the requested species in the StoxBioticData. For acoustic-trawl estimates such hauls should be filtered out using FilterUpwards  = TRUE in FilterStoxBiotic().")
     }
 }
 
 
 checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
-    numSpecies <- length(unique(StoxBioticData$SpeciesCategory$SpeciesCategory))
+    # Remove NA here, as this check for only one species should only count non-missing SpeciesCategory:
+    numSpecies <- length((unique(StoxBioticData$SpeciesCategory$SpeciesCategory)))
     if(numSpecies > 1) {
-        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
+        stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "), ". ", "Please make sure that the column SpeciesCategory of the table SpeciesCategory of  StoxBioticData contains only one unique value. If the column contains missing values (NA, shown as \"-\" in the StoX GUI) there are hauls with no individuals of the requested species in the StoxBioticData used as input to LengthDistribution(). For acoustic-trawl estimates such hauls should be filtered out using FilterUpwards  = TRUE in FilterStoxBiotic().")
     }
 }
 
