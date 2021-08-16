@@ -808,7 +808,7 @@ summaryStox <- function(x, na.rm = FALSE) {
     c(
         stats::quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
         mean = mean(x, na.rm = na.rm),
-        sd = sd(x, na.rm = na.rm),
+        sd = stats::sd(x, na.rm = na.rm),
         cv = cv(x, na.rm = na.rm)
     )
 }
@@ -882,56 +882,6 @@ StoxDataStartMiddleStopDateTime <- function(
 }
 
 
-#' Convert to JSON
-#' 
-#' This function takes care of the defaults preferred by the Rstox packages
-#' 
-#' @param x An object to convert to JSON.
-#' @param ... Parameters overriding the defaults digits = NA, auto_unbox = TRUE, na = "null", null = "null".
-#' 
-#' @export
-#' 
-toJSON_Rstox <- function(x, ...) {
-    # Define defaults:
-    digits <- NA
-    auto_unbox <- TRUE
-    # Changed on 2021-04-21 to supports NA strings:
-    #na <- "null"
-    na <- "string"
-    null <- "null"
-    
-    # Override by ...:
-    lll <- list(...)
-    
-    if(!"digits" %in% names(lll)) {
-        lll$digits <- digits
-    }
-    if(!"auto_unbox" %in% names(lll)) {
-        lll$auto_unbox <- auto_unbox
-    }
-    if(!"na" %in% names(lll)) {
-        lll$na <- na
-    }
-    if(!"null" %in% names(lll)) {
-        lll$null <- null
-    }
-    
-    #lll$x <- x
-    lll <- c(list(x = x), lll
-    )
-    
-    # Use ISO8601 for time:
-    lll$POSIXt ="ISO8601"
-    
-    do.call(jsonlite::toJSON, lll)
-}
-
-# Function to set attributes:
-setAtt <- function(x, ...) {
-    attributes(x) <- list(...)
-    return(x)
-}
-
 
 #' Replace all NAs in a data.table by reference
 #' 
@@ -959,6 +909,7 @@ detectInvalidUTF8 <- function(x) {
     return(newNA)
 }
 
+
 firstNonNA <- function(x) {
     if(!is.na(x[1])) {
         return(x[1])
@@ -974,4 +925,248 @@ firstNonNA <- function(x) {
         }
     }
 }
+
+
+
+
+
+#' Read a project.xml file from StoX <= 2.7
+#' 
+#' @param projectXMLFilePath The path to the project.xml file.
+#' 
+#' @export
+#' 
+readProjectXMLToList <- function(projectXMLFilePath) {
+    # Read the project.xml file into a list:
+    #doc = XML::xmlParse(projectXMLFile)
+    doc = xml2::read_xml(projectXMLFilePath)
+    #projectList <- XML::xmlToList(doc)
+    projectList <- xml2::as_list(doc)$project
+    return(projectList)
+}
+
+
+readStox2.7ProcessDataTable <- function(projectXMLFilePath, processDataName, oldName = NULL, newName = NULL, drop = FALSE) {
+    # Read the project.xml file to a list:
+    projectList <- readProjectXMLToList(projectXMLFilePath)
+    
+    # Discard any name that are not present in the process data:
+    invalid <- setdiff(processDataName, names(projectList$processdata))
+    if(length(invalid)) {
+        warning("The following process data names are not present in the project.xml file ", projectXMLFilePath, " and were ignored.")
+        processDataName <- intersect(processDataName, names(projectList$processdata))
+    }
+    
+    processDataTables <- lapply(processDataName, readStox2.7ProcessDataTableOne, projectList = projectList)
+    names(processDataTables) <- processDataName
+    
+    # Rename columns:
+    if(length(oldName) && length(newName)) {
+        processDataTables <- lapply(processDataTables, data.table::setnames, old = oldName, new = newName, skip_absent = TRUE)
+    }
+    
+    if(drop && length(processDataTables) == 1) {
+        processDataTables <- processDataTables[[1]]
+    }
+    
+    return(processDataTables)
+}
+
+
+readStox2.7ProcessDataTableOne <- function(processDataName, projectList) {
+    # Get the names of the data:
+    dataNames <- names(projectList$processdata[[processDataName]][1])
+    attNames <- names(attributes(projectList$processdata[[processDataName]][[1]]))
+    columnNames <- c(
+        dataNames, 
+        attNames
+    )
+    
+    # Get the data:
+    data <- matrix(unlist(projectList$processdata[[processDataName]]), ncol = length(dataNames), byrow = TRUE)
+    # Get the attributes:
+    att <- lapply(projectList$processdata[[processDataName]], attributes)
+    att <- matrix(unlist(att), ncol = length(attNames), byrow = TRUE)
+    
+    # Add the attributes to the data:
+    processDataTable <- data.table::as.data.table(
+        cbind(
+            data, 
+            att
+        )
+    )
+    names(processDataTable) <- columnNames
+    
+    return(processDataTable)
+}
+
+
+#' Read a the StratumPolygon from a project.xml file from StoX <= 2.7
+#' 
+#' @param projectXMLFilePath The path to the project.xml file.
+#' @param remove_includeintotal Logical: If TRUE, remove the column includeintotal column.
+#' @param stratumPolygonFilePath The path to the file to write the StratumPolygon to (geojson file).
+#' 
+#' @export
+#' 
+readStratumPolygonFrom2.7 <- function(projectXMLFilePath, remove_includeintotal = TRUE) {
+    
+    # Cannot use this as the stratum polygon is stored differently from a table in the project.xml, with two lines per polygon:
+    ### # Read the data from the StoX 2.7 project.xml file.
+    ### StratumPolygon <- readStox2.7ProcessDataTable(
+    ###     projectXMLFilePath, 
+    ###     processDataName = "stratumpolygon",
+    ###     oldName = c("polygonkey", "polygon"), 
+    ###     newName = c("Stratum", "Polygon"), 
+    ###     drop = TRUE
+    ### )
+    
+    # Read the project.xml file into a list:
+    projectList <- readProjectXMLToList(projectXMLFilePath)
+    # Convert the stratumpolygon to a table:
+    StratumPolygon <- stratumpolygon2.7ToTable(projectList$processdata$stratumpolygon)
+    # Rename the columns:
+    data.table::setnames(StratumPolygon, old = c("polygonkey", "polygon"), new = c("Stratum", "Polygon"), skip_absent = TRUE)
+    
+    # Remove the unused includeintotal column:
+    if(remove_includeintotal) {
+        StratumPolygon[, includeintotal := NULL]
+    }
+    else {
+        StratumPolygon[, includeintotal := as.logical(includeintotal)]
+    }
+    
+    return(StratumPolygon)
+}
+#'
+#' @export
+#' @rdname readStratumPolygonFrom2.7
+#' 
+writeStratumPolygonFrom2.7 <- function(projectXMLFilePath, stratumPolygonFilePath, remove_includeintotal = TRUE) {
+    
+    # Read the StratumPolygon from the StoX 2.7 project.xml file.
+    StratumPolygon <- readStratumPolygonFrom2.7(projectXMLFilePath, remove_includeintotal = remove_includeintotal)
+    
+    # Write the StratumPolygon
+    data.table::fwrite(
+        StratumPolygon, 
+        stratumPolygonFilePath, 
+        col.names = FALSE, 
+        sep = "\t"
+    )
+    
+    return(stratumPolygonFilePath)
+}
+
+
+
+stratumpolygon2.7ToTable <- function(stratumpolygon) {
+    # Get polygon keys:
+    #polygonkey <- sapply(stratumpolygon, function(x) x$.attrs["polygonkey"])
+    polygonkey <- sapply(stratumpolygon, attr, "polygonkey")
+    
+    # Convert to a list with one list per polygon:
+    stratumpolygonList <- split(stratumpolygon, polygonkey)
+    # ... and extract the includeintotal and polygon:
+    stratumpolygonList <- lapply(stratumpolygonList, unlist)
+    
+    # Rbind to a data.table and add names:
+    stratumpolygonTable <- do.call(rbind, stratumpolygonList)
+    stratumpolygonTable <- data.table::data.table(names(stratumpolygonList), stratumpolygonTable)
+    names(stratumpolygonTable) <- c("polygonkey", "includeintotal", "polygon")
+    
+    return(stratumpolygonTable)
+}
+
+
+#' Read a the AcousticPSU from a project.xml file from StoX <= 2.7
+#' 
+#' @param projectXMLFilePath The path to the project.xml file.
+#' 
+#' @export
+#' 
+readAcousticPSUFrom2.7 <- function(projectXMLFilePath) {
+    
+    # Read the old project.xml file:
+    #projectList <- readProjectXMLToList(projectXMLPath2.7)
+    
+    ## Create the Stratum_PSU table:
+    #Stratum_PSU <- data.table::as.data.table(
+    #    cbind(
+    #        Stratum = unlist(projectList$processdata$psustratum), 
+    #        PSU = sapply(projectList$processdata$psustratum, attr, "psu")
+    #    )
+    #)
+    ## And the EDSU_PSU table:
+    #EDSU_PSU <- data.table::as.data.table(
+    #    cbind(
+    #        PSU = unlist(projectList$processdata$edsupsu), 
+    #        EDSU = sapply(projectList$processdata$edsupsu, attr, "edsu")
+    #    )
+    #)
+    #names(EDSU_PSU) <- c("PSU", "EDSU")
+    
+    processDataNames2.7 = c("edsupsu", "psustratum")
+    processDataNames3.0 = c("EDSU_PSU", "Stratum_PSU")
+    AcousticPSU <- readStox2.7ProcessDataTable(
+        projectXMLFilePath, 
+        processDataName = processDataNames2.7, 
+        oldName = c("psu", "edsu", "stratum"), 
+        newName = c("PSU", "EDSU", "Stratum")
+    )
+    names(AcousticPSU) <- processDataNames3.0
+    
+    
+    ### data.table::setcolorder(EDSU_PSU, c("EDSU", "PSU"))
+    
+    # Parse out the Cruise and DateTime:
+    #splitted <- AcousticPSU$EDSU_PSU[, strsplit(EDSU, "/")][[1]]
+    splitted <- strsplit(AcousticPSU$EDSU_PSU$EDSU, "/")
+    
+    Cruise <- sapply(splitted, "[[", 1)
+    Date <- sapply(splitted, "[[", 3)
+    Time <- sapply(splitted, "[[", 4)
+    DateTime <- paste0(Date, "T", Time, ".000Z")
+    
+    AcousticPSU$EDSU_PSU[, EDSU := paste(..Cruise, ..DateTime, sep = "/")]
+    
+    # Add empty PSUByTime. This will be added in DefineAcousticPSU:
+    AcousticPSU$PSUByTime = data.table::data.table()
+
+    
+    return(AcousticPSU)
+}
+
+
+
+#' Read a the BioticAssignment from a project.xml file from StoX <= 2.7
+#' 
+#' @param projectXMLFilePath The path to the project.xml file.
+#' 
+#' @export
+#' 
+readBioticAssignmentFrom2.7 <- function(projectXMLFilePath) {
+    
+    # Read the data from the StoX 2.7 project.xml file.
+    processDataNames2.7 = c("bioticassignment", "suassignment", "psustratum")
+    BioticAssignment2.7 <- readStox2.7ProcessDataTable(
+        projectXMLFilePath, 
+        processDataName = processDataNames2.7, 
+        oldName = c("stationweight",   "assignmentid", "station", "sampleunit", "estlayer", "stratum", "psu"), 
+        newName = c("WeightingFactor", "AssignmentID", "Haul",    "PSU",        "Layer",    "Stratum", "PSU")
+    )
+    
+    if(!BioticAssignment2.7$suassignment[, allEqual(Layer)]) {
+        stop("Currently, only StoX 2.7 projects with layer type \"WaterColumn\" can be automatically converted to StoX 3.0 and higher.")
+    }
+    BioticAssignment2.7$suassignment[, Layer := "WaterColumn"]
+    
+    # Add stratum:
+    BioticAssignment <- merge(BioticAssignment2.7$bioticassignment, BioticAssignment2.7$suassignment, by = "AssignmentID", allow.cartesian = TRUE)
+    BioticAssignment <- merge(BioticAssignment, BioticAssignment2.7$psustratum, by = "PSU", allow.cartesian = TRUE)
+    
+    return(BioticAssignment)
+}
+
+
 

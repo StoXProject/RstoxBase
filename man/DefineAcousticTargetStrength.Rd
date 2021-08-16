@@ -23,7 +23,7 @@ DefineAcousticTargetStrength(
 
 \item{TargetStrengthMethod}{Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.}
 
-\item{TargetStrengthTable}{A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.}
+\item{TargetStrengthTable}{A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.}
 
 \item{FileName}{A file from which to read the \code{TargetStrengthTable}.}
 }

@@ -26,13 +26,26 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "Survey",
         functionParameterFormat = list(
-            SurveyTable = "surveyTable"
+            SurveyTable = "surveyTable", 
+            FileName = "filePath"
         ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
             SurveyTable = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "SurveyTable"
+            ), 
+            FileName = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
+            ), 
+            StratumPolygon = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "AllStrata"
+            ), 
+            StratumPolygon = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "SurveyTable"
             )
@@ -73,6 +86,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "AcousticPSU",
+        functionParameterFormat = list(
+            FileName = "filePath"
+        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
@@ -100,10 +116,11 @@ stoxFunctionAttributes <- list(
             AcousticPSU = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "PreDefined"
-            )#, 
-            #SavePSUByTime = list(
-            #    UseProcessData = FALSE
-            #)
+            ), 
+            FileName = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
+            )
         )
     ), 
     #ExtractAcousticPSUByTime = list(
@@ -190,7 +207,8 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "BioticAssignment", 
         functionParameterFormat = list(
-            LayerTable = "layerTable"
+            LayerTable = "layerTable", 
+            FileName = "filePath"
         ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
@@ -272,6 +290,12 @@ stoxFunctionAttributes <- list(
             LatitudeDifference = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "EllipsoidalDistance"
+            ), 
+            
+            # These two are joined with AND, and must both be fulfilled:
+            FileName = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
             )
         )
     ), 
@@ -594,6 +618,16 @@ stoxFunctionAttributes <- list(
         )
     ), 
     SuperIndividuals = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SuperIndividualsData", 
+        functionArgumentHierarchy = list(
+            LengthDistributionData = list(
+                DistributionMethod = "HaulDensity"
+            )
+        )
+    ), 
+    SuperIndividualsOld = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SuperIndividualsData", 
