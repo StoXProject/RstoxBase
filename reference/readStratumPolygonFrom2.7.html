@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read geojson file — reasdGeoJSON • RstoxBase</title>
+<title>Read a the StratumPolygon from a project.xml file from StoX &lt;= 2.7 — readStratumPolygonFrom2.7 • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Read geojson file — reasdGeoJSON" />
-<meta property="og:description" content="Read geojson file" />
+<meta property="og:title" content="Read a the StratumPolygon from a project.xml file from StoX &lt;= 2.7 — readStratumPolygonFrom2.7" />
+<meta property="og:description" content="Read a the StratumPolygon from a project.xml file from StoX &amp;lt;= 2.7" />
 
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -113,23 +113,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read geojson file</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Spatial.R'><code>R/Spatial.R</code></a></small>
-    <div class="hidden name"><code>reasdGeoJSON.Rd</code></div>
+    <h1>Read a the StratumPolygon from a project.xml file from StoX &lt;= 2.7</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Utilities.R'><code>R/Utilities.R</code></a></small>
+    <div class="hidden name"><code>readStratumPolygonFrom2.7.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Read geojson file</p>
+    <p>Read a the StratumPolygon from a project.xml file from StoX &lt;= 2.7</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>reasdGeoJSON</span><span class='op'>(</span><span class='va'>FileName</span><span class='op'>)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>readStratumPolygonFrom2.7</span><span class='op'>(</span><span class='va'>projectXMLFilePath</span>, remove_includeintotal <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='fu'>writeStratumPolygonFrom2.7</span><span class='op'>(</span>
+  <span class='va'>projectXMLFilePath</span>,
+  <span class='va'>stratumPolygonFilePath</span>,
+  remove_includeintotal <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>FileName</th>
-      <td><p>The path to a <a href='https://geojson.org/'>GeoJSON</a> file.</p></td>
+      <th>projectXMLFilePath</th>
+      <td><p>The path to the project.xml file.</p></td>
+    </tr>
+    <tr>
+      <th>remove_includeintotal</th>
+      <td><p>Logical: If TRUE, remove the column includeintotal column.</p></td>
+    </tr>
+    <tr>
+      <th>stratumPolygonFilePath</th>
+      <td><p>The path to the file to write the StratumPolygon to (geojson file).</p></td>
     </tr>
     </table>
 

@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -125,9 +125,10 @@
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>DefineSurvey</span><span class='op'>(</span>
   <span class='va'>processData</span>,
   UseProcessData <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AllStrata"</span>, <span class='st'>"SurveyTable"</span><span class='op'>)</span>,
+  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AllStrata"</span>, <span class='st'>"SurveyTable"</span>, <span class='st'>"ResourceFile"</span><span class='op'>)</span>,
   <span class='va'>StratumPolygon</span>,
-  SurveyTable <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>
+  SurveyTable <span class='op'>=</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span><span class='op'>)</span>,
+  FileName <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -143,7 +144,7 @@
     </tr>
     <tr>
       <th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the <code>SurveyTable</code> to be given.</p></td>
+      <td><p>Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; "SurveyTable", which requires the <code>SurveyTable</code> to be given; and "ResourceFile" to read from a project.xml file from StoX 2.7.</p></td>
     </tr>
     <tr>
       <th>StratumPolygon</th>
@@ -152,6 +153,10 @@
     <tr>
       <th>SurveyTable</th>
       <td><p>A table of the two columns Stratum and Survey.</p></td>
+    </tr>
+    <tr>
+      <th>FileName</th>
+      <td><p>The path to the StoX 2.7 project.xml file to read StratumPolygon from, in the case that <code>DefinitionMethod</code> is "ResourceFile".</p></td>
     </tr>
     </table>
 

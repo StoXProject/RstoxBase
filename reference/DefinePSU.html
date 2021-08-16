@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.1</span>
       </span>
     </div>
 
@@ -128,7 +128,9 @@
   <span class='va'>StratumPolygon</span>,
   StoxData <span class='op'>=</span> <span class='cn'>NULL</span>,
   MergedStoxDataStationLevel <span class='op'>=</span> <span class='cn'>NULL</span>,
-  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Manual"</span>, <span class='st'>"Identity"</span>, <span class='st'>"DeleteAllPSUs"</span>, <span class='st'>"PreDefined"</span><span class='op'>)</span>,
+  DefinitionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Manual"</span>, <span class='st'>"Identity"</span>, <span class='st'>"DeleteAllPSUs"</span>, <span class='st'>"PreDefined"</span>,
+    <span class='st'>"ResourceFile"</span><span class='op'>)</span>,
+  FileName <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
   PSUType <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Acoustic"</span>, <span class='st'>"Biotic"</span><span class='op'>)</span>,
   SavePSUByTime <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>PSUProcessData</span>
@@ -160,6 +162,10 @@
     <tr>
       <th>DefinitionMethod</th>
       <td><p>A string naming the method to use, see <code><a href='DefineBioticPSU.html'>DefineBioticPSU</a></code> and <code><a href='DefineAcousticPSU.html'>DefineAcousticPSU</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>FileName</th>
+      <td><p>The path to a resource file from which to read AcousticPSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.</p></td>
     </tr>
     <tr>
       <th>PSUType</th>

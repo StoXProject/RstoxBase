@@ -301,7 +301,19 @@
     <loc>/reference/processPropertyFormats.html</loc>
   </url>
   <url>
-    <loc>/reference/reasdGeoJSON.html</loc>
+    <loc>/reference/readAcousticPSUFrom2.7.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readBioticAssignmentFrom2.7.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGeoJSON.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readProjectXMLToList.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readStratumPolygonFrom2.7.html</loc>
   </url>
   <url>
     <loc>/reference/replaceNAByReference.html</loc>
@@ -314,8 +326,5 @@
   </url>
   <url>
     <loc>/reference/summaryStox.html</loc>
-  </url>
-  <url>
-    <loc>/reference/toJSON_Rstox.html</loc>
   </url>
 </urlset>
