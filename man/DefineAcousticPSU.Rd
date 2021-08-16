@@ -9,7 +9,9 @@ DefineAcousticPSU(
   UseProcessData = FALSE,
   StratumPolygon,
   StoxAcousticData,
-  DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "PreDefined"),
+  DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "PreDefined",
+    "ResourceFile"),
+  FileName = character(),
   AcousticPSU
 )
 }
@@ -23,6 +25,8 @@ DefineAcousticPSU(
 \item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
+
+\item{FileName}{The path to a resource file from which to read AcousticPSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.}
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 }

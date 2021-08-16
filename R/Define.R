@@ -9,6 +9,7 @@
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param MergedStoxDataStationLevel The merged StoxData at the station level. Used in \code{meanRawResolutionData}.
 #' @param DefinitionMethod A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
+#' @param FileName The path to a resource file from which to read AcousticPSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.
 #' @param SavePSUByTime Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.
 #' @param PSUProcessData Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.
 #' 
@@ -24,7 +25,8 @@ DefinePSU <- function(
     StratumPolygon, 
     StoxData = NULL, 
     MergedStoxDataStationLevel = NULL, 
-    DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "PreDefined"), 
+    DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "PreDefined", "ResourceFile"), 
+    FileName = character(), 
     #IntervalVariable = character(),
     #Interval = double(), 
     PSUType = c("Acoustic", "Biotic"), 
@@ -121,6 +123,23 @@ DefinePSU <- function(
         return(processData)
     }
     
+
+    # Speical care is needed if DefinitionMethod is "ResourceFile", which only applies to AccousicPSU:
+    if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
+        
+        # Read from the project.xml:
+        AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+            
+        # Add the PSUByTime:
+        if(SavePSUByTime) {
+            processData$PSUByTime <- getPSUByTime(
+                PSUProcessData = AcousticPSU, 
+                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                PSUType = PSUType
+            )
+        }
+        return(processData)
+    }
     
     
     
@@ -427,7 +446,8 @@ DefineAcousticPSU <- function(
     StratumPolygon, 
     StoxAcousticData, 
     #DefinitionMethod = c("EDSUToPSU", "DeleteAllPSUs", "Interval", "ByTime"), 
-    DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "PreDefined"), 
+    DefinitionMethod = c("Manual", "EDSUToPSU", "DeleteAllPSUs", "PreDefined", "ResourceFile"), 
+    FileName = character(), 
     #IntervalVariable = character(),
     #Interval = double(), 
     #SavePSUByTime = FALSE, 
@@ -448,12 +468,14 @@ DefineAcousticPSU <- function(
         StratumPolygon = StratumPolygon, 
         StoxData = StoxAcousticData, 
         DefinitionMethod = DefinitionMethod, 
+        FileName = FileName, 
         #IntervalVariable = IntervalVariable, 
         #Interval = Interval, 
         PSUType = "Acoustic", 
         SavePSUByTime = TRUE, 
         PSUProcessData = AcousticPSU
     )
+
     
     # Format the output:
     formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
@@ -535,7 +557,7 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     thisSSU_PSU <- SSU_PSU_ByPSU[[PSU]]
     
     # Match the SSUs of the PSUProcessData with SSUs of the StationTable:
-    # Order both since it may happen that the EDSUs of the StoxAocusticData are not ordered, e.g. if there are multiple instruments from the same cruise, and these instruments have both identical and differing times:
+    # Order both since it may happen that the EDSUs of the StoxAcousticData are not ordered, e.g. if there are multiple instruments from the same cruise, and these instruments have both identical and differing times:
     atSSUInStoxData <- match(sort(thisSSU_PSU$SSU), sort(StationTable$SSU))
     if(any(is.na(atSSUInStoxData))) {
         warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData.")
@@ -838,7 +860,8 @@ DefineBioticLayer <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference} and \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference}, \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.
+#' @param FileName The path to the StoX 2.7 project.xml file to read "bioticassignment", "suassignment" and "psustratum" from, in the case that \code{DefinitionMethod} is "ResourceFile".
 #' @inheritParams SumNASC
 #' @inheritParams DefineAcousticLayer
 #' @param Radius Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
@@ -931,8 +954,9 @@ DefineBioticLayer <- function(
 #'
 DefineBioticAssignment <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("Manual", "Stratum", "Radius", "EllipsoidalDistance", "DeleteAllAssignments"), 
+    DefinitionMethod = c("Manual", "Stratum", "Radius", "EllipsoidalDistance", "DeleteAllAssignments", "ResourceFile"), 
     StoxBioticData, 
+    FileName = character(), 
     # For DefinitionMethod "Stratum": 
     StratumPolygon, AcousticPSU, #AcousticLayer, 
     LayerDefinition = c("FunctionParameter", "FunctionInput"), 
@@ -1127,6 +1151,20 @@ DefineBioticAssignment <- function(
     else if(grepl("DeleteAllAssignments", DefinitionMethod, ignore.case = TRUE)) {
         BioticAssignment <- data.table::data.table()
     }
+    else if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
+        BioticAssignment <- readBioticAssignmentFrom2.7(FileName)
+        
+        # Translate to the Haul defined by StoX >=3:
+        HaulsAsIn2.7 <- sub("/.*&*-", "/", MergeStoxBioticData$Haul)
+        
+        BioticAssignment$Haul <- MergeStoxBioticData$Haul[
+            match(
+                BioticAssignment$Haul, 
+                HaulsAsIn2.7
+            )
+        ]
+        
+    }
     else if(isEmptyString(DefinitionMethod)){
         if(length(processData)) {
             return(processData)
@@ -1278,6 +1316,7 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.
+#' @param LengthDistributionData The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
 #' @param LengthExponent For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
@@ -1594,8 +1633,9 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 
 checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, WeightingMethod) {
     # Remove NA here, as this check for only one species should only count non-missing SpeciesCategory:
-    numSpecies <- length((unique(LengthDistributionData$SpeciesCategory)))
+    numSpecies <- length(unique(LengthDistributionData$SpeciesCategory))
     if(numSpecies > 1) {
+        #stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
         stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "), ". ", "Please make sure that the column SpeciesCategory of LengthDistributionData contains only one unique value. If the column contains missing values (NA, shown as \"-\" in the StoX GUI) there are hauls with no individuals of the requested species in the StoxBioticData. For acoustic-trawl estimates such hauls should be filtered out using FilterUpwards  = TRUE in FilterStoxBiotic().")
     }
 }
@@ -1603,8 +1643,9 @@ checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, Weig
 
 checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
     # Remove NA here, as this check for only one species should only count non-missing SpeciesCategory:
-    numSpecies <- length((unique(StoxBioticData$SpeciesCategory$SpeciesCategory)))
+    numSpecies <- length(unique(StoxBioticData$SpeciesCategory$SpeciesCategory))
     if(numSpecies > 1) {
+        #stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
         stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "), ". ", "Please make sure that the column SpeciesCategory of the table SpeciesCategory of  StoxBioticData contains only one unique value. If the column contains missing values (NA, shown as \"-\" in the StoX GUI) there are hauls with no individuals of the requested species in the StoxBioticData used as input to LengthDistribution(). For acoustic-trawl estimates such hauls should be filtered out using FilterUpwards  = TRUE in FilterStoxBiotic().")
     }
 }
@@ -1619,7 +1660,7 @@ checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
 #' @inheritParams general_arguments
 #' @param TargetStrengthMethod  Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
 #' @param DefinitionMethod  Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table \code{TargetStrengthTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
-#' @param TargetStrengthTable A table holding the specification of the target strength function/table. The first two columns are AcocusticCategory and Frequenccy. See details for other columns.
+#' @param TargetStrengthTable A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.
 #' @param FileName A file from which to read the \code{TargetStrengthTable}.
 #' 
 #' @details
@@ -1731,8 +1772,9 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
-#' @param DefinitionMethod Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the \code{SurveyTable} to be given.
+#' @param DefinitionMethod Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; "SurveyTable", which requires the \code{SurveyTable} to be given; and "ResourceFile" to read from a project.xml file from StoX 2.7.
 #' @param SurveyTable A table of the two columns Stratum and Survey.
+#' @param FileName The path to the StoX 2.7 project.xml file to read StratumPolygon from, in the case that \code{DefinitionMethod} is "ResourceFile".
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticPSU}}.
@@ -1743,9 +1785,10 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 #' 
 DefineSurvey <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("AllStrata", "SurveyTable"), 
+    DefinitionMethod = c("AllStrata", "SurveyTable", "ResourceFile"), 
     StratumPolygon, 
-    SurveyTable = data.table::data.table()
+    SurveyTable = data.table::data.table(), 
+    FileName = character()
 ) {
     
     # Return immediately if UseProcessData = TRUE:
@@ -1756,13 +1799,29 @@ DefineSurvey <- function(
     # Get the DefinitionMethod:
     DefinitionMethod <- match.arg(DefinitionMethod)
     
-    # Get the survey table using the stratum names:
-    stratumNames <- getStratumNames(StratumPolygon)
-    SurveyTable <- getSurveyTable(
-        DefinitionMethod = DefinitionMethod, 
-        stratumNames = stratumNames, 
-        SurveyTable = SurveyTable
-    )
+    # Read from a stoX 2.7 project.xml:
+    if(DefinitionMethod == "ResourceFile") {
+        # Read the StratumPolygon from the project.xml file:
+        StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = FALSE)
+        
+        # Define all strata that have includeintotal = TRUE as a survey named "Survey", and all others as individual surveys:
+        SurveyTable <- data.table::data.table(
+            Stratum = StratumPolygon$Stratum, 
+            Survey = StratumPolygon$Stratum
+        )
+        indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
+        SurveyTable[indcludedInTotal, Survey := "Survey"]
+    }
+    else {
+        # Get the survey table using the stratum names:
+        stratumNames <- getStratumNames(StratumPolygon)
+        SurveyTable <- getSurveyTable(
+            DefinitionMethod = DefinitionMethod, 
+            stratumNames = stratumNames, 
+            SurveyTable = SurveyTable
+        )
+    }
+    
         
     return(SurveyTable)
 }
@@ -1771,7 +1830,8 @@ DefineSurvey <- function(
 getSurveyTable <- function(
     DefinitionMethod, 
     stratumNames, 
-    SurveyTable = data.table::data.table()
+    SurveyTable = data.table::data.table(), 
+    FileName = character()
 ) {
     
     # Define one single survey:

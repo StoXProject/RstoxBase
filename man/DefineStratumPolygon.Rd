@@ -8,7 +8,7 @@ DefineStratumPolygon(
   processData,
   UseProcessData = FALSE,
   DefinitionMethod = c("ResourceFile", "Manual"),
-  FileName
+  FileName = character()
 )
 }
 \arguments{

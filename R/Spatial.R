@@ -38,7 +38,6 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
 
 
 dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
-    
     # 
     polygonName <- as.character(DataTable$Stratum)
     multipolygon <- DataTable$Polygon
@@ -113,7 +112,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 DefineStratumPolygon <- function(
     processData, UseProcessData = FALSE, 
     DefinitionMethod = c("ResourceFile", "Manual"), 
-    FileName
+    FileName = character()
 ) {
     #if(!is.null(processData) & UseProcessData) {
     if(UseProcessData) {
@@ -163,7 +162,14 @@ DefineStratumPolygon <- function(
             
             # StratumPolygon <-  sf::as_Spatial(geojsonsf::geojson_sf(FileName))
             
-            StratumPolygon <- reasdGeoJSON(FileName)
+            StratumPolygon <- readGeoJSON(FileName)
+        }
+        else if(tolower(FileExt) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+            # Read the StratumPolygon from the project.xml file:
+            StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = TRUE)
+            
+            # Convert to SpatialPolygonsDataFrame:
+            StratumPolygon <- dataTable2SpatialPolygonsDataFrame(StratumPolygon)
         }
         else {
             stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
@@ -191,7 +197,7 @@ DefineStratumPolygon <- function(
 #' 
 #' @export
 #'
-reasdGeoJSON <- function(FileName) {
+readGeoJSON <- function(FileName) {
     sf::as_Spatial(geojsonsf::geojson_sf(FileName))
 }
 

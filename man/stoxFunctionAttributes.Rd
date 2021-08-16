@@ -7,7 +7,7 @@
 The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
 The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.}
 \format{
-An object of class \code{list} of length 35.
+An object of class \code{list} of length 36.
 }
 \usage{
 stoxFunctionAttributes

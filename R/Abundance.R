@@ -229,7 +229,7 @@ SuperIndividuals <- function(
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
         
-        # Sum in each length group (in case lengths are grouped coearser than the original groups):
+        # Sum in each length group (in case lengths are grouped coarser than the original groups):
         haulGrouping <- c(
             "Haul", 
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
@@ -256,8 +256,17 @@ SuperIndividuals <- function(
         # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
         SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount]
         
-        # Get the number of length measured individuals of the length group:
-        SuperIndividualsData[, individualCount := .N, by = haulGrouping]
+        # Count the length measured individuals of each Haul, species, beam and length group:
+        #SuperIndividualsData[, individualCount := .N, by = haulGrouping] # This was an error, since it did not take different beams into account.
+        countGrouping <- c(
+            "Haul", 
+            getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
+            getDataTypeDefinition(dataType = "AbundanceData", elements = "groupingVariables_acoustic", unlist = TRUE), 
+            "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
+        )
+        # Keep only the variables present in the AbundanceData, as AbundanceData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
+        countGrouping <- intersect(countGrouping, names(SuperIndividualsData))
+        SuperIndividualsData[, individualCount := .N, by = countGrouping]
         
         # Remove WeightedCount and sumWeightedCount:
         SuperIndividualsData[, WeightedCount := NULL]
@@ -267,11 +276,25 @@ SuperIndividuals <- function(
         stop("Invalid DistributionMethod")
     }
     
+    # Generate the weighting factors:
+    SuperIndividualsData[, individualWeightFactor := haulWeightFactor / individualCount]
+    # ... and check that they sum to 1:
+    SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeAbundanceBy]
+    tol <- sqrt(.Machine$double.eps)
+    all1 <- SuperIndividualsData[!is.na(sumIndividualWeightFactor), all(sumIndividualWeightFactor > 1 - tol & sumIndividualWeightFactor < 1 + tol)]
+    #if(!all1) {
+    #    stop("An error occurred causing weights to not sum to 1")
+    #}
+    SuperIndividualsData[, sumIndividualWeightFactor := NULL]
+    
     # Multiply by abundance weighting factors:
-    SuperIndividualsData[, Abundance := Abundance * haulWeightFactor]
+    #SuperIndividualsData[, Abundance := Abundance * haulWeightFactor]
     
     # Divide by the number of individuals (regardless of DistributionMethod)
-    SuperIndividualsData[, Abundance := Abundance / individualCount]
+    #SuperIndividualsData[, Abundance := Abundance / individualCount]
+    SuperIndividualsData[, Abundance := Abundance * individualWeightFactor]
+    SuperIndividualsData[, individualWeightFactor := NULL]
+    
     
     # Add Biomass:
     SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
@@ -702,8 +725,6 @@ replaceMissingData <- function(x, columnNames) {
     
     return(x)
 }
-
-
 
 
 

@@ -10,7 +10,9 @@ DefinePSU(
   StratumPolygon,
   StoxData = NULL,
   MergedStoxDataStationLevel = NULL,
-  DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "PreDefined"),
+  DefinitionMethod = c("Manual", "Identity", "DeleteAllPSUs", "PreDefined",
+    "ResourceFile"),
+  FileName = character(),
   PSUType = c("Acoustic", "Biotic"),
   SavePSUByTime = FALSE,
   PSUProcessData
@@ -28,6 +30,8 @@ DefinePSU(
 \item{MergedStoxDataStationLevel}{The merged StoxData at the station level. Used in \code{meanRawResolutionData}.}
 
 \item{DefinitionMethod}{A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.}
+
+\item{FileName}{The path to a resource file from which to read AcousticPSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.}
 
 \item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic"}
 

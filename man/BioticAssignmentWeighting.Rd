@@ -23,7 +23,7 @@ BioticAssignmentWeighting(
 
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
-\item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
+\item{LengthDistributionData}{The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).}
 
 \item{MaxNumberOfLengthSamples}{For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.}
 

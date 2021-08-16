@@ -7,9 +7,10 @@
 DefineSurvey(
   processData,
   UseProcessData = FALSE,
-  DefinitionMethod = c("AllStrata", "SurveyTable"),
+  DefinitionMethod = c("AllStrata", "SurveyTable", "ResourceFile"),
   StratumPolygon,
-  SurveyTable = data.table::data.table()
+  SurveyTable = data.table::data.table(),
+  FileName = character()
 )
 }
 \arguments{
@@ -17,11 +18,13 @@ DefineSurvey(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; and "SurveyTable", which requires the \code{SurveyTable} to be given.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; "SurveyTable", which requires the \code{SurveyTable} to be given; and "ResourceFile" to read from a project.xml file from StoX 2.7.}
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
 \item{SurveyTable}{A table of the two columns Stratum and Survey.}
+
+\item{FileName}{The path to the StoX 2.7 project.xml file to read StratumPolygon from, in the case that \code{DefinitionMethod} is "ResourceFile".}
 }
 \value{
 An object of StoX data type \code{\link{BioticPSU}}.
