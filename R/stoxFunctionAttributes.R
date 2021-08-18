@@ -872,20 +872,23 @@ processPropertyFormats <- list(
         }, 
         possibleValues = function(LengthDistributionData, CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
             CompensationMethod <- match.arg(CompensationMethod)
-            CompensationMethod <- strsplit(CompensationMethod, "And")[[1]]
+            Variables <- strsplit(CompensationMethod, "And")[[1]]
             
             if(!length(LengthDistributionData)) {
-                return(vector("list", length(CompensationMethod) + 1))
+                return(vector("list", length(Variables) + 1))
             }
             
             # Get all unique combinations:
-            listOfUniqueCombinations <- as.list(unique(LengthDistributionData[, ..CompensationMethod]))
+            #listOfUniqueCombinations <- as.list(unique(LengthDistributionData[, ..Variables]))
+            listOfUniqueCombinations <- lapply(Variables, function(var) as.list(unique(LengthDistributionData[[var]])))
             
             # Output must be an unnamed list:
             c(
-                list(unname(listOfUniqueCombinations)), 
+                #list(unname(listOfUniqueCombinations)), 
+                listOfUniqueCombinations, 
                 list(NULL)
             )
+            
         }
     ), 
     
