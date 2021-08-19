@@ -1,3 +1,8 @@
+# RstoxBase v1.4.4 (2021-08-18)
+* Added more informative error when more than one SpeciesCategory in BioticAssignmentWeighting().
+* Fixed bug in SuperIndividuals() where length measured individuals were counted over all beams, whereas per beam was correct. Added DefinitionMethod "ResourceFile" in DefineSurvey(), DefineAcousticPSU() and DefineBioticAssignment(), and support for a StoX 2.7 project.xml file in DefineStratumPolygon().*
+* Fixed bug with CompensationTable in GearDependentCatchCompensation.
+
 # RstoxBase v1.3.32 (2021-06-16)
 * Added error if the variable specified by ImputeAtMissing is not explicitely inclcuded in ToImpute
 * Fixed bug in DistributionMethod == "HaulDensity", where number of individuals in each length group was not taken into account.
