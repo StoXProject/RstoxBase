@@ -24,7 +24,7 @@ aggregateBaselineDataOneTable(
 
 \item{subTable}{The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.}
 
-\item{GroupingVariables}{The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).}
+\item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.}
 
 \item{na.rm}{Used in the function specified by \code{aggregationFunction}.}
 

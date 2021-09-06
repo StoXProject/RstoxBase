@@ -25,6 +25,12 @@ ReportSuperIndividuals <- function(
     WeightingVariable = character()
 ) 
 {
+    
+    # Issue a warning if RemoveMissingValues = TRUE:
+    if(isTRUE(RemoveMissingValues)) {
+        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning"))
+    }
+    
     aggregateBaselineDataOneTable(
         stoxData = SuperIndividualsData, 
         TargetVariable = TargetVariable, 
@@ -60,6 +66,11 @@ ReportDensity <- function(
     WeightingVariable = character()
 ) 
 {
+    # Issue a warning if RemoveMissingValues = TRUE:
+    if(isTRUE(RemoveMissingValues)) {
+        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning"))
+    }
+    
     aggregateBaselineDataOneTable(
         stoxData = DensityData$Data, 
         TargetVariable = TargetVariable, 
@@ -69,7 +80,6 @@ ReportDensity <- function(
         WeightingVariable = WeightingVariable
     ) 
 }
-
 
 
 ##################################################

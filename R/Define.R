@@ -132,13 +132,13 @@ DefinePSU <- function(
             
         # Add the PSUByTime:
         if(SavePSUByTime) {
-            processData$PSUByTime <- getPSUByTime(
+            AcousticPSU$PSUByTime <- getPSUByTime(
                 PSUProcessData = AcousticPSU, 
                 MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
                 PSUType = PSUType
             )
         }
-        return(processData)
+        return(AcousticPSU)
     }
     
     
@@ -560,7 +560,7 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     # Order both since it may happen that the EDSUs of the StoxAcousticData are not ordered, e.g. if there are multiple instruments from the same cruise, and these instruments have both identical and differing times:
     atSSUInStoxData <- match(sort(thisSSU_PSU$SSU), sort(StationTable$SSU))
     if(any(is.na(atSSUInStoxData))) {
-        warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData.")
+        warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData. (Number of EDSUs not found in the StoxData: ", sum(is.na(atSSUInStoxData)))
         atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
         
         # It may happen that an SSU of the SSU_PSU is not present in the station data (StoxAcoustic$Log or StoxBiotic$Station). In these cases return NAs for cruise and times: 
@@ -1532,6 +1532,9 @@ BioticAssignmentWeighting <- function(
         )
     }
     else if(WeightingMethod == "InverseSumWeightedCount") {
+        # Allow only one species in StoX 3.1.0: 
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NumberOfLengthSamples")
+        
         BioticAssignmentCopy <- addSumWeightedCount(
             BioticAssignment = BioticAssignmentCopy, 
             LengthDistributionData = LengthDistributionData, 
@@ -1766,7 +1769,7 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 
 ##################################################
 ##################################################
-#' Biotic Survey
+#' Define Survey
 #' 
 #' This function defines the Strata associated to different surveys (in the sense that a separate estimate should be made for those strata). 
 #' 
