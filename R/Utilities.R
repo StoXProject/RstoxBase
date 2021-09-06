@@ -940,7 +940,22 @@ firstNonNA <- function(x) {
 
 
 
-
+##################################################
+##################################################
+#' General parameters of treating project.xml file from StoX <= 2.7
+#' 
+#' @param projectPath (Optional) The path to the StoX 2.7 project.
+#' @param projectXMLFileName (Optional) The name of the StoX 2.7 project.xml file, defaulted to "project.xml".
+#' @param projectXMLFilePath The path to the project.xml file.
+#' @param projectXMLList A list as read by \code{\link{readProjectXMLToList}}.
+#' @param modelName,processName,parameterName The name of the parameter of the process of the model to modify.
+#' @param parameterValue,newParameterValue The new value of the parameter.
+#' @param functionName The name of the function of the process to add.
+#' @param modify A named list specifying the modification of a process. Possible elements are remove, add and modify.
+#' 
+#' @name general_arguments2.7
+#' 
+NULL
 
 
 
@@ -948,7 +963,7 @@ firstNonNA <- function(x) {
 
 #' Read a project.xml file from StoX <= 2.7
 #' 
-#' @inheritParams getProjectXMLFilePath
+#' @inheritParams general_arguments2.7
 #' 
 #' @export
 #' 
@@ -969,8 +984,7 @@ readProjectXMLToList <- function(projectXMLFilePath = NULL, projectPath = NULL, 
 
 #' Write a project.xml file from StoX <= 2.7 from a list
 #' 
-#' @param projectXMLList A list as read by \code{\link{readProjectXMLToList}}.
-#' @inheritParams getProjectXMLFilePath
+#' @inheritParams general_arguments2.7
 #' 
 #' @export
 #' 
@@ -993,9 +1007,7 @@ writeProjectXMLToList <- function(projectXMLList, projectXMLFilePath, projectPat
 
 #' Get the path to the project.xml file from StoX <= 2.7.
 #' 
-#' @param projectPath (Optional) The path to the StoX 2.7 project.
-#' @param projectXMLFileName (Optional) The name of the StoX 2.7 project.xml file, defaulted to "project.xml".
-#' @param projectXMLFilePath The path to the project.xml file.
+#' @inheritParams general_arguments2.7
 #' 
 #' @export
 #' 
@@ -1011,9 +1023,7 @@ getProjectXMLFilePath <- function(projectPath, projectXMLFileName = "project.xml
 
 #' Modify a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
 #' 
-#' @inheritParams writeProjectXMLToList
-#' @param modelName,processName,parameterName The names of the parameter of the process of the model to modify.
-#' @param newValue The new value of the parameter
+#' @inheritParams general_arguments2.7
 #' 
 modifyParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, parameterName, newParameterValue, functionName = NULL) {
     # Find the parameter of the process of the model:
@@ -1064,8 +1074,7 @@ findModelProcessParameter_ProjectXMLList <- function(projectXMLList, modelName, 
 
 #' Remove a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
 #' 
-#' @inheritParams writeProjectXMLToList
-#' @param modelName,processName,parameterName The names of the parameter of the process of the model to modify.
+#' @inheritParams general_arguments2.7
 #' 
 removeParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, parameterName, functionName = NULL) {
     # Find the parameter of the process of the model:
@@ -1086,9 +1095,7 @@ removeParameter_ProjectXMLList <- function(projectXMLList, modelName, processNam
 
 #' Add a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
 #' 
-#' @inheritParams writeProjectXMLToList
-#' @param modelName,processName,parameterName The names of the parameter of the process of the model to modify.
-#' @param newValue The new value of the parameter
+#' @inheritParams general_arguments2.7
 #' 
 addParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, parameterName, parameterValue, functionName = NULL) {
     # Find the parameter of the process of the model:
@@ -1117,8 +1124,7 @@ addParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, 
 
 #' Modify a parameter of a process of a project.xml file from StoX <= 2.7.
 #' 
-#' @inheritParams writeProjectXMLToList
-#' @inheritParams getProjectXMLFilePath
+#' @inheritParams general_arguments2.7
 #' 
 #' @export
 #' 
@@ -1280,9 +1286,7 @@ createProcessList <- function(
 
 #' Add a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
 #' 
-#' @inheritParams writeProjectXMLToList
-#' @param modelName,processName,parameterName The names of the parameter of the process of the model to modify.
-#' @param newValue The new value of the parameter
+#' @inheritParams general_arguments2.7
 #' 
 addProcess_ProjectXMLList <- function(
     projectXMLList, 
