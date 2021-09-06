@@ -2,7 +2,7 @@
 % Please edit documentation in R/Define.R
 \name{DefineSurvey}
 \alias{DefineSurvey}
-\title{Biotic Survey}
+\title{Define Survey}
 \usage{
 DefineSurvey(
   processData,

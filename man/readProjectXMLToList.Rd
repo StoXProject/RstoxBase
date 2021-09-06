@@ -4,10 +4,18 @@
 \alias{readProjectXMLToList}
 \title{Read a project.xml file from StoX <= 2.7}
 \usage{
-readProjectXMLToList(projectXMLFilePath)
+readProjectXMLToList(
+  projectXMLFilePath = NULL,
+  projectPath = NULL,
+  projectXMLFileName = "project.xml"
+)
 }
 \arguments{
 \item{projectXMLFilePath}{The path to the project.xml file.}
+
+\item{projectPath}{(Optional) The path to the StoX 2.7 project.}
+
+\item{projectXMLFileName}{(Optional) The name of the StoX 2.7 project.xml file, defaulted to "project.xml".}
 }
 \description{
 Read a project.xml file from StoX <= 2.7

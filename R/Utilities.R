@@ -806,7 +806,8 @@ getSequenceToSampleFrom <- function(){
 #' 
 summaryStox <- function(x, na.rm = FALSE) {
     c(
-        stats::quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
+        # Accept na.rm = FALSE in quantile, as  in median():
+        if(any(is.na(x)) && isFALSE(na.rm)) rep(NA, 3) else stats::quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
         mean = mean(x, na.rm = na.rm),
         sd = stats::sd(x, na.rm = na.rm),
         cv = cv(x, na.rm = na.rm)
@@ -930,13 +931,48 @@ firstNonNA <- function(x) {
 
 
 
+
+
+
+
+
+
+
+
+
+##################################################
+##################################################
+#' General parameters of treating project.xml file from StoX <= 2.7
+#' 
+#' @param projectPath (Optional) The path to the StoX 2.7 project.
+#' @param projectXMLFileName (Optional) The name of the StoX 2.7 project.xml file, defaulted to "project.xml".
+#' @param projectXMLFilePath The path to the project.xml file.
+#' @param projectXMLList A list as read by \code{\link{readProjectXMLToList}}.
+#' @param modelName,processName,parameterName The name of the parameter of the process of the model to modify.
+#' @param parameterValue,newParameterValue The new value of the parameter.
+#' @param functionName The name of the function of the process to add.
+#' @param modify A named list specifying the modification of a process. Possible elements are remove, add and modify.
+#' 
+#' @name general_arguments2.7
+#' 
+NULL
+
+
+
+
+
 #' Read a project.xml file from StoX <= 2.7
 #' 
-#' @param projectXMLFilePath The path to the project.xml file.
+#' @inheritParams general_arguments2.7
 #' 
 #' @export
 #' 
-readProjectXMLToList <- function(projectXMLFilePath) {
+readProjectXMLToList <- function(projectXMLFilePath = NULL, projectPath = NULL, projectXMLFileName = "project.xml") {
+    # Get the path to the project.xml file if only the projectPath is given:
+    if(length(projectPath))  {
+        projectXMLFilePath <- getProjectXMLFilePath(projectPath = projectPath, projectXMLFileName = projectXMLFileName, projectXMLFilePath = projectXMLFilePath)
+    }
+    
     # Read the project.xml file into a list:
     #doc = XML::xmlParse(projectXMLFile)
     doc = xml2::read_xml(projectXMLFilePath)
@@ -944,6 +980,376 @@ readProjectXMLToList <- function(projectXMLFilePath) {
     projectList <- xml2::as_list(doc)$project
     return(projectList)
 }
+
+
+#' Write a project.xml file from StoX <= 2.7 from a list
+#' 
+#' @inheritParams general_arguments2.7
+#' 
+#' @export
+#' 
+writeProjectXMLToList <- function(projectXMLList, projectXMLFilePath, projectPath = NULL, projectXMLFileName = "project.xml") {
+    
+    ns <- attr(projectXMLList, "xmlns")
+    xml <- xml2::as_xml_document(list(project = projectXMLList), ns = ns)
+    
+    # Get the path to the project.xml file if only the projectPath is given:
+    if(length(projectPath))  {
+        projectXMLFilePath <- getProjectXMLFilePath(projectPath = projectPath, projectXMLFileName = projectXMLFileName, projectXMLFilePath = projectXMLFilePath)
+    }
+    
+    xml2::write_xml(xml, file = projectXMLFilePath, encoding = "UTF-8")
+    
+    return(projectXMLFilePath)
+}
+
+
+
+#' Get the path to the project.xml file from StoX <= 2.7.
+#' 
+#' @inheritParams general_arguments2.7
+#' 
+#' @export
+#' 
+getProjectXMLFilePath <- function(projectPath, projectXMLFileName = "project.xml", projectXMLFilePath = NULL) {
+    if(!length(projectXMLFilePath)) {
+        projectXMLFilePath <- file.path(projectPath, "process", projectXMLFileName)
+    }
+    
+    return(projectXMLFilePath)    
+}
+
+
+
+#' Modify a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
+#' 
+#' @inheritParams general_arguments2.7
+#' 
+modifyParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, parameterName, newParameterValue, functionName = NULL) {
+    # Find the parameter of the process of the model:
+    at <- findModelProcessParameter_ProjectXMLList(
+        projectXMLList = projectXMLList, 
+        modelName = modelName, 
+        processName = processName, 
+        parameterName = parameterName, 
+        functionName = functionName
+    )
+    
+    # Replace:
+    projectXMLList[[at$atModel]][[at$atProcess]][[at$atParameter]] <- newParameterValue
+    
+    return(projectXMLList)
+}
+
+
+findModelProcessParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, parameterName, functionName = NULL) {
+    # Get the requested model:
+    modelNames <- sapply(projectXMLList, attr, "name")
+    atModel <- which(modelNames == modelName)
+    #model <- projectXMLList[[atModel]]
+    
+    # Get the requested process:
+    if(length(functionName)) {
+        functionNames <- unlist(lapply(projectXMLList[[atModel]], "[[", "function"))
+        atProcess <- which(functionNames == functionName)
+    }
+    else {
+        processNames <- sapply(projectXMLList[[atModel]], attr, "name")
+        atProcess <- which(processNames == processName)
+    }
+    
+    # Get the requested parameter:
+    parameterNames <- sapply(projectXMLList[[atModel]][[atProcess]], attr, "name")
+    atParameter <- which(parameterNames == parameterName)
+    
+    at <- list(
+        atModel = atModel, 
+        atProcess = atProcess, 
+        atParameter = atParameter
+    )
+    
+    return(at)
+}
+
+
+#' Remove a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
+#' 
+#' @inheritParams general_arguments2.7
+#' 
+removeParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, parameterName, functionName = NULL) {
+    # Find the parameter of the process of the model:
+    at <- findModelProcessParameter_ProjectXMLList(
+        projectXMLList = projectXMLList, 
+        modelName = modelName, 
+        processName = processName, 
+        parameterName = parameterName, 
+        functionName = functionName
+    )
+    
+    # Replace:
+    projectXMLList[[at$atModel]][[at$atProcess]][[at$atParameter]] <- NULL
+    
+    return(projectXMLList)
+}
+
+
+#' Add a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
+#' 
+#' @inheritParams general_arguments2.7
+#' 
+addParameter_ProjectXMLList <- function(projectXMLList, modelName, processName, parameterName, parameterValue, functionName = NULL) {
+    # Find the parameter of the process of the model:
+    at <- findModelProcessParameter_ProjectXMLList(
+        projectXMLList = projectXMLList, 
+        modelName = modelName, 
+        processName = processName, 
+        parameterName = parameterName, 
+        functionName = functionName
+    )
+    
+    # Add:
+    toAdd <-  list(parameter = parameterValue)
+    attr(toAdd, "name") <- parameterName
+    
+    
+    projectXMLList[[at$atModel]][[at$atProcess]] <- c(
+        projectXMLList[[at$atModel]][[at$atProcess]], 
+        toAdd
+    )
+    
+    return(projectXMLList)
+}
+
+
+
+#' Modify a parameter of a process of a project.xml file from StoX <= 2.7.
+#' 
+#' @inheritParams general_arguments2.7
+#' 
+#' @export
+#' 
+modifyProcess2.7 <- function(modelName, processName, modify = list(), projectXMLFilePath = NULL, projectPath = NULL, projectXMLFileName = NULL, functionName = NULL) {
+    
+    projectXMLList <- readProjectXMLToList(
+        projectXMLFilePath = projectXMLFilePath, 
+        projectPath = projectPath, 
+        projectXMLFileName = projectXMLFileName
+    )
+    
+    # First remove parameters:
+    if(length(modify$remove)) {
+        mapply(
+            removeParameter_ProjectXMLList, 
+            projectXMLList = projectXMLList, 
+            modelName = modelName, 
+            processName = processName, 
+            parameterName = modify$remove$parameterName, 
+            functionName = functionName
+        )
+    }
+    
+    # Then add parameters:
+    if(length(modify$add)) {
+        mapply(
+            addParameter_ProjectXMLList, 
+            projectXMLList = projectXMLList, 
+            modelName = modelName, 
+            processName = processName, 
+            parameterName = modify$add$parameterName, 
+            parameterValue = modify$add$parameterValue, 
+            functionName = functionName
+        )
+    }
+    
+    # Finally modify existing parameters (new parameters are already added value by addParameter_ProjectXMLList()):
+    if(length(modify$modify)) {
+        mapply(
+            removeParameter_ProjectXMLList, 
+            projectXMLList = projectXMLList, 
+            modelName = modelName, 
+            processName = processName, 
+            parameterName = modify$modify$parameterName, 
+            newParameterValue = modify$modify$newParameterValue, 
+            functionName = functionName
+        )
+    }
+    
+    projectXMLFilePath <- writeProjectXMLToList(
+        projectXMLList = projectXMLList, 
+        projectXMLFilePath = projectXMLFilePath, 
+        projectPath = projectPath, 
+        projectXMLFileName = projectXMLFileName
+    )
+        
+        
+    return(projectXMLFilePath)
+}
+
+
+createStoX2.7Project <- function(projectPath, projectXMLList = NULL, ow = FALSE) {
+    
+    # Create the project folder:
+    if(dir.exists(projectPath)) {
+        if(isTRUE(ow)) {
+            unlink(projectPath, recursive = TRUE, force = TRUE)
+        }
+        else {
+            stop("The project ", projectPath, " already exists. To overwrite use ow = TRUE")
+        }
+    }
+    dir.create(projectPath)
+    # Create the folder structure:
+    inputFolder <- "input"
+    outputFolder <- "output"
+    baselineFolder <- file.path(outputFolder, "baseline")
+    rFolder <- file.path(outputFolder, "r")
+    folders <-  c(
+        proecss = "proecss", 
+        acoustic = file.path(inputFolder, "acoustic"), 
+        biotic   = file.path(inputFolder, "biotic"), 
+        landing  = file.path(inputFolder, "landing"), 
+        r = file.path(rFolder, "data"),
+        rRrport = file.path(rFolder, "report"),
+        baseline = file.path(baselineFolder, "data"),
+        baselineReport = file.path(baselineFolder, "report")
+    )
+    lapply(folders, dir.create, showWarnings = FALSE, recursive = TRUE)
+    
+    # Write the projectXML
+    
+    
+}
+
+
+
+
+
+createEmptyProjectXMLList <- function() {
+    projectXMLList <- list(
+        model = list(), 
+        model = list(), 
+        model = list(), 
+        model = list(), 
+        processdata = list(
+            bioticassignment = list("\n    "), 
+            suassignment = list("\n    "), 
+            assignmentresolution = list("\n    "), 
+            edsupsu = list("\n    "), 
+            psustratum = list("\n    "), 
+            stratumpolygon = list("\n    "), 
+            temporal = list("\n    "), 
+            gearfactor = list("\n    "), 
+            spatial = list("\n    "), 
+            platformfactor = list("\n    "), 
+            covparam = list("\n    "), 
+            ageerror = list("\n    "), 
+            stratumneighbour = list("\n    ")
+        )
+    )
+    
+    attr(projectXMLList, "template") <- ""
+    attr(projectXMLList, "rstoxversion") <- ""
+    attr(projectXMLList, "lastmodified") <- format(Sys.time(), "%Y/%m/%d %H:%M")
+    attr(projectXMLList, "rversion") <- as.character(getRversion())
+    attr(projectXMLList, "stoxversion") <- ""
+    attr(projectXMLList, "resourceversion") <- ""
+    attr(projectXMLList, "xmlns") <- "http://www.imr.no/formats/stox/v1"
+    
+    return(projectXMLList)
+}
+
+
+createProcessList <- function(
+    processName = "", 
+    functionName = "", 
+    enabled = "true",  
+    respondingui = "false",  
+    breakingui = "false", 
+    fileoutput = "false", 
+    output = ""
+) {
+    # Define the process:
+    processList <- list(
+        "function" = list(functionName), 
+        enabled = list(enabled),
+        respondingui = list(respondingui),
+        breakingui = list(breakingui),
+        enabled = list(enabled),
+        fileoutput = list(fileoutput),
+        output = list(output)
+    )
+    # Add process name:
+    attr(processList, "name") <- processName
+    
+    return(processList)
+}
+
+#' Add a parameter of a process of a list representation of a project.xml file from StoX <= 2.7.
+#' 
+#' @inheritParams general_arguments2.7
+#' 
+addProcess_ProjectXMLList <- function(
+    projectXMLList, 
+    modelName, 
+    processName, 
+    parameterName, 
+    parameterValue, 
+    functionName = NULL
+) {
+    # Find the parameter of the process of the model:
+    at <- findModelProcessParameter_ProjectXMLList(
+        projectXMLList = projectXMLList, 
+        modelName = modelName, 
+        processName = processName, 
+        parameterName = parameterName, 
+        functionName = functionName
+    )
+    
+    # Add:
+    toAdd <-  list(parameter = parameterValue)
+    attr(toAdd, "name") <- parameterName
+    
+    
+    projectXMLList[[at$atModel]][[at$atProcess]] <- c(
+        projectXMLList[[at$atModel]][[at$atProcess]], 
+        toAdd
+    )
+    
+    return(projectXMLList)
+}
+
+
+#namesList2AttributedList <- function(x) {
+#    if(is.list(x))  {
+#        x <- lapply(x, namesList2AttributedList)
+#        namesx <- names(x)
+#        x <- lapply(namesx, function(name) {
+#            attr(x[[name]], name) <- name;
+#            return(x[[name]])
+#            })
+#        x <-  unname(x)
+#        
+#        return(x)
+#    }
+#    else{
+#        return(x)
+#    }
+#}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 readStox2.7ProcessDataTable <- function(projectXMLFilePath, processDataName, oldName = NULL, newName = NULL, drop = FALSE) {
@@ -1164,6 +1570,10 @@ readBioticAssignmentFrom2.7 <- function(projectXMLFilePath) {
     # Add stratum:
     BioticAssignment <- merge(BioticAssignment2.7$bioticassignment, BioticAssignment2.7$suassignment, by = "AssignmentID", allow.cartesian = TRUE)
     BioticAssignment <- merge(BioticAssignment, BioticAssignment2.7$psustratum, by = "PSU", allow.cartesian = TRUE)
+    
+    # Make sure WeightingFactor is numeric:
+    BioticAssignment[, WeightingFactor := as.numeric(WeightingFactor)]
+    
     
     return(BioticAssignment)
 }
