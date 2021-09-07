@@ -1532,8 +1532,9 @@ BioticAssignmentWeighting <- function(
         )
     }
     else if(WeightingMethod == "InverseSumWeightedCount") {
+        # This was a mistake, as InverseSumWeightedCount is used in SplitNASC-projects, where several species should be supported:
         # Allow only one species in StoX 3.1.0: 
-        checkOneSpeciesInStoxBioticData(LengthDistributionData, WeightingMethod = "NumberOfLengthSamples")
+        #checkOneSpeciesInLengthDistributionData(LengthDistributionData, WeightingMethod = "NumberOfLengthSamples")
         
         BioticAssignmentCopy <- addSumWeightedCount(
             BioticAssignment = BioticAssignmentCopy, 
