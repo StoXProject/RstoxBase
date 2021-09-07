@@ -394,7 +394,7 @@ SweptAreaDensity <- function(
     SweepWidthMethod <- match.arg(SweepWidthMethod)
     #DensityMethod    <- match.arg(DensityMethod)
     
-    DensityMethod == "LengthDependent"
+    DensityMethod <- "LengthDependent"
     
     
     if(DensityMethod == "LengthDependent") {
