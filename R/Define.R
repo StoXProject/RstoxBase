@@ -1533,7 +1533,7 @@ BioticAssignmentWeighting <- function(
     }
     else if(WeightingMethod == "InverseSumWeightedCount") {
         # Allow only one species in StoX 3.1.0: 
-        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NumberOfLengthSamples")
+        checkOneSpeciesInStoxBioticData(LengthDistributionData, WeightingMethod = "NumberOfLengthSamples")
         
         BioticAssignmentCopy <- addSumWeightedCount(
             BioticAssignment = BioticAssignmentCopy, 
