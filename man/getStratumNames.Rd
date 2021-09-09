@@ -8,6 +8,8 @@ getStratumNames(stratum, StratumNameLabel = c("StratumName", "polygonName"))
 }
 \arguments{
 \item{stratum}{A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.}
+
+\item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
 }
 \description{
 The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.

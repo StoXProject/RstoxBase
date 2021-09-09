@@ -88,11 +88,11 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' This function reads a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} or a \code{\link{StoX_multipolygon_WKT}} file and returns an object of StoX data type \code{\link{StratumPolygon}} file.
 #' 
 #' @inheritParams general_arguments
+#' @inheritParams getStratumNames
 #' @param DefinitionMethod A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.
 #' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} (may be a folder) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.
-#' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile.
 #' @param SimplifyStratumPolygon Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://geocompr.robinlovelace.net/geometric-operations.html#simplification}{Geocomputation with R}).
-#' @param SimplificationFactor A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left unsimplified, and will contribute to a larger final object size than the desired object size.
+#' @param SimplificationFactor A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size.
 #' 
 #' @details
 #' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
@@ -139,10 +139,14 @@ DefineStratumPolygon <- function(
             FileExt <- utils::tail(fileParts, 1)
         }
         
+        fileType <- NULL
         if(tolower(FileExt) %in% c("wkt", "txt")) {
+            fileType <- "wkt"
             StratumPolygon <- stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
         }
-        else if(tolower(FileExt) == "shp") {
+        # If the FileName is a shapefile, or a directory with a shapefile:
+        else if(tolower(FileExt) == "shp" || (isTRUE(file.info(FileName)$isdir) && any(tools::file_ext(list.files(FileName)) == "shp"))) {
+            fileType <- "shape"
             # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
             #StratumPolygon <- rgdal::readOGR(FileName, verbose = FALSE)
             
@@ -150,6 +154,7 @@ DefineStratumPolygon <- function(
             StratumPolygon <- sf::as_Spatial(sf::read_sf(FileName))
         }
         else if(tolower(FileExt) %in% c("json", "geojson")) {
+            fileType <- "GeoJSON"
             # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
             #if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
             #    stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change fi#le format.")
@@ -171,6 +176,7 @@ DefineStratumPolygon <- function(
             StratumPolygon <- readGeoJSON(FileName)
         }
         else if(tolower(FileExt) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+            fileType <- "project.xml"
             # Read the StratumPolygon from the project.xml file:
             StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = TRUE)
             
@@ -184,7 +190,7 @@ DefineStratumPolygon <- function(
         # Add an attribute named StratumName:
         StratumPolygon$StratumName <- getStratumNames(
             StratumPolygon, 
-            StratumNameLabel = StratumNameLabel
+            StratumNameLabel = if(fileType == "wkt") "StratumName" else StratumNameLabel
         )
         
         # Assume the default projection:
@@ -221,8 +227,8 @@ simplifyStratumPolygon <- function(
     sfStratumPolygon <- sf::st_as_sf(StratumPolygon)
     
     
-    # Iterate to find the object size SimplificationFactor as a fraction of the original object.size:
-    originalSize <- object.size(sfStratumPolygon)
+    # Iterate to find the object size SimplificationFactor as a fraction of the original utils::object.size:
+    originalSize <- utils::object.size(sfStratumPolygon)
     size <- originalSize
     desiredSize <- originalSize * SimplificationFactor
     margin <- 0.001 * originalSize
@@ -257,7 +263,7 @@ simplifyStratumPolygon <- function(
         ))
         
         # Update size and check if we should go down or up in tolerance:
-        size <- object.size(sfStratumPolygon_temp)
+        size <- utils::object.size(sfStratumPolygon_temp)
         down <- size < desiredSize
         sizeInPercentOfOriginal <- signif(100  *  as.numeric(size) / as.numeric(originalSize), digits = 2)
         
@@ -284,15 +290,15 @@ simplifyStratumPolygon <- function(
     )
     
     # Issue a warning iff any strata are smaller than 1 square meter:
-    empty <- area < units::set_units(1,  m^2)
+    empty <- area < units::set_units(1,  "m^2")
     if(any(empty)) {
-        warning("The following strata was empty after simplification (less than 1 square meter), and were replaced by the original strata: \n", paste0(capture.output(StratumAreaTable[empty]), collapse = "\n"))
+        warning("The following strata was empty after simplification (less than 1 square meter), and were replaced by the original strata: \n", paste0(utils::capture.output(StratumAreaTable[empty]), collapse = "\n"))
     }
     
     # Replace empty strata by the original:
     sfStratumPolygon_temp$geometry[empty] <- sfStratumPolygon$geometry[empty]
     
-    StratumPolygon <- as(sfStratumPolygon_temp, "Spatial")
+    StratumPolygon <- methods::as(sfStratumPolygon_temp, "Spatial")
 
     
     message("Used ", iteration, " iterations to obtain desired object size  (SimplificationFactor = ", SimplificationFactor, " of the original size).")
@@ -323,6 +329,7 @@ readGeoJSON <- function(FileName) {
 #'  The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' 
 #' @param stratum A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
+#' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile.
 #' 
 #' @export
 #' 

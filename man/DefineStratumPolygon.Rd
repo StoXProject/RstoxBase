@@ -27,7 +27,7 @@ DefineStratumPolygon(
 
 \item{SimplifyStratumPolygon}{Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://geocompr.robinlovelace.net/geometric-operations.html#simplification}{Geocomputation with R}).}
 
-\item{SimplificationFactor}{A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left unsimplified, and will contribute to a larger final object size than the desired object size.}
+\item{SimplificationFactor}{A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size.}
 }
 \value{
 An object of StoX data type \code{\link{StratumPolygon}}.
