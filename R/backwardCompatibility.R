@@ -46,6 +46,13 @@ backwardCompatibility <- list(
             modelName = "baseline", 
             parameterName = "ImputeByEqual", 
             parameterValue = c("SpeciesCategory", "IndividualTotalLength")
+        ), 
+        list(
+            changeVersion = "1.4.7", 
+            functionName = "DefineStratumPolygon", 
+            modelName = "baseline", 
+            parameterName = "StratumNameLabel", 
+            parameterValue = "polygonName"
         )
     ),  
     

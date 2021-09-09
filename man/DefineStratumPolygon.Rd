@@ -8,7 +8,10 @@ DefineStratumPolygon(
   processData,
   UseProcessData = FALSE,
   DefinitionMethod = c("ResourceFile", "Manual"),
-  FileName = character()
+  FileName = character(),
+  StratumNameLabel = character(),
+  SimplifyStratumPolygon = FALSE,
+  SimplificationFactor = 1
 )
 }
 \arguments{
@@ -19,6 +22,12 @@ DefineStratumPolygon(
 \item{DefinitionMethod}{A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.}
 
 \item{FileName}{The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} (may be a folder) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.}
+
+\item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
+
+\item{SimplifyStratumPolygon}{Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://geocompr.robinlovelace.net/geometric-operations.html#simplification}{Geocomputation with R}).}
+
+\item{SimplificationFactor}{A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left unsimplified, and will contribute to a larger final object size than the desired object size.}
 }
 \value{
 An object of StoX data type \code{\link{StratumPolygon}}.

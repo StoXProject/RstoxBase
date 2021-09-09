@@ -70,6 +70,19 @@ stoxFunctionAttributes <- list(
             FileName = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "ResourceFile"
+            ), 
+            StratumNameLabel = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
+            ), 
+            SimplifyStratumPolygon = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
+            ), 
+            SimplificationFactor = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile", 
+                SimplifyStratumPolygon = TRUE
             )
         )
     ), 
