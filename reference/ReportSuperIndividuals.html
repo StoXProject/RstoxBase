@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.7</span>
       </span>
     </div>
 
@@ -148,11 +148,11 @@
     </tr>
     <tr>
       <th>GroupingVariables</th>
-      <td><p>The variables to report by, e.g. "Stratum" or "SpeciesCategory". Can be given as a comma separated list of variables (with no spaces).</p></td>
+      <td><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.</p></td>
     </tr>
     <tr>
       <th>RemoveMissingValues</th>
-      <td><p>Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA.</p></td>
+      <td><p>Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA. Use <code>RemoveMissingValues</code> = TRUE with extreme caution, as it may lead to under-estimation. E.g., if <code>RemoveMissingValues</code> = TRUE and a super-individual lacks <code>IndividualRoundWeight</code>, <code>Biomass</code> will be NA, and the portion of <code>Abundance</code> distributed to that super-individual will be excluded when summing <code>Biomass</code> (but included when summing <code>Abundance</code>). It is advised to always run with <code>RemoveMissingValues</code> = FALSE first, and make a thorough investigation to identify the source of any missing values. The function <code>link{ImputeSuperIndividuals}</code> can be used to impute the missing information from other super-individuals.</p></td>
     </tr>
     <tr>
       <th>WeightingVariable</th>
