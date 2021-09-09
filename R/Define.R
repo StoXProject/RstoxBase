@@ -281,44 +281,57 @@ getStratumOfPSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
     # Get unique PSUs:
     allPSUs <- unique(SSU_PSU$PSU)
     allPSUs <- allPSUs[!is.na(allPSUs)]
+    
     # Get the strata:
-    Stratum_PSU <- data.table::rbindlist(
-        lapply(
-            X = allPSUs, 
-            FUN = getStratumOfPSU, 
-            SSU_PSU = SSU_PSU, 
-            MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-            StratumPolygon = StratumPolygon, 
-            SSULabel = SSULabel, 
-            StationLevel = StationLevel
-        )
-    )
+    # This was extremely slow. Not sure why this loop over SSUs was chosen.
+    #Stratum_PSU <- data.table::rbindlist(
+    #    lapply(
+    #        X = allPSUs, 
+    #        FUN = getStratumOfPSU, 
+    #        SSU_PSU = SSU_PSU, 
+    #        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+    #        StratumPolygon = StratumPolygon, 
+    #        SSULabel = SSULabel, 
+    #        StationLevel = StationLevel
+    #    )
+    #)
     
-    return(Stratum_PSU)
-}
-getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
-    
-    # Get the MergedStoxDataStationLevel of the specified PSU:
-    SSUs <- SSU_PSU[PSU == thisPSU, SSU]
-    pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSUs, c("Longitude", "Latitude")]
+    # Get the SSU positions and convert to spatialpoints:
+    pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSU_PSU$SSU, c("Longitude", "Latitude")]
     SpatialPSUs <- sp::SpatialPoints(pos)
-    # Det the default projection to the points:
+    # Project and find in the StratumPolygonStratumPolygon:
     sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
-    
-    # Find the stratum of each PSU:
-    StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
-    # Select the most frequent:
-    MostFrequentStratumName <- names(which.max(table(StratumNames)))
-    
-    # Create the Stratum_PSU data.table:
+    StratumNames <- sp::over(SpatialPSUs, StratumPolygon)$StratumName
     Stratum_PSU <- data.table::data.table(
-        #Stratum = NonEmptyStrata, 
-        Stratum = if(length(MostFrequentStratumName)) MostFrequentStratumName else NA, 
-        PSU = thisPSU
+        Stratum = unlist(StratumNames), 
+        PSU = SSU_PSU$PSU
     )
-    
+
     return(Stratum_PSU)
 }
+#getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
+#    
+#    # Get the MergedStoxDataStationLevel of the specified PSU:
+#    SSUs <- SSU_PSU[PSU == thisPSU, SSU]
+#    pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSUs, c("Longitude", "Latitude")]
+#    SpatialPSUs <- sp::SpatialPoints(pos)
+#    # Det the default projection to the points:
+#    sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
+#    
+#    # Find the stratum of each PSU:
+#    StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
+#    # Select the most frequent:
+#    MostFrequentStratumName <- names(which.max(table(StratumNames)))
+#    
+#    # Create the Stratum_PSU data.table:
+#    Stratum_PSU <- data.table::data.table(
+#        #Stratum = NonEmptyStrata, 
+#        Stratum = if(length(MostFrequentStratumName)) MostFrequentStratumName else NA, 
+#        PSU = thisPSU
+#    )
+#    
+#    return(Stratum_PSU)
+#}
 
 # Function to remove PSUs with missing Stratum:
 removePSUsWithMissingStratum <- function(PSUProcessData) {
@@ -1018,12 +1031,14 @@ DefineBioticAssignment <- function(
         }
     }
     else if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
+        
         # Create a spatial points object of the positions of the hauls:
         SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
         sp::proj4string(SpatialHauls) <- getRstoxBaseDefinitions("proj4string")
         
         # Get the stratum for each haul:
-        locatedStratum <- unname(unlist(sp::over(SpatialHauls, StratumPolygon)))
+        #locatedStratum <- unname(unlist(sp::over(SpatialHauls, StratumPolygon)))
+        locatedStratum <- sp::over(SpatialHauls, StratumPolygon)$StratumName
         BioticAssignment <- MergeStoxBioticData
         BioticAssignment[, Stratum := ..locatedStratum]
         
