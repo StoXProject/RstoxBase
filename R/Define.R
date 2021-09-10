@@ -301,7 +301,9 @@ getStratumOfPSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
     SpatialPSUs <- sp::SpatialPoints(pos)
     # Project and find in the StratumPolygonStratumPolygon:
     sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
-    StratumNames <- sp::over(SpatialPSUs, StratumPolygon)$StratumName
+    
+    # Changed on 2021-09-10 to use getStratumNames():
+    StratumNames <- getStratumNames(sp::over(SpatialPSUs, StratumPolygon), check.unique = FALSE)
     Stratum_PSU <- data.table::data.table(
         Stratum = unlist(StratumNames), 
         PSU = SSU_PSU$PSU
