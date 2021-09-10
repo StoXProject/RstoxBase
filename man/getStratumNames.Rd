@@ -4,7 +4,11 @@
 \alias{getStratumNames}
 \title{Extract stratum names from a SpatialPolygonsDataFrame}
 \usage{
-getStratumNames(stratum, StratumNameLabel = c("StratumName", "polygonName"))
+getStratumNames(
+  stratum,
+  StratumNameLabel = c("StratumName", "polygonName"),
+  check.unique = TRUE
+)
 }
 \arguments{
 \item{stratum}{A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.}

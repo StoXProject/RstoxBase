@@ -187,12 +187,6 @@ DefineStratumPolygon <- function(
             stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
         }
         
-        # Add an attribute named StratumName:
-        StratumPolygon$StratumName <- getStratumNames(
-            StratumPolygon, 
-            StratumNameLabel = if(fileType == "wkt") "StratumName" else StratumNameLabel
-        )
-        
         # Assume the default projection:
         suppressWarnings(sp::proj4string(StratumPolygon) <- RstoxBase::getRstoxBaseDefinitions("proj4string"))
     }
@@ -202,6 +196,12 @@ DefineStratumPolygon <- function(
     else {
         stop("Inavlid DefinitionMethod")
     }
+    
+    # Add an attribute named StratumName:
+    StratumPolygon$StratumName <- getStratumNames(
+        StratumPolygon, 
+        StratumNameLabel = if(fileType == "wkt") "StratumName" else StratumNameLabel
+    )
     
     if(isTRUE(SimplifyStratumPolygon)) {
         StratumPolygon <- simplifyStratumPolygon(
@@ -333,8 +333,8 @@ readGeoJSON <- function(FileName) {
 #' 
 #' @export
 #' 
-getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName")) {
-    if("SpatialPolygonsDataFrame" %in% class(stratum)) {
+getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE) {
+    if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
         
         # Look for the strings given by StratumNameLabel in the names of the SpatialPolygonsDataFrame stratum:
         StratumNameLabel <- intersect(StratumNameLabel, names(stratum))
@@ -349,7 +349,7 @@ getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
         stratumNames <- as.character(stratum[[StratumNameLabel]])
         
         # Test uniqueness:
-        if(!identical(stratumNames, unique(stratumNames))) {
+        if(check.unique  && !identical(stratumNames, unique(stratumNames))) {
             stop("Stratum names must be unique.")
         }
         
@@ -604,7 +604,7 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
     
     
     output <- data.table::data.table(
-        Stratum = stratumPolygon$StratumName,
+        Stratum = getStratumNames(stratumPolygon),
         Area = area
     )
     return(output)
