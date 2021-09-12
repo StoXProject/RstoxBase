@@ -568,6 +568,16 @@ stoxFunctionAttributes <- list(
         )
     ),
     
+    SplitNASC = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "NASCData", 
+        functionParameterFormat = list(
+            SpeciesLink = "speciesLinkTable",
+            AcousticCategoryLink = "acousticCategoryLinkTable"
+        )
+    ),
+    
     NASCToStoxAcoustic = list(
         functionType = "modelData", 
         functionCategory = "baseline", 

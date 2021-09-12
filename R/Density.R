@@ -320,14 +320,15 @@ getTargetStrength <- function(Data, TargetStrengthMethod) {
     }
     else if(grepl("LengthAndDepthDependent", TargetStrengthMethod, ignore.case = TRUE)) {
         # Add the the depth:
-        verticalLayerDimension <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "verticalLayerDimension", unlist = TRUE)
-        Data[, midDepth := rowMeans(.SD), .SDcols = verticalLayerDimension]
+        verticalLayerDimension <- getDataTypeDefinition(dataType = "MeanNASCData", elements = "verticalLayerDimension", unlist = TRUE)
+        Data[, Depth := rowMeans(.SD), .SDcols = verticalLayerDimension]
         
         # Apply the LengthAndDepthDependent equation: 
         Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthAndDepthDependent")(
             midIndividualTotalLength, 
             TargetStrength0 = TargetStrength0, 
             LengthExponent = LengthExponent, 
+            DepthExponent = DepthExponent, 
             Depth = Depth
         )]
     }
