@@ -547,7 +547,7 @@ initiateRstoxBase <- function(){
             LengthExponent * log10(midIndividualTotalLength)
     }
     # 2. TS = TS0 + M log10(Lcm) + D log10(1 + D/10) # Ona 2003:
-    TargetStrengthFunction_LengthAndDepthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, Depth) {
+    TargetStrengthFunction_LengthAndDepthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, DepthExponent, Depth) {
         TargetStrength0 + 
             LengthExponent * log10(midIndividualTotalLength) + 
             DepthExponent * log10(1 + Depth/10)

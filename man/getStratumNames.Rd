@@ -14,6 +14,8 @@ getStratumNames(
 \item{stratum}{A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.}
 
 \item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
+
+\item{check.unique}{Logical:: If TRUE, an error is given if stratum names are not unique.}
 }
 \description{
 The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
