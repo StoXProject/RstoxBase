@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Super-indivduals with abundance — SuperIndividuals • RstoxBase</title>
+<title>Split NASCData — SplitNASC • RstoxBase</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Super-indivduals with abundance — SuperIndividuals" />
-<meta property="og:description" content="This function distributes Abundance to the individuals defined by Individuals." />
+<meta property="og:title" content="Split NASCData — SplitNASC" />
+<meta property="og:description" content="This function splits NASCData of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories." />
 
 
 
@@ -113,46 +113,56 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Super-indivduals with abundance</h1>
-    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R'><code>R/Abundance.R</code></a></small>
-    <div class="hidden name"><code>SuperIndividuals.Rd</code></div>
+    <h1>Split NASCData</h1>
+    <small class="dont-index">Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/R/Acoustic.R'><code>R/Acoustic.R</code></a></small>
+    <div class="hidden name"><code>SplitNASC.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function distributes Abundance to the individuals defined by <code><a href='Individuals.html'>Individuals</a></code>.</p>
+    <p>This function splits NASCData of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>SuperIndividuals</span><span class='op'>(</span>
-  <span class='va'>IndividualsData</span>,
-  <span class='va'>AbundanceData</span>,
-  DistributionMethod <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Equal"</span>, <span class='st'>"HaulDensity"</span><span class='op'>)</span>,
-  <span class='va'>LengthDistributionData</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>SplitNASC</span><span class='op'>(</span>
+  <span class='va'>NASCData</span>,
+  <span class='va'>AcousticPSU</span>,
+  <span class='va'>AssignmentLengthDistributionData</span>,
+  <span class='va'>AcousticTargetStrength</span>,
+  <span class='va'>SpeciesLink</span>,
+  <span class='va'>AcousticCategoryLink</span>
 <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>IndividualsData</th>
-      <td><p>The <code><a href='IndividualsData.html'>IndividualsData</a></code> data.</p></td>
+      <th>NASCData</th>
+      <td><p>The <code><a href='NASCData.html'>NASCData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>AbundanceData</th>
-      <td><p>The <code><a href='AbundanceData.html'>AbundanceData</a></code> data.</p></td>
+      <th>AcousticPSU</th>
+      <td><p>The <code><a href='AcousticPSU.html'>AcousticPSU</a></code> process data.</p></td>
     </tr>
     <tr>
-      <th>DistributionMethod</th>
-      <td><p>The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For <code>DistributionMethod</code> = "HaulDensity" the <code>LengthDistributionData</code> must be given. It is recommended to use the same <code>LengthDistributionData</code> that was used to produce the <code><a href='AbundanceData.html'>AbundanceData</a></code> (via <code>link{DensityData}</code>).</p></td>
+      <th>AssignmentLengthDistributionData</th>
+      <td><p>The <code><a href='AssignmentLengthDistributionData.html'>AssignmentLengthDistributionData</a></code> data.</p></td>
     </tr>
     <tr>
-      <th>LengthDistributionData</th>
-      <td><p>The <code><a href='LengthDistributionData.html'>LengthDistributionData</a></code> data.</p></td>
+      <th>AcousticTargetStrength</th>
+      <td><p>The <code><a href='AcousticTargetStrength.html'>AcousticTargetStrength</a></code> process data.</p></td>
+    </tr>
+    <tr>
+      <th>SpeciesLink</th>
+      <td><p>A table of the two columns AcousticCategory and SpeciesCategory.</p></td>
+    </tr>
+    <tr>
+      <th>AcousticCategoryLink</th>
+      <td><p>A table linking the acoustic categories to split and those to split into.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>roxygenize</code> is used to generate the documentation.</p></div>
+    <div class='dont-index'><p>This functions uses similar methods as <code><a href='AcousticDensity.html'>AcousticDensity</a></code>. Convert back to <code>StoxAcousticData</code> with <code><a href='NASCToStoxAcoustic.html'>NASCToStoxAcoustic</a></code>.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

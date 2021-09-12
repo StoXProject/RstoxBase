@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.9</span>
       </span>
     </div>
 
@@ -157,11 +157,11 @@
     </tr>
     <tr>
       <th>SimplifyStratumPolygon</th>
-      <td><p>Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from <a href='https://geocompr.robinlovelace.net/geometric-operations.html#simplification'>Geocomputation with R</a>).</p></td>
+      <td><p>Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from <a href='https://geocompr.robinlovelace.net/geometric-operations.html#simplification'>Geocomputation with R</a>). This option is useful for very complex stratum polygon files to reduce time for opening, running and saving a project.</p></td>
     </tr>
     <tr>
       <th>SimplificationFactor</th>
-      <td><p>A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size.</p></td>
+      <td><p>A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size. Note that larger values require more  time than smaller values. It is advisable to start with a low value (e.g. 0.01) and check the resolution of the strata borders in the map, and gradually increase <code>SimplificationFactor</code> until an acceptable resolution is obtained. Note that simplification of stratum polygons can lead to inaccuracies such as gaps between strata, which can lead to hauls falling outside of any stratum, causing under-estimation of survey indices, or failure to complete the model in the case of SplitNASC models which require all hauls to be located in a stratum. If such problems occur, the strata can be modified manually after simplification to include all hauls. Another problem is the change in stratum areas, which is reported to the console when running the simplification. A very rough rule of thumb is that <code>SimplificationFactor</code> = 0.1 seems to be a compromise between increased speed and reduction of stratum border resolution.</p></td>
     </tr>
     </table>
 
