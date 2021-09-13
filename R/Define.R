@@ -716,9 +716,9 @@ DefineLayer <- function(
         Layer <- data.table::data.table(
             Layer = "WaterColumn", 
             #MinLayerDepth = possibleIntervals[1, 1], 
-            MinLayerDepth = 0,
+            MinLayerDepth = min(data[[VerticalResolutionMin]], na.rm = TRUE),
             #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
-            MaxLayerDepth = Inf
+            MaxLayerDepth = max(data[[VerticalResolutionMax]], na.rm = TRUE)
         )
     }
     
@@ -1040,7 +1040,8 @@ DefineBioticAssignment <- function(
         
         # Get the stratum for each haul:
         #locatedStratum <- unname(unlist(sp::over(SpatialHauls, StratumPolygon)))
-        locatedStratum <- sp::over(SpatialHauls, StratumPolygon)$StratumName
+        #locatedStratum <- sp::over(SpatialHauls, StratumPolygon)$StratumName
+        locatedStratum <- getStratumNames(sp::over(SpatialHauls, StratumPolygon), check.unique = FALSE)
         BioticAssignment <- MergeStoxBioticData
         BioticAssignment[, Stratum := ..locatedStratum]
         
