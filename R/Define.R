@@ -713,12 +713,25 @@ DefineLayer <- function(
     
     # If "WaterColumn" is requested use the full range:
     if(grepl("WaterColumn", DefinitionMethod, ignore.case = TRUE)) {
+        if(all(is.na(data[[VerticalResolutionMin]]))) {
+            MinLayerDepth <- 0
+        }
+        else {
+            MinLayerDepth <- min(data[[VerticalResolutionMin]], na.rm = TRUE)
+        }
+        if(all(is.na(data[[VerticalResolutionMax]]))) {
+            MaxLayerDepth <- Inf
+        }
+        else {
+            MaxLayerDepth <- max(data[[VerticalResolutionMax]], na.rm = TRUE)
+        }
+        
         Layer <- data.table::data.table(
             Layer = "WaterColumn", 
             #MinLayerDepth = possibleIntervals[1, 1], 
-            MinLayerDepth = min(data[[VerticalResolutionMin]], na.rm = TRUE),
+            MinLayerDepth = MinLayerDepth, 
             #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
-            MaxLayerDepth = max(data[[VerticalResolutionMax]], na.rm = TRUE)
+            MaxLayerDepth = MaxLayerDepth
         )
     }
     
