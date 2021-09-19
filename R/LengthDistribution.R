@@ -90,6 +90,13 @@ LengthDistribution <- function(
     ##### 1. Merge levels: #####
     ############################
     StoxBioticDataMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
+    
+    # Delete empty sub samples e.g. if all individuals are filtered out. In this case a row will exist in StoxBioticDataMerged for this sample, thus appearing as an individual although it is not:
+    # First count the individuals in sub samples:
+    StoxBioticDataMerged[ , numberOfSubSamples := length(unique(SampleKey)), by = "Haul"]
+    StoxBioticDataMerged[ , numberOfIndividuals := sum(!is.na(IndividualTotalLength)), by = "Sample"]
+    # Then subset to only sub samples with individuals, that is delete rows from samples with sub samples, and where there are no non-missing lengths:
+    StoxBioticDataMerged <- subset(StoxBioticDataMerged, !(numberOfSubSamples > 1 & numberOfIndividuals == 0))
     ############################
     
     ####################################################
