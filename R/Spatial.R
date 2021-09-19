@@ -139,14 +139,12 @@ DefineStratumPolygon <- function(
             FileExt <- utils::tail(fileParts, 1)
         }
         
-        fileType <- NULL
         if(tolower(FileExt) %in% c("wkt", "txt")) {
-            fileType <- "wkt"
+            StratumNameLabel <- "StratumName"
             StratumPolygon <- stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
         }
         # If the FileName is a shapefile, or a directory with a shapefile:
         else if(tolower(FileExt) == "shp" || (isTRUE(file.info(FileName)$isdir) && any(tools::file_ext(list.files(FileName)) == "shp"))) {
-            fileType <- "shape"
             # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
             #StratumPolygon <- rgdal::readOGR(FileName, verbose = FALSE)
             
@@ -154,7 +152,6 @@ DefineStratumPolygon <- function(
             StratumPolygon <- sf::as_Spatial(sf::read_sf(FileName))
         }
         else if(tolower(FileExt) %in% c("json", "geojson")) {
-            fileType <- "GeoJSON"
             # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
             #if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
             #    stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change fi#le format.")
@@ -176,7 +173,6 @@ DefineStratumPolygon <- function(
             StratumPolygon <- readGeoJSON(FileName)
         }
         else if(tolower(FileExt) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
-            fileType <- "project.xml"
             # Read the StratumPolygon from the project.xml file:
             StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = TRUE)
             
@@ -198,10 +194,12 @@ DefineStratumPolygon <- function(
     }
     
     # Add an attribute named StratumName:
-    StratumPolygon$StratumName <- getStratumNames(
-        StratumPolygon, 
-        StratumNameLabel = if(fileType == "wkt") "StratumName" else StratumNameLabel
-    )
+    if(NROW(StratumPolygon)) {
+        StratumPolygon$StratumName <- getStratumNames(
+            StratumPolygon, 
+            StratumNameLabel = StratumNameLabel
+        )
+    }
     
     if(isTRUE(SimplifyStratumPolygon)) {
         StratumPolygon <- simplifyStratumPolygon(
@@ -339,7 +337,13 @@ readGeoJSON <- function(FileName) {
 #' @export
 #' 
 getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE) {
+    
     if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
+        
+        # No names for empty polygons:
+        if(!length(stratum)) {
+            return(NA_character_)
+        }
         
         # Look for the strings given by StratumNameLabel in the names of the SpatialPolygonsDataFrame stratum:
         StratumNameLabel <- intersect(StratumNameLabel, names(stratum))
