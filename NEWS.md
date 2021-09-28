@@ -1,3 +1,12 @@
+# RstoxBase v1.4.13 (2021-09-28)
+* Added the function SplitNASC() intended to replaec SplitMeanNASC(). SplitNASC() uses NASCData and AcousticPSU as input and generates one PSU per EDSU for splitting the NASC based on BioticAssignment, and then returns a NASCData object. Consequently one can skip the MeanNASC() function in the model. Added method for simplifying stratum polygons in DefineStratumPolygon. Fixed bug when using depth TargetStrengthMethod = "LengthAndDepthDependent" .
+* Sped up DefineAcousticPSU with DefinitionMethod "EDSUToPSU" by removing loop over EDSUs. Fixed bug when reading shapefiles or GeoJSON, by introducing the parameter StratumNameLabel in DefineStratumPolygon(). Added the option of simplifying stratum polygons by the new parameters SimplifyStratumPolygon and SimplificationFactor.
+* Removed updating PSUByTime in DefineAcousticPSU() when UseProcessData = TRUE, as this destroys the information to be passed onto another process using DefineAcousticPSU() where the first process is used as input.
+* Fixed bug where LengthDistribution produced a line of NA in IndividualTotalLength for subsamples that were completely empty by the filter, thus resulting in a small percentage of the WeightedCount assigned to this NA length in the percent length distribution, and consequently reducinng the WeightedCount of the valid lengths.
+* Changed from [0, Inf] to [min, max] of channel depth when DefinitionMethod "WaterColumn" in DefineLayer(), and added [0, Inf] if [min, max] are NA in channel depth when DefinitionMethod "WaterColumn" in DefineLayer().
+* Fixed bugs related to stratum names (using getStratumNames() consistently).
+* Added shapefile and GeoJSON to the tests.
+
 # RstoxBase v1.4.4 (2021-08-18)
 * Added more informative error when more than one SpeciesCategory in BioticAssignmentWeighting().
 * Fixed bug in SuperIndividuals() where length measured individuals were counted over all beams, whereas per beam was correct. Added DefinitionMethod "ResourceFile" in DefineSurvey(), DefineAcousticPSU() and DefineBioticAssignment(), and support for a StoX 2.7 project.xml file in DefineStratumPolygon().*

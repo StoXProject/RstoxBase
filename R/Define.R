@@ -112,14 +112,14 @@ DefinePSU <- function(
         # Rename back from "SSU" to "EDSU"/"Station": 
         processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
         
-        # Add the PSUByTime:
-        if(SavePSUByTime) {
-            processData$PSUByTime <- getPSUByTime(
-                PSUProcessData = processData, 
-                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-                PSUType = PSUType
-            )
-        }
+        ## Add the PSUByTime:
+        #if(SavePSUByTime) {
+        #    processData$PSUByTime <- getPSUByTime(
+        #        PSUProcessData = processData, 
+        #        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+        #        PSUType = PSUType
+        #    )
+        #}
         return(processData)
     }
     
