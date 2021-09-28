@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.4.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.13</span>
       </span>
     </div>
 
@@ -116,6 +116,17 @@
       <small>Source: <a href='https://github.com/StoXProject/RstoxBase/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="rstoxbase-v1413-2021-09-28" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.13">
+<a href="#rstoxbase-v1413-2021-09-28" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.13 (2021-09-28)</h1>
+<ul><li>Added the function SplitNASC() intended to replaec SplitMeanNASC(). SplitNASC() uses NASCData and AcousticPSU as input and generates one PSU per EDSU for splitting the NASC based on BioticAssignment, and then returns a NASCData object. Consequently one can skip the MeanNASC() function in the model. Added method for simplifying stratum polygons in DefineStratumPolygon. Fixed bug when using depth TargetStrengthMethod = “LengthAndDepthDependent” .</li>
+<li>Sped up DefineAcousticPSU with DefinitionMethod “EDSUToPSU” by removing loop over EDSUs. Fixed bug when reading shapefiles or GeoJSON, by introducing the parameter StratumNameLabel in DefineStratumPolygon(). Added the option of simplifying stratum polygons by the new parameters SimplifyStratumPolygon and SimplificationFactor.</li>
+<li>Removed updating PSUByTime in DefineAcousticPSU() when UseProcessData = TRUE, as this destroys the information to be passed onto another process using DefineAcousticPSU() where the first process is used as input.</li>
+<li>Fixed bug where LengthDistribution produced a line of NA in IndividualTotalLength for subsamples that were completely empty by the filter, thus resulting in a small percentage of the WeightedCount assigned to this NA length in the percent length distribution, and consequently reducinng the WeightedCount of the valid lengths.</li>
+<li>Changed from [0, Inf] to [min, max] of channel depth when DefinitionMethod “WaterColumn” in DefineLayer(), and added [0, Inf] if [min, max] are NA in channel depth when DefinitionMethod “WaterColumn” in DefineLayer().</li>
+<li>Fixed bugs related to stratum names (using getStratumNames() consistently).</li>
+<li>Added shapefile and GeoJSON to the tests.</li>
+</ul></div>
     <div id="rstoxbase-v144-2021-08-18" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.4">
 <a href="#rstoxbase-v144-2021-08-18" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.4 (2021-08-18)</h1>
