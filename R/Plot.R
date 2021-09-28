@@ -28,8 +28,8 @@ PlotNASC <- function(
     NASCData, 
     ColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
     Zoom = 1, 
-    MinimumSize = 0, 
-    MaximumSize = 10, 
+    MinSize = 0, 
+    MaxSize = 10, 
     TrackOnTop = FALSE
 ) {
     
@@ -42,7 +42,7 @@ PlotNASC <- function(
         x = NASCData, 
         lon = "Longitude", lat = "Latitude", 
         type = if(TrackOnTop) "pl" else "lp", 
-        size = "NASC", size.track = 1, size.range = c(MinimumSize, MaximumSize), 
+        size = "NASC", size.track = 1, size.range = c(MinSize, MaxSize), 
         color = "NASC", color.track = 1, 
         color.scale = do.call(ColorScale, list(ncolors)), 
         shape = 19, 
@@ -82,8 +82,8 @@ PlotSumNASC <- function(
     SumNASCData, 
     ColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
     Zoom = 1, 
-    MinimumSize = 0, 
-    MaximumSize = 10, 
+    MinSize = 0, 
+    MaxSize = 10, 
     TrackOnTop = FALSE
 ) {
     
@@ -96,7 +96,7 @@ PlotSumNASC <- function(
         x = SumNASCData$Data, 
         lon = "Longitude", lat = "Latitude", 
         type = if(TrackOnTop) "pl" else "lp", 
-        size = "NASC", size.track = 1, size.range = c(MinimumSize, MaximumSize), 
+        size = "NASC", size.track = 1, size.range = c(MinSize, MaxSize), 
         color = "NASC", color.track = 1, 
         color.scale = do.call(ColorScale, list(ncolors)), 
         shape = 19, 

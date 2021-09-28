@@ -33,8 +33,9 @@ utils::globalVariables(c(
 	 "aggregationVariables", "assignmentID", "assignmentPasted", "backscatteringCrossSection",
 	 "crossSection", "distance", "functionName", "haulWeightFactor", "imputeSeed", "includeintotal",
 	 "individualCount", "individualWeightFactor", "inside", "intervalIndex", "midDepth",
-	 "midIndividualTotalLength", "minDistance", "multiple", "packageName", "projectXMLFilePath",
-	 "raisingFactor", "representativeBackscatteringCrossSection",
+	 "midIndividualTotalLength", "minDistance", "multiple", "numberOfIndividuals",
+	 "numberOfSubSamples", "packageName", "projectXMLFilePath", "raisingFactor",
+	 "representativeBackscatteringCrossSection",
 	 "representativeBackscatteringCrossSectionNormalized", "sd", "stratumPolygonFilePath",
 	 "sumIndividualWeightFactor", "sumWeightedCount", "weighted", "weightingParameter", "x", "y"))
 
