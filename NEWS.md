@@ -1,3 +1,8 @@
+# RstoxData v1.3.0 (2021-10-08)
+
+* Fixed bug in SplitNASC().
+* Final version for the release of StoX 3.2.0.
+
 # RstoxBase v1.4.13 (2021-09-28)
 * Added the function SplitNASC() intended to replaec SplitMeanNASC(). SplitNASC() uses NASCData and AcousticPSU as input and generates one PSU per EDSU for splitting the NASC based on BioticAssignment, and then returns a NASCData object. Consequently one can skip the MeanNASC() function in the model. Added method for simplifying stratum polygons in DefineStratumPolygon. Fixed bug when using depth TargetStrengthMethod = "LengthAndDepthDependent" .
 * Sped up DefineAcousticPSU with DefinitionMethod "EDSUToPSU" by removing loop over EDSUs. Fixed bug when reading shapefiles or GeoJSON, by introducing the parameter StratumNameLabel in DefineStratumPolygon(). Added the option of simplifying stratum polygons by the new parameters SimplifyStratumPolygon and SimplificationFactor.
