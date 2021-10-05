@@ -2,7 +2,7 @@
 % Please edit documentation in R/Acoustic.R
 \name{SplitMeanNASC}
 \alias{SplitMeanNASC}
-\title{Split MeanNASCData to NASCData}
+\title{Split MeanNASCData to NASCData (deprecated)}
 \usage{
 SplitMeanNASC(
   MeanNASCData,
