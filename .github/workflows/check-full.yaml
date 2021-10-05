@@ -102,6 +102,10 @@ jobs:
           remotes::install_cran("git2r")
           remotes::install_cran("drat")
         shell: Rscript {0}
+        
+        if: runner.os == 'Windows'
+          withr::with_makevars(list(CXX11STD = "-std=c++11"), install.packages("s2"))
+        shell: Rscript {0}
 
       - name: Session info
         run: |
