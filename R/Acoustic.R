@@ -336,7 +336,10 @@ SplitNASC <- function(
     
     # Fake a MeanNASCData table:
     data.table::setnames(NASCData, c("MinChannelDepth", "MaxChannelDepth"), c("MinLayerDepth", "MaxLayerDepth"))
+    # Specifically, add PSUs:
     NASCData <- merge(NASCData, AcousticPSU$EDSU_PSU)
+    # ... and fake Layers by simply copying Channel to Layer:
+    NASCData[, Layer := Channel]
     
     # Find the mix categories in the NASCData.
     allAcousticCategory <- unique(NASCData$AcousticCategory)
@@ -373,10 +376,14 @@ SplitNASC <- function(
     # Define the resolution on which to distribute the NASC:
     resolution <- setdiff(
         getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
-        c("Stratum" , # Stratum is not need as there is one PSU per EDSU (Stratum would not provide any finer grouping than PSU)., 
-        "Layer") # Same goes with Layer, as the NASCData has channel resolution.
+        "Stratum" # Stratum is not need as there is one PSU per EDSU (Stratum would not provide any finer grouping than PSU)
     )
-    # Split the NASC by the AssignmentLengthDistributionData:
+    # Split the NASC by the AssignmentLengthDistributionData, but first remove the column Layer from AssignmentLengthDistributionData so that the fake layers which are copied from channels are not matched with the Layer from the assignment, which we   require to be WaterColumn in the current version:
+    if(!all(AssignmentLengthDistributionData$Layer == "WaterColumn")) {
+        stop("All Layer in AssignmentLengthDistributionData must be \"WaterColumn\". This can be set in the function DefineBioticAssignment.")
+    }
+    AssignmentLengthDistributionData[, Layer := NULL]
+    
     NASCDataSplit <- DistributeNASC(
         NASCData = NASCDataToSplit, 
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
