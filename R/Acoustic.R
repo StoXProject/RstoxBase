@@ -202,7 +202,7 @@ MeanNASC <- function(
 }
 
 ##################################################
-#' Split MeanNASCData to NASCData
+#' Split MeanNASCData to NASCData (deprecated)
 #' 
 #' This function splits NASCData of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.
 #' 
