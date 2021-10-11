@@ -1,4 +1,10 @@
-# RstoxData v1.3.0 (2021-10-08)
+# RstoxData v1.4.16 (2021-10-11)
+
+* Changed ImputeSuperIndividuals() to not add rows from EDSUs with no assigned biotic hauls. In the previous version, rows were added with NA in all variables except those from the EDSU (frequency, etc.) if e.g. assignment method "Stratum" was used, and no hauls existed in a stratum with EDSUs.
+* Changed aggregateBaselineDataOneTable() so that when used to produce reports using RstoxFramework::BootstraReport() NAs are not change to 0 except for NAs introduced between bootstrap runs (e.g., ages missing in some runs due to resampling of hauls).
+* Fixed bug in the parameter formats of ImputeSuperIndividuals() when using SuperIndividualsData from another process using ImputeSuperIndividuals().
+
+# RstoxData v1.4.15 (2021-10-08)
 
 * Fixed bug in SplitNASC().
 * Final version for the release of StoX 3.2.0.

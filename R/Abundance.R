@@ -193,7 +193,8 @@ SuperIndividuals <- function(
         by = mergeBy, 
         allow.cartesian = TRUE, 
         ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
-        all = TRUE
+        # Changed from all =  TRUE to all.x = TRUE on 2021-10-08, since we do not want extra rows in the individuals from strata with no biology but with acoustics:
+        all.x = TRUE
     )
     
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
@@ -529,6 +530,13 @@ ImputeSuperIndividuals <- function(
     keys <- names(ImputeSuperIndividualsData)[areKeys]
     #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
     formatOutput(ImputeSuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(SuperIndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
+    
+    # Add the attribute 'variableNames':
+    setattr(
+        ImputeSuperIndividualsData, 
+        "stoxDataVariableNames",
+        attr(SuperIndividualsData, "stoxDataVariableNames")
+    )
     
     # Not needed here, since we only copy data: 
     #Ensure that the numeric values are rounded to the defined number of digits:

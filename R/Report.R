@@ -161,7 +161,14 @@ aggregateBaselineDataOneTable <- function(
         # Add NAs for missing combinations of the GroupingVariables:
         #stoxData <- stoxData[do.call(CJ, lapply(GroupingVariables, unique)), allow.cartesian = TRUE]
         paddingVariables <- c(GroupingVariables, padWithZerosOn)
-        stoxData <- stoxData[do.call(data.table::CJ, lapply(stoxData[, ..paddingVariables], unique)), on = paddingVariables]
+        grid <- do.call(data.table::CJ, lapply(stoxData[, ..paddingVariables], unique))
+        grid$index_ <- seq.int(nrow(grid))
+        
+        # Save indices in the grid at which there are NAs in the data:
+        arePresent <- grid[stoxData[, ..paddingVariables], on = paddingVariables]$index_
+        areNA <- arePresent[is.na(stoxData[[TargetVariable]])]
+        
+        stoxData <- stoxData[grid[, ..paddingVariables], on = paddingVariables]
         # Convert the NAs to 0 for the abundance and biomass columns:
         abudanceVariables <- setdiff(names(stoxData), paddingVariables)
         # Convvert NA to 0 only for Biomass or Abundance:
@@ -170,7 +177,11 @@ aggregateBaselineDataOneTable <- function(
         abudanceVariables <- abudanceVariables[isAbudanceVariable]
         
         if(length(abudanceVariables)) {
+            # Set all NA to 0, both those from the original stoxData and those introduced by the grid:
             replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
+            # Restore the NAs from the original st  oxData:
+            stoxData[areNA, eval(TargetVariable) := NA]
+            
         }
         
     }
