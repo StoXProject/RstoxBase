@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.16</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
       </span>
     </div>
 
@@ -47,6 +47,24 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/NEWS.md"><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="rstoxbase-v1416-2021-10-11" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.16">
+<a href="#rstoxbase-v1416-2021-10-11" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.16 (2021-10-11)</h1>
+<ul><li>Changed to merge SuperIndividualsData and LengthDistributionData with all.x = TRUE in SuperIndividuals(). The effect of this is that hauls that are discarded by the random sampling in a bootstrap run no longer result in a row in SuperIndividualsData with mostly NAs.</li>
+</ul></div>
+    <div id="rstoxbase-v1416-2021-10-11-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.16">
+<a href="#rstoxbase-v1416-2021-10-11-1" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.16 (2021-10-11)</h1>
+<ul><li>Changed ImputeSuperIndividuals() to not add rows from EDSUs with no assigned biotic hauls. In the previous version, rows were added with NA in all variables except those from the EDSU (frequency, etc.) if e.g. assignment method “Stratum” was used, and no hauls existed in a stratum with EDSUs.</li>
+<li>Changed aggregateBaselineDataOneTable() so that when used to produce reports using RstoxFramework::BootstraReport() NAs are not change to 0 except for NAs introduced between bootstrap runs (e.g., ages missing in some runs due to resampling of hauls).</li>
+<li>Fixed bug in the parameter formats of ImputeSuperIndividuals() when using SuperIndividualsData from another process using ImputeSuperIndividuals().</li>
+</ul></div>
+    <div id="rstoxbase-v1415-2021-10-08" class="section level1">
+<h1 class="page-header" data-toc-text="1.4.15">
+<a href="#rstoxbase-v1415-2021-10-08" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.15 (2021-10-08)</h1>
+<ul><li>Fixed bug in SplitNASC().</li>
+<li>Final version for the release of StoX 3.2.0.</li>
+</ul></div>
     <div id="rstoxbase-v1413-2021-09-28" class="section level1">
 <h1 class="page-header" data-toc-text="1.4.13">
 <a href="#rstoxbase-v1413-2021-09-28" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.13 (2021-09-28)</h1>
