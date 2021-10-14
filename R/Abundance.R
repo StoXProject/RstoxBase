@@ -155,6 +155,7 @@ SuperIndividuals <- function(
     DistributionMethod = c("Equal", "HaulDensity"), 
     LengthDistributionData
 ) {
+    
     # Get the DistributionMethod:
     DistributionMethod <- match.arg(DistributionMethod)
     
@@ -164,9 +165,9 @@ SuperIndividuals <- function(
     AbundanceData$Data <- data.table::setDT(AbundanceData$Data)
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the AbundanceData:
-    addLengthGroup(data = SuperIndividualsData, master = AbundanceData$Data)
+    addLengthGroup(data = SuperIndividualsData, master = AbundanceData$Data, warn = FALSE)
     # Add length groups also to the AbundanceData:
-    addLengthGroup(data = AbundanceData$Data, master = AbundanceData$Data)
+    addLengthGroup(data = AbundanceData$Data, master = AbundanceData$Data, warn = FALSE)
     
     # Merge the AbundanceData into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups().
     # Stratum/Layer/SpeciesCategory/LengthGroup
@@ -193,7 +194,8 @@ SuperIndividuals <- function(
         by = mergeBy, 
         allow.cartesian = TRUE, 
         ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
-        # Changed from all =  TRUE to all.x = TRUE on 2021-10-08, since we do not want extra rows in the individuals from strata with no biology but with acoustics:
+        # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation (after bootstrapping):
+        # all.y = TRUE
         all.x = TRUE
     )
     
@@ -226,7 +228,7 @@ SuperIndividuals <- function(
         # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
         LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
         
-        addLengthGroup(data = LengthDistributionData, master = AbundanceData$Data)
+        addLengthGroup(data = LengthDistributionData, master = AbundanceData$Data, warn = FALSE)
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
         
@@ -243,7 +245,7 @@ SuperIndividuals <- function(
             LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
             by = haulGrouping, 
             allow.cartesian = TRUE, 
-            # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation:
+            # Changed this onn 2021-02-14 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation:
             # all.y = TRUE
             all.x = TRUE
         )
@@ -420,7 +422,8 @@ addLengthGroup <- function(
     data, 
     master, 
     lengthVar = "IndividualTotalLength", 
-    resolutionVar = "LengthResolution"
+    resolutionVar = "LengthResolution", 
+    warn = TRUE
 ) {
     
     # Run a for loop through the common species:
@@ -430,12 +433,12 @@ addLengthGroup <- function(
     
     # If there are species in the master that are not in the data, report a warning:
     speciesOnlyInMaster <- stats::na.omit(setdiff(speciesInMaster, speciesInData))
-    if(length(speciesOnlyInMaster)) {
+    if(warn && length(speciesOnlyInMaster)) {
         warning("StoX: The species categories ", paste(speciesOnlyInMaster, collapse = ", "), " are present in the master but not in the data")
     }
     # If there are species in the data that are not in the master, report a warning:
-    speciesOnlyInData <- stats::na.omit(setdiff(speciesInMaster, speciesInData))
-    if(length(speciesOnlyInData)) {
+    speciesOnlyInData <- stats::na.omit(setdiff(speciesInData, speciesInMaster))
+    if(warn && length(speciesOnlyInData)) {
         warning("StoX: The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
     }
 

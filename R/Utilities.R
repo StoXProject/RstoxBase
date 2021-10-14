@@ -578,9 +578,6 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     #### Step 3: ####
     # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
     by <- intersect(names(data), by)
-    print(aggregationVariables)
-    print(by)
-    print(subset(data, Beam == "38000/2" & PSU == "T27"))
     data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
     # Store the new weights by the summed original weights:
     data[, c(targetWeightingVariable) := SummedWeights]
