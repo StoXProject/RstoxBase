@@ -181,9 +181,7 @@ aggregateBaselineDataOneTable <- function(
             replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
             # Restore the NAs from the original st  oxData:
             stoxData[areNA, eval(TargetVariable) := NA]
-            
         }
-        
     }
     
     outputData <- stoxData[, fun(.SD), by = GroupingVariables]

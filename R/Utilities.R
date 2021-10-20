@@ -1541,6 +1541,49 @@ readAcousticPSUFrom2.7 <- function(projectXMLFilePath) {
 }
 
 
+#' Read a the AcousticPSU from a project.xml file from StoX <= 2.7
+#' 
+#' @param projectXMLFilePath The path to the project.xml file.
+#' 
+#' @export
+#' 
+readBioticPSUFrom2.7 <- function(projectXMLFilePath, MergedStoxDataHaulLevel) {
+    
+    # Read the BioticPSU from the StoX 2.7 process data:
+    processDataNames2.7 = c("edsupsu", "psustratum")
+    processDataNames3.0 = c("Station_PSU", "Stratum_PSU")
+    BioticPSU <- readStox2.7ProcessDataTable(
+        projectXMLFilePath, 
+        processDataName = processDataNames2.7, 
+        oldName = c("psu", "edsu", "stratum"), 
+        newName = c("PSU", "Station", "Stratum")
+    )
+    names(BioticPSU) <- processDataNames3.0
+    
+    #### Convert the Station column to match the definition used in StoX >= 3, which is CruiseKey-StationKey: ####
+    # Create a table from the MergedStoxDataHaulLevel containing the the following:
+    # CruiseKey, which will be used to form the Station as defined in StoX >= 3
+    # CruiseKey1, which is the first element of the CruiseKey, and corresponds to the first element of the EDSU in the StoX 2.7 edsupsu process data
+    # HaulKey, which corresponds to the second element of the edsu in the StoX 2.7 edsupsu process data
+    # Station, which we are replacing edsu in the edsu in the StoX 2.7 edsupsu process data by 
+    toMergeFromStoxData <- MergedStoxDataHaulLevel[, c("CruiseKey", "Station", "HaulKey")]
+    toMergeFromStoxData[, CruiseKey1 := sapply(strsplit(CruiseKey, "/"), "[[", 1)]
+    BioticPSU$Station_PSU[, CruiseKey := NULL]
+    
+    # Get the CruiseKey1 and the HaulKey to merge by:
+    BioticPSU$Station_PSU[, CruiseKey1 := sapply(strsplit(Station, "/"), "[[", 1)]
+    BioticPSU$Station_PSU[, HaulKey := sapply(strsplit(Station, "/"), "[[", 2)]
+    # .. and delete Station, as it will be replaced by the Station from toMergeFromStoxData:
+    BioticPSU$Station_PSU[, Station := NULL]
+    
+    # Insert Station by merging:
+    BioticPSU$Station_PSU <- merge(BioticPSU$Station_PSU, toMergeFromStoxData, by = c("CruiseKey1", "HaulKey"), all.x = TRUE)
+    
+    return(BioticPSU)
+}
+
+
+
 
 #' Read a the BioticAssignment from a project.xml file from StoX <= 2.7
 #' 
