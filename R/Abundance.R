@@ -492,7 +492,9 @@ ImputeSuperIndividuals <- function(
     ImputeAtMissing = character(), 
     ImputeByEqual = character(), 
     ToImpute = character(), 
-    Seed = 1
+    Seed = 1#,
+    #RegroupIndividualTotalLength = FALSE, 
+    #LengthInterval = numeric()
 ) {
     
     # Check that the length resolution is constant: 
@@ -520,7 +522,8 @@ ImputeSuperIndividuals <- function(
         imputeAtMissing = ImputeAtMissing, 
         imputeByEqual = ImputeByEqual, 
         seed = Seed, 
-        columnNames = ToImpute
+        columnNames = ToImpute#, 
+        #lengthInterval  = if(RegroupIndividualTotalLength) LengthInterval else numeric()
     )
     
     # Re-calculate the Biomass:
@@ -555,6 +558,7 @@ ImputeData <- function(
     imputeByEqual = c("IndividualTotalLength", "SpeciesCategory"), 
     seed = 1, 
     columnNames = NULL, 
+    lengthInterval = numeric(), 
     levels = list(
         "Haul", 
         "Stratum", 
@@ -566,6 +570,14 @@ ImputeData <- function(
     dataCopy <- data.table::copy(data)
     #RowIndex <- seq_len(nrow(dataCopy))
     #dataCopy[, RowIndex := ..RowIndex]
+    
+    # If specified, regroup the length intervals:
+    if(length(lengthInterval) == 1L) {
+        dataCopy <- RegroupLengthData(
+            dataCopy, 
+            lengthInterval = lengthInterval
+        )
+    }
     
     # Introduce an Individual index for use in the sorted sampling:
     dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]

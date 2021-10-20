@@ -127,20 +127,37 @@ DefinePSU <- function(
     # Speical care is needed if DefinitionMethod is "ResourceFile", which only applies to AccousicPSU:
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
         
-        # Read from the project.xml:
-        AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+        if(PSUType == "Acoustic") {
+            # Read from the project.xml:
+            AcousticPSU <- readAcousticPSUFrom2.7(FileName)
             
-        # Add the PSUByTime:
-        if(SavePSUByTime) {
-            AcousticPSU$PSUByTime <- getPSUByTime(
-                PSUProcessData = AcousticPSU, 
-                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-                PSUType = PSUType
-            )
+            # Add the PSUByTime:
+            if(SavePSUByTime) {
+                AcousticPSU$PSUByTime <- getPSUByTime(
+                    PSUProcessData = AcousticPSU, 
+                    MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                    PSUType = PSUType
+                )
+            }
+            return(AcousticPSU)
         }
-        return(AcousticPSU)
+        else if(PSUType == "Biotic") {
+            # Read from the project.xml:
+            MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
+                StoxData, 
+                tableNames = c("Cruise", "Station", "Haul"), 
+                output.only.last = TRUE, 
+                all = TRUE
+            )
+            
+            
+            BioticPSU <- readBioticPSUFrom2.7(FileName, MergedStoxDataHaulLevel = MergedStoxDataHaulLevel)
+            return(BioticPSU)
+        }
+        else {
+            stop("Invalid PSUType, must be one of \"Acoustic\" and \"Biotic\"")
+        }
     }
-    
     
     
     # Use each SSU as a PSU:
@@ -410,7 +427,8 @@ DefineBioticPSU <- function(
     processData, UseProcessData = FALSE, 
     StratumPolygon, 
     StoxBioticData, 
-    DefinitionMethod = c("Manual", "StationToPSU", "DeleteAllPSUs")
+    DefinitionMethod = c("Manual", "StationToPSU", "DeleteAllPSUs", "ResourceFile"), 
+    FileName = character()
 ) {
     
     # Get the DefinitionMethod:
@@ -427,6 +445,7 @@ DefineBioticPSU <- function(
         StratumPolygon = StratumPolygon, 
         StoxData = StoxBioticData, 
         DefinitionMethod = DefinitionMethod, 
+        FileName = FileName, 
         PSUType = "Biotic"
     )
     

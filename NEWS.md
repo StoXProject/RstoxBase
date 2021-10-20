@@ -1,10 +1,14 @@
-# RstoxBase v1.4.16 (2021-10-11)
+# RstoxBase v1.4.18 (2021-10-21)
+
+* Added the DefinitionMethod \"ResourceFile\" in DefineBioticPSU(), which enables reading BioiticPSU from a StoX 2.7 project.xml file.
+
+# RstoxBase v1.4.17 (2021-10-11)
 
 * Changed to merge SuperIndividualsData and LengthDistributionData with all.x = TRUE in SuperIndividuals(). The effect of this is that hauls that are discarded by the random sampling in a bootstrap run no longer result in a row in SuperIndividualsData with mostly NAs.
 
 # RstoxBase v1.4.16 (2021-10-11)
 
-* Changed ImputeSuperIndividuals() to not add rows from EDSUs with no assigned biotic hauls. In the previous version, rows were added with NA in all variables except those from the EDSU (frequency, etc.) if e.g. assignment method "Stratum" was used, and no hauls existed in a stratum with EDSUs.
+* Changed SuperIndividuals() to not add rows from EDSUs with no assigned biotic hauls. In the previous version, rows were added with NA in all variables except those from the EDSU (frequency, etc.) if e.g. assignment method "Stratum" was used, and no hauls existed in a stratum with EDSUs.
 * Changed aggregateBaselineDataOneTable() so that when used to produce reports using RstoxFramework::BootstraReport() NAs are not change to 0 except for NAs introduced between bootstrap runs (e.g., ages missing in some runs due to resampling of hauls).
 * Fixed bug in the parameter formats of ImputeSuperIndividuals() when using SuperIndividualsData from another process using ImputeSuperIndividuals().
 

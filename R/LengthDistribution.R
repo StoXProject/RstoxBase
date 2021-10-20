@@ -239,90 +239,106 @@ RegroupLengthDistribution <- function(
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
     
-    # Get the minimum and maximum lower and upper length interval breaks:
-    if(all(is.na(LengthDistributionDataCopy$IndividualTotalLength))) {
-        stop("IndividualTotalLength is all NA in LengthDistributionData")
-    }
-    minLength <- min(LengthDistributionDataCopy$IndividualTotalLength, na.rm = TRUE)
-    maxLength <- max(LengthDistributionDataCopy$IndividualTotalLength + LengthDistributionDataCopy$LengthResolution, na.rm = TRUE)
+    # Regroup the length intervals:
+    LengthDistributionDataCopy <- RegroupLengthData(
+        LengthDistributionDataCopy, 
+        lengthInterval = LengthInterval
+    )
     
-    # Create a vector of breaks, if not given in the input 'LengthInterval':
-    if(length(LengthInterval) == 1) {
-        # Convert to indices:
-        minLengthIntervalIndexFrom0 <- floor(minLength / LengthInterval)
-        # Add one interval if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
-        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / LengthInterval) + as.numeric(ceiling(maxLength / LengthInterval) == floor(maxLength / LengthInterval))
-        
-        LengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * LengthInterval
-    }
-    else {
-        stop("The function parameter LengthInterval must be set as a numeric value")
-    }
-    
-    # Check that there are no existing length intervals that are inside one of the new intervals:
-    # Get the possible intervals:
-    lengthGroupMinMax <- unique(LengthDistributionDataCopy[, .(lengthIntervalMin = IndividualTotalLength, lengthIntervalMax = IndividualTotalLength + LengthResolution)])
-    #possibleIntervals <- getCommonIntervals(data = lengthGroupMinMax)
-    
-    strictlyInside <- function(x, table, margin = 1e-6) {
-        which(x - margin > table[, 1] & x + margin < table[, 2])
-    }
-    
-    invalidIntervalBreaks <- lapply(LengthInterval, strictlyInside, lengthGroupMinMax)
-    atInvalidIntervalBreaks <- lengths(invalidIntervalBreaks) > 0
-    
-    # Check whether any of the new interval limits are inside the possible intervals:
-    if(any(atInvalidIntervalBreaks)) {
-        at <- which(atInvalidIntervalBreaks)
-        stop("The following intervals intersect partially with the possible intervals: \n", 
-            paste(
-                paste0(
-                    "Regroup interval ", 
-                    paste(
-                        LengthInterval[at], 
-                        LengthInterval[at + 1], 
-                        sep = " - "
-                    ), 
-                    " intersecting with possible intervals ", 
-                    sapply(invalidIntervalBreaks[at], function(this) paste(lengthGroupMinMax[this, do.call(paste, c(.SD, sep = "-"))], collapse = ", "))
-                ), 
-            collapse = "\n"
-            ), 
-            "\nChange the regroup intervals or search for possible errors in the data."
-        )
-    }
-    
-     # Temporary add the index of the length intervals:
-    LengthDistributionDataCopy[, intervalIndex := findInterval(IndividualTotalLength, ..LengthInterval)]
-    
-    # Get the inteval widths, and count the number of hits in each interval:
-    LengthIntervalWidths <- diff(LengthInterval)
-    numIntervals <- length(LengthIntervalWidths)
-    # Issue a warning if the intervalIndex is NA (values outside of the LengthInterval):
-    anyBelow <- any(LengthDistributionDataCopy$intervalIndex < 1, na.rm = TRUE)
-    anyAbove <- any(LengthDistributionDataCopy$intervalIndex > numIntervals, na.rm = TRUE)
-    if(any(anyBelow, anyAbove)) {
-        warning("StoX: Not all individuals are inside the length intervals defined by the input LengthInterval of RegroupLengthDistribution(). The range of the intervals must be <= ", minLength, " and > ", maxLength, " (all intervals, including the last interval are defined as open).")
-    }
-    
-    # Replace with the new LengthResolution:
-    LengthDistributionDataCopy[, LengthResolution := ..LengthIntervalWidths[intervalIndex]]
-    # Replace IndividualTotalLength with the new lower interval breaks:
-    LengthDistributionDataCopy[, IndividualTotalLength := ..LengthInterval[intervalIndex]]
-    
-    # Finally, aggregate the WeightedCount in the new length groups:
+    # Aggregate the WeightedCount in the new length groups:
     # Extract the 'by' element:
     by <- getAllAggregationVariables(dataType="LengthDistributionData")
     LengthDistributionDataCopy[, WeightedCount := sum(WeightedCount), by = by]
     # Delete duplicated rows:
     LengthDistributionDataCopy <- unique(LengthDistributionDataCopy)
     
-    # Remove the temporary intervalIndex:
-    LengthDistributionDataCopy[, intervalIndex := NULL]
-    
     return(LengthDistributionDataCopy)
 }
 
+RegroupLengthData<- function(
+    LengthData, 
+    lengthInterval = numeric()
+) {
+    
+    # Get the new length intervals:
+    lengthInterval <- getLengthInterval(LengthData, lengthInterval = lengthInterval)
+    
+    # Temporary add the index of the length intervals:
+    LengthData[, intervalIndex := findInterval(IndividualTotalLength, ..lengthInterval)]
+    
+    # Get the interval widths, and count the number of hits in each interval:
+    lengthIntervalWidths <- diff(lengthInterval)
+    
+    # Replace with the new LengthResolution:
+    LengthData[, LengthResolution := ..lengthIntervalWidths[intervalIndex]]
+    # Replace IndividualTotalLength with the new lower interval breaks:
+    LengthData[, IndividualTotalLength := ..lengthInterval[intervalIndex]]
+    
+    # Remove the temporary intervalIndex:
+    LengthData[, intervalIndex := NULL]
+    
+    return(LengthData)
+}
+
+
+getLengthInterval <- function(LengthData, lengthInterval = numeric()) {
+    
+    # Get the minimum and maximum lower and upper length interval breaks:
+    if(all(is.na(LengthData$IndividualTotalLength))) {
+        stop("IndividualTotalLength is all NA in ", deparse(substitute(LengthDistributionData)))
+    }
+    minLength <- min(LengthData$IndividualTotalLength, na.rm = TRUE)
+    maxLength <- max(LengthData$IndividualTotalLength + LengthData$LengthResolution, na.rm = TRUE)
+    
+    # Create a vector of breaks, if not given in the input 'lengthInterval':
+    if(length(lengthInterval) == 1) {
+        # Convert to indices:
+        minLengthIntervalIndexFrom0 <- floor(minLength / lengthInterval)
+        # Add one interval if the ceiling and floor is equal, since rightmost.closed = FALSE in findInterval():
+        maxLengthIntervalIndexFrom0 <- ceiling(maxLength / lengthInterval) + as.numeric(ceiling(maxLength / lengthInterval) == floor(maxLength / lengthInterval))
+        
+        lengthInterval <- seq(minLengthIntervalIndexFrom0, maxLengthIntervalIndexFrom0) * lengthInterval
+    }
+    else {
+        stop("The function parameter lengthInterval must be set as a single numeric value")
+    }
+    
+    # Check that there are no new intervals that are inside one of the existing length intervals:
+    # Get the possible intervals:
+    lengthGroupMinMax <- unique(LengthData[, .(lengthIntervalMin = IndividualTotalLength, lengthIntervalMax = IndividualTotalLength + LengthResolution)])
+    #possibleIntervals <- getCommonIntervals(data = lengthGroupMinMax)
+    
+    invalidIntervalBreaks <- lapply(lengthInterval, strictlyInside, lengthGroupMinMax)
+    atInvalidIntervalBreaks <- lengths(invalidIntervalBreaks) > 0
+    
+    # Check whether any of the new interval limits are inside the possible intervals:
+    if(any(atInvalidIntervalBreaks)) {
+        at <- which(atInvalidIntervalBreaks)
+        stop("The following intervals intersect partially with the possible intervals. Change the regroup intervals or search for possible errors in the data: \n", 
+             paste(
+                 paste0(
+                     "Regroup interval ", 
+                     paste(
+                         lengthInterval[at], 
+                         lengthInterval[at + 1], 
+                         sep = " - "
+                     ), 
+                     " intersecting partially with possible intervals ", 
+                     sapply(invalidIntervalBreaks[at], function(this) paste(lengthGroupMinMax[this, do.call(paste, c(.SD, sep = "-"))], collapse = ", "))
+                 ), 
+                 collapse = "\n"
+             ), 
+             "."
+        )
+    }
+    
+    return(lengthInterval)
+}
+
+
+strictlyInside <- function(x, table, margin = 1e-6) {
+    which(x - margin > table[, 1] & x + margin < table[, 2])
+}
 
 
 ##################################################

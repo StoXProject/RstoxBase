@@ -158,6 +158,14 @@ stoxFunctionAttributes <- list(
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
+            ), 
+            StratumPolygon = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "StationToPSU"
+            ), 
+            FileName = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
             )
         )
     ), 
@@ -659,7 +667,12 @@ stoxFunctionAttributes <- list(
             ImputeAtMissing = "getImputeAtMissing", 
             ImputeByEqual = "getImputeByEqual", 
             ToImpute = "getToImpute"
-        )
+        )#,
+        #functionArgumentHierarchy = list(
+        #    LengthInterval = list(
+        #        RegroupIndividualTotalLength = TRUE
+        #    )
+        #)
     ),
     ##########
     
