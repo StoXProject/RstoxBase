@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Regroup length distribution to common intervals</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R"><code>R/LengthDistribution.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R" class="external-link"><code>R/LengthDistribution.R</code></a></small>
     <div class="hidden name"><code>RegroupLengthDistribution.Rd</code></div>
     </div>
 
@@ -52,20 +52,27 @@
     <p>The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the <code>WeightedCount</code> of the LengthDistributionData</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">RegroupLengthDistribution</span><span class="op">(</span><span class="va">LengthDistributionData</span>, LengthInterval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">RegroupLengthDistribution</span><span class="op">(</span><span class="va">LengthDistributionData</span>, LengthInterval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>LengthDistributionData</th>
       <td><p>The <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> data.</p></td>
     </tr><tr><th>LengthInterval</th>
       <td><p>Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX data type <code><a href="LengthDistributionData.html">LengthDistributionData</a></code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>NOTE. Function parameter <em>SpeciesCategory</em> is NOT YET IMPLEMENTED. Consequently, a common LengthInterval is applied to all SpeciesCategories in the input data.</p>
 <p>The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the length distributions in the output dataset and across all Hauls.A function parameter <em>SpeciesCategory</em> is used to choose either All or one SpeciesCategory from the input LengthDistribution data set. A dropdown list of available SpeciesCategories in the input data is available for the selection. The function parameter <em>LengthInterval</em> is used to set the desired output length interval in centimeters.  The new length interval can never have finer resolution than the coarsest resolution found in the data that are due to be regrouped. A least common multiple of the length group intervals in the input is calculated. This value is the highest resolution possible. If the user chooses a finer resolution than this for the parameter LengthInterval, a warning will be given, and the least common multiple will be applied for the output LengthDistribution dataset from the process.</p>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

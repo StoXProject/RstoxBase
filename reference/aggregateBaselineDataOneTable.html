@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Function to aggregate baseline data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R"><code>R/Report.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R" class="external-link"><code>R/Report.R</code></a></small>
     <div class="hidden name"><code>aggregateBaselineDataOneTable.Rd</code></div>
     </div>
 
@@ -56,14 +56,15 @@
   <span class="va">stoxData</span>,
   <span class="va">TargetVariable</span>,
   aggregationFunction <span class="op">=</span> <span class="fu"><a href="getReportFunctions.html">getReportFunctions</a></span><span class="op">(</span><span class="op">)</span>,
-  subTable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
-  GroupingVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
+  subTable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
+  GroupingVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   na.rm <span class="op">=</span> <span class="cn">FALSE</span>,
-  padWithZerosOn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
-  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>
+  padWithZerosOn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
+  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>stoxData</th>
       <td><p>Output from any StoX function.</p></td>
     </tr><tr><th>TargetVariable</th>
@@ -80,12 +81,18 @@
       <td><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></td>
     </tr><tr><th>WeightingVariable</th>
       <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An aggregated version of the input <code>stoxData</code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="ReportSuperIndividuals.html">ReportSuperIndividuals</a></code></p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

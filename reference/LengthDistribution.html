@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Length distribution</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R"><code>R/LengthDistribution.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R" class="external-link"><code>R/LengthDistribution.R</code></a></small>
     <div class="hidden name"><code>LengthDistribution.Rd</code></div>
     </div>
 
@@ -54,22 +54,27 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">LengthDistribution</span><span class="op">(</span>
   <span class="va">StoxBioticData</span>,
-  LengthDistributionType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Normalized"</span>, <span class="st">"Standard"</span>, <span class="st">"Percent"</span><span class="op">)</span>,
-  RaisingFactorPriority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Weight"</span>, <span class="st">"Count"</span><span class="op">)</span>
+  LengthDistributionType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Normalized"</span>, <span class="st">"Standard"</span>, <span class="st">"Percent"</span><span class="op">)</span>,
+  RaisingFactorPriority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Weight"</span>, <span class="st">"Count"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>StoxBioticData</th>
-      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
+      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
     </tr><tr><th>LengthDistributionType</th>
       <td><p>The type of length distribution to use, one of "Standard", "Normalized" and "Percent" (see 'Details').</p></td>
     </tr><tr><th>RaisingFactorPriority</th>
       <td><p>A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX data type <code><a href="LengthDistributionData.html">LengthDistributionData</a></code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The <em>LengthDistribution</em> function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionCount is calculated in the same manner.</p>
 <p>From each CatchFraction, a Sample is usually taken. Various types of individual characteristics or population parameters are measures. The most common parameters are individual length followed by weight. Other parameters are age, sex, maturity etc. The Sample weight and number is recorded. From the CatchFractionWeight and the SampleWeight, a raising factor (<em>r</em>) is calculated as:</p>
 <p>$$r = \frac{CatchFractionWeight}{SampleWeight}$$</p>
@@ -96,6 +101,8 @@
 <p>B) If a SpeciesCategory in a Hauls have more than one Sample, the percent distributions are generated by converting the Standard into percent distribution. This implies that distributions with more than one Sample and with missing raising factors will not be generated as no Standard distribution exist for these.</p>  
 <p><strong>General comments on the function</strong></p>  
 <p>Note that some StoX models require one specific LengthDistributionType as output from the process and as input to other processes in the model.</p>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Impute missing individual data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R"><code>R/Abundance.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R" class="external-link"><code>R/Abundance.R</code></a></small>
     <div class="hidden name"><code>ImputeSuperIndividuals.Rd</code></div>
     </div>
 
@@ -54,14 +54,15 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">ImputeSuperIndividuals</span><span class="op">(</span>
   <span class="va">SuperIndividualsData</span>,
-  ImputationMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"RandomSampling"</span><span class="op">)</span>,
-  ImputeAtMissing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
-  ImputeByEqual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
-  ToImpute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
+  ImputationMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RandomSampling"</span><span class="op">)</span>,
+  ImputeAtMissing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
+  ImputeByEqual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
+  ToImpute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   Seed <span class="op">=</span> <span class="fl">1</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>SuperIndividualsData</th>
       <td><p>The <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code> data.</p></td>
     </tr><tr><th>ImputationMethod</th>
@@ -74,12 +75,18 @@
       <td><p>The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>. The variable specified by <code>ImputeAtMissing</code> is always imputed, and need not be included in <code>ToImpute</code>.</p></td>
     </tr><tr><th>Seed</th>
       <td><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX data type <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="SuperIndividuals.html">SuperIndividuals</a></code> for distributing Abundance to the Individuals.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

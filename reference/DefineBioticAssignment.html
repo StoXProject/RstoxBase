@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Assignment of biotic hauls to acoustic PSUs by layer</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>DefineBioticAssignment.Rd</code></div>
     </div>
 
@@ -55,29 +55,30 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">DefineBioticAssignment</span><span class="op">(</span>
   <span class="va">processData</span>,
   UseProcessData <span class="op">=</span> <span class="cn">FALSE</span>,
-  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Manual"</span>, <span class="st">"Stratum"</span>, <span class="st">"Radius"</span>, <span class="st">"EllipsoidalDistance"</span>,
+  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manual"</span>, <span class="st">"Stratum"</span>, <span class="st">"Radius"</span>, <span class="st">"EllipsoidalDistance"</span>,
     <span class="st">"DeleteAllAssignments"</span>, <span class="st">"ResourceFile"</span><span class="op">)</span>,
   <span class="va">StoxBioticData</span>,
-  FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
+  FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   <span class="va">StratumPolygon</span>,
   <span class="va">AcousticPSU</span>,
-  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
-  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>,
+  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
+  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>,
     <span class="st">"LayerTable"</span><span class="op">)</span>,
-  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span><span class="op">)</span>,
+  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
   AcousticLayer <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">StoxAcousticData</span>,
-  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  MinNumberOfHauls <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  Distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  TimeDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  BottomDepthDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  LongitudeDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  LatitudeDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>
+  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  MinNumberOfHauls <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  Distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  TimeDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  BottomDepthDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  LongitudeDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  LatitudeDifference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>processData</th>
       <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr><tr><th>UseProcessData</th>
@@ -85,7 +86,7 @@
     </tr><tr><th>DefinitionMethod</th>
       <td><p>Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in <code>Radius</code> to each acoustic PSU; and "EllipsoidalDistance" to provide <code>MinNumberOfHauls</code>, <code>Distance</code>, <code>TimeDifference</code>, <code>BottomDepthDifference</code>, <code>LongitudeDifference</code>, <code>LatitudeDifference</code>, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.</p></td>
     </tr><tr><th>StoxBioticData</th>
-      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
+      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
     </tr><tr><th>FileName</th>
       <td><p>The path to the StoX 2.7 project.xml file to read "bioticassignment", "suassignment" and "psustratum" from, in the case that <code>DefinitionMethod</code> is "ResourceFile".</p></td>
     </tr><tr><th>StratumPolygon</th>
@@ -103,7 +104,7 @@
     </tr><tr><th>AcousticLayer</th>
       <td><p>The <code><a href="AcousticLayer.html">AcousticLayer</a></code> process data.</p></td>
     </tr><tr><th>StoxAcousticData</th>
-      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html">StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
+      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
     </tr><tr><th>Radius</th>
       <td><p>Numeric: The radius inside which to assign biotic stations to each acoustic PSU.</p></td>
     </tr><tr><th>MinNumberOfHauls</th>
@@ -118,11 +119,15 @@
       <td><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.</p></td>
     </tr><tr><th>LatitudeDifference</th>
       <td><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX data type <code><a href="BioticAssignment.html">BioticAssignment</a></code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The <em>DefineBioticAssignment</em> function creates a list of which biotic hauls are assigned to each acoustic primary sampling unit (PSU) and assignment layer. An <em>assignment layer</em> is made up of one or more <em>layers</em>. The assigned biotic hauls are given the default weighting factor of 1. The list of assigned biotic stations will in another function be used to make a total combined length frequency distribution from all the individual haul distributions that have been assigned.</p>
 <p>In addition to the option of modifying assignments manually through the StoX graphically user interface, several automatic assignment methods are available. The automated methods are applied by assignment layer on the biotic stations that are associated with each assignment layer. By default, the function parameter <em>UseProcessData</em> is set to true, ensuring that assignment from previous execution is availabe upon execution. UseProcessData may be set to false to redo or update assignemts.</p>
 <p>Layer definitions needed for assignment can be done in two ways using the function parameter:</p>
@@ -141,7 +146,7 @@
 <p><strong>Radius</strong></p>
 <p>All biotic stations within the given radius (function parameter <em>Radius</em> (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system. The function parameter <em>MinNumberOfHauls</em> set a minimum number of hauls for each assignment. This implies that the search for hauls may go beyond the given radius.</p>
 <p><strong>EllipsoidalDistance</strong></p>
-<p>This assignment method uses the ellipsoidal distance <a href="https://doi.org/10.1016/j.fishres.2007.07.013">(Johnsen and Iilende, 2007, equation 8)</a>.  All biotic stations that fulfills the selection criteria (scalar product f &lt;=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:</p>
+<p>This assignment method uses the ellipsoidal distance <a href="https://doi.org/10.1016/j.fishres.2007.07.013" class="external-link">(Johnsen and Iilende, 2007, equation 8)</a>.  All biotic stations that fulfills the selection criteria (scalar product f &lt;=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:</p>
 <p>$$f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
 \left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
 \left(\frac{\Delta o}{r_0}\right)^2$$</p>
@@ -159,12 +164,16 @@
 <p>\(r_o\) = reference value for longitude difference (degrees). Defined by function parameter <em>LongitudeDifference</em>)</p>
 <p>The function parameter <em>MinNumberOfHauls</em> can override the requirement to fulfill the selection criteria (scalar product f &lt;=1) if the number of assigned hauls are lower than the MinNumberOfHauls parameter value. Hauls with a scalar product value closest to the minimum selection criteria, will be included in the assignment list to ensure that a minimum number of stations are assigned.</p>
 <p>NOTE! The end user will get a warning if one or more acoustic PSUs have not been assigned any biotic hauls.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, <a href="https://doi.org/10.1016/j.fishres.2007.07.013">https://doi.org/10.1016/j.fishres.2007.07.013</a></p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
+    <p>Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, <a href="https://doi.org/10.1016/j.fishres.2007.07.013" class="external-link">https://doi.org/10.1016/j.fishres.2007.07.013</a></p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="BioticAssignmentWeighting.html">BioticAssignmentWeighting</a></code> for weighting BioticAssignment.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

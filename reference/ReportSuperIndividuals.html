@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Report SuperIndividualsData</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R"><code>R/Report.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Report.R" class="external-link"><code>R/Report.R</code></a></small>
     <div class="hidden name"><code>ReportSuperIndividuals.Rd</code></div>
     </div>
 
@@ -56,12 +56,13 @@
   <span class="va">SuperIndividualsData</span>,
   <span class="va">TargetVariable</span>,
   ReportFunction <span class="op">=</span> <span class="fu"><a href="getReportFunctions.html">getReportFunctions</a></span><span class="op">(</span>getMultiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,
-  GroupingVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
+  GroupingVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   RemoveMissingValues <span class="op">=</span> <span class="cn">FALSE</span>,
-  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>
+  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>SuperIndividualsData</th>
       <td><p>The <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code> data.</p></td>
     </tr><tr><th>TargetVariable</th>
@@ -74,12 +75,18 @@
       <td><p>Logical: If TRUE, remove missing values (NAs). The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA. Use <code>RemoveMissingValues</code> = TRUE with extreme caution, as it may lead to under-estimation. E.g., if <code>RemoveMissingValues</code> = TRUE and a super-individual lacks <code>IndividualRoundWeight</code>, <code>Biomass</code> will be NA, and the portion of <code>Abundance</code> distributed to that super-individual will be excluded when summing <code>Biomass</code> (but included when summing <code>Abundance</code>). It is advised to always run with <code>RemoveMissingValues</code> = FALSE first, and make a thorough investigation to identify the source of any missing values. The function <code>link{ImputeSuperIndividuals}</code> can be used to impute the missing information from other super-individuals.</p></td>
     </tr><tr><th>WeightingVariable</th>
       <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code><a href="ReportSuperIndividualsData.html">ReportSuperIndividualsData</a></code> object.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLength, or average IndividualTotalLength for each IndiivdualAge and Stratum.</p>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

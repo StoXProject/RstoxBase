@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calculate number density from NASC in length intervals</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Density.R"><code>R/Density.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Density.R" class="external-link"><code>R/Density.R</code></a></small>
     <div class="hidden name"><code>AcousticDensity.Rd</code></div>
     </div>
 
@@ -56,10 +56,11 @@
   <span class="va">MeanNASCData</span>,
   <span class="va">AssignmentLengthDistributionData</span>,
   <span class="va">AcousticTargetStrength</span>,
-  SpeciesLink <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span><span class="op">)</span>
+  SpeciesLink <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>MeanNASCData</th>
       <td><p>The <code><a href="MeanNASCData.html">MeanNASCData</a></code> data.</p></td>
     </tr><tr><th>AssignmentLengthDistributionData</th>
@@ -68,11 +69,15 @@
       <td><p>The <code><a href="AcousticTargetStrength.html">AcousticTargetStrength</a></code> process data.</p></td>
     </tr><tr><th>SpeciesLink</th>
       <td><p>A table of the two columns AcousticCategory and SpeciesCategory.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX data type <code><a href="DensityData.html">DensityData</a></code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The AcousticDensity function calculates length distributed densities as number of fish per square nautical mile by vertical layer. Length based density distributions are calculated for each NASC value of the input acoustic data set (MacLennan <em>et al</em>, 2002) . Usually, the NASC values have a horizontal resolution at PSU level (e.g. transect). By combining a NASC value with a length distribution (usually a total combined length distribution derived from more than one biotic station) and applying a TS vslength relationship, a corresponding density length distribution can be calculated.</p>
 <p>The horizontal resolution (EDSU, PSU or Stratum) of the NASC object determines the horizontal resolution of the densities. The same principal applies for the vertical layer resolution.</p>
 <p>To combine a NASC value and a length distribution into a density distribution, the TS vs length relationship for the actual species and acoustic frequency, needs to be known.Constants in the TS vs length formula has to be given. If the vertical layer resolution is channels referred from surface and with a fixed thickness, the mean depth of each channel can be calculated and a depth dependent TS vs length formula may be applied. The calculation of densities by length from a NASC value and a corresponding length distribution (as percentage or proportion) is performed as follows (Ona, 2003, Simmond and MacLennan, 2005, Johnsen <em>et al</em>, 2019):</p>
@@ -98,13 +103,16 @@ species</p>
 <p>where:</p>
 <p>\(\rho_l\) = area density of fish (ind. per sqare nautical mile) in length group \(l\)</p>
 <p>References:</p>
-<p>Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  <a href="https://doi.org/10.1111/2041-210X.13250">https://doi.org/10.1111/2041-210X.13250</a></p>
+<p>Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  <a href="https://doi.org/10.1111/2041-210X.13250" class="external-link">https://doi.org/10.1111/2041-210X.13250</a></p>
 <p>MacLennan, D. N., Fernandes, P. G., and Dalen, J. 2002. A consistent approach to definitions and symbols in fisheries acoustics. ICES Journal of Marine Science, 59: 365_369.</p>
-<p>Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, <a href="https://doi.org/10.1016/S1054-3139(03)00031-6">https://doi.org/10.1016/S1054-3139(03)00031-6</a></p>
+<p>Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, <a href="https://doi.org/10.1016/S1054-3139(03)00031-6" class="external-link">https://doi.org/10.1016/S1054-3139(03)00031-6</a></p>
 <p>Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>To define the acoustic target strength, see <code><a href="AcousticTargetStrength.html">AcousticTargetStrength</a></code>.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

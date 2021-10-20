@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Length distribution assigned to each cell of acoustic PSU and Layer</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R"><code>R/LengthDistribution.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/LengthDistribution.R" class="external-link"><code>R/LengthDistribution.R</code></a></small>
     <div class="hidden name"><code>AssignmentLengthDistribution.Rd</code></div>
     </div>
 
@@ -54,16 +54,21 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">AssignmentLengthDistribution</span><span class="op">(</span><span class="va">LengthDistributionData</span>, <span class="va">BioticAssignment</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>LengthDistributionData</th>
       <td><p>The <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> data.</p></td>
     </tr><tr><th>BioticAssignment</th>
       <td><p>The <code><a href="BioticAssignment.html">BioticAssignment</a></code> process data.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX datatype <code><a href="AssignmentLengthDistributionData.html">AssignmentLengthDistributionData</a></code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The purpose of the <em>AssignmentLengthDistribution</em> function is to produces one total length distribution for each combination of assigned biotic stations with corresponding weighting variables.</p>
 <p>If the biotic station length distributions which shall make up the total length distribution is of type <em>Standard</em> (length distribution as if the complete catch on deck was measured), this will give an <em>implicit weighting by catch as well as towing distance</em>.</p>
 <p>If the biotic station length distributions which shall make up the total length distribution is of type <em>Normalized</em> (length distribution as if the complete catch on deck was measured and as if the towing distance had been 1 nautical mile), this will give an <em>implicit weighting by catch</em>.</p>
@@ -82,9 +87,12 @@
 <p>3)	The total length distribution \(d_t\) is finally calculated by adding the numbers in each length interval for all stations where \(n\) is the number of stations to be combined:</p>
 <p>$$d_t = \displaystyle\sum_{y=1}^{n} dw_y$$</p>
 <p>\(d_t\) is the total length distribution for one assignment.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="LengthDistribution.html">LengthDistribution</a></code> to produce the input LengthDistributionData, and <code><a href="DefineBioticAssignment.html">DefineBioticAssignment</a></code> to produce the input BioticAssignment.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

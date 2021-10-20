@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,30 +44,30 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/NEWS.md"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="rstoxbase-v1416-2021-10-11" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.16">
-<a href="#rstoxbase-v1416-2021-10-11" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.16 (2021-10-11)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.18" id="rstoxbase-v1418-2021-10-21">RstoxBase v1.4.18 (2021-10-21)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1418-2021-10-21"></a></h2>
+<ul><li>Added the DefinitionMethod "ResourceFile" in DefineBioticPSU(), which enables reading BioiticPSU from a StoX 2.7 project.xml file.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.17" id="rstoxbase-v1417-2021-10-11">RstoxBase v1.4.17 (2021-10-11)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1417-2021-10-11"></a></h2>
 <ul><li>Changed to merge SuperIndividualsData and LengthDistributionData with all.x = TRUE in SuperIndividuals(). The effect of this is that hauls that are discarded by the random sampling in a bootstrap run no longer result in a row in SuperIndividualsData with mostly NAs.</li>
 </ul></div>
-    <div id="rstoxbase-v1416-2021-10-11-1" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.16">
-<a href="#rstoxbase-v1416-2021-10-11-1" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.16 (2021-10-11)</h1>
-<ul><li>Changed ImputeSuperIndividuals() to not add rows from EDSUs with no assigned biotic hauls. In the previous version, rows were added with NA in all variables except those from the EDSU (frequency, etc.) if e.g. assignment method “Stratum” was used, and no hauls existed in a stratum with EDSUs.</li>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.16" id="rstoxbase-v1416-2021-10-11">RstoxBase v1.4.16 (2021-10-11)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1416-2021-10-11"></a></h2>
+<ul><li>Changed SuperIndividuals() to not add rows from EDSUs with no assigned biotic hauls. In the previous version, rows were added with NA in all variables except those from the EDSU (frequency, etc.) if e.g. assignment method “Stratum” was used, and no hauls existed in a stratum with EDSUs.</li>
 <li>Changed aggregateBaselineDataOneTable() so that when used to produce reports using RstoxFramework::BootstraReport() NAs are not change to 0 except for NAs introduced between bootstrap runs (e.g., ages missing in some runs due to resampling of hauls).</li>
 <li>Fixed bug in the parameter formats of ImputeSuperIndividuals() when using SuperIndividualsData from another process using ImputeSuperIndividuals().</li>
 </ul></div>
-    <div id="rstoxbase-v1415-2021-10-08" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.15">
-<a href="#rstoxbase-v1415-2021-10-08" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.15 (2021-10-08)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.15" id="rstoxbase-v1415-2021-10-08">RstoxBase v1.4.15 (2021-10-08)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1415-2021-10-08"></a></h2>
 <ul><li>Fixed bug in SplitNASC().</li>
 <li>Final version for the release of StoX 3.2.0.</li>
 </ul></div>
-    <div id="rstoxbase-v1413-2021-09-28" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.13">
-<a href="#rstoxbase-v1413-2021-09-28" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.13 (2021-09-28)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.13" id="rstoxbase-v1413-2021-09-28">RstoxBase v1.4.13 (2021-09-28)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1413-2021-09-28"></a></h2>
 <ul><li>Added the function SplitNASC() intended to replaec SplitMeanNASC(). SplitNASC() uses NASCData and AcousticPSU as input and generates one PSU per EDSU for splitting the NASC based on BioticAssignment, and then returns a NASCData object. Consequently one can skip the MeanNASC() function in the model. Added method for simplifying stratum polygons in DefineStratumPolygon. Fixed bug when using depth TargetStrengthMethod = “LengthAndDepthDependent” .</li>
 <li>Sped up DefineAcousticPSU with DefinitionMethod “EDSUToPSU” by removing loop over EDSUs. Fixed bug when reading shapefiles or GeoJSON, by introducing the parameter StratumNameLabel in DefineStratumPolygon(). Added the option of simplifying stratum polygons by the new parameters SimplifyStratumPolygon and SimplificationFactor.</li>
 <li>Removed updating PSUByTime in DefineAcousticPSU() when UseProcessData = TRUE, as this destroys the information to be passed onto another process using DefineAcousticPSU() where the first process is used as input.</li>
@@ -76,16 +76,14 @@
 <li>Fixed bugs related to stratum names (using getStratumNames() consistently).</li>
 <li>Added shapefile and GeoJSON to the tests.</li>
 </ul></div>
-    <div id="rstoxbase-v144-2021-08-18" class="section level1">
-<h1 class="page-header" data-toc-text="1.4.4">
-<a href="#rstoxbase-v144-2021-08-18" class="anchor" aria-hidden="true"></a>RstoxBase v1.4.4 (2021-08-18)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.4" id="rstoxbase-v144-2021-08-18">RstoxBase v1.4.4 (2021-08-18)<a class="anchor" aria-label="anchor" href="#rstoxbase-v144-2021-08-18"></a></h2>
 <ul><li>Added more informative error when more than one SpeciesCategory in BioticAssignmentWeighting().</li>
 <li>Fixed bug in SuperIndividuals() where length measured individuals were counted over all beams, whereas per beam was correct. Added DefinitionMethod “ResourceFile” in DefineSurvey(), DefineAcousticPSU() and DefineBioticAssignment(), and support for a StoX 2.7 project.xml file in DefineStratumPolygon().*</li>
 <li>Fixed bug with CompensationTable in GearDependentCatchCompensation.</li>
 </ul></div>
-    <div id="rstoxbase-v1332-2021-06-16" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.32">
-<a href="#rstoxbase-v1332-2021-06-16" class="anchor" aria-hidden="true"></a>RstoxBase v1.3.32 (2021-06-16)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.32" id="rstoxbase-v1332-2021-06-16">RstoxBase v1.3.32 (2021-06-16)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1332-2021-06-16"></a></h2>
 <ul><li>Added error if the variable specified by ImputeAtMissing is not explicitely inclcuded in ToImpute</li>
 <li>Fixed bug in DistributionMethod == “HaulDensity”, where number of individuals in each length group was not taken into account.</li>
 <li>Fixed bug in SplitMeanNASC(), where now acoustic categories not to be split are added to the AcousticCategoryLink only if of positive length.</li>
@@ -97,97 +95,80 @@
 <li>Fixed column order for datatypes *IndividualsData</li>
 <li>Fixed bug ini SuperIndividuals, where number of individuals was counted over all Beams while it should be counted for each Beam.</li>
 </ul></div>
-    <div id="rstoxbase-v1312-2021-05-04" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.12">
-<a href="#rstoxbase-v1312-2021-05-04" class="anchor" aria-hidden="true"></a>RstoxBase v1.3.12 (2021-05-04)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.12" id="rstoxbase-v1312-2021-05-04">RstoxBase v1.3.12 (2021-05-04)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1312-2021-05-04"></a></h2>
 <ul><li>Changed to only use keys as secondaryColumnOrder in Individuals, speeding up the function.</li>
 <li>Solved bug where estimates were reduced when including several Beams in acoustic-trawl models (added groupingVariables_biotic and groupingVariables_acoustic).</li>
 </ul></div>
-    <div id="rstoxbase-v130-2021-02-11" class="section level1">
-<h1 class="page-header" data-toc-text="1.3.0">
-<a href="#rstoxbase-v130-2021-02-11" class="anchor" aria-hidden="true"></a>RstoxBase v1.3.0 (2021-02-11)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.0" id="rstoxbase-v130-2021-02-11">RstoxBase v1.3.0 (2021-02-11)<a class="anchor" aria-label="anchor" href="#rstoxbase-v130-2021-02-11"></a></h2>
 <ul><li>Final version for the release of StoX 3.0.0.</li>
 </ul></div>
-    <div id="rstoxbase-v1249-2021-02-08" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.49">
-<a href="#rstoxbase-v1249-2021-02-08" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.49 (2021-02-08)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.49" id="rstoxbase-v1249-2021-02-08">RstoxBase v1.2.49 (2021-02-08)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1249-2021-02-08"></a></h2>
 <ul><li>Cleaned up ImputeSuperIndividuals().</li>
 <li>Introduced calculation of centroid of each polygon instead of using labpt.</li>
 <li>Renamed <em>TowedDistance to </em>TowDistance.</li>
 <li>Fixed bug in SuperIndividuals with DistributionMethod = ‘HaulDensity’.</li>
 </ul></div>
-    <div id="rstoxbase-v1244-2021-01-21" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.44">
-<a href="#rstoxbase-v1244-2021-01-21" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.44 (2021-01-21)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.44" id="rstoxbase-v1244-2021-01-21">RstoxBase v1.2.44 (2021-01-21)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1244-2021-01-21"></a></h2>
 <ul><li>Added re-processing PSUByTime even UseProcessData is TRUE in DefineAcousticPSU().</li>
 <li>Renamed TargetStrengthDefinition to TargetStrengthTable.</li>
 </ul></div>
-    <div id="rstoxbase-v1242-2021-01-14" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.42">
-<a href="#rstoxbase-v1242-2021-01-14" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.42 (2021-01-14)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.42" id="rstoxbase-v1242-2021-01-14">RstoxBase v1.2.42 (2021-01-14)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1242-2021-01-14"></a></h2>
 <p>Added projection to StratumPolygon and EDSU points.</p>
 </div>
-    <div id="rstoxbase-v1241-2021-01-13" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.41">
-<a href="#rstoxbase-v1241-2021-01-13" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.41 (2021-01-13)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.41" id="rstoxbase-v1241-2021-01-13">RstoxBase v1.2.41 (2021-01-13)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1241-2021-01-13"></a></h2>
 <ul><li>Updated documentation for several functions.</li>
 </ul></div>
-    <div id="rstoxbase-v1239-2021-01-09" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.39">
-<a href="#rstoxbase-v1239-2021-01-09" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.39 (2021-01-09)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.39" id="rstoxbase-v1239-2021-01-09">RstoxBase v1.2.39 (2021-01-09)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1239-2021-01-09"></a></h2>
 <ul><li>Removed dependency of rgdal in StratumArea().</li>
 </ul></div>
-    <div id="rstoxbase-v1236-2020-12-21" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.36">
-<a href="#rstoxbase-v1236-2020-12-21" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.36 (2020-12-21)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.36" id="rstoxbase-v1236-2020-12-21">RstoxBase v1.2.36 (2020-12-21)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1236-2020-12-21"></a></h2>
 <ul><li>Removed rgdal and replaced geojsonio with geojsonsf.</li>
 </ul></div>
-    <div id="rstoxbase-v1235-2020-12-18" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.35">
-<a href="#rstoxbase-v1235-2020-12-18" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.35 (2020-12-18)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.35" id="rstoxbase-v1235-2020-12-18">RstoxBase v1.2.35 (2020-12-18)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1235-2020-12-18"></a></h2>
 <ul><li>Added the option DefinitionMethod = ‘Manual’ in DefineAcousticPSU().</li>
 <li>Renamed ChannelReferenceOrientation to ChannelReferenceTilt.</li>
 </ul></div>
-    <div id="rstoxbase-v1234-2020-11-03" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.34">
-<a href="#rstoxbase-v1234-2020-11-03" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.34 (2020-11-03)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.34" id="rstoxbase-v1234-2020-11-03">RstoxBase v1.2.34 (2020-11-03)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1234-2020-11-03"></a></h2>
 <ul><li>Preserving all hauls in BioticAssignmentWeighting().</li>
 </ul></div>
-    <div id="rstoxbase-v1233-2020-10-08" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.33">
-<a href="#rstoxbase-v1233-2020-10-08" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.33 (2020-10-08)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.33" id="rstoxbase-v1233-2020-10-08">RstoxBase v1.2.33 (2020-10-08)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1233-2020-10-08"></a></h2>
 <ul><li>Re-adding Layer to BioticAssignment even if UseProcessData = TRUE.</li>
 <li>Common data type for SuperIndividuals and ImputeSuperIndividuals.</li>
 </ul></div>
-    <div id="rstoxbase-v1231-2020-09-09" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.31">
-<a href="#rstoxbase-v1231-2020-09-09" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.31 (2020-09-09)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.31" id="rstoxbase-v1231-2020-09-09">RstoxBase v1.2.31 (2020-09-09)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1231-2020-09-09"></a></h2>
 <ul><li>Added LayerDefinition and DefinitionMethod = DeleteAllAssignments to DefineBioticAssignment().</li>
 </ul></div>
-    <div id="rstoxbase-v1228-2020-09-07" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.28">
-<a href="#rstoxbase-v1228-2020-09-07" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.28 (2020-09-07)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.28" id="rstoxbase-v1228-2020-09-07">RstoxBase v1.2.28 (2020-09-07)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1228-2020-09-07"></a></h2>
 <ul><li>Added ReportBootstrap().</li>
 </ul></div>
-    <div id="rstoxbase-v1225-2020-08-28" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.25">
-<a href="#rstoxbase-v1225-2020-08-28" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.25 (2020-08-28)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.25" id="rstoxbase-v1225-2020-08-28">RstoxBase v1.2.25 (2020-08-28)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1225-2020-08-28"></a></h2>
 <ul><li>Removed unit in variable and parameter names.</li>
 </ul></div>
-    <div id="rstoxbase-v1222-2020-08-14" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.22">
-<a href="#rstoxbase-v1222-2020-08-14" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.22 (2020-08-14)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.22" id="rstoxbase-v1222-2020-08-14">RstoxBase v1.2.22 (2020-08-14)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1222-2020-08-14"></a></h2>
 <ul><li>Added ImputeSuperIndividuals().</li>
 </ul></div>
-    <div id="rstoxbase-v1220-2020-07-11" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.20">
-<a href="#rstoxbase-v1220-2020-07-11" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.20 (2020-07-11)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.20" id="rstoxbase-v1220-2020-07-11">RstoxBase v1.2.20 (2020-07-11)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1220-2020-07-11"></a></h2>
 <ul><li>Introduced Sum* and Mean* data types.</li>
 <li>Renamed SweptAreaPSU and SweptAreaLayer to BioticPSU and BioticLayer.</li>
 </ul></div>
-    <div id="rstoxbase-v1215-2019-10-16" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.15">
-<a href="#rstoxbase-v1215-2019-10-16" class="anchor" aria-hidden="true"></a>RstoxBase v1.2.15 (2019-10-16)</h1>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.15" id="rstoxbase-v1215-2019-10-16">RstoxBase v1.2.15 (2019-10-16)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1215-2019-10-16"></a></h2>
 <ul><li>Created the package, which will be a library for StoX functions used for survey estimation, including defining resolution and calculating density, abundance and super individual data.</li>
 </ul></div>
   </div>

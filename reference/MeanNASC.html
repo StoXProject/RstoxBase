@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Mean NASC</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Acoustic.R"><code>R/Acoustic.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Acoustic.R" class="external-link"><code>R/Acoustic.R</code></a></small>
     <div class="hidden name"><code>MeanNASC.Rd</code></div>
     </div>
 
@@ -55,23 +55,24 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">MeanNASC</span><span class="op">(</span>
   <span class="va">NASCData</span>,
   <span class="va">SumNASCData</span>,
-  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span>, <span class="st">"PreDefined"</span><span class="op">)</span>,
-  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>,
+  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span>, <span class="st">"PreDefined"</span><span class="op">)</span>,
+  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>,
     <span class="st">"LayerTable"</span><span class="op">)</span>,
-  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span><span class="op">)</span>,
+  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
   AcousticLayer <span class="op">=</span> <span class="cn">NULL</span>,
-  SurveyDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
-  SurveyDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"SurveyTable"</span><span class="op">)</span>,
-  SurveyTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span><span class="op">)</span>,
+  SurveyDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
+  SurveyDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"SurveyTable"</span><span class="op">)</span>,
+  SurveyTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
   Survey <span class="op">=</span> <span class="cn">NULL</span>,
-  PSUDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
-  PSUDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"EDSUToPSU"</span><span class="op">)</span>,
+  PSUDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
+  PSUDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EDSUToPSU"</span><span class="op">)</span>,
   StratumPolygon <span class="op">=</span> <span class="cn">NULL</span>,
   AcousticPSU <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>NASCData</th>
       <td><p>The <code><a href="NASCData.html">NASCData</a></code> data.</p></td>
     </tr><tr><th>SumNASCData</th>
@@ -102,12 +103,18 @@
       <td><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></td>
     </tr><tr><th>AcousticPSU</th>
       <td><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></td>
-    </tr></table><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="details">
+    <h2>Details</h2>
     <p>This function is awesome and does excellent stuff.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="NASC.html">NASC</a></code> and <code>MeanNASC</code>.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Super-indivduals with abundance</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R"><code>R/Abundance.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R" class="external-link"><code>R/Abundance.R</code></a></small>
     <div class="hidden name"><code>SuperIndividuals.Rd</code></div>
     </div>
 
@@ -55,11 +55,12 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">SuperIndividuals</span><span class="op">(</span>
   <span class="va">IndividualsData</span>,
   <span class="va">AbundanceData</span>,
-  DistributionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Equal"</span>, <span class="st">"HaulDensity"</span><span class="op">)</span>,
+  DistributionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Equal"</span>, <span class="st">"HaulDensity"</span><span class="op">)</span>,
   <span class="va">LengthDistributionData</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>IndividualsData</th>
       <td><p>The <code><a href="IndividualsData.html">IndividualsData</a></code> data.</p></td>
     </tr><tr><th>AbundanceData</th>
@@ -68,9 +69,14 @@
       <td><p>The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For <code>DistributionMethod</code> = "HaulDensity" the <code>LengthDistributionData</code> must be given. It is recommended to use the same <code>LengthDistributionData</code> that was used to produce the <code><a href="AbundanceData.html">AbundanceData</a></code> (via <code>link{DensityData}</code>).</p></td>
     </tr><tr><th>LengthDistributionData</th>
       <td><p>The <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> data.</p></td>
-    </tr></table><h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code>roxygenize</code> is used to generate the documentation.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

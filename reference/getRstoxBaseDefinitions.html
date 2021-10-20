@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Get RstoxBase definitions</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Definitions.R"><code>R/Definitions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Definitions.R" class="external-link"><code>R/Definitions.R</code></a></small>
     <div class="hidden name"><code>getRstoxBaseDefinitions.Rd</code></div>
     </div>
 
@@ -54,16 +54,23 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">getRstoxBaseDefinitions</span><span class="op">(</span>name <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>name</th>
       <td><p>An optional string vector denoting which definitions to extract.</p></td>
     </tr><tr><th>...</th>
       <td><p>values overriding the values of definitions.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>A list of definitions.</p>
+    </div>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">getRstoxBaseDefinitions</span><span class="op">(</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $allResolution</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $allResolution$NASCData</span>
@@ -1117,8 +1124,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(prefix)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fe69ad890b8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fe69ad81640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fea138cd858&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fea138cb970&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $getSSULabel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (PSUType) </span>
@@ -1134,8 +1141,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(SSULabel)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fe69ad859f8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fe69ad81640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fea138ce038&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fea138cb970&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $getStationLevel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (PSUType) </span>
@@ -1151,8 +1158,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(SSULabel)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fe69ad86408&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fe69ad81640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fea138ca9e8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fea138cb970&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $nauticalMileInMeters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1852</span>
@@ -1231,8 +1238,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         DepthExponent * log10(1 + Depth/10)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fe69ad88478&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fe69ad81640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fea138ccf98&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fea138cb970&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $TargetStrengthFunction_LengthDependent</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
@@ -1240,16 +1247,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fe69ad88088&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fe69ad81640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fea138ccb70&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fea138cb970&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $TargetStrengthFunction_LengthExponent</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, LengthExponent) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     LengthExponent * log10(midIndividualTotalLength)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fe69ad88be8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fe69ad81640&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fea138cd628&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fea138cb970&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthMethodTypes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthMethodTypes$LengthDependent</span>
@@ -1281,6 +1288,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

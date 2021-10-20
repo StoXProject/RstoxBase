@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Weighting of biotic hauls in biotic assignment</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>BioticAssignmentWeighting.Rd</code></div>
     </div>
 
@@ -54,38 +54,43 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">BioticAssignmentWeighting</span><span class="op">(</span>
   <span class="va">BioticAssignment</span>,
-  WeightingMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Equal"</span>, <span class="st">"NumberOfLengthSamples"</span>, <span class="st">"NormalizedTotalWeight"</span>,
+  WeightingMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Equal"</span>, <span class="st">"NumberOfLengthSamples"</span>, <span class="st">"NormalizedTotalWeight"</span>,
     <span class="st">"NormalizedTotalCount"</span>, <span class="st">"SumWeightedCount"</span>, <span class="st">"InverseSumWeightedCount"</span><span class="op">)</span>,
   <span class="va">StoxBioticData</span>,
   <span class="va">LengthDistributionData</span>,
   MaxNumberOfLengthSamples <span class="op">=</span> <span class="fl">100</span>,
   <span class="va">StoxAcousticData</span>,
-  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>,
-  LengthExponent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span>
+  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  LengthExponent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>BioticAssignment</th>
       <td><p>The <code><a href="BioticAssignment.html">BioticAssignment</a></code> process data.</p></td>
     </tr><tr><th>WeightingMethod</th>
       <td><p>Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.</p></td>
     </tr><tr><th>StoxBioticData</th>
-      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
+      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
     </tr><tr><th>LengthDistributionData</th>
       <td><p>The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).</p></td>
     </tr><tr><th>MaxNumberOfLengthSamples</th>
       <td><p>For <code>WeightingMethod</code> = "NumberOfLengthSamples": Values of the number of length samples that exceed <code>MaxNumberOfLengthSamples</code> are set to <code>MaxNumberOfLengthSamples</code>. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.</p></td>
     </tr><tr><th>StoxAcousticData</th>
-      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html">StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
+      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></td>
     </tr><tr><th>Radius</th>
       <td><p>For <code>WeightingMethod</code> = "NASC": The radius inside which the average NASC is calculated.</p></td>
     </tr><tr><th>LengthExponent</th>
       <td><p>For <code>WeightingMethod</code> = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX data type <code><a href="BioticAssignment.html">BioticAssignment</a></code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The <em>BioStationWeighting</em> function is used to update the weighting variables of the biotic stations that are associated in <code><a href="BioticAssignment.html">BioticAssignment</a></code>. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.</p>
 <p>A set of automatic <em>WeightingMethod</em>s are available to update the haul weighing variables. Note that the weighting may change if an additional species is included for all WeightingMethods except "Equal":</p>
 <p><strong>Equal</strong></p>
@@ -119,9 +124,12 @@ The assigned biotic hauls are given a weighting value according to the number of
 <p><em>TargetStrength0</em>:  TargetStrength0 in the target stregth versus length formula as:</p>
 <p>$$TS = LengthExponent \log_{10}{l} + TargetStrength0$$</p>
 <p>where <em>l</em> is the fish "total length" in centimeters given as the lower value of the length group interval.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="DefineBioticAssignment.html">DefineBioticAssignment</a></code> for generating BioticAssignment.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

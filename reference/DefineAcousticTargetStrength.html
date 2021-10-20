@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Acoustic target strength definition</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>DefineAcousticTargetStrength.Rd</code></div>
     </div>
 
@@ -55,14 +55,15 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">DefineAcousticTargetStrength</span><span class="op">(</span>
   <span class="va">processData</span>,
   UseProcessData <span class="op">=</span> <span class="cn">FALSE</span>,
-  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ResourceFile"</span>, <span class="st">"TargetStrengthTable"</span><span class="op">)</span>,
-  TargetStrengthMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"LengthDependent"</span>, <span class="st">"LengthAndDepthDependent"</span>,
+  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ResourceFile"</span>, <span class="st">"TargetStrengthTable"</span><span class="op">)</span>,
+  TargetStrengthMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LengthDependent"</span>, <span class="st">"LengthAndDepthDependent"</span>,
     <span class="st">"TargetStrengthByLength"</span><span class="op">)</span>,
-  TargetStrengthTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span><span class="op">)</span>,
-  FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>
+  TargetStrengthTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
+  FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>processData</th>
       <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr><tr><th>UseProcessData</th>
@@ -75,19 +76,26 @@
       <td><p>A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.</p></td>
     </tr><tr><th>FileName</th>
       <td><p>A file from which to read the <code>TargetStrengthTable</code>.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An <code><a href="AcousticTargetStrength.html">AcousticTargetStrength</a></code> object.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The <code>TargetStrengthMethod</code> has the following possible values:</p><ol><li><p>LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.</p></li>
 <li><p>LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.</p></li>
 <li><p>TargetStrengthByLength, applying a table of TargetStrength and TotalLength. Required columns: TargetStrength and TotalLength.</p></li>
 <li><p>LengthExponent, applying the logarithmic function TargetStrength = LengthExponent * log10(Length). Required columns: LengthExponent.</p></li>
 </ol><p>The parameters/values can be given by tables with the first columns being AcousticCategory and Frequency, or as a csv file.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="AcousticDensity.html">AcousticDensity</a></code> for applying the AcousticTargetStrength.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

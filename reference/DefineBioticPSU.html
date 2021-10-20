@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
       </span>
     </div>
 
@@ -29,7 +29,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/StoXProject/RstoxBase/">
+  <a href="https://github.com/StoXProject/RstoxBase/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Biotic PSU</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>DefineBioticPSU.Rd</code></div>
     </div>
 
@@ -57,10 +57,12 @@
   UseProcessData <span class="op">=</span> <span class="cn">FALSE</span>,
   <span class="va">StratumPolygon</span>,
   <span class="va">StoxBioticData</span>,
-  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Manual"</span>, <span class="st">"StationToPSU"</span>, <span class="st">"DeleteAllPSUs"</span><span class="op">)</span>
+  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manual"</span>, <span class="st">"StationToPSU"</span>, <span class="st">"DeleteAllPSUs"</span>, <span class="st">"ResourceFile"</span><span class="op">)</span>,
+  FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>processData</th>
       <td><p>The current data produced by a previous instance of the function.</p></td>
     </tr><tr><th>UseProcessData</th>
@@ -68,15 +70,21 @@
     </tr><tr><th>StratumPolygon</th>
       <td><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></td>
     </tr><tr><th>StoxBioticData</th>
-      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
+      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
     </tr><tr><th>DefinitionMethod</th>
       <td><p>Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="ref-sections">
+    <div id="value">
+    <h2>Value</h2>
     <p>An object of StoX data type <code><a href="BioticPSU.html">BioticPSU</a></code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>Acousic PSUs are generated using <code><a href="DefineAcousticPSU.html">DefineAcousticPSU</a></code>. For the vertical resolution (Layer) see <code><a href="DefineBioticLayer.html">DefineBioticLayer</a></code> and <code><a href="DefineAcousticLayer.html">DefineAcousticLayer</a></code>.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
