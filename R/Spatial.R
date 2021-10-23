@@ -195,7 +195,7 @@ DefineStratumPolygon <- function(
     
     # Add an attribute named StratumName:
     if(NROW(StratumPolygon)) {
-        StratumPolygon$StratumName <- getStratumNames(
+        StratumPolygon <- addStratumNames(
             StratumPolygon, 
             StratumNameLabel = StratumNameLabel
         )
@@ -326,17 +326,18 @@ readGeoJSON <- function(FileName) {
 
 
 
-#' Extract stratum names from a SpatialPolygonsDataFrame
+#' Extract or add stratum names from a SpatialPolygonsDataFrame
 #' 
 #'  The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' 
 #' @param stratum A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile.
-#' @param check.unique Logical:: If TRUE, an error is given if stratum names are not unique.
+#' @param check.unique Logical: If TRUE, an error is given if stratum names are not unique.
+#' @param accept.wrong.name.if.only.one Logical: If TRUE, interpret stratum names if only one column in the SpatialPolygonsDataFrame.
 #' 
 #' @export
 #' 
-getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE) {
+getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
     
     if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
         
@@ -348,7 +349,13 @@ getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
         # Look for the strings given by StratumNameLabel in the names of the SpatialPolygonsDataFrame stratum:
         StratumNameLabel <- intersect(StratumNameLabel, names(stratum))
         if(!length(StratumNameLabel)) {
-            stop("StratumNameLabel must be the name of one of the attributes of the GeoJSON/shapefile. Use one of the following attributes: ", paste(names(stratum), collapse = ", "), ".")
+            # If there is only one column, accept this as stratum names if accept.wrong.name.if.only.one, regardless of StratumNameLabel:
+            if(accept.wrong.name.if.only.one && ncol(stratum) == 1) {
+                StratumNameLabel <- names(stratum)
+            }
+            else {
+                stop("StratumNameLabel must be the name of one of the attributes of the GeoJSON/shapefile. Use one of the following attributes: ", paste(names(stratum), collapse = ", "), ".")
+            }
         }
         else {
             StratumNameLabel <- StratumNameLabel[1]
@@ -370,9 +377,25 @@ getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
     
     return(stratumNames)
 }
-
-
-
+#' 
+#' @rdname getStratumNames
+#' @export
+#' 
+addStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
+    
+    stratumNames <- getStratumNames(
+        stratum, 
+        StratumNameLabel = StratumNameLabel, 
+        check.unique = check.unique, 
+        accept.wrong.name.if.only.one = accept.wrong.name.if.only.one
+    )
+    
+    row.names(stratum) <- stratumNames
+    # This ensures that stratum polygons stored in the project.json with different StratumNameLabel than those definend in the parameter declaration will be stored properly on save:
+    names(stratum) <- "StratumName"
+    
+    return(stratum)
+}
 
 
 ##################################################

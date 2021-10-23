@@ -250,7 +250,7 @@ SplitMeanNASC <- function(
         AcousticCategoryLink <- rbind(
             AcousticCategoryLink, 
             data.table::data.table(
-                MixAcousticCategory = AcousticCategoryNotToBeSplit, 
+                AcousticCategory = AcousticCategoryNotToBeSplit, 
                 SplitAcousticCategory = AcousticCategoryNotToBeSplit
             )
         )
@@ -347,6 +347,7 @@ SplitNASC <- function(
     if(length(missingMixAcousticCategory)) {
         warning("The following mix AcousticCategory are not present in the NASCData: ", paste(missingMixAcousticCategory, collapse = ", "))
     }
+    
     # Keep only rows with mix categories present in the data:
     AcousticCategoryLink <- subset(AcousticCategoryLink, AcousticCategory %in% allAcousticCategory)
     # Add all species that will not be split to the AcousticCategoryLink:
@@ -358,7 +359,7 @@ SplitNASC <- function(
         AcousticCategoryLink <- rbind(
             AcousticCategoryLink, 
             data.table::data.table(
-                MixAcousticCategory = AcousticCategoryNotToBeSplit, 
+                AcousticCategory = AcousticCategoryNotToBeSplit, 
                 SplitAcousticCategory = AcousticCategoryNotToBeSplit
             )
         )

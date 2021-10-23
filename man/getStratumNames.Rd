@@ -2,12 +2,21 @@
 % Please edit documentation in R/Spatial.R
 \name{getStratumNames}
 \alias{getStratumNames}
-\title{Extract stratum names from a SpatialPolygonsDataFrame}
+\alias{addStratumNames}
+\title{Extract or add stratum names from a SpatialPolygonsDataFrame}
 \usage{
 getStratumNames(
   stratum,
   StratumNameLabel = c("StratumName", "polygonName"),
-  check.unique = TRUE
+  check.unique = TRUE,
+  accept.wrong.name.if.only.one = FALSE
+)
+
+addStratumNames(
+  stratum,
+  StratumNameLabel = c("StratumName", "polygonName"),
+  check.unique = TRUE,
+  accept.wrong.name.if.only.one = FALSE
 )
 }
 \arguments{
@@ -15,7 +24,9 @@ getStratumNames(
 
 \item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
 
-\item{check.unique}{Logical:: If TRUE, an error is given if stratum names are not unique.}
+\item{check.unique}{Logical: If TRUE, an error is given if stratum names are not unique.}
+
+\item{accept.wrong.name.if.only.one}{Logical: If TRUE, interpret stratum names if only one column in the SpatialPolygonsDataFrame.}
 }
 \description{
 The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.

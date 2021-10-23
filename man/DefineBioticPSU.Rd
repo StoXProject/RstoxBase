@@ -23,6 +23,8 @@ DefineBioticPSU(
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
+
+\item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.}
 }
 \value{
 An object of StoX data type \code{\link{BioticPSU}}.
