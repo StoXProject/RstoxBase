@@ -53,6 +53,13 @@ backwardCompatibility <- list(
             modelName = "baseline", 
             parameterName = "StratumNameLabel", 
             parameterValue = "polygonName"
+        ), 
+        list(
+            changeVersion = "1.4.7", 
+            functionName = "DefineStratumPolygon", 
+            modelName = "baseline", 
+            parameterName = "SimplifyStratumPolygon", 
+            parameterValue = "FALSE"
         )
     ),  
     

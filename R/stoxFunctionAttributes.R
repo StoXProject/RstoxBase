@@ -155,6 +155,9 @@ stoxFunctionAttributes <- list(
         functionType = "processData", 
         functionCategory = "baseline", 
         functionOutputDataType = "BioticPSU", 
+        functionParameterFormat = list(
+            FileName = "filePath"
+        ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
                 UseProcessData = FALSE

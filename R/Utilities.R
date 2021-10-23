@@ -1544,6 +1544,7 @@ readAcousticPSUFrom2.7 <- function(projectXMLFilePath) {
 #' Read a the AcousticPSU from a project.xml file from StoX <= 2.7
 #' 
 #' @param projectXMLFilePath The path to the project.xml file.
+#' @param MergedStoxDataHaulLevel Merged StoxBioticData down to Haul.
 #' 
 #' @export
 #' 
