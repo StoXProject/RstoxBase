@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.19</span>
       </span>
     </div>
 
@@ -59,19 +59,16 @@
   LengthDependentSelectivityParameters <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>LengthDistributionData</th>
-      <td><p>The <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> data.</p></td>
-    </tr><tr><th>CompensationMethod</th>
-      <td><p>The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).</p></td>
-    </tr><tr><th>LengthDependentSweepWidthParameters</th>
-      <td><p>A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).</p></td>
-    </tr><tr><th>LengthDependentSelectivityParameters</th>
-      <td><p>A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).</p></td>
-    </tr></table></div>
+    
 
-    <div id="ref-sections">
+<dl><dt>LengthDistributionData</dt><dd><p>The <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> data.</p></dd>
+</dl><dl><dt>CompensationMethod</dt><dd><p>The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).</p></dd>
+</dl><dl><dt>LengthDependentSweepWidthParameters</dt><dd><p>A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).</p></dd>
+</dl><dl><dt>LengthDependentSelectivityParameters</dt><dd><p>A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> object.</p>

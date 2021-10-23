@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.19</span>
       </span>
     </div>
 
@@ -62,25 +62,19 @@
   LayerType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acoustic"</span>, <span class="st">"Biotic"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>processData</th>
-      <td><p>The current data produced by a previous instance of the function.</p></td>
-    </tr><tr><th>UseProcessData</th>
-      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
-    </tr><tr><th>StoxData</th>
-      <td><p>Either <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> or <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data.</p></td>
-    </tr><tr><th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the <code>LayerTable</code>.</p></td>
-    </tr><tr><th>Resolution</th>
-      <td><p>Numeric: A single numeric giving the thickness of the layers.</p></td>
-    </tr><tr><th>LayerTable</th>
-      <td><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></td>
-    </tr><tr><th>LayerType</th>
-      <td><p>Character: A string naming the type of model, either "Acoustic" or "Biotic".</p></td>
-    </tr></table></div>
+    
 
-    <div id="ref-sections">
+<dl><dt>processData</dt><dd><p>The current data produced by a previous instance of the function.</p></dd>
+</dl><dl><dt>UseProcessData</dt><dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+</dl><dl><dt>StoxData</dt><dd><p>Either <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> or <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data.</p></dd>
+</dl><dl><dt>DefinitionMethod</dt><dd><p>Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the <code>LayerTable</code>.</p></dd>
+</dl><dl><dt>Resolution</dt><dd><p>Numeric: A single numeric giving the thickness of the layers.</p></dd>
+</dl><dl><dt>LayerTable</dt><dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
+</dl><dl><dt>LayerType</dt><dd><p>Character: A string naming the type of model, either "Acoustic" or "Biotic".</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>An object of StoX data type <code><a href="BioticLayer.html">BioticLayer</a></code>.</p>

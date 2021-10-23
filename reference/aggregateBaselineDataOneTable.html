@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.19</span>
       </span>
     </div>
 
@@ -63,27 +63,20 @@
   WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>stoxData</th>
-      <td><p>Output from any StoX function.</p></td>
-    </tr><tr><th>TargetVariable</th>
-      <td><p>The variable to report.</p></td>
-    </tr><tr><th>aggregationFunction</th>
-      <td><p>The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.</p></td>
-    </tr><tr><th>subTable</th>
-      <td><p>The name of the sub table to aggregate on, if <code>stoxData</code> is a list of tables.</p></td>
-    </tr><tr><th>GroupingVariables</th>
-      <td><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.</p></td>
-    </tr><tr><th>na.rm</th>
-      <td><p>Used in the function specified by <code>aggregationFunction</code>.</p></td>
-    </tr><tr><th>padWithZerosOn</th>
-      <td><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></td>
-    </tr><tr><th>WeightingVariable</th>
-      <td><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></td>
-    </tr></table></div>
+    
 
-    <div id="ref-sections">
+<dl><dt>stoxData</dt><dd><p>Output from any StoX function.</p></dd>
+</dl><dl><dt>TargetVariable</dt><dd><p>The variable to report.</p></dd>
+</dl><dl><dt>aggregationFunction</dt><dd><p>The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.</p></dd>
+</dl><dl><dt>subTable</dt><dd><p>The name of the sub table to aggregate on, if <code>stoxData</code> is a list of tables.</p></dd>
+</dl><dl><dt>GroupingVariables</dt><dd><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.</p></dd>
+</dl><dl><dt>na.rm</dt><dd><p>Used in the function specified by <code>aggregationFunction</code>.</p></dd>
+</dl><dl><dt>padWithZerosOn</dt><dd><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></dd>
+</dl><dl><dt>WeightingVariable</dt><dd><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>An aggregated version of the input <code>stoxData</code>.</p>

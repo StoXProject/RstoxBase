@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.19</span>
       </span>
     </div>
 
@@ -61,21 +61,18 @@
   FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>processData</th>
-      <td><p>The current data produced by a previous instance of the function.</p></td>
-    </tr><tr><th>UseProcessData</th>
-      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
-    </tr><tr><th>StratumPolygon</th>
-      <td><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></td>
-    </tr><tr><th>StoxBioticData</th>
-      <td><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></td>
-    </tr><tr><th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.</p></td>
-    </tr></table></div>
+    
 
-    <div id="ref-sections">
+<dl><dt>processData</dt><dd><p>The current data produced by a previous instance of the function.</p></dd>
+</dl><dl><dt>UseProcessData</dt><dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+</dl><dl><dt>StratumPolygon</dt><dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+</dl><dl><dt>StoxBioticData</dt><dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></dd>
+</dl><dl><dt>DefinitionMethod</dt><dd><p>Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.</p></dd>
+</dl><dl><dt>FileName</dt><dd><p>The path to a resource file from which to read PSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>An object of StoX data type <code><a href="BioticPSU.html">BioticPSU</a></code>.</p>

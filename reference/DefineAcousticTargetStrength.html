@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.18</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.19</span>
       </span>
     </div>
 
@@ -62,23 +62,18 @@
   FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>processData</th>
-      <td><p>The current data produced by a previous instance of the function.</p></td>
-    </tr><tr><th>UseProcessData</th>
-      <td><p>Logical: If TRUE use the existing function output in the process.</p></td>
-    </tr><tr><th>DefinitionMethod</th>
-      <td><p>Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table <code>TargetStrengthTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></td>
-    </tr><tr><th>TargetStrengthMethod</th>
-      <td><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></td>
-    </tr><tr><th>TargetStrengthTable</th>
-      <td><p>A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.</p></td>
-    </tr><tr><th>FileName</th>
-      <td><p>A file from which to read the <code>TargetStrengthTable</code>.</p></td>
-    </tr></table></div>
+    
 
-    <div id="ref-sections">
+<dl><dt>processData</dt><dd><p>The current data produced by a previous instance of the function.</p></dd>
+</dl><dl><dt>UseProcessData</dt><dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+</dl><dl><dt>DefinitionMethod</dt><dd><p>Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table <code>TargetStrengthTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></dd>
+</dl><dl><dt>TargetStrengthMethod</dt><dd><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></dd>
+</dl><dl><dt>TargetStrengthTable</dt><dd><p>A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.</p></dd>
+</dl><dl><dt>FileName</dt><dd><p>A file from which to read the <code>TargetStrengthTable</code>.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>An <code><a href="AcousticTargetStrength.html">AcousticTargetStrength</a></code> object.</p>
