@@ -1,5 +1,5 @@
 Package: RstoxBase
-Version: 1.4.20
+Version: 1.4.21
 Date: 2021-10-26
 Title: Base StoX Functions
 Authors@R: c(
@@ -49,7 +49,8 @@ Imports:
     units (>= 0.7),
     methods (>= 3.6.2),
     xml2 (>= 1.2.2),
-    RstoxData (>= 1.2.11)
+    jsonvalidate (>= 1.1.0),
+    RstoxData (>= 1.2.12)
 Suggests: 
     testthat
 Additional_repositories: 
