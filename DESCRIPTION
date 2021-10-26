@@ -50,6 +50,7 @@ Imports:
     methods (>= 3.6.2),
     xml2 (>= 1.2.2),
     jsonvalidate (>= 1.1.0),
+    jsonlite (>= 1.6),
     RstoxData (>= 1.2.12)
 Suggests: 
     testthat
