@@ -406,9 +406,9 @@ SplitNASC <- function(
     # Uniquify:
     NASCData <- unique(NASCData, by = sumBy)
     
-    if(sum(is.na(NASCData$PSU))) {
-        stop("All EDSUs must be inside a stratum.")
-    }
+    ### if(sum(is.na(NASCData$PSU))) {
+    ###     stop("All EDSUs must be inside a stratum.")
+    ### }
     
     # Revert to channels:
     data.table::setnames(NASCData, c("MinLayerDepth", "MaxLayerDepth"), c("MinChannelDepth", "MaxChannelDepth"))

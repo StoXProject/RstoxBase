@@ -392,7 +392,14 @@ addStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
     
     row.names(stratum) <- stratumNames
     # This ensures that stratum polygons stored in the project.json with different StratumNameLabel than those definend in the parameter declaration will be stored properly on save:
-    names(stratum) <- "StratumName"
+    if(accept.wrong.name.if.only.one && NCOL(stratum) == 1) {
+        names(stratum) <- "StratumName"
+    }
+    
+    # Create a new SpatialPolygonsDataFrame with only one column being the "StratumName" column holding the stratum names:
+    stratum <- stratum[, NULL]
+    stratum$StratumName <- stratumNames
+    
     
     return(stratum)
 }
