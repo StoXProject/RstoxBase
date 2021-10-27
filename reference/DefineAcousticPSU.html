@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.21</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Acoustic PSU</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>DefineAcousticPSU.Rd</code></div>
     </div>
 
@@ -66,15 +66,20 @@
     <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    
-
-<dl><dt>processData</dt><dd><p>The current data produced by a previous instance of the function.</p></dd>
-</dl><dl><dt>UseProcessData</dt><dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
-</dl><dl><dt>StratumPolygon</dt><dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
-</dl><dl><dt>StoxAcousticData</dt><dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></dd>
-</dl><dl><dt>DefinitionMethod</dt><dd><p>Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.</p></dd>
-</dl><dl><dt>FileName</dt><dd><p>The path to a resource file from which to read PSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.</p></dd>
-</dl><dl><dt>AcousticPSU</dt><dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
+    <dl><dt>processData</dt>
+<dd><p>The current data produced by a previous instance of the function.</p></dd>
+<dt>UseProcessData</dt>
+<dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+<dt>StratumPolygon</dt>
+<dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+<dt>StoxAcousticData</dt>
+<dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></dd>
+<dt>DefinitionMethod</dt>
+<dd><p>Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.</p></dd>
+<dt>FileName</dt>
+<dd><p>The path to a resource file from which to read PSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.</p></dd>
+<dt>AcousticPSU</dt>
+<dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

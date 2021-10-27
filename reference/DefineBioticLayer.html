@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.21</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Define biotic Layer</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>DefineBioticLayer.Rd</code></div>
     </div>
 
@@ -64,14 +64,18 @@
     <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    
-
-<dl><dt>processData</dt><dd><p>The current data produced by a previous instance of the function.</p></dd>
-</dl><dl><dt>UseProcessData</dt><dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
-</dl><dl><dt>StoxBioticData</dt><dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></dd>
-</dl><dl><dt>DefinitionMethod</dt><dd><p>Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the <code>LayerTable</code>.</p></dd>
-</dl><dl><dt>Resolution</dt><dd><p>Numeric: A single numeric giving the thickness of the layers.</p></dd>
-</dl><dl><dt>LayerTable</dt><dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
+    <dl><dt>processData</dt>
+<dd><p>The current data produced by a previous instance of the function.</p></dd>
+<dt>UseProcessData</dt>
+<dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+<dt>StoxBioticData</dt>
+<dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></dd>
+<dt>DefinitionMethod</dt>
+<dd><p>Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the <code>LayerTable</code>.</p></dd>
+<dt>Resolution</dt>
+<dd><p>Numeric: A single numeric giving the thickness of the layers.</p></dd>
+<dt>LayerTable</dt>
+<dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

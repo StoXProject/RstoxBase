@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.21</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Function to format the output of a function returning StoX data (ModelData or ProcessData).</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Definitions.R" class="external-link"><code>R/Definitions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/R/Definitions.R" class="external-link"><code>R/Definitions.R</code></a></small>
     <div class="hidden name"><code>formatOutput.Rd</code></div>
     </div>
 
@@ -64,13 +64,16 @@
     <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    
-
-<dl><dt>data</dt><dd><p>A table or list of tables to return from the StoX function.</p></dd>
-</dl><dl><dt>dataType</dt><dd><p>The data type to format against.</p></dd>
-</dl><dl><dt>keep.all</dt><dd><p>Logical: If TRUE keep all columns, and if FALSE delete undefined columns.</p></dd>
-</dl><dl><dt>allow.missing</dt><dd><p>Logical: If TRUE allow for unrelevant column names defined in <code>secondaryColumnOrder</code>.</p></dd>
-</dl><dl><dt>secondaryColumnOrder, secondaryRowOrder</dt><dd><p>A vector of column names specifying order of column not defined by <code><a href="getDataTypeDefinition.html">getDataTypeDefinition</a></code> used to proiritize when ordering columns and rows, respectively.</p></dd>
+    <dl><dt>data</dt>
+<dd><p>A table or list of tables to return from the StoX function.</p></dd>
+<dt>dataType</dt>
+<dd><p>The data type to format against.</p></dd>
+<dt>keep.all</dt>
+<dd><p>Logical: If TRUE keep all columns, and if FALSE delete undefined columns.</p></dd>
+<dt>allow.missing</dt>
+<dd><p>Logical: If TRUE allow for unrelevant column names defined in <code>secondaryColumnOrder</code>.</p></dd>
+<dt>secondaryColumnOrder, secondaryRowOrder</dt>
+<dd><p>A vector of column names specifying order of column not defined by <code><a href="getDataTypeDefinition.html">getDataTypeDefinition</a></code> used to proiritize when ordering columns and rows, respectively.</p></dd>
 </dl></div>
     </div>
 

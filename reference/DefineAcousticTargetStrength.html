@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.21</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Acoustic target strength definition</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>DefineAcousticTargetStrength.Rd</code></div>
     </div>
 
@@ -65,14 +65,18 @@
     <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    
-
-<dl><dt>processData</dt><dd><p>The current data produced by a previous instance of the function.</p></dd>
-</dl><dl><dt>UseProcessData</dt><dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
-</dl><dl><dt>DefinitionMethod</dt><dd><p>Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table <code>TargetStrengthTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></dd>
-</dl><dl><dt>TargetStrengthMethod</dt><dd><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></dd>
-</dl><dl><dt>TargetStrengthTable</dt><dd><p>A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.</p></dd>
-</dl><dl><dt>FileName</dt><dd><p>A file from which to read the <code>TargetStrengthTable</code>.</p></dd>
+    <dl><dt>processData</dt>
+<dd><p>The current data produced by a previous instance of the function.</p></dd>
+<dt>UseProcessData</dt>
+<dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+<dt>DefinitionMethod</dt>
+<dd><p>Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table <code>TargetStrengthTable</code>; and "ResourceFile" for reading the acoustic tfarget strength table from the text file <code>FileName</code>.</p></dd>
+<dt>TargetStrengthMethod</dt>
+<dd><p>Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.</p></dd>
+<dt>TargetStrengthTable</dt>
+<dd><p>A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.</p></dd>
+<dt>FileName</dt>
+<dd><p>A file from which to read the <code>TargetStrengthTable</code>.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

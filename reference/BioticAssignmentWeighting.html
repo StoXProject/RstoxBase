@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.21</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Weighting of biotic hauls in biotic assignment</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/R/Define.R" class="external-link"><code>R/Define.R</code></a></small>
     <div class="hidden name"><code>BioticAssignmentWeighting.Rd</code></div>
     </div>
 
@@ -67,16 +67,22 @@
     <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    
-
-<dl><dt>BioticAssignment</dt><dd><p>The <code><a href="BioticAssignment.html">BioticAssignment</a></code> process data.</p></dd>
-</dl><dl><dt>WeightingMethod</dt><dd><p>Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.</p></dd>
-</dl><dl><dt>StoxBioticData</dt><dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></dd>
-</dl><dl><dt>LengthDistributionData</dt><dd><p>The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).</p></dd>
-</dl><dl><dt>MaxNumberOfLengthSamples</dt><dd><p>For <code>WeightingMethod</code> = "NumberOfLengthSamples": Values of the number of length samples that exceed <code>MaxNumberOfLengthSamples</code> are set to <code>MaxNumberOfLengthSamples</code>. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.</p></dd>
-</dl><dl><dt>StoxAcousticData</dt><dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></dd>
-</dl><dl><dt>Radius</dt><dd><p>For <code>WeightingMethod</code> = "NASC": The radius inside which the average NASC is calculated.</p></dd>
-</dl><dl><dt>LengthExponent</dt><dd><p>For <code>WeightingMethod</code> = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.</p></dd>
+    <dl><dt>BioticAssignment</dt>
+<dd><p>The <code><a href="BioticAssignment.html">BioticAssignment</a></code> process data.</p></dd>
+<dt>WeightingMethod</dt>
+<dd><p>Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.</p></dd>
+<dt>StoxBioticData</dt>
+<dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></dd>
+<dt>LengthDistributionData</dt>
+<dd><p>The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).</p></dd>
+<dt>MaxNumberOfLengthSamples</dt>
+<dd><p>For <code>WeightingMethod</code> = "NumberOfLengthSamples": Values of the number of length samples that exceed <code>MaxNumberOfLengthSamples</code> are set to <code>MaxNumberOfLengthSamples</code>. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.</p></dd>
+<dt>StoxAcousticData</dt>
+<dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></dd>
+<dt>Radius</dt>
+<dd><p>For <code>WeightingMethod</code> = "NASC": The radius inside which the average NASC is calculated.</p></dd>
+<dt>LengthExponent</dt>
+<dd><p>For <code>WeightingMethod</code> = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

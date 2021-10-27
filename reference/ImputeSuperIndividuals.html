@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.21</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Impute missing individual data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Abundance.R" class="external-link"><code>R/Abundance.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/R/Abundance.R" class="external-link"><code>R/Abundance.R</code></a></small>
     <div class="hidden name"><code>ImputeSuperIndividuals.Rd</code></div>
     </div>
 
@@ -64,14 +64,18 @@
     <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    
-
-<dl><dt>SuperIndividualsData</dt><dd><p>The <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code> data.</p></dd>
-</dl><dl><dt>ImputationMethod</dt><dd><p>The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.</p></dd>
-</dl><dl><dt>ImputeAtMissing</dt><dd><p>The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndividualAge.</p></dd>
-</dl><dl><dt>ImputeByEqual</dt><dd><p>The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndividualTotalLength.</p></dd>
-</dl><dl><dt>ToImpute</dt><dd><p>The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>. The variable specified by <code>ImputeAtMissing</code> is always imputed, and need not be included in <code>ToImpute</code>.</p></dd>
-</dl><dl><dt>Seed</dt><dd><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></dd>
+    <dl><dt>SuperIndividualsData</dt>
+<dd><p>The <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code> data.</p></dd>
+<dt>ImputationMethod</dt>
+<dd><p>The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.</p></dd>
+<dt>ImputeAtMissing</dt>
+<dd><p>The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndividualAge.</p></dd>
+<dt>ImputeByEqual</dt>
+<dd><p>The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndividualTotalLength.</p></dd>
+<dt>ToImpute</dt>
+<dd><p>The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>. The variable specified by <code>ImputeAtMissing</code> is always imputed, and need not be included in <code>ToImpute</code>.</p></dd>
+<dt>Seed</dt>
+<dd><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.20</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.21</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Mean NASC</h1>
-    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/R/Acoustic.R" class="external-link"><code>R/Acoustic.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/R/Acoustic.R" class="external-link"><code>R/Acoustic.R</code></a></small>
     <div class="hidden name"><code>MeanNASC.Rd</code></div>
     </div>
 
@@ -74,23 +74,36 @@
     <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    
-
-<dl><dt>NASCData</dt><dd><p>The <code><a href="NASCData.html">NASCData</a></code> data.</p></dd>
-</dl><dl><dt>SumNASCData</dt><dd><p>The <code><a href="SumNASCData.html">SumNASCData</a></code> data.</p></dd>
-</dl><dl><dt>LayerDefinition</dt><dd><p>The method to use for defining the Layers, one of <code>FunctionParameter</code> to define the Layers on the fly in this function, <code>FunctionInput</code> to import Layer process data from a previously run process by the input <code>AcousticLayer</code>, or <code>PreDefined</code> whihc requires <code>SumNASCData</code> as input.</p></dd>
-</dl><dl><dt>LayerDefinitionMethod</dt><dd><p>See <code><a href="DefineAcousticLayer.html">DefineAcousticLayer</a></code></p></dd>
-</dl><dl><dt>Resolution</dt><dd><p>Numeric: A single numeric giving the thickness of the layers.</p></dd>
-</dl><dl><dt>LayerTable</dt><dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
-</dl><dl><dt>AcousticLayer</dt><dd><p>The <code><a href="AcousticLayer.html">AcousticLayer</a></code> process data.</p></dd>
-</dl><dl><dt>SurveyDefinition</dt><dd><p>The method to use for defining the Survey, one of <code>FunctionParameter</code> to define the Survey on the fly in this function, or <code>FunctionInput</code> to import Survey process data from a previously run process by the input <code>Survey</code>.</p></dd>
-</dl><dl><dt>SurveyDefinitionMethod</dt><dd><p>See <code><a href="DefineSurvey.html">DefineSurvey</a></code></p></dd>
-</dl><dl><dt>SurveyTable</dt><dd><p>A table of the two columns Stratum and Survey.</p></dd>
-</dl><dl><dt>Survey</dt><dd><p>The <code><a href="Survey.html">Survey</a></code> process data.</p></dd>
-</dl><dl><dt>PSUDefinition</dt><dd><p>The method to use for defining the PSUs, one of <code>FunctionParameter</code> to define the PSUs on the fly in this function, or <code>FunctionInput</code> to import PSU process data from a previously run process by <code>AcousticPSU</code>.</p></dd>
-</dl><dl><dt>PSUDefinitionMethod</dt><dd><p>See <code><a href="DefineAcousticPSU.html">DefineAcousticPSU</a></code></p></dd>
-</dl><dl><dt>StratumPolygon</dt><dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
-</dl><dl><dt>AcousticPSU</dt><dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
+    <dl><dt>NASCData</dt>
+<dd><p>The <code><a href="NASCData.html">NASCData</a></code> data.</p></dd>
+<dt>SumNASCData</dt>
+<dd><p>The <code><a href="SumNASCData.html">SumNASCData</a></code> data.</p></dd>
+<dt>LayerDefinition</dt>
+<dd><p>The method to use for defining the Layers, one of <code>FunctionParameter</code> to define the Layers on the fly in this function, <code>FunctionInput</code> to import Layer process data from a previously run process by the input <code>AcousticLayer</code>, or <code>PreDefined</code> whihc requires <code>SumNASCData</code> as input.</p></dd>
+<dt>LayerDefinitionMethod</dt>
+<dd><p>See <code><a href="DefineAcousticLayer.html">DefineAcousticLayer</a></code></p></dd>
+<dt>Resolution</dt>
+<dd><p>Numeric: A single numeric giving the thickness of the layers.</p></dd>
+<dt>LayerTable</dt>
+<dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
+<dt>AcousticLayer</dt>
+<dd><p>The <code><a href="AcousticLayer.html">AcousticLayer</a></code> process data.</p></dd>
+<dt>SurveyDefinition</dt>
+<dd><p>The method to use for defining the Survey, one of <code>FunctionParameter</code> to define the Survey on the fly in this function, or <code>FunctionInput</code> to import Survey process data from a previously run process by the input <code>Survey</code>.</p></dd>
+<dt>SurveyDefinitionMethod</dt>
+<dd><p>See <code><a href="DefineSurvey.html">DefineSurvey</a></code></p></dd>
+<dt>SurveyTable</dt>
+<dd><p>A table of the two columns Stratum and Survey.</p></dd>
+<dt>Survey</dt>
+<dd><p>The <code><a href="Survey.html">Survey</a></code> process data.</p></dd>
+<dt>PSUDefinition</dt>
+<dd><p>The method to use for defining the PSUs, one of <code>FunctionParameter</code> to define the PSUs on the fly in this function, or <code>FunctionInput</code> to import PSU process data from a previously run process by <code>AcousticPSU</code>.</p></dd>
+<dt>PSUDefinitionMethod</dt>
+<dd><p>See <code><a href="DefineAcousticPSU.html">DefineAcousticPSU</a></code></p></dd>
+<dt>StratumPolygon</dt>
+<dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+<dt>AcousticPSU</dt>
+<dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
