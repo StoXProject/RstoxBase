@@ -180,6 +180,10 @@ LengthDistribution <- function(
     ##### 6. Divide by the effective towed distance for normalized length distribution: #####
     #########################################################################################
     if(LengthDistributionType == "Normalized") {
+        atEffectiveTowDistance0 <- which(LengthDistributionData[, EffectiveTowDistance == 0])
+        if(length(atEffectiveTowDistance0)) {
+            warning("The following Hauls have EffectiveTowDistance = 0, which causes WeightedCount = Inf. This may result in loss of data at a later stage, e.g. in SplitNASC:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = "\n"))
+        }
         LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
     }
     

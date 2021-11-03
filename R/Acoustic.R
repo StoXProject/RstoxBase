@@ -334,49 +334,34 @@ SplitNASC <- function(
     AcousticCategoryLink
 ) {
     
+    # Add PSUs. This makes a copy, also:
+    NASCData <- merge(NASCData, AcousticPSU$EDSU_PSU)
     # Fake a MeanNASCData table:
     data.table::setnames(NASCData, c("MinChannelDepth", "MaxChannelDepth"), c("MinLayerDepth", "MaxLayerDepth"))
-    # Specifically, add PSUs:
-    NASCData <- merge(NASCData, AcousticPSU$EDSU_PSU)
     # ... and fake Layers by simply copying Channel to Layer:
     NASCData[, Layer := Channel]
     
-    # Find the mix categories in the NASCData.
-    allAcousticCategory <- unique(NASCData$AcousticCategory)
+    
+    # First consider only the rows with non-missing PSU, which are those that will be split:
+    rowToBeSplit <- !is.na(NASCData$PSU)
+    
+    # Then find the mix categories in the NASCData.
+    allAcousticCategory <- unique(NASCData$AcousticCategory[rowToBeSplit])
     missingMixAcousticCategory <- setdiff(AcousticCategoryLink$AcousticCategory, allAcousticCategory)
     if(length(missingMixAcousticCategory)) {
-        warning("The following mix AcousticCategory are not present in the NASCData: ", paste(missingMixAcousticCategory, collapse = ", "))
+        warning("The following mix AcousticCategory are not present in the NASCData, and will not be split: ", paste(missingMixAcousticCategory, collapse = ", "))
+        
     }
-    
     # Keep only rows with mix categories present in the data:
     AcousticCategoryLink <- subset(AcousticCategoryLink, AcousticCategory %in% allAcousticCategory)
-    # Add all species that will not be split to the AcousticCategoryLink:
-    AcousticCategoryNotToBeSplit <- setdiff(
-        unique(NASCData$AcousticCategory), 
-        unique(AcousticCategoryLink$AcousticCategory)
-    )
-    if(length(AcousticCategoryNotToBeSplit)) {
-        AcousticCategoryLink <- rbind(
-            AcousticCategoryLink, 
-            data.table::data.table(
-                AcousticCategory = AcousticCategoryNotToBeSplit, 
-                SplitAcousticCategory = AcousticCategoryNotToBeSplit
-            )
-        )
-    }
     
-    # Copy the NASC from the MixAcousticCategory to the SplitAcousticCategory, and remove the MixAcousticCategory:
-    NASCDataToSplit <- subset(NASCData, AcousticCategory %in% AcousticCategoryLink$AcousticCategory)
-    NASCDataNotToSplit <- subset(NASCData, ! AcousticCategory %in% AcousticCategoryLink$AcousticCategory)
-    
-    # Add the SplitAcousticCategory:
-    NASCDataToSplit <- RstoxData::mergeByIntersect(NASCDataToSplit, AcousticCategoryLink, all = TRUE, allow.cartesian = TRUE, sort = FALSE)
-    # Replace the AcousticCategory column by the SplitAcousticCategory column:
-    NASCDataToSplit[, AcousticCategory := SplitAcousticCategory][, SplitAcousticCategory := NULL]
+    # Set aside the rows that will not be split:
+    rowToBeSplit <- rowToBeSplit & NASCData$AcousticCategory %in% AcousticCategoryLink$AcousticCategory
+    NASCDataNotSplit <- subset(NASCData, !rowToBeSplit)
     
     # Define the resolution on which to distribute the NASC:
     resolution <- setdiff(
-        getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
+        getDataTypeDefinition(dataType = "NASCData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
         "Stratum" # Stratum is not need as there is one PSU per EDSU (Stratum would not provide any finer grouping than PSU)
     )
     # Split the NASC by the AssignmentLengthDistributionData, but first remove the column Layer from AssignmentLengthDistributionData so that the fake layers which are copied from channels are not matched with the Layer from the assignment, which we   require to be WaterColumn in the current version:
@@ -385,30 +370,34 @@ SplitNASC <- function(
     }
     AssignmentLengthDistributionData[, Layer := NULL]
     
-    NASCDataSplit <- DistributeNASC(
-        NASCData = NASCDataToSplit, 
+    # Split one mix acoustic category at the time:
+    
+    
+    NASCDataSplit <- lapply(
+        unique(AcousticCategoryLink$AcousticCategory), 
+        splitOneAcousticCategory, 
+        NASCData = NASCData, 
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
+        AcousticCategoryLink = AcousticCategoryLink, 
         SpeciesLink = SpeciesLink, 
-        sumBy = resolution
+        rowToBeSplit = rowToBeSplit, 
+        splitResolution = resolution
     )
+    NASCDataSplit <- data.table::rbindlist(NASCDataSplit)
     
-    # Then add to the NASCDataNotToSplit and sum for each species of each Stratum, PSU and Layer:
-    columnsToKeep <- names(NASCDataNotToSplit)
+    # Then add to the NASCDataNotToSplit:
+    columnsToKeep <- names(NASCDataNotSplit)
     NASCData <- rbind(
-        NASCDataNotToSplit, 
+        NASCDataNotSplit, 
         NASCDataSplit[, ..columnsToKeep]
     )
     
     # Sum the NASC:
     sumBy <- c(resolution, "AcousticCategory")
-    NASCData <- NASCData[, NASC := sum(NASC), by = sumBy]
+    NASCData <- NASCData[, NASC := sum(NASC, na.rm = TRUE), by = sumBy]
     # Uniquify:
     NASCData <- unique(NASCData, by = sumBy)
-    
-    ### if(sum(is.na(NASCData$PSU))) {
-    ###     stop("All EDSUs must be inside a stratum.")
-    ### }
     
     # Revert to channels:
     data.table::setnames(NASCData, c("MinLayerDepth", "MaxLayerDepth"), c("MinChannelDepth", "MaxChannelDepth"))
@@ -417,9 +406,92 @@ SplitNASC <- function(
     formatOutput(NASCData, dataType = "NASCData", keep.all = FALSE)
     
     
+    
+    
+     
+    
+    
+    
+    #NASCDataToSplit <- subset(NASCData, doSplit)
+    #NASCDataNotToSplit <- subset(NASCData, !doSplit)
+    #
+    ## Add the SplitAcousticCategory:
+    #NASCDataToSplit <- RstoxData::mergeByIntersect(NASCDataToSplit, AcousticCategoryLink, all = TRUE, allow.cartesian = TRUE, sort = FALSE)
+    ## Replace the AcousticCategory column by the SplitAcousticCategory column:
+    #NASCDataToSplit[, AcousticCategory := SplitAcousticCategory][, SplitAcousticCategory := NULL]
+    #
+    ## Define the resolution on which to distribute the NASC:
+    #resolution <- setdiff(
+    #    getDataTypeDefinition(dataType = "NASCData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
+    #    "Stratum" # Stratum is not need as there is one PSU per EDSU (Stratum would not provide any finer grouping than PSU)
+    #)
+    ## Split the NASC by the AssignmentLengthDistributionData, but first remove the column Layer from AssignmentLengthDistributionData so that the fake layers which are copied from channels are not matched with the Layer from the assignment, which we   require to be WaterColumn in the current version:
+    #if(!all(AssignmentLengthDistributionData$Layer == "WaterColumn")) {
+    #    stop("All Layer in AssignmentLengthDistributionData must be \"WaterColumn\". This can be set in the function DefineBioticAssignment.")
+    #}
+    #AssignmentLengthDistributionData[, Layer := NULL]
+    #
+    #NASCDataSplit <- DistributeNASC(
+    #    NASCData = NASCDataToSplit, 
+    #    AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
+    #    AcousticTargetStrength = AcousticTargetStrength, 
+    #    SpeciesLink = SpeciesLink, 
+    #    sumBy = resolution
+    #)
+    ### Convert NASC to density by dividing by the backscattering cross section of each species:
+    #NASCDataSplit <- NASCToDensity(NASCDataSplit)
+    
+    ## Then add to the NASCDataNotToSplit and sum for each species of each Stratum, PSU and Layer:
+    #columnsToKeep <- names(NASCDataNotToSplit)
+    #NASCData <- rbind(
+    #    NASCDataNotToSplit, 
+    #    NASCDataSplit[, ..columnsToKeep]
+    #)
+    #
+    ## Sum the NASC:
+    #sumBy <- c(resolution, "AcousticCategory")
+    #NASCData <- NASCData[, NASC := sum(NASC), by = sumBy]
+    ## Uniquify:
+    #NASCData <- unique(NASCData, by = sumBy)
+    #
+    #if(sum(is.na(NASCData$PSU))) {
+    #    stop("All EDSUs must be inside a stratum.")
+    #}
+    #
+    ## Revert to channels:
+    #data.table::setnames(NASCData, c("MinLayerDepth", "MaxLayerDepth"), c("MinChannelDepth", "MaxChannelDepth"))
+    #
+    ## Format the output:
+    #formatOutput(NASCData, dataType = "NASCData", keep.all = FALSE)
+    
+    
     return(NASCData)
 }
 
+splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLengthDistributionData, AcousticTargetStrength, AcousticCategoryLink, SpeciesLink, rowToBeSplit, splitResolution) {
+    
+    # Extract the mix acoustic category :
+    AcousticCategoryLink <- subset(AcousticCategoryLink, AcousticCategory == mixAcousticCategory)
+    # Extract the NASCData for the AcousticCategory to be split:
+    doSplit <- rowToBeSplit & NASCData$AcousticCategory %in% AcousticCategoryLink$AcousticCategory
+    NASCDataToBeSplit <- subset(NASCData, doSplit)
+    
+    # Add the SplitAcousticCategory. This repeats the NASC to each of the split categories:
+    NASCDataToBeSplit <- RstoxData::mergeByIntersect(NASCDataToBeSplit, AcousticCategoryLink, all = TRUE, allow.cartesian = TRUE, sort = FALSE)
+    # Replace the AcousticCategory column by the SplitAcousticCategory column:
+    NASCDataToBeSplit[, AcousticCategory := SplitAcousticCategory][, SplitAcousticCategory := NULL]
+    
+    #  Split the abundance:
+    NASCDataSplit <- DistributeNASC(
+        NASCData = NASCDataToBeSplit, 
+        AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
+        AcousticTargetStrength = AcousticTargetStrength, 
+        SpeciesLink = SpeciesLink, 
+        sumBy = splitResolution
+    )
+    
+    return(NASCDataSplit)
+}
 
 ##################################################
 #' Convert NASCData to StoxAcousticData
