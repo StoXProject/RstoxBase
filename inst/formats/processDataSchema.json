@@ -1,185 +1,123 @@
 {
  
-    "AcousticPSU": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object",
-        "properties": {
-            "Stratum_PSU": {
-                "type": "array",
-                "items": [ 
-                    {
-                        "type": "object",
-                        "properties": {
-                            "Stratum": { "type": "string" },
-                            "PSU": { "type": "string" }
-                        },
-                        "required": [
-                            "Stratum",
-                            "PSU"
-                        ]
-                    }
-                ]
-            },
-            "EDSU_PSU": {
-                "type": "array",
-                "items": [ 
-                    {
-                        "type": "object",
-                        "properties": {
-                            "EDSU": { "type": "string" },
-                            "PSU": { "type": "string" }
-                        },
-                        "required": [
-                            "EDSU",
-                            "PSU"
-                        ]
-                    }
+    "Stratum_PSU": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "Stratum": { "type": "string" },
+                    "PSU": { "type": "string" }
+                },
+                "required": [
+                    "Stratum",
+                    "PSU"
                 ]
             }
-        },
-        "required": [
-            "Stratum_PSU",
-            "EDSU_PSU"
         ]
-    }, 
-    
-    "AcousticPSUByTime": {
-    	"$schema": "http://json-schema.org/draft-04/schema#",
-		"type": "array",
-		"items": [
-			{
-				"type": "object",
-				"properties": {
-					"Stratum": { "type": "string" },
-					"PSU": { "type": "string" },
-					"Cruise": { "type": "string" },
-					"StartDateTime": { "type": "string" },
-					"StopDateTime": { "type": "string" }
-				},
-				"required": [
-					"Stratum",
-					"PSU",
-					"Cruise",
-					"StartDateTime",
-					"StopDateTime"
-				]
-			}
-		]
-	}, 
-    
-    "BioticPSU": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object",
-        "properties": {
-            "Stratum_PSU": {
-                "type": "array",
-                "items": [ 
-                    {
-                        "type": "object",
-                        "properties": {
-                            "Stratum": { "type": "string" },
-                            "PSU": { "type": "string" }
-                        },
-                        "required": [
-                            "Stratum",
-                            "PSU"
-                        ]
-                    }
-                ]
-            },
-            "Station_PSU": {
-                "type": "array",
-                "items": [ 
-                    {
-                        "type": "object",
-                        "properties": {
-                            "Station": { "type": "string" },
-                            "PSU": { "type": "string" }
-                        },
-                        "required": [
-                            "Station",
-                            "PSU"
-                        ]
-                    }
+    },
+    "EDSU_PSU": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "EDSU": { "type": "string" },
+                    "PSU": { "type": "string" }
+                },
+                "required": [
+                    "EDSU",
+                    "PSU"
                 ]
             }
-        },
-        "required": [
-            "Stratum_PSU",
-            "Station_PSU"
         ]
-    }, 
+    },
+    "PSUByTime": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "Stratum": { "type": "string" },
+    		        "PSU": { "type": "string" },
+    		        "Cruise": { "type": "string" },
+    		        "StartDateTime": { "type": "string" },
+    		        "StopDateTime": { "type": "string" }
+                },
+                "required": [
+                    "Stratum",
+    		        "PSU",
+    		        "Cruise",
+    		        "StartDateTime",
+    		        "StopDateTime"
+                ]
+            }
+        ]
+    },
     
+    "Station_PSU": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "Station": { "type": "string" },
+                    "PSU": { "type": "string" }
+                },
+                "required": [
+                    "Station",
+                    "PSU"
+                ]
+            }
+        ]
+    },
+        
     "BioticLayer": {
-		"$schema": "http://json-schema.org/draft-04/schema#",
+		"$schema": "https://json-schema.org/draft/2020-12/schema",
 		"type": "array",
 		"items": [
 			{
 				"type": "object",
 				"properties": {
-					"AcousticCategory": {
-						"type": "integer"
-					},
-					"Frequency": {
-						"type": "integer"
-					},
-					"m": {
-						"type": "integer"
-					},
-					"a": {
-						"type": "number"
-					},
-					"d": {
-						"type": "integer"
-					}
+				    "Layer": { "type": "string" }, 
+                    "MinLayerDepth": { "type": "number" }, 
+                    "MaxLayerDepth": { "type": "number" }
 				},
 				"required": [
-					"AcousticCategory",
-					"Frequency",
-					"m",
-					"a",
-					"d"
+					"Layer",
+					"MinLayerDepthMinLayerDepth",
+					"MaxLayerDepth"
 				]
 			}
 		]
 	}, 
 
     "AcousticLayer": {
-		"$schema": "http://json-schema.org/draft-04/schema#",
+		"$schema": "https://json-schema.org/draft/2020-12/schema",
 		"type": "array",
 		"items": [
 			{
 				"type": "object",
 				"properties": {
-					"AcousticCategory": {
-						"type": "integer"
-					},
-					"Frequency": {
-						"type": "integer"
-					},
-					"m": {
-						"type": "integer"
-					},
-					"a": {
-						"type": "number"
-					},
-					"d": {
-						"type": "integer"
-					}
+				    "Layer": { "type": "string" }, 
+                    "MinLayerDepth": { "type": "number" }, 
+                    "MaxLayerDepth": { "type": "number" }
 				},
 				"required": [
-					"AcousticCategory",
-					"Frequency",
-					"m",
-					"a",
-					"d"
+					"Layer",
+					"MinLayerDepthMinLayerDepth",
+					"MaxLayerDepth"
 				]
 			}
 		]
 	}, 
 
     "BioticAssignment": {
-		"$schema": "http://json-schema.org/draft-04/schema#",
+		"$schema": "https://json-schema.org/draft/2020-12/schema",
 		"type": "array",
 		"items": [
 			{
@@ -189,7 +127,7 @@
 					"PSU": { "type": "string" },
 					"Layer": { "type": "string" },
 					"Haul": { "type": "string" },
-					"WeightingFactor": { "type": "integer" }
+					"WeightingFactor": { "type": "number" }
 				},
 				"required": [
 					"Stratum",
@@ -202,32 +140,8 @@
 		]
 	}, 
 
-    "AcousticTargetStrength": {
-		"$schema": "http://json-schema.org/draft-04/schema#",
-		"type": "array",
-		"items": [
-			{
-				"type": "object",
-				"properties": {
-					"AcousticCategory": { "type": "integer" },
-					"Frequency": { "type": "integer" },
-					"m": { "type": "integer" },
-					"a": { "type": "number" },
-					"d": { "type": "integer" }
-				},
-				"required": [
-					"AcousticCategory",
-					"Frequency",
-					"m",
-					"a",
-					"d"
-				]
-			}
-		]
-	}, 
-	
 	"Survey": {
-		"$schema": "http://json-schema.org/draft-04/schema#",
+		"$schema": "https://json-schema.org/draft/2020-12/schema",
 		"type": "array",
 		"items": [
 			{
@@ -245,7 +159,7 @@
 	}, 
 	
     "StratumPolygon": {
-		"$schema": "http://json-schema.org/draft-07/schema#",
+		"$schema": "https://json-schema.org/draft/2020-12/schema",
 		"$id": "https://geojson.org/schema/FeatureCollection.json",
 		"title": "GeoJSON FeatureCollection",
 		"type": "object",
@@ -293,70 +207,6 @@
 									"type": "null"
 								},
 								{
-									"title": "GeoJSON Point",
-									"type": "object",
-									"required": [
-										"type",
-										"coordinates"
-									],
-									"properties": {
-										"type": {
-											"type": "string",
-											"enum": [
-												"Point"
-											]
-										},
-										"coordinates": {
-											"type": "array",
-											"minItems": 2,
-											"items": {
-												"type": "number"
-											}
-										},
-										"bbox": {
-											"type": "array",
-											"minItems": 4,
-											"items": {
-												"type": "number"
-											}
-										}
-									}
-								},
-								{
-									"title": "GeoJSON LineString",
-									"type": "object",
-									"required": [
-										"type",
-										"coordinates"
-									],
-									"properties": {
-										"type": {
-											"type": "string",
-											"enum": [
-												"LineString"
-											]
-										},
-										"coordinates": {
-											"type": "array",
-											"minItems": 2,
-											"items": {
-												"type": "array",
-												"minItems": 2,
-												"items": {
-													"type": "number"
-												}
-											}
-										},
-										"bbox": {
-											"type": "array",
-											"minItems": 4,
-											"items": {
-												"type": "number"
-											}
-										}
-									}
-								},
-								{
 									"title": "GeoJSON Polygon",
 									"type": "object",
 									"required": [
@@ -375,76 +225,6 @@
 											"items": {
 												"type": "array",
 												"minItems": 4,
-												"items": {
-													"type": "array",
-													"minItems": 2,
-													"items": {
-														"type": "number"
-													}
-												}
-											}
-										},
-										"bbox": {
-											"type": "array",
-											"minItems": 4,
-											"items": {
-												"type": "number"
-											}
-										}
-									}
-								},
-								{
-									"title": "GeoJSON MultiPoint",
-									"type": "object",
-									"required": [
-										"type",
-										"coordinates"
-									],
-									"properties": {
-										"type": {
-											"type": "string",
-											"enum": [
-												"MultiPoint"
-											]
-										},
-										"coordinates": {
-											"type": "array",
-											"items": {
-												"type": "array",
-												"minItems": 2,
-												"items": {
-													"type": "number"
-												}
-											}
-										},
-										"bbox": {
-											"type": "array",
-											"minItems": 4,
-											"items": {
-												"type": "number"
-											}
-										}
-									}
-								},
-								{
-									"title": "GeoJSON MultiLineString",
-									"type": "object",
-									"required": [
-										"type",
-										"coordinates"
-									],
-									"properties": {
-										"type": {
-											"type": "string",
-											"enum": [
-												"MultiLineString"
-											]
-										},
-										"coordinates": {
-											"type": "array",
-											"items": {
-												"type": "array",
-												"minItems": 2,
 												"items": {
 													"type": "array",
 													"minItems": 2,
@@ -522,70 +302,6 @@
 											"items": {
 												"oneOf": [
 													{
-														"title": "GeoJSON Point",
-														"type": "object",
-														"required": [
-															"type",
-															"coordinates"
-														],
-														"properties": {
-															"type": {
-																"type": "string",
-																"enum": [
-																	"Point"
-																]
-															},
-															"coordinates": {
-																"type": "array",
-																"minItems": 2,
-																"items": {
-																	"type": "number"
-																}
-															},
-															"bbox": {
-																"type": "array",
-																"minItems": 4,
-																"items": {
-																	"type": "number"
-																}
-															}
-														}
-													},
-													{
-														"title": "GeoJSON LineString",
-														"type": "object",
-														"required": [
-															"type",
-															"coordinates"
-														],
-														"properties": {
-															"type": {
-																"type": "string",
-																"enum": [
-																	"LineString"
-																]
-															},
-															"coordinates": {
-																"type": "array",
-																"minItems": 2,
-																"items": {
-																	"type": "array",
-																	"minItems": 2,
-																	"items": {
-																		"type": "number"
-																	}
-																}
-															},
-															"bbox": {
-																"type": "array",
-																"minItems": 4,
-																"items": {
-																	"type": "number"
-																}
-															}
-														}
-													},
-													{
 														"title": "GeoJSON Polygon",
 														"type": "object",
 														"required": [
@@ -604,76 +320,6 @@
 																"items": {
 																	"type": "array",
 																	"minItems": 4,
-																	"items": {
-																		"type": "array",
-																		"minItems": 2,
-																		"items": {
-																			"type": "number"
-																		}
-																	}
-																}
-															},
-															"bbox": {
-																"type": "array",
-																"minItems": 4,
-																"items": {
-																	"type": "number"
-																}
-															}
-														}
-													},
-													{
-														"title": "GeoJSON MultiPoint",
-														"type": "object",
-														"required": [
-															"type",
-															"coordinates"
-														],
-														"properties": {
-															"type": {
-																"type": "string",
-																"enum": [
-																	"MultiPoint"
-																]
-															},
-															"coordinates": {
-																"type": "array",
-																"items": {
-																	"type": "array",
-																	"minItems": 2,
-																	"items": {
-																		"type": "number"
-																	}
-																}
-															},
-															"bbox": {
-																"type": "array",
-																"minItems": 4,
-																"items": {
-																	"type": "number"
-																}
-															}
-														}
-													},
-													{
-														"title": "GeoJSON MultiLineString",
-														"type": "object",
-														"required": [
-															"type",
-															"coordinates"
-														],
-														"properties": {
-															"type": {
-																"type": "string",
-																"enum": [
-																	"MultiLineString"
-																]
-															},
-															"coordinates": {
-																"type": "array",
-																"items": {
-																	"type": "array",
-																	"minItems": 2,
 																	"items": {
 																		"type": "array",
 																		"minItems": 2,
@@ -764,6 +410,105 @@
 				}
 			}
 		}
-	}
+	}, 
 	
+    "TargetStrengthMethod": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "TargetStrengthMethod": { "type": "string" }
+                },
+                "required": [
+                    "TargetStrengthMethod"
+                ]
+            }
+        ]
+    },
+    "TargetStrengthTable": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "AcousticCategory": { "type": "string" }, 
+                    "Frequency": { "type": "number" },
+                    "TargetStrength0": { "type": "number" },
+                    "LengthExponent": { "type": "number" },
+                    "DepthExponent": { "type": "number" },
+                    "TargetStrength": { "type": "number" },
+                    "TotalLength": { "type": "number" }
+                },
+                "required": [
+                    "AcousticCategory",
+                    "Frequency"
+                ]
+            }
+        ]
+    }, 
+
+
+
+
+
+
+
+    
+    "AcousticPSU": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "Stratum_PSU": {
+              "$ref": "#/Stratum_PSU"
+            },
+            "EDSU_PSU": {
+              "$ref": "#/EDSU_PSU"
+            },
+            "PSUByTime": {
+              "$ref": "#/PSUByTime"
+            }
+        },
+        "required": [
+            "Stratum_PSU",
+            "EDSU_PSU",
+            "PSUByTime"
+        ]
+    }, 
+   
+    "BioticPSU": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "Stratum_PSU": {
+              "$ref": "#/Stratum_PSU"
+            },
+            "EDSU_PSU": {
+              "$ref": "#/EDSU_PSU"
+            }
+        },
+        "required": [
+            "Stratum_PSU",
+            "Station_PSU"
+        ]
+    }, 	
+    
+    "AcousticTargetStrength": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "TargetStrengthMethod": {
+              "$ref": "#/TargetStrengthMethod"
+            },
+            "TargetStrengthTable": {
+              "$ref": "#/TargetStrengthTable"
+            }
+        },
+        "required": [
+            "TargetStrengthMethod",
+            "TargetStrengthTable"
+        ]
+    }
 }

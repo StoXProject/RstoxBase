@@ -30,10 +30,10 @@ DefineLayer(
 \item{LayerType}{Character: A string naming the type of model, either "Acoustic" or "Biotic".}
 }
 \value{
-An object of StoX data type \code{\link{BioticLayer}}.
+A table of layer intervals.
 }
 \description{
-This function defines the \code{\link{BioticLayer}} process data, which sets the range intervals of the swetp-area layers used in biotic estimation models in StoX.
+This function defines the Layer process data, which sets the range intervals of layers used in estimation models in StoX.
 }
 \seealso{
 \code{\link{DefineAcousticLayer}} and \code{\link{DefineBioticLayer}}.

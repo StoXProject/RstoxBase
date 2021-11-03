@@ -659,7 +659,7 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 ##################################################
 #' Define Layers
 #' 
-#' This function defines the \code{\link{BioticLayer}} process data, which sets the range intervals of the swetp-area layers used in biotic estimation models in StoX.
+#' This function defines the Layer process data, which sets the range intervals of layers used in estimation models in StoX.
 #' 
 #' @inheritParams general_arguments
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
@@ -668,11 +668,9 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 #' @param LayerTable A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{BioticLayer}}.
+#' A table of layer intervals.
 #' 
 #' @seealso \code{\link{DefineAcousticLayer}} and \code{\link{DefineBioticLayer}}.
-#' 
-#' @export
 #' 
 DefineLayer <- function(
     processData, UseProcessData = FALSE, 

@@ -1,3 +1,9 @@
+# RstoxBase v1.4.22 (2021-11-03)
+
+* Refactored SplitNASC to support multiple EDSUs per PSU, and EDSUs outside of any statum.
+* Added warning for when EffectiveTowDistance = 0 in Lengthdistribution() with LengthDistributionType = "Normalized".
+* Updated processDataSchema.json.
+
 # RstoxBase v1.4.18 (2021-10-21)
 
 * Added the DefinitionMethod \"ResourceFile\" in DefineBioticPSU(), which enables reading BioiticPSU from a StoX 2.7 project.xml file.
