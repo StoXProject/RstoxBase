@@ -1356,7 +1356,7 @@ readStox2.7ProcessDataTable <- function(projectXMLFilePath, processDataName, old
     # Discard any name that are not present in the process data:
     invalid <- setdiff(processDataName, names(projectList$processdata))
     if(length(invalid)) {
-        warning("The following process data names are not present in the project.xml file ", projectXMLFilePath, " and were ignored.")
+        warning("StoX: The following process data names are not present in the project.xml file ", projectXMLFilePath, " and were ignored.")
         processDataName <- intersect(processDataName, names(projectList$processdata))
     }
     

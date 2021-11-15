@@ -6,7 +6,7 @@
 \usage{
 ReportDensity(
   DensityData,
-  TargetVariable,
+  TargetVariable = character(),
   ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
   RemoveMissingValues = FALSE,

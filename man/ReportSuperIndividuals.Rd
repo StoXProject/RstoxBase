@@ -6,7 +6,7 @@
 \usage{
 ReportSuperIndividuals(
   SuperIndividualsData,
-  TargetVariable,
+  TargetVariable = character(),
   ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
   RemoveMissingValues = FALSE,

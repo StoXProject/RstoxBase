@@ -101,11 +101,11 @@ DefinePSU <- function(
         usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
         if(any(usedButMissingInStoxData)) {
             warning(
-                "There are ", 
+                "StoX: There are ", 
                 switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", 
                 " that are present as tagged to one or more PSUs in the process data, but that are not present in the ", 
-                "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data of using a filter. StoX should take care to ignore these ", 
-                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", "but for clarity it is advised to remove them from the PSUs."
+                "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data or using a filter. StoX should ignore these ", 
+                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", " but for clarity it is advised to remove them from the PSUs."
             )
         }
         
@@ -599,6 +599,7 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
         atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
         
         # It may happen that an SSU of the SSU_PSU is not present in the station data (StoxAcoustic$Log or StoxBiotic$Station). In these cases return NAs for cruise and times: 
+        # ????????????????????????????? Why all() with no argument?
         if(all()) {
             #PSUStartStopDateTimeOneCruise <- data.table::data.table(
             #    PSU = PSU, 
@@ -1347,6 +1348,10 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
     )
     # Square and return:
     SquaredRelativeDiff <- c(out[, x - y])^2 / axisLength^2
+    if(all(is.na(SquaredRelativeDiff))) {
+        warning("StoX: All ", variableName, " are NA. Using this as an axis in the ellipsoid will have no effect.")
+    }
+    
     return(SquaredRelativeDiff)
 }
 
@@ -1498,7 +1503,7 @@ BioticAssignmentWeighting <- function(
     }
     # Search around each station for the NASC values inside the range 'Radius':
     else if(WeightingMethod == "NASC") {
-        warning("Not implemented")
+        warning("StoX: WeightingMethod = \"NASC\" not yet implemented.")
         # Merge the Station and Haul table:
         ###if(any(unlist(LengthDistributionData[, lapply(.SD, function(x) all(is.na(x))), .SDcols = c("Station", "Haul")]))) {
         ###    stop("LengthDistributionData must have horizontal/vertical resolution Station/Haul (the finest resolution)")
@@ -1898,16 +1903,16 @@ getSurveyTable <- function(
     else if(DefinitionMethod == "SurveyTable") {
         # Delete rows with missing Survey:
         if(any(is.na(SurveyTable$Survey))) {
-            warning("Removing rows of missing Survey in SurveyTable")
+            warning("StoX: Removing rows of missing Survey in SurveyTable")
             SurveyTable <- SurveyTable[!is.na(Survey)]
         }
         if(any(is.na(SurveyTable$Stratum))) {
-            warning("Removing rows of missing Stratum in SurveyTable")
+            warning("StoX: Removing rows of missing Stratum in SurveyTable")
             SurveyTable <- SurveyTable[!is.na(Stratum)]
         }
         # Delete also rows with unrecognized Stratum:
         if(!all(SurveyTable$Stratum %in% stratumNames)) {
-            warning("Removing rows of Stratum not present in the SurveyTable")
+            warning("StoX: Removing rows of Stratum not present in the SurveyTable")
             SurveyTable <- SurveyTable[Stratum %in% stratumNames, ]
         }
         # If no rows in the SurveyTable, issue an error:
