@@ -18,7 +18,7 @@
 #' 
 ReportSuperIndividuals <- function(
     SuperIndividualsData, 
-    TargetVariable, 
+    TargetVariable = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     RemoveMissingValues = FALSE, 
@@ -59,7 +59,7 @@ ReportSuperIndividuals <- function(
 #' 
 ReportDensity <- function(
     DensityData, 
-    TargetVariable, 
+    TargetVariable = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     RemoveMissingValues = FALSE, 

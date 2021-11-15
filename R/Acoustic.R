@@ -349,7 +349,7 @@ SplitNASC <- function(
     allAcousticCategory <- unique(NASCData$AcousticCategory[rowToBeSplit])
     missingMixAcousticCategory <- setdiff(AcousticCategoryLink$AcousticCategory, allAcousticCategory)
     if(length(missingMixAcousticCategory)) {
-        warning("The following mix AcousticCategory are not present in the NASCData, and will not be split: ", paste(missingMixAcousticCategory, collapse = ", "))
+        warning("StoX: The following mix AcousticCategory are not present in the NASCData, and will not be split: ", paste(missingMixAcousticCategory, collapse = ", "))
         
     }
     # Keep only rows with mix categories present in the data:
@@ -364,7 +364,7 @@ SplitNASC <- function(
         getDataTypeDefinition(dataType = "NASCData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
         "Stratum" # Stratum is not need as there is one PSU per EDSU (Stratum would not provide any finer grouping than PSU)
     )
-    # Split the NASC by the AssignmentLengthDistributionData, but first remove the column Layer from AssignmentLengthDistributionData so that the fake layers which are copied from channels are not matched with the Layer from the assignment, which we   require to be WaterColumn in the current version:
+    # Split the NASC by the AssignmentLengthDistributionData, but first remove the column Layer from AssignmentLengthDistributionData so that the fake layers which are copied from channels are not matched with the Layer from the assignment, which we require to be WaterColumn in the current version:
     if(!all(AssignmentLengthDistributionData$Layer == "WaterColumn")) {
         stop("All Layer in AssignmentLengthDistributionData must be \"WaterColumn\". This can be set in the function DefineBioticAssignment.")
     }
@@ -537,6 +537,11 @@ NASCToStoxAcoustic <- function(NASCData, StoxAcousticData) {
     
     # Set the column order of the output StoxAcousticData based on the input StoxAcousticData:
     mapply(data.table::setcolorder, StoxAcousticDataOut, lapply(StoxAcousticData, names))
+    
+    # Set order of the columns:
+    for(tableName in names(StoxAcousticDataOut)) {
+        data.table::setorder(StoxAcousticDataOut[[tableName]])
+    }
     
     return(StoxAcousticDataOut)
 }

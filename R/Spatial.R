@@ -294,7 +294,7 @@ simplifyStratumPolygon <- function(
     # Issue a warning iff any strata are smaller than 1 square meter:
     empty <- area < units::set_units(1,  "m^2")
     if(any(empty)) {
-        warning("The following strata was empty after simplification (less than 1 square meter), and were replaced by the original strata: \n", paste0(utils::capture.output(StratumAreaTable[empty]), collapse = "\n"))
+        warning("StoX: The following strata was empty after simplification (less than 1 square meter), and were replaced by the original strata: \n", paste0(utils::capture.output(StratumAreaTable[empty]), collapse = "\n"))
     }
     
     # Replace empty strata by the original:
