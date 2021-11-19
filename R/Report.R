@@ -9,7 +9,7 @@
 #' @param ReportFunction The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.
 #' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
 #'
-#' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLength, or average IndividualTotalLength for each IndiivdualAge and Stratum.
+#' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLength, or average IndividualTotalLength for each IndividualAge and Stratum.
 #' 
 #' @return
 #' A \code{\link{ReportSuperIndividualsData}} object.
@@ -27,8 +27,8 @@ ReportSuperIndividuals <- function(
 {
     
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues)) {
-        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning"))
+    if(isTRUE(RemoveMissingValues) && any(is.na(SuperIndividualsData[[TargetVariable]]))) {
+        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
     aggregateBaselineDataOneTable(
@@ -67,8 +67,8 @@ ReportDensity <- function(
 ) 
 {
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues)) {
-        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning"))
+    if(isTRUE(RemoveMissingValues) && any(is.na(DensityData[[TargetVariable]]))) {
+        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
     aggregateBaselineDataOneTable(

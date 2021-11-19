@@ -23,7 +23,7 @@ Abundance <- function(
     MeanDensityData, 
     StratumAreaData
 ) {
-	
+    
     # Merge the stratum area with the DensityData to an AbundanceData (remove the area at the end of the function):
     AbundanceData <- data.table::copy(MeanDensityData)
     AbundanceData$Data <- merge(AbundanceData$Data, StratumAreaData, by ="Stratum")
@@ -196,7 +196,10 @@ SuperIndividuals <- function(
         ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
         # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation (after bootstrapping):
         # all.y = TRUE
-        all.x = TRUE
+        
+        # Reverting to all = TRUE, since all.x = TRUE had the unwanted effect that the behavior of seed changed due to the weak code in ImputeData where data.table::data.table is used to cbind uniqueKeys, and imputeSeed, whereas a seed per pasted unique combination of the keys, treated as factor with platform independent sorting should be use. Also, we are not adding Abundance to the individuals, but rather distributing ALL OF THE Abundance to inidividuals:
+        #all.x = TRUE
+        all = TRUE
     )
     
     # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
@@ -441,7 +444,7 @@ addLengthGroup <- function(
     if(warn && length(speciesOnlyInData)) {
         warning("StoX: The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
     }
-
+    
     # Keep only the common species:    
     species <- intersect(speciesInData, speciesInMaster)
     
@@ -597,11 +600,13 @@ ImputeData <- function(
         by <- c(level, imputeByEqual)
         
         # Get the table of seeds for each unique combination of the columns defined by 'by':
-        seedTable <- unique(dataCopy[, ..by])
-        data.table::setorder(seedTable)
+        uniqueKeys <- unique(dataCopy[, ..by])
+        data.table::setorder(uniqueKeys)
+        
+        # This seed table will be dependent on whether there is a row of all NAs or not in the table of unique keys. As a consequence, a future review of how StoX includes NA rows will affect how seed works!!!
         seedTable <- data.table::data.table(
-            seedTable, 
-            imputeSeed = getSeedVector(size = nrow(seedTable), seed = seedVector[[level]])
+            uniqueKeys, 
+            imputeSeed = getSeedVector(size = nrow(uniqueKeys), seed = seedVector[[level]])
         )
         
         # Add the seeds to the data (recycled). Use all.x = TRUE as there is no need to include any unwanted rows from the seedTable (althouhg this iss unlikely to happen):
@@ -647,13 +652,13 @@ getImputeRowIndicesOneLevel <- function(
     .SDcols <- c(imputeAtMissing, "ReplaceIndividualIndex", "ReplaceLevel", "IndividualIndex", "imputeSeed")
     
     dataCopy[, 
-         c("ReplaceIndividualIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
-             .SD, 
-             imputeAtMissing = imputeAtMissing, 
-             level = level
-         ), 
-         .SDcols = .SDcols, 
-         by = by]
+             c("ReplaceIndividualIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
+                 .SD, 
+                 imputeAtMissing = imputeAtMissing, 
+                 level = level
+             ), 
+             .SDcols = .SDcols, 
+             by = by]
 }
 
 # Function to get the imputation row indices of one table of one level ("Haul", "Stratum", NULL). This function is applied using data table with 'by':

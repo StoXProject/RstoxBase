@@ -111,6 +111,7 @@ LengthDistribution <- function(
         # The length group is defined as the combination of IndividualTotalLength and LengthResolution. See 'dataTypeDefinition' in initiateRstoxBase(): 
         dataTypeDefinition$groupingVariables
     )
+    
     # Declare the variables used below:
     LengthDistributionData <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
     if(!nrow(LengthDistributionData)) {
@@ -164,6 +165,9 @@ LengthDistribution <- function(
     }
     raisingFactorIndex <- apply(raisingFactorTable, 1, getIndexOfFirstNonNA, LengthDistributionType = LengthDistributionType)
     LengthDistributionData$raisingFactor <- raisingFactorTable[cbind(seq_along(raisingFactorIndex), raisingFactorIndex)]
+    if(any(is.na(LengthDistributionData$raisingFactor))) {
+        warning("StoX: Missing raising factor found for ", sum(is.na(LengthDistributionData$raisingFactor)), " out of ", nrow(LengthDistributionData), " samples. This is an indication that both CatchFractionWeight and CatchFractionCount, or both SampleWeight and SampleCount are missing for those samples (or possibly other combinations of missing values).")
+    }
     
     # Apply the raising factor and sum over samples:
     #keysSansSample <- setdiff(keys, getStoxBioticKeys("Sample"))
