@@ -680,8 +680,10 @@ initiateRstoxBase <- function(){
     seedSequenceLength <- 1e7
     
     # Warning when using RemoveMissingValues:
-    RemoveMissingValuesWarning <- "StoX: Using RemoveMissingValues = TRUE implies the risk of under-estimation. E.g., if RemoveMissingValues = TRUE and a super-individual lacks IndividualRoundWeight, Biomass will be NA, and the portion of Abundance distributed to that super-individual will be excluded when summing Biomass (but included when summing Abundance). It is advised to always run with RemoveMissingValues = FALSE first, and make a thorough investigation to identify the source of any missing values. The function ImputeSuperIndividuals can be used to impute the missing information from other super-individuals."
-    
+    #RemoveMissingValuesWarning <- "StoX: Using RemoveMissingValues = TRUE implies the risk of under-estimation. E.g., if RemoveMissingValues = TRUE and a super-individual lacks IndividualRoundWeight, Biomass will be NA, and the portion of Abundance distributed to that super-individual will be excluded when summing Biomass (but included when summing Abundance). It is advised to always run with RemoveMissingValues = FALSE first, and make a thorough investigation to identify the source of any missing values. The function ImputeSuperIndividuals can be used to impute the missing information from other super-individuals."
+    RemoveMissingValuesWarning <- function(TargetVariable) {
+        paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! The Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")
+    }
     
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
