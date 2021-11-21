@@ -784,6 +784,8 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
 
 formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL, secondaryRowOrder = NULL) {
     
+    
+    
     # Get the column order:
     columnOrder <- unique(
         c(
@@ -797,6 +799,7 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
             secondaryRowOrder
         )
     )
+    
     if(allow.missing) {
         columnOrder <- intersect(columnOrder, names(table))
         rowOrder <- intersect(rowOrder, names(table))

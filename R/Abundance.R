@@ -302,8 +302,8 @@ SuperIndividuals <- function(
     SuperIndividualsData[, individualWeightFactor := NULL]
     
     
-    # Add Biomass:
-    SuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    # Add Biomass, where missing weigth is accepted if Abundane is 0:
+    SuperIndividualsData[, Biomass := ifelse(Abundance %in% 0, 0, Abundance * IndividualRoundWeight)]
     
     # Format the output but keep all columns:
     #formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
@@ -529,8 +529,8 @@ ImputeSuperIndividuals <- function(
         #lengthInterval  = if(RegroupIndividualTotalLength) LengthInterval else numeric()
     )
     
-    # Re-calculate the Biomass:
-    ImputeSuperIndividualsData[, Biomass := Abundance * IndividualRoundWeight]
+    # Re-calculate the Biomass, where missing weigth is accepted if Abundane is 0:
+    ImputeSuperIndividualsData[, Biomass := ifelse(Abundance %in% 0, 0, Abundance * IndividualRoundWeight)]
     
     # Format the output but keep all columns:
     #formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE)
@@ -582,8 +582,22 @@ ImputeData <- function(
         )
     }
     
+    
     # Introduce an Individual index for use in the sorted sampling:
     dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]
+    #dataCopy[, IndividualIndex := seq_along(Individual)]
+    # Use the semi-numeric sorting proivded by RstoxData:
+    #dataCopy[, IndividualIndex := as.numeric(factor(RstoxData::createOrderKey(Individual)))]
+    
+    # Missed attempt:
+    #RstoxData::setorderv_numeric(dataCopy, by = getDataTypeDefinition("SuperIndividualsData", unlist = TRUE))
+    #dataCopy[, IndividualIndex := seq_along(Individual)]
+    
+    # Missed attempt:
+    #dataCopy[, IndividualExpanded := paste(Survey, Stratum, Layer, SpeciesCategory, Individual, sep = "-")]
+    #dataCopy[, IndividualIndex := as.numeric(factor(RstoxData::createOrderKey(IndividualExpanded, split = c("/", "-"))))]
+    
+    
     
     ## Add an AllStrata column to the data to facilitate the AllStrata level: 
     #dataCopy[, AllStrata := "AllStrata"]
@@ -648,6 +662,7 @@ getImputeRowIndicesOneLevel <- function(
     level = "Haul", 
     by
 ) {
+    
     # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
     .SDcols <- c(imputeAtMissing, "ReplaceIndividualIndex", "ReplaceLevel", "IndividualIndex", "imputeSeed")
     
@@ -667,7 +682,6 @@ getImputeRowIndicesOneGroup <- function(
     imputeAtMissing, 
     level
 ) {
-    
     # Get the super individuals with missing data (and which have not been given ReplaceIndividualIndex):
     missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceIndividualIndex)]
     # This is assuming unique individuals for each Stratum, Layer, SpeciesCategory and length group:
@@ -694,6 +708,8 @@ getImputeRowIndicesOneGroup <- function(
         ###     redraw.seed = TRUE
         ### )
         ### ReplaceRowIndex[missingData] <- dataCopyOneGroup[presentData, RowIndex][sampleIndexInPresent]
+        
+        # Using sampleSorted() here should be platfom independent as we are sampling integers:
         
         ReplaceIndividualIndex[missingData] <- sampleSorted(
             #dataCopyOneGroup[!missingData, IndividualIndex], 
