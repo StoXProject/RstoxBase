@@ -139,7 +139,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
             weighting = NULL, 
             type = "LengthDistributionType", 
-            other = NULL
+            other = c("NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls")
         ), 
         # Density:
         DensityData = list(
@@ -171,6 +171,7 @@ initiateRstoxBase <- function(){
                 surveyDefinition = "Survey", 
                 horizontalResolution = "Stratum", 
                 verticalResolution = c("Layer"), 
+                obserationVariable = "Beam",
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = c(
                     "IndividualTotalLength", "LengthResolution", 

@@ -1,25 +1,32 @@
-# RstoxBase v1.4.22 (2021-11-03)
+# RstoxBase v1.4.26 (2021-11-23)
+* Changed how StoX treats missing values (NA) so that an NA will always propagate to the next step in the calculation (na.rm = FALSE). The only exception is missing values in bootstrap runs, which are treated as 0 to reflect the instances of e.g. a length group being left out in the data due to the random sampling of hauls, in which case the abundance of that length group is to be considered as 0. Previously, in MeanNASC(), MeanLengthDistribution() and MeanDensity(), where the mean is calculated as sum of the data divided by the sum of the weights (e.g. log distance or number of stations), missing values were ignored in the sums. In the new version missing values result in missing values in the mean. A consequence of preserving missing values can be that a missing value in a normalized LengthDistribution (e.g., due to missing sample weights) will propagate through to a missing value in the stratum, and ultimately to a missing value in the survey if summing over strata in a report. The problem must then be solved by either correcting what in the input data that is causing the missing values, or filter out those values (e.g. filter out erroneous or experimental hauls). For acoustic-trawl models there is an extra complication related to bootstrapping, since missing values here are treated as 0. I there are hauls assigned to an acoustic PSU that does not contain any length measured individuals of the target species, there is a positive probability that only these hauls are sampled in a bootstrap run, resulting in missing values in abundance of the stratum of that PSU. Treating this as 0 will lead to under-estimation. Only hauls length measured individuals of the target species should be used in the biotic assignment when bootstrapping is included in the StoX project.
+* Added support for multiple beams in SplitNASC(, where the NASC is now distributed to the different species for each beam().
+* Fixed bug in SplitNASC() so that NASC for a PSUs with all missing values in the AssignmentLengthDistributionData of a specific species are left un-splitted.
+* Added removal of empty PSUs.
+* Added the columns NumberOfAssignedHaulsWithCatch and NumberOfAssignedHauls to AsssignmentLengthDistributionData, used in AcousticDensity() to flag PSUs for which hauls with no length measured individuals of the target species are assigned.
+* Removed unwanted columns in the output from AcousticDensity(), inherirted from MeanNASCData.
+* Added support for Biomass = 0 when Abundance = 0, regardless of IndividualRoundWeight = NA.
+* Reverted to using all = TRUE when merging AbnudanceData into Individuals in SuperIndividuals(), as using all.x = TRUE implies the risk of discarding a portion of the abundance.
+* Changed error causing trouble in DistributeNASC() in splitOneAcousticCategory() to warning.
+* Fixed bug causing empty PSUByTime from DefineAcousticPSU when DefinitionMethod = "Manual".
 
+# RstoxBase v1.4.22 (2021-11-03)
 * Refactored SplitNASC to support multiple EDSUs per PSU, and EDSUs outside of any statum.
 * Added warning for when EffectiveTowDistance = 0 in Lengthdistribution() with LengthDistributionType = "Normalized".
 * Updated processDataSchema.json.
 
 # RstoxBase v1.4.18 (2021-10-21)
-
 * Added the DefinitionMethod \"ResourceFile\" in DefineBioticPSU(), which enables reading BioiticPSU from a StoX 2.7 project.xml file.
 
 # RstoxBase v1.4.17 (2021-10-11)
-
 * Changed to merge SuperIndividualsData and LengthDistributionData with all.x = TRUE in SuperIndividuals(). The effect of this is that hauls that are discarded by the random sampling in a bootstrap run no longer result in a row in SuperIndividualsData with mostly NAs.
 
 # RstoxBase v1.4.16 (2021-10-11)
-
 * Changed SuperIndividuals() to not add rows from EDSUs with no assigned biotic hauls. In the previous version, rows were added with NA in all variables except those from the EDSU (frequency, etc.) if e.g. assignment method "Stratum" was used, and no hauls existed in a stratum with EDSUs.
 * Changed aggregateBaselineDataOneTable() so that when used to produce reports using RstoxFramework::BootstraReport() NAs are not change to 0 except for NAs introduced between bootstrap runs (e.g., ages missing in some runs due to resampling of hauls).
 * Fixed bug in the parameter formats of ImputeSuperIndividuals() when using SuperIndividualsData from another process using ImputeSuperIndividuals().
 
 # RstoxBase v1.4.15 (2021-10-08)
-
 * Fixed bug in SplitNASC().
 * Final version for the release of StoX 3.2.0.
 

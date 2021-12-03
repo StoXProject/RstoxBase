@@ -165,8 +165,15 @@ LengthDistribution <- function(
     }
     raisingFactorIndex <- apply(raisingFactorTable, 1, getIndexOfFirstNonNA, LengthDistributionType = LengthDistributionType)
     LengthDistributionData$raisingFactor <- raisingFactorTable[cbind(seq_along(raisingFactorIndex), raisingFactorIndex)]
-    if(any(is.na(LengthDistributionData$raisingFactor))) {
-        warning("StoX: Missing raising factor found for ", sum(is.na(LengthDistributionData$raisingFactor)), " out of ", nrow(LengthDistributionData), " samples. This is an indication that both CatchFractionWeight and CatchFractionCount, or both SampleWeight and SampleCount are missing for those samples (or possibly other combinations of missing values).")
+    
+    # Warnings for NA or Inf raising factor:
+    atRaisingFactorNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(raisingFactor)])
+    if(length(atRaisingFactorNA)) {
+        warning("StoX: The following Hauls have missing (NA) raising factor, which is an indication that both CatchFractionWeight and CatchFractionCount, or both SampleWeight and SampleCount are missing for those samples (or possibly other combinations of missing values).:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorNA]), collapse = "\n"))
+    }
+    atRaisingFactorInf <- which(LengthDistributionData[, !is.na(Haul) & is.infinite(raisingFactor)])
+    if(length(atRaisingFactorInf)) {
+        warning("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleCount are 0 for those samples and will lead to Inf values in the length distribution, which in turn can result in loss of NASC in SplitNASC() or loss of density in AcousticDensity().:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorInf]), collapse = "\n"))
     }
     
     # Apply the raising factor and sum over samples:
@@ -184,10 +191,15 @@ LengthDistribution <- function(
     ##### 6. Divide by the effective towed distance for normalized length distribution: #####
     #########################################################################################
     if(LengthDistributionType == "Normalized") {
-        atEffectiveTowDistance0 <- which(LengthDistributionData[, EffectiveTowDistance == 0])
+        atEffectiveTowDistance0 <- which(LengthDistributionData[, !is.na(Haul) & EffectiveTowDistance == 0])
         if(length(atEffectiveTowDistance0)) {
             warning("StoX: The following Hauls have EffectiveTowDistance = 0, which causes WeightedCount = Inf. This may result in loss of data at a later stage, e.g. in SplitNASC:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = "\n"))
         }
+        atEffectiveTowDistanceNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(EffectiveTowDistance)])
+        if(length(atEffectiveTowDistanceNA)) {
+            warning("StoX: The following Hauls have EffectiveTowDistance = NA, which when LengthDistributionType == \"Normalized\" results in all WeightedCount = NA, which will propagate through mean and sum proecsses throughout the project.:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = "\n"))
+        }
+        
         LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
     }
     
@@ -919,14 +931,23 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     thisLengthDistributionData[, c(dataVariable) := sum(x = get(dataVariable) * get(weightingVariable)), by = by]
     
+    # Add the number of assigned hauls par PSU, and the number of assigned hauls with length distribution for each species
+    thisLengthDistributionData[, NumberOfAssignedHauls := length(unique(Haul))]
+    thisLengthDistributionData[, HasAnyPositiveWeightedCount := any(!is.na(WeightedCount) & (WeightedCount > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
+    thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedCount, Haul, NA)]
+    thisLengthDistributionData[, NumberOfAssignedHaulsWithCatch := length(unique(stats::na.omit(ValidHaul))), by = "SpeciesCategory"]
+    
     # Extract only the relevant columns:
     ###formatOutput(thisLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE, allow.missing = TRUE)
     # Remove also the resolution variables, as the output from this function will be merged with BioticAssignmentData by AssignmentID (and not by these resolution avriables):
     removeColumnsByReference(
         data = thisLengthDistributionData, 
-        toRemove = getResolutionVariables("AssignmentLengthDistributionData")
+        toRemove = c(
+            getResolutionVariables("AssignmentLengthDistributionData"), 
+            "HasAnyPositiveWeightedCount",
+            "ValidHaul"
+        )
     )
-    
     
     
     # Subset to the unique rows (since the sum was by reference):

@@ -299,7 +299,7 @@ zoom_xlim_ylim <- function(xlim, ylim, zoom = 1, offset = c(0.5, 0.5)){
     xcenter <- min(xlim) + offset[1] * diff(xlim)
     ycenter <- min(ylim) + offset[2] * diff(ylim)
     if(zoom <= 0){
-        warning("The value of 'zoom' must be positive, with default 1 implying no zoom. The default was used.")
+        warning("StoX: The value of 'zoom' must be positive, with default 1 implying no zoom. The default was used.")
     }
     
     # Zoom:
