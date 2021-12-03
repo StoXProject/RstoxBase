@@ -123,7 +123,10 @@ AcousticDensity <- function(
     # 2020-12-02: This had keep.all = FALSE. Is this an error????????????????????? We should clearly describe the justifications for which data types are rigid and which are not rigid:
     # Changed to keep.all = TRUE on 2021-03-18 when introducing Data and Resolution for DensityData and onwards:
     #formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE, allow.missing = TRUE)
-    formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
+    
+    # Changed to keep.all = FALSE in StoX 3.2.0, as inlcuding all variables from MeanNASC seems like an error.
+    #formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
+    formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
     RstoxData::setRstoxPrecisionLevel(DensityData)
@@ -195,9 +198,36 @@ DistributeNASC <- function(
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
     # Check whether there are any non-missing length distribution frequencies:
-    if(! NASCData[, sum(!is.na(WeightedCount))]) {
+    anyNonNAWeightedCount <- NASCData[, sum(!is.na(WeightedCount))]
+    if(! anyNonNAWeightedCount) {
         warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), ". A possible reason is that the LayerDefinition differs between the MeanNASCData and the AssignmentLengthDistributionData. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC(). Another reason may be that the AcousticCategory of the AcousticTargetStrength process data and the parameter SpeciesLink of the AcousticDensity function do not match.")
         #"No length distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
+    }
+    
+    
+    # And check whether there are PSU/Layer for which one or more hauls are empty for one or more of the target species:
+    resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    checkValidHaulsBy <- c(resolution, getDataTypeDefinition(dataType = "DensityData", elements = c("categoryVariable"), unlist = TRUE))
+    notAllHaulsHaveCatch <- NASCData[, .(notAllHaulsHaveCatch = NumberOfAssignedHaulsWithCatch != NumberOfAssignedHauls), by = checkValidHaulsBy]
+    if(any(notAllHaulsHaveCatch$notAllHaulsHaveCatch, na.rm = TRUE)) {
+        withInvalidHauls <- unique(NASCData[notAllHaulsHaveCatch$notAllHaulsHaveCatch, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls"),with = FALSE], by = checkValidHaulsBy)
+        withInvalidHauls <- paste0(
+            withInvalidHauls[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = checkValidHaulsBy], 
+            " (", 
+            withInvalidHauls[, Reduce(function(...) paste(..., sep = "/"), .SD), .SDcols = c("NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls")], 
+            ")"
+        )
+        warning(paste("StoX: There are Stratum-PSU-Layer-SpeciesCategory that have assigned hauls with no length measured individuals, and consequently no length distribution of the target species. This can lead to underestimation in reports from bootstrap.\n\tDetails: If ONLY hauls with no length measured individuals are sampled in a bootstrap run, the assignment length distribution will be missing (NA), and acoustic density will be NA. This, in turn, can propagate as NA in the corresponding stratum through to SuperIndividuals of that bootstrap run. This can lead to underestimation for acoustic-trawl models, as NAs are treated as 0 across bootstrap runs. Please make sure that only hauls with length measured individuals of the target species are assigned to each PSU-Layer. The hauls with no length measured individuals are listed with (number of hauls with number of length measured individuals / total number of assigned hauls):", paste(withInvalidHauls, collapse = "\n\t"), sep = "\n\t"))
+    }
+    
+    
+    # Add a warning if any WeightedCount are NA while NASC > 0:
+    NASCData[, missingAssignment := all(is.na(WeightedCount) & NASC > 0), by = sumBy]
+    unassignedPSUs <- unique(NASCData[missingAssignment == TRUE, PSU])
+    unassignedPSUs <- setdiff(unassignedPSUs, NA)
+    NASCData[, missingAssignment := NULL]
+    if(length(unassignedPSUs)) {
+        warning("StoX: There are NASC values with no assigned length distibution. This can lead to un-splitted acoustic categories in SplitNASC() and missing (NA) density. Make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this. Missing length distribution for the following PSUs:\n", paste("\t", unassignedPSUs, collapse = "\n"))
     }
     
     # Calculate the target strength of each length group:
@@ -209,10 +239,11 @@ DistributeNASC <- function(
     # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the length distribution from the AssignmentLengthDistributionData:
     NASCData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount]
     # Divide by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
+    # If the length distribution is misssing (NA) this will be NA/sum(NA, na.rm = TRUE) = NA, as expected.
     NASCData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection, na.rm = TRUE), by = sumBy]
     
     # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
-    NASCData[, NASC := NASC * representativeBackscatteringCrossSectionNormalized]
+    NASCData[, NASC := ifelse(NASC == 0, 0, NASC * representativeBackscatteringCrossSectionNormalized)]
     
     return(NASCData[])
 }
@@ -559,7 +590,7 @@ SpeciesCategoryCatch <- function(
     sumBy <- c("Haul", categoryVariable)
     StoxBioticDataMerged[, eval(CatchVariableName) := sum(get(CatchVariableName)), by = sumBy]
     
-    # Warning if there are species ccategories which are empty string:
+    # Warning if there are species categories which are empty string:
     emptyString <- StoxBioticDataMerged[, nchar(get(categoryVariable))] == 0
     if(any(emptyString, na.rm = TRUE)) {
         warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")

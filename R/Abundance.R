@@ -257,7 +257,8 @@ SuperIndividuals <- function(
         # No no, this was certainly wrong, as WeightedCount could be duplicated within a Stratum for one length group:
         #SuperIndividualsData[, sumWeightedCount := sum(unique(WeightedCount), na.rm = TRUE), by = distributeAbundanceBy]
         # Sum the WeightedCount over all hauls of the columns specified by distributeAbundanceBy:
-        SuperIndividualsData[, sumWeightedCount := sum(WeightedCount[!duplicated(Haul)], na.rm = TRUE), by = distributeAbundanceBy]
+        #SuperIndividualsData[, sumWeightedCount := sum(WeightedCount[!duplicated(Haul)], na.rm = TRUE), by = distributeAbundanceBy]
+        SuperIndividualsData[, sumWeightedCount := sum(WeightedCount[!duplicated(Haul)], na.rm = FALSE), by = distributeAbundanceBy]
         
         # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
         SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount]
@@ -275,8 +276,12 @@ SuperIndividuals <- function(
         SuperIndividualsData[, individualCount := .N, by = countGrouping]
         
         # Remove WeightedCount and sumWeightedCount:
-        SuperIndividualsData[, WeightedCount := NULL]
-        SuperIndividualsData[, sumWeightedCount := NULL]
+        #SuperIndividualsData[, WeightedCount := NULL]
+        #SuperIndividualsData[, sumWeightedCount := NULL]
+        removeColumnsByReference(
+            data = SuperIndividualsData, 
+            toRemove = c("WeightedCount", "sumWeightedCount")
+        )
     }
     else{
         stop("Invalid DistributionMethod")
@@ -314,11 +319,14 @@ SuperIndividuals <- function(
     formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
     # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
-    SuperIndividualsData[, haulWeightFactor := NULL]
-    
-    SuperIndividualsData[, individualCount := NULL]
-    #SuperIndividualsData[, abundanceWeightFactor := NULL]
-    SuperIndividualsData[, LengthGroup := NULL]
+    #SuperIndividualsData[, haulWeightFactor := NULL]
+    #SuperIndividualsData[, individualCount := NULL]
+    ##SuperIndividualsData[, abundanceWeightFactor := NULL]
+    #SuperIndividualsData[, LengthGroup := NULL]
+    removeColumnsByReference(
+        data = SuperIndividualsData, 
+        toRemove = c("haulWeightFactor", "individualCount", "LengthGroup")
+    )
     
     ## Order the rows:
     #orderDataByReference(SuperIndividualsData, "SuperIndividualsData")
@@ -647,11 +655,11 @@ ImputeData <- function(
     dataCopy[, ReplaceIndividual := Individual[match(ReplaceIndividualIndex, IndividualIndex)]]
     
     # Delete the IndividualIndex and ReplaceIndividualIndex:
-    dataCopy[, IndividualIndex := NULL]
-    #dataCopy[, RowIndex := NULL]
-    dataCopy[, ReplaceIndividualIndex := NULL]
-    #dataCopy[, AllStrata := NULL]
-    
+    removeColumnsByReference(
+        data = dataCopy, 
+        toRemove = c("IndividualIndex", "ReplaceIndividualIndex")
+    )
+
     return(dataCopy)
 }
 

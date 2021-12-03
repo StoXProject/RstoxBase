@@ -109,6 +109,12 @@ DefinePSU <- function(
             )
         }
         
+        # Remove PSUs that do not have a stratum:
+        processData <- removePSUsWithMissingStratum(processData)
+        
+        # Remove empy PSUs:
+        processData <- removeEmptyPSUs(processData)
+        
         # Rename back from "SSU" to "EDSU"/"Station": 
         processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
         
@@ -124,7 +130,7 @@ DefinePSU <- function(
     }
     
 
-    # Speical care is needed if DefinitionMethod is "ResourceFile", which only applies to AccousicPSU:
+    # Speical care is needed if DefinitionMethod is "ResourceFile", which only applies to AcousicPSU:
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
         
         if(PSUType == "Acoustic") {
@@ -256,7 +262,10 @@ DefinePSU <- function(
     }
     else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         if(length(processData)) {
-            return(processData)
+            processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+            #return(processData)
+            SSU_PSU <- processData$SSU_PSU
+            Stratum_PSU <- processData$Stratum_PSU
         }
         else {
             SSU_PSU <- data.table::data.table(
@@ -277,6 +286,9 @@ DefinePSU <- function(
     )
     # Remove PSUs that do not have a stratum:
     PSUProcessData <- removePSUsWithMissingStratum(PSUProcessData)
+    
+    # Remove empy PSUs:
+    PSUProcessData <- removeEmptyPSUs(PSUProcessData)
     
     # Rename the data according to the model type:
     PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData = PSUProcessData, PSUType = PSUType)
@@ -356,9 +368,26 @@ getStratumOfPSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
 removePSUsWithMissingStratum <- function(PSUProcessData) {
     
     validPSUs <- unique(PSUProcessData$Stratum_PSU$PSU[!is.na(PSUProcessData$Stratum_PSU$Stratum)])
-    if(length(validPSUs)) {
+    if(!length(validPSUs)) {
+        warning("StoX: No PSUs with Stratum")
+        return(PSUProcessData)
+    }
+    invalidPSUs <- setdiff(PSUProcessData$Stratum_PSU$PSU, validPSUs)
+    if(length(invalidPSUs)) {
+        warning("StoX: Removing the following PSUs with no Stratum:\n\t", paste(invalidPSUs, collapse = ", "))
         PSUProcessData$Stratum_PSU <- PSUProcessData$Stratum_PSU[ PSU %in% validPSUs ]
         PSUProcessData$SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
+    }
+    
+    return(PSUProcessData)
+}
+
+# Function to remove PSUs with missing Stratum:
+removeEmptyPSUs <- function(PSUProcessData) {
+    emptyPSUs <- setdiff(PSUProcessData$Stratum_PSU$PSU, PSUProcessData$SSU_PSU$PSU)
+    if(length(emptyPSUs)) {
+        warning("StoX: Removing the following empty PSUs:\n\t", paste(emptyPSUs, collapse = ", "))
+        PSUProcessData$Stratum_PSU <- subset(PSUProcessData$Stratum_PSU, ! PSU %in% emptyPSUs)
     }
     
     return(PSUProcessData)
@@ -1033,7 +1062,7 @@ DefineBioticAssignment <- function(
         # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
         newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, processData$BioticAssignment$PSU)
         if(length(newPSUs)) {
-            warning("StoX: There are PSUs in AcousticPSU that are not present in the processData. Please re-run the DefineBioticAssignment function with UseProcecssData set to FALSE (unchecked) to regenerate the assignemnt and include all PSUs. This will however overwrite any manually defined assignments, so re-run primarily if you used an automatic assignment methods.")
+            warning("StoX: There are PSUs in AcousticPSU that are not present in the BioticAssignment processData. Please re-run the DefineBioticAssignment function with UseProcecssData set to FALSE (unchecked) to regenerate the assignemnt and include all PSUs. This will however overwrite any manually defined assignments, so re-run primarily if you used an automatic assignment methods. The following PSUs are missing in the BioticAssignment proecss Data.\n", paste("\t", newPSUs, collapse = "\n"))
         }
         
         # Special action since we have included Layer in the BioticAssignment but have not yet opened for the possibility to assign differently to different layers. Re-add the Layer column:
