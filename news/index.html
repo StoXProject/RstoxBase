@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.26</span>
       </span>
     </div>
 
@@ -47,6 +47,19 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.4.26" id="rstoxbase-v1426-2021-11-23">RstoxBase v1.4.26 (2021-11-23)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1426-2021-11-23"></a></h2>
+<ul><li>Changed how StoX treats missing values (NA) so that an NA will always propagate to the next step in the calculation (na.rm = FALSE). The only exception is missing values in bootstrap runs, which are treated as 0 to reflect the instances of e.g. a length group being left out in the data due to the random sampling of hauls, in which case the abundance of that length group is to be considered as 0. Previously, in MeanNASC(), MeanLengthDistribution() and MeanDensity(), where the mean is calculated as sum of the data divided by the sum of the weights (e.g. log distance or number of stations), missing values were ignored in the sums. In the new version missing values result in missing values in the mean. A consequence of preserving missing values can be that a missing value in a normalized LengthDistribution (e.g., due to missing sample weights) will propagate through to a missing value in the stratum, and ultimately to a missing value in the survey if summing over strata in a report. The problem must then be solved by either correcting what in the input data that is causing the missing values, or filter out those values (e.g. filter out erroneous or experimental hauls). For acoustic-trawl models there is an extra complication related to bootstrapping, since missing values here are treated as 0. I there are hauls assigned to an acoustic PSU that does not contain any length measured individuals of the target species, there is a positive probability that only these hauls are sampled in a bootstrap run, resulting in missing values in abundance of the stratum of that PSU. Treating this as 0 will lead to under-estimation. Only hauls length measured individuals of the target species should be used in the biotic assignment when bootstrapping is included in the StoX project.</li>
+<li>Added support for multiple beams in SplitNASC(, where the NASC is now distributed to the different species for each beam().</li>
+<li>Fixed bug in SplitNASC() so that NASC for a PSUs with all missing values in the AssignmentLengthDistributionData of a specific species are left un-splitted.</li>
+<li>Added removal of empty PSUs.</li>
+<li>Added the columns NumberOfAssignedHaulsWithCatch and NumberOfAssignedHauls to AsssignmentLengthDistributionData, used in AcousticDensity() to flag PSUs for which hauls with no length measured individuals of the target species are assigned.</li>
+<li>Removed unwanted columns in the output from AcousticDensity(), inherirted from MeanNASCData.</li>
+<li>Added support for Biomass = 0 when Abundance = 0, regardless of IndividualRoundWeight = NA.</li>
+<li>Reverted to using all = TRUE when merging AbnudanceData into Individuals in SuperIndividuals(), as using all.x = TRUE implies the risk of discarding a portion of the abundance.</li>
+<li>Changed error causing trouble in DistributeNASC() in splitOneAcousticCategory() to warning.</li>
+<li>Fixed bug causing empty PSUByTime from DefineAcousticPSU when DefinitionMethod = “Manual”.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.4.22" id="rstoxbase-v1422-2021-11-03">RstoxBase v1.4.22 (2021-11-03)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1422-2021-11-03"></a></h2>
 <ul><li>Refactored SplitNASC to support multiple EDSUs per PSU, and EDSUs outside of any statum.</li>
@@ -191,7 +204,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.9000.</p>
 </div>
 
       </footer></div>
