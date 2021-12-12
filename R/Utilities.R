@@ -511,9 +511,12 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     summedWeighting <- data[, ..extract]
     # Uniquify so that we get only one value per Station/EDSU. This ignores the categoryVariable and groupingVariables, and assumes that the weightingVariable is constant across these variables (length group for swept area data and beam for acoustic data):
     summedWeighting <- unique(summedWeighting, by = c(horizontalResolution, targetHorizontalResolution))
+    
     # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
-    if(any(is.na(summedWeighting[[weightingVariable]]))) {
-        warning("StoX: There are missing values for ", weightingVariable, ". This can result in missing values in ", targetDataType, ".")
+    # Use utils::tail(horizontalResolution, 1) here to get the Station/Haul/PSU:
+    naWeights <- summedWeighting[, is.na(get(weightingVariable)) & !is.na(get(utils::tail(horizontalResolution, 1)))]
+    if(any(naWeights)) {
+        warning("StoX: There are missing values for ", weightingVariable, ". This can result in missing values in ", targetDataType, ". The following ", horizontalResolution, " have missing ", weightingVariable, ":\n\t", paste(summedWeighting[[horizontalResolution]][naWeights], collapse = "\n\t"))
     }
     #summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = targetHorizontalResolution]
     summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = FALSE), by = targetHorizontalResolution]

@@ -1699,10 +1699,10 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
     if(!any(endsWith(firstNonNA(LengthDistributionData$LengthDistributionType), c("Standard", "Normalized")))) {
         stop("The LengthDistributionType must be \"Standard\" or \"Normalized\" (ending with \"Standard\" or \"Normalized\")")
     }
-    # Sum the WeightedCount for each Haul:
+    # Sum the WeightedCount for each Haul. Here it makes sense to use na.rm = TRUE, as we are only looking for a sum of the data that are present:
     SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
     
-    # Merge the SumWeightedCount into the BioticAssignment by the Haul identifyer: 
+    # Merge the SumWeightedCount into the BioticAssignment by the Haul identifier: 
     BioticAssignment <- merge(BioticAssignment, SumWeightedCount, by = "Haul")
     
     # Copy the SumWeightedCount into the weightingVariable:
@@ -1720,7 +1720,7 @@ addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weight
 
 checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, WeightingMethod) {
     # Remove NA here, as this check for only one species should only count non-missing SpeciesCategory:
-    numSpecies <- length(unique(LengthDistributionData$SpeciesCategory))
+    numSpecies <- length(unique(stats::na.omit(LengthDistributionData$SpeciesCategory)))
     if(numSpecies > 1) {
         #stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
         stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "), ". ", "Please make sure that the column SpeciesCategory of LengthDistributionData contains only one unique value. If the column contains missing values (NA, shown as \"-\" in the StoX GUI) there are hauls with no individuals of the requested species in the StoxBioticData. For acoustic-trawl estimates such hauls should be filtered out using FilterUpwards  = TRUE in FilterStoxBiotic().")
@@ -1730,7 +1730,7 @@ checkOneSpeciesInLengthDistributionData <- function(LengthDistributionData, Weig
 
 checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
     # Remove NA here, as this check for only one species should only count non-missing SpeciesCategory:
-    numSpecies <- length(unique(StoxBioticData$SpeciesCategory$SpeciesCategory))
+    numSpecies <- length(unique(stats::na.omit(StoxBioticData$SpeciesCategory$SpeciesCategory)))
     if(numSpecies > 1) {
         #stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "))
         stop("Only one species is allowed in BioticAssignmentWeighting when WeightingMethod is ", paste(WeightingMethod, collapse = ", "), ". ", "Please make sure that the column SpeciesCategory of the table SpeciesCategory of  StoxBioticData contains only one unique value. If the column contains missing values (NA, shown as \"-\" in the StoX GUI) there are hauls with no individuals of the requested species in the StoxBioticData used as input to LengthDistribution(). For acoustic-trawl estimates such hauls should be filtered out using FilterUpwards  = TRUE in FilterStoxBiotic().")
