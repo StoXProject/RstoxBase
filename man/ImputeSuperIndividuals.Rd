@@ -2,11 +2,11 @@
 % Please edit documentation in R/Abundance.R
 \name{ImputeSuperIndividuals}
 \alias{ImputeSuperIndividuals}
-\title{Impute missing individual data}
+\title{Impute missing super-individual data}
 \usage{
 ImputeSuperIndividuals(
   SuperIndividualsData,
-  ImputationMethod = c("RandomSampling"),
+  ImputationMethod = "RandomSampling",
   ImputeAtMissing = character(),
   ImputeByEqual = character(),
   ToImpute = character(),
@@ -18,11 +18,11 @@ ImputeSuperIndividuals(
 
 \item{ImputationMethod}{The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.}
 
-\item{ImputeAtMissing}{The name of the variable identifying which individuals to impute data to. In StoX 3.0.0 and older, this was hard coded to IndividualAge.}
+\item{ImputeAtMissing}{A single string naming the variable which when missing identifies target individuals to input data \bold{to}. I.e., if \code{ImputeAtMissing} is missing for an individual, perform the imputation. In StoX 3.0.0 and older, \code{ImputeAtMissing} was hard coded to IndividualAge.}
 
-\item{ImputeByEqual}{The name of the variables identifying which individuals to impute data from. In StoX 3.0.0 and older, this was hard coded to IndividualTotalLength.}
+\item{ImputeByEqual}{A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data \bold{from}. The source individuals need also to have non-missing \code{ImputeAtMissing}. In StoX 3.0.0 and older, \code{ImputeByEqual} was hard coded to c("SpeciesCategory","IndividualTotalLength").}
 
-\item{ToImpute}{The name of the variable(s) to impute. In StoX 3.0.0 and older, this was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}. The variable specified by \code{ImputeAtMissing} is always imputed, and need not be included in \code{ToImpute}.}
+\item{ToImpute}{A vector of strings naming the variable(s) to impute (copy to the target individual). Only variables that are non-missing in the source individual and missing in the target individual are copied to the target individual. In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
 }
@@ -30,7 +30,7 @@ ImputeSuperIndividuals(
 An object of StoX data type \code{\link{SuperIndividualsData}}.
 }
 \description{
-This function identifies individuals with missing value in the column gievn by \code{ImputeAtMissing} (defaulted to "IndividualAge"), and imputes the variables specified by \code{ToImpute} by the method specified by \code{ImputationMethod} (defaulted to "RandomSampling", which currently is the only option) from individuals with values identical to the target individual in all of the columns specified by \code{ImputeByEqual} (defaulted to c("IndividualTotalLength", "SpeciesCategory")). In the imputation, individual to impute from are randomly selected from individuals at the same Haul, then the same Stratum if no individuals with identical values in \code{ImputeByEqual} are found, and finally the same Survey. If no individuals are found, the missing values are not imputed, but kept as missing values (currently with no warning).
+For each (target) individual with missing value in \code{ImputeAtMissing}, identify all (source) individuals in the haul for which \code{ImputeAtMissing} is non-missing and for which the values in \code{ImputeByEqual} are identical to the target individual. Then sample one of these source individuals, and copy values of \code{ToImpute} to the target individual. Only values that are non-missing are copied from the sampled individual, and  only missing values in the target individual are replaced. If no source individuals are found in the haul, expand the search to the stratum, and finally to the survey. If no source individuals are found in the survey, leave the target individual unchanged.
 }
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.

@@ -166,12 +166,12 @@ LengthDistribution <- function(
     raisingFactorIndex <- apply(raisingFactorTable, 1, getIndexOfFirstNonNA, LengthDistributionType = LengthDistributionType)
     LengthDistributionData$raisingFactor <- raisingFactorTable[cbind(seq_along(raisingFactorIndex), raisingFactorIndex)]
     
-    # Warnings for NA or Inf raising factor:
-    atRaisingFactorNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(raisingFactor)])
+    # Warnings for NA or Inf raising factor, but only if both Haul and SpeciesCategory are given:
+    atRaisingFactorNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(raisingFactor) & !is.na(SpeciesCategory)])
     if(length(atRaisingFactorNA)) {
         warning("StoX: The following Hauls have missing (NA) raising factor, which is an indication that both CatchFractionWeight and CatchFractionCount, or both SampleWeight and SampleCount are missing for those samples (or possibly other combinations of missing values).:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorNA]), collapse = "\n"))
     }
-    atRaisingFactorInf <- which(LengthDistributionData[, !is.na(Haul) & is.infinite(raisingFactor)])
+    atRaisingFactorInf <- which(LengthDistributionData[, !is.na(Haul) & is.infinite(raisingFactor) & !is.na(SpeciesCategory)])
     if(length(atRaisingFactorInf)) {
         warning("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleCount are 0 for those samples and will lead to Inf values in the length distribution, which in turn can result in loss of NASC in SplitNASC() or loss of density in AcousticDensity().:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorInf]), collapse = "\n"))
     }
