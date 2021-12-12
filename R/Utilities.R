@@ -516,7 +516,7 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     # Use utils::tail(horizontalResolution, 1) here to get the Station/Haul/PSU:
     naWeights <- summedWeighting[, is.na(get(weightingVariable)) & !is.na(get(utils::tail(horizontalResolution, 1)))]
     if(any(naWeights)) {
-        warning("StoX: There are missing values for ", weightingVariable, ". This can result in missing values in ", targetDataType, ". The following ", horizontalResolution, " have missing ", weightingVariable, ":\n\t", paste(summedWeighting[[horizontalResolution]][naWeights], collapse = "\n\t"))
+        warning("StoX: There are missing values for ", weightingVariable, ". This can result in missing values in ", targetDataType, ". The following ", horizontalResolution, " have missing ", weightingVariable, ":\n\t", paste(summedWeighting[[utils::tail(horizontalResolution, 1)]][naWeights], collapse = "\n\t"))
     }
     #summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = targetHorizontalResolution]
     summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = FALSE), by = targetHorizontalResolution]
