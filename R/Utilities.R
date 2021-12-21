@@ -553,50 +553,6 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     data <- subset(data, !duplicated(data[, ..meanBy]))
     
     return(data)
-    
-    
-    
-    
-    
-    
-    
-    # Extract the resolution and weighting variables:
-    extract <- c(meanBy, weightingVariable)
-    summedWeighting <- data[, ..extract]
-    # Finally uniquify to the Stratum/Layer:
-    summedWeighting <- unique(summedWeighting)
-    # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
-    sumBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
-    #summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = TRUE), by = eval(aggregationVariables$nextResolution)]
-    summedWeighting[, SummedWeights := sum(get(weightingVariable), na.rm = FALSE), by = eval(aggregationVariables$nextResolution)]
-    
-    # Extract the next resolution and the summed weights and uniquify:
-    extract <- c(aggregationVariables$nextResolution, "SummedWeights")
-    summedWeighting <- summedWeighting[, ..extract]
-    summedWeighting <- unique(summedWeighting)
-    ########
-    
-    
-    #### Step 2: ####
-    # Merge the resulting summed weights with the data, by the next resolution:
-    summedWeightingBy <- aggregationVariables$nextResolution
-    data <- merge(data, summedWeighting, by = summedWeightingBy, all = TRUE)
-    ########
-    
-    
-    #### Step 3: ####
-    # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
-    by <- intersect(names(data), by)
-    #data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = TRUE) / SummedWeights, by = by]
-    data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = FALSE) / SummedWeights, by = by]
-    # Store the new weights by the summed original weights:
-    data[, c(targetWeightingVariable) := SummedWeights]
-    ########
-    
-    # Remove duplicated rows:
-    data <- subset(data, !duplicated(data[, ..by]))
-    
-    return(data)
 }
 
 
@@ -762,7 +718,9 @@ sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out
         size <- lx
     }
     if(sorted){
-        x <- sort(x)
+        # Changed to platform independent sorting in StoX 3.2.0. This should not have any effect on the applications of sampleSorted(), which are in imputation of replace individual indices, and sampling of PSU and Haul in bootstrapping:
+        #x <- sort(x)
+        x<- stringi::stri_sort(x, locale = "en_US_POSIX")
     }
     # Sample:
     set.seed(seed)

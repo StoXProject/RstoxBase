@@ -26,7 +26,8 @@ Abundance <- function(
     
     # Merge the stratum area with the DensityData to an AbundanceData (remove the area at the end of the function):
     AbundanceData <- data.table::copy(MeanDensityData)
-    AbundanceData$Data <- merge(AbundanceData$Data, StratumAreaData, by ="Stratum")
+    # Added all.x for StoX 3.2.0, as the defautl all = FALSE drops strata not present in StratumAreaData (particularly NA stratum):
+    AbundanceData$Data <- merge(AbundanceData$Data, StratumAreaData, by ="Stratum", all.x = TRUE)
     
     # Multiply the area and the density:
     AbundanceData$Data[, Abundance := Area * Density]
@@ -47,11 +48,14 @@ Abundance <- function(
 ##################################################
 #' Indivduals to distribute abundance to to create super-individuals
 #' 
-#' This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
+#' This function defines and returns the individuals used in the estimation model, to which to distribute the abundance to create super-individuals.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
+#' 
+#' @return 
+#' An object of StoX datatype \code{\link{IndividualsData}}.
 #' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 #' 
@@ -723,7 +727,6 @@ getImputeRowIndicesOneGroup <- function(
         ### ReplaceRowIndex[missingData] <- dataCopyOneGroup[presentData, RowIndex][sampleIndexInPresent]
         
         # Using sampleSorted() here should be platfom independent as we are sampling integers:
-        
         ReplaceIndividualIndex[missingData] <- sampleSorted(
             #dataCopyOneGroup[!missingData, IndividualIndex], 
             dataCopyOneGroup[presentData, IndividualIndex], 
@@ -782,6 +785,4 @@ replaceMissingData <- function(x, columnNames) {
     
     return(x)
 }
-
-
 

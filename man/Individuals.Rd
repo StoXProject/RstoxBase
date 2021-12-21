@@ -20,8 +20,11 @@ Individuals(
 
 \item{MeanLengthDistributionData}{The \code{\link{MeanLengthDistributionData}} data.}
 }
+\value{
+An object of StoX datatype \code{\link{IndividualsData}}.
+}
 \description{
-This function defines and returns the individuals used in the estimation model to which to distribute the abundance to create super-individuals.
+This function defines and returns the individuals used in the estimation model, to which to distribute the abundance to create super-individuals.
 }
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.

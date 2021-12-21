@@ -493,7 +493,7 @@ NULL
 ##################################################
 #' Individuals data
 #' 
-#' The IndividualsData model data are the individuals from \code{\link{StoxBioticData}} used in the estimate.
+#' The IndividualsData model data are the individuals from \code{\link{StoxBioticData}} used in the estimate. In Individuals() the \code{\link{StoxBioticData}} is merged with \code{\link{BioticAssignment}} in the case of acoustic-trawl models and with \code{\link{MeanLengthDistributionData}} in the case of swept-area models, by the Haul identifier stored in the \code{\link{StoxBioticData}}, the \code{\link{BioticAssignment}}, and in the Resolution table of the \code{\link{MeanLengthDistributionData}}. As the hauls may be linked to a different stratum than the one containing the haul, the Stratum column of the \code{\link{IndividualsData}} may not correspond to the actual stratum of the haul.
 #' 
 #' @seealso This data type is produced by \code{\link{Individuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
