@@ -546,6 +546,16 @@ MeanDensity <- function(
     
     # Get the mean of the density data:
     MeanDensityData <- data.table::copy(DensityData)
+    
+    # Issue a warning if there are NA in Beam with positive DensityWeight, which will represent a separate Beam, and will thus exlcude those PSUs from the mean:
+    if("Beam" %in% names(MeanDensityData$Data)) {
+        NABeamPositiveDensityWeight <- MeanDensityData$Data[, is.na(Beam) & DensityWeight >  0]
+        if(any(NABeamPositiveDensityWeight)) {
+            warning("StoX: The following acoustic PSUs contain missing Beam with positive DensityWeight, which is an indication that the Beam of interest was not recording or that it for some other reason was non inlcuded in the acoustic file for some or all of the EDSUs of the PSU. This will have the effect that the mean density for the Beam of interes does not cover those PSUs, and that the acoustic sampling therefore does not cover the entire stratum:\n", paste("\t", stats::na.omit(MeanDensityData$Data$PSU[NABeamPositiveDensityWeight]), collapse = "\n"))
+        }
+    }
+    
+    
     MeanDensityData$Data <- applyMeanToData(data = MeanDensityData$Data, dataType = "DensityData", targetResolution = "Stratum")
     
     # Format the output:

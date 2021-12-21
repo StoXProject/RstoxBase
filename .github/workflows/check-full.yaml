@@ -119,7 +119,7 @@ jobs:
       - name: Prepare for CRANdependencies on Linux
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install -y libgdal-dev
+          sudo apt-get install -y libproj-dev
         shell: bash
       
       - name: Install CRANdependencies
