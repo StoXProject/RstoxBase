@@ -23,10 +23,10 @@ jobs:
           - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'}
           - {os: windows-latest, r: 'oldrel',  pkgext: '.zip'}
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
-          - {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://packagemanager.rstudio.com/cran/latest"}
-          - {os: ubuntu-18.04,   r: 'release', pkgext: '.tar.gz', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
-          - {os: ubuntu-18.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
-          - {os: ubuntu-18.04,   r: '3.6',     pkgext: '.tar.gz', rspm: "https://packagemanager.rstudio.com/cran/__linux__/bionic/latest"}
+          - {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-latest,   r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-18.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-18.04,   r: '3.6',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -56,7 +56,7 @@ jobs:
           echo "PKG_REPO=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
         shell: bash
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           rtools-version: ${{ matrix.config.rtools }}
@@ -67,7 +67,6 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
@@ -104,7 +103,16 @@ jobs:
       - name: Install dependencies on Windows and macOS
         if: runner.os != 'Linux'
         run: |
+          # First try binary and then possibly source:
+          options(install.packages.check.source = "no")
           remotes::install_deps(dependencies = TRUE, type = "binary")
+          installed <- utils::installed.packages()[, "Package"]
+          needed <- remotes::dev_package_deps()
+          missing <- setdiff(needed$package, installed)
+          if(length(missing)) {
+            message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
+            utils::install.packages(missing, dependencies = TRUE)
+          }
         shell: Rscript {0}
 
       - name: Install CRANdependencies
@@ -124,7 +132,7 @@ jobs:
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
       - name: Show testthat output
