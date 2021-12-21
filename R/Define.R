@@ -1065,7 +1065,13 @@ DefineBioticAssignment <- function(
         # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
         newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, processData$BioticAssignment$PSU)
         if(length(newPSUs)) {
-            warning("StoX: There are PSUs in AcousticPSU that are not present in the BioticAssignment processData. Please re-run the DefineBioticAssignment function with UseProcecssData set to FALSE (unchecked) to regenerate the assignemnt and include all PSUs. This will however overwrite any manually defined assignments, so re-run primarily if you used an automatic assignment methods. The following PSUs are missing in the BioticAssignment proecss Data.\n", paste("\t", newPSUs, collapse = "\n"))
+            warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData. Please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
+        }
+        
+        # Also issue a warning for assignment to non-existing acoustic PSUs:
+        nonExistingPSUs <- setdiff(processData$BioticAssignment$PSU, AcousticPSU$Stratum_PSU$PSU)
+        if(length(nonExistingPSUs)) {
+            warning("StoX: There are assignments to the following non-existing acoustic PSUs. Please remove these assignments, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", nonExistingPSUs, collapse = "\n"))
         }
         
         # Special action since we have included Layer in the BioticAssignment but have not yet opened for the possibility to assign differently to different layers. Re-add the Layer column:
