@@ -467,6 +467,9 @@ DefineBioticPSU <- function(
     if(grepl("StationToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
+    if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+        warning("Manually tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
+    }
     
     # Define the PSUs:
     BioticPSU <- DefinePSU(
@@ -1512,8 +1515,8 @@ BioticAssignmentWeighting <- function(
         # Allow only one species in StoX 3.1.0: 
         checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NumberOfLengthSamples")
         
-        # Merge Haul and Individual, and count individuals with length for each Haul:
-        Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
+        # Merge Haul and Individual, and count individuals with length for each Haul. Here all.x is used for clarity, and should not matter as we are counting individuals with length, and including hauls with no individuals should not matter:
+        Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual, all.x = TRUE)
         NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLength)))), by = "Haul"]
         # Apply the MaxNumberOfLengthSamples:
         NumberOfLengthSamples[NumberOfLengthSamples > MaxNumberOfLengthSamples, NumberOfLengthSamples := MaxNumberOfLengthSamples]
@@ -1589,7 +1592,7 @@ BioticAssignmentWeighting <- function(
         # Allow only one species in StoX 3.1.0: 
         checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalCount")
         
-        # Merge Haul and Sample, and sum the catch count divided by towed distance:
+        # Merge Haul and Sample, and sum the catch count divided by towed distance. Here all.x is used for clarity, and should not matter as we are summing CatchFractionCount:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
         NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowDistance[1]), by = "Haul"]
         # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
@@ -1954,3 +1957,79 @@ getSurveyTable <- function(
 }
 
 
+
+
+
+
+
+### ##################################################
+### ##################################################
+### #' Define a regression model and parameters
+### #' 
+### #' This function defines a regression model with parameters, where the model can be one of a set of pre-defined ### models (see the argument \code{RegressionModel}). The parameters can either be defined in a table or read from a ### resource file.
+### #' 
+### #' @inheritParams general_arguments
+### #' @inheritParams ProcessData
+### #' @param RegressionModel Character: A string naming the model to use for the regression, one of "Linear" for a ### simple (one independent variable) or multiple (multiple independent variables) linear regression, or "Power" for ### the model \code{DependentVariable = Factor * IndependentVariable ^ Exponent}, which is log transformed to ### \code{log(DependentVariable) = log(Factor) + Exponent * log(IndependentVariable)} in the regression. 
+### #' @param DependentVariable Character: The dependent variable (response variable) to be regressed against the ### \code{IndependentVariable} (explanatory variable).
+### #' @param IndependentVariable Character: One or more independent variables (explanatory variables).
+### #' @param DefinitionMethod Character: A string naming the method to use, one "ParameterTable", which requires the ### \code{ParameterTable} to be given; and "ResourceFile" to read the parameter table from file.
+### #' @param ParameterTable A table of parameter values in one row, with the columns !Intercept! and the names of ### the \code{IndependentVariable} in the case of \code{RegressionModel} = "Linear", and "Factor" and "Exponent" in ### the case of \code{RegressionModel} = "Power"
+### #' @param FileName The path to the StoX 2.7 project.xml file to read StratumPolygon from, in the case that ### \code{DefinitionMethod} is "ResourceFile".
+### #' 
+### #' @return
+### #' An object of StoX data type \code{\link{Regression}}.
+### #' 
+### #' @seealso \code{\link{EstimateRegression}} for estimating regression parameters from a ### \code{\link{StoxBioticData}}, \code{\link{IndividualsData}} or \code{\link{SuperIndividualsData}} object, and  ### \code{\link{ImputeSuperIndividuals}} for applying the regression to \code{\link{SuperIndividualsData}}.
+### #' 
+### DefineRegression <- function(
+###     processData, UseProcessData = FALSE, 
+###     DefinitionMethod = c("RegressionTable", "ResourceFile"), 
+###     RegressionTable = data.table::data.table(), 
+###     Conditional = FALSE, # If TRUE, adds a column to the parameter format translationTable.
+###     FileName = character()
+###     #RegressionModel = c("Linear", "Power"), 
+###     #DependentVariable = character(), 
+###     #IndependentVariable = character(), 
+###     #DefinitionMethod = c("ParameterTable", "ResourceFile"), 
+###     #ParameterTable = data.table::data.table(), 
+###     #FileName = character()
+### ) {
+###     # Return immediately if UseProcessData = TRUE:
+###     if(UseProcessData) {
+###         return(processData)
+###     }
+###     
+###     # Get the DefinitionMethod:
+###     DefinitionMethod <- match.arg(DefinitionMethod)
+###     
+###     # Read the parameter table from a file:
+###     if(DefinitionMethod == "ResourceFile") {
+###         RegressionTable <- data.table::fread(FileName, encoding = "UTF-8")
+###     }
+###     
+###     return(RegressionTable)
+### }
+### 
+### #rbind(
+### #    data.table(
+### #        RegressionModel = "Linear", 
+### #        DependentVariable = "IndividualRoundWeight", 
+### #        IndependentVariable = "IndividualTotalLength", 
+### #        Intersect = 1.2, 
+### #        Slope = 0.72, 
+### #        ConditionalVariableName = "Survey", 
+### #        ConditionalValue = "N67"
+### #    ), 
+### #    data.table(
+### #        RegressionModel = "Power", 
+### #        DependentVariable = "IndividualRoundWeight", 
+### #        IndependentVariable = "IndividualTotalLength", 
+### #        Intersect = 0.32, 
+### #        Slope = 2.89, 
+### #        ConditionalVariableName = "Survey", 
+### #        ConditionalValue = "62-67N62-67N"
+### #    ), 
+### #    
+### #)
+###
