@@ -120,6 +120,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install -y libproj-dev
+          sudo aptitude install libgdal-dev
         shell: bash
       
       - name: Install CRANdependencies
