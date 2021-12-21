@@ -24,7 +24,7 @@ jobs:
           - {os: windows-latest, r: 'oldrel',  pkgext: '.zip'}
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
           - {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-latest,   r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-18.04,   r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-18.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-18.04,   r: '3.6',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
 
@@ -116,12 +116,12 @@ jobs:
           }
         shell: Rscript {0}
 
-      - name: Prepare for CRANdependencies on Linux
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install -y libproj-dev
-          sudo apt-get install libgdal-dev
-        shell: bash
+      #- name: Prepare for CRANdependencies on Linux
+      #  if: runner.os == 'Linux'
+      #  run: |
+      #    sudo apt-get install -y libproj-dev
+      #    sudo apt-get install libgdal-dev
+      #  shell: bash
       
       - name: Install CRANdependencies
         run: |
