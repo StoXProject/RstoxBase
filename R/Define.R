@@ -468,7 +468,7 @@ DefineBioticPSU <- function(
         DefinitionMethod <- "Identity"
     }
     if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
-        warning("Manually tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
+        warning("Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
     }
     
     # Define the PSUs:
