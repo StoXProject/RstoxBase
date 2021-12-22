@@ -720,7 +720,17 @@ sampleSorted <- function(x, size, seed, replace = TRUE, sorted = TRUE, index.out
     if(sorted){
         # Changed to platform independent sorting in StoX 3.2.0. This should not have any effect on the applications of sampleSorted(), which are in imputation of replace individual indices, and sampling of PSU and Haul in bootstrapping:
         #x <- sort(x)
-        x<- stringi::stri_sort(x, locale = "en_US_POSIX")
+        #print((
+        #    sort(x), 
+        #    stringi::stri_sort(x, locale = "en_US_POSIX"))
+        #)
+        if(is.character(x)) {
+            x <- stringi::stri_sort(x, locale = "en_US_POSIX")
+        }
+        else {
+            x <- sort(x)
+        }
+        
     }
     # Sample:
     set.seed(seed)
