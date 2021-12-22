@@ -26,6 +26,15 @@ An object of StoX datatype \code{\link{IndividualsData}}.
 \description{
 This function defines and returns the individuals used in the estimation model, to which to distribute the abundance to create super-individuals.
 }
+\details{
+The \code{\link{IndividualsData}} contains variables from \code{\link{StoxBioticData}} in addition to the columns Stratum and Layer. The Stratum column is not necessarily the actual stratum containing the Haul in which an individual was sampled, but rather the stratum linked to the haul via \code{\link{DefineBioticAssignment}} for acoustic-trawl models and \code{\link{MeanLengthDistribution}} for swept-area models. In detail:
+\itemize{
+\item DefineAcousticPSU(): Defines acoustic PSUs, which are assigned to a stratum, and that conntainns EDSUs, possibly from other strata than the assigned stratum.
+\item DefineBioticPSU(): Defines biotic PSUs, which are assigned to a stratum, and that conntainns Stations, possibly from other strata than the assigned stratum.
+\item DefineBioticAssignment(): Assignes hauls to acoustic PSUs, possibly from other strata than the stratum assigned to the acoustic PSU. In this datatype it is possible that EDSUs of an acoustic PSU are located in different strata, or even that all the EDSUs of the acoustic PSU are located in another stratum than the assigned stratum; and that the hauls assigned to the acoustic PSU are located in yet another stratum.
+\item In Individuals() the StoxBioticData are merged with BioticAssignment in the case of acoustic-trawl models and with MeanLengthDistributionData in the case of swept-area models, by the Haul identifier stored in the StoxBioticData, the BioticAssignment, and in the Resolution table of the MeanLengthDistributionData. As the hauls may be linked to a different statum than the one containing the haul, as per the description of DefineBioticAssignment() above, the Stratum column of the IndividualsData may not correspond to the actual stratum of the haul.
+}
+}
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
 }
