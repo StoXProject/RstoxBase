@@ -726,7 +726,7 @@ getImputeRowIndicesOneGroup <- function(
         ### )
         ### ReplaceRowIndex[missingData] <- dataCopyOneGroup[presentData, RowIndex][sampleIndexInPresent]
         
-        # Using sampleSorted() here should be platfom independent as we are sampling integers:
+        # Using the new sampleSorted() which is identical for non-character such as these integers to be sampled:
         ReplaceIndividualIndex[missingData] <- sampleSorted(
             #dataCopyOneGroup[!missingData, IndividualIndex], 
             dataCopyOneGroup[presentData, IndividualIndex], 
@@ -785,4 +785,6 @@ replaceMissingData <- function(x, columnNames) {
     
     return(x)
 }
+
+
 
