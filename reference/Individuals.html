@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.31</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
       </span>
     </div>
 
@@ -76,6 +76,13 @@
     <h2>Value</h2>
     <p>An object of StoX datatype <code><a href="IndividualsData.html">IndividualsData</a></code>.</p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The <code><a href="IndividualsData.html">IndividualsData</a></code> contains variables from <code>StoxBioticData</code> in addition to the columns Stratum and Layer. The Stratum column is not necessarily the actual stratum containing the Haul in which an individual was sampled, but rather the stratum linked to the haul via <code><a href="DefineBioticAssignment.html">DefineBioticAssignment</a></code> for acoustic-trawl models and <code><a href="MeanLengthDistribution.html">MeanLengthDistribution</a></code> for swept-area models. In detail:</p><ul><li><p>DefineAcousticPSU(): Defines acoustic PSUs, which are assigned to a stratum, and that conntainns EDSUs, possibly from other strata than the assigned stratum.</p></li>
+<li><p>DefineBioticPSU(): Defines biotic PSUs, which are assigned to a stratum, and that conntainns Stations, possibly from other strata than the assigned stratum.</p></li>
+<li><p>DefineBioticAssignment(): Assignes hauls to acoustic PSUs, possibly from other strata than the stratum assigned to the acoustic PSU. In this datatype it is possible that EDSUs of an acoustic PSU are located in different strata, or even that all the EDSUs of the acoustic PSU are located in another stratum than the assigned stratum; and that the hauls assigned to the acoustic PSU are located in yet another stratum.</p></li>
+<li><p>In Individuals() the StoxBioticData are merged with BioticAssignment in the case of acoustic-trawl models and with MeanLengthDistributionData in the case of swept-area models, by the Haul identifier stored in the StoxBioticData, the BioticAssignment, and in the Resolution table of the MeanLengthDistributionData. As the hauls may be linked to a different statum than the one containing the haul, as per the description of DefineBioticAssignment() above, the Stratum column of the IndividualsData may not correspond to the actual stratum of the haul.</p></li>
+</ul></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="SuperIndividuals.html">SuperIndividuals</a></code> for distributing Abundance to the Individuals.</p></div>
