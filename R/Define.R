@@ -93,13 +93,13 @@ DefinePSU <- function(
         
         # Remove any EDSUs that are not tagged to a PSU and that are missing in the StoxData:
         unusedAndMissingInStoxData <- processData$SSU_PSU[, is.na(PSU) & ! SSU %in% SSUs]
-        if(any(unusedAndMissingInStoxData)) {
+        if(any(unusedAndMissingInStoxData, na.rm = TRUE)) {
             processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
         }
         
         # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
         usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
-        if(any(usedButMissingInStoxData)) {
+        if(any(usedButMissingInStoxData, na.rm = TRUE)) {
             warning(
                 "StoX: There are ", 
                 switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", 
@@ -1521,8 +1521,8 @@ BioticAssignmentWeighting <- function(
         # Allow only one species in StoX 3.1.0: 
         checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NumberOfLengthSamples")
         
-        # Merge Haul and Individual, and count individuals with length for each Haul. Here all.x is used for clarity, and should not matter as we are counting individuals with length, and including hauls with no individuals should not matter:
-        Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual, all.x = TRUE)
+        # Merge Haul and Individual, and count individuals with length for each Haul:
+        Haul_Individual <- merge(StoxBioticData$Haul, StoxBioticData$Individual)
         NumberOfLengthSamples <- Haul_Individual[, .(NumberOfLengthSamples = as.double(sum(!is.na(IndividualTotalLength)))), by = "Haul"]
         # Apply the MaxNumberOfLengthSamples:
         NumberOfLengthSamples[NumberOfLengthSamples > MaxNumberOfLengthSamples, NumberOfLengthSamples := MaxNumberOfLengthSamples]
@@ -1598,7 +1598,7 @@ BioticAssignmentWeighting <- function(
         # Allow only one species in StoX 3.1.0: 
         checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalCount")
         
-        # Merge Haul and Sample, and sum the catch count divided by towed distance. Here all.x is used for clarity, and should not matter as we are summing CatchFractionCount:
+        # Merge Haul and Sample, and sum the catch count divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
         NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowDistance[1]), by = "Haul"]
         # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
