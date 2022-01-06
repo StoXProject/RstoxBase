@@ -696,7 +696,7 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 #' 
 #' @inheritParams general_arguments
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "Table" to provide the \code{LayerTable}.
 #' @param Resolution  Numeric: A single numeric giving the thickness of the layers.
 #' @param LayerTable A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.
 #' 
@@ -708,7 +708,7 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 DefineLayer <- function(
     processData, UseProcessData = FALSE, 
     StoxData, 
-    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     LayerType = c("Acoustic", "Biotic")
@@ -791,8 +791,8 @@ DefineLayer <- function(
         Layer <- createLayerTable(possibleIntervals)
     }
     
-    # If "LayerTable" is requested match the Breaks against the possible breaks:
-    else if(grepl("LayerTable", DefinitionMethod, ignore.case = TRUE)) {
+    # If "Table" is requested match the Breaks against the possible breaks:
+    else if(grepl("Table", DefinitionMethod, ignore.case = TRUE)) {
         # Detect invalid breaks:
         allBreaks <- unlist(LayerTable[, c("MinLayerDepth", "MaxLayerDepth")])
         rangeOfPossibleIntervals <- range((possibleIntervals))
@@ -801,7 +801,7 @@ DefineLayer <- function(
         
         # Error if any of the specified breaks are invalid:
         if(any(!validBreaks)) {
-            stop("Some of the specified breaks are not at common breaks of all Log(distance)s. Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
+            stop("Some of the specified breaks are not at common breaks of all Log(distance). Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
         }
         else {
             Layer <- LayerTable
@@ -874,7 +874,7 @@ getDefaultLayerNames <- function(x) {
 DefineAcousticLayer <- function(
     processData, UseProcessData = FALSE, 
     StoxAcousticData, 
-    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table()
 ) {
@@ -912,7 +912,7 @@ DefineAcousticLayer <- function(
 DefineBioticLayer <- function(
     processData, UseProcessData = FALSE, 
     StoxBioticData, 
-    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table()
 ) {
@@ -971,8 +971,6 @@ DefineBioticLayer <- function(
 #' \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
 #' \emph{Resolution} method is assosiated with function parameter \emph{Resolution} which gives the desired thickness (in meters) of the layers.
 #'
-# Atle to fix this: \emph{LayerTable} method is assosiated with function parameter \emph{LayerTable} which \strong{??? NEED TO BE COMPLETED ???}
-#'   
 #' The available automatic assignment methods are:
 #' 
 #'\strong{Stratum}
@@ -1039,7 +1037,7 @@ DefineBioticAssignment <- function(
     # For DefinitionMethod "Stratum": 
     StratumPolygon, AcousticPSU, #AcousticLayer, 
     LayerDefinition = c("FunctionParameter", "FunctionInput"), 
-    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     AcousticLayer = NULL, 
@@ -1748,19 +1746,134 @@ checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+##################################################
+#' Define a parametric or numeric model
+#' 
+#' @inheritParams general_arguments
+#' @param modelClass The model class, such as Regression.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Table" to define a table directly (in the GUI), and ResourceFile to read a file.
+#' @param ModelName The model to use.
+#' @param ParameterTable A table holding the parameter values.
+#' @param FileName A file from which to read the \code{ParameterTable}.
+#' 
+#' @export
+#' 
+DefineModel <- function(
+    modelClass, 
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("Table", "ResourceFile"),
+    ModelName, # e.g. c("SimpleLinear", "Power")
+    ParameterTable = data.table::data.table(), 
+    FileName = character()
+) {
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # Get the DefinitionMethod:
+    DefinitionMethod <- match.arg(DefinitionMethod)
+    
+    # Get or read the model parameters and return in a list with the model name:
+    output <- getModel(
+        modelClass = modelClass, 
+        ModelName = ModelName, 
+        DefinitionMethod = DefinitionMethod, 
+        ParameterTable = ParameterTable, 
+        FileName = FileName
+    )
+    
+    return(output)
+}
+
+
+getModel <- function(modelClass, ModelName, DefinitionMethod, ParameterTable, FileName) {
+    
+    # Read the table if requested, or issue an error if not given:
+    if(DefinitionMethod == "Table") {
+        if(length(ParameterTable) == 0) {
+            stop(ParameterTable, "TableName must be given if DefinitionMethod = \"", TableName, "\".")
+        }
+    }
+    else if(DefinitionMethod == "ResourceFile") {
+        ParameterTable <- data.table::fread(FileName, encoding = "UTF-8")
+    }
+    
+    # Check the columns of the table:
+    checkModel(modelClass, ParameterTable, ModelName)
+    
+    # Define the output as a list of the method and the table:
+    outputModelLabel <- paste0(modelClass, "Model")
+    outputTableLabel <- paste0(modelClass, "Table")
+    output <- list(
+        data.table::setnames(data.table::data.table(ModelName), outputModelLabel), 
+        ParameterTable
+    )
+    names(output) <- c(outputModelLabel, outputTableLabel)
+    
+    return(output)
+}
+
+
+checkModel <- function(modelClass, ParameterTable, ModelName) {
+    
+    # Get and check the ModelName:
+    modelParameters <- getRstoxBaseDefinitions("modelParameters")[[modelClass]]
+    if(! ModelName %in% names(modelParameters)) {
+        stop("Wrong ModelName Must be one of ", paste(names(modelParameters), collapse = ", "))
+    }
+    
+    # Check that the ParameterTable contains the required columns:
+    if(! all(modelParameters[[ModelName]] %in% names(ParameterTable))) {
+        stop("The parameter table for ", ModelName, " must contain the required column; ", paste(modelParameters[[ModelName]], collapse = ", "))
+    }
+    
+    # Check for duplicated keys:
+    keys <- setdiff(
+        names(ParameterTable), 
+        modelParameters[[ModelName]]
+    )
+    dup <- duplicated(ParameterTable[, ..keys])
+    if(any(dup)) {
+        duprev <- duplicated(ParameterTable[, ..keys], fromLast = TRUE)
+        alldup <- sort(unique(c(which(dup), which(duprev))))
+        stop("The output from Define", modelClass, "() contains duplicated keys (", paste(keys, collapse = ", "), ")", " in rows ", paste(alldup, collapse = ", "), ".")
+    }
+}
+
+
+
+
+
+
+
+
 ##################################################
 #' Acoustic target strength definition
 #' 
 #' This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 #' 
 #' @inheritParams general_arguments
-#' @param TargetStrengthMethod  Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table \code{TargetStrengthTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.
-#' @param TargetStrengthTable A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.
-#' @param FileName A file from which to read the \code{TargetStrengthTable}.
+#' @inheritParams DefineModel
+#' @param AcousticTargetStrengthModel  Character: The target strength model/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.
+#' @param AcousticTargetStrengthTable A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.
+#' @param FileName A file from which to read the \code{AcousticTargetStrengthTable}.
 #' 
 #' @details
-#' The \code{TargetStrengthMethod} has the following possible values: 
+#' The \code{AcousticTargetStrengthModel} has the following possible values: 
 #' \enumerate{
 #'   \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.
 #'   \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.
@@ -1778,85 +1891,225 @@ checkOneSpeciesInStoxBioticData <- function(StoxBioticData, WeightingMethod) {
 #' 
 DefineAcousticTargetStrength <- function(
     processData, UseProcessData = FALSE, 
-    # Note that "LengthExponent" is an option for TargetStrengthMethod (used by BioticAssignmentWeighting()), but this is not shown.
-    DefinitionMethod = c("ResourceFile", "TargetStrengthTable"),
-    TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
-    TargetStrengthTable = data.table::data.table(), 
+    # Note that "LengthExponent" is an option for AcousticTargetStrengthModel (used by BioticAssignmentWeighting()), but this is not shown.
+    DefinitionMethod = c("ResourceFile", "Table"),
+    AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength"), 
+    AcousticTargetStrengthTable = data.table::data.table(), 
     FileName = character()
 ) {
     
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
-    }
-    
     # Get the methods:
-    TargetStrengthMethod <- match.arg(TargetStrengthMethod)
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel)
     
-    # Get or read the TargetStrength and return in a list with the TargetStrengthMethod:
-    AcousticTargetStrength <- getAcousticTargetStrength(
-        TargetStrengthMethod = TargetStrengthMethod, 
-        DefinitionMethod = DefinitionMethod, 
-        TargetStrengthTable = TargetStrengthTable, 
-        #TargetStrength = get(paste0(TargetStrengthMethod, "Table")), 
+    # Define the model:
+    DefineModel(
+        modelClass = "AcousticTargetStrength", 
+        processData = processData, UseProcessData = UseProcessData, 
+        DefinitionMethod = DefinitionMethod,
+        ModelName = AcousticTargetStrengthModel, 
+        ParameterTable = AcousticTargetStrengthTable, 
         FileName = FileName
     )
-    
-    return(AcousticTargetStrength)
 }
 
-getAcousticTargetStrength <- function(TargetStrengthMethod, DefinitionMethod, TargetStrengthTable, FileName) {
+
+
+
+
+
+##################################################
+##################################################
+#' Define a regression model and parameters
+#' 
+#' This function defines a regression model with parameters, where the model can be one of a set of pre-defined models (see the argument \code{RegressionModel}). The parameters can either be defined in a table or read from a resource file.
+#' 
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @inheritParams DefineModel
+#' @param GroupingVariables An optional vector of strings defining variables seving as grouping variables in the RegressionTable. Setting this adds the its elements as columns in the RegressionTable in the GUI.
+#' @param RegressionModel Character: A string naming the model to use for the regression. See Details for options.
+#' @param RegressionTable A table with one row defining the name of the dependent variable (column name \code{DependentVariable}), the name of the independent variable (column name \code{IndependentVariable}), and the \code{Intersect} and \code{Slope} if \code{RegressionModel} = "SimpleLinear" and \code{Factor} and \code{Exponent} if \code{RegressionModel} = "Power".
+#' @param FileName The path to a CSV file containing the columns \code{DependentVariable}), \code{IndependentVariable} and the \code{RegressionTable}.
+#' 
+#' @details 
+#' The currently implemented models are listed below:
+#' * SimpleLinear \deqn{DependentVariable = Intercept + Slope * IndependentVariable}
+#' * Power \deqn{DependentVariable = Factor * IndependentVariable^{Exponent}}
+#' @md
+#' 
+#' @return
+#' An object of StoX data type \code{\link{Regression}}.
+#' 
+#' @seealso \code{\link{EstimateBioticRegression}} for estimating regression parameters from a \code{\link{StoxBioticData}}, \code{\link{IndividualsData}} or \code{\link{SuperIndividualsData}} object, and  \code{\link{ImputeSuperIndividuals}} for applying the regression to \code{\link{SuperIndividualsData}}.
+#' 
+#' @export
+#' 
+DefineRegression <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("ResourceFile", "Table"),
+    GroupingVariables = character(), 
+    RegressionModel = c("SimpleLinear", "Power"), 
+    RegressionTable = data.table::data.table(), 
+    FileName = character()
+) {
     
-    # Read the table if requested, or issue an error if not given:
-    if(DefinitionMethod == "Table") {
-        if(length(TargetStrengthTable) == 0) {
-            stop(TargetStrengthMethod, "TargetStrengthTable must be given if DefinitionMethod = \"TargetStrengthTable\"")
-        }
+    # Get the methods:
+    RegressionModel <- match.arg(RegressionModel)
+    
+    # Define the model:
+    DefineModel(
+        modelClass = "Regression", 
+        processData = processData, UseProcessData = UseProcessData, 
+        DefinitionMethod = DefinitionMethod,
+        ModelName = RegressionModel, 
+        ParameterTable = RegressionTable, 
+        FileName = FileName
+    )
+}
+
+
+
+
+
+
+
+##################################################
+##################################################
+#' Estimate a regression model and parameters for biotic data
+#' 
+#' This function estimates a regression model with parameters, where the model can be one of a set of pre-defined models.
+#' 
+#' @inheritParams general_arguments
+#' @inheritParams ModelData
+#' @inheritParams DefineModel
+#' @inheritParams DefineRegression
+#' @param InputDataType The type of biotic data to estimate the regression parameters based on, one of "StoxBioticData", "IndividualsData" and "SuperIndividualsData".
+#' @param DependentVariable The name of the dependent variable (respons variable).
+#' @param IndependentVariable The name of the independent variable (explanatory variable).
+#' 
+#' @details The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model L ~ a W^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
+#' 
+#' @return
+#' An object of StoX data type \code{\link{Regression}}.
+#' 
+#' @seealso \code{\link{DefineRegression}} for defining regression parameters directly of from a file.
+#' 
+#' @export
+#' 
+EstimateBioticRegression <- function(
+    InputDataType = c("IndividualsData", "SuperIndividualsData"), 
+    RegressionModel = c("SimpleLinear", "Power"), 
+    DependentVariable = character(), 
+    IndependentVariable = character(), 
+    GroupingVariables = character(), 
+    IndividualsData, 
+    SuperIndividualsData
+) {
+    
+    # Get the methods:
+    InputDataType <- match.arg(InputDataType)
+    RegressionModel <- match.arg(RegressionModel)
+    
+    # Get the appropriate data:
+    #if(InputDataType == "StoxBioticData") {
+    #    data <- data.table::copy(StoxBioticData)
+    #}
+    if(InputDataType == "IndividualsData") {
+        data <- data.table::copy(IndividualsData)
     }
-    else if(DefinitionMethod == "ResourceFile") {
-        TargetStrengthTable <- data.table::fread(FileName, encoding = "UTF-8")
+    else if(InputDataType == "SuperIndividualsData") {
+        data <- data.table::copy(SuperIndividualsData)
     }
     
-    # Check the columns of the table:
-    checkTargetStrength(TargetStrengthTable, TargetStrengthMethod)
+    # Check that the GroupingVariables are present in the data:
+    if(length(GroupingVariables) && nchar(GroupingVariables) && !all(GroupingVariables %in% names(data))) {
+        stop("All of the GroupingVariables must be present in the data (", paste(setdiff(GroupingVariables, names(data)), collapse = ", "), " not present)")
+    }
     
-    # Define the output AcousticTargetStrength as a list of the method and the table:
-    AcousticTargetStrength <- list(
-        TargetStrengthMethod = data.table::data.table(TargetStrengthMethod = TargetStrengthMethod), 
-        TargetStrengthTable = TargetStrengthTable
+    # Run the estimation by the GroupingVariables:
+    RegressionTable <- data[, getRegressionTable(
+        RegressionModel = RegressionModel, 
+        DependentVariable = DependentVariable, 
+        IndependentVariable = IndependentVariable, 
+        GroupingVariables = GroupingVariables, 
+        EstimationMethod = EstimationMethod,
+        data = .SD
+    ), 
+    by = GroupingVariables, 
+    .SDcols = names(data)] # Inlcude all columns, as the default is to skip the 'by' columns.
+    
+    ## Since this is such a flexible datatype, we define the column order here, and use it on the RegressionTable below:
+    #columnOrder <- c(
+    #    GroupingVariables, 
+    #    "DependentVariable", 
+    #    "IndependentVariable", 
+    #    getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]], 
+    #    "ResidualStandardError",
+    #    "EstimationMethod"
+    #)
+    #data.table::setcolorder(RegressionTable, columnOrder)
+    
+    # Form the output:
+    Regression <- list(
+        RegressionModel = data.table::data.table(
+            RegressionModel = RegressionModel
+        ), 
+        RegressionTable = RegressionTable
     )
     
-    return(AcousticTargetStrength)
-}
+    return(Regression)
+    }
 
 
-checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
+getRegressionTable <- function(
+    RegressionModel, 
+    DependentVariable, 
+    IndependentVariable, 
+    GroupingVariables, 
+    EstimationMethod,
+    data
+) {
     
-    # Get and check the TargetStrengthMethod:
-    targetStrengthParameters <- getRstoxBaseDefinitions("targetStrengthParameters")
-    if(! TargetStrengthMethod %in% names(targetStrengthParameters)) {
-        stop("Wrong TargetStrengthMethod. Must be one of ", paste(names(targetStrengthParameters), collapse = ", "))
-    }
+    # Apply the default EstimationMethod. Non-default (such as non-linear) may come later:
+    EstimationMethod <- getRstoxBaseDefinitions("defaultEstimationMethod")$Regression[[RegressionModel]]
     
-    # Check that the TargetStrengthTable contains the required columns:
-    if(! all(targetStrengthParameters[[TargetStrengthMethod]] %in% names(TargetStrengthTable))) {
-        stop("The ", TargetStrengthMethod, "Table must contain the required column; ", paste(targetStrengthParameters[[TargetStrengthMethod]], collapse = ", "))
-    }
-    
-    # Check for duplicated keys:
-    keys <- setdiff(
-        names(TargetStrengthTable), 
-        targetStrengthParameters[[TargetStrengthMethod]]
+    # Estimate the regression model:
+    estimationFunction <- getRstoxBaseDefinitions("estimationFunctions")$Regression[[RegressionModel]]
+    regressionSummary <- tryCatch(
+        summary(
+            estimationFunction(
+                dependentVariable = DependentVariable, 
+                independentVariable = IndependentVariable, 
+                data = data
+            )
+        ), 
+        error = function(err) list(
+            coefficients = array(NA_real_, dim = c(length(getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]), 1)), 
+            sigma = NA_real_
+        )
     )
-    dup <- duplicated(TargetStrengthTable[, ..keys])
-    if(any(dup)) {
-        duprev <- duplicated(TargetStrengthTable[, ..keys], fromLast = TRUE)
-        alldup <- sort(unique(c(which(dup), which(duprev))))
-        stop("The output from DefineAcousticTargetStrength contains duplicated keys (", paste(keys, collapse = ", "), ")", " in rows ", paste(alldup, collapse = ", "), ".")
-    }
+    
+    # Get the model parameter names:
+    modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
+    
+    # Create a table with the parameters and residual stndard error:
+    RegressionTable <- data.table::as.data.table(
+        c(
+            structure(as.list(regressionSummary$coefficients[, 1]), names = modelParameters), 
+            list(ResidualStandardError = regressionSummary$sigma)
+        )
+    )
+    
+    # Add also the DependentVariable, IndependentVariable and GroupingVariables at the start, and EstimationMethod at the end:
+    RegressionTable <- data.table::data.table(
+        DependentVariable = DependentVariable, 
+        IndependentVariable = IndependentVariable, 
+        RegressionTable, 
+        EstimationMethod = EstimationMethod
+    )
+    
+    return(RegressionTable)
 }
-
 
 
 
@@ -1868,7 +2121,7 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams ProcessData
-#' @param DefinitionMethod Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; "SurveyTable", which requires the \code{SurveyTable} to be given; and "ResourceFile" to read from a project.xml file from StoX 2.7.
+#' @param DefinitionMethod Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; "Table", which requires the \code{SurveyTable} to be given; and "ResourceFile" to read from a project.xml file from StoX 2.7.
 #' @param SurveyTable A table of the two columns Stratum and Survey.
 #' @param FileName The path to the StoX 2.7 project.xml file to read StratumPolygon from, in the case that \code{DefinitionMethod} is "ResourceFile".
 #' 
@@ -1881,7 +2134,7 @@ checkTargetStrength <- function(TargetStrengthTable, TargetStrengthMethod) {
 #' 
 DefineSurvey <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("AllStrata", "SurveyTable", "ResourceFile"), 
+    DefinitionMethod = c("AllStrata", "Table", "ResourceFile"), 
     StratumPolygon, 
     SurveyTable = data.table::data.table(), 
     FileName = character()
@@ -1938,7 +2191,7 @@ getSurveyTable <- function(
         )
     }
     # Or accept/reject the input SurveyTable:
-    else if(DefinitionMethod == "SurveyTable") {
+    else if(DefinitionMethod == "Table") {
         # Delete rows with missing Survey:
         if(any(is.na(SurveyTable$Survey))) {
             warning("StoX: Removing rows of missing Survey in SurveyTable")
@@ -1966,76 +2219,3 @@ getSurveyTable <- function(
 
 
 
-
-
-### ##################################################
-### ##################################################
-### #' Define a regression model and parameters
-### #' 
-### #' This function defines a regression model with parameters, where the model can be one of a set of pre-defined ### models (see the argument \code{RegressionModel}). The parameters can either be defined in a table or read from a ### resource file.
-### #' 
-### #' @inheritParams general_arguments
-### #' @inheritParams ProcessData
-### #' @param RegressionModel Character: A string naming the model to use for the regression, one of "Linear" for a ### simple (one independent variable) or multiple (multiple independent variables) linear regression, or "Power" for ### the model \code{DependentVariable = Factor * IndependentVariable ^ Exponent}, which is log transformed to ### \code{log(DependentVariable) = log(Factor) + Exponent * log(IndependentVariable)} in the regression. 
-### #' @param DependentVariable Character: The dependent variable (response variable) to be regressed against the ### \code{IndependentVariable} (explanatory variable).
-### #' @param IndependentVariable Character: One or more independent variables (explanatory variables).
-### #' @param DefinitionMethod Character: A string naming the method to use, one "ParameterTable", which requires the ### \code{ParameterTable} to be given; and "ResourceFile" to read the parameter table from file.
-### #' @param ParameterTable A table of parameter values in one row, with the columns !Intercept! and the names of ### the \code{IndependentVariable} in the case of \code{RegressionModel} = "Linear", and "Factor" and "Exponent" in ### the case of \code{RegressionModel} = "Power"
-### #' @param FileName The path to the StoX 2.7 project.xml file to read StratumPolygon from, in the case that ### \code{DefinitionMethod} is "ResourceFile".
-### #' 
-### #' @return
-### #' An object of StoX data type \code{\link{Regression}}.
-### #' 
-### #' @seealso \code{\link{EstimateRegression}} for estimating regression parameters from a ### \code{\link{StoxBioticData}}, \code{\link{IndividualsData}} or \code{\link{SuperIndividualsData}} object, and  ### \code{\link{ImputeSuperIndividuals}} for applying the regression to \code{\link{SuperIndividualsData}}.
-### #' 
-### DefineRegression <- function(
-###     processData, UseProcessData = FALSE, 
-###     DefinitionMethod = c("RegressionTable", "ResourceFile"), 
-###     RegressionTable = data.table::data.table(), 
-###     Conditional = FALSE, # If TRUE, adds a column to the parameter format translationTable.
-###     FileName = character()
-###     #RegressionModel = c("Linear", "Power"), 
-###     #DependentVariable = character(), 
-###     #IndependentVariable = character(), 
-###     #DefinitionMethod = c("ParameterTable", "ResourceFile"), 
-###     #ParameterTable = data.table::data.table(), 
-###     #FileName = character()
-### ) {
-###     # Return immediately if UseProcessData = TRUE:
-###     if(UseProcessData) {
-###         return(processData)
-###     }
-###     
-###     # Get the DefinitionMethod:
-###     DefinitionMethod <- match.arg(DefinitionMethod)
-###     
-###     # Read the parameter table from a file:
-###     if(DefinitionMethod == "ResourceFile") {
-###         RegressionTable <- data.table::fread(FileName, encoding = "UTF-8")
-###     }
-###     
-###     return(RegressionTable)
-### }
-### 
-### #rbind(
-### #    data.table(
-### #        RegressionModel = "Linear", 
-### #        DependentVariable = "IndividualRoundWeight", 
-### #        IndependentVariable = "IndividualTotalLength", 
-### #        Intersect = 1.2, 
-### #        Slope = 0.72, 
-### #        ConditionalVariableName = "Survey", 
-### #        ConditionalValue = "N67"
-### #    ), 
-### #    data.table(
-### #        RegressionModel = "Power", 
-### #        DependentVariable = "IndividualRoundWeight", 
-### #        IndependentVariable = "IndividualTotalLength", 
-### #        Intersect = 0.32, 
-### #        Slope = 2.89, 
-### #        ConditionalVariableName = "Survey", 
-### #        ConditionalValue = "62-67N62-67N"
-### #    ), 
-### #    
-### #)
-###

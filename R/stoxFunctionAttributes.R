@@ -35,7 +35,7 @@ stoxFunctionAttributes <- list(
             ), 
             SurveyTable = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "SurveyTable"
+                DefinitionMethod = "Table"
             ), 
             FileName = list(
                 UseProcessData = FALSE, 
@@ -47,7 +47,7 @@ stoxFunctionAttributes <- list(
             ), 
             StratumPolygon = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "SurveyTable"
+                DefinitionMethod = "Table"
             )
         )
     ), 
@@ -195,7 +195,7 @@ stoxFunctionAttributes <- list(
             # These two are joined with AND, and must both be fulfilled:
             LayerTable = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "LayerTable"
+                DefinitionMethod = "Table"
             )
         )
     ), 
@@ -218,7 +218,7 @@ stoxFunctionAttributes <- list(
             # These two are joined with AND, and must both be fulfilled:
             LayerTable = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "LayerTable"
+                DefinitionMethod = "Table"
             )
         )
     ), 
@@ -261,7 +261,7 @@ stoxFunctionAttributes <- list(
             ), 
             LayerTable = list(
                 #UseProcessData = FALSE, 
-                LayerDefinitionMethod = "LayerTable"
+                LayerDefinitionMethod = "Table"
             ), 
             #AcousticLayer = list(
             #    UseProcessData = FALSE
@@ -418,7 +418,7 @@ stoxFunctionAttributes <- list(
                 LayerDefinitionMethod = "Resolution"
             ), 
             LayerTable = list(
-                LayerDefinitionMethod = "LayerTable"
+                LayerDefinitionMethod = "Table"
             ), 
             LayerProcessData = list(
                 LayerDefinition = "FunctionInput"
@@ -455,7 +455,7 @@ stoxFunctionAttributes <- list(
                 LayerDefinitionMethod = "Resolution"
             ), 
             LayerTable = list(
-                LayerDefinitionMethod = "LayerTable"
+                LayerDefinitionMethod = "Table"
             ), 
             # PSU: 
             BioticPSU = list(
@@ -476,7 +476,7 @@ stoxFunctionAttributes <- list(
             ), 
             SurveyTable = list(
                 SurveyDefinition = "FunctionParameter", 
-                SurveyDefinitionMethod = "SurveyTable"
+                SurveyDefinitionMethod = "Table"
             )
         )
     ), 
@@ -507,7 +507,7 @@ stoxFunctionAttributes <- list(
                 LayerDefinitionMethod = "Resolution"
             ), 
             LayerTable = list(
-                LayerDefinitionMethod = "LayerTable"
+                LayerDefinitionMethod = "Table"
             )
         )
     ),
@@ -543,7 +543,7 @@ stoxFunctionAttributes <- list(
             ), 
             LayerTable = list(
                 LayerDefinition = "FunctionParameter", 
-                LayerDefinitionMethod = "LayerTable"
+                LayerDefinitionMethod = "Table"
             ), 
             # PSU: 
             AcousticPSU = list(
@@ -564,7 +564,7 @@ stoxFunctionAttributes <- list(
             ), 
             SurveyTable = list(
                 SurveyDefinition = "FunctionParameter", 
-                SurveyDefinitionMethod = "SurveyTable"
+                SurveyDefinitionMethod = "Table"
             )
         )
     ),
@@ -633,6 +633,55 @@ stoxFunctionAttributes <- list(
     
     
     ##### Abundance: #####
+    DefineRegression = list(
+        functionType = "processData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "Regression", 
+        functionParameterFormat = list(
+            FileName = "filePath",
+            RegressionTable = "regressionTable"
+        ), 
+        functionArgumentHierarchy = list(
+            RegressionModel = list(
+                UseProcessData = FALSE
+            ), 
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
+            GroupingVariables = list(
+                DefinitionMethod = "Table", 
+                UseProcessData = FALSE
+            ), 
+            RegressionTable = list(
+                DefinitionMethod = "Table", 
+                UseProcessData = FALSE
+            ), 
+            FileName = list(
+                DefinitionMethod = "ResourceFile", 
+                UseProcessData = FALSE
+            )
+        )
+    ),
+    
+    
+    EstimateBioticRegression = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "Regression", 
+        functionParameterFormat = list(
+            RegressionTable = "regressionTable"
+        ), 
+        functionArgumentHierarchy = list(
+            IndividualsData = list(
+                InputDataType = "IndividualsData"
+            ), 
+            SuperIndividualsData = list(
+                InputDataType = "SuperIndividualsData"
+            )
+        )
+    ),
+    
+    
     Abundance = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
@@ -670,12 +719,24 @@ stoxFunctionAttributes <- list(
             ImputeAtMissing = "getImputeAtMissing", 
             ImputeByEqual = "getImputeByEqual", 
             ToImpute = "getToImpute"
-        )#,
-        #functionArgumentHierarchy = list(
-        #    LengthInterval = list(
-        #        RegroupIndividualTotalLength = TRUE
-        #    )
-        #)
+        ),
+        functionArgumentHierarchy = list(
+            Regression = list(
+                ImputationMethod = "Regression"
+            ), 
+            ImputeAtMissing = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ImputeByEqual = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ToImpute = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            Seed = list(
+                ImputationMethod = "RandomSampling"
+            )
+        )
     ),
     ##########
     
@@ -687,17 +748,17 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "AcousticTargetStrength", 
         functionParameterFormat = list(
             FileName = "filePath",
-            TargetStrengthTable = "targetStrengthTable"
+            AcousticTargetStrengthTable = "targetStrengthTable"
         ), 
         functionArgumentHierarchy = list(
-            TargetStrengthMethod = list(
+            AcousticTargetStrengthModel = list(
                 UseProcessData = FALSE
             ), 
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            TargetStrengthTable = list(
-                DefinitionMethod = "TargetStrengthTable", 
+            AcousticTargetStrengthTable = list(
+                DefinitionMethod = "Table", 
                 UseProcessData = FALSE
             ), 
             FileName = list(
@@ -933,31 +994,31 @@ processPropertyFormats <- list(
     
     targetStrengthTable = list(
         class = "table", 
-        title = function(TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
-            TargetStrengthMethod <- match.arg(TargetStrengthMethod)
+        title = function(AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
+            AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel)
             
-            if(identical(TargetStrengthMethod, "LengthDependent")) {
+            if(identical(AcousticTargetStrengthModel, "LengthDependent")) {
                 title <- "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length))"
             }
-            else if(identical(TargetStrengthMethod, "LengthAndDepthDependent")) {
+            else if(identical(AcousticTargetStrengthModel, "LengthAndDepthDependent")) {
                 title <- "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10))"
             }
-            else if(identical(TargetStrengthMethod, "TargetStrengthByLength")) {
+            else if(identical(AcousticTargetStrengthModel, "TargetStrengthByLength")) {
                 title <- "Define a table of IndividualTotalLength and TargetStrength for each AcousticCategory and Frequency"
             }
-            else if(identical(TargetStrengthMethod, "LengthExponent")) {
+            else if(identical(AcousticTargetStrengthModel, "LengthExponent")) {
                 title <- "Define LengthExponent"
             }
             else {
-                stop("Wrong TargetStrengthMethod")
+                stop("Wrong AcousticTargetStrengthModel")
             }
             
             return(title)
         }, 
-        columnNames = function(TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
-            TargetStrengthMethod <- match.arg(TargetStrengthMethod)
+        columnNames = function(AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
+            AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel)
             
-            if(identical(TargetStrengthMethod, "LengthDependent")) {
+            if(identical(AcousticTargetStrengthModel, "LengthDependent")) {
                 columnNames <- c(
                     "AcousticCategory", 
                     "Frequency", 
@@ -965,7 +1026,7 @@ processPropertyFormats <- list(
                     "LengthExponent"
                 )
             }
-            else if(identical(TargetStrengthMethod, "LengthAndDepthDependent")) {
+            else if(identical(AcousticTargetStrengthModel, "LengthAndDepthDependent")) {
                 columnNames <- c(
                     "AcousticCategory", 
                     "Frequency", 
@@ -974,7 +1035,7 @@ processPropertyFormats <- list(
                     "DepthExponent"
                 )
             }
-            else if(identical(TargetStrengthMethod, "TargetStrengthByLength")) {
+            else if(identical(AcousticTargetStrengthModel, "TargetStrengthByLength")) {
                 columnNames <- c(
                     "AcousticCategory", 
                     "Frequency", 
@@ -982,7 +1043,7 @@ processPropertyFormats <- list(
                     "TargetStrength"
                 )
             }
-            else if(identical(TargetStrengthMethod, "LengthExponent")) {
+            else if(identical(AcousticTargetStrengthModel, "LengthExponent")) {
                 columnNames <- c(
                     "AcousticCategory", 
                     "Frequency", 
@@ -990,15 +1051,16 @@ processPropertyFormats <- list(
                 )
             }
             else {
-                stop("Wrong TargetStrengthMethod")
+                stop("Wrong AcousticTargetStrengthModel")
             }
             
             return(columnNames)
         }, 
-        variableTypes = function(TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
-            TargetStrengthMethod <- match.arg(TargetStrengthMethod)
+        variableTypes = function(AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
+            AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel
+                                             )
             
-            if(identical(TargetStrengthMethod, "LengthDependent")) {
+            if(identical(AcousticTargetStrengthModel, "LengthDependent")) {
                 variableTypes <- c(
                     "character",
                     "double",
@@ -1006,7 +1068,7 @@ processPropertyFormats <- list(
                     "double"
                 )
             }
-            else if(identical(TargetStrengthMethod, "LengthAndDepthDependent")) {
+            else if(identical(AcousticTargetStrengthModel, "LengthAndDepthDependent")) {
                 variableTypes <- c(
                     "character",
                     "double",
@@ -1015,7 +1077,7 @@ processPropertyFormats <- list(
                     "double"
                 )
             }
-            else if(identical(TargetStrengthMethod, "TargetStrengthByLength")) {
+            else if(identical(AcousticTargetStrengthModel, "TargetStrengthByLength")) {
                 variableTypes <- c(
                     "character",
                     "double",
@@ -1023,7 +1085,7 @@ processPropertyFormats <- list(
                     "double"
                 )
             }
-            else if(identical(TargetStrengthMethod, "LengthExponent")) {
+            else if(identical(AcousticTargetStrengthModel, "LengthExponent")) {
                 variableTypes <- c(
                     "character",
                     "double",
@@ -1031,10 +1093,115 @@ processPropertyFormats <- list(
                 )
             }
             else {
-                stop("Wrong TargetStrengthMethod")
+                stop("Wrong AcousticTargetStrengthModel")
             }
             
             return(variableTypes)
+        }
+    ), 
+    
+    
+    regressionTable = list(
+        class = "table", 
+        title = function(RegressionModel = c("SimpleLinear", "Power")) {
+            RegressionModel <- match.arg(RegressionModel)
+            
+            if(identical(RegressionModel, "SimpleLinear")) {
+                title <- "Define parameters of the linear model (DependentVariable = Intercept + Slope * IndependentVariable)"
+            }
+            else if(identical(RegressionModel, "Power")) {
+                title <- "Define parameters of the power model (DependentVariable = Factor * IndependentVariable ^ Exponent)"
+            }
+            else {
+                stop("Wrong RegressionModel")
+            }
+            
+            return(title)
+        }, 
+        columnNames = function(RegressionModel = c("SimpleLinear", "Power"), GroupingVariables = character()) {
+            RegressionModel <- match.arg(RegressionModel)
+            
+            if(identical(RegressionModel, "SimpleLinear")) {
+                columnNames <- c(
+                    "DependentVariable", 
+                    "IndependentVariable", 
+                    "Intercept", 
+                    "Slope", 
+                    "ResidualStandardError", 
+                    "EstimationMethod"
+                )
+            }
+            else if(identical(RegressionModel, "Power")) {
+                columnNames <- c(
+                    "DependentVariable", 
+                    "IndependentVariable", 
+                    "Factor", 
+                    "Exponent", 
+                    "ResidualStandardError", 
+                    "EstimationMethod"
+                )
+            }
+            else {
+                stop("Wrong RegressionModel")
+            }
+            
+            if(length(GroupingVariables) && nchar(GroupingVariables)) {
+                columnNames <- c(GroupingVariables, columnNames)
+            }
+            
+            return(columnNames)
+        }, 
+        variableTypes = function(RegressionModel = c("SimpleLinear", "Power"), GroupingVariables = character()) {
+            RegressionModel <- match.arg(RegressionModel)
+            
+            if(identical(RegressionModel, "SimpleLinear")) {
+                variableTypes <- c(
+                    "character",
+                    "character",
+                    "double",
+                    "double",
+                    "double",
+                    "character"
+                )
+            }
+            else if(identical(RegressionModel, "Power")) {
+                variableTypes <- c(
+                    "character",
+                    "character",
+                    "double",
+                    "double",
+                    "double",
+                    "character"
+                )
+            }
+            else {
+                stop("Wrong RegressionModel")
+            }
+            
+            if(length(GroupingVariables) && nchar(GroupingVariables)) {
+                variableTypes <- c(rep("character", length(GroupingVariables)), variableTypes)
+            }
+            
+            return(variableTypes)
+        }, 
+        possibleValues = function(RegressionModel, GroupingVariables = character()) {
+            
+            # Get all unique combinations:
+            if(RegressionModel == "SimpleLinear") {
+                EstimationMethod <- "Linear"
+            }
+            else if(RegressionModel == "Power") {
+                EstimationMethod <- c(
+                    "LogLogLinear", 
+                    "NonLinear"
+                )
+            }
+            
+            # Output must be an unnamed list:
+            c(
+                rep(list(list()), 5 + as.numeric(length(GroupingVariables) && nchar(GroupingVariables))), 
+                list(EstimationMethod)
+            )
         }
     ), 
     

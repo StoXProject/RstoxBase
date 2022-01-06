@@ -8,7 +8,7 @@ DefineAcousticLayer(
   processData,
   UseProcessData = FALSE,
   StoxAcousticData,
-  DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"),
+  DefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"),
   Resolution = double(),
   LayerTable = data.table::data.table()
 )
@@ -20,7 +20,7 @@ DefineAcousticLayer(
 
 \item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "LayerTable" to provide the \code{LayerTable}.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "Table" to provide the \code{LayerTable}.}
 
 \item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
 

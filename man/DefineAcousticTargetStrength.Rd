@@ -7,10 +7,10 @@
 DefineAcousticTargetStrength(
   processData,
   UseProcessData = FALSE,
-  DefinitionMethod = c("ResourceFile", "TargetStrengthTable"),
-  TargetStrengthMethod = c("LengthDependent", "LengthAndDepthDependent",
+  DefinitionMethod = c("ResourceFile", "Table"),
+  AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent",
     "TargetStrengthByLength"),
-  TargetStrengthTable = data.table::data.table(),
+  AcousticTargetStrengthTable = data.table::data.table(),
   FileName = character()
 )
 }
@@ -19,13 +19,13 @@ DefineAcousticTargetStrength(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "TargetStrengthTable", for providing the acoustic target strength parameters in the table \code{TargetStrengthTable}; and "ResourceFile" for reading the acoustic tfarget strength table from the text file \code{FileName}.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Table" to define a table directly (in the GUI), and ResourceFile to read a file.}
 
-\item{TargetStrengthMethod}{Character: The target strength methdo/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.}
+\item{AcousticTargetStrengthModel}{Character: The target strength model/function to use. Currently implemented are "LengthDependent", "LengthAndDepthDependent", "LengthExponent" and "TargetStrengthByLength". See Details.}
 
-\item{TargetStrengthTable}{A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.}
+\item{AcousticTargetStrengthTable}{A table holding the specification of the target strength function/table. The first two columns are AcousticCategory and Frequency. See details for other columns.}
 
-\item{FileName}{A file from which to read the \code{TargetStrengthTable}.}
+\item{FileName}{A file from which to read the \code{AcousticTargetStrengthTable}.}
 }
 \value{
 An \code{\link{AcousticTargetStrength}} object.
@@ -34,7 +34,7 @@ An \code{\link{AcousticTargetStrength}} object.
 This function returns a table of parameters specifying the acoustic target strength as a function of length for different values of user selected variables in the NASC data.
 }
 \details{
-The \code{TargetStrengthMethod} has the following possible values: 
+The \code{AcousticTargetStrengthModel} has the following possible values: 
 \enumerate{
   \item LengthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length). Required columns: Targetstrength0 and LengthExponent.
   \item LengthAndDepthDependent, applying the logarithmic function TargetStrength = Targetstrength0 + LengthExponent * log10(Length) + DepthExponent * log10(1 + Depth/10). Required columns: Targetstrength0, LengthExponent and DepthExponent.

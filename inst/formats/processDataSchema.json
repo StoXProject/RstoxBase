@@ -412,22 +412,22 @@
 		}
 	}, 
 	
-    "TargetStrengthMethod": {
+    "AcousticTargetStrengthModel": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "array",
         "items": [ 
             {
                 "type": "object",
                 "properties": {
-                    "TargetStrengthMethod": { "type": "string" }
+                    "AcousticTargetStrengthModel": { "type": "string" }
                 },
                 "required": [
-                    "TargetStrengthMethod"
+                    "AcousticTargetStrengthModel"
                 ]
             }
         ]
     },
-    "TargetStrengthTable": {
+    "AcousticTargetStrengthTable": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "array",
         "items": [ 
@@ -450,12 +450,44 @@
         ]
     }, 
 
-
-
-
-
-
-
+    "RegressionModel": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "RegressionModel": { "type": "string" }
+                },
+                "required": [
+                    "RegressionModel"
+                ]
+            }
+        ]
+    },
+    "RegressionTable": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "DependentVariable": { "type": "string" }, 
+                    "IndependentVariable": { "type": "string" },
+                    "Intercept": { "type": "number" },
+                    "Slope": { "type": "number" },
+                    "Factor": { "type": "number" },
+                    "Exponent": { "type": "number" }, 
+                    "ResidualStandardError": { "type": "number" },
+                    "EstimationMethod": { "type": "string" }
+                },
+                "required": [
+                    "DependentVariable",
+                    "IndependentVariable"
+                ]
+            }
+        ]
+    }, 
     
     "AcousticPSU": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -499,16 +531,33 @@
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
-            "TargetStrengthMethod": {
-              "$ref": "#/TargetStrengthMethod"
+            "AcousticTargetStrengthModel": {
+              "$ref": "#/AcousticTargetStrengthModel"
             },
-            "TargetStrengthTable": {
-              "$ref": "#/TargetStrengthTable"
+            "AcousticTargetStrengthTable": {
+              "$ref": "#/AcousticTargetStrengthTable"
             }
         },
         "required": [
-            "TargetStrengthMethod",
-            "TargetStrengthTable"
+            "AcousticTargetStrengthModel",
+            "AcousticTargetStrengthTable"
+        ]
+    },  	
+    
+    "Regression": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "RegressionModel": {
+              "$ref": "#/RegressionModel"
+            },
+            "RegressionTable": {
+              "$ref": "#/RegressionTable"
+            }
+        },
+        "required": [
+            "RegressionModel",
+            "RegressionTable"
         ]
     }
 }

@@ -16,15 +16,16 @@ utils::globalVariables(c(
 	 "..extract", "..extractFromDataCopy", "..haulGrouping", "..intervalVector", "..keys",
 	 "..keysSansSample", "..lengthInterval", "..lengthIntervalWidths", "..lengthVar",
 	 "..locatedStratum", "..meanBy", "..paddingVariables", "..presentResolutionVariables",
-	 "..refvar", "..resolutionVar", "..sumBy", "..variablesToGetFromAbundanceData", "..vars",
-	 "AcousticCategory", "AcousticCategoryKey", "Area", "Beam", "BeamKey", "Biomass",
-	 "CatchFractionCount", "CatchFractionWeight", "Channel", "ChannelReferenceDepth",
-	 "ChannelReferenceKey", "ChannelReferenceTilt", "ChannelReferenceType", "Cruise", "CruiseKey",
-	 "CruiseKey1", "DateTime", "Density", "DensityWeight", "Depth", "DepthExponent", "EDSU",
-	 "EffectiveLogDistance", "EffectiveTowDistance", "HasAnyPositiveWeightedCount", "Haul",
-	 "HaulKey", "Individual", "IndividualIndex", "IndividualKey", "IndividualRoundWeight",
-	 "IndividualTotalLength", "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType",
-	 "LengthExponent", "LengthGroup", "LengthResolution", "LogDuration", "LogKey", "LogOrigin",
+	 "..refvar", "..resolutionVar", "..sumBy", "..tomerge", "..variablesToGetFromAbundanceData",
+	 "..vars", "AcousticCategory", "AcousticCategoryKey", "AcousticTargetStrength", "Area", "Beam",
+	 "BeamKey", "Biomass", "CatchFractionCount", "CatchFractionWeight", "Channel",
+	 "ChannelReferenceDepth", "ChannelReferenceKey", "ChannelReferenceTilt", "ChannelReferenceType",
+	 "Cruise", "CruiseKey", "CruiseKey1", "DateTime", "Density", "DensityWeight", "Depth",
+	 "DepthExponent", "EDSU", "EffectiveLogDistance", "EffectiveTowDistance", "EstimationMethod",
+	 "HasAnyPositiveWeightedCount", "Haul", "HaulKey", "Individual", "IndividualIndex",
+	 "IndividualKey", "IndividualRoundWeight", "IndividualTotalLength",
+	 "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent",
+	 "LengthGroup", "LengthResolution", "lm", "LogDuration", "LogKey", "LogOrigin",
 	 "MaxChannelDepth", "MaxChannelRange", "MeanLengthDistributionWeight", "MeanNASCWeight",
 	 "MergeStoxBiotic", "MiddleDateTime", "MinChannelDepth", "MinChannelRange", "NASCKey",
 	 "NASCWeight", "NewValue", "NumberOfAssignedHauls", "NumberOfAssignedHaulsWithCatch", "PSU",
@@ -39,7 +40,7 @@ utils::globalVariables(c(
 	 "numberOfIndividuals", "numberOfSubSamples", "packageName", "raisingFactor",
 	 "representativeBackscatteringCrossSection",
 	 "representativeBackscatteringCrossSectionNormalized", "sumIndividualWeightFactor",
-	 "sumWeightedCount", "weighted", "weightingParameter", "x", "y"))
+	 "sumWeightedCount", "TableName", "weighted", "weightingParameter", "x", "y"))
 
 .onLoad <- function(libname, pkgname) {
 	# Initiate the RstoxBase environment:

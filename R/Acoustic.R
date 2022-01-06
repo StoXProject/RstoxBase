@@ -78,7 +78,7 @@ getDepth <- function(depth0, range, angle) {
 SumNASC <- function(
     NASCData, 
     LayerDefinition = c("FunctionParameter", "FunctionInput"), 
-    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     AcousticLayer = NULL
@@ -135,13 +135,13 @@ MeanNASC <- function(
     # Parameters of the sum part:
     # Layer: 
     LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"), 
-    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     AcousticLayer = NULL, 
     # Survey: 
     SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
-    SurveyDefinitionMethod = c("AllStrata", "SurveyTable"), 
+    SurveyDefinitionMethod = c("AllStrata", "Table"), 
     SurveyTable = data.table::data.table(), 
     Survey = NULL, 
     # Parameters of the mean part:

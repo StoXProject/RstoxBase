@@ -14,8 +14,7 @@ DefineBioticAssignment(
   StratumPolygon,
   AcousticPSU,
   LayerDefinition = c("FunctionParameter", "FunctionInput"),
-  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution",
-    "LayerTable"),
+  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"),
   Resolution = double(),
   LayerTable = data.table::data.table(),
   AcousticLayer = NULL,
@@ -96,7 +95,6 @@ alternatively,
 \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
 \emph{Resolution} method is assosiated with function parameter \emph{Resolution} which gives the desired thickness (in meters) of the layers.
 
-  
 The available automatic assignment methods are:
 
 \strong{Stratum}

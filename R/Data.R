@@ -95,6 +95,7 @@ NULL
 #' @param BioticPSU The \code{\link{BioticPSU}} process data.
 #' @param BioticAssignment The \code{\link{BioticAssignment}} process data.
 #' @param AcousticTargetStrength The \code{\link{AcousticTargetStrength}} process data.
+#' @param Regression The \code{\link{Regression}} process data.
 #' 
 #' @name ProcessData
 #' 
@@ -466,11 +467,24 @@ NULL
 ##################################################
 #' Acoustic target strength
 #' 
-#' The AcousticTargetStrength process data is a list of two tables, the TargetStrengthMethod, holding only the string naming the method to use, and the TargetStrength, holding the parameters/values of the method. See \code{\link{DefineAcousticTargetStrength}} for details on the different methods.
+#' The AcousticTargetStrength process data is a list of two tables, the AcousticTargetStrengthModel, holding only the string naming the model to use, and the AcousticTargetStrengthTable, holding the table of the parameters/values of the model. See \code{\link{DefineAcousticTargetStrength}} for details of the different models.
 #' 
 #' @seealso This data type is produced by \code{\link{DefineAcousticTargetStrength}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name AcousticTargetStrength
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Regression
+#' 
+#' The Regression process data is a list of two tables, the RegressionModel, holding only the string naming the model to use, the RegressionTable, holding the table of the parameters/values of the model. See \code{\link{DefineRegression}} for details of the different models. The function \code{\link{EstimateBioticRegression}} also outputs this datatype.
+#' 
+#' @seealso This data type is produced by \code{\link{DefineRegression}} and \code{\link{EstimateBioticRegression}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name Regression
 #' 
 NULL
 

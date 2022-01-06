@@ -496,6 +496,7 @@ addLengthGroup <- function(
 #'  For each (target) individual with missing value in \code{ImputeAtMissing}, identify all (source) individuals in the haul for which \code{ImputeAtMissing} is non-missing and for which the values in \code{ImputeByEqual} are identical to the target individual. Then sample one of these source individuals, and copy values of \code{ToImpute} to the target individual. Only values that are non-missing are copied from the sampled individual, and  only missing values in the target individual are replaced. If no source individuals are found in the haul, expand the search to the stratum, and finally to the survey. If no source individuals are found in the survey, leave the target individual unchanged. 
 #' 
 #' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param ImputationMethod The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.
 #' @param ImputeAtMissing A single string naming the variable which when missing identifies target individuals to input data \bold{to}. I.e., if \code{ImputeAtMissing} is missing for an individual, perform the imputation. In StoX 3.0.0 and older, \code{ImputeAtMissing} was hard coded to IndividualAge.
 #' @param ImputeByEqual A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data \bold{from}. The source individuals need also to have non-missing \code{ImputeAtMissing}. In StoX 3.0.0 and older, \code{ImputeByEqual} was hard coded to c("SpeciesCategory","IndividualTotalLength").
@@ -511,48 +512,57 @@ addLengthGroup <- function(
 #' 
 ImputeSuperIndividuals <- function(
     SuperIndividualsData, 
-    ImputationMethod = "RandomSampling", 
-    #ImputationMethod = c("RandomSampling", "Regression"), 
+    #ImputationMethod = "RandomSampling", 
+    ImputationMethod = c("RandomSampling", "Regression"), 
     ImputeAtMissing = character(), 
     ImputeByEqual = character(), 
     ToImpute = character(), 
-    Seed = 1
+    Seed = 1, 
+    Regression
     #RegroupIndividualTotalLength = FALSE, 
     #LengthInterval = numeric()
-    #RegressionDefinition = c("FunctionInput", "FunctionParameter"), 
-    #Regression, 
-    #RegressionModel,
-    #RegressionParameters
 ) {
     
-    # Check that the length resolution is constant: 
-    if(!allEqual(SuperIndividualsData$LengthResolution)) {
-        stop("All individuals must have identical LengthResolution in the current version.")
+    ImputationMethod <- match.arg(ImputationMethod)
+    
+    if(ImputationMethod == "RandomSampling") {
+        # Check that the length resolution is constant: 
+        if("IndividualTotalLength" %in% ImputeByEqual && !allEqual(SuperIndividualsData$LengthResolution)) {
+            stop("All individuals must have identical LengthResolution in the current version.")
+        }
+        
+        if(!length(ToImpute)) {
+            warning("StoX: Empty ToImpute is deprecated. Please select the variables to impute explicitely.")
+            ToImpute <- getIndividualNames(SuperIndividualsData, ImputeByEqual,  tables = "Individual")
+        }
+        if(!ImputeAtMissing %in% ToImpute) {
+            stop("Please specify the variable given by ImputeAtMissing (", ImputeAtMissing, ") in ToImpute. ")
+        }
+        # For safety uniquify:
+        ToImpute <- unique(ToImpute)
+        
+        if(length(ImputeAtMissing) != 1) {
+            stop("ImputeAtMissing must have length 1.")
+        }
+        
+        # Impute the SuperIndividualsData:
+        ImputeSuperIndividualsData <- ImputeDataByRandomSampling(
+            data = SuperIndividualsData, 
+            imputeAtMissing = ImputeAtMissing, 
+            imputeByEqual = ImputeByEqual, 
+            seed = Seed, 
+            columnNames = ToImpute#, 
+            #lengthInterval  = if(RegroupIndividualTotalLength) LengthInterval else numeric()
+        )
+    }
+    else if(ImputationMethod == "Regression") {
+        ImputeSuperIndividualsData <- ImputeDataByRegression (
+            data = SuperIndividualsData, 
+            Regression = Regression
+        )
     }
     
-    if(!length(ToImpute)) {
-        warning("StoX: Empty ToImpute is deprecated. Please select the variables to impute explicitely.")
-        ToImpute <- getIndividualNames(SuperIndividualsData, ImputeByEqual,  tables = "Individual")
-    }
-    if(!ImputeAtMissing %in% ToImpute) {
-        stop("Please specify the variable given by ImputeAtMissing (", ImputeAtMissing, ") in ToImpute. ")
-    }
-    # For safety uniquify:
-    ToImpute <- unique(ToImpute)
     
-    if(length(ImputeAtMissing) != 1) {
-        stop("ImputeAtMissing must have length 1.")
-    }
-    
-    # Impute the SuperIndividualsData:
-    ImputeSuperIndividualsData <- ImputeData(
-        data = SuperIndividualsData, 
-        imputeAtMissing = ImputeAtMissing, 
-        imputeByEqual = ImputeByEqual, 
-        seed = Seed, 
-        columnNames = ToImpute#, 
-        #lengthInterval  = if(RegroupIndividualTotalLength) LengthInterval else numeric()
-    )
     
     # Re-calculate the Biomass, where missing weigth is accepted if Abundane is 0:
     ImputeSuperIndividualsData[, Biomass := ifelse(Abundance %in% 0, 0, Abundance * IndividualRoundWeight)]
@@ -580,7 +590,7 @@ ImputeSuperIndividuals <- function(
 }
 
 
-ImputeData <- function(
+ImputeDataByRandomSampling <- function(
     data, 
     imputeAtMissing = "IndividualAge", 
     imputeByEqual = c("IndividualTotalLength", "SpeciesCategory"), 
@@ -794,3 +804,53 @@ replaceMissingData <- function(x, columnNames) {
     return(x)
 }
 
+
+
+ImputeDataByRegression <- function(
+    data, 
+    Regression
+) {
+    
+    # Get the data and add the RowIndex for use when identifying which rows to impute from:
+    dataCopy <- data.table::copy(data)
+    
+    # Check that DependentVariable and IndependentVariable are constant:
+    if(!allEqual(Regression$RegressionTable$DependentVariable)) {
+        stop("All DependentVariable must be equal.")
+    }
+    else {
+        DependentVariable <- Regression$RegressionTable$DependentVariable[1]
+    }
+    if(!allEqual(Regression$RegressionTable$IndependentVariable)) {
+        stop("All IndependentVariable must be equal.")
+    }
+    else {
+        IndependentVariable <- Regression$RegressionTable$IndependentVariable[1]
+    }
+    
+    # Find rows with missing DependentVariable and present IndependentVariable:
+    atImpute <- dataCopy[, which(is.na(get(DependentVariable)) & !is.na(get(IndependentVariable)))]
+    
+    # Merge in the regression parameters:
+    mergeBy <- intersect(
+        names(dataCopy), 
+        names(Regression$RegressionTable)
+    )
+    tomerge <- setdiff(names(Regression$RegressionTable), c("DependentVariable", "IndependentVariable"))
+    removeAfterwards <- setdiff(names(Regression$RegressionTable), names(dataCopy))
+    if(length(mergeBy) > 0) {
+        dataCopy <- merge(dataCopy, Regression$RegressionTable[, ..tomerge], by = mergeBy, all.x = TRUE)
+    }
+    else {
+        dataCopy <- cbind(dataCopy, Regression$RegressionTable[, ..tomerge])
+    }
+    
+    # Apply the regression model with the parameters:
+    RegressionModel <- Regression$RegressionModel$RegressionModel
+    modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
+    regressionFunction <- getRstoxBaseDefinitions("modelFunctions")[["Regression"]][[RegressionModel]]
+    dataCopy[atImpute, eval(DependentVariable) := regressionFunction(get(eval(IndependentVariable)), .SD), .SDcols = modelParameters]
+    
+    
+    return(dataCopy)
+}
