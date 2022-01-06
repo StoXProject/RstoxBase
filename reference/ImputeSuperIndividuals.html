@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -55,11 +55,12 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ImputeSuperIndividuals</span><span class="op">(</span>
   <span class="va">SuperIndividualsData</span>,
-  ImputationMethod <span class="op">=</span> <span class="st">"RandomSampling"</span>,
+  ImputationMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RandomSampling"</span>, <span class="st">"Regression"</span><span class="op">)</span>,
   ImputeAtMissing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   ImputeByEqual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   ToImpute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
-  Seed <span class="op">=</span> <span class="fl">1</span>
+  Seed <span class="op">=</span> <span class="fl">1</span>,
+  <span class="va">Regression</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -77,6 +78,8 @@
 <dd><p>A vector of strings naming the variable(s) to impute (copy to the target individual). Only variables that are non-missing in the source individual and missing in the target individual are copied to the target individual. In StoX 3.0.0 and older, <code>ToImpute</code> was hard coded to all available variables of the BioticData contained in the <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p></dd>
 <dt>Seed</dt>
 <dd><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></dd>
+<dt>Regression</dt>
+<dd><p>The <code><a href="Regression.html">Regression</a></code> process data.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -1092,6 +1092,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> list()</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $defaultEstimationMethod</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $defaultEstimationMethod$Regression</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $defaultEstimationMethod$Regression$SimpleLinear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Linear"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $defaultEstimationMethod$Regression$Power</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LogLogLinear"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $emptyStratumPolygon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An object of class "SpatialPolygonsDataFrame"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Slot "data":</span>
@@ -1114,6 +1124,31 @@
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>CRS object has no comment</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $estimationFunctions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $estimationFunctions$Regression</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $estimationFunctions$Regression$SimpleLinear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (dependentVariable, independentVariable, data) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     fit &lt;- stats::lm(get(dependentVariable) ~ get(independentVariable), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         data = data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     return(fit)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e49b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $estimationFunctions$Regression$Power</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (dependentVariable, independentVariable, data) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     fit &lt;- stats::lm(log(get(dependentVariable)) ~ log(get(independentVariable)), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         data = data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     fit$coefficients[1] &lt;- exp(fit$coefficients[1])</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     return(fit)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e4320&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $getPSUPrefix</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (PSUType) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
@@ -1128,8 +1163,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(prefix)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fadeb0d17e8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fadeb0cfd98&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e68d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $getSSULabel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (PSUType) </span>
@@ -1145,8 +1180,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(SSULabel)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fadeb0d1fc8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fadeb0cfd98&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60ec000&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $getStationLevel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (PSUType) </span>
@@ -1162,8 +1197,125 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(SSULabel)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fadeb0cec18&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fadeb0cfd98&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60eb7e8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $implementedModelClasses</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "AcousticTargetStrength" "Regression"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength$LengthDependent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Depth) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e5f20&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength$LengthAndDepthDependent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     DepthExponent, Depth) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         DepthExponent * log10(1 + Depth/10)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e5b68&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength$LengthExponent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, LengthExponent) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     LengthExponent * log10(midIndividualTotalLength)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e5548&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength$TargetStrengthByLength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$Regression</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$Regression$SimpleLinear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (independentVariable, parameters) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     parameters$Intercept + parameters$Slope * get(independentVariable)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e52e0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$Regression$Power</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> function (independentVariable, parameters) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     parameters$Factor * independentVariable^parameters$Exponent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60e4dd8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelNames</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelNames$AcousticTargetStrength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LengthDependent"         "LengthAndDepthDependent"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "LengthExponent"          "TargetStrengthByLength" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelNames$Regression</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelNames$Regression[[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SimpleLinear"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelNames$Regression[[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Power"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$AcousticTargetStrength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$AcousticTargetStrength$LengthDependent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TargetStrength0" "LengthExponent" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$AcousticTargetStrength$LengthAndDepthDependent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TargetStrength0" "LengthExponent"  "DepthExponent"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$AcousticTargetStrength$LengthExponent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LengthExponent"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$AcousticTargetStrength$TargetStrengthByLength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TargetStrength" "TotalLength"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$Regression</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$Regression$SimpleLinear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Intercept" "Slope"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelParameters$Regression$Power</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Factor"   "Exponent"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$AcousticTargetStrength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$AcousticTargetStrength$LengthDependent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$AcousticTargetStrength$LengthAndDepthDependent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$AcousticTargetStrength$LengthExponent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$AcousticTargetStrength$TargetStrengthByLength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Table"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$Regression</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$Regression$SimpleLinear</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $modelTypes$Regression$Power</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $nauticalMileInMeters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1852</span>
@@ -1187,8 +1339,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! The Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fadeb0cf628&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fadeb0cfd98&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fada60eadd8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fada60ea6a0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $reportFunctions</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      functionName packageName weighted weightingParameter multiple</span>
@@ -1239,61 +1391,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $seedSequenceLength</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1e+07</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $TargetStrengthFunction_LengthAndDepthDependent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     DepthExponent, Depth) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         DepthExponent * log10(1 + Depth/10)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fadeb0d0f98&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fadeb0cfd98&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $TargetStrengthFunction_LengthDependent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     Depth) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fadeb0d0be0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fadeb0cfd98&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $TargetStrengthFunction_LengthExponent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, LengthExponent) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     LengthExponent * log10(midIndividualTotalLength)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fadeb0d15b8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fadeb0cfd98&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthMethodTypes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthMethodTypes$LengthDependent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthMethodTypes$LengthAndDepthDependent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthMethodTypes$LengthExponent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Function"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthMethodTypes$TargetStrengthByLength</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Table"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthParameters</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthParameters$LengthDependent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TargetStrength0" "LengthExponent" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthParameters$LengthAndDepthDependent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TargetStrength0" "LengthExponent"  "DepthExponent"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthParameters$LengthExponent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LengthExponent"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $targetStrengthParameters$TargetStrengthByLength</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TargetStrength" "TotalLength"   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 </code></pre></div>

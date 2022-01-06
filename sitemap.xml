@@ -79,7 +79,13 @@
     <loc>/reference/DefineLayer.html</loc>
   </url>
   <url>
+    <loc>/reference/DefineModel.html</loc>
+  </url>
+  <url>
     <loc>/reference/DefinePSU.html</loc>
+  </url>
+  <url>
+    <loc>/reference/DefineRegression.html</loc>
   </url>
   <url>
     <loc>/reference/DefineStratumPolygon.html</loc>
@@ -92,6 +98,9 @@
   </url>
   <url>
     <loc>/reference/EDSU.html</loc>
+  </url>
+  <url>
+    <loc>/reference/EstimateBioticRegression.html</loc>
   </url>
   <url>
     <loc>/reference/GearDependentCatchCompensation.html</loc>
@@ -155,6 +164,9 @@
   </url>
   <url>
     <loc>/reference/ProcessData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Regression.html</loc>
   </url>
   <url>
     <loc>/reference/RegroupLengthDistribution.html</loc>

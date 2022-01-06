@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -63,8 +63,7 @@
   <span class="va">StratumPolygon</span>,
   <span class="va">AcousticPSU</span>,
   LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
-  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>,
-    <span class="st">"LayerTable"</span><span class="op">)</span>,
+  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>, <span class="st">"Table"</span><span class="op">)</span>,
   Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
   LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
   AcousticLayer <span class="op">=</span> <span class="cn">NULL</span>,
@@ -139,7 +138,6 @@
 <p><em>Watercolomn</em> method which defines one layer for the entire watercolumn
 <em>HighestResolution</em> method which makes the highest possible number of layers based on the resolution in the input AcousticData.
 <em>Resolution</em> method is assosiated with function parameter <em>Resolution</em> which gives the desired thickness (in meters) of the layers.</p>
-  
 <p>The available automatic assignment methods are:</p>
 <p><strong>Stratum</strong></p>
 <p>All biotic hauls within each stratum  are assigned to all the acoustic PSUs of the stratum.</p>

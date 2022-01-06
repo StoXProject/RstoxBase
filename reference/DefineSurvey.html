@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">DefineSurvey</span><span class="op">(</span>
   <span class="va">processData</span>,
   UseProcessData <span class="op">=</span> <span class="cn">FALSE</span>,
-  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"SurveyTable"</span>, <span class="st">"ResourceFile"</span><span class="op">)</span>,
+  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"Table"</span>, <span class="st">"ResourceFile"</span><span class="op">)</span>,
   <span class="va">StratumPolygon</span>,
   SurveyTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
   FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
@@ -70,7 +70,7 @@
 <dt>UseProcessData</dt>
 <dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
 <dt>DefinitionMethod</dt>
-<dd><p>Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; "SurveyTable", which requires the <code>SurveyTable</code> to be given; and "ResourceFile" to read from a project.xml file from StoX 2.7.</p></dd>
+<dd><p>Character: A string naming the method to use, one of "AllStrata", which defines all strata as the same survey named "Survey"; "Table", which requires the <code>SurveyTable</code> to be given; and "ResourceFile" to read from a project.xml file from StoX 2.7.</p></dd>
 <dt>StratumPolygon</dt>
 <dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
 <dt>SurveyTable</dt>
