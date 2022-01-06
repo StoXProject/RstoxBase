@@ -77,6 +77,20 @@ backwardCompatibility <- list(
             modelName = "report", 
             parameterName = "StoxBioticTranslation",
             newParameterName = "Translation"
+        ), 
+        list(
+            changeVersion = "1.5.1", 
+            functionName = "DefineAcousticTargetStrength", 
+            modelName = "baseline", 
+            parameterName = "TargetStrengthTable",
+            newParameterName = "AcousticTargetStrengthTable"
+        ), 
+        list(
+            changeVersion = "1.5.1", 
+            functionName = "DefineAcousticTargetStrength", 
+            modelName = "baseline", 
+            parameterName = "TargetStrengthMethod",
+            newParameterName = "AcousticTargetStrengthModel"
         )
     ),  
     
@@ -89,7 +103,6 @@ backwardCompatibility <- list(
 	        value = "Table", 
 	        newValue = "TargetStrengthTable"
 	    ), 
-	    
 	    list(
 	        changeVersion = "1.2.43", 
 	        functionName = "DefineStratumPolygon", 
@@ -97,6 +110,122 @@ backwardCompatibility <- list(
 	        parameterName = "DefinitionMethod", 
 	        value = "None", 
 	        newValue = "Manual"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "DefineAcousticTargetStrength", 
+	        modelName = "baseline", 
+	        parameterName = "DefinitionMethod", 
+	        value = "TargetStrengthTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "DefineSurvey", 
+	        modelName = "baseline", 
+	        parameterName = "DefinitionMethod", 
+	        value = "SurveyTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "MeanLengthDistribution", 
+	        modelName = "baseline", 
+	        parameterName = "SurveyDefinitionMethod", 
+	        value = "SurveyTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "MeanNASC", 
+	        modelName = "baseline", 
+	        parameterName = "SurveyDefinitionMethod", 
+	        value = "SurveyTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "DefineBioticLayer", 
+	        modelName = "baseline", 
+	        parameterName = "DefinitionMethod", 
+	        value = "LayerTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "DefineAcousticLayer", 
+	        modelName = "baseline", 
+	        parameterName = "DefinitionMethod", 
+	        value = "LayerTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "DefineBioticAssignment", 
+	        modelName = "baseline", 
+	        parameterName = "LayerDefinitionMethod", 
+	        value = "LayerTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "SumLengthDistribution", 
+	        modelName = "baseline", 
+	        parameterName = "LayerDefinitionMethod", 
+	        value = "LayerTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "MeanLengthDistribution", 
+	        modelName = "baseline", 
+	        parameterName = "LayerDefinitionMethod", 
+	        value = "LayerTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "SumNASC", 
+	        modelName = "baseline", 
+	        parameterName = "LayerDefinitionMethod", 
+	        value = "LayerTable", 
+	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.1", 
+	        functionName = "MeanNASC", 
+	        modelName = "baseline", 
+	        parameterName = "LayerDefinitionMethod", 
+	        value = "LayerTable", 
+	        newValue = "Table"
 	    )
-	)
+	), 
+    
+    renameProcessData = list(
+        list(
+            changeVersion = "1.5.1", 
+            functionName = "DefineAcousticTargetStrength", 
+            modelName = "baseline", 
+            processDataName = "TargetStrengthMethod",
+            newProcessDataName = "AcousticTargetStrengthModel"
+        ), 
+        list(
+            changeVersion = "1.5.1", 
+            functionName = "DefineAcousticTargetStrength", 
+            modelName = "baseline", 
+            processDataName = "TargetStrengthTable",
+            newProcessDataName = "AcousticTargetStrengthTable"
+        )
+    ), 
+    
+    renameColumInProcessDataTable = list(
+        list(
+            changeVersion = "1.5.1", 
+            functionName = "DefineAcousticTargetStrength", 
+            modelName = "baseline", 
+            processDataName = "AcousticTargetStrengthModel",
+            processDataColumnName = "TargetStrengthMethod",
+            newProcessDataColumnName = "AcousticTargetStrengthModel"
+        )
+    )
 )

@@ -153,23 +153,25 @@ DistributeNASC <- function(
         }
     }
     allAcousticCategory <- unique(NASCData$AcousticCategory)
-    if(!all(allAcousticCategory %in% AcousticTargetStrength$TargetStrengthTable$AcousticCategory)) {
-        notPresent <- setdiff(allAcousticCategory, AcousticTargetStrength$TargetStrengthTable$AcousticCategory)
+    if(!all(allAcousticCategory %in% AcousticTargetStrength$AcousticTargetStrengthTable$AcousticCategory)) {
+        notPresent <- setdiff(allAcousticCategory, AcousticTargetStrength$AcousticTargetStrengthTable$AcousticCategory)
         notPresent <- notPresent[!is.na(notPresent)]
         if(length(notPresent)) {
             warning("StoX: The following AcousticCategory are present in the NASCData but not in the AcousticTargetStrength: ", paste(notPresent, collapse = ", "), ".")
         }
     }
     
-    # Merge TargetStrength with SpeciesLink in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
-    AcousticTargetStrength$TargetStrengthTable <- merge(AcousticTargetStrength$TargetStrengthTable, SpeciesLink, by = "AcousticCategory", all = TRUE, allow.cartesian = TRUE)
+    # Merge AcousticTargetStrength with SpeciesLink in order to get the targets strengt for each SepciesCategory (and not only AcousticCategory):
+    AcousticTargetStrength$AcousticTargetStrengthTable <- merge(AcousticTargetStrength$AcousticTargetStrengthTable, SpeciesLink, by = "AcousticCategory", all = TRUE, allow.cartesian = TRUE)
     
-    # Merge the TargetStrength into the NASCData. This adds the parameters of the target strength to length relationship. This step is important, as merging is done by the AcousticCategory, Frequency and possibly other grouping columns.:
+    # Merge the AcousticTargetStrength into the NASCData. This adds the parameters of the target strength to length relationship. This step is important, as merging is done by the AcousticCategory, Frequency and possibly other grouping columns.:
     
-    # Take special care of TargetStrengthMethods that are tables of length instead of functions, in which we apply constant interpolation to the lengths in the data here, to facilitate correct merging:
-    if(getRstoxBaseDefinitions("targetStrengthMethodTypes")[[AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod]] == "Table") {
-        AcousticTargetStrength$TargetStrengthTable <- getTargetStrengthByLengthFunction(
-            AcousticTargetStrength$TargetStrengthTable, 
+    # Take special care of AcousticTargetStrengthModels that are tables of length instead of functions, in which we apply constant interpolation to the lengths in the data here, to facilitate correct merging:
+    
+    #if(getRstoxBaseDefinitions("targetStrengthMethodTypes")[[TargetStrength$TargetStrengthModel$TargetStrengthModel]] == "Table") {
+    if(getRstoxBaseDefinitions("modelTypes")$AcousticTargetStrength[[AcousticTargetStrength$AcousticTargetStrengthModel$AcousticTargetStrengthModel]] == "Table") {
+        AcousticTargetStrength$AcousticTargetStrengthTable <- getTargetStrengthByLengthFunction(
+            AcousticTargetStrength$AcousticTargetStrengthTable, 
             method = "constant", 
             rule = 2
         )
@@ -178,19 +180,13 @@ DistributeNASC <- function(
     #mergeBy <- getDataTypeDefinition(dataType = "NASCData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     mergeBy <- intersect(
         names(NASCData), 
-        names(AcousticTargetStrength$TargetStrengthTable)
+        names(AcousticTargetStrength$AcousticTargetStrengthTable)
     )
-    ## Subtract the columns defined as parameters to the target strength function:
-    #mergeBy <- setdiff(
-    #    mergeBy, 
-    #    getRstoxBaseDefinitions("targetStrengthParameters")[[AcousticTargetStrength$TargetStrengthMethod]]
-    #)
-    
     if(length(mergeBy) > 0) {
-        NASCData <- merge(NASCData, AcousticTargetStrength$TargetStrengthTable, by = mergeBy, all.x = TRUE)
+        NASCData <- merge(NASCData, AcousticTargetStrength$AcousticTargetStrengthTable, by = mergeBy, all.x = TRUE)
     }
     else {
-        NASCData <- cbind(NASCData, AcousticTargetStrength$TargetStrengthTable)
+        NASCData <- cbind(NASCData, AcousticTargetStrength$AcousticTargetStrengthTable)
     }
     
     # Merge the AssignmentLengthDistributionData into the NASCData. This adds the length distribution:
@@ -231,7 +227,7 @@ DistributeNASC <- function(
     }
     
     # Calculate the target strength of each length group:
-    getTargetStrength(NASCData, TargetStrengthMethod = AcousticTargetStrength$TargetStrengthMethod$TargetStrengthMethod)
+    getTargetStrength(NASCData, AcousticTargetStrengthModel = AcousticTargetStrength$AcousticTargetStrengthModel$AcousticTargetStrengthModel)
     
     # Get backscattering cross section:
     NASCData[, backscatteringCrossSection := targetStrengthToBackscatteringCrossSection(TargetStrength)]
@@ -269,30 +265,30 @@ checkIntersect <- function(x, y, by = NULL) {
 }
 
 # Convert a table of length and TS to a funciton:
-getTargetStrengthByLengthFunction <- function(TargetStrengthTable, method = "constant", rule = 2) {
+getTargetStrengthByLengthFunction <- function(AcousticTargetStrengthTable, method = "constant", rule = 2) {
     
     # Define the columns to modify:
     functionColumns <- c("TotalLength", "TargetStrength")
-    by <- setdiff(names(TargetStrength), functionColumns)
+    by <- setdiff(names(AcousticTargetStrength), functionColumns)
     
-    # Add mid points to the TargetStrength to facilitate use of approxfun with method = "constant":
-    TargetStrengthTable  <- expandTargetStrengthTable(TargetStrengthTable, by = by)
+    # Add mid points to the AcousticTargetStrength to facilitate use of approxfun with method = "constant":
+    AcousticTargetStrengthTable  <- expandTargetStrengthTable(AcousticTargetStrengthTable, by = by)
     
     # Get one function for each combination of the columns given by 'by':
-    TargetStrengthWithFunction <- TargetStrengthTable[, .(TargetStrengthFunction = getTargetStrengthByLengthFunctionOne(.SD, by = by, method = method, rule = rule)), by = by]
+    AcousticTargetStrengthWithFunction <- AcousticTargetStrengthTable[, .(TargetStrengthFunction = getTargetStrengthByLengthFunctionOne(.SD, by = by, method = method, rule = rule)), by = by]
     
-    return(TargetStrengthWithFunction)
+    return(AcousticTargetStrengthWithFunction)
 }
 
 
 # Define the function to get the target strength function, using one TargetStrength (a subset of the TargetStrength):
-getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method = "constant", rule = 2) {
+getTargetStrengthByLengthFunctionOne <- function(AcousticTargetStrengthTable, by, method = "constant", rule = 2) {
     
     # Define the target strength function as a function of length and length interval:
     targetStrengthByLengthFunctionOne <- function(TotalLength) {
         output <- stats::approx(
-            x = TargetStrengthTable$TotalLength, 
-            y = TargetStrengthTable$TargetStrength, 
+            x = AcousticTargetStrengthTable$TotalLength, 
+            y = AcousticTargetStrengthTable$TargetStrength, 
             xout = TotalLength, 
             method = method, 
             rule = rule
@@ -316,9 +312,9 @@ getTargetStrengthByLengthFunctionOne <- function(TargetStrengthTable, by, method
 
 
 # Function to prepare a TargetStrength for approxfun():
-expandTargetStrengthTable <- function(TargetStrengthTable, by) {
+expandTargetStrengthTable <- function(AcousticTargetStrengthTable, by) {
     # Add mid points of the lengths between the first and last:
-    TargetStrengthTable[, .(
+    AcousticTargetStrengthTable[, .(
         TotalLength = c(
             utils::head(TotalLength, 1), 
             TotalLength[-1] - diff(TotalLength) / 2, 
@@ -335,27 +331,27 @@ expandTargetStrengthTable <- function(TargetStrengthTable, by) {
 ###########################################################
 # Define a function to add TS according to selected model #
 ###########################################################
-getTargetStrength <- function(Data, TargetStrengthMethod) {
+getTargetStrength <- function(Data, AcousticTargetStrengthModel) {
     
     # Get the length interval mid points:
     Data[, midIndividualTotalLength := getMidIndividualTotalLength(.SD)]
     
     # Check wich model is selected
-    if(grepl("LengthDependent", TargetStrengthMethod, ignore.case = TRUE)) {
+    if(grepl("LengthDependent", AcousticTargetStrengthModel, ignore.case = TRUE)) {
         # Apply the LengthDependent equation: 
-        Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthDependent")(
+        Data[, TargetStrength := getRstoxBaseDefinitions("modelFunctions")$AcousticTargetStrength$LengthDependent(
             midIndividualTotalLength, 
             TargetStrength0 = TargetStrength0, 
             LengthExponent = LengthExponent
         )]
     }
-    else if(grepl("LengthAndDepthDependent", TargetStrengthMethod, ignore.case = TRUE)) {
+    else if(grepl("LengthAndDepthDependent", AcousticTargetStrengthModel, ignore.case = TRUE)) {
         # Add the the depth:
         verticalLayerDimension <- getDataTypeDefinition(dataType = "MeanNASCData", elements = "verticalLayerDimension", unlist = TRUE)
         Data[, Depth := rowMeans(.SD), .SDcols = verticalLayerDimension]
         
         # Apply the LengthAndDepthDependent equation: 
-        Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthAndDepthDependent")(
+        Data[, TargetStrength := getRstoxBaseDefinitions("modelFunctions")$AcousticTargetStrength$LengthAndDepthDependent(
             midIndividualTotalLength, 
             TargetStrength0 = TargetStrength0, 
             LengthExponent = LengthExponent, 
@@ -363,14 +359,14 @@ getTargetStrength <- function(Data, TargetStrengthMethod) {
             Depth = Depth
         )]
     }
-    else if(grepl("LengthExponent", TargetStrengthMethod, ignore.case = TRUE)) {
+    else if(grepl("LengthExponent", AcousticTargetStrengthModel, ignore.case = TRUE)) {
         # Apply only the LengthExponent: 
-        Data[, TargetStrength := getRstoxBaseDefinitions("TargetStrengthFunction_LengthExponent")(
+        Data[, TargetStrength := getRstoxBaseDefinitions("modelFunctions")$AcousticTargetStrength$LengthExponent(
             midIndividualTotalLength, 
             LengthExponent = LengthExponent
         )]
     }
-    else if(grepl("TargetStrengthByLength", TargetStrengthMethod, ignore.case = TRUE)) {
+    else if(grepl("TargetStrengthByLength", AcousticTargetStrengthModel, ignore.case = TRUE)) {
         # Apply the TargetStrengthByLengthTargetStrengthByLength equations: 
         Data[, TargetStrength := 
             if(!is.na(TargetStrengthFunction)) 
@@ -381,7 +377,7 @@ getTargetStrength <- function(Data, TargetStrengthMethod) {
         )]
     }
     else{
-        warning("StoX: Invalid TargetStrengthMethod (", paste(getRstoxBaseDefinitions("targetStrengthParameters"), collapse = ", "), " currently implemented)")
+        warning("StoX: Invalid AcousticTargetStrengthModel (", paste(names(getRstoxBaseDefinitions("modelParameters")$AcousticTargetStrength), collapse = ", "), " currently implemented)")
     }
 }
 

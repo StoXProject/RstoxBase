@@ -527,36 +527,140 @@ initiateRstoxBase <- function(){
     #suppressWarnings(sp::proj4string(emptyStratumPolygon) <- proj4string)
     
     
-    targetStrengthParameters <- list(
-        LengthDependent = c("TargetStrength0", "LengthExponent"), 
-        LengthAndDepthDependent = c("TargetStrength0", "LengthExponent", "DepthExponent"), 
-        LengthExponent = "LengthExponent", 
-        TargetStrengthByLength = c("TargetStrength", "TotalLength")
+    ##### Definitions of implemented model classes, such as target strength and regression: #####
+    implementedModelClasses <- c(
+        "AcousticTargetStrength", 
+        "Regression"
     )
     
-    targetStrengthMethodTypes  <- list(
-        LengthDependent = "Function", 
-        LengthAndDepthDependent = "Function", 
-        LengthExponent = "Function", 
-        TargetStrengthByLength = "Table"
+    # The names of the models for each model class:
+    modelNames <- list(
+        AcousticTargetStrength = c(
+            "LengthDependent", 
+            "LengthAndDepthDependent", 
+            "LengthExponent", 
+            "TargetStrengthByLength"
+        ), 
+        Regression = list(
+            "SimpleLinear", 
+            "Power"
+        )
     )
     
-    # Define the various acoustic target strength functions:
-    # 1. TS = TS0 + M log10(Lcm): 
-    TargetStrengthFunction_LengthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, Depth) {
-        TargetStrength0 + 
-            LengthExponent * log10(midIndividualTotalLength)
+    # The model types, either function or table:
+    modelTypes  <- list(
+        AcousticTargetStrength = list(
+            LengthDependent = "Function", 
+            LengthAndDepthDependent = "Function", 
+            LengthExponent = "Function", 
+            TargetStrengthByLength = "Table"
+        ), 
+        Regression = list(
+            SimpleLinear = "Function", 
+            Power = "Function"
+        )
+    )
+    
+    # The model parameters:
+    modelParameters <- list(
+        AcousticTargetStrength = list(
+            LengthDependent = c("TargetStrength0", "LengthExponent"), 
+            LengthAndDepthDependent = c("TargetStrength0", "LengthExponent", "DepthExponent"), 
+            LengthExponent = "LengthExponent", 
+            TargetStrengthByLength = c("TargetStrength", "TotalLength")
+        ), 
+        Regression = list(
+            SimpleLinear = c("Intercept", "Slope"), 
+            Power = c("Factor", "Exponent")
+        )
+    )
+    
+    defaultEstimationMethod <- list(
+        Regression = list(
+            SimpleLinear = "Linear", 
+            Power = "LogLogLinear"
+        )
+    )
+    
+    
+    # The model functions:
+    modelFunctions  <- list(
+        AcousticTargetStrength = list(
+            
+            # Length dependent: 
+            # TS = TS0 + M log10(Lcm): 
+            LengthDependent = function(midIndividualTotalLength, TargetStrength0, LengthExponent, Depth) {
+                TargetStrength0 + 
+                LengthExponent * log10(midIndividualTotalLength)
+            }, 
+            
+            # Length and depth dependent: 
+            # TS = TS0 + M log10(Lcm) + D log10(1 + D/10) # Ona 2003:
+            LengthAndDepthDependent = function(midIndividualTotalLength, TargetStrength0, LengthExponent, DepthExponent, Depth) {
+                TargetStrength0 + 
+                LengthExponent * log10(midIndividualTotalLength) + 
+                DepthExponent * log10(1 + Depth/10)
+            }, 
+            
+            # Length exponent: 
+            # TS = M log10(Lcm):
+            LengthExponent = function(midIndividualTotalLength, LengthExponent) {
+                LengthExponent * log10(midIndividualTotalLength)
+            }, 
+            
+            # Target strength by lngth is given as a table: 
+            TargetStrengthByLength = NA
+        ), 
+        Regression = list(
+            
+            # Simple linear regression Y = a + bX:
+            SimpleLinear = function(independentVariable, parameters) {
+                parameters$Intercept + parameters$Slope * get(independentVariable)
+            }, 
+            
+            # Power regression Y = aX^b:
+            Power = function(independentVariable, parameters) {
+                parameters$Factor * independentVariable^parameters$Exponent
+            }
+        )
+    )
+    
+    
+    # The estimation functions:
+    estimationFunctions  <- list(
+        Regression = list(
+            # Simple linear regression Y = a + bX:
+            SimpleLinear = function(dependentVariable, independentVariable, data) {
+                fit <- stats::lm(get(dependentVariable) ~ get(independentVariable), data = data)
+                return(fit)
+            }, 
+            # Power regression Y = aX^b:
+            Power = function(dependentVariable, independentVariable, data) {
+                fit <- stats::lm(log(get(dependentVariable)) ~ log(get(independentVariable)), data = data)
+                # After log-log we get log(Y) = log(a) + b log(X), so a = exp(fit$coefficients[1])
+                fit$coefficients[1] <- exp(fit$coefficients[1])
+                return(fit)
+            }
+        )
+    )
+    
+    
+    # Some diagnostics to check that all model specifications contain the implemented model classes, and only the implemented model classes:
+    if(!identical(sort(implementedModelClasses), sort(names(modelNames)))) {
+        stop("All implemented model classes must be present in the RstoxBase definition 'modelNames'. Please notify the developers to fix this.")
     }
-    # 2. TS = TS0 + M log10(Lcm) + D log10(1 + D/10) # Ona 2003:
-    TargetStrengthFunction_LengthAndDepthDependent <- function(midIndividualTotalLength, TargetStrength0, LengthExponent, DepthExponent, Depth) {
-        TargetStrength0 + 
-            LengthExponent * log10(midIndividualTotalLength) + 
-            DepthExponent * log10(1 + Depth/10)
+    if(!identical(sort(implementedModelClasses), sort(names(modelParameters)))) {
+        stop("All implemented model classes must be present in the RstoxBase definition 'modelParameters'. Please notify the developers to fix this.")
     }
-    # 3. TS = M log10(Lcm): 
-    TargetStrengthFunction_LengthExponent <- function(midIndividualTotalLength, LengthExponent) {
-        LengthExponent * log10(midIndividualTotalLength)
+    if(!identical(sort(implementedModelClasses), sort(names(modelTypes)))) {
+        stop("All implemented model classes must be present in the RstoxBase definition 'modelTypes'. Please notify the developers to fix this.")
     }
+    if(!identical(sort(implementedModelClasses), sort(names(modelFunctions)))) {
+        stop("All implemented model classes must be present in the RstoxBase definition 'modelFunctions'. Please notify the developers to fix this.")
+    }
+    # The estimationFunctions are not required for AcousticTargetStrength.
+    
+    
     
     # Define the PSU prefix and the SSU label:
     getPSUPrefix <- function(PSUType) {

@@ -7,8 +7,7 @@
 SumNASC(
   NASCData,
   LayerDefinition = c("FunctionParameter", "FunctionInput"),
-  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution",
-    "LayerTable"),
+  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"),
   Resolution = double(),
   LayerTable = data.table::data.table(),
   AcousticLayer = NULL

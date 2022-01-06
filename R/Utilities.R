@@ -268,7 +268,7 @@ sumRawResolutionData <- function(
     data, dataType, 
     LayerDefinition = c("FunctionParameter", "FunctionInput"), 
     LayerProcessData = NULL, 
-    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "LayerTable"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     LayerType = c("Acoustic", "Biotic")
@@ -338,7 +338,7 @@ meanRawResolutionData <- function(
     # Survey:
     SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
     SurveyProcessData = NULL, 
-    SurveyDefinitionMethod = c("AllStrata", "SurveyTable"), 
+    SurveyDefinitionMethod = c("AllStrata", "Table"), 
     SurveyTable = data.table::data.table(), 
     # General:
     StratumPolygon = NULL, 
