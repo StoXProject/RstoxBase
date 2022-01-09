@@ -129,13 +129,12 @@ Individuals <- function(
     #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
     formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = names(MergeStoxBioticData), secondaryRowOrder = keys)
     
-    # Add the attribute 'variableNames':
-    setattr(
-        IndividualsData, 
-        "stoxDataVariableNames",
-        attr(MergeStoxBioticData, "stoxDataVariableNames")
-    )
-    
+    # Add the attribute 'stoxDataVariableNames':
+    #setattr(
+    #    IndividualsData, 
+    #    "stoxDataVariableNames",
+    #    attr(MergeStoxBioticData, "stoxDataVariableNames")
+    #)
     attr(IndividualsData, "stoxDataVariableNames") <- attr(MergeStoxBioticData, "stoxDataVariableNames")
     
     # Not needed here, since we only copy data: 

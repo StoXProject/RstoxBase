@@ -30,7 +30,7 @@ SumNASC(
 A \code{\link{SumNASCData}} object.
 }
 \description{
-This function summes NASC data vertically.
+This function summes \code{\link{NASCData}} vertically.
 }
 \seealso{
 \code{\link{NASC}} and \code{\link{MeanNASC}}.

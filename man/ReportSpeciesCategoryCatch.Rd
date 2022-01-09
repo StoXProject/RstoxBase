@@ -4,12 +4,15 @@
 \alias{ReportSpeciesCategoryCatch}
 \title{Report SpeciesCategoryCatch}
 \usage{
-ReportSpeciesCategoryCatch(SpeciesCategoryCatchData, Translation)
+ReportSpeciesCategoryCatch(
+  SpeciesCategoryCatchData,
+  ReportVariable = c("TotalCatchCount", "TotalCatchWeight")
+)
 }
 \arguments{
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
 
-\item{Translation}{The \code{\link[RstoxData]{Translation}} process data.}
+\item{ReportVariable}{The column to report.}
 }
 \value{
 A \code{\link{ReportSpeciesCategoryCatchData}} object.

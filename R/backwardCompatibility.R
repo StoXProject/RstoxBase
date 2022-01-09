@@ -7,6 +7,18 @@ backwardCompatibility <- list(
             functionName = "ReportBootstrap", 
             modelName = "report", 
             newFunctionName = "RstoxFramework::ReportBootstrap"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "GearDependentCatchCompensation", 
+            modelName = "baseline", 
+            newFunctionName = "RstoxFramework::GearDependentLengthDistributionCompensation"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "LengthDependentCatchCompensation", 
+            modelName = "baseline", 
+            newFunctionName = "RstoxFramework::LengthDependentLengthDistributionCompensation"
         )
     ), 
     
@@ -22,6 +34,18 @@ backwardCompatibility <- list(
             functionName = "SweptAreaDensity", 
             modelName = "baseline", 
             parameterName = "SweepWidthByCruise"
+        ),  
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "SpeciesCategoryCatch", 
+            modelName = "baseline", 
+            parameterName = "CatchVariable"
+        ),  
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "ReportSpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "Translation"
         )
     ),  
     
@@ -60,6 +84,43 @@ backwardCompatibility <- list(
             modelName = "baseline", 
             parameterName = "SimplifyStratumPolygon", 
             parameterValue = "FALSE"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "ReportSpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "ReportVariable"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "SweptAreaDensity", 
+            modelName = "baseline", 
+            parameterName = "SweptAreaDensityType"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "SweptAreaDensity", 
+            modelName = "baseline", 
+            parameterName = "MeanSpeciesCategoryCatchData"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "SweptAreaDensity", 
+            modelName = "baseline", 
+            parameterName = "DensityType"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "GearDependentLengthDistributionCompensation", 
+            modelName = "baseline", 
+            parameterName = "InputDataType", 
+            parameterValue = "LengthDistributionData"
+        ), 
+        list(
+            changeVersion = "1.5.2", 
+            functionName = "GearDependentLengthDistributionCompensation", 
+            modelName = "baseline", 
+            parameterName = "SpeciesCategoryCatchData"
         )
     ),  
     

@@ -5,17 +5,26 @@
 \title{Swept-area density}
 \usage{
 SweptAreaDensity(
+  SweptAreaDensityType = c("LengthDistributed", "TotalCatch"),
   MeanLengthDistributionData,
+  MeanSpeciesCategoryCatchData,
   SweepWidthMethod = c("Constant", "PreDefined"),
-  SweepWidth = double()
+  SweepWidth = double(),
+  DensityType = character()
 )
 }
 \arguments{
+\item{SweptAreaDensityType}{The type of swept-area calculation, one of \"LengthDistributed\" for calculating density from the length distribution (\code{\link{MeanLengthDistributionData}}), and \"TotalCatch\" for calculating density from the total catch (\code{\link{MeanSpeciesCategoryCatchData}}).}
+
 \item{MeanLengthDistributionData}{The \code{\link{MeanLengthDistributionData}} data.}
 
-\item{SweepWidthMethod}{The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, e.g. using \code{link{GearDependentCatchCompensation}} or \code{link{LengthDependentCatchCompensation}}.}
+\item{MeanSpeciesCategoryCatchData}{The \code{\link{MeanSpeciesCategoryCatchData}} data.}
+
+\item{SweepWidthMethod}{The method for calculating the sweep width. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{MeanLengthDistributionData} using \code{link{GearDependentLengthDistributionCompensation}} or \code{link{LengthDependentLengthDistributionCompensation}}, or in the \code{MeanSpeciesCategoryCatchData} using \code{link{GearDependentSpeciesCategoryCatchCompensation}}.}
 
 \item{SweepWidth}{The constant sweep width in meters.}
+
+\item{DensityType}{The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityType = "LengthDistributed", and one of "AreaNumberDensity" and "AreaMassDensity" for SweptAreaDensityType = "TotalCatch".}
 }
 \description{
 This function calculates the area density of fish as number of individuals per square nautical mile.

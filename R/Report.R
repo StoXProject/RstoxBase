@@ -277,7 +277,7 @@ getReportFunctionPackage <- function(x) {
 #' Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 #' 
 #' @inheritParams ModelData
-#' @param Translation The \code{\link[RstoxData]{Translation}} process data.
+#' @param ReportVariable The column to report.
 #' 
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
@@ -288,27 +288,36 @@ getReportFunctionPackage <- function(x) {
 #' 
 ReportSpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData, 
-    Translation
-) 
-{
+    ReportVariable = c("TotalCatchCount", "TotalCatchWeight")
+){
     
-    # Add a warining if there are empty cells in the NewValue column of the Translation table:
-    ValueWithEmptyNewValue <- Translation[nchar(NewValue) == 0, Value]
-    if(length(ValueWithEmptyNewValue)) {
-        warning("StoX: The following Values had empty NewValue in the Translation, and were removed from the report: ", paste(ValueWithEmptyNewValue, collapse = ", "), ".")
-        SpeciesCategoryCatchData$SpeciesCategoryCatch[, V1 := NULL]
+    # Get the ReportVariable:
+    ReportVariable <- match.arg(ReportVariable)
+    
+    # Warning if there are species categories which are empty string:
+    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
+    emptyString <- SpeciesCategoryCatchData[, nchar(get(categoryVariable))] == 0
+    if(any(emptyString, na.rm = TRUE)) {
+        warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")
     }
     
-    ValueNotPresentInTranslation <- setdiff(
-        setdiff(names(SpeciesCategoryCatchData$SpeciesCategoryCatch), "Haul"), 
-        Translation$NewValue
+    # Create the table with species categories in the columns:
+    ReportSpeciesCategoryCatchData <- data.table::dcast(
+        SpeciesCategoryCatchData, 
+        formula = Haul ~ get(categoryVariable), 
+        value.var = ReportVariable, 
+        fun.aggregate = sum
     )
-    if(length(ValueNotPresentInTranslation)) {
-        warning("StoX: The following SpeciesCategories were not found in the NewValue column of the Translation, and were removed from the report: ", paste(ValueNotPresentInTranslation, collapse = ", "), ".")
-        SpeciesCategoryCatchData$SpeciesCategoryCatch[, (ValueNotPresentInTranslation) := NULL]
-    }
     
-    ReportSpeciesCategoryCatchData <- RstoxData::mergeDataTables(SpeciesCategoryCatchData, output.only.last = TRUE)
+    # Add haul info as the unique table of all variables except the category and data variables:
+    dataVariables <- getDataTypeDefinition(dataType = "SpeciesCategoryCatchData", elements = "data", unlist = TRUE)
+    haulInfo <- unique(SpeciesCategoryCatchData[, !c(categoryVariable, dataVariables), with = FALSE])
+    
+    ReportSpeciesCategoryCatchData <- merge(
+        haulInfo, 
+        ReportSpeciesCategoryCatchData, 
+        by = "Haul"
+    )
     
     return(ReportSpeciesCategoryCatchData)
 }

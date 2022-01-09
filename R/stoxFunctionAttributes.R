@@ -372,15 +372,23 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData"
     ), 
-    GearDependentCatchCompensation = list(
+    GearDependentSpeciesCategoryCatchCompensation = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SpeciesCategoryCatchData", 
+        functionParameterFormat = list(
+            CompensationTable = "gearCompensationTable_SpeciesCategoryCatchData"
+        )
+    ), 
+    GearDependentLengthDistributionCompensation = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
         functionParameterFormat = list(
-            CompensationTable = "gearCompensationTable"
+            CompensationTable = "gearCompensationTable_LengthDistributionData"
         )
     ), 
-    LengthDependentCatchCompensation = list(
+    LengthDependentLengthDistributionCompensation = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "LengthDistributionData", 
@@ -411,6 +419,9 @@ stoxFunctionAttributes <- list(
         ), 
         functionArgumentHierarchy = list(
             # Layer: 
+            BioticLayer = list(
+                LayerDefinition = "FunctionInput"
+            ),
             LayerDefinitionMethod = list(
                 LayerDefinition = "FunctionParameter"
             ), 
@@ -482,6 +493,105 @@ stoxFunctionAttributes <- list(
     ), 
     ##########
     
+    
+    
+    #########
+    ### 
+    ### SpeciesCategoryDensity = list(
+    ###     functionType = "modelData", 
+    ###     functionCategory = "baseline", 
+    ###     functionOutputDataType = "SpeciesCategoryDensityData"
+    ### ), 
+    
+    SpeciesCategoryCatch = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SpeciesCategoryCatchData"
+    ), 
+    
+    SumSpeciesCategoryCatch = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SumSpeciesCategoryCatchData", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable"
+        ), 
+        functionArgumentHierarchy = list(
+            # Layer: 
+            BioticLayer = list(
+                LayerDefinition = "FunctionInput"
+            ),
+            LayerDefinitionMethod = list(
+                LayerDefinition = "FunctionParameter"
+            ), 
+            Resolution = list(
+                LayerDefinitionMethod = "Resolution"
+            ), 
+            LayerTable = list(
+                LayerDefinitionMethod = "Table"
+            ), 
+            LayerProcessData = list(
+                LayerDefinition = "FunctionInput"
+            )
+        )
+    ), 
+    
+    MeanSpeciesCategoryCatch = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "MeanSpeciesCategoryCatchData", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable", 
+            SurveyTable = "surveyTable"
+        ), 
+        functionArgumentHierarchy = list(
+            # Layer: 
+            SpeciesCategoryCatchData = list(
+                # The LayerDefinition can be any of these:
+                LayerDefinition = c(
+                    "FunctionInput", 
+                    "FunctionParameter"
+                )
+            ), 
+            SumSpeciesCategoryCatchData = list(
+                LayerDefinition = "PreDefined"
+            ), 
+            BioticLayer = list(
+                LayerDefinition = "FunctionInput"
+            ),
+            LayerDefinitionMethod = list(
+                LayerDefinition = "FunctionParameter"
+            ), 
+            Resolution = list(
+                LayerDefinitionMethod = "Resolution"
+            ), 
+            LayerTable = list(
+                LayerDefinitionMethod = "Table"
+            ), 
+            # PSU: 
+            BioticPSU = list(
+                PSUDefinition = "FunctionInput"
+            ), 
+            PSUDefinitionMethod = list(
+                PSUDefinition = "FunctionParameter"
+            ), 
+            StratumPolygon = list(
+                PSUDefinitionMethod = "StationToPSU"
+            ), 
+            # Survey:
+            Survey = list(
+                SurveyDefinition = "FunctionInput"
+            ), 
+            SurveyDefinitionMethod = list(
+                SurveyDefinition = "FunctionParameter"
+            ), 
+            SurveyTable = list(
+                SurveyDefinition = "FunctionParameter", 
+                SurveyDefinitionMethod = "Table"
+            )
+        )
+    ), 
+    #########
     
     ##### NASC: #####
     NASC = list(
@@ -610,6 +720,12 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "DensityData", 
         functionArgumentHierarchy = list(
+            MeanLengthDistributionData = list(
+                SweptAreaDensityType = "LengthDistributed"
+            ),
+            MeanSpeciesCategoryCatchData = list(
+                SweptAreaDensityType = "TotalCatch"
+            ),
             SweepWidth = list(
                 SweepWidthMethod = "Constant"
             )
@@ -768,18 +884,6 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
-    ### 
-    ### SpeciesCategoryDensity = list(
-    ###     functionType = "modelData", 
-    ###     functionCategory = "baseline", 
-    ###     functionOutputDataType = "SpeciesCategoryDensityData"
-    ### ), 
-    
-    SpeciesCategoryCatch = list(
-        functionType = "modelData", 
-        functionCategory = "baseline", 
-        functionOutputDataType = "SpeciesCategoryCatchData"
-    ), 
     
     
     ReportSuperIndividuals = list(
@@ -948,7 +1052,7 @@ processPropertyFormats <- list(
         )
     ), 
     
-    gearCompensationTable =  list(
+    gearCompensationTable_LengthDistributionData =  list(
         class = "table", 
         title = "Sweep width for all gear", 
         columnNames = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
@@ -981,6 +1085,50 @@ processPropertyFormats <- list(
             # Get all unique combinations:
             #listOfUniqueCombinations <- as.list(unique(LengthDistributionData[, ..Variables]))
             listOfUniqueCombinations <- lapply(Variables, function(var) as.list(unique(LengthDistributionData[[var]])))
+            
+            # Output must be an unnamed list:
+            c(
+                #list(unname(listOfUniqueCombinations)), 
+                listOfUniqueCombinations, 
+                list(NULL)
+            )
+            
+        }
+    ), 
+    
+    gearCompensationTable_SpeciesCategoryCatchData =  list(
+        class = "table", 
+        title = "Sweep width for all gear", 
+        columnNames = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
+            CompensationMethod <- match.arg(CompensationMethod)
+            columnNames <- c(
+                strsplit(CompensationMethod, "And")[[1]], 
+                "SweepWidth"
+            )
+            
+            return(columnNames)
+        }, 
+        variableTypes = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
+            CompensationMethod <- match.arg(CompensationMethod)
+            columnNames <- strsplit(CompensationMethod, "And")[[1]]
+            variableTypes <- c(
+                rep("character", length(columnNames)), 
+                "double"
+            )
+            
+            return(variableTypes)
+        }, 
+        possibleValues = function(SpeciesCategoryCatchData, CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
+            CompensationMethod <- match.arg(CompensationMethod)
+            Variables <- strsplit(CompensationMethod, "And")[[1]]
+            
+            if(!length(SpeciesCategoryCatchData)) {
+                return(vector("list", length(Variables) + 1))
+            }
+            
+            # Get all unique combinations:
+            #listOfUniqueCombinations <- as.list(unique(LengthDistributionData[, ..Variables]))
+            listOfUniqueCombinations <- lapply(Variables, function(var) as.list(unique(SpeciesCategoryCatchData[[var]])))
             
             # Output must be an unnamed list:
             c(

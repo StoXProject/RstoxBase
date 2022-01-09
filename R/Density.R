@@ -404,112 +404,118 @@ getMidIndividualTotalLength <- function(x) {
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param SweepWidthMethod The method for calculating the sweep width to multiply the \code{WeightedCount} in the \code{LengthDistributionData} with. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{LengthDistributionData}, e.g. using \code{link{GearDependentCatchCompensation}} or \code{link{LengthDependentCatchCompensation}}.
+#' @param SweptAreaDensityType The type of swept-area calculation, one of \"LengthDistributed\" for calculating density from the length distribution (\code{\link{MeanLengthDistributionData}}), and \"TotalCatch\" for calculating density from the total catch (\code{\link{MeanSpeciesCategoryCatchData}}).
+#' @param SweepWidthMethod The method for calculating the sweep width. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{MeanLengthDistributionData} using \code{link{GearDependentLengthDistributionCompensation}} or \code{link{LengthDependentLengthDistributionCompensation}}, or in the \code{MeanSpeciesCategoryCatchData} using \code{link{GearDependentSpeciesCategoryCatchCompensation}}.
 #' @param SweepWidth The constant sweep width in meters.
+#' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityType = "LengthDistributed", and one of "AreaNumberDensity" and "AreaMassDensity" for SweptAreaDensityType = "TotalCatch".
 #' 
 #' @seealso See \code{\link{AcousticDensity}} for acoustic density.
 #' 
 #' @export
 #' 
 SweptAreaDensity <- function(
+    SweptAreaDensityType = c("LengthDistributed", "TotalCatch"), 
     MeanLengthDistributionData, 
-    #DensityMethod = c("LengthDependent", "TotalCatch"), 
+    MeanSpeciesCategoryCatchData, 
     SweepWidthMethod = c("Constant", "PreDefined"), 
-    SweepWidth = double()
+    SweepWidth = double(), 
+    DensityType = character()
 ) {
 	
+    
     ## Get the DefinitionMethod:
     SweepWidthMethod <- match.arg(SweepWidthMethod)
-    #DensityMethod    <- match.arg(DensityMethod)
+    SweptAreaDensityType <- match.arg(SweptAreaDensityType)
     
-    DensityMethod <- "LengthDependent"
+    # Get the input data type:
+    if(SweptAreaDensityType == "LengthDistributed") {
+        Data <- data.table::copy(MeanLengthDistributionData$Data)
+        Resolution <- data.table::copy(MeanLengthDistributionData$Resolution)
+        InputDataType <- "MeanLengthDistributionData"
+    }
+    else if(SweptAreaDensityType == "TotalCatch") {
+        Data <- data.table::copy(MeanSpeciesCategoryCatchData$Data)
+        Resolution <- data.table::copy(MeanSpeciesCategoryCatchData$Resolution)
+        InputDataType <- "MeanSpeciesCategoryCatchData"
+    }
     
+    # Get the types:
+    typeVariableName <-getDataTypeDefinition(dataType = InputDataType, elements = "type", unlist = TRUE)
+    weightingVariableName <-getDataTypeDefinition(dataType = InputDataType, elements = "weighting", unlist = TRUE)
     
-    if(DensityMethod == "LengthDependent") {
-        # Get the length distribution type:
-        LengthDistributionType <- utils::head(MeanLengthDistributionData$Data$LengthDistributionType, 1)
-        
-        # Issue an error if the LengthDistributionType is "Percent" or "Standard":
-        #validLengthDistributionType <- c("Normalized", "SweepWidthCompensatedNormalized", "SelectivityCompensatedNormalized")
-        #if(! LengthDistributionType %in% validLengthDistributionType) {
-        #    stop("The LengthDistributionType of the input MeanLengthDistributionData must be one of ", paste(validLengthDistributionType, collapse = ", "))
-        #}
-        if(!endsWith(firstNonNA(MeanLengthDistributionData$Data$LengthDistributionType), "Normalized")) {
-            stop("The LengthDistribution must be normalized, i.e. divided by towed distance (LengthDistributionType ending with \"Normalized\")")
+    # Require normalized type:
+    if(!endsWith(firstNonNA(Data[[typeVariableName]]), "Normalized")) {
+        stop("The ", InputDataType, " must be normalized, i.e. divided by towed distance (", typeVariableName, " ending with \"Normalized\")")
+    }
+    
+    # Introduce the DensityWeight as a copy of the MeanLengthDistributionWeight:
+    Data[, DensityWeight := get(weightingVariableName)]
+    
+    # Add  the density type:
+    if(!startsWith(DensityType, "Area")) {
+        stop("Only area density is currently implemented in StoX.")
+    }
+    # SweptAreaDensityType == "LengthDistributed" only permits number density:
+    if(SweptAreaDensityType == "LengthDistributed") {
+        if(!endsWith(DensityType, "NumberDensity")) {
+            stop("Only number density is available for SweptAreaDensityType = \"LengthDistributed\".")
         }
-        
-        # Make a copy of the input, since we are averaging and setting values by reference:
-        DensityData = data.table::copy(MeanLengthDistributionData$Data)
-        
-        # Introduce the DensityWeight as a copy of the MeanLengthDistributionWeight:
-        DensityData[, DensityWeight := MeanLengthDistributionWeight]
-        
-        
-        # Do we need to account for the sweep width?:
-        if(startsWith(firstNonNA(MeanLengthDistributionData$Data$LengthDistributionType), "SweepWidthCompensated")) {
-            if(SweepWidthMethod == "PreDefined") {
-                # WeightedCount is already in area density when LengthDistributionType is SweepWidthCompensatedNormalized, which is generated by LengthDependentCatchCompensation():
-                DensityData[, Density := WeightedCount]
-            }
-            else {
-                stop("SweepWidthMethod must be \"PreDefined\" if the length distribution in MeanLengthDistributionData is sweep width compensated (LengthDistributionType starting with \"SweepWidthCompensated\")")
-            }
+    }
+    Data[, DensityType := ..DensityType]
+    
+    # Get the data variable depending on the SweptAreaDensityType and the DensityType:
+    dataVariables <- getDataTypeDefinition(dataType = InputDataType, elements = "data", unlist = TRUE)
+    if(SweptAreaDensityType == "LengthDistributed") {
+        dataVariable <- dataVariables
+    }
+    else if(SweptAreaDensityType == "TotalCatch") {
+        # Select mass or number density:
+        if(!startsWith(DensityType, "Mass")) {
+            dataVariable <- dataVariables["Mass"]
+        }
+        else if(!startsWith(DensityType, "Area")) {
+            dataVariable <- dataVariables["Number"]
+        }
+    }
+    
+    # Do we need to account for the sweep width?:
+    if(startsWith(firstNonNA(Data[[typeVariableName]]), "SweepWidthCompensated")) {
+        if(SweepWidthMethod == "PreDefined") {
+            # The data are already in area density when the type is SweepWidthCompensatedNormalized, which is generated by *Compensation():
+            Data[, Density := get(dataVariable)]
         }
         else {
-            # Use a constant sweep width for all data by default:
-            if(SweepWidthMethod == "Constant") {
-                if(length(SweepWidth) == 0) {
-                    stop("SweepWidth must be given when SweepWidthMethod == \"Constant\"")
-                }
-                
-                # Convert WeightedCount to density:
-                sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
-                
-                DensityData[, Density := WeightedCount / sweepWidthInNauticalMiles]
-            }
-            # This was moved to the GearDependentCatchCompensation on 2021-04-09:
-            #else if(SweepWidthMethod == "CruiseDependent") {
-            #    if(length(SweepWidthByCruise) == 0) {
-            #        stop("SweepWidthByCruise must be given when SweepWidthMethod == \"CruiseDependent\"")
-            #    }
-            #    
-            #    # Merge in the SweepWidth:
-            #    DensityData <- merge(DensityData, SweepWidthByCruise, by = "Cruise")
-            #    # Convert sweep width to nautical miles:
-            #    DensityData[, SweepWidthNauticalMile := SweepWidth  / getRstoxBaseDefinitions("nauticalMileInMeters")]
-            #    # Divide by the sweep width:
-            #    DensityData[, Density := WeightedCount / SweepWidthNauticalMile, by = "Cruise"]
-            #}
-            else {
-                stop("SweepWidthMethod must be \"Constant\" if LengthDistributionType is not sweep width compensated (LengthDistributionType not starting with \"SweepWidthCompensated\")")
-            }
+            stop("SweepWidthMethod must be \"PreDefined\" if the length distribution in ", InputDataType, " is sweep width compensated (", typeVariableName, " starting with \"SweepWidthCompensated\")")
         }
-        
-        # Remove the WeightedCount:
-        DensityData[, WeightedCount := NULL]
-        
-        # Convert to density per nautical mile atwarthship:
-        #DensityData[, Density := Density * lengthOfOneNauticalMile]
-        
-        # Extract the relevant variables only:
-        #relevantVariables <- getAllDataTypeVariables(dataType = "DensityData")
-        #DensityData <- DensityData[, ..relevantVariables]
-        
-        # Format the output:
-        # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
-        
-        # Add the Resolution table:
-        DensityData <- list(
-            Data = DensityData, 
-            Resolution = MeanLengthDistributionData$Resolution
-        )
-    }
-    else  if(DensityMethod == "TotalCatch") {
-        
     }
     else {
-        stop("Invalid DensityMethod")
+        # Use a constant sweep width for all data by default:
+        if(SweepWidthMethod == "Constant") {
+            if(length(SweepWidth) == 0) {
+                stop("SweepWidth must be given when SweepWidthMethod == \"Constant\"")
+            }
+            
+            # Convert WeightedCount to density:
+            sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
+            
+            Data[, Density := eval(dataVariable) / sweepWidthInNauticalMiles]
+        }
+        else {
+            stop("SweepWidthMethod must be \"Constant\" if ", InputDataType, " is not sweep width compensated (", typeVariableName, " not starting with \"SweepWidthCompensated\")")
+        }
     }
+    
+    # Remove the dataVariables:
+    Data[, (dataVariables) := NULL]
+    # Remove the weighting and type:
+    Data[, (typeVariableName) := NULL]
+    Data[, (weightingVariableName) := NULL]
+    
+    # Add the Resolution table:
+    DensityData <- list(
+        Data = Data, 
+        Resolution = Resolution
+    )
     
     # Format the output:
     # Changed to keep.all = TRUE on 2021-03-18 when introducing Data and Resolution for DensityData and onwards:
@@ -565,61 +571,3 @@ MeanDensity <- function(
 }
 
 
-##################################################
-##################################################
-#' Table of biotic stations as rows with station info and catch of all species categories as columns
-#' 
-#' This function organizes the catch of all species in the input \code{StoxBioticData} into a table with biotic stations as rows, and the catch in count or weight (kilogram) of each species category in columns.
-#' 
-#' @inheritParams ModelData
-#' @inheritParams ProcessData
-#' @param CatchVariable Specifies whether to output catch or weight (kilogram).
-#' 
-#' @export
-#' 
-SpeciesCategoryCatch <- function(
-    StoxBioticData, 
-    CatchVariable = c("Count", "Weight")
-) {
-    
-    # Get the DensityUnit and DensityType:
-    CatchVariable <- match.arg(CatchVariable)
-    
-    # Merge Station, ..., Sample table:
-    StoxBioticDataMerged <- MergeStoxBiotic(StoxBioticData, TargetTable = "Sample")
-    #Cruise_Station <- MergeStoxBiotic(StoxBioticData, TargetTable = "Station")
-    Cruise_Station_Haul <- MergeStoxBiotic(StoxBioticData, TargetTable = "Haul")
-    
-    # Sum the CatchFractionWeight for each Haul:
-    CatchVariableName <- paste0("CatchFraction", CatchVariable)
-    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
-    sumBy <- c("Haul", categoryVariable)
-    StoxBioticDataMerged[, eval(CatchVariableName) := sum(get(CatchVariableName)), by = sumBy]
-    
-    # Warning if there are species categories which are empty string:
-    emptyString <- StoxBioticDataMerged[, nchar(get(categoryVariable))] == 0
-    if(any(emptyString, na.rm = TRUE)) {
-        warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")
-    }
-    
-    # Create the SpeciesCategoryDensity as a table with species categories in the columns:
-    SpeciesCategoryCatch <- data.table::dcast(
-        StoxBioticDataMerged, 
-        formula = Haul ~ get(categoryVariable), 
-        value.var = CatchVariableName, 
-        fun.aggregate = sum
-        )
-    
-    SpeciesCategoryCatchData <- list(
-        HaulInfo = Cruise_Station_Haul, 
-        SpeciesCategoryCatch = SpeciesCategoryCatch
-    )
-    
-    #SpeciesCategoryCatchData <- merge(Cruise_Station_Haul, SpeciesCategoryCatchData, by = "Station")
-    
-    # Not needed here, since we only copy data: 
-    #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(SpeciesCategoryCatchData)
-    
-    return (SpeciesCategoryCatchData)
-}

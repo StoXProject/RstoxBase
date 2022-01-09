@@ -10,11 +10,11 @@
 
 # Global variables
 utils::globalVariables(c(
-	 ".", "..Cruise", "..DateTime", "..Hauls", "..LengthDistributionType",
-	 "..VerticalResolutionMax", "..VerticalResolutionMin", "..WeightingFactors",
-	 "..acceptedColumns", "..atMissingLengthGroup", "..by", "..cols", "..columnsToKeep",
-	 "..extract", "..extractFromDataCopy", "..haulGrouping", "..intervalVector", "..keys",
-	 "..keysSansSample", "..lengthInterval", "..lengthIntervalWidths", "..lengthVar",
+	 ".", "..Cruise", "..DateTime", "..DensityType", "..Hauls", "..LengthDistributionType",
+	 "..SpeciesCategoryCatchType", "..VerticalResolutionMax", "..VerticalResolutionMin",
+	 "..WeightingFactors", "..acceptedColumns", "..atMissingLengthGroup", "..by", "..cols",
+	 "..columnsToKeep", "..extract", "..extractFromDataCopy", "..haulGrouping", "..intervalVector",
+	 "..keys", "..keysSansSample", "..lengthInterval", "..lengthIntervalWidths", "..lengthVar",
 	 "..locatedStratum", "..meanBy", "..paddingVariables", "..presentResolutionVariables",
 	 "..refvar", "..resolutionVar", "..sumBy", "..tomerge", "..variablesToGetFromAbundanceData",
 	 "..vars", "AcousticCategory", "AcousticCategoryKey", "AcousticTargetStrength", "Area", "Beam",
@@ -25,22 +25,21 @@ utils::globalVariables(c(
 	 "HasAnyPositiveWeightedCount", "Haul", "HaulKey", "Individual", "IndividualIndex",
 	 "IndividualKey", "IndividualRoundWeight", "IndividualTotalLength",
 	 "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent",
-	 "LengthGroup", "LengthResolution", "lm", "LogDuration", "LogKey", "LogOrigin",
-	 "MaxChannelDepth", "MaxChannelRange", "MeanLengthDistributionWeight", "MeanNASCWeight",
-	 "MergeStoxBiotic", "MiddleDateTime", "MinChannelDepth", "MinChannelRange", "NASCKey",
-	 "NASCWeight", "NewValue", "NumberOfAssignedHauls", "NumberOfAssignedHaulsWithCatch", "PSU",
+	 "LengthGroup", "LengthResolution", "LogDuration", "LogKey", "LogOrigin", "MaxChannelDepth",
+	 "MaxChannelRange", "MeanNASCWeight", "MiddleDateTime", "MinChannelDepth", "MinChannelRange",
+	 "NASCKey", "NASCWeight", "NumberOfAssignedHauls", "NumberOfAssignedHaulsWithCatch", "PSU",
 	 "ReplaceIndividual", "ReplaceIndividualIndex", "ReplaceLevel", "SSU", "SSUIndex",
-	 "SpeciesCategory", "SplitAcousticCategory", "StartDateTime", "Station", "StationLevel",
-	 "StopDateTime", "Stratum", "SummedWeights", "Survey", "SweepWidth", "TargetStrength",
-	 "TargetStrength0", "TargetStrengthFunction", "TotalLength", "ValidHaul", "V1", "Value",
-	 "WeightedCount", "WeightingFactor", "aggregationVariables", "assignmentID", "assignmentPasted",
+	 "SpeciesCategory", "SpeciesCategoryCatchWeight", "SplitAcousticCategory", "StartDateTime",
+	 "Station", "StationLevel", "StopDateTime", "Stratum", "SummedWeights", "Survey", "SweepWidth",
+	 "TableName", "TargetStrength", "TargetStrength0", "TargetStrengthFunction", "TotalLength",
+	 "V1", "ValidHaul", "WeightedCount", "WeightingFactor", "assignmentID", "assignmentPasted",
 	 "backscatteringCrossSection", "crossSection", "distance", "functionName", "haulWeightFactor",
 	 "imputeSeed", "includeintotal", "individualCount", "individualWeightFactor", "inside",
 	 "intervalIndex", "midIndividualTotalLength", "minDistance", "missingAssignment", "multiple",
 	 "numberOfIndividuals", "numberOfSubSamples", "packageName", "raisingFactor",
 	 "representativeBackscatteringCrossSection",
 	 "representativeBackscatteringCrossSectionNormalized", "sumIndividualWeightFactor",
-	 "sumWeightedCount", "TableName", "weighted", "weightingParameter", "x", "y"))
+	 "sumWeightedCount", "weighted", "weightingParameter", "x", "y"))
 
 .onLoad <- function(libname, pkgname) {
 	# Initiate the RstoxBase environment:
