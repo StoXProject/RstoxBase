@@ -721,10 +721,10 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "DensityData", 
         functionArgumentHierarchy = list(
             MeanLengthDistributionData = list(
-                SweptAreaDensityType = "LengthDistributed"
+                SweptAreaDensityMethod = "LengthDistributed"
             ),
             MeanSpeciesCategoryCatchData = list(
-                SweptAreaDensityType = "TotalCatch"
+                SweptAreaDensityMethod = "TotalCatch"
             ),
             SweepWidth = list(
                 SweepWidthMethod = "Constant"

@@ -31,6 +31,31 @@ Abundance <- function(
     
     # Multiply the area and the density:
     AbundanceData$Data[, Abundance := Area * Density]
+       
+    # Set the AbundanceType:
+    getCamelCaseElements <- function(x, at) {
+        if(length(x) > 1) {
+            stop("Only length 1 accepted.")
+        }
+        atUpperCase <- which(strsplit(x, "")[[1]] == strsplit(toupper(x), "")[[1]])
+        if(at > length(atUpperCase)) {
+            warning("Only ", length(atUpperCase), " CamelCase elements found < 'at' (", at, ").")
+            return(character())
+        }
+        else if(at == length(atUpperCase)) {
+            end <- nchar(x)
+        }
+        else {
+            end <- atUpperCase[at + 1] - 1
+        }
+        start <- atUpperCase[at]
+        
+        CamelCaseElements <- mapply(substr, x, start, end)
+        
+        return(CamelCaseElements)
+    }
+    AbundanceData$Data[, AbundanceType := getCamelCaseElements(DensityType[1], 2)]
+    
     
     # Format the output:
     # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:

@@ -95,6 +95,7 @@ AcousticDensity <- function(
     #    SpeciesLink = SpeciesLink, 
     #    sumBy = sumBy
     #)
+    
     sumBy <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE)
     # Split the NASC by the AssignmentLengthDistributionData:
     NASCData <- DistributeNASC(
@@ -111,11 +112,15 @@ AcousticDensity <- function(
     # Introduce the DensityWeight as a copy of the NASCWeight:
     DensityData[, DensityWeight := MeanNASCWeight]
     
+    # Add the density type, which is always c for AcousticDensity():
+    DensityData[, DensityType := "AcousticDensity"]
+    
     # Add the Resolution table:
     DensityData <- list(
         Data = DensityData, 
         Resolution = MeanNASCData$Resolution
     )
+    
     
     # Format the output:
     # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
@@ -404,17 +409,17 @@ getMidIndividualTotalLength <- function(x) {
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param SweptAreaDensityType The type of swept-area calculation, one of \"LengthDistributed\" for calculating density from the length distribution (\code{\link{MeanLengthDistributionData}}), and \"TotalCatch\" for calculating density from the total catch (\code{\link{MeanSpeciesCategoryCatchData}}).
+#' @param SweptAreaDensityMethod The method to use for the swept-area calculation, one of \"LengthDistributed\" for calculating density from the length distribution (\code{\link{MeanLengthDistributionData}}), and \"TotalCatch\" for calculating density from the total catch (\code{\link{MeanSpeciesCategoryCatchData}}).
 #' @param SweepWidthMethod The method for calculating the sweep width. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{MeanLengthDistributionData} using \code{link{GearDependentLengthDistributionCompensation}} or \code{link{LengthDependentLengthDistributionCompensation}}, or in the \code{MeanSpeciesCategoryCatchData} using \code{link{GearDependentSpeciesCategoryCatchCompensation}}.
 #' @param SweepWidth The constant sweep width in meters.
-#' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityType = "LengthDistributed", and one of "AreaNumberDensity" and "AreaMassDensity" for SweptAreaDensityType = "TotalCatch".
+#' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaMassDensity" for SweptAreaDensityMethod = "TotalCatch".
 #' 
 #' @seealso See \code{\link{AcousticDensity}} for acoustic density.
 #' 
 #' @export
 #' 
 SweptAreaDensity <- function(
-    SweptAreaDensityType = c("LengthDistributed", "TotalCatch"), 
+    SweptAreaDensityMethod = c("LengthDistributed", "TotalCatch"), 
     MeanLengthDistributionData, 
     MeanSpeciesCategoryCatchData, 
     SweepWidthMethod = c("Constant", "PreDefined"), 
@@ -422,25 +427,24 @@ SweptAreaDensity <- function(
     DensityType = character()
 ) {
 	
-    
     ## Get the DefinitionMethod:
     SweepWidthMethod <- match.arg(SweepWidthMethod)
-    SweptAreaDensityType <- match.arg(SweptAreaDensityType)
+    SweptAreaDensityMethod <- match.arg(SweptAreaDensityMethod)
     
     # Get the input data type:
-    if(SweptAreaDensityType == "LengthDistributed") {
+    if(SweptAreaDensityMethod == "LengthDistributed") {
         Data <- data.table::copy(MeanLengthDistributionData$Data)
         Resolution <- data.table::copy(MeanLengthDistributionData$Resolution)
         InputDataType <- "MeanLengthDistributionData"
     }
-    else if(SweptAreaDensityType == "TotalCatch") {
+    else if(SweptAreaDensityMethod == "TotalCatch") {
         Data <- data.table::copy(MeanSpeciesCategoryCatchData$Data)
         Resolution <- data.table::copy(MeanSpeciesCategoryCatchData$Resolution)
         InputDataType <- "MeanSpeciesCategoryCatchData"
     }
     
     # Get the types:
-    typeVariableName <-getDataTypeDefinition(dataType = InputDataType, elements = "type", unlist = TRUE)
+    typeVariableName <- getDataTypeDefinition(dataType = InputDataType, elements = "type", unlist = TRUE)
     weightingVariableName <-getDataTypeDefinition(dataType = InputDataType, elements = "weighting", unlist = TRUE)
     
     # Require normalized type:
@@ -451,24 +455,24 @@ SweptAreaDensity <- function(
     # Introduce the DensityWeight as a copy of the MeanLengthDistributionWeight:
     Data[, DensityWeight := get(weightingVariableName)]
     
-    # Add  the density type:
+    # Add the density type:
     if(!startsWith(DensityType, "Area")) {
         stop("Only area density is currently implemented in StoX.")
     }
-    # SweptAreaDensityType == "LengthDistributed" only permits number density:
-    if(SweptAreaDensityType == "LengthDistributed") {
+    # SweptAreaDensityMethod == "LengthDistributed" only permits number density:
+    if(SweptAreaDensityMethod == "LengthDistributed") {
         if(!endsWith(DensityType, "NumberDensity")) {
-            stop("Only number density is available for SweptAreaDensityType = \"LengthDistributed\".")
+            stop("Only number density is available for SweptAreaDensityMethod = \"LengthDistributed\".")
         }
     }
     Data[, DensityType := ..DensityType]
     
-    # Get the data variable depending on the SweptAreaDensityType and the DensityType:
+    # Get the data variable depending on the SweptAreaDensityMethod and the DensityType:
     dataVariables <- getDataTypeDefinition(dataType = InputDataType, elements = "data", unlist = TRUE)
-    if(SweptAreaDensityType == "LengthDistributed") {
+    if(SweptAreaDensityMethod == "LengthDistributed") {
         dataVariable <- dataVariables
     }
-    else if(SweptAreaDensityType == "TotalCatch") {
+    else if(SweptAreaDensityMethod == "TotalCatch") {
         # Select mass or number density:
         if(!startsWith(DensityType, "Mass")) {
             dataVariable <- dataVariables["Mass"]
@@ -498,7 +502,7 @@ SweptAreaDensity <- function(
             # Convert WeightedCount to density:
             sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
             
-            Data[, Density := eval(dataVariable) / sweepWidthInNauticalMiles]
+            Data[, Density := get(dataVariable) / sweepWidthInNauticalMiles]
         }
         else {
             stop("SweepWidthMethod must be \"Constant\" if ", InputDataType, " is not sweep width compensated (", typeVariableName, " not starting with \"SweepWidthCompensated\")")

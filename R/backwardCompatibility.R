@@ -87,6 +87,13 @@ backwardCompatibility <- list(
         ), 
         list(
             changeVersion = "1.5.2", 
+            functionName = "SpeciesCategoryCatch", 
+            modelName = "baseline", 
+            parameterName = "SpeciesCategoryCatchType", 
+            parameterValue = "Standard"
+        ),  
+        list(
+            changeVersion = "1.5.2", 
             functionName = "ReportSpeciesCategoryCatch", 
             modelName = "report", 
             parameterName = "ReportVariable"
@@ -95,7 +102,8 @@ backwardCompatibility <- list(
             changeVersion = "1.5.2", 
             functionName = "SweptAreaDensity", 
             modelName = "baseline", 
-            parameterName = "SweptAreaDensityType"
+            parameterName = "SweptAreaDensityMethod", 
+            parameterValue = "LengthDistributed"
         ), 
         list(
             changeVersion = "1.5.2", 
@@ -107,7 +115,8 @@ backwardCompatibility <- list(
             changeVersion = "1.5.2", 
             functionName = "SweptAreaDensity", 
             modelName = "baseline", 
-            parameterName = "DensityType"
+            parameterName = "DensityType", 
+            parameterValue = "AreaNumberDensity"
         ), 
         list(
             changeVersion = "1.5.2", 
