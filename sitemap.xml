@@ -106,6 +106,12 @@
     <loc>/reference/GearDependentCatchCompensation.html</loc>
   </url>
   <url>
+    <loc>/reference/GearDependentLengthDistributionCompensation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/GearDependentSpeciesCategoryCatchCompensation.html</loc>
+  </url>
+  <url>
     <loc>/reference/Haul.html</loc>
   </url>
   <url>
@@ -121,7 +127,7 @@
     <loc>/reference/Layer.html</loc>
   </url>
   <url>
-    <loc>/reference/LengthDependentCatchCompensation.html</loc>
+    <loc>/reference/LengthDependentLengthDistributionCompensation.html</loc>
   </url>
   <url>
     <loc>/reference/LengthDistribution.html</loc>
@@ -146,6 +152,12 @@
   </url>
   <url>
     <loc>/reference/MeanNASCData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MeanSpeciesCategoryCatch.html</loc>
+  </url>
+  <url>
+    <loc>/reference/MeanSpeciesCategoryCatchData.html</loc>
   </url>
   <url>
     <loc>/reference/ModelData.html</loc>
@@ -242,6 +254,12 @@
   </url>
   <url>
     <loc>/reference/SumNASCData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SumSpeciesCategoryCatch.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SumSpeciesCategoryCatchData.html</loc>
   </url>
   <url>
     <loc>/reference/SuperIndividuals.html</loc>

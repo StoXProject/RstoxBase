@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
       </span>
     </div>
 
@@ -53,15 +53,18 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ReportSpeciesCategoryCatch</span><span class="op">(</span><span class="va">SpeciesCategoryCatchData</span>, <span class="va">Translation</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ReportSpeciesCategoryCatch</span><span class="op">(</span>
+  <span class="va">SpeciesCategoryCatchData</span>,
+  ReportVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalCatchCount"</span>, <span class="st">"TotalCatchWeight"</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>SpeciesCategoryCatchData</dt>
 <dd><p>The <code><a href="SpeciesCategoryCatchData.html">SpeciesCategoryCatchData</a></code> data.</p></dd>
-<dt>Translation</dt>
-<dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/Translation.html" class="external-link">Translation</a></code> process data.</p></dd>
+<dt>ReportVariable</dt>
+<dd><p>The column to report.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
