@@ -347,7 +347,6 @@ meanRawResolutionData <- function(
     
     # Make a copy of the input, since we are averaging and setting values by reference:
     dataCopy = data.table::copy(data$Data)
-    resolutionCopy = data.table::copy(data$Resolution)
     
     # Add the PSUs either from function input or by automatic method using function parameter:
     # Define the PSUs:
@@ -450,7 +449,10 @@ applySumToData <- function(data, dataType) {
     # Sum of the data variable for each horizontalResolution, categoryVariable and groupingVariables:
     dataVariable <- getDataTypeDefinition(dataType, elements = "data", unlist = TRUE)
     sumBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
-    data[, c(dataVariable) := sum(x = get(dataVariable)), by = sumBy]
+    for(var in dataVariable) {
+        data[, c(var) := sum(x = get(var)), by = sumBy]
+    }
+    
     
     # Add the weighting variable:
     weightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
@@ -544,7 +546,10 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     # Beam is not present for LengthDistributionData:
     meanBy <- intersect(meanBy, names(data))
     
-    data[, c(dataVariable) := sum(get(dataVariable) * get(weightingVariable), na.rm = FALSE) / SummedWeights, by = meanBy]
+    for(var in dataVariable) {
+        data[, c(var) := sum(get(var) * get(weightingVariable), na.rm = FALSE) / SummedWeights, by = meanBy]
+    }
+    
     # Store the new weights by the summed original weights:
     data[, c(targetWeightingVariable) := SummedWeights]
     ########

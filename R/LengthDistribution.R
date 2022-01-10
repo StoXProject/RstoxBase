@@ -368,27 +368,35 @@ strictlyInside <- function(x, table, margin = 1e-6) {
 #' This function multiplies the WeightedCount of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
 #' 
 #' @inheritParams ModelData
-#' @inheritParams ProcessData
+#' @param InputDataType The datatype of the input, one of LengthDistributionData, SpeciesCategoryCatchData.
 #' @param CompensationMethod The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.
 #' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.
 #' 
-#' @return
-#' A \code{\link{LengthDistributionData}} object.
-#' 
-#' @export
-#' 
 GearDependentCatchCompensation <- function(
+    InputDataType = c("LengthDistributionData", "SpeciesCategoryCatchData"), 
     LengthDistributionData, 
+    SpeciesCategoryCatchData, 
     CompensationMethod = c("Gear", "Cruise", "GearAndCruise"), 
     CompensationTable = data.table::data.table()
 ) {
     
-    # Sweep width compensation cannot be performed on olready sweep width compensated LengthDistributionData:
-    if(startsWith(firstNonNA(LengthDistributionData$LengthDistributionType), "SweepWidthCompensated")) {
-        stop("The LengthDistributionData are already sweep width compensated (LengthDistributionType starting with \"SweepWidthCompensated\")")
+    # Get the input data type:
+    InputDataType <- match.arg(InputDataType)
+    if(InputDataType == "LengthDistributionData") {
+        dataCopy <- data.table::copy(LengthDistributionData)
+    }
+    else if(InputDataType == "SpeciesCategoryCatchData") {
+        dataCopy <- data.table::copy(SpeciesCategoryCatchData)
     }
     
-    # Get the catchability method:
+    
+    # Sweep width compensation cannot be performed on already sweep width compensated LengthDistributionData:
+    typeVariableName <-getDataTypeDefinition(dataType = InputDataType, elements = "type", unlist = TRUE)
+    if(startsWith(firstNonNA(dataCopy[[typeVariableName]]), "SweepWidthCompensated")) {
+        stop("The ", InputDataType, " are already sweep width compensated (", typeVariableName , " starting with \"SweepWidthCompensated\")")
+    }
+    
+    # Get the compensation method:
     CompensationMethod <- match.arg(CompensationMethod)
     # Split by "And":
     CompensationMethod <- strsplit(CompensationMethod, "And")[[1]]
@@ -401,50 +409,82 @@ GearDependentCatchCompensation <- function(
     CompensationTable <- CompensationTable[, ..acceptedColumns]
     
     # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in CompensationTable:
-    #uniqueCombinationsInLengthDistributionData <- unique(LengthDistributionData[, ..CompensationMethod])
-    #uniqueCombinationsInCompensationTable <- unique(CompensationTable[, ..CompensationMethod])
-    #if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInCompensationTable)) {
-    #    stop("All combinations of the variables ", paste(CompensationMethod, collapse = ", "), " that are present in the LengthDistributionData must be present also in the CompensationTable.")
-    #}
     checkAllCombinations(
-        LengthDistributionData = LengthDistributionData, 
+        dataCopy, 
         table = CompensationTable, 
         variables = CompensationMethod
     )
     
     # Merge the CompensationTable into the LengthDistributionData:
-    LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
     # Use all.x = TRUE as we should keep all rows of the LengthDistributionData, but not necessaroily all rows of the CompensationTable:
-    LengthDistributionDataCopy <- merge(LengthDistributionDataCopy, CompensationTable, by = CompensationMethod, all.x = TRUE)
+    dataCopy <- merge(dataCopy, CompensationTable, by = CompensationMethod, all.x = TRUE)
     
     # Multiply by the sweep width in nautical miles, as normalizaion in the direcion of the vessel involves dividing by disance in nautical miles:
-    LengthDistributionDataCopy[, WeightedCount := WeightedCount / (SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters"))]
+    dataVariable <- getDataTypeDefinition(InputDataType, elements = "data", unlist = TRUE)
+    for(var in dataVariable) {
+        dataCopy[, eval(var) := get(var) / (SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters"))]
+    }
     
-    # Set the LengthDistributionType
-    LengthDistributionDataCopy[, LengthDistributionType := paste0("SweepWidthCompensated", LengthDistributionType)]
+    # Set the type
+    dataCopy[, eval(typeVariableName) := paste0("SweepWidthCompensated", get(typeVariableName))]
     
     # Format the output:
-    formatOutput(LengthDistributionDataCopy, dataType = "LengthDistributionData", keep.all = FALSE)
+    formatOutput(dataCopy, dataType = InputDataType, keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(LengthDistributionDataCopy)
+    RstoxData::setRstoxPrecisionLevel(dataCopy)
     
-    return(LengthDistributionDataCopy)
+    return(dataCopy)
 }
 
 
-checkAllCombinations <- function(LengthDistributionData, table, variables) {
+checkAllCombinations <- function(data, table, variables) {
     # Ignore NAs:
-    containNA <- rowSums(LengthDistributionData[, lapply(.SD, is.na), .SDcols =  variables])
+    containNA <- rowSums(data[, lapply(.SD, is.na), .SDcols =  variables])
     validRows <- containNA == 0
-    # Check that all combinations in the LengthDistributionData of the variablas specified by variables are present in CompensationTable:
-    uniqueCombinationsInLengthDistributionData <- unique(subset(LengthDistributionData, validRows)[, do.call(paste, .SD),.SDcols =  variables])
+    # Check that all combinations in the data of the variablas specified by variables are present in CompensationTable:
+    uniqueCombinationsInData <- unique(subset(data, validRows)[, do.call(paste, .SD),.SDcols =  variables])
     uniqueCombinationsInTable <- unique(table[, do.call( paste, .SD),.SDcols =  variables])
     
-    if(!all(uniqueCombinationsInLengthDistributionData %in% uniqueCombinationsInTable)) {
-        stop("All combinations of the variables ", paste(variables, collapse = ", "), " that are present in the LengthDistributionData must be present also in the ", deparse(substitute(table)))
+    if(!all(uniqueCombinationsInData %in% uniqueCombinationsInTable)) {
+        stop("All combinations of the variables ", paste(variables, collapse = ", "), " that are present in the data must be present also in the CompensationTable")
     }
 }
+
+
+##################################################
+##################################################
+#' Apply the sweep of different gear (and cruise)
+#' 
+#' This function multiplies the WeightedCount of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
+#' 
+#' @inheritParams ModelData
+#' @param CompensationMethod The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.
+#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.
+#' 
+#' @return
+#' A \code{\link{LengthDistributionData}} object.
+#' 
+#' @export
+#' 
+GearDependentLengthDistributionCompensation <- function(
+    LengthDistributionData, 
+    CompensationMethod = c("Gear", "Cruise", "GearAndCruise"), 
+    CompensationTable = data.table::data.table()
+) {
+    
+    LengthDistributionData <- GearDependentCatchCompensation(
+        InputDataType = "LengthDistributionData",
+        LengthDistributionData = LengthDistributionData, 
+        CompensationMethod = CompensationMethod, 
+        CompensationTable = CompensationTable
+    )
+    
+    return(LengthDistributionData)
+}
+
+
+
 
 ##################################################
 ##################################################
@@ -463,7 +503,7 @@ checkAllCombinations <- function(LengthDistributionData, table, variables) {
 #' 
 #' @export
 #' 
-LengthDependentCatchCompensation <- function(
+LengthDependentLengthDistributionCompensation <- function(
     LengthDistributionData, 
     CompensationMethod = c("LengthDependentSweepWidth", "LengthDependentSelectivity"), 
     LengthDependentSweepWidthParameters = data.table::data.table(), 
@@ -480,7 +520,7 @@ LengthDependentCatchCompensation <- function(
         
         # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in LengthDependentSweepWidthParameters:
         checkAllCombinations(
-            LengthDistributionData = LengthDistributionData, 
+            data = LengthDistributionData, 
             table = LengthDependentSweepWidthParameters, 
             variables = "SpeciesCategory"
         )
@@ -506,7 +546,7 @@ LengthDependentCatchCompensation <- function(
         
         # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in LengthDependentSweepWidthParameters:
         checkAllCombinations(
-            LengthDistributionData = LengthDistributionData, 
+            data = LengthDistributionData, 
             table = LengthDependentSelectivityParameters, 
             variables = "SpeciesCategory"
         )
@@ -686,9 +726,9 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 
 ##################################################
 ##################################################
-#' Sum length distribution vertically
+#' Sum length distribution vertically over Hauls of each Station
 #' 
-#' This function summes LengthDistributionData data vertically.
+#' This function summes \code{link{LengthDistributionData}} data vertically.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
@@ -733,9 +773,9 @@ SumLengthDistribution <- function(
 
 ##################################################
 ##################################################
-#' Mean length distribution
+#' Mean length distribution over Stations in each AcousticPSU
 #' 
-#' This function averages LengthDistributionData data horizontally, weighted by the effective towed distance.
+#' This function averages \code{link{LengthDistributionData}} data horizontally, weighted by the effective towed distance.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData

@@ -1,3 +1,6 @@
+# RstoxBase v1.5.1 (2022-01-07)
+* Added DefineRegression(), EstimateBioticRegression() and the implementation in ImputeSuperIndividuals(). Refactored so that DefineRegression() and DefineAcousticTargetStrength() both use the underlying DefineModel(), with outputs <Model>Model and <Model>Table. Renamed DefinitionMethod "TargetStrengthTable", "SurveyTable" and "LayerTable" to "Table".
+
 # RstoxBase v1.4.27 (2021-12-12)
 * Improved documentation of ImputeSuperIndividuals().
 * Avoided unwanted warnings when raising factor is missing for hauls with no fish.

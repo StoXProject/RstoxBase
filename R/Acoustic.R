@@ -60,7 +60,7 @@ getDepth <- function(depth0, range, angle) {
 ##################################################
 #' Sum NASC 
 #' 
-#' This function summes NASC data vertically.
+#' This function summes \code{\link{NASCData}} vertically.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
@@ -108,7 +108,7 @@ SumNASC <- function(
 ##################################################
 #' Mean NASC 
 #' 
-#' This function summes NASC data vertically.
+#' This function averages \code{\link{SumNASCData}} horizontally to the acoustic PSU resolution. Optionally, \code{\link{NASCData}} can be used as input, in which case \code{\link{SumNASC}} is run first. 
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
@@ -121,9 +121,6 @@ SumNASC <- function(
 #' @param PSUDefinition The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{AcousticPSU}.
 #' @param PSUDefinitionMethod See \code{\link{DefineAcousticPSU}}
 #' @inheritParams DefineAcousticPSU
-#' 
-#' @details
-#' This function is awesome and does excellent stuff.
 #' 
 #' @seealso \code{\link{NASC}} and \code{\link{MeanNASC}}.
 #' 
@@ -204,7 +201,7 @@ MeanNASC <- function(
 ##################################################
 #' Split MeanNASCData to NASCData (deprecated)
 #' 
-#' This function splits NASCData of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.
+#' This function splits \code{\link{NASCData}} of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData

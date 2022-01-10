@@ -38,6 +38,10 @@
 
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
 
+\item{SumSpeciesCategoryCatchData}{The \code{\link{SumSpeciesCategoryCatchData}} data.}
+
+\item{MeanSpeciesCategoryCatchData}{The \code{\link{MeanSpeciesCategoryCatchData}} data.}
+
 \item{AbundanceData}{The \code{\link{AbundanceData}} data.}
 
 \item{IndividualsData}{The \code{\link{IndividualsData}} data.}

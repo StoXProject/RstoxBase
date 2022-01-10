@@ -24,7 +24,7 @@ SplitMeanNASC(
 \item{AcousticCategoryLink}{A table linking the acoustic categories to split and those to split into.}
 }
 \description{
-This function splits NASCData of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.
+This function splits \code{\link{NASCData}} of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.
 }
 \seealso{
 This functions uses similar methods as \code{\link{AcousticDensity}}. Convert back to \code{\link{StoxAcousticData}} with \code{\link{NASCToStoxAcoustic}}.

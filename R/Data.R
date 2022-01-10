@@ -70,6 +70,8 @@ NULL
 #' @param DensityData The \code{\link{DensityData}} data.
 #' @param MeanDensityData The \code{\link{MeanDensityData}} data.
 #' @param SpeciesCategoryCatchData The \code{\link{SpeciesCategoryCatchData}} data.
+#' @param SumSpeciesCategoryCatchData The \code{\link{SumSpeciesCategoryCatchData}} data.
+#' @param MeanSpeciesCategoryCatchData The \code{\link{MeanSpeciesCategoryCatchData}} data.
 #' @param AbundanceData The \code{\link{AbundanceData}} data.
 #' @param IndividualsData The \code{\link{IndividualsData}} data.
 #' @param SuperIndividualsData The \code{\link{SuperIndividualsData}} data.
@@ -322,11 +324,50 @@ NULL
 
 ##################################################
 ##################################################
+#' Total catch per SpeciesCategory and Haul
+#' 
+#' The SpeciesCategoryDensityData columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
+#' 
+#' @seealso This data type is produced by \code{\link{SpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name SpeciesCategoryCatchData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Total catch per SpeciesCategory and Station
+#' 
+#' The SumSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns Station, Layer and Haul containing the link between the vertical resolution variables before summing.
+#' 
+#' @seealso This data type is produced by \code{\link{SumSpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name SumSpeciesCategoryCatchData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Total catch per SpeciesCategory and biotic PSU
+#' 
+#' The MeanSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, Station, Layer and Haul containing the link between the horizontal and vertical resolution variables before summing and averaging.
+#' 
+#' @seealso This data type is produced by \code{\link{MeanSpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name MeanSpeciesCategoryCatchData
+#' 
+NULL
+
+
+##################################################
+##################################################
 #' Length distribution data
 #' 
 #' The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
 #' 
-#' @seealso This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentCatchCompensation}} and \code{\link{RelativeLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name LengthDistributionData
 #' 
@@ -452,19 +493,6 @@ NULL
 
 ##################################################
 ##################################################
-#' Total catch of each SpeciesCategory
-#' 
-#' The SpeciesCategoryDensityData model data is a list of two elements; the HaulInfo, containing information about each Haul; and the SpeciesCategoryCatch, holding the total catch of each SpeciesCategory of each Haul, where the Hauls are organized as rows and SpeciesCategories as columns.
-#' 
-#' @seealso This data type is produced by \code{\link{SpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
-#' 
-#' @name SpeciesCategoryCatchData
-#' 
-NULL
-
-
-##################################################
-##################################################
 #' Acoustic target strength
 #' 
 #' The AcousticTargetStrength process data is a list of two tables, the AcousticTargetStrengthModel, holding only the string naming the model to use, and the AcousticTargetStrengthTable, holding the table of the parameters/values of the model. See \code{\link{DefineAcousticTargetStrength}} for details of the different models.
@@ -540,20 +568,6 @@ NULL
 #' @name ReportSuperIndividualsData
 #' 
 NULL
-
-
-
-### ##################################################
-### ##################################################
-### #' Reported imputed super-individuals data
-### #' 
-### #' The ReportImputeSuperIndividualsData model data is a report of the \code{\link{ImputeSuperInd### ividualsData}} such as summed Biomass per Stratum and SpeciesCategory.
-### #' 
-### #' @seealso This data type is produced by \code{\link{ReportImputeSuperIndividuals}}. See ### \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
-### #' 
-### #' @name ReportImputeSuperIndividualsData
-### #' 
-### NULL
 
 
 ##################################################

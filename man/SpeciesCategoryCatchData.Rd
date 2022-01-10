@@ -2,9 +2,9 @@
 % Please edit documentation in R/Data.R
 \name{SpeciesCategoryCatchData}
 \alias{SpeciesCategoryCatchData}
-\title{Total catch of each SpeciesCategory}
+\title{Total catch per SpeciesCategory and Haul}
 \description{
-The SpeciesCategoryDensityData model data is a list of two elements; the HaulInfo, containing information about each Haul; and the SpeciesCategoryCatch, holding the total catch of each SpeciesCategory of each Haul, where the Hauls are organized as rows and SpeciesCategories as columns.
+The SpeciesCategoryDensityData columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
 }
 \seealso{
 This data type is produced by \code{\link{SpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
