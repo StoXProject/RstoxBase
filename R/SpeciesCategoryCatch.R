@@ -1,8 +1,8 @@
 ##################################################
 ##################################################
-#' Table of total catch weight and count per Haul and SpeciesCategory
+#' Table of total catch weight and number per Haul and SpeciesCategory
 #' 
-#' This function sums the catch fraction weight and count per Haul and SpeciesCategory.
+#' This function sums the catch fraction weight and number per Haul and SpeciesCategory.
 #' 
 #' @inheritParams ModelData
 #' @param SpeciesCategoryCatchType The type of the total catch variables, either "Standard" for the raw total catch and "Normalized" for normalizing by tow distance by dividing by the EffectiveTowDistance in nautical miles.
@@ -28,7 +28,7 @@ SpeciesCategoryCatch <- function(
         elements = c("verticalResolution", "categoryVariable"), 
         unlist = TRUE
     )
-    # Sum for weight and count separately:
+    # Sum for weight and number separately:
     for(ind in seq_along(dataVariables)) {
         SpeciesCategoryCatchData[, eval(dataVariables[ind]) := sum(get(CatchFractionVariables[ind])), by = sumBy]
     }
@@ -195,11 +195,11 @@ MeanSpeciesCategoryCatch <- function(
 ##################################################
 #' Apply the sweep of different gear (and cruise)
 #' 
-#' This function multiplies the CatchFractionWeight and CatchFractionCount of a SpeciesCategoryCatchData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (SpeciesCategoryCatchType starting with "SweepWidthCompensated").
+#' This function multiplies the CatchFractionWeight and CatchFractionNumber of a SpeciesCategoryCatchData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (SpeciesCategoryCatchType starting with "SweepWidthCompensated").
 #' 
 #' @inheritParams ModelData
 #' @param CompensationMethod The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.
-#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.
+#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedNumber.
 #' 
 #' @return
 #' A \code{\link{SpeciesCategoryCatchData}} object.

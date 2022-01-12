@@ -41,6 +41,7 @@ NULL
 #' 
 #' @param TargetVariable The variable to report.
 #' @param GroupingVariables The variables to report by. For most applications \code{GroupingVariables} should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.
+#' @param InformationVariables Variables to include as columns to the end of the report table. These cannot have more unique combinations than the \code{GroupingVariables}.
 #' @param RemoveMissingValues Logical: If TRUE, remove missing values (NAs) from the \code{TargetVariable}. The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA. Use \code{RemoveMissingValues} = TRUE with extreme caution, as it may lead to under-estimation. E.g., if \code{RemoveMissingValues} = TRUE and a super-individual lacks \code{IndividualRoundWeight}, \code{Biomass} will be NA, and the portion of \code{Abundance} distributed to that super-individual will be excluded when summing \code{Biomass} (but included when summing \code{Abundance}). It is advised to always run with \code{RemoveMissingValues} = FALSE first, and make a thorough investigation to identify the source of any missing values. The function \code{link{ImputeSuperIndividuals}} can be used to impute the missing information from other super-individuals.
 #' 
 #' @name general_report_arguments
@@ -326,7 +327,7 @@ NULL
 ##################################################
 #' Total catch per SpeciesCategory and Haul
 #' 
-#' The SpeciesCategoryDensityData columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
+#' The SpeciesCategoryCatchData contains the columns Station, Haul, SpeciesCategory, TotalCatchWeigth, TotalCatchNumber, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and SpeciesCategoryCatchType.
 #' 
 #' @seealso This data type is produced by \code{\link{SpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -365,7 +366,7 @@ NULL
 ##################################################
 #' Length distribution data
 #' 
-#' The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
+#' The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedNumber, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
 #' 
 #' @seealso This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -522,7 +523,8 @@ NULL
 ##################################################
 #' Abundance data
 #' 
-#' The Abundance model data holds the abundance of individuals as number per Stratum and Layer. The data type contains the tables Data and Resolution.
+#' The Abundance model data holds the abundance of individuals as number per Stratum and Layer. The data type contains the tables Data and Resolution. The column Abundance if the table Data can be given as number or weight (kg) as indicated by the column AbundanceType with possible values "Number" and "Weight" (only relevant for SweptAreaDensityMethod = "TotalCatch" in SweptAreaDensity()).
+
 #' 
 #' @seealso This data type is produced by \code{\link{Abundance}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -592,6 +594,19 @@ NULL
 #' @seealso This data type is produced by \code{\link{ReportDensity}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name ReportDensityData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Reported Abundance data
+#' 
+#' The ReportAbundanceData model data is a report of the \code{\link{AbundanceData}}.
+#' 
+#' @seealso This data type is produced by \code{\link{ReportAbundance}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ReportAbundanceData
 #' 
 NULL
 

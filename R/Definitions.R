@@ -81,7 +81,7 @@ initiateRstoxBase <- function(){
             obserationVariable = NULL,
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
-            data = "WeightedCount",
+            data = "WeightedNumber",
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = NULL, 
             weighting = "LengthDistributionWeight", 
@@ -95,7 +95,7 @@ initiateRstoxBase <- function(){
                 obserationVariable = NULL,
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
-                data = "WeightedCount",
+                data = "WeightedNumber",
                 verticalRawDimension = NULL, 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "SumLengthDistributionWeight", 
@@ -116,7 +116,7 @@ initiateRstoxBase <- function(){
                 obserationVariable = NULL,
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
-                data = "WeightedCount",
+                data = "WeightedNumber",
                 verticalRawDimension = NULL, 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = "MeanLengthDistributionWeight", 
@@ -140,8 +140,8 @@ initiateRstoxBase <- function(){
             categoryVariable = "SpeciesCategory", 
             groupingVariables = NULL, 
             data = c(
-                Mass = "TotalCatchWeight", 
-                Number = "TotalCatchCount"
+                Weight = "TotalCatchWeight", 
+                Number = "TotalCatchNumber"
             ),
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = NULL, 
@@ -157,8 +157,8 @@ initiateRstoxBase <- function(){
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = NULL, 
                 data = c(
-                    Mass = "TotalCatchWeight", 
-                    Number = "TotalCatchCount"
+                    Weight = "TotalCatchWeight", 
+                    Number = "TotalCatchNumber"
                 ),
                 verticalRawDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 verticalLayerDimension = NULL, 
@@ -181,8 +181,8 @@ initiateRstoxBase <- function(){
                 categoryVariable = "SpeciesCategory", 
                 groupingVariables = NULL, 
                 data = c(
-                    Mass = "TotalCatchWeight", 
-                    Number = "TotalCatchCount"
+                    Weight = "TotalCatchWeight", 
+                    Number = "TotalCatchNumber"
                 ),
                 verticalRawDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 verticalLayerDimension = NULL, 
@@ -203,7 +203,7 @@ initiateRstoxBase <- function(){
             obserationVariable = NULL,
             categoryVariable = "SpeciesCategory", 
             groupingVariables = c("IndividualTotalLength", "LengthResolution"), 
-            data = "WeightedCount",
+            data = "WeightedNumber",
             verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
             weighting = NULL, 
             type = "LengthDistributionType", 
@@ -406,7 +406,7 @@ initiateRstoxBase <- function(){
         LengthDistributionData = list(
             IndividualTotalLength = "cm", 
             LengthResolution = "cm", 
-            WeightedCount = "individual", 
+            WeightedNumber = "individual", 
             MinHaulDepth = "m",
             MaxHaulDepth = "m",
             EffectiveTowDistance = "nautical_mile", 
@@ -420,7 +420,7 @@ initiateRstoxBase <- function(){
             Data = list(
                 IndividualTotalLength = "cm", 
                 LengthResolution = "cm", 
-                WeightedCount = "individual", 
+                WeightedNumber = "individual", 
                 MinLayerDepth = "m",
                 MaxLayerDepth = "m",
                 EffectiveTowDistance = "nautical_mile", 
@@ -437,7 +437,7 @@ initiateRstoxBase <- function(){
             Data = list(
                 IndividualTotalLength = "cm", 
                 LengthResolution = "cm", 
-                WeightedCount = "individual", 
+                WeightedNumber = "individual", 
                 MinLayerDepth = "m",
                 MaxLayerDepth = "m",
                 EffectiveTowDistance = "nautical_mile", 
@@ -456,7 +456,7 @@ initiateRstoxBase <- function(){
         AssignmentLengthDistributionData = list(
             IndividualTotalLength = "cm", 
             LengthResolution = "cm", 
-            WeightedCount = "individual"
+            WeightedNumber = "individual"
         ), 
         # Density:
         DensityData = list(

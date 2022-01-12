@@ -17,12 +17,12 @@ utils::globalVariables(c(
 	 "..keys", "..keysSansSample", "..lengthInterval", "..lengthIntervalWidths", "..lengthVar",
 	 "..locatedStratum", "..meanBy", "..paddingVariables", "..presentResolutionVariables",
 	 "..refvar", "..resolutionVar", "..sumBy", "..tomerge", "..variablesToGetFromAbundanceData",
-	 "..vars", "AcousticCategory", "AcousticCategoryKey", "AbundanceType", "AcousticTargetStrength",
-	 "Area", "Beam", "BeamKey", "Biomass", "CatchFractionCount", "CatchFractionWeight", "Channel",
+	 "..vars", "AbundanceType", "AcousticCategory", "AcousticCategoryKey", "AcousticTargetStrength",
+	 "Area", "Beam", "BeamKey", "Biomass", "CatchFractionNumber", "CatchFractionWeight", "Channel",
 	 "ChannelReferenceDepth", "ChannelReferenceKey", "ChannelReferenceTilt", "ChannelReferenceType",
-	 "Cruise", "CruiseKey", "CruiseKey1", "DateTime", "Density", "DensityWeight", "DensityType",
+	 "Cruise", "CruiseKey", "CruiseKey1", "DateTime", "Density", "DensityType", "DensityWeight",
 	 "Depth", "DepthExponent", "EDSU", "EffectiveLogDistance", "EffectiveTowDistance",
-	 "EstimationMethod", "HasAnyPositiveWeightedCount", "Haul", "HaulKey", "Individual",
+	 "EstimationMethod", "HasAnyPositiveWeightedNumber", "Haul", "HaulKey", "Individual",
 	 "IndividualIndex", "IndividualKey", "IndividualRoundWeight", "IndividualTotalLength",
 	 "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent",
 	 "LengthGroup", "LengthResolution", "LogDuration", "LogKey", "LogOrigin", "MaxChannelDepth",
@@ -32,14 +32,14 @@ utils::globalVariables(c(
 	 "SpeciesCategory", "SpeciesCategoryCatchWeight", "SplitAcousticCategory", "StartDateTime",
 	 "Station", "StationLevel", "StopDateTime", "Stratum", "SummedWeights", "Survey", "SweepWidth",
 	 "TableName", "TargetStrength", "TargetStrength0", "TargetStrengthFunction", "TotalLength",
-	 "V1", "ValidHaul", "WeightedCount", "WeightingFactor", "assignmentID", "assignmentPasted",
+	 "V1", "ValidHaul", "WeightedNumber", "WeightingFactor", "assignmentID", "assignmentPasted",
 	 "backscatteringCrossSection", "crossSection", "distance", "functionName", "haulWeightFactor",
-	 "imputeSeed", "includeintotal", "individualCount", "individualWeightFactor", "inside",
+	 "imputeSeed", "includeintotal", "individualNumber", "individualWeightFactor", "inside",
 	 "intervalIndex", "midIndividualTotalLength", "minDistance", "missingAssignment", "multiple",
 	 "numberOfIndividuals", "numberOfSubSamples", "packageName", "raisingFactor",
 	 "representativeBackscatteringCrossSection",
 	 "representativeBackscatteringCrossSectionNormalized", "sumIndividualWeightFactor",
-	 "sumWeightedCount", "weighted", "weightingParameter", "x", "y"))
+	 "sumWeightedNumber", "weighted", "weightingParameter", "x", "y"))
 
 .onLoad <- function(libname, pkgname) {
 	# Initiate the RstoxBase environment:

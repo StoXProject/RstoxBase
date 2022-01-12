@@ -1405,8 +1405,8 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.
-#' @param LengthDistributionData The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).
+#' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalNumber", the same as "NormalizedTotalWeight" but for total number, "SumWeightedNumber", weighting by the summed WeightedNumber of the input LengthDistributionData; and "InverseSumWeightedNumber", weighting by the inverse of the summed WeightedNumber.
+#' @param LengthDistributionData The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
 #' @param LengthExponent For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
@@ -1427,17 +1427,17 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' 
 #' The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 #' 
-#'\strong{NormalizedTotalCount}
+#'\strong{NormalizedTotalNumber}
 #'
-#'The assigned biotic hauls are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+#'The assigned biotic hauls are given a weighting value according to the normalized catch number (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch number divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 #'
-#'\strong{SumWeightedCount}
+#'\strong{SumWeightedNumber}
 #'
-#'The assigned biotic hauls are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
+#'The assigned biotic hauls are given a weighting value according to the sum of the WeightedNumber of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 #'
-#'\strong{InverseSumWeightedCount}
+#'\strong{InverseSumWeightedNumber}
 #'
-#'The assigned biotic hauls are given a weighting value as the inverse of the sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
+#'The assigned biotic hauls are given a weighting value as the inverse of the sum of the WeightedNumber of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
 #'
 #'\deqn{w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }}
 #'
@@ -1453,7 +1453,7 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 #'\eqn{m_{s,b}}  =	number of length groups for species \emph{s} in biotic haul \emph{b}
 #'
-#'\eqn{c_{l,s,b}} = count in length group \emph{l} for species \emph{s} in biotic haul \emph{b}
+#'\eqn{c_{l,s,b}} = number in length group \emph{l} for species \emph{s} in biotic haul \emph{b}
 #' 
 #'The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.
 #'
@@ -1487,23 +1487,19 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 BioticAssignmentWeighting <- function(
     BioticAssignment, 
-    #WeightingMethod = c("Equal", "NumberOfLengthSamples", "NASC", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
-    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"), 
+    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber"), 
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
     StoxAcousticData, Radius = double(), LengthExponent = double()
 ) {
     
-    # NOTE: This function assumes that the data variable in LengthDistributionData is "WeightedCount". If this is changed the function will not work.
-    
     # Get the DefinitionMethod:
     WeightingMethod <- match.arg(WeightingMethod)
     
     # Define the weighting variable:
     weightingVariable <- getDataTypeDefinition(dataType = "BioticAssignment", elements = "weighting", unlist = TRUE)
-    #weightedCountVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "data", unlist = TRUE)
-
+    
     # Make a copy of the BioticAssignment to enable safe modification by reference:
     BioticAssignmentCopy <- data.table::copy(BioticAssignment)
     
@@ -1590,43 +1586,43 @@ BioticAssignmentWeighting <- function(
         #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalWeight, by = "Haul")
         #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalWeight]        
     }
-    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
-    else if(WeightingMethod == "NormalizedTotalCount") {
+    # Weight hauls by the summed CatchFractionNumber divided by the EffectiveTowDistance:
+    else if(WeightingMethod == "NormalizedTotalNumber") {
         
         # Allow only one species in StoX 3.1.0: 
-        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalCount")
+        checkOneSpeciesInStoxBioticData(StoxBioticData, WeightingMethod = "NormalizedTotalNumber")
         
-        # Merge Haul and Sample, and sum the catch count divided by towed distance:
+        # Merge Haul and Sample, and sum the catch number divided by towed distance:
         Haul_Sample <- merge(StoxBioticData$Haul, StoxBioticData$Sample)
-        NormalizedTotalCount <- Haul_Sample[, .(NormalizedTotalCount = sum(CatchFractionCount) / EffectiveTowDistance[1]), by = "Haul"]
+        NormalizedTotalNumber <- Haul_Sample[, .(NormalizedTotalNumber = sum(CatchFractionNumber) / EffectiveTowDistance[1]), by = "Haul"]
         # Merge into the BioticAssignmentCopy and set the weightingVariable to the NumberOfLengthSamples
         BioticAssignmentCopy <- mergeIntoBioticAssignment(
             BioticAssignment = BioticAssignmentCopy, 
-            toMerge = NormalizedTotalCount, 
-            variable = "NormalizedTotalCount", 
+            toMerge = NormalizedTotalNumber, 
+            variable = "NormalizedTotalNumber", 
             weightingVariable = weightingVariable
         )
-        #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalCount, by = "Haul")
-        #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalCount]
+        #BioticAssignmentCopy <- merge(BioticAssignmentCopy, NormalizedTotalNumber, by = "Haul")
+        #BioticAssignmentCopy[, eval(weightingVariable) := NormalizedTotalNumber]
     }
-    # Weight hauls by the summed CatchFractionCount divided by the EffectiveTowDistance:
-    else if(WeightingMethod == "SumWeightedCount") {
+    # Weight hauls by the summed CatchFractionNumber divided by the EffectiveTowDistance:
+    else if(WeightingMethod == "SumWeightedNumber") {
         # Allow only one species in StoX 3.1.0: 
-        checkOneSpeciesInLengthDistributionData(LengthDistributionData, "SumWeightedCount")
+        checkOneSpeciesInLengthDistributionData(LengthDistributionData, "SumWeightedNumber")
         
-        BioticAssignmentCopy <- addSumWeightedCount(
+        BioticAssignmentCopy <- addSumWeightedNumber(
             BioticAssignment = BioticAssignmentCopy, 
             LengthDistributionData = LengthDistributionData, 
             weightingVariable = weightingVariable, 
             inverse = FALSE
         )
     }
-    else if(WeightingMethod == "InverseSumWeightedCount") {
-        # This was a mistake, as InverseSumWeightedCount is used in SplitNASC-projects, where several species should be supported:
+    else if(WeightingMethod == "InverseSumWeightedNumber") {
+        # This was a mistake, as InverseSumWeightedNumber is used in SplitNASC-projects, where several species should be supported:
         # Allow only one species in StoX 3.1.0: 
         #checkOneSpeciesInLengthDistributionData(LengthDistributionData, WeightingMethod = "NumberOfLengthSamples")
         
-        BioticAssignmentCopy <- addSumWeightedCount(
+        BioticAssignmentCopy <- addSumWeightedNumber(
             BioticAssignment = BioticAssignmentCopy, 
             LengthDistributionData = LengthDistributionData, 
             weightingVariable = weightingVariable, 
@@ -1689,35 +1685,35 @@ getAverageNASCInsideRadius <- function(thisHaul, stationInfo, EDSUInfo, Radius) 
     return(averageNASC)
 }
 
-# Function to sum up the WeightedCount
-addSumWeightedCount <- function(BioticAssignment, LengthDistributionData, weightingVariable, inverse = FALSE) {
+# Function to sum up the WeightedNumber
+addSumWeightedNumber <- function(BioticAssignment, LengthDistributionData, weightingVariable, inverse = FALSE) {
     
     # Make a copy of the LengthDistributionData to enable safe modification by reference:
     LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
     
-    ### # Normalize the WeightedCount:
+    ### # Normalize the WeightedNumber:
     ### if(isLengthDistributionType(LengthDistributionData, "Standard")) {
-    ###     LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
+    ###     LengthDistributionData[, WeightedNumber := WeightedNumber / EffectiveTowDistance]
     ### } 
     ### else if(!isLengthDistributionType(LengthDistributionData, "Normalized")) {
-    ###     stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedCount will be divided by EffectiveTowDistance) or###  \"Normalized\"")
+    ###     stop("The LengthDistributionType must be \"Standard\" (in which case the WeightedNumber will be divided by EffectiveTowDistance) or###  \"Normalized\"")
     ### }
     #if(!isLengthDistributionType(LengthDistributionData, c("Standard", "Normalized"))) {
     if(!any(endsWith(firstNonNA(LengthDistributionData$LengthDistributionType), c("Standard", "Normalized")))) {
         stop("The LengthDistributionType must be \"Standard\" or \"Normalized\" (ending with \"Standard\" or \"Normalized\")")
     }
-    # Sum the WeightedCount for each Haul. Here it makes sense to use na.rm = TRUE, as we are only looking for a sum of the data that are present:
-    SumWeightedCount <- LengthDistributionData[, .(SumWeightedCount = sum(WeightedCount, na.rm = TRUE)), by = "Haul"]
+    # Sum the WeightedNumber for each Haul. Here it makes sense to use na.rm = TRUE, as we are only looking for a sum of the data that are present:
+    SumWeightedNumber <- LengthDistributionData[, .(SumWeightedNumber = sum(WeightedNumber, na.rm = TRUE)), by = "Haul"]
     
-    # Merge the SumWeightedCount into the BioticAssignment by the Haul identifier: 
-    BioticAssignment <- merge(BioticAssignment, SumWeightedCount, by = "Haul")
+    # Merge the SumWeightedNumber into the BioticAssignment by the Haul identifier: 
+    BioticAssignment <- merge(BioticAssignment, SumWeightedNumber, by = "Haul")
     
-    # Copy the SumWeightedCount into the weightingVariable:
+    # Copy the SumWeightedNumber into the weightingVariable:
     if(inverse) {
-        BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedCount]
+        BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedNumber]
     }
     else {
-        BioticAssignment[, eval(weightingVariable) := SumWeightedCount]
+        BioticAssignment[, eval(weightingVariable) := SumWeightedNumber]
     }
     
     BioticAssignment[]

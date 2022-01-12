@@ -113,7 +113,7 @@ AcousticDensity <- function(
     DensityData[, DensityWeight := MeanNASCWeight]
     
     # Add the density type, which is always c for AcousticDensity():
-    DensityData[, DensityType := "AcousticDensity"]
+    DensityData[, DensityType := "AreaNumberDensity"]
     
     # Add the Resolution table:
     DensityData <- list(
@@ -199,8 +199,8 @@ DistributeNASC <- function(
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
     # Check whether there are any non-missing length distribution frequencies:
-    anyNonNAWeightedCount <- NASCData[, sum(!is.na(WeightedCount))]
-    if(! anyNonNAWeightedCount) {
+    anyNonNAWeightedNumber <- NASCData[, sum(!is.na(WeightedNumber))]
+    if(! anyNonNAWeightedNumber) {
         warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), ". A possible reason is that the LayerDefinition differs between the MeanNASCData and the AssignmentLengthDistributionData. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC(). Another reason may be that the AcousticCategory of the AcousticTargetStrength process data and the parameter SpeciesLink of the AcousticDensity function do not match.")
         #"No length distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
     }
@@ -222,8 +222,8 @@ DistributeNASC <- function(
     }
     
     
-    # Add a warning if any WeightedCount are NA while NASC > 0:
-    NASCData[, missingAssignment := all(is.na(WeightedCount) & NASC > 0), by = sumBy]
+    # Add a warning if any WeightedNumber are NA while NASC > 0:
+    NASCData[, missingAssignment := all(is.na(WeightedNumber) & NASC > 0), by = sumBy]
     unassignedPSUs <- unique(NASCData[missingAssignment == TRUE, PSU])
     unassignedPSUs <- setdiff(unassignedPSUs, NA)
     NASCData[, missingAssignment := NULL]
@@ -238,7 +238,7 @@ DistributeNASC <- function(
     NASCData[, backscatteringCrossSection := targetStrengthToBackscatteringCrossSection(TargetStrength)]
     
     # Get the representative backscattering cross section of each length group as the product of backscatteringCrossSection and the length distribution from the AssignmentLengthDistributionData:
-    NASCData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedCount]
+    NASCData[, representativeBackscatteringCrossSection := backscatteringCrossSection * WeightedNumber]
     # Divide by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
     # If the length distribution is misssing (NA) this will be NA/sum(NA, na.rm = TRUE) = NA, as expected.
     NASCData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection, na.rm = TRUE), by = sumBy]
@@ -410,9 +410,9 @@ getMidIndividualTotalLength <- function(x) {
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @param SweptAreaDensityMethod The method to use for the swept-area calculation, one of \"LengthDistributed\" for calculating density from the length distribution (\code{\link{MeanLengthDistributionData}}), and \"TotalCatch\" for calculating density from the total catch (\code{\link{MeanSpeciesCategoryCatchData}}).
-#' @param SweepWidthMethod The method for calculating the sweep width. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedCount} in the \code{MeanLengthDistributionData} using \code{link{GearDependentLengthDistributionCompensation}} or \code{link{LengthDependentLengthDistributionCompensation}}, or in the \code{MeanSpeciesCategoryCatchData} using \code{link{GearDependentSpeciesCategoryCatchCompensation}}.
+#' @param SweepWidthMethod The method for calculating the sweep width. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedNumber} in the \code{MeanLengthDistributionData} using \code{link{GearDependentLengthDistributionCompensation}} or \code{link{LengthDependentLengthDistributionCompensation}}, or in the \code{MeanSpeciesCategoryCatchData} using \code{link{GearDependentSpeciesCategoryCatchCompensation}}.
 #' @param SweepWidth The constant sweep width in meters.
-#' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaMassDensity" for SweptAreaDensityMethod = "TotalCatch".
+#' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaWeightDensity" for SweptAreaDensityMethod = "TotalCatch".
 #' 
 #' @seealso See \code{\link{AcousticDensity}} for acoustic density.
 #' 
@@ -473,11 +473,11 @@ SweptAreaDensity <- function(
         dataVariable <- dataVariables
     }
     else if(SweptAreaDensityMethod == "TotalCatch") {
-        # Select mass or number density:
-        if(!startsWith(DensityType, "Mass")) {
-            dataVariable <- dataVariables["Mass"]
+        # Select weight or number density:
+        if(DensityType == "AreaWeightDensity") {
+            dataVariable <- dataVariables["Weight"]
         }
-        else if(!startsWith(DensityType, "Area")) {
+        else if(DensityType == "AreaNumberDensity") {
             dataVariable <- dataVariables["Number"]
         }
     }
@@ -499,7 +499,7 @@ SweptAreaDensity <- function(
                 stop("SweepWidth must be given when SweepWidthMethod == \"Constant\"")
             }
             
-            # Convert WeightedCount to density:
+            # Convert WeightedNumber to density:
             sweepWidthInNauticalMiles <- SweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
             
             Data[, Density := get(dataVariable) / sweepWidthInNauticalMiles]
