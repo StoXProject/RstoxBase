@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">BioticAssignmentWeighting</span><span class="op">(</span>
   <span class="va">BioticAssignment</span>,
   WeightingMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Equal"</span>, <span class="st">"NumberOfLengthSamples"</span>, <span class="st">"NormalizedTotalWeight"</span>,
-    <span class="st">"NormalizedTotalCount"</span>, <span class="st">"SumWeightedCount"</span>, <span class="st">"InverseSumWeightedCount"</span><span class="op">)</span>,
+    <span class="st">"NormalizedTotalNumber"</span>, <span class="st">"SumWeightedNumber"</span>, <span class="st">"InverseSumWeightedNumber"</span><span class="op">)</span>,
   <span class="va">StoxBioticData</span>,
   <span class="va">LengthDistributionData</span>,
   MaxNumberOfLengthSamples <span class="op">=</span> <span class="fl">100</span>,
@@ -71,11 +71,11 @@
     <dl><dt>BioticAssignment</dt>
 <dd><p>The <code><a href="BioticAssignment.html">BioticAssignment</a></code> process data.</p></dd>
 <dt>WeightingMethod</dt>
-<dd><p>Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.</p></dd>
+<dd><p>Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalNumber", the same as "NormalizedTotalWeight" but for total number, "SumWeightedNumber", weighting by the summed WeightedNumber of the input LengthDistributionData; and "InverseSumWeightedNumber", weighting by the inverse of the summed WeightedNumber.</p></dd>
 <dt>StoxBioticData</dt>
 <dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></dd>
 <dt>LengthDistributionData</dt>
-<dd><p>The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).</p></dd>
+<dd><p>The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).</p></dd>
 <dt>MaxNumberOfLengthSamples</dt>
 <dd><p>For <code>WeightingMethod</code> = "NumberOfLengthSamples": Values of the number of length samples that exceed <code>MaxNumberOfLengthSamples</code> are set to <code>MaxNumberOfLengthSamples</code>. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.</p></dd>
 <dt>StoxAcousticData</dt>
@@ -99,12 +99,12 @@
 The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station. The parameter <em>MaxNumberOfLengthSamples</em> is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. Note that the weighting may change if an additional species is included.</p>
 <p><strong>NormalizedTotalWeight</strong></p>
 <p>The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.</p>
-<p><strong>NormalizedTotalCount</strong></p>
-<p>The assigned biotic hauls are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.</p>
-<p><strong>SumWeightedCount</strong></p>
-<p>The assigned biotic hauls are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type <em>Standard</em> or <em>Normalized</em> (normalized to one nautical mile towing distance).</p>
-<p><strong>InverseSumWeightedCount</strong></p>
-<p>The assigned biotic hauls are given a weighting value as the inverse of the sum of the count of all length groups and all species. The weighting value \(w_b\) is calculated as:</p>
+<p><strong>NormalizedTotalNumber</strong></p>
+<p>The assigned biotic hauls are given a weighting value according to the normalized catch number (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch number divided by towing distance. This normalization makes the stations comparable regardless of catch effort.</p>
+<p><strong>SumWeightedNumber</strong></p>
+<p>The assigned biotic hauls are given a weighting value according to the sum of the WeightedNumber of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type <em>Standard</em> or <em>Normalized</em> (normalized to one nautical mile towing distance).</p>
+<p><strong>InverseSumWeightedNumber</strong></p>
+<p>The assigned biotic hauls are given a weighting value as the inverse of the sum of the WeightedNumber of all length groups and all species. The weighting value \(w_b\) is calculated as:</p>
 <p>$$w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }$$</p>
 <p>where:</p>
 <p>\(w_b\) = weighting value of biotic haul <em>b</em></p>
@@ -112,7 +112,7 @@ The assigned biotic hauls are given a weighting value according to the number of
 <p>\(n_b\) = number of species in the input data off biotic haul <em>b</em></p>
 <p>\(l\) =  length group number</p>
 <p>\(m_{s,b}\)  =	number of length groups for species <em>s</em> in biotic haul <em>b</em></p>
-<p>\(c_{l,s,b}\) = count in length group <em>l</em> for species <em>s</em> in biotic haul <em>b</em></p>
+<p>\(c_{l,s,b}\) = number in length group <em>l</em> for species <em>s</em> in biotic haul <em>b</em></p>
 <p>The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.</p>
 <p>It is a requirement that the lengthdistribution data is of distribution type <em>Standard</em> or <em>Normalized</em> (normalized to one nautical mile towing distance).</p>
 <p><strong>NASC</strong> Not yet implemented.</p>

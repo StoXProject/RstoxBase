@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">LengthDistribution</span><span class="op">(</span>
   <span class="va">StoxBioticData</span>,
   LengthDistributionType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Normalized"</span>, <span class="st">"Standard"</span>, <span class="st">"Percent"</span><span class="op">)</span>,
-  RaisingFactorPriority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Weight"</span>, <span class="st">"Count"</span><span class="op">)</span>
+  RaisingFactorPriority <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Weight"</span>, <span class="st">"Number"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -67,7 +67,7 @@
 <dt>LengthDistributionType</dt>
 <dd><p>The type of length distribution to use, one of "Standard", "Normalized" and "Percent" (see 'Details').</p></dd>
 <dt>RaisingFactorPriority</dt>
-<dd><p>A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".</p></dd>
+<dd><p>A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Number".</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -75,12 +75,12 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>The <em>LengthDistribution</em> function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionCount is calculated in the same manner.</p>
+    <p>The <em>LengthDistribution</em> function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionNumber is calculated in the same manner.</p>
 <p>From each CatchFraction, a Sample is usually taken. Various types of individual characteristics or population parameters are measures. The most common parameters are individual length followed by weight. Other parameters are age, sex, maturity etc. The Sample weight and number is recorded. From the CatchFractionWeight and the SampleWeight, a raising factor (<em>r</em>) is calculated as:</p>
 <p>$$r = \frac{CatchFractionWeight}{SampleWeight}$$</p>
 <p>alternatively, the raising factor r can be calculated as:</p>
-<p>$$r = \frac{CatchFractionCount}{SampleCount}$$</p>
-<p>A <em>RaisingFactorPriority</em> parameter determines whether to make the first attempt on calculating the raising factor by weight or count variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.</p>
+<p>$$r = \frac{CatchFractionNumber}{SampleNumber}$$</p>
+<p>A <em>RaisingFactorPriority</em> parameter determines whether to make the first attempt on calculating the raising factor by weight or number of variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.</p>
 <p>To produce a length frequency distribution for the Haul by SpeciesCategory, each Sample length distribution is first multiplied with the raising factor of the Sample. A total length distribution for the entire catch, is produced by adding the adjusted length distributions from all the Samples into one common length distribution for the SpeciesCategory in a Haul.</p>
 <p>The Samples may have different length group intervals. If this is the case the intervals may overlap between Samples.The combination of length frequencies from all Samples of a SpeciesCategory can be expressed as:</p>
   
@@ -92,7 +92,7 @@
 <p>\(n\)     is the number of Samples</p>
 <p>The LengthDistribution function can generate three different distributions types:</p>
 <p>1) <strong>Standard</strong></p>
-<p>A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionCount and SampleCount. If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.</p>
+<p>A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionNumber and SampleNumber If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.</p>
 <p>2) <strong>Normalized</strong></p>
 <p>Normalized length distribution to one nautical mile towing distance. This distribution shows the length distribution as if the towing distance had been one nautical mile long and the entire catch had been length measured. The length distributions Standard is used together with the towing distance of the trawl station, to calculate this distribution. The number of fish from Standard in each length group is divided by the towing distance. It is worth noting that length distributions of type Normalied from several stations may be compared since they are independent of effort (towing distance). Each of the length distributions reflects the CPUE of the trawl hauls. They are in other words implicitly weighted by CPUE. If towing distance is lacking for a station, length distributions of type Normalized cannot be made.</p>
 <p>3) <strong>Percent</strong></p>

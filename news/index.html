@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
       </span>
     </div>
 
@@ -47,6 +47,26 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.5.3" id="rstoxbase-v153-2022-01-12">RstoxBase v1.5.3 (2022-01-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v153-2022-01-12"></a></h2>
+<ul><li>
+<p>Changed all instances of the use of the phrase “count” to “number”, in accordance with the terminology of ICESBiotic and the convension “area number density” (“area count density is very rare”). This change affects the following code:</p>
+<ul><li><p>In StoxBiotic(): | <em>SampleCount -&gt; SampleNumber</em> | <em>CatchFractionCount -&gt; CatchFractionNumber</em> <strong>This could affect external scripts that use the StoxBioticData.</strong></p></li>
+<li><p>In LengthDistribution(), SumLengthDistribution(), MeanLengthDistribution(), AssignmentLengthDistribution(), RegroupLengthDistribution(), GearDependentCatchCompensation(), LengthDependentCatchCompensation(), RelativeLengthDistribution(): | <em>Renamed the column WeightedCount to WeightedNumber</em> <strong>This could affect external scripts that use one of the listed datatypes as WeightedCount is no longer found. Other than that the WeightedCount does not exist further in the estimation models in StoX.</strong></p></li>
+<li><p>In BioticAssignmentWeighting(): | <em>WeightingMethod = “NormalizedTotalCount” -&gt; “NormalizedTotalNumber”</em> | <em>WeightingMethod = “SumWeightedCount” -&gt; “SumWeightedNumber”</em> | <em>WeightingMethod = “InverseSumWeightedCount” -&gt; “InverseSumWeightedNumber”</em> <strong>Backward compatibility should take care of these</strong></p></li>
+<li><p>LengthDistribution(): | <em>RaisingFactorPriority = “Count” -&gt; “Number”</em> <strong>Backward compatibility should take care of these</strong></p></li>
+</ul></li>
+<li><p>Added the function ReportAbundance.</p></li>
+<li><p>Added the parameter InformationVariables to reports.</p></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.5.2" id="rstoxbase-v152-2022-01-10">RstoxBase v1.5.2 (2022-01-10)<a class="anchor" aria-label="anchor" href="#rstoxbase-v152-2022-01-10"></a></h2>
+<ul><li>Changed SpeciesCategoryCatch() to return a single table similar to LengthDistributionData, but with TotalCatchWeight and TotalCatchCount instead of WeightedCount. As such, moved the CatchVariable of SpeciesCategoryCatch() to the ReportVariable of ReportSpeciesCategoryCatch(). The latter is a backward compatibility breaking change.</li>
+<li>Added SumSpeciesCategoryCatch() and MeanSpeciesCategoryCatch().</li>
+<li>Added the parameter SweptAreaDensityType in SweptAreaDensity() supporting both “LengthDistributed” and “TotalCatch” swept-area density.</li>
+<li>Added new column DensityType in DensityData with supported values “AreaNumberDensity” (the only option for AcousticDensity() and SweptAreaDensityType “LengthDistributed”) and “AreaMassDensity”.</li>
+<li>Added new column AbundanceType in AbundanceData with supported values “Number” (the only option for AcousticDensity() and SweptAreaDensityType “LengthDistributed”) and “Mass”.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.5.1" id="rstoxbase-v151-2022-01-07">RstoxBase v1.5.1 (2022-01-07)<a class="anchor" aria-label="anchor" href="#rstoxbase-v151-2022-01-07"></a></h2>
 <ul><li>Added DefineRegression(), EstimateBioticRegression() and the implementation in ImputeSuperIndividuals(). Refactored so that DefineRegression() and DefineAcousticTargetStrength() both use the underlying DefineModel(), with outputs <model>Model and <model>Table. Renamed DefinitionMethod “TargetStrengthTable”, “SurveyTable” and “LayerTable” to “Table”.</model></model></li>

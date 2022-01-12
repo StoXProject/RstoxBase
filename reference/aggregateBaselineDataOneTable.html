@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
       </span>
     </div>
 
@@ -59,6 +59,7 @@
   aggregationFunction <span class="op">=</span> <span class="fu"><a href="getReportFunctions.html">getReportFunctions</a></span><span class="op">(</span><span class="op">)</span>,
   subTable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   GroupingVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
+  InformationVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   na.rm <span class="op">=</span> <span class="cn">FALSE</span>,
   padWithZerosOn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
@@ -77,6 +78,8 @@
 <dd><p>The name of the sub table to aggregate on, if <code>stoxData</code> is a list of tables.</p></dd>
 <dt>GroupingVariables</dt>
 <dd><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.</p></dd>
+<dt>InformationVariables</dt>
+<dd><p>Variables to include as columns to the end of the report table. These cannot have more unique combinations than the <code>GroupingVariables</code>.</p></dd>
 <dt>na.rm</dt>
 <dd><p>Used in the function specified by <code>aggregationFunction</code>.</p></dd>
 <dt>padWithZerosOn</dt>
