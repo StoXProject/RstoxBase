@@ -42,7 +42,7 @@
 
 \item{MeanSpeciesCategoryCatchData}{The \code{\link{MeanSpeciesCategoryCatchData}} data.}
 
-\item{AbundanceData}{The \code{\link{AbundanceData}} data.}
+\item{QuantityData}{The \code{\link{QuantityData}} data.}
 
 \item{IndividualsData}{The \code{\link{IndividualsData}} data.}
 

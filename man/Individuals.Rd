@@ -6,7 +6,7 @@
 \usage{
 Individuals(
   StoxBioticData,
-  AbundanceType = c("Acoustic", "SweptArea"),
+  QuantityType = c("Acoustic", "SweptArea"),
   BioticAssignment,
   MeanLengthDistributionData
 )
@@ -14,7 +14,7 @@ Individuals(
 \arguments{
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
-\item{AbundanceType}{The type of abundance, one of "Acoustic" and "SweptArea".}
+\item{QuantityType}{The type of abundance, one of "Acoustic" and "SweptArea".}
 
 \item{BioticAssignment}{The \code{\link{BioticAssignment}} process data.}
 

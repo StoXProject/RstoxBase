@@ -88,21 +88,21 @@ ReportDensity <- function(
 
 ##################################################
 ##################################################
-#' Report AbundanceData
+#' Report QuantityData
 #' 
-#' Reports the sum, mean or other functions on a variable of the \code{\link{AbundanceData}}.
+#' Reports the sum, mean or other functions on a variable of the \code{\link{QuantityData}}.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
 #' @inheritParams ReportSuperIndividuals
 #' 
 #' @return
-#' A \code{\link{ReportAbundanceData}} object.
+#' A \code{\link{ReportQuantityData}} object.
 #' 
 #' @export
 #' 
-ReportAbundance <- function(
-    AbundanceData, 
+ReportQuantity <- function(
+    QuantityData, 
     TargetVariable = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
@@ -112,12 +112,12 @@ ReportAbundance <- function(
 ) 
 {
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(AbundanceData[[TargetVariable]]))) {
+    if(isTRUE(RemoveMissingValues) && any(is.na(QuantityData[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
     aggregateBaselineDataOneTable(
-        stoxData = AbundanceData$Data, 
+        stoxData = QuantityData$Data, 
         TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
         GroupingVariables = GroupingVariables, 
@@ -203,7 +203,7 @@ aggregateBaselineDataOneTable <- function(
         return(out)
     }
     
-    # Add a CJ operation here like in StoX 2.7 (function reportAbundanceAtLevel). This needs an option, so that it is only used across bootstrap iterations:
+    # Add a CJ operation here like in StoX 2.7 (function reportQuantityAtLevel). This needs an option, so that it is only used across bootstrap iterations:
     if(length(padWithZerosOn)) {
         # Add NAs for missing combinations of the GroupingVariables:
         #stoxData <- stoxData[do.call(CJ, lapply(GroupingVariables, unique)), allow.cartesian = TRUE]
@@ -218,7 +218,7 @@ aggregateBaselineDataOneTable <- function(
         stoxData <- stoxData[grid[, ..paddingVariables], on = paddingVariables]
         # Convert the NAs to 0 for the abundance and biomass columns:
         abudanceVariables <- setdiff(names(stoxData), paddingVariables)
-        # Convvert NA to 0 only for Biomass or Abundance:
+        # Convert NA to 0 only for Biomass or Abundance:
         abudanceVariableKeys <- getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
         isAbudanceVariable <- rowSums(outer(abudanceVariables, abudanceVariableKeys, startsWith)) > 0
         abudanceVariables <- abudanceVariables[isAbudanceVariable]

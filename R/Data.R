@@ -73,7 +73,7 @@ NULL
 #' @param SpeciesCategoryCatchData The \code{\link{SpeciesCategoryCatchData}} data.
 #' @param SumSpeciesCategoryCatchData The \code{\link{SumSpeciesCategoryCatchData}} data.
 #' @param MeanSpeciesCategoryCatchData The \code{\link{MeanSpeciesCategoryCatchData}} data.
-#' @param AbundanceData The \code{\link{AbundanceData}} data.
+#' @param QuantityData The \code{\link{QuantityData}} data.
 #' @param IndividualsData The \code{\link{IndividualsData}} data.
 #' @param SuperIndividualsData The \code{\link{SuperIndividualsData}} data.
 #' @param ReportSuperIndividualsData The \code{\link{ReportSuperIndividualsData}} data.
@@ -521,14 +521,14 @@ NULL
 
 ##################################################
 ##################################################
-#' Abundance data
+#' Quantity data
 #' 
-#' The Abundance model data holds the abundance of individuals as number per Stratum and Layer. The data type contains the tables Data and Resolution. The column Abundance if the table Data can be given as number or weight (kg) as indicated by the column AbundanceType with possible values "Number" and "Weight" (only relevant for SweptAreaDensityMethod = "TotalCatch" in SweptAreaDensity()).
+#' The Quantity model data holds the abundance and biomass of individuals as number and weight (g), respectively, per Stratum and Layer. The data type contains the tables Data and Resolution.
 
 #' 
-#' @seealso This data type is produced by \code{\link{Abundance}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{Quantity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
-#' @name AbundanceData
+#' @name QuantityData
 #' 
 NULL
 
@@ -600,13 +600,13 @@ NULL
 
 ##################################################
 ##################################################
-#' Reported Abundance data
+#' Reported Quantity data
 #' 
-#' The ReportAbundanceData model data is a report of the \code{\link{AbundanceData}}.
+#' The ReportQuantityData model data is a report of the \code{\link{QuantityData}}.
 #' 
-#' @seealso This data type is produced by \code{\link{ReportAbundance}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
+#' @seealso This data type is produced by \code{\link{ReportQuantity}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
 #' 
-#' @name ReportAbundanceData
+#' @name ReportQuantityData
 #' 
 NULL
 

@@ -1,23 +1,27 @@
+# RstoxBase v1.5.4 (2022-01-12)
+* Renamed Abundance(), ReportAbundance(), AbundanceData and ReportAbundanceData to Quantity*, as this data now contains both Abundance and Biomass.
+
+
 # RstoxBase v1.5.3 (2022-01-12)
 * Changed all instances of the use of the phrase "count" to "number", in accordance with the terminology of ICESBiotic and the convension "area number density" ("area count density is very rare"). This change affects the following code:
 
     + In StoxBiotic():
-	|   *SampleCount -> SampleNumber*
-	|   *CatchFractionCount -> CatchFractionNumber*
+	*SampleCount -> SampleNumber*
+	*CatchFractionCount -> CatchFractionNumber*
 	**This could affect external scripts that use the StoxBioticData.**
 	
     + In LengthDistribution(), SumLengthDistribution(), MeanLengthDistribution(), AssignmentLengthDistribution(), RegroupLengthDistribution(), GearDependentCatchCompensation(), LengthDependentCatchCompensation(), RelativeLengthDistribution():
-	|   *Renamed the column WeightedCount to WeightedNumber*
+	*Renamed the column WeightedCount to WeightedNumber*
     **This could affect external scripts that use one of the listed datatypes as WeightedCount is no longer found. Other than that the WeightedCount does not exist further in the estimation models in StoX.**
 
     + In BioticAssignmentWeighting():
-	|   *WeightingMethod = "NormalizedTotalCount"    -> "NormalizedTotalNumber"*
-	|   *WeightingMethod = "SumWeightedCount"        -> "SumWeightedNumber"*
-	|   *WeightingMethod = "InverseSumWeightedCount" -> "InverseSumWeightedNumber"*
+	*WeightingMethod = "NormalizedTotalCount"    -> "NormalizedTotalNumber"*
+	*WeightingMethod = "SumWeightedCount"        -> "SumWeightedNumber"*
+	*WeightingMethod = "InverseSumWeightedCount" -> "InverseSumWeightedNumber"*
 	**Backward compatibility should take care of these**
 
     + LengthDistribution():
-	|   *RaisingFactorPriority = "Count" -> "Number"*
+	*RaisingFactorPriority = "Count" -> "Number"*
     **Backward compatibility should take care of these**
 * Added the function ReportAbundance.
 * Added the parameter InformationVariables to reports.

@@ -123,7 +123,7 @@ AcousticDensity <- function(
     
     
     # Format the output:
-    # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
+    # Changed added on 2020-10-16, where the datatypes DensityData and QuantityData are now considered non-rigid:
     #formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
     # 2020-12-02: This had keep.all = FALSE. Is this an error????????????????????? We should clearly describe the justifications for which data types are rigid and which are not rigid:
     # Changed to keep.all = TRUE on 2021-03-18 when introducing Data and Resolution for DensityData and onwards:

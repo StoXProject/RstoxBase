@@ -13,59 +13,41 @@
 #' In swept-area surveys the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength 
 #' 
 #' @return
-#' An object of StoX data type \code{\link{AbundanceData}}. 
+#' An object of StoX data type \code{\link{QuantityData}}. 
 #' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to individuals.
 #' 
 #' @export
 #' 
-Abundance <- function(
+Quantity <- function(
     MeanDensityData, 
     StratumAreaData
 ) {
     
-    # Merge the stratum area with the DensityData to an AbundanceData (remove the area at the end of the function):
-    AbundanceData <- data.table::copy(MeanDensityData)
+    # Merge the stratum area with the DensityData to an QuantityData (remove the area at the end of the function):
+    QuantityData <- data.table::copy(MeanDensityData)
     # Added all.x for StoX 3.2.0, as the defautl all = FALSE drops strata not present in StratumAreaData (particularly NA stratum):
-    AbundanceData$Data <- merge(AbundanceData$Data, StratumAreaData, by ="Stratum", all.x = TRUE)
+    QuantityData$Data <- merge(QuantityData$Data, StratumAreaData, by ="Stratum", all.x = TRUE)
     
     # Multiply the area and the density:
-    AbundanceData$Data[, Abundance := Area * Density]
-       
-    # Set the AbundanceType:
-    getCamelCaseElements <- function(x, at) {
-        if(length(x) > 1) {
-            stop("Only length 1 accepted.")
-        }
-        atUpperCase <- which(strsplit(x, "")[[1]] == strsplit(toupper(x), "")[[1]])
-        if(at > length(atUpperCase)) {
-            warning("Only ", length(atUpperCase), " CamelCase elements found < 'at' (", at, ").")
-            return(character())
-        }
-        else if(at == length(atUpperCase)) {
-            end <- nchar(x)
-        }
-        else {
-            end <- atUpperCase[at + 1] - 1
-        }
-        start <- atUpperCase[at]
-        
-        CamelCaseElements <- mapply(substr, x, start, end)
-        
-        return(CamelCaseElements)
+    if(MeanDensityData$Data$DensityType[1] == "AreaNumberDensity") {
+        QuantityData$Data[, Abundance := Area * Density]
+        QuantityData$Data[, Biomass := NA_real_]
     }
-    AbundanceData$Data[, AbundanceType := getCamelCaseElements(DensityType[1], 2)]
-    
+    else if(MeanDensityData$Data$DensityType[1] == "AreaWeightDensity") {
+        QuantityData$Data[, Abundance := NA_real_]
+        QuantityData$Data[, Biomass := Area * Density]
+    }
     
     # Format the output:
-    # Changed added on 2020-10-16, where the datatypes DensityData and AbundanceData are now considered non-rigid:
-    #formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE)
-    formatOutput(AbundanceData, dataType = "AbundanceData", keep.all = FALSE, allow.missing = TRUE)
+    # Changed added on 2020-10-16, where the datatypes DensityData and QuantityData are now considered non-rigid:
+    #formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE)
+    formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(AbundanceData)
+    RstoxData::setRstoxPrecisionLevel(QuantityData)
     
-    return(AbundanceData)
+    return(QuantityData)
 }
 
 
@@ -77,7 +59,7 @@ Abundance <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param AbundanceType The type of abundance, one of "Acoustic" and "SweptArea".
+#' @param QuantityType The type of abundance, one of "Acoustic" and "SweptArea".
 #' 
 #' @details 
 #' The \code{\link{IndividualsData}} contains variables from \code{\link{StoxBioticData}} in addition to the columns Stratum and Layer. The Stratum column is not necessarily the actual stratum containing the Haul in which an individual was sampled, but rather the stratum linked to the haul via \code{\link{DefineBioticAssignment}} for acoustic-trawl models and \code{\link{MeanLengthDistribution}} for swept-area models. In detail:
@@ -96,26 +78,26 @@ Abundance <- function(
 #' 
 Individuals <- function(
     StoxBioticData, 
-    AbundanceType = c("Acoustic", "SweptArea"), 
+    QuantityType = c("Acoustic", "SweptArea"), 
     BioticAssignment, 
     MeanLengthDistributionData
 ) {
     
     # Get the DefinitionMethod:
-    AbundanceType <- match.arg(AbundanceType)
+    QuantityType <- match.arg(QuantityType)
     
     # Merge StoxBtiotic:
     MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
     
-    # Get the resolution variables of AbundanceData:
-    abundanceResolutionVariables <- getResolutionVariables("AbundanceData")
+    # Get the resolution variables of QuantityData:
+    abundanceResolutionVariables <- getResolutionVariables("QuantityData")
     
     # Get all hauls of each Stratum and Layer:
-    if(AbundanceType == "Acoustic") {
+    if(QuantityType == "Acoustic") {
         # Get the hauls with positive WeightingFactor:
         usedHauls <- BioticAssignment[WeightingFactor > 0, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
-    else if(AbundanceType == "SweptArea") {
+    else if(QuantityType == "SweptArea") {
         # Get the PSUs that have positive WeightedNumber (changed on 2021-03-09):
         dataVariable <- getDataTypeDefinition("MeanLengthDistributionData", subTable = "Data", elements = "data", unlist = TRUE)
         # Make sure to omit NAs, which indicate hauls which are not tagged to any PSU (e.g. outside of any stratum):
@@ -179,7 +161,7 @@ Individuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{AbundanceData}} (via \code{link{DensityData}}).
+#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{QuantityData}} (via \code{link{DensityData}}).
 #' 
 #' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
@@ -187,7 +169,7 @@ Individuals <- function(
 #' 
 SuperIndividuals <- function(
     IndividualsData, 
-    AbundanceData, 
+    QuantityData, 
     DistributionMethod = c("Equal", "HaulDensity"), 
     LengthDistributionData
 ) {
@@ -197,36 +179,36 @@ SuperIndividuals <- function(
     
     # Make a copy of the IndividualsData:
     SuperIndividualsData <- data.table::copy(IndividualsData)
-    # Make sure the AbundanceData is proper data.table. Comment on 2021-03-18: Why is this needed????:
-    AbundanceData$Data <- data.table::setDT(AbundanceData$Data)
+    # Make sure the QuantityData is proper data.table. Comment on 2021-03-18: Why is this needed????:
+    QuantityData$Data <- data.table::setDT(QuantityData$Data)
     
-    # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the AbundanceData:
-    addLengthGroup(data = SuperIndividualsData, master = AbundanceData$Data, warn = FALSE)
-    # Add length groups also to the AbundanceData:
-    addLengthGroup(data = AbundanceData$Data, master = AbundanceData$Data, warn = FALSE)
+    # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
+    addLengthGroup(data = SuperIndividualsData, master = QuantityData$Data, warn = FALSE)
+    # Add length groups also to the QuantityData:
+    addLengthGroup(data = QuantityData$Data, master = QuantityData$Data, warn = FALSE)
     
-    # Merge the AbundanceData into the SuperIndividualsData, by the resolution and category variables of the AbundanceData and the LengthGroup introduced in addLengthGroups().
+    # Merge the QuantityData into the SuperIndividualsData, by the resolution and category variables of the QuantityData and the LengthGroup introduced in addLengthGroups().
     # Stratum/Layer/SpeciesCategory/LengthGroup
     mergeBy <- c(
-        getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
+        getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
-    # Get the variables to add from the AbundanceData, which are the Abundance, the surveyDefinition, the vertical dimension, and the acoustic grouping variables:
+    # Get the variables to add from the QuantityData, which are the Abundance, the surveyDefinition, the vertical dimension, and the acoustic grouping variables:
     # Abundance/Survey/MinLayerDepth/MaxLayerDepth/Beam/Frequency
-    variablesToGetFromAbundanceData <- c(
+    variablesToGetFromQuantityData <- c(
         "Abundance", 
-        getDataTypeDefinition(dataType = "AbundanceData", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables_acoustic"), unlist = TRUE)
+        getDataTypeDefinition(dataType = "QuantityData", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables_acoustic"), unlist = TRUE)
     )
     # Add the mergeBy since these are needed in the merging:
-    variablesToGetFromAbundanceData <- unique(c(variablesToGetFromAbundanceData, mergeBy))
+    variablesToGetFromQuantityData <- unique(c(variablesToGetFromQuantityData, mergeBy))
     # Keep only variables present in SuperIndividualsData:
-    variablesToGetFromAbundanceData <- intersect(variablesToGetFromAbundanceData, names(AbundanceData$Data))
+    variablesToGetFromQuantityData <- intersect(variablesToGetFromQuantityData, names(QuantityData$Data))
     
     
-    # Merge AbundanceData into the IndividualsData
+    # Merge QuantityData into the IndividualsData
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
-        AbundanceData$Data[, ..variablesToGetFromAbundanceData], 
+        QuantityData$Data[, ..variablesToGetFromQuantityData], 
         by = mergeBy, 
         allow.cartesian = TRUE, 
         ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
@@ -239,16 +221,16 @@ SuperIndividuals <- function(
     )
     
     # Append an individualNumber to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
-    distributeAbundanceBy <- c(
-        getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
+    distributeQuantityBy <- c(
+        getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
         "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
-    # Keep only the variables present in the AbundanceData, as AbundanceData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
-    distributeAbundanceBy <- intersect(distributeAbundanceBy, names(AbundanceData$Data))
+    # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
+    distributeQuantityBy <- intersect(distributeQuantityBy, names(QuantityData$Data))
     
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(DistributionMethod == "Equal") {
-        SuperIndividualsData[, individualNumber := as.double(.N), by = distributeAbundanceBy]
+        SuperIndividualsData[, individualNumber := as.double(.N), by = distributeQuantityBy]
         SuperIndividualsData[, haulWeightFactor := 1]
     }
     else if(DistributionMethod == "HaulDensity") {
@@ -267,7 +249,7 @@ SuperIndividuals <- function(
         # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
         LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
         
-        addLengthGroup(data = LengthDistributionData, master = AbundanceData$Data, warn = FALSE)
+        addLengthGroup(data = LengthDistributionData, master = QuantityData$Data, warn = FALSE)
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
         
@@ -291,10 +273,10 @@ SuperIndividuals <- function(
         
         # Sum the haul densities (stored as WeightedNumber) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
         # No no, this was certainly wrong, as WeightedNumber could be duplicated within a Stratum for one length group:
-        #SuperIndividualsData[, sumWeightedNumber := sum(unique(WeightedNumber), na.rm = TRUE), by = distributeAbundanceBy]
-        # Sum the WeightedNumber over all hauls of the columns specified by distributeAbundanceBy:
-        #SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = TRUE), by = distributeAbundanceBy]
-        SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = FALSE), by = distributeAbundanceBy]
+        #SuperIndividualsData[, sumWeightedNumber := sum(unique(WeightedNumber), na.rm = TRUE), by = distributeQuantityBy]
+        # Sum the WeightedNumber over all hauls of the columns specified by distributeQuantityBy:
+        #SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = TRUE), by = distributeQuantityBy]
+        SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = FALSE), by = distributeQuantityBy]
         
         # Get the Haul weight factor as the WeightedNumber divided by sumWeightedNumber:
         SuperIndividualsData[, haulWeightFactor := WeightedNumber / sumWeightedNumber]
@@ -304,10 +286,10 @@ SuperIndividuals <- function(
         countGrouping <- c(
             "Haul", 
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
-            getDataTypeDefinition(dataType = "AbundanceData", elements = "groupingVariables_acoustic", unlist = TRUE), 
+            getDataTypeDefinition(dataType = "QuantityData", elements = "groupingVariables_acoustic", unlist = TRUE), 
             "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
         )
-        # Keep only the variables present in the AbundanceData, as AbundanceData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
+        # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
         countGrouping <- intersect(countGrouping, names(SuperIndividualsData))
         SuperIndividualsData[, individualNumber := .N, by = countGrouping]
         
@@ -326,7 +308,7 @@ SuperIndividuals <- function(
     # Generate the weighting factors:
     SuperIndividualsData[, individualWeightFactor := haulWeightFactor / individualNumber]
     # ... and check that they sum to 1:
-    SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeAbundanceBy]
+    SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeQuantityBy]
     tol <- sqrt(.Machine$double.eps)
     all1 <- SuperIndividualsData[!is.na(sumIndividualWeightFactor), all(sumIndividualWeightFactor > 1 - tol & sumIndividualWeightFactor < 1 + tol)]
     #if(!all1) {
@@ -393,7 +375,7 @@ addLengthGroupOneSpecies <- function(
 ) {
     
     # Get the indices at the given species in 'data' and 'master':
-    speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
+    speciesVar <- getDataTypeDefinition(dataType = "QuantityData", elements = "categoryVariable", unlist = TRUE)
     atSpeciesInData <- which(data[[speciesVar]] %in% species)
     atSpeciesInMaster <- which(master[[speciesVar]] %in% species)
     
@@ -474,7 +456,7 @@ addLengthGroup <- function(
 ) {
     
     # Run a for loop through the common species:
-    speciesVar <- getDataTypeDefinition(dataType = "AbundanceData", elements = "categoryVariable", unlist = TRUE)
+    speciesVar <- getDataTypeDefinition(dataType = "QuantityData", elements = "categoryVariable", unlist = TRUE)
     speciesInData <- unique(data[[speciesVar]])
     speciesInMaster <- unique(master[[speciesVar]])
     

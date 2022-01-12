@@ -260,8 +260,8 @@ initiateRstoxBase <- function(){
                 other = c("Cruise", "EffectiveLogDistance", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             )
         ), 
-        # Abundance:
-        AbundanceData = list(
+        # Quantity:
+        QuantityData = list(
             Data = list(
                 surveyDefinition = "Survey", 
                 horizontalResolution = "Stratum", 
@@ -273,10 +273,10 @@ initiateRstoxBase <- function(){
                 ), 
                 groupingVariables_biotic = c("IndividualTotalLength", "LengthResolution"), 
                 groupingVariables_acoustic = c("Beam", "Frequency"), 
-                data = "Abundance", 
+                data = c("Abundance", "Biomass"), 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = NULL, 
-                type = "AbundanceType", 
+                type = NULL, 
                 other = NULL
             ), 
             Resolution = list(
@@ -300,7 +300,7 @@ initiateRstoxBase <- function(){
             ), 
             VariableNames = list()
         ), 
-        # Prioritise the aggregation variables (horizontalResolution, verticalResolution, categoryVariable and groupingVariables) of the AbundanceData, followed by the IndividualRoundWeight, which is used to calculate Biomass (dividing Abundance by it); and finally the aggregation variables of the IndividualsData, as the purpose of the SuperIndividualsData is to distribute Abundance and Biomass onto the individuals:
+        # Prioritise the aggregation variables (horizontalResolution, verticalResolution, categoryVariable and groupingVariables) of the QuantityData, followed by the IndividualRoundWeight, which is used to calculate Biomass (dividing Abundance by it); and finally the aggregation variables of the IndividualsData, as the purpose of the SuperIndividualsData is to distribute Abundance and Biomass onto the individuals:
         SuperIndividualsData = list(
             Data = list(
                 surveyDefinition = "Survey", 
@@ -321,7 +321,7 @@ initiateRstoxBase <- function(){
                     "IndividualTotalLength", "LengthResolution", "IndividualRoundWeight", 
                     "Beam", "Frequency" # The relevant acoustic variables
                 ), 
-                data = c("Abundance",  "Biomass"), 
+                data = c("Abundance", "Biomass"), 
                 verticalLayerDimension = c("MinLayerDepth", "MaxLayerDepth"), 
                 weighting = NULL, 
                 other = NULL
@@ -497,8 +497,8 @@ initiateRstoxBase <- function(){
                 TrawlDoorSpread = "m"
             )
         ), 
-        # Abundance:
-        AbundanceData = list(
+        # Quantity:
+        QuantityData = list(
             Data = list(
                 IndividualTotalLength = "cm", 
                 LengthResolution = "cm", 
@@ -550,7 +550,7 @@ initiateRstoxBase <- function(){
             vertical= c("Layer"), 
             horizontal = c("Stratum", "PSU")
         ), 
-        Abundance = list(
+        Quantity = list(
             vertical= c("Layer"), 
             horizontal = c("Stratum")
         )
@@ -565,7 +565,7 @@ initiateRstoxBase <- function(){
         MeanLengthDistributionData = "LengthDistribution", 
         DensityData = "Density",
         MeanDensityData = "Density",
-        AbundanceData = "Abundance"
+        QuantityData = "Quantity"
     )
     
     
