@@ -15,7 +15,7 @@ RegroupLengthDistribution(LengthDistributionData, LengthInterval = numeric())
 An object of StoX data type \code{\link{LengthDistributionData}}.
 }
 \description{
-The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the \code{WeightedCount} of the LengthDistributionData
+The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the \code{WeightedNumber} of the LengthDistributionData
 }
 \details{
 NOTE. Function parameter \emph{SpeciesCategory} is NOT YET IMPLEMENTED. Consequently, a common LengthInterval is applied to all SpeciesCategories in the input data.

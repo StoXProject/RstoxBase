@@ -9,6 +9,7 @@ ReportSuperIndividuals(
   TargetVariable = character(),
   ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
+  InformationVariables = character(),
   RemoveMissingValues = FALSE,
   WeightingVariable = character()
 )
@@ -21,6 +22,8 @@ ReportSuperIndividuals(
 \item{ReportFunction}{The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.}
 
 \item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.}
+
+\item{InformationVariables}{Variables to include as columns to the end of the report table. These cannot have more unique combinations than the \code{GroupingVariables}.}
 
 \item{RemoveMissingValues}{Logical: If TRUE, remove missing values (NAs) from the \code{TargetVariable}. The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA. Use \code{RemoveMissingValues} = TRUE with extreme caution, as it may lead to under-estimation. E.g., if \code{RemoveMissingValues} = TRUE and a super-individual lacks \code{IndividualRoundWeight}, \code{Biomass} will be NA, and the portion of \code{Abundance} distributed to that super-individual will be excluded when summing \code{Biomass} (but included when summing \code{Abundance}). It is advised to always run with \code{RemoveMissingValues} = FALSE first, and make a thorough investigation to identify the source of any missing values. The function \code{link{ImputeSuperIndividuals}} can be used to impute the missing information from other super-individuals.}
 

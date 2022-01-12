@@ -15,11 +15,11 @@ GearDependentSpeciesCategoryCatchCompensation(
 
 \item{CompensationMethod}{The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.}
 
-\item{CompensationTable}{A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.}
+\item{CompensationTable}{A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedNumber.}
 }
 \value{
 A \code{\link{SpeciesCategoryCatchData}} object.
 }
 \description{
-This function multiplies the CatchFractionWeight and CatchFractionCount of a SpeciesCategoryCatchData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (SpeciesCategoryCatchType starting with "SweepWidthCompensated").
+This function multiplies the CatchFractionWeight and CatchFractionNumber of a SpeciesCategoryCatchData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (SpeciesCategoryCatchType starting with "SweepWidthCompensated").
 }

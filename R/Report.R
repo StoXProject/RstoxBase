@@ -21,6 +21,7 @@ ReportSuperIndividuals <- function(
     TargetVariable = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
+    InformationVariables = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character()
 ) 
@@ -36,6 +37,7 @@ ReportSuperIndividuals <- function(
         TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
         GroupingVariables = GroupingVariables, 
+        InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         WeightingVariable = WeightingVariable
     ) 
@@ -62,6 +64,7 @@ ReportDensity <- function(
     TargetVariable = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
+    InformationVariables = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character()
 ) 
@@ -76,6 +79,49 @@ ReportDensity <- function(
         TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
         GroupingVariables = GroupingVariables, 
+        InformationVariables = InformationVariables, 
+        na.rm = RemoveMissingValues, 
+        WeightingVariable = WeightingVariable
+    ) 
+}
+
+
+##################################################
+##################################################
+#' Report AbundanceData
+#' 
+#' Reports the sum, mean or other functions on a variable of the \code{\link{AbundanceData}}.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams general_report_arguments
+#' @inheritParams ReportSuperIndividuals
+#' 
+#' @return
+#' A \code{\link{ReportAbundanceData}} object.
+#' 
+#' @export
+#' 
+ReportAbundance <- function(
+    AbundanceData, 
+    TargetVariable = character(), 
+    ReportFunction = getReportFunctions(getMultiple = FALSE), 
+    GroupingVariables = character(), 
+    InformationVariables = character(), 
+    RemoveMissingValues = FALSE, 
+    WeightingVariable = character()
+) 
+{
+    # Issue a warning if RemoveMissingValues = TRUE:
+    if(isTRUE(RemoveMissingValues) && any(is.na(AbundanceData[[TargetVariable]]))) {
+        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
+    }
+    
+    aggregateBaselineDataOneTable(
+        stoxData = AbundanceData$Data, 
+        TargetVariable = TargetVariable, 
+        aggregationFunction = ReportFunction, 
+        GroupingVariables = GroupingVariables, 
+        InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         WeightingVariable = WeightingVariable
     ) 
@@ -107,6 +153,7 @@ aggregateBaselineDataOneTable <- function(
     aggregationFunction = getReportFunctions(), 
     subTable = character(), 
     GroupingVariables = character(), 
+    InformationVariables = character(), 
     na.rm = FALSE, 
     padWithZerosOn = character(), 
     WeightingVariable = character()
@@ -190,6 +237,28 @@ aggregateBaselineDataOneTable <- function(
     if(length(GroupingVariables)) {
         data.table::setorderv(outputData, GroupingVariables)
     }
+    
+    # Add the InformationVariables: 
+    if(length(InformationVariables)) {
+        if(any(InformationVariables %in% GroupingVariables)) {
+            warning("StoX: Removing the following InformationVariables that are present also in GroupingVariables: ", paste(intersect(InformationVariables, GroupingVariables), collapse = ", "), ".")
+            InformationVariables <- setdiff(InformationVariables, GroupingVariables)
+        }
+        if(length(InformationVariables)) {
+            toAdd <- unique(stoxData[, c(GroupingVariables, InformationVariables), with = FALSE])
+            nUniqueLevelsOfGroupingVariables <- nrow(unique(outputData[, GroupingVariables, with = FALSE]))
+            nUniqueLevelsOfInformationVariables <- nrow(toAdd)
+            if(nUniqueLevelsOfInformationVariables > nUniqueLevelsOfGroupingVariables) {
+                stop("The InformationVariables cannot contain more unique combinations than the GroupingVariables.")
+            }
+            outputData <- merge(
+                outputData, 
+                toAdd,  
+                all.x = TRUE, 
+                by = GroupingVariables)
+        }
+    }
+    
     
     # Set the number of digits. Added on 2021-03-04:
     RstoxData::setRstoxPrecisionLevel(outputData)
@@ -288,7 +357,7 @@ getReportFunctionPackage <- function(x) {
 #' 
 ReportSpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData, 
-    ReportVariable = c("TotalCatchCount", "TotalCatchWeight")
+    ReportVariable = c("TotalCatchNumber", "TotalCatchWeight")
 ){
     
     # Get the ReportVariable:

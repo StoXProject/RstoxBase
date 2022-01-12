@@ -268,6 +268,46 @@ backwardCompatibility <- list(
 	        parameterName = "LayerDefinitionMethod", 
 	        value = "LayerTable", 
 	        newValue = "Table"
+	    ), 
+	    list(
+	        changeVersion = "1.5.3", 
+	        functionName = "BioticAssignmentWeighting", 
+	        modelName = "baseline", 
+	        parameterName = "WeightingMethod", 
+	        value = "NormalizedTotalCount", 
+	        newValue = "NormalizedTotalNumber"
+	    ), 
+	    list(
+	        changeVersion = "1.5.3", 
+	        functionName = "BioticAssignmentWeighting", 
+	        modelName = "baseline", 
+	        parameterName = "WeightingMethod", 
+	        value = "SumWeightedCount", 
+	        newValue = "SumWeightedNumber"
+	    ), 
+	    list(
+	        changeVersion = "1.5.3", 
+	        functionName = "BioticAssignmentWeighting", 
+	        modelName = "baseline", 
+	        parameterName = "WeightingMethod", 
+	        value = "InverseSumWeightedCount", 
+	        newValue = "InverseSumWeightedNumber"
+	    ), 
+	    list(
+	        changeVersion = "1.5.3", 
+	        functionName = "LengthDistribution", 
+	        modelName = "baseline", 
+	        parameterName = "RaisingFactorPriority", 
+	        value = "Count", 
+	        newValue = "Number"
+	    ),
+	    list(
+	        changeVersion = "1.5.3", 
+	        functionName = "ReportSpeciesCategoryCatch", 
+	        modelName = "report", 
+	        parameterName = "ReportVariable", 
+	        value = "TotalCatchCount", 
+	        newValue = "TotalCatchNumber"
 	    )
 	), 
     

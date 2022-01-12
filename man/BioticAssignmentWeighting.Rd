@@ -7,7 +7,7 @@
 BioticAssignmentWeighting(
   BioticAssignment,
   WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight",
-    "NormalizedTotalCount", "SumWeightedCount", "InverseSumWeightedCount"),
+    "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber"),
   StoxBioticData,
   LengthDistributionData,
   MaxNumberOfLengthSamples = 100,
@@ -19,11 +19,11 @@ BioticAssignmentWeighting(
 \arguments{
 \item{BioticAssignment}{The \code{\link{BioticAssignment}} process data.}
 
-\item{WeightingMethod}{Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalCount", the same as "NormalizedTotalWeight" but for total count, "SumWeightedCount", weighting by the summed WeightedCount of the input LengthDistributionData; and "InverseSumWeightedCount", weighting by the inverse of the summed WeightedCount.}
+\item{WeightingMethod}{Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalNumber", the same as "NormalizedTotalWeight" but for total number, "SumWeightedNumber", weighting by the summed WeightedNumber of the input LengthDistributionData; and "InverseSumWeightedNumber", weighting by the inverse of the summed WeightedNumber.}
 
 \item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
 
-\item{LengthDistributionData}{The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedCount" or "InverseSumWeightedCount", in which case the column WeightedCount is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).}
+\item{LengthDistributionData}{The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).}
 
 \item{MaxNumberOfLengthSamples}{For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.}
 
@@ -55,17 +55,17 @@ The assigned biotic hauls are given a weighting value according to the number of
 
 The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 
-\strong{NormalizedTotalCount}
+\strong{NormalizedTotalNumber}
 
-The assigned biotic hauls are given a weighting value according to the normalized catch count (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch count divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
+The assigned biotic hauls are given a weighting value according to the normalized catch number (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch number divided by towing distance. This normalization makes the stations comparable regardless of catch effort.
 
-\strong{SumWeightedCount}
+\strong{SumWeightedNumber}
 
-The assigned biotic hauls are given a weighting value according to the estimated normalized length distribution count (number of individuals in all length groups) of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
+The assigned biotic hauls are given a weighting value according to the sum of the WeightedNumber of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 
-\strong{InverseSumWeightedCount}
+\strong{InverseSumWeightedNumber}
 
-The assigned biotic hauls are given a weighting value as the inverse of the sum of the count of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
+The assigned biotic hauls are given a weighting value as the inverse of the sum of the WeightedNumber of all length groups and all species. The weighting value \eqn{w_b} is calculated as:
 
 \deqn{w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }}
 
@@ -81,7 +81,7 @@ where:
 
 \eqn{m_{s,b}}  =	number of length groups for species \emph{s} in biotic haul \emph{b}
 
-\eqn{c_{l,s,b}} = count in length group \emph{l} for species \emph{s} in biotic haul \emph{b}
+\eqn{c_{l,s,b}} = number in length group \emph{l} for species \emph{s} in biotic haul \emph{b}
 
 The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.
 

@@ -1,3 +1,35 @@
+# RstoxBase v1.5.3 (2022-01-12)
+* Changed all instances of the use of the phrase "count" to "number", in accordance with the terminology of ICESBiotic and the convension "area number density" ("area count density is very rare"). This change affects the following code:
+
+    + In StoxBiotic():
+	|   *SampleCount -> SampleNumber*
+	|   *CatchFractionCount -> CatchFractionNumber*
+	**This could affect external scripts that use the StoxBioticData.**
+	
+    + In LengthDistribution(), SumLengthDistribution(), MeanLengthDistribution(), AssignmentLengthDistribution(), RegroupLengthDistribution(), GearDependentCatchCompensation(), LengthDependentCatchCompensation(), RelativeLengthDistribution():
+	|   *Renamed the column WeightedCount to WeightedNumber*
+    **This could affect external scripts that use one of the listed datatypes as WeightedCount is no longer found. Other than that the WeightedCount does not exist further in the estimation models in StoX.**
+
+    + In BioticAssignmentWeighting():
+	|   *WeightingMethod = "NormalizedTotalCount"    -> "NormalizedTotalNumber"*
+	|   *WeightingMethod = "SumWeightedCount"        -> "SumWeightedNumber"*
+	|   *WeightingMethod = "InverseSumWeightedCount" -> "InverseSumWeightedNumber"*
+	**Backward compatibility should take care of these**
+
+    + LengthDistribution():
+	|   *RaisingFactorPriority = "Count" -> "Number"*
+    **Backward compatibility should take care of these**
+* Added the function ReportAbundance.
+* Added the parameter InformationVariables to reports.
+
+
+# RstoxBase v1.5.2 (2022-01-10)
+* Changed SpeciesCategoryCatch() to return a single table similar to LengthDistributionData, but with TotalCatchWeight and TotalCatchCount instead of WeightedCount. As such, moved the CatchVariable of SpeciesCategoryCatch() to the ReportVariable of ReportSpeciesCategoryCatch(). The latter is a backward compatibility breaking change.
+* Added SumSpeciesCategoryCatch() and MeanSpeciesCategoryCatch().
+* Added the parameter SweptAreaDensityType in SweptAreaDensity() supporting both "LengthDistributed" and "TotalCatch" swept-area density. 
+* Added new column DensityType in DensityData with supported values "AreaNumberDensity" (the only option for AcousticDensity() and  SweptAreaDensityType "LengthDistributed") and  "AreaMassDensity".
+* Added new column AbundanceType in AbundanceData with supported values "Number" (the only option for AcousticDensity() and  SweptAreaDensityType "LengthDistributed") and "Mass".
+
 # RstoxBase v1.5.1 (2022-01-07)
 * Added DefineRegression(), EstimateBioticRegression() and the implementation in ImputeSuperIndividuals(). Refactored so that DefineRegression() and DefineAcousticTargetStrength() both use the underlying DefineModel(), with outputs <Model>Model and <Model>Table. Renamed DefinitionMethod "TargetStrengthTable", "SurveyTable" and "LayerTable" to "Table".
 

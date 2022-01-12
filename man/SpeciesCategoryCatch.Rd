@@ -2,7 +2,7 @@
 % Please edit documentation in R/SpeciesCategoryCatch.R
 \name{SpeciesCategoryCatch}
 \alias{SpeciesCategoryCatch}
-\title{Table of total catch weight and count per Haul and SpeciesCategory}
+\title{Table of total catch weight and number per Haul and SpeciesCategory}
 \usage{
 SpeciesCategoryCatch(
   StoxBioticData,
@@ -15,5 +15,5 @@ SpeciesCategoryCatch(
 \item{SpeciesCategoryCatchType}{The type of the total catch variables, either "Standard" for the raw total catch and "Normalized" for normalizing by tow distance by dividing by the EffectiveTowDistance in nautical miles.}
 }
 \description{
-This function sums the catch fraction weight and count per Haul and SpeciesCategory.
+This function sums the catch fraction weight and number per Haul and SpeciesCategory.
 }

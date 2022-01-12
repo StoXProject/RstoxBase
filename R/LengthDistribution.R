@@ -6,10 +6,10 @@
 #' 
 #' @inheritParams ModelData
 #' @param LengthDistributionType The type of length distribution to use, one of "Standard", "Normalized" and "Percent" (see 'Details').
-#' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".
+#' @param RaisingFactorPriority A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Number".
 #'
 #' @details 
-#' The \emph{LengthDistribution} function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionCount is calculated in the same manner.
+#' The \emph{LengthDistribution} function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionNumber is calculated in the same manner.
 #' 
 #' From each CatchFraction, a Sample is usually taken. Various types of individual characteristics or population parameters are measures. The most common parameters are individual length followed by weight. Other parameters are age, sex, maturity etc. The Sample weight and number is recorded. From the CatchFractionWeight and the SampleWeight, a raising factor (\emph{r}) is calculated as:
 #' 
@@ -17,9 +17,9 @@
 #' 
 #' alternatively, the raising factor r can be calculated as:
 #' 
-#' \deqn{r = \frac{CatchFractionCount}{SampleCount}}
+#' \deqn{r = \frac{CatchFractionNumber}{SampleNumber}}
 #' 
-#' A \emph{RaisingFactorPriority} parameter determines whether to make the first attempt on calculating the raising factor by weight or count variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.
+#' A \emph{RaisingFactorPriority} parameter determines whether to make the first attempt on calculating the raising factor by weight or number of variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.
 #' 
 #' To produce a length frequency distribution for the Haul by SpeciesCategory, each Sample length distribution is first multiplied with the raising factor of the Sample. A total length distribution for the entire catch, is produced by adding the adjusted length distributions from all the Samples into one common length distribution for the SpeciesCategory in a Haul.
 #' 
@@ -42,7 +42,7 @@
 #' 
 #'1) \strong{Standard}
 #' 
-#' A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionCount and SampleCount. If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.
+#' A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionNumber and SampleNumber If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.
 #' 
 #' 2) \strong{Normalized}
 #' 
@@ -69,7 +69,7 @@
 LengthDistribution <- function(
     StoxBioticData, 
     LengthDistributionType = c("Normalized", "Standard", "Percent"), 
-    RaisingFactorPriority = c("Weight", "Count")
+    RaisingFactorPriority = c("Weight", "Number")
 ) {
     
     ####################################
@@ -100,7 +100,7 @@ LengthDistribution <- function(
     ############################
     
     ####################################################
-    ##### 2. Get the count in each length group: #######
+    ##### 2. Get the number in each length group: ######
     ####################################################
     keys <- c(
         # Get all keys except the individual key (since we are supposed to count individuals). This includes unique hauls (CruiseKey, StationKey, HaulKey, SpeciesCategoryKey, SampleKey):
@@ -113,7 +113,7 @@ LengthDistribution <- function(
     )
     
     # Declare the variables used below:
-    LengthDistributionData <- StoxBioticDataMerged[, WeightedCount := as.double(.N), by = keys]
+    LengthDistributionData <- StoxBioticDataMerged[, WeightedNumber := as.double(.N), by = keys]
     if(!nrow(LengthDistributionData)) {
         warning("StoX: Empty Individual table.")
         return(LengthDistributionData)
@@ -149,7 +149,7 @@ LengthDistribution <- function(
     # Create a data table of different raising factors in the columns:
     raisingFactorTable <- data.frame(
         Weight = LengthDistributionData$CatchFractionWeight / LengthDistributionData$SampleWeight, 
-        Count = LengthDistributionData$CatchFractionCount / LengthDistributionData$SampleCount, 
+        Number = LengthDistributionData$CatchFractionNumber / LengthDistributionData$SampleNumber, 
         Percent = 1
     )
     
@@ -169,11 +169,11 @@ LengthDistribution <- function(
     # Warnings for NA or Inf raising factor, but only if both Haul and SpeciesCategory are given:
     atRaisingFactorNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(raisingFactor) & !is.na(SpeciesCategory)])
     if(length(atRaisingFactorNA)) {
-        warning("StoX: The following Hauls have missing (NA) raising factor, which is an indication that both CatchFractionWeight and CatchFractionCount, or both SampleWeight and SampleCount are missing for those samples (or possibly other combinations of missing values).:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorNA]), collapse = "\n"))
+        warning("StoX: The following Hauls have missing (NA) raising factor, which is an indication that both CatchFractionWeight and CatchFractionNumber, or both SampleWeight and SampleNumber are missing for those samples (or possibly other combinations of missing values).:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorNA]), collapse = "\n"))
     }
     atRaisingFactorInf <- which(LengthDistributionData[, !is.na(Haul) & is.infinite(raisingFactor) & !is.na(SpeciesCategory)])
     if(length(atRaisingFactorInf)) {
-        warning("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleCount are 0 for those samples and will lead to Inf values in the length distribution, which in turn can result in loss of NASC in SplitNASC() or loss of density in AcousticDensity().:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorInf]), collapse = "\n"))
+        warning("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution, which in turn can result in loss of NASC in SplitNASC() or loss of density in AcousticDensity().:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorInf]), collapse = "\n"))
     }
     
     # Apply the raising factor and sum over samples:
@@ -182,7 +182,7 @@ LengthDistribution <- function(
     keysSansSample <- setdiff(keys, SampleKey)
     #keysSansSample <- RstoxData::getStoxKeys("StoxBiotic", level = "Sample", keys.out = "all.but.present")
     
-    LengthDistributionData <- LengthDistributionData[, WeightedCount := sum(WeightedCount * raisingFactor), by = keysSansSample]
+    LengthDistributionData <- LengthDistributionData[, WeightedNumber := sum(WeightedNumber * raisingFactor), by = keysSansSample]
     LengthDistributionData <- subset(LengthDistributionData, !duplicated(LengthDistributionData[, ..keysSansSample]))
     #######################################################
     
@@ -193,14 +193,14 @@ LengthDistribution <- function(
     if(LengthDistributionType == "Normalized") {
         atEffectiveTowDistance0 <- which(LengthDistributionData[, !is.na(Haul) & EffectiveTowDistance == 0])
         if(length(atEffectiveTowDistance0)) {
-            warning("StoX: The following Hauls have EffectiveTowDistance = 0, which causes WeightedCount = Inf. This may result in loss of data at a later stage, e.g. in SplitNASC:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = "\n"))
+            warning("StoX: The following Hauls have EffectiveTowDistance = 0, which causes WeightedNumber = Inf. This may result in loss of data at a later stage, e.g. in SplitNASC:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = "\n"))
         }
         atEffectiveTowDistanceNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(EffectiveTowDistance)])
         if(length(atEffectiveTowDistanceNA)) {
-            warning("StoX: The following Hauls have EffectiveTowDistance = NA, which when LengthDistributionType == \"Normalized\" results in all WeightedCount = NA, which will propagate through mean and sum proecsses throughout the project.:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = "\n"))
+            warning("StoX: The following Hauls have EffectiveTowDistance = NA, which when LengthDistributionType == \"Normalized\" results in all WeightedNumber = NA, which will propagate through mean and sum proecsses throughout the project.:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = "\n"))
         }
         
-        LengthDistributionData[, WeightedCount := WeightedCount / EffectiveTowDistance]
+        LengthDistributionData[, WeightedNumber := WeightedNumber / EffectiveTowDistance]
     }
     
     # Add the LengthDistributionType to the LengthDistributionData:
@@ -236,7 +236,7 @@ LengthDistribution <- function(
 ##################################################
 #' Regroup length distribution to common intervals
 #' 
-#' The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the \code{WeightedCount} of the LengthDistributionData
+#' The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the \code{WeightedNumber} of the LengthDistributionData
 #' 
 #' @inheritParams ModelData
 #' @param LengthInterval Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.
@@ -265,10 +265,10 @@ RegroupLengthDistribution <- function(
         lengthInterval = LengthInterval
     )
     
-    # Aggregate the WeightedCount in the new length groups:
+    # Aggregate the WeightedNumber in the new length groups:
     # Extract the 'by' element:
     by <- getAllAggregationVariables(dataType="LengthDistributionData")
-    LengthDistributionDataCopy[, WeightedCount := sum(WeightedCount), by = by]
+    LengthDistributionDataCopy[, WeightedNumber := sum(WeightedNumber), by = by]
     # Delete duplicated rows:
     LengthDistributionDataCopy <- unique(LengthDistributionDataCopy)
     
@@ -365,12 +365,12 @@ strictlyInside <- function(x, table, margin = 1e-6) {
 ##################################################
 #' Apply the sweep of different gear (and cruise)
 #' 
-#' This function multiplies the WeightedCount of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
+#' This function multiplies the WeightedNumber of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
 #' 
 #' @inheritParams ModelData
 #' @param InputDataType The datatype of the input, one of LengthDistributionData, SpeciesCategoryCatchData.
 #' @param CompensationMethod The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.
-#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.
+#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedNumber.
 #' 
 GearDependentCatchCompensation <- function(
     InputDataType = c("LengthDistributionData", "SpeciesCategoryCatchData"), 
@@ -456,11 +456,11 @@ checkAllCombinations <- function(data, table, variables) {
 ##################################################
 #' Apply the sweep of different gear (and cruise)
 #' 
-#' This function multiplies the WeightedCount of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
+#' This function multiplies the WeightedNumber of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
 #' 
 #' @inheritParams ModelData
 #' @param CompensationMethod The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.
-#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedCount.
+#' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedNumber.
 #' 
 #' @return
 #' A \code{\link{LengthDistributionData}} object.
@@ -581,7 +581,7 @@ LengthDependentLengthDistributionCompensation <- function(
 #   L = LMin if L < LMin 
 # and 
 #   L = LMax if L > LMax:
-applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthMiddle, LMin, LMax, Alpha, Beta) {
+applyLengthDependentSweepWidth <- function(WeightedNumber, IndividualTotalLengthMiddle, LMin, LMax, Alpha, Beta) {
     # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
     if(any(is.na(LMin))) {
         stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMin. Subset the rows before applying the function.")
@@ -593,13 +593,13 @@ applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthM
     # And the lengths larger than LMax to LMax: 
     IndividualTotalLengthMiddle <- pmin(IndividualTotalLengthMiddle, LMax)
     
-    # Calculate the factor to multiply the WeightedCount by:
+    # Calculate the factor to multiply the WeightedNumber by:
     sweepWidth <- Alpha * IndividualTotalLengthMiddle^Beta
     sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
     
-    WeightedCount <- WeightedCount / sweepWidthInNauticalMiles
+    WeightedNumber <- WeightedNumber / sweepWidthInNauticalMiles
     
-    return(WeightedCount)
+    return(WeightedNumber)
 }
 
 # Function to apply the length dependent selectivity function.
@@ -608,25 +608,25 @@ applyLengthDependentSweepWidth <- function(WeightedCount, IndividualTotalLengthM
 #   fact = Alpha * exp(L * Beta)
 # and 
 #   fact = 1 if L > LMax:
-applyLengthDependentSelectivity <- function(WeightedCount, IndividualTotalLengthMiddle, LMax, Alpha, Beta) {
+applyLengthDependentSelectivity <- function(WeightedNumber, IndividualTotalLengthMiddle, LMax, Alpha, Beta) {
     # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
     if(any(is.na(LMax))) {
         stop("The function applyLengthDependentSelectivity() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
     }
     
-    # Calculate the factor to multiply the WeightedCount:
+    # Calculate the factor to multiply the WeightedNumber:
     fact <- Alpha * exp(IndividualTotalLengthMiddle * Beta)
     # Set the factor to 1 outside of the range LMin to LMax. This is  questionable, and we do not turn on this functionality before this method is approved:
     stop("CatchabilityMethod = \"LengthDependentSelectivity\" is not yet supported.")
     fact[IndividualTotalLengthMiddle > LMax] <- 1
-    WeightedCount <- WeightedCount * fact
+    WeightedNumber <- WeightedNumber * fact
     
-    return(WeightedCount)
+    return(WeightedNumber)
 }
 
 
 # Function to run a length dependent compensation function, given its method name, parameter table, vector of required parameters and the specific grouping variable, which in all current cases is "SpeciesCategory":
-# It is possible to simplify this function to only take the method as input, requiring that the function is named apply<methodname>, the parameter table is named <methodname>Parameters, and the function has the parameters WeightedCount and IndividualTotalLengthMiddle followed by the required parameters (then R would determine the required parameters from the formals of the function). We should discuss whether to proceed with this strategy:
+# It is possible to simplify this function to only take the method as input, requiring that the function is named apply<methodname>, the parameter table is named <methodname>Parameters, and the function has the parameters WeightedNumber and IndividualTotalLengthMiddle followed by the required parameters (then R would determine the required parameters from the formals of the function). We should discuss whether to proceed with this strategy:
 runLengthDependentCompensationFunction <- function(data, compensationMethod, compensationFunction, parametertable, requiredParameters, groupingVariable = "SpeciesCategory") {
     
     
@@ -676,8 +676,8 @@ runLengthDependentCompensationFunction <- function(data, compensationMethod, com
     #if(!all(valid)) {
     #    warning("StoX: Length dependent compensation was not applied to all species categories in the length distribution data")
     #}
-    functionInputColumns <- c("WeightedCount", "IndividualTotalLengthMiddle", requiredParameters)
-    data[valid, WeightedCount := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]
+    functionInputColumns <- c("WeightedNumber", "IndividualTotalLengthMiddle", requiredParameters)
+    data[valid, WeightedNumber := do.call(compensationFunction, .SD), .SDcols = functionInputColumns]
     
     # Remove the temporary columns:
     data[, (requiredParameters) := vector("list", length(requiredParameters))]
@@ -717,7 +717,7 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
     by <- getAllAggregationVariables(dataType="LengthDistributionData", exclude.groupingVariables = TRUE)
     
     # Apply the division by the sum:
-    LengthDistributionDataCopy[, WeightedCount := WeightedCount / sum(WeightedCount) * 100, by = by]
+    LengthDistributionDataCopy[, WeightedNumber := WeightedNumber / sum(WeightedNumber) * 100, by = by]
     LengthDistributionDataCopy[, LengthDistributionType := "Percent"]
     
     return(LengthDistributionDataCopy)
@@ -967,14 +967,14 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
     thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
     
-    # Get the category and grouping variables (SpeciesCategory, IndividualTotalLength, LengthResolution), and sum across hauls for each combination of these variables, weighted by the "WeightedCount":
+    # Get the category and grouping variables (SpeciesCategory, IndividualTotalLength, LengthResolution), and sum across hauls for each combination of these variables, weighted by the "WeightedNumber":
     by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     thisLengthDistributionData[, c(dataVariable) := sum(x = get(dataVariable) * get(weightingVariable)), by = by]
     
     # Add the number of assigned hauls par PSU, and the number of assigned hauls with length distribution for each species
     thisLengthDistributionData[, NumberOfAssignedHauls := length(unique(Haul))]
-    thisLengthDistributionData[, HasAnyPositiveWeightedCount := any(!is.na(WeightedCount) & (WeightedCount > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
-    thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedCount, Haul, NA)]
+    thisLengthDistributionData[, HasAnyPositiveWeightedNumber := any(!is.na(WeightedNumber) & (WeightedNumber > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
+    thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedNumber, Haul, NA)]
     thisLengthDistributionData[, NumberOfAssignedHaulsWithCatch := length(unique(stats::na.omit(ValidHaul))), by = "SpeciesCategory"]
     
     # Extract only the relevant columns:
@@ -984,7 +984,7 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
         data = thisLengthDistributionData, 
         toRemove = c(
             getResolutionVariables("AssignmentLengthDistributionData"), 
-            "HasAnyPositiveWeightedCount",
+            "HasAnyPositiveWeightedNumber",
             "ValidHaul"
         )
     )

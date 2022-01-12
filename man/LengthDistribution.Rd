@@ -7,7 +7,7 @@
 LengthDistribution(
   StoxBioticData,
   LengthDistributionType = c("Normalized", "Standard", "Percent"),
-  RaisingFactorPriority = c("Weight", "Count")
+  RaisingFactorPriority = c("Weight", "Number")
 )
 }
 \arguments{
@@ -15,7 +15,7 @@ LengthDistribution(
 
 \item{LengthDistributionType}{The type of length distribution to use, one of "Standard", "Normalized" and "Percent" (see 'Details').}
 
-\item{RaisingFactorPriority}{A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Count".}
+\item{RaisingFactorPriority}{A character string naming the variable to prioritise when generating raising factors for summing length distributions from different (sub)samples of one SpeciesCategory of a Haul, one of "Weight" and "Number".}
 }
 \value{
 An object of StoX data type \code{\link{LengthDistributionData}}.
@@ -24,7 +24,7 @@ An object of StoX data type \code{\link{LengthDistributionData}}.
 This function calculates length frequency distributions for each biotic Station and Haul by SpeciesCategory.
 }
 \details{
-The \emph{LengthDistribution} function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionCount is calculated in the same manner.
+The \emph{LengthDistribution} function produces length frequency distributions for each biotic Station and Haul by SpeciesCategory. A SpeciesCategory is usually a taxonomic species, but the categorization may follow other criteria.The catch of one SpeciesCategory is often split into one or more CatchFractions. If the catch of a species consists of several distinct size ranges, it is common to perform such splitting. For each CatchFraction, a CatchFractionWeight has been calculated and raised to Haul level. The sum of all CatchFractionWeights for a SpeciesCategory is therefore equal to the total catch weight of the trawl Haul. A CatchFractionNumber is calculated in the same manner.
 
 From each CatchFraction, a Sample is usually taken. Various types of individual characteristics or population parameters are measures. The most common parameters are individual length followed by weight. Other parameters are age, sex, maturity etc. The Sample weight and number is recorded. From the CatchFractionWeight and the SampleWeight, a raising factor (\emph{r}) is calculated as:
 
@@ -32,9 +32,9 @@ From each CatchFraction, a Sample is usually taken. Various types of individual 
 
 alternatively, the raising factor r can be calculated as:
 
-\deqn{r = \frac{CatchFractionCount}{SampleCount}}
+\deqn{r = \frac{CatchFractionNumber}{SampleNumber}}
 
-A \emph{RaisingFactorPriority} parameter determines whether to make the first attempt on calculating the raising factor by weight or count variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.
+A \emph{RaisingFactorPriority} parameter determines whether to make the first attempt on calculating the raising factor by weight or number of variables. If the initial attempt fails due to lack of data, a new attempt is done using the alternative variables.
 
 To produce a length frequency distribution for the Haul by SpeciesCategory, each Sample length distribution is first multiplied with the raising factor of the Sample. A total length distribution for the entire catch, is produced by adding the adjusted length distributions from all the Samples into one common length distribution for the SpeciesCategory in a Haul.
 
@@ -57,7 +57,7 @@ The LengthDistribution function can generate three different distributions types
 
 1) \strong{Standard}
 
-A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionCount and SampleCount. If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.
+A calculated length distribution as if every individual of the SpeciesCategory in the Haul had been length measured. This is mainly done as described above. A raising factor for each Sample will be attempted calculated using either CatchFractionWeight and SampleWeight or CatchFractionNumber and SampleNumber If both attempts to calculate a raising factor for one or more Samples fail, no LengthDistribution can be created for the SpeciesCategory in this Haul.
 
 2) \strong{Normalized}
 

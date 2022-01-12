@@ -6,7 +6,7 @@
 \usage{
 ReportSpeciesCategoryCatch(
   SpeciesCategoryCatchData,
-  ReportVariable = c("TotalCatchCount", "TotalCatchWeight")
+  ReportVariable = c("TotalCatchNumber", "TotalCatchWeight")
 )
 }
 \arguments{

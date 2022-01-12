@@ -4,7 +4,7 @@
 \alias{SpeciesCategoryCatchData}
 \title{Total catch per SpeciesCategory and Haul}
 \description{
-The SpeciesCategoryDensityData columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedCount, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
+The SpeciesCategoryCatchData contains the columns Station, Haul, SpeciesCategory, TotalCatchWeigth, TotalCatchNumber, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and SpeciesCategoryCatchType.
 }
 \seealso{
 This data type is produced by \code{\link{SpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}

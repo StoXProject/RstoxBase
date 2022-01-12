@@ -333,11 +333,11 @@ stoxFunctionAttributes <- list(
         functionArgumentHierarchy = list(
             StoxBioticData = list(
                 # The WeightingMethod can be any of these:
-                WeightingMethod = c("NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalCount")
+                WeightingMethod = c("NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalNumber")
             ), 
             LengthDistributionData = list(
                 # The WeightingMethod can be any of these:
-                WeightingMethod = c("SumWeightedCount", "InverseSumWeightedCount", "NASC")
+                WeightingMethod = c("SumWeightedNumber", "InverseSumWeightedNumber", "NASC")
             ), 
             MaxNumberOfLengthSamples = list(
                 WeightingMethod = c("NumberOfLengthSamples")
@@ -719,6 +719,9 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "DensityData", 
+        functionParameterFormat = list(
+            DensityType = "densityType_SweptAreaDensity"
+        ),
         functionArgumentHierarchy = list(
             MeanLengthDistributionData = list(
                 SweptAreaDensityMethod = "LengthDistributed"
@@ -893,7 +896,8 @@ stoxFunctionAttributes <- list(
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
             #TargetVariable = "targetVariable_ReportSuperIndividuals", 
-            GroupingVariables = "groupingVariables_ReportSuperIndividuals"
+            GroupingVariables = "groupingVariables_ReportSuperIndividuals", 
+            InformationVariables = "informationVariables_ReportSuperIndividuals"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -909,7 +913,25 @@ stoxFunctionAttributes <- list(
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
             #TargetVariable = "targetVariable_ReportSuperIndividuals", 
-            GroupingVariables = "groupingVariables_ReportDensity"
+            GroupingVariables = "groupingVariables_ReportDensity", 
+            InformationVariables = "informationVariables_ReportDensity"
+        ), 
+        functionArgumentHierarchy = list(
+            WeightingVariable = list(
+                ReportFunction = expression(RstoxBase::getWeightingFunctions())
+            )
+        )
+    ), 
+    
+    ReportAbundance = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "ReportAbundanceData", 
+        # This is an example of using an expression to determine when to show a parameter:
+        functionParameterFormat = list(
+            #TargetVariable = "targetVariable_ReportSuperIndividuals", 
+            GroupingVariables = "groupingVariables_ReportAbundance", 
+            InformationVariables = "informationVariables_ReportAbundance"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -1360,6 +1382,18 @@ processPropertyFormats <- list(
         }
     ), 
     
+    densityType_SweptAreaDensity = list(
+        class = "vector", # Should be changed to single when this is implemented in the GUI.
+        possibleValues = function(SweptAreaDensityMethod) {
+            if(SweptAreaDensityMethod == "LengthDistributed") {
+                AreaNumberDensity
+            }
+            else if(SweptAreaDensityMethod == "TotalCatch") {
+                c("AreaNumberDensity", "AreaWeightDensity")
+            }
+        }
+    ), 
+    
     groupingVariables_ReportSuperIndividuals = list(
         class = "vector", 
         title = "One or more variables to group super-individuals by when reporting SuperIndividualsData", 
@@ -1377,6 +1411,44 @@ processPropertyFormats <- list(
         }, 
         variableTypes <- "character"
     ), 
+    
+    groupingVariables_ReportAbundance = list(
+        class = "vector", 
+        title = "One or more variables to group by when reporting AbundanceData", 
+        possibleValues = function(AbundanceData) {
+            sort(names(AbundanceData$Data))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
+    
+    informationVariables_ReportSuperIndividuals = list(
+        class = "vector", 
+        title = "One or more columns to inlcude in ReportSuperIndividualsData", 
+        possibleValues = function(SuperIndividualsData, GroupingVariables) {
+            sort(setdiff(names(SuperIndividualsData), GroupingVariables))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
+    informationVariables_ReportDensity = list(
+        class = "vector", 
+        title = "One or more columns to inlcude in ReportDensityData", 
+        possibleValues = function(DensityData, GroupingVariables) {
+            sort(setdiff(names(DensityData$Data), GroupingVariables))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
+    informationVariables_ReportAbundance = list(
+        class = "vector", 
+        title = "One or more columns to inlcude in ReportAbundanceData", 
+        possibleValues = function(AbundanceData, GroupingVariables) {
+            sort(setdiff(names(AbundanceData$Data), GroupingVariables))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
     
     surveyTable = list(
         class = "table", 

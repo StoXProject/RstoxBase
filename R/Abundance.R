@@ -116,7 +116,7 @@ Individuals <- function(
         usedHauls <- BioticAssignment[WeightingFactor > 0, .(Haul = unique(Haul)), by = abundanceResolutionVariables]
     }
     else if(AbundanceType == "SweptArea") {
-        # Get the PSUs that have positive WeightedCount (changed on 2021-03-09):
+        # Get the PSUs that have positive WeightedNumber (changed on 2021-03-09):
         dataVariable <- getDataTypeDefinition("MeanLengthDistributionData", subTable = "Data", elements = "data", unlist = TRUE)
         # Make sure to omit NAs, which indicate hauls which are not tagged to any PSU (e.g. outside of any stratum):
         #PSUs <- MeanLengthDistributionData$Data[get(dataVariable) > 0, unique(PSU)]
@@ -230,7 +230,7 @@ SuperIndividuals <- function(
         by = mergeBy, 
         allow.cartesian = TRUE, 
         ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
-        # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation (after bootstrapping):
+        # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedNumber from hauls with no individuals present in the estimation (after bootstrapping):
         # all.y = TRUE
         
         # Reverting to all = TRUE, since all.x = TRUE had the unwanted effect that the behavior of seed changed due to the weak code in ImputeData where data.table::data.table is used to cbind uniqueKeys, and imputeSeed, whereas a seed per pasted unique combination of the keys, treated as factor with platform independent sorting should be use. Also, we are not adding Abundance to the individuals, but rather distributing ALL OF THE Abundance to inidividuals:
@@ -238,7 +238,7 @@ SuperIndividuals <- function(
         all = TRUE
     )
     
-    # Append an individualCount to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
+    # Append an individualNumber to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     distributeAbundanceBy <- c(
         getDataTypeDefinition(dataType = "AbundanceData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
         "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
@@ -248,7 +248,7 @@ SuperIndividuals <- function(
     
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(DistributionMethod == "Equal") {
-        SuperIndividualsData[, individualCount := as.double(.N), by = distributeAbundanceBy]
+        SuperIndividualsData[, individualNumber := as.double(.N), by = distributeAbundanceBy]
         SuperIndividualsData[, haulWeightFactor := 1]
     }
     else if(DistributionMethod == "HaulDensity") {
@@ -277,30 +277,30 @@ SuperIndividuals <- function(
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
             "LengthGroup"
         )
-        # Add the haul density as the WeightedCount to the SuperIndividualsData (requiring Normalized LengthDistributionType):
+        # Add the haul density as the WeightedNumber to the SuperIndividualsData (requiring Normalized LengthDistributionType):
         # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl:
         SuperIndividualsData <- merge(
             SuperIndividualsData, 
-            LengthDistributionData[, c(..haulGrouping, "WeightedCount")], 
+            LengthDistributionData[, c(..haulGrouping, "WeightedNumber")], 
             by = haulGrouping, 
             allow.cartesian = TRUE, 
-            # Changed this onn 2021-02-14 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedCount from hauls with no individuals present in the estimation:
+            # Changed this onn 2021-02-14 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedNumber from hauls with no individuals present in the estimation:
             # all.y = TRUE
             all.x = TRUE
         )
         
-        # Sum the haul densities (stored as WeightedCount) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
-        # No no, this was certainly wrong, as WeightedCount could be duplicated within a Stratum for one length group:
-        #SuperIndividualsData[, sumWeightedCount := sum(unique(WeightedCount), na.rm = TRUE), by = distributeAbundanceBy]
-        # Sum the WeightedCount over all hauls of the columns specified by distributeAbundanceBy:
-        #SuperIndividualsData[, sumWeightedCount := sum(WeightedCount[!duplicated(Haul)], na.rm = TRUE), by = distributeAbundanceBy]
-        SuperIndividualsData[, sumWeightedCount := sum(WeightedCount[!duplicated(Haul)], na.rm = FALSE), by = distributeAbundanceBy]
+        # Sum the haul densities (stored as WeightedNumber) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
+        # No no, this was certainly wrong, as WeightedNumber could be duplicated within a Stratum for one length group:
+        #SuperIndividualsData[, sumWeightedNumber := sum(unique(WeightedNumber), na.rm = TRUE), by = distributeAbundanceBy]
+        # Sum the WeightedNumber over all hauls of the columns specified by distributeAbundanceBy:
+        #SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = TRUE), by = distributeAbundanceBy]
+        SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = FALSE), by = distributeAbundanceBy]
         
-        # Get the Haul weight factor as the WeightedCount divided by sumWeightedCount:
-        SuperIndividualsData[, haulWeightFactor := WeightedCount / sumWeightedCount]
+        # Get the Haul weight factor as the WeightedNumber divided by sumWeightedNumber:
+        SuperIndividualsData[, haulWeightFactor := WeightedNumber / sumWeightedNumber]
         
         # Count the length measured individuals of each Haul, species, beam and length group:
-        #SuperIndividualsData[, individualCount := .N, by = haulGrouping] # This was an error, since it did not take different beams into account.
+        #SuperIndividualsData[, individualNumber := .N, by = haulGrouping] # This was an error, since it did not take different beams into account.
         countGrouping <- c(
             "Haul", 
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
@@ -309,14 +309,14 @@ SuperIndividuals <- function(
         )
         # Keep only the variables present in the AbundanceData, as AbundanceData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
         countGrouping <- intersect(countGrouping, names(SuperIndividualsData))
-        SuperIndividualsData[, individualCount := .N, by = countGrouping]
+        SuperIndividualsData[, individualNumber := .N, by = countGrouping]
         
-        # Remove WeightedCount and sumWeightedCount:
-        #SuperIndividualsData[, WeightedCount := NULL]
-        #SuperIndividualsData[, sumWeightedCount := NULL]
+        # Remove WeightedNumber and sumWeightedNumber:
+        #SuperIndividualsData[, WeightedNumber := NULL]
+        #SuperIndividualsData[, sumWeightedNumber := NULL]
         removeColumnsByReference(
             data = SuperIndividualsData, 
-            toRemove = c("WeightedCount", "sumWeightedCount")
+            toRemove = c("WeightedNumber", "sumWeightedNumber")
         )
     }
     else{
@@ -324,7 +324,7 @@ SuperIndividuals <- function(
     }
     
     # Generate the weighting factors:
-    SuperIndividualsData[, individualWeightFactor := haulWeightFactor / individualCount]
+    SuperIndividualsData[, individualWeightFactor := haulWeightFactor / individualNumber]
     # ... and check that they sum to 1:
     SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeAbundanceBy]
     tol <- sqrt(.Machine$double.eps)
@@ -338,7 +338,7 @@ SuperIndividuals <- function(
     #SuperIndividualsData[, Abundance := Abundance * haulWeightFactor]
     
     # Divide by the number of individuals (regardless of DistributionMethod)
-    #SuperIndividualsData[, Abundance := Abundance / individualCount]
+    #SuperIndividualsData[, Abundance := Abundance / individualNumber]
     SuperIndividualsData[, Abundance := Abundance * individualWeightFactor]
     SuperIndividualsData[, individualWeightFactor := NULL]
     
@@ -354,14 +354,14 @@ SuperIndividuals <- function(
     #formatOutput(IndividualsData, dataType = "IndividualsData", keep.all = TRUE, secondaryColumnOrder = keys)
     formatOutput(SuperIndividualsData, dataType = "SuperIndividualsData", keep.all = TRUE, allow.missing = TRUE, secondaryColumnOrder = unlist(attr(IndividualsData, "stoxDataVariableNames")), secondaryRowOrder = keys)
     
-    # Remove the columns "individualCount" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
+    # Remove the columns "individualNumber" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
     #SuperIndividualsData[, haulWeightFactor := NULL]
-    #SuperIndividualsData[, individualCount := NULL]
+    #SuperIndividualsData[, individualNumber := NULL]
     ##SuperIndividualsData[, abundanceWeightFactor := NULL]
     #SuperIndividualsData[, LengthGroup := NULL]
     removeColumnsByReference(
         data = SuperIndividualsData, 
-        toRemove = c("haulWeightFactor", "individualCount", "LengthGroup")
+        toRemove = c("haulWeightFactor", "individualNumber", "LengthGroup")
     )
     
     ## Order the rows:

@@ -4,7 +4,7 @@
 \alias{AbundanceData}
 \title{Abundance data}
 \description{
-The Abundance model data holds the abundance of individuals as number per Stratum and Layer. The data type contains the tables Data and Resolution.
+The Abundance model data holds the abundance of individuals as number per Stratum and Layer. The data type contains the tables Data and Resolution. The column Abundance if the table Data can be given as number or weight (kg) as indicated by the column AbundanceType with possible values "Number" and "Weight" (only relevant for SweptAreaDensityMethod = "TotalCatch" in SweptAreaDensity()).
 }
 \seealso{
 This data type is produced by \code{\link{Abundance}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
