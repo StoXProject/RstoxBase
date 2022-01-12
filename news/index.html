@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.4</span>
       </span>
     </div>
 
@@ -48,13 +48,17 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.5.4" id="rstoxbase-v154-2022-01-12">RstoxBase v1.5.4 (2022-01-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v154-2022-01-12"></a></h2>
+<ul><li>Renamed Abundance(), ReportAbundance(), AbundanceData and ReportAbundanceData to Quantity*, as this data now contains both Abundance and Biomass.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.5.3" id="rstoxbase-v153-2022-01-12">RstoxBase v1.5.3 (2022-01-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v153-2022-01-12"></a></h2>
 <ul><li>
 <p>Changed all instances of the use of the phrase “count” to “number”, in accordance with the terminology of ICESBiotic and the convension “area number density” (“area count density is very rare”). This change affects the following code:</p>
-<ul><li><p>In StoxBiotic(): | <em>SampleCount -&gt; SampleNumber</em> | <em>CatchFractionCount -&gt; CatchFractionNumber</em> <strong>This could affect external scripts that use the StoxBioticData.</strong></p></li>
-<li><p>In LengthDistribution(), SumLengthDistribution(), MeanLengthDistribution(), AssignmentLengthDistribution(), RegroupLengthDistribution(), GearDependentCatchCompensation(), LengthDependentCatchCompensation(), RelativeLengthDistribution(): | <em>Renamed the column WeightedCount to WeightedNumber</em> <strong>This could affect external scripts that use one of the listed datatypes as WeightedCount is no longer found. Other than that the WeightedCount does not exist further in the estimation models in StoX.</strong></p></li>
-<li><p>In BioticAssignmentWeighting(): | <em>WeightingMethod = “NormalizedTotalCount” -&gt; “NormalizedTotalNumber”</em> | <em>WeightingMethod = “SumWeightedCount” -&gt; “SumWeightedNumber”</em> | <em>WeightingMethod = “InverseSumWeightedCount” -&gt; “InverseSumWeightedNumber”</em> <strong>Backward compatibility should take care of these</strong></p></li>
-<li><p>LengthDistribution(): | <em>RaisingFactorPriority = “Count” -&gt; “Number”</em> <strong>Backward compatibility should take care of these</strong></p></li>
+<ul><li><p>In StoxBiotic(): <em>SampleCount -&gt; SampleNumber</em> <em>CatchFractionCount -&gt; CatchFractionNumber</em> <strong>This could affect external scripts that use the StoxBioticData.</strong></p></li>
+<li><p>In LengthDistribution(), SumLengthDistribution(), MeanLengthDistribution(), AssignmentLengthDistribution(), RegroupLengthDistribution(), GearDependentCatchCompensation(), LengthDependentCatchCompensation(), RelativeLengthDistribution(): <em>Renamed the column WeightedCount to WeightedNumber</em> <strong>This could affect external scripts that use one of the listed datatypes as WeightedCount is no longer found. Other than that the WeightedCount does not exist further in the estimation models in StoX.</strong></p></li>
+<li><p>In BioticAssignmentWeighting(): <em>WeightingMethod = “NormalizedTotalCount” -&gt; “NormalizedTotalNumber”</em> <em>WeightingMethod = “SumWeightedCount” -&gt; “SumWeightedNumber”</em> <em>WeightingMethod = “InverseSumWeightedCount” -&gt; “InverseSumWeightedNumber”</em> <strong>Backward compatibility should take care of these</strong></p></li>
+<li><p>LengthDistribution(): <em>RaisingFactorPriority = “Count” -&gt; “Number”</em> <strong>Backward compatibility should take care of these</strong></p></li>
 </ul></li>
 <li><p>Added the function ReportAbundance.</p></li>
 <li><p>Added the parameter InformationVariables to reports.</p></li>

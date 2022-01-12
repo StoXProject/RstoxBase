@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.4</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SuperIndividuals</span><span class="op">(</span>
   <span class="va">IndividualsData</span>,
-  <span class="va">AbundanceData</span>,
+  <span class="va">QuantityData</span>,
   DistributionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Equal"</span>, <span class="st">"HaulDensity"</span><span class="op">)</span>,
   <span class="va">LengthDistributionData</span>
 <span class="op">)</span></code></pre></div>
@@ -65,10 +65,10 @@
     <h2>Arguments</h2>
     <dl><dt>IndividualsData</dt>
 <dd><p>The <code><a href="IndividualsData.html">IndividualsData</a></code> data.</p></dd>
-<dt>AbundanceData</dt>
-<dd><p>The <code><a href="AbundanceData.html">AbundanceData</a></code> data.</p></dd>
+<dt>QuantityData</dt>
+<dd><p>The <code><a href="QuantityData.html">QuantityData</a></code> data.</p></dd>
 <dt>DistributionMethod</dt>
-<dd><p>The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For <code>DistributionMethod</code> = "HaulDensity" the <code>LengthDistributionData</code> must be given. It is recommended to use the same <code>LengthDistributionData</code> that was used to produce the <code><a href="AbundanceData.html">AbundanceData</a></code> (via <code>link{DensityData}</code>).</p></dd>
+<dd><p>The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For <code>DistributionMethod</code> = "HaulDensity" the <code>LengthDistributionData</code> must be given. It is recommended to use the same <code>LengthDistributionData</code> that was used to produce the <code><a href="QuantityData.html">QuantityData</a></code> (via <code>link{DensityData}</code>).</p></dd>
 <dt>LengthDistributionData</dt>
 <dd><p>The <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> data.</p></dd>
 </dl></div>

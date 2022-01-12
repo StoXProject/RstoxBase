@@ -13,12 +13,6 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/Abundance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AbundanceData.html</loc>
-  </url>
-  <url>
     <loc>/reference/AcousticDensity.html</loc>
   </url>
   <url>
@@ -178,6 +172,12 @@
     <loc>/reference/ProcessData.html</loc>
   </url>
   <url>
+    <loc>/reference/Quantity.html</loc>
+  </url>
+  <url>
+    <loc>/reference/QuantityData.html</loc>
+  </url>
+  <url>
     <loc>/reference/Regression.html</loc>
   </url>
   <url>
@@ -187,16 +187,16 @@
     <loc>/reference/RelativeLengthDistribution.html</loc>
   </url>
   <url>
-    <loc>/reference/ReportAbundance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportAbundanceData.html</loc>
-  </url>
-  <url>
     <loc>/reference/ReportDensity.html</loc>
   </url>
   <url>
     <loc>/reference/ReportDensityData.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ReportQuantity.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ReportQuantityData.html</loc>
   </url>
   <url>
     <loc>/reference/ReportSpeciesCategoryCatch.html</loc>
