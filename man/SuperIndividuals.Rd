@@ -6,7 +6,7 @@
 \usage{
 SuperIndividuals(
   IndividualsData,
-  AbundanceData,
+  QuantityData,
   DistributionMethod = c("Equal", "HaulDensity"),
   LengthDistributionData
 )
@@ -14,9 +14,9 @@ SuperIndividuals(
 \arguments{
 \item{IndividualsData}{The \code{\link{IndividualsData}} data.}
 
-\item{AbundanceData}{The \code{\link{AbundanceData}} data.}
+\item{QuantityData}{The \code{\link{QuantityData}} data.}
 
-\item{DistributionMethod}{The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{AbundanceData}} (via \code{link{DensityData}}).}
+\item{DistributionMethod}{The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{QuantityData}} (via \code{link{DensityData}}).}
 
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 }

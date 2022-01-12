@@ -418,7 +418,7 @@ splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLe
     #  Remove the mixAcousticCategory, so that we properly REPLACE the mixAcousticCategory by the SplitAcousticCategory.:
     NASCDataToBeSplit <- subset(NASCDataToBeSplit, ! AcousticCategory %in% mixAcousticCategory)
     
-    #  Split the abundance:
+    #  Split the NASC:
     NASCDataSplit <- DistributeNASC(
         NASCData = NASCDataToBeSplit, 
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 

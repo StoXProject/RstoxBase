@@ -751,7 +751,7 @@ stoxFunctionAttributes <- list(
     ##########
     
     
-    ##### Abundance: #####
+    ##### Quantity: #####
     DefineRegression = list(
         functionType = "processData", 
         functionCategory = "baseline", 
@@ -801,10 +801,10 @@ stoxFunctionAttributes <- list(
     ),
     
     
-    Abundance = list(
+    Quantity = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "AbundanceData"
+        functionOutputDataType = "QuantityData"
     ), 
     Individuals = list(
         functionType = "modelData", 
@@ -812,10 +812,10 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "IndividualsData", 
         functionArgumentHierarchy = list(
             BioticAssignment = list(
-                AbundanceType = "Acoustic"
+                QuantityType = "Acoustic"
             ), 
             MeanLengthDistributionData = list(
-                AbundanceType = "SweptArea"
+                QuantityType = "SweptArea"
             )
         )
     ), 
@@ -895,7 +895,6 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "ReportSuperIndividualsData", 
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
-            #TargetVariable = "targetVariable_ReportSuperIndividuals", 
             GroupingVariables = "groupingVariables_ReportSuperIndividuals", 
             InformationVariables = "informationVariables_ReportSuperIndividuals"
         ), 
@@ -912,7 +911,6 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "ReportDensityData", 
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
-            #TargetVariable = "targetVariable_ReportSuperIndividuals", 
             GroupingVariables = "groupingVariables_ReportDensity", 
             InformationVariables = "informationVariables_ReportDensity"
         ), 
@@ -923,15 +921,14 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
-    ReportAbundance = list(
+    ReportQuantity = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "ReportAbundanceData", 
+        functionOutputDataType = "ReportQuantityData", 
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
-            #TargetVariable = "targetVariable_ReportSuperIndividuals", 
-            GroupingVariables = "groupingVariables_ReportAbundance", 
-            InformationVariables = "informationVariables_ReportAbundance"
+            GroupingVariables = "groupingVariables_ReportQuantity", 
+            InformationVariables = "informationVariables_ReportQuantity"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -1375,15 +1372,9 @@ processPropertyFormats <- list(
         }
     ), 
     
-    targetVariable_ReportSuperIndividuals = list(
-        class = "single", 
-        possibleValues = function(SuperIndividualsData) {
-            sort(names(SuperIndividualsData))
-        }
-    ), 
-    
     densityType_SweptAreaDensity = list(
         class = "vector", # Should be changed to single when this is implemented in the GUI.
+        title = "Select the type of swept area density.", 
         possibleValues = function(SweptAreaDensityMethod) {
             if(SweptAreaDensityMethod == "LengthDistributed") {
                 AreaNumberDensity
@@ -1412,11 +1403,11 @@ processPropertyFormats <- list(
         variableTypes <- "character"
     ), 
     
-    groupingVariables_ReportAbundance = list(
+    groupingVariables_ReportQuantity = list(
         class = "vector", 
-        title = "One or more variables to group by when reporting AbundanceData", 
-        possibleValues = function(AbundanceData) {
-            sort(names(AbundanceData$Data))
+        title = "One or more variables to group by when reporting QuantityData", 
+        possibleValues = function(QuantityData) {
+            sort(names(QuantityData$Data))
         }, 
         variableTypes <- "character"
     ), 
@@ -1440,11 +1431,11 @@ processPropertyFormats <- list(
         variableTypes <- "character"
     ), 
     
-    informationVariables_ReportAbundance = list(
+    informationVariables_ReportQuantity = list(
         class = "vector", 
-        title = "One or more columns to inlcude in ReportAbundanceData", 
-        possibleValues = function(AbundanceData, GroupingVariables) {
-            sort(setdiff(names(AbundanceData$Data), GroupingVariables))
+        title = "One or more columns to inlcude in ReportQuantityData", 
+        possibleValues = function(QuantityData, GroupingVariables) {
+            sort(setdiff(names(QuantityData$Data), GroupingVariables))
         }, 
         variableTypes <- "character"
     ), 

@@ -19,6 +19,18 @@ backwardCompatibility <- list(
             functionName = "LengthDependentCatchCompensation", 
             modelName = "baseline", 
             newFunctionName = "RstoxFramework::LengthDependentLengthDistributionCompensation"
+        ), 
+        list(
+            changeVersion = "1.5.4", 
+            functionName = "Abundance", 
+            modelName = "baseline", 
+            newFunctionName = "RstoxBase::Quantity"
+        ), 
+        list(
+            changeVersion = "1.5.4", 
+            functionName = "ReportAbundance", 
+            modelName = "baseline", 
+            newFunctionName = "RstoxBase::ReportQuantity"
         )
     ), 
     
@@ -161,6 +173,27 @@ backwardCompatibility <- list(
             modelName = "baseline", 
             parameterName = "TargetStrengthMethod",
             newParameterName = "AcousticTargetStrengthModel"
+        ), 
+        list(
+            changeVersion = "1.5.4", 
+            functionName = "SuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "AbundanceData",
+            newParameterName = "QuantityData"
+        ), 
+        list(
+            changeVersion = "1.5.4", 
+            functionName = "Individuals", 
+            modelName = "baseline", 
+            parameterName = "AbundanceType",
+            newParameterName = "QuantityType"
+        ), 
+        list(
+            changeVersion = "1.5.4", 
+            functionName = "ReportAbundance", 
+            modelName = "baseline", 
+            parameterName = "AbundanceData",
+            newParameterName = "QuantityData"
         )
     ),  
     
