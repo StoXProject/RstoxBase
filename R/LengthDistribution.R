@@ -963,6 +963,12 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     WeightingFactors <- BioticAssignment$WeightingFactor
     thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
     
+    # Add the number of assigned hauls par PSU, and the number of assigned hauls with length distribution for each species
+    thisLengthDistributionData[, NumberOfAssignedHauls := length(unique(Haul))]
+    thisLengthDistributionData[, HasAnyPositiveWeightedNumber := any(!is.na(get(dataVariable)) & (get(dataVariable) > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
+    thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedNumber, Haul, NA)]
+    thisLengthDistributionData[, NumberOfAssignedHaulsWithCatch := length(unique(stats::na.omit(ValidHaul))), by = "SpeciesCategory"]
+    
     # Overwrite the weights by those defined in the BioticAssignment object:
     weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
     thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
@@ -970,12 +976,6 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     # Get the category and grouping variables (SpeciesCategory, IndividualTotalLength, LengthResolution), and sum across hauls for each combination of these variables, weighted by the "WeightedNumber":
     by <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = c("categoryVariable", "groupingVariables"), unlist = TRUE)
     thisLengthDistributionData[, c(dataVariable) := sum(x = get(dataVariable) * get(weightingVariable)), by = by]
-    
-    # Add the number of assigned hauls par PSU, and the number of assigned hauls with length distribution for each species
-    thisLengthDistributionData[, NumberOfAssignedHauls := length(unique(Haul))]
-    thisLengthDistributionData[, HasAnyPositiveWeightedNumber := any(!is.na(WeightedNumber) & (WeightedNumber > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
-    thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedNumber, Haul, NA)]
-    thisLengthDistributionData[, NumberOfAssignedHaulsWithCatch := length(unique(stats::na.omit(ValidHaul))), by = "SpeciesCategory"]
     
     # Extract only the relevant columns:
     ###formatOutput(thisLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE, allow.missing = TRUE)

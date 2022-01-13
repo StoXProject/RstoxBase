@@ -210,6 +210,7 @@ DistributeNASC <- function(
     resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     checkValidHaulsBy <- c(resolution, getDataTypeDefinition(dataType = "DensityData", elements = c("categoryVariable"), unlist = TRUE))
     notAllHaulsHaveCatch <- NASCData[, .(notAllHaulsHaveCatch = NumberOfAssignedHaulsWithCatch != NumberOfAssignedHauls), by = checkValidHaulsBy]
+    
     if(any(notAllHaulsHaveCatch$notAllHaulsHaveCatch, na.rm = TRUE)) {
         withInvalidHauls <- unique(NASCData[notAllHaulsHaveCatch$notAllHaulsHaveCatch, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls"),with = FALSE], by = checkValidHaulsBy)
         withInvalidHauls <- paste0(
@@ -538,7 +539,7 @@ SweptAreaDensity <- function(
 ##################################################
 #' Mean density in each stratum
 #' 
-#' This function calculates the weighted average of the density in each stratum (or possibly in each PSU, which impies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of hauls ??????????????????? per PSU for swept area density.
+#' This function calculates the weighted average of the density in each stratum (or possibly in each PSU, which implies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of stations per biotic PSU for swept area density.
 #' 
 #' @inheritParams ModelData
 #' 
