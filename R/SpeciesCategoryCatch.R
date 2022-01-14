@@ -38,7 +38,7 @@ SpeciesCategoryCatch <- function(
     # Normalize if requested:
     if(SpeciesCategoryCatchType == "Normalized") {
         for(ind in seq_along(dataVariables)) {
-            SpeciesCategoryCatchData[, eval(dataVariables[ind]) := get(CatchFractionVariables[ind]) / EffectiveTowDistance, by = sumBy]
+            SpeciesCategoryCatchData[, eval(dataVariables[ind]) := get(dataVariables[ind]) / EffectiveTowDistance, by = sumBy]
         }
     }
     
