@@ -1,6 +1,6 @@
 Package: RstoxBase
-Version: 1.6.0
-Date: 2022-01-13
+Version: 1.7.0
+Date: 2022-01-14
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", 
@@ -50,7 +50,7 @@ Imports:
     methods (>= 3.6.2),
     xml2 (>= 1.2.2),
     stringi (>= 1.4.3),
-    RstoxData (>= 1.4.0)
+    RstoxData (>= 1.5.0)
 Suggests: 
     testthat
 Additional_repositories: 
