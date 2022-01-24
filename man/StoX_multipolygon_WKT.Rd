@@ -14,5 +14,5 @@ Additonal information on WKT multipolygon specification and StoX can be found he
 
 \href{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 
-Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528.  \url{https://doi.org/10.1111/2041-210X.13250}
+Johnsen, E., Totland, A., Skålevik, Å., Holmin, A. J., Dingsør, G. E., Fuglebakk, E., & Handegard, N. O. (2019). StoX: An open source software for marine survey analyses. Methods in Ecology and Evolution, 10(9), 1523-1528. \doi{10.1111/2041-210X.13250}
 }

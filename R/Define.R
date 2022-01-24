@@ -983,7 +983,7 @@ DefineBioticLayer <- function(
 #'
 #'\strong{EllipsoidalDistance}
 #'
-#'This assignment method uses the ellipsoidal distance \href{https://doi.org/10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
+#'This assignment method uses the ellipsoidal distance \doi{10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
 #'
 #' \deqn{f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
 #' \left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
@@ -1019,7 +1019,7 @@ DefineBioticLayer <- function(
 #'
 #' @references
 #'
-#'Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, \url{https://doi.org/10.1016/j.fishres.2007.07.013}
+#'Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, \doi{10.1016/j.fishres.2007.07.013}
 #' 
 #' 
 #' @return
@@ -2079,10 +2079,13 @@ getRegressionTable <- function(
                 data = data
             )
         ), 
-        error = function(err) list(
-            coefficients = array(NA_real_, dim = c(length(getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]), 1)), 
-            sigma = NA_real_
-        )
+        error = function(err) {
+            warning("StoX: ", err)
+            list(
+                coefficients = array(NA_real_, dim = c(length(getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]), 1)), 
+                sigma = NA_real_
+            )
+        }
     )
     
     # Get the model parameter names:

@@ -3,7 +3,7 @@
 ##################################################
 #' Calculate number density from NASC in length intervals
 #' 
-#' This function converts NASC to number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
+#' This function converts NASC to area number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
@@ -58,11 +58,11 @@
 #'
 #' References:
 #'
-#' Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528.  \url{https://doi.org/10.1111/2041-210X.13250}
+#' Johnsen, E,.Totland, A.,Skaalevik, A., et al., 2019, StoX: An open source software for marine survey analyses. Methods Ecol Evol. 2019;10:1523_1528. \doi{10.1111/2041-210X.13250}
 #'
 #' MacLennan, D. N., Fernandes, P. G., and Dalen, J. 2002. A consistent approach to definitions and symbols in fisheries acoustics. ICES Journal of Marine Science, 59: 365_369.
 #'
-#' Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, \url{https://doi.org/10.1016/S1054-3139(03)00031-6}
+#' Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal of Marine Science, Volume 60, Issue 3, 2003, Pages 493_499, \doi{10.1016/S1054-3139(03)00031-6}
 #'
 #' Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.
 #'
@@ -406,14 +406,14 @@ getMidIndividualTotalLength <- function(x) {
 ##################################################
 #' Swept-area density
 #' 
-#' This function calculates the area density of fish as number of individuals per square nautical mile.
+#' This function calculates the area density of fish as number of individuals or weight (kg) per square nautical mile, as determined by the \code{DensityType}.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @param SweptAreaDensityMethod The method to use for the swept-area calculation, one of \"LengthDistributed\" for calculating density from the length distribution (\code{\link{MeanLengthDistributionData}}), and \"TotalCatch\" for calculating density from the total catch (\code{\link{MeanSpeciesCategoryCatchData}}).
 #' @param SweepWidthMethod The method for calculating the sweep width. Possible options are (1) "Constant", which requires \code{SweepWidth} to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the \code{WeightedNumber} in the \code{MeanLengthDistributionData} using \code{link{GearDependentLengthDistributionCompensation}} or \code{link{LengthDependentLengthDistributionCompensation}}, or in the \code{MeanSpeciesCategoryCatchData} using \code{link{GearDependentSpeciesCategoryCatchCompensation}}.
 #' @param SweepWidth The constant sweep width in meters.
-#' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaWeightDensity" for SweptAreaDensityMethod = "TotalCatch".
+#' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaWeightDensity" (kg) for SweptAreaDensityMethod = "TotalCatch". All area densities are given per square nautical mile.
 #' 
 #' @seealso See \code{\link{AcousticDensity}} for acoustic density.
 #' 
