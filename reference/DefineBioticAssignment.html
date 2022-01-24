@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -144,7 +144,8 @@
 <p><strong>Radius</strong></p>
 <p>All biotic stations within the given radius (function parameter <em>Radius</em> (nautical miles)) of one or more of the elementary distance sampling units (EDSU) that makes up a PSU, are assigned to that PSU. The start position of both the biotic station and the EDSU is used for distance calculations. The method does not take into consideration whether the biotic station is in the same stratum as the PSU or even outside the boundaries of the strata system. The function parameter <em>MinNumberOfHauls</em> set a minimum number of hauls for each assignment. This implies that the search for hauls may go beyond the given radius.</p>
 <p><strong>EllipsoidalDistance</strong></p>
-<p>This assignment method uses the ellipsoidal distance <a href="https://doi.org/10.1016/j.fishres.2007.07.013" class="external-link">(Johnsen and Iilende, 2007, equation 8)</a>.  All biotic stations that fulfills the selection criteria (scalar product f &lt;=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:</p>
+<p>This assignment method uses the ellipsoidal distance doi: <a href="https://doi.org/10.1016/j.fishres.2007.07.013" class="external-link">10.1016/j.fishres.2007.07.013</a>
+(Johnsen and Iilende, 2007, equation 8).  All biotic stations that fulfills the selection criteria (scalar product f &lt;=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:</p>
 <p>$$f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
 \left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
 \left(\frac{\Delta o}{r_0}\right)^2$$</p>
@@ -165,7 +166,7 @@
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, <a href="https://doi.org/10.1016/j.fishres.2007.07.013" class="external-link">https://doi.org/10.1016/j.fishres.2007.07.013</a></p>
+    <p>Johnsen E., Iilende T., 2007, Factors affecting the diel variation in commercial CPUE of Namibian hake. Can new information improve standard survey estimates?, Fisheries Research 88 (2007) p70 to 79, doi: <a href="https://doi.org/10.1016/j.fishres.2007.07.013" class="external-link">10.1016/j.fishres.2007.07.013</a></p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -184,7 +185,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.9000.</p>
 </div>
 
       </footer></div>
