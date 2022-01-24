@@ -24,10 +24,10 @@ SweptAreaDensity(
 
 \item{SweepWidth}{The constant sweep width in meters.}
 
-\item{DensityType}{The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaWeightDensity" for SweptAreaDensityMethod = "TotalCatch".}
+\item{DensityType}{The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaWeightDensity" (kg) for SweptAreaDensityMethod = "TotalCatch". All area densities are given per square nautical mile.}
 }
 \description{
-This function calculates the area density of fish as number of individuals per square nautical mile.
+This function calculates the area density of fish as number of individuals or weight (kg) per square nautical mile, as determined by the \code{DensityType}.
 }
 \seealso{
 See \code{\link{AcousticDensity}} for acoustic density.

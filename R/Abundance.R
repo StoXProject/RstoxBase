@@ -82,7 +82,7 @@ Individuals <- function(
     BioticAssignment, 
     MeanLengthDistributionData
 ) {
-    
+
     # Get the DefinitionMethod:
     QuantityType <- match.arg(QuantityType)
     
@@ -182,6 +182,10 @@ SuperIndividuals <- function(
     # Make sure the QuantityData is proper data.table. Comment on 2021-03-18: Why is this needed????:
     QuantityData$Data <- data.table::setDT(QuantityData$Data)
     
+    #### This is a potentially bakward reproducibiliti breaking change, scheduled for 4.0.0: ####
+    # Subset to the positive data, as this can discard length groups that have been filtered out in Indivduals when computing the PSUs:
+    #QuantityData$Data <- subset(QuantityData$Data, Abundance > 0)
+     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
     addLengthGroup(data = SuperIndividualsData, master = QuantityData$Data, warn = FALSE)
     # Add length groups also to the QuantityData:
@@ -211,7 +215,7 @@ SuperIndividuals <- function(
         QuantityData$Data[, ..variablesToGetFromQuantityData], 
         by = mergeBy, 
         allow.cartesian = TRUE, 
-        ### all.y = TRUE # Keep all stata, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
+        ### all.y = TRUE # Keep all data, even those with no acoustic data of the requested species. Using all.y = TRUE will however delete the individuals assigned to PSUs in those strata. We rather use all = TRUE and deal with the NAs (explain the NAs from the data):
         # Changed this onn 2021-02-09 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedNumber from hauls with no individuals present in the estimation (after bootstrapping):
         # all.y = TRUE
         

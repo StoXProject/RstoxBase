@@ -788,7 +788,9 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "Regression", 
         functionParameterFormat = list(
-            RegressionTable = "regressionTable"
+            RegressionTable = "regressionTable", 
+            DependentVariable = "dependentVariable_EstimateBioticRegression", 
+            IndependentVariable = "independentVariable_EstimateBioticRegression"
         ), 
         functionArgumentHierarchy = list(
             IndividualsData = list(
@@ -962,6 +964,27 @@ processPropertyFormats <- list(
         class = "single", 
         title = "The path to a single file"
     ), 
+    
+    dependentVariable_EstimateBioticRegression = list(
+        class = "vector", 
+        title = "Select DependentVariable for regression", 
+        variableTypes = "character", 
+        possibleValues = function(InputDataType, IndividualsData, SuperIndividualsData) {
+            data <- get(InputDataType)
+            intersect(names(data), attr(data, "stoxDataVariableNames")$Individual)
+        }
+    ), 
+    
+    independentVariable_EstimateBioticRegression = list(
+        class = "vector", 
+        title = "Select DependentVariable for regression", 
+        variableTypes = "character", 
+        possibleValues = function(DependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
+            data <- get(InputDataType)
+            setdiff(intersect(names(data), attr(data, "stoxDataVariableNames")$Individual), DependentVariable)
+        }
+    ), 
+    
     sweepWidthByCruiseTable = list(
         class = "table", 
         title = "Define sweep width in meters for each cruise", 
@@ -1377,7 +1400,7 @@ processPropertyFormats <- list(
         title = "Select the type of swept area density.", 
         possibleValues = function(SweptAreaDensityMethod) {
             if(SweptAreaDensityMethod == "LengthDistributed") {
-                AreaNumberDensity
+                "AreaNumberDensity"
             }
             else if(SweptAreaDensityMethod == "TotalCatch") {
                 c("AreaNumberDensity", "AreaWeightDensity")
