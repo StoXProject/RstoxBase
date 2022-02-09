@@ -58,6 +58,12 @@ backwardCompatibility <- list(
             functionName = "ReportSpeciesCategoryCatch", 
             modelName = "report", 
             parameterName = "Translation"
+        ),  
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = c("StoxAcousticData", "LengthExponent")
         )
     ),  
     
@@ -142,6 +148,66 @@ backwardCompatibility <- list(
             functionName = "GearDependentLengthDistributionCompensation", 
             modelName = "baseline", 
             parameterName = "SpeciesCategoryCatchData"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "SumNASCData"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "NASCData"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "LayerDefinition"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "LayerDefinitionMethod"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "Resolution"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "LayerTable"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "AcousticLayer"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "StratumPolygon"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "AcousticTargetStrength"
+        ), 
+        list(
+            changeVersion = "1.7.2", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "SpeciesLink"
         )
     ),  
     

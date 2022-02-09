@@ -36,7 +36,7 @@ An object of StoX data type \code{\link{Regression}}.
 This function estimates a regression model with parameters, where the model can be one of a set of pre-defined models.
 }
 \details{
-The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model L ~ a W^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
+The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model Y ~ a X^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
 }
 \seealso{
 \code{\link{DefineRegression}} for defining regression parameters directly of from a file.

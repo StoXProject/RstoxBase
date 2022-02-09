@@ -468,7 +468,7 @@ DefineBioticPSU <- function(
         DefinitionMethod <- "Identity"
     }
     if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
-        warning("Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
+        warning("StoX: Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
     }
     
     # Define the PSUs:
@@ -1405,11 +1405,12 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
+#' @inheritParams MeanNASC
+#' @inheritParams AcousticDensity
 #' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalNumber", the same as "NormalizedTotalWeight" but for total number, "SumWeightedNumber", weighting by the summed WeightedNumber of the input LengthDistributionData; and "InverseSumWeightedNumber", weighting by the inverse of the summed WeightedNumber.
 #' @param LengthDistributionData The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
-#' @param LengthExponent For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.
 #' 
 #' @details
 #' The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
@@ -1487,11 +1488,27 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 BioticAssignmentWeighting <- function(
     BioticAssignment, 
-    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber"), 
+    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber", "NASC"), 
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    StoxAcousticData, Radius = double(), LengthExponent = double()
+    # Used in WeightingMethod = "NASC":
+    SumNASCData, 
+    NASCData, 
+    LayerDefinition = c("FunctionParameter", "FunctionInput"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    AcousticLayer = NULL, 
+    # Survey: 
+    SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
+    SurveyDefinitionMethod = c("AllStrata", "Table"), 
+    SurveyTable = data.table::data.table(), 
+    Survey = NULL, 
+    # PSU: 
+    StratumPolygon = NULL, 
+    # Used in AcousticDensity: 
+    AcousticTargetStrength, SpeciesLink = data.table::data.table(), Radius = double()
 ) {
     
     # Get the DefinitionMethod:
@@ -1535,36 +1552,57 @@ BioticAssignmentWeighting <- function(
     }
     # Search around each station for the NASC values inside the range 'Radius':
     else if(WeightingMethod == "NASC") {
-        warning("StoX: WeightingMethod = \"NASC\" not yet implemented.")
-        # Merge the Station and Haul table:
-        ###if(any(unlist(LengthDistributionData[, lapply(.SD, function(x) all(is.na(x))), .SDcols = c("Station", "Haul")]))) {
-        ###    stop("LengthDistributionData must have horizontal/vertical resolution Station/Haul (the finest resolution)")
-        ###}
-        stationInfo <- unique(LengthDistributionData[, c("Station", "Haul", "DateTime", "Longitude", "Latitude")])
-        # Get unique hauls in BioticAssignmentCopy:
-        uniqueHauls <- BioticAssignmentCopy[, .(Haul = unique(Haul))]
-        # Get the position and NASC from the StoxAcousticData:
-        EDSUInfo <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
         
-        # Get the average NASC around each haul:
-        NASCData <- uniqueHauls[, 
-            NASC := getAverageNASCInsideRadius(
-                thisHaul = Haul, 
-                stationInfo = stationInfo, 
-                EDSUInfo = EDSUInfo, 
-                Radius = Radius
-            ), by = "Haul"
-        ]
+        # SpeciesLink must contain only one link, and the SpeciesCategory and AcousticCategory must be present in the data:
+        if(!(
+            nrow(SpeciesLink) == 1 && 
+            SpeciesLink$SpeciesCategory %in% LengthDistributionData$SpeciesCategory && 
+            SpeciesLink$AcousticCategory %in% NASCData$AcousticCategory
+        )) {
+            stop("StoX: SpeciesLink must contain only one row, with SpeciesCategory and AcousticCategory present in the LengthDistributionData and NASCData, respectively.")
+        }
         
-        # Change the weights to the average NASC:
-        BioticAssignmentCopy <- merge(
-            BioticAssignmentCopy, 
-            NASCData, 
-            by = "Haul"
+        ## Also the NASCData cannot contain more than one frequency:
+        #if(NASCData[, length(unique(Beam))] > 1) {
+        #    stop("Stox: The NASCData can only contain one Beam.")
+        #}
+        
+        # Get the LayerDefinition
+        LayerDefinition <- match.arg(LayerDefinition)
+        
+        # Get the weights for each Haul:
+        uniqueHauls <- unique(LengthDistributionData$Haul)
+        weightsNASC <- sapply(
+            uniqueHauls, 
+            getMeanAcousticDensityAroundOneStation, 
+            LengthDistributionData = LengthDistributionData, 
+            NASCData = NASCData,
+            LayerDefinition = LayerDefinition,
+            LayerDefinitionMethod = LayerDefinitionMethod,
+            Resolution = Resolution,
+            LayerTable = LayerTable,
+            AcousticLayer = AcousticLayer,
+            SurveyDefinition = SurveyDefinition,
+            SurveyDefinitionMethod = SurveyDefinitionMethod,
+            SurveyTable = SurveyTable,
+            Survey = Survey,
+            StratumPolygon = StratumPolygon, 
+            Radius = Radius, 
+            AcousticTargetStrength = AcousticTargetStrength,
+            SpeciesLink = SpeciesLink 
         )
-        BioticAssignmentCopy[, WeightingFactor := NASC]
         
-        stop("Unfinished method")
+        # Give a warning if any of the new weights are NA:
+        if(any(is.na(weightsNASC))) {
+            warning("StoX: The following Hauls had no positive NASC inside a radius of ", Radius, " nautical miles, resulting in 0 biotic assignment weight:\n\t", paste(names(weightsNASC)[is.na(weightsNASC)], collapse = "\n\t"))
+            # Replace NA by 0:
+            weightsNASC[is.na(weightsNASC)] <- 0
+        }
+        
+        # Add the weights:
+        BioticAssignmentCopy <- merge(BioticAssignmentCopy, data.table::data.table(Haul = names(weightsNASC), weightsNASC = weightsNASC))
+        BioticAssignmentCopy[, WeightingFactor := weightsNASC]
+        
     }
     # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowDistance:
     else if(WeightingMethod == "NormalizedTotalWeight") {
@@ -1637,6 +1675,7 @@ BioticAssignmentWeighting <- function(
 }
 
 
+
 mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weightingVariable, ...) {
     BioticAssignment <- merge(BioticAssignment, toMerge, by = "Haul", ...)
     BioticAssignment[, eval(weightingVariable) := as.double(get(variable)) * get(weightingVariable)]
@@ -1644,46 +1683,102 @@ mergeIntoBioticAssignment <- function(BioticAssignment, toMerge, variable, weigh
 }
 
 
-# Function to get great circle distance between a Haul and the EDSUs:
-getHaulToEDSUDistance <- function(thisHaul, stationInfo, EDSUInfo) {
-    # Get the distance from the station of the Haul to the EDSUs:
-    stationPosition <- stationInfo[Haul == thisHaul, c("Longitude", "Latitude")]
+getMeanAcousticDensityAroundOneStation <- function(
+    thisHaul, 
+    LengthDistributionData, 
+    NASCData,
+    LayerDefinition,
+    LayerDefinitionMethod,
+    Resolution,
+    LayerTable,
+    AcousticLayer,
+    SurveyDefinition, 
+    SurveyDefinitionMethod, 
+    SurveyTable, 
+    Survey, 
+    StratumPolygon, 
+    Radius, 
+    AcousticTargetStrength,
+    SpeciesLink
+) {
+    
+    # Get the distance from the station to the EDSUs:
+    stationPosition <- unique(LengthDistributionData[Haul == thisHaul, c("Longitude", "Latitude")])
+    EDSUData <- subset(NASCData, !duplicated(EDSU))
+    EDSUPositions <- EDSUData[, c("Longitude", "Latitude")]
     # Get the distance using WGS84 ellipsoid:
     haulToEDSUDistance <- sp::spDistsN1(
-        pts = as.matrix(EDSUInfo[, c("Longitude", "Latitude")]), 
+        pts = as.matrix(EDSUPositions), 
         pt = as.matrix(stationPosition), 
         longlat = TRUE
     )
-    # plot(NSAC$Longitude, NSAC$Latitude, cex = haulToEDSUDistance/max(haulToEDSUDistance) * 5)
-    return(haulToEDSUDistance)
-}
-# Function to get great circle distance between a Haul and the EDSUs:
-getEDSUsInsideRadius <- function(thisHaul, stationInfo, EDSUInfo, Radius) {
-    # Get the distance from the station of the Haul to the EDSUs:
-    haulToEDSUDistance <- getHaulToEDSUDistance(
-        thisHaul = thisHaul, 
-        stationInfo = stationInfo, 
-        EDSUInfo = EDSUInfo
-    )
     
     # Identify EDSUs within the specified radius:
-    EDSUsInsideRadius <- haulToEDSUDistance <= Radius
-    return(EDSUsInsideRadius)
-}
-# Function to get average NASC around one haul:
-getAverageNASCInsideRadius <- function(thisHaul, stationInfo, EDSUInfo, Radius) {
-    # Identify EDSUs within the specified radius:
-    EDSUsInsideRadius <- getEDSUsInsideRadius(
-        thisHaul = thisHaul, 
-        stationInfo = stationInfo, 
-        EDSUInfo = EDSUInfo, 
-        Radius = Radius
+    EDSUsInsideRadius <- subset(EDSUData, haulToEDSUDistance <= Radius)
+    if(!nrow(EDSUsInsideRadius)) {
+        return(NA)
+    }
+    
+    # Subset the NASCData:
+    NASCDataInside <- subset(NASCData, EDSU %in% EDSUsInsideRadius$EDSU)
+    
+    # Get the SumNASCData and then the MeanNASCData:
+    if(LayerDefinition != "PreDefined") {
+        SumNASCDataInside <- SumNASC(
+            NASCData = NASCDataInside, 
+            LayerDefinition = LayerDefinition, 
+            LayerDefinitionMethod = LayerDefinitionMethod, 
+            Resolution = Resolution, 
+            LayerTable = LayerTable, 
+            AcousticLayer = AcousticLayer
+        )
+    }
+    suppressWarnings(MeanNASCDataInside <- MeanNASC(
+        LayerDefinition = "PreDefined", 
+        SumNASCData = SumNASCDataInside, 
+        # Survey: 
+        SurveyDefinition = SurveyDefinition, 
+        SurveyDefinitionMethod = SurveyDefinitionMethod, 
+        SurveyTable = SurveyTable, 
+        Survey = Survey, 
+        # PSU: 
+        PSUDefinition = "FunctionParameter", 
+        PSUDefinitionMethod = "EDSUToPSU", 
+        StratumPolygon = StratumPolygon
+    ))
+    
+    # Contruct BioticAssignment, as the given Haul for all EDSUs inside the radius:
+    BioticAssignment <- data.table::data.table(
+        MeanNASCDataInside$Data[, c("Stratum", "PSU", "Layer")], 
+        Haul = thisHaul, 
+        WeightingFactor = 1
     )
     
-    # Get the average NASC inside of the radius (across Frequency and AcosuticCategory):
-    averageNASC <- EDSUInfo[EDSUsInsideRadius, mean(NASC, na.rm = TRUE)]
-    return(averageNASC)
+    # Further, get the AssignmentLengthDistributionData:
+    AssignmentLengthDistributionData <- AssignmentLengthDistribution(LengthDistributionData, BioticAssignment)
+    
+    # Convert the NASCData inside the radius to acoustic density: 
+    suppressWarnings(AcousticDensityData <- AcousticDensity(
+        MeanNASCData = MeanNASCDataInside,
+        AssignmentLengthDistributionData = AssignmentLengthDistributionData,
+        AcousticTargetStrength = AcousticTargetStrength,
+        SpeciesLink = SpeciesLink
+    ))
+    
+    # Sum the acoustic density over length groups and beams:
+    AcousticDensityData$Data[, Density := sum(Density), by = "PSU"]
+    AcousticDensityData$Data <- unique(AcousticDensityData$Data, by = "PSU")
+    
+    # Average the acoustic density, but trick MeanDensity() to average across all strata in the survey:
+    AcousticDensityData$Data[, Stratum := Survey]
+    MeanAcousticDensityData <- MeanDensity(AcousticDensityData)
+    
+    # Extract the row with non-missing Layer:
+    averageAcousticDensity <- MeanAcousticDensityData$Data[!is.na(Layer) & !is.na(Survey), Density]
+    
+    return(averageAcousticDensity)
 }
+
 
 # Function to sum up the WeightedNumber
 addSumWeightedNumber <- function(BioticAssignment, LengthDistributionData, weightingVariable, inverse = FALSE) {
@@ -1983,7 +2078,7 @@ DefineRegression <- function(
 #' @param DependentVariable The name of the dependent variable (respons variable).
 #' @param IndependentVariable The name of the independent variable (explanatory variable).
 #' 
-#' @details The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model L ~ a W^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
+#' @details The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model Y ~ a X^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
 #' 
 #' @return
 #' An object of StoX data type \code{\link{Regression}}.

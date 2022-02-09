@@ -1,3 +1,13 @@
+# RstoxBase v1.7.2 (2022-02-10)
+* Added WeightingMethod = "NASC" in BioticAssignmentWeighting().
+
+
+# RstoxBase v1.7.1 (2022-01-25)
+* Fixed bug in drop-down list for DensityType in SweptAreaDensity() when SweptAreaDensityMethod == "LengthDistributed". To avoid error the user had to type in the value manually as ["AreaNumberDensity"]. Moved from testthat to tinytest.
+* Added errors as StoX warning in getRegressionTable() to communicate the error. 
+* Added drop-down list in parameters DependentVariable and IndependentVariable in EstimateRegression().
+
+
 # RstoxBase v1.5.4 (2022-01-12)
 * Renamed Abundance(), ReportAbundance(), AbundanceData and ReportAbundanceData to Quantity*, as this data now contains both Abundance and Biomass.
 
