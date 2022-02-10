@@ -298,6 +298,9 @@
     <loc>/reference/general_arguments.html</loc>
   </url>
   <url>
+    <loc>/reference/general_arguments2.7.html</loc>
+  </url>
+  <url>
     <loc>/reference/general_report_arguments.html</loc>
   </url>
   <url>
@@ -305,6 +308,9 @@
   </url>
   <url>
     <loc>/reference/getDataTypeDefinition.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getProjectXMLFilePath.html</loc>
   </url>
   <url>
     <loc>/reference/getReportFunctionPackage.html</loc>
@@ -337,6 +343,9 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/modifyParameter_ProjectXMLList.html</loc>
+  </url>
+  <url>
     <loc>/reference/processPropertyFormats.html</loc>
   </url>
   <url>
@@ -344,6 +353,9 @@
   </url>
   <url>
     <loc>/reference/readBioticAssignmentFrom2.7.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readBioticPSUFrom2.7.html</loc>
   </url>
   <url>
     <loc>/reference/readGeoJSON.html</loc>
@@ -365,5 +377,8 @@
   </url>
   <url>
     <loc>/reference/summaryStox.html</loc>
+  </url>
+  <url>
+    <loc>/reference/writeProjectXMLToList.html</loc>
   </url>
 </urlset>

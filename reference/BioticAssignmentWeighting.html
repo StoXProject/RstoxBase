@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.2</span>
       </span>
     </div>
 
@@ -56,13 +56,25 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">BioticAssignmentWeighting</span><span class="op">(</span>
   <span class="va">BioticAssignment</span>,
   WeightingMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Equal"</span>, <span class="st">"NumberOfLengthSamples"</span>, <span class="st">"NormalizedTotalWeight"</span>,
-    <span class="st">"NormalizedTotalNumber"</span>, <span class="st">"SumWeightedNumber"</span>, <span class="st">"InverseSumWeightedNumber"</span><span class="op">)</span>,
+    <span class="st">"NormalizedTotalNumber"</span>, <span class="st">"SumWeightedNumber"</span>, <span class="st">"InverseSumWeightedNumber"</span>, <span class="st">"NASC"</span><span class="op">)</span>,
   <span class="va">StoxBioticData</span>,
   <span class="va">LengthDistributionData</span>,
   MaxNumberOfLengthSamples <span class="op">=</span> <span class="fl">100</span>,
-  <span class="va">StoxAcousticData</span>,
-  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
-  LengthExponent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="va">SumNASCData</span>,
+  <span class="va">NASCData</span>,
+  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
+  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>, <span class="st">"Table"</span><span class="op">)</span>,
+  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
+  AcousticLayer <span class="op">=</span> <span class="cn">NULL</span>,
+  SurveyDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
+  SurveyDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"Table"</span><span class="op">)</span>,
+  SurveyTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
+  Survey <span class="op">=</span> <span class="cn">NULL</span>,
+  StratumPolygon <span class="op">=</span> <span class="cn">NULL</span>,
+  <span class="va">AcousticTargetStrength</span>,
+  SpeciesLink <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
+  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -78,12 +90,36 @@
 <dd><p>The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).</p></dd>
 <dt>MaxNumberOfLengthSamples</dt>
 <dd><p>For <code>WeightingMethod</code> = "NumberOfLengthSamples": Values of the number of length samples that exceed <code>MaxNumberOfLengthSamples</code> are set to <code>MaxNumberOfLengthSamples</code>. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.</p></dd>
-<dt>StoxAcousticData</dt>
-<dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></dd>
+<dt>SumNASCData</dt>
+<dd><p>The <code><a href="SumNASCData.html">SumNASCData</a></code> data.</p></dd>
+<dt>NASCData</dt>
+<dd><p>The <code><a href="NASCData.html">NASCData</a></code> data.</p></dd>
+<dt>LayerDefinition</dt>
+<dd><p>The method to use for defining the Layers, one of <code>FunctionParameter</code> to define the Layers on the fly in this function, <code>FunctionInput</code> to import Layer process data from a previously run process by the input <code>AcousticLayer</code>, or <code>PreDefined</code> whihc requires <code>SumNASCData</code> as input.</p></dd>
+<dt>LayerDefinitionMethod</dt>
+<dd><p>See <code><a href="DefineAcousticLayer.html">DefineAcousticLayer</a></code></p></dd>
+<dt>Resolution</dt>
+<dd><p>Numeric: A single numeric giving the thickness of the layers.</p></dd>
+<dt>LayerTable</dt>
+<dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
+<dt>AcousticLayer</dt>
+<dd><p>The <code><a href="AcousticLayer.html">AcousticLayer</a></code> process data.</p></dd>
+<dt>SurveyDefinition</dt>
+<dd><p>The method to use for defining the Survey, one of <code>FunctionParameter</code> to define the Survey on the fly in this function, or <code>FunctionInput</code> to import Survey process data from a previously run process by the input <code>Survey</code>.</p></dd>
+<dt>SurveyDefinitionMethod</dt>
+<dd><p>See <code><a href="DefineSurvey.html">DefineSurvey</a></code></p></dd>
+<dt>SurveyTable</dt>
+<dd><p>A table of the two columns Stratum and Survey.</p></dd>
+<dt>Survey</dt>
+<dd><p>The <code><a href="Survey.html">Survey</a></code> process data.</p></dd>
+<dt>StratumPolygon</dt>
+<dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+<dt>AcousticTargetStrength</dt>
+<dd><p>The <code><a href="AcousticTargetStrength.html">AcousticTargetStrength</a></code> process data.</p></dd>
+<dt>SpeciesLink</dt>
+<dd><p>A table of the two columns AcousticCategory and SpeciesCategory.</p></dd>
 <dt>Radius</dt>
 <dd><p>For <code>WeightingMethod</code> = "NASC": The radius inside which the average NASC is calculated.</p></dd>
-<dt>LengthExponent</dt>
-<dd><p>For <code>WeightingMethod</code> = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
