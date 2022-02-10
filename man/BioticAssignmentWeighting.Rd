@@ -7,13 +7,25 @@
 BioticAssignmentWeighting(
   BioticAssignment,
   WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight",
-    "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber"),
+    "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber", "NASC"),
   StoxBioticData,
   LengthDistributionData,
   MaxNumberOfLengthSamples = 100,
-  StoxAcousticData,
-  Radius = double(),
-  LengthExponent = double()
+  SumNASCData,
+  NASCData,
+  LayerDefinition = c("FunctionParameter", "FunctionInput"),
+  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  AcousticLayer = NULL,
+  SurveyDefinition = c("FunctionParameter", "FunctionInput"),
+  SurveyDefinitionMethod = c("AllStrata", "Table"),
+  SurveyTable = data.table::data.table(),
+  Survey = NULL,
+  StratumPolygon = NULL,
+  AcousticTargetStrength,
+  SpeciesLink = data.table::data.table(),
+  Radius = double()
 )
 }
 \arguments{
@@ -27,11 +39,35 @@ BioticAssignmentWeighting(
 
 \item{MaxNumberOfLengthSamples}{For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.}
 
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
+\item{SumNASCData}{The \code{\link{SumNASCData}} data.}
+
+\item{NASCData}{The \code{\link{NASCData}} data.}
+
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process by the input \code{AcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.}
+
+\item{LayerDefinitionMethod}{See \code{\link{DefineAcousticLayer}}}
+
+\item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
+
+\item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
+
+\item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
+
+\item{SurveyDefinition}{The method to use for defining the Survey, one of \code{FunctionParameter} to define the Survey on the fly in this function, or \code{FunctionInput} to import Survey process data from a previously run process by the input \code{Survey}.}
+
+\item{SurveyDefinitionMethod}{See \code{\link{DefineSurvey}}}
+
+\item{SurveyTable}{A table of the two columns Stratum and Survey.}
+
+\item{Survey}{The \code{\link{Survey}} process data.}
+
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+
+\item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
+
+\item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
 
 \item{Radius}{For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated.}
-
-\item{LengthExponent}{For \code{WeightingMethod} = "NASC": A table linking AcousticCategory with the LengthExponent used to convert from NASC to density.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.
