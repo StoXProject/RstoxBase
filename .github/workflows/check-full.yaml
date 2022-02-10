@@ -116,12 +116,12 @@ jobs:
           }
         shell: Rscript {0}
 
-      #- name: Prepare for CRANdependencies on Linux
-      #  if: runner.os == 'Linux'
-      #  run: |
-      #    sudo apt-get install -y libproj-dev
-      #    sudo apt-get install libgdal-dev
-      #  shell: bash
+      - name: Prepare for CRANdependencies on Linux
+        if: runner.os == 'Linux'
+        run: |
+          #sudo apt-get install -y libproj-dev
+          sudo apt-get install libgdal-dev
+        shell: bash
       
       - name: Install CRANdependencies
         run: |
