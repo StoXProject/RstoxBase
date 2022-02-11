@@ -1600,7 +1600,7 @@ BioticAssignmentWeighting <- function(
         }
         
         # Add the weights:
-        BioticAssignmentCopy <- merge(BioticAssignmentCopy, data.table::data.table(Haul = names(weightsNASC), weightsNASC = weightsNASC))
+        BioticAssignmentCopy <- merge(BioticAssignmentCopy, data.table::data.table(Haul = names(weightsNASC), weightsNASC = weightsNASC), by = "Haul")
         BioticAssignmentCopy[, WeightingFactor := weightsNASC]
         
     }
