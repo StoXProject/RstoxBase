@@ -2,7 +2,7 @@
 % Please edit documentation in R/Data.R
 \name{ProcessData}
 \alias{ProcessData}
-\title{Process data used in estimation models in StoX}
+\title{Process data used by RstoxBase}
 \arguments{
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 

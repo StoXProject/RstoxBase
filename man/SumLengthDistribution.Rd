@@ -16,7 +16,7 @@ SumLengthDistribution(
 \arguments{
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
-\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process by \code{BioticLayer}.}
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineBioticLayer}.}
 
 \item{LayerDefinitionMethod}{See \code{\link{DefineBioticLayer}}}
 

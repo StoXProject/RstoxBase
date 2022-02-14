@@ -64,7 +64,7 @@ getDepth <- function(depth0, range, angle) {
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process by \code{AcousticLayer}.
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}.
 #' @param LayerDefinitionMethod See \code{\link{DefineAcousticLayer}}
 #' @inheritParams DefineAcousticLayer
 #' 
@@ -112,7 +112,7 @@ SumNASC <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process by the input \code{AcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.
 #' @param LayerDefinitionMethod See \code{\link{DefineAcousticLayer}}
 #' @inheritParams DefineAcousticLayer
 #' @param SurveyDefinition The method to use for defining the Survey, one of \code{FunctionParameter} to define the Survey on the fly in this function, or \code{FunctionInput} to import Survey process data from a previously run process by the input \code{Survey}.
