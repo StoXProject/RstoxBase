@@ -27,7 +27,7 @@ MeanSpeciesCategoryCatch(
 
 \item{SumSpeciesCategoryCatchData}{The \code{\link{SumSpeciesCategoryCatchData}} data.}
 
-\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process by the input \code{BioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.}
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineBioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.}
 
 \item{LayerDefinitionMethod}{See \code{\link{DefineBioticLayer}}}
 

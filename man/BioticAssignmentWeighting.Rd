@@ -43,7 +43,7 @@ BioticAssignmentWeighting(
 
 \item{NASCData}{The \code{\link{NASCData}} data.}
 
-\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process by the input \code{AcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.}
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.}
 
 \item{LayerDefinitionMethod}{See \code{\link{DefineAcousticLayer}}}
 
