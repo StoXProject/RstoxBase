@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.5</span>
       </span>
     </div>
 
@@ -65,13 +65,14 @@
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of StoX data type <code><a href="QuantityData.html">QuantityData</a></code>.</p>
+    <p>An object of StoX data type <code><a href="QuantityData.html">QuantityData</a></code>. The <code><a href="QuantityData.html">QuantityData</a></code> contains both an Abundance and a Biomass column, but only one of these can be populated.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>The function merge the <code><a href="MeanDensityData.html">MeanDensityData</a></code> with the <code><a href="StratumAreaData.html">StratumAreaData</a></code> by Stratum and calculates the abundance  as the product of density (number by square nautical miles) and area (square nautical miles). 
-For acoustic-trawl surveys the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
-In swept-area surveys the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength</p>
+For acoustic-trawl estimates the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
+In swept-area estimates the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength</p>
+<p>For swept-area estimates the density calculated by <code><a href="SweptAreaDensity.html">SweptAreaDensity</a></code> can be given as "AreaWeightDensity" (as indicated by the column <code>DensityType</code>). In this case the <code>Biomass</code> column and not the <code>Abundance</code> column is populated in the output <code><a href="QuantityData.html">QuantityData</a></code> from this function. The biomass is given in kilogram in this case, as Density is in kilogram per square nautical mile if <code>DensityType</code> = "AreaWeightDensity". This is different from the <code>Biomass</code> column of <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>, which is in gram, as it is generated from IndividualRoundWeight which is in gram.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>

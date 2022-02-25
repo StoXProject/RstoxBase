@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.5</span>
       </span>
     </div>
 
@@ -48,6 +48,12 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.5" id="rstoxbase-v175-2022-02-25">RstoxBase v1.7.5 (2022-02-25)<a class="anchor" aria-label="anchor" href="#rstoxbase-v175-2022-02-25"></a></h2>
+<ul><li>Added error when the raising factor calculated from CatchFractionWeight/SampleWeight or CatchFractionNumber/SampleNumber is NA or Inf in one or more samples. This is an indication of error in the data that StoX can take no general approach to handle. The primary solution for this error is to correct the errors in the input data, or preferably in the database holding the data, so that other users may avoid the same error. There are possibilities for filtering out the hauls/samples with error in raising factor in StoX, but this requires COMPLETE KNOWLEDGE of what the different samples and hauls represent. Filtering out a sample with missing raising factor causes the length distribution to be given by the other samples, which may be special samples of e.g. only large fish, resulting in highly biased length distribution. Filtering out entire hauls is also problematic, as one may lose vital information in the data, say if the large catches have a particular problem with extra samples where the raising factor is not given. Another dangerous option in StoX is to translate e.g. CatchFractionWeight and SampleWeight to positive values at the exact knowledge of what the correct value should be.</li>
+<li>Added possible values for SpeciesLink in AcousticDensity().</li>
+<li>Added notes on the difference between unit for Biomass in the data types QuantityData (kg) and SuperIndividualsData (g) in the documentation of the functions Quantity() and SuperIndividuals().</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.7.2" id="rstoxbase-v172-2022-02-10">RstoxBase v1.7.2 (2022-02-10)<a class="anchor" aria-label="anchor" href="#rstoxbase-v172-2022-02-10"></a></h2>
 <ul><li>Added WeightingMethod = “NASC” in BioticAssignmentWeighting().</li>
 </ul></div>
@@ -76,6 +82,7 @@
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.5.2" id="rstoxbase-v152-2022-01-10">RstoxBase v1.5.2 (2022-01-10)<a class="anchor" aria-label="anchor" href="#rstoxbase-v152-2022-01-10"></a></h2>
 <ul><li>Changed SpeciesCategoryCatch() to return a single table similar to LengthDistributionData, but with TotalCatchWeight and TotalCatchCount instead of WeightedCount. As such, moved the CatchVariable of SpeciesCategoryCatch() to the ReportVariable of ReportSpeciesCategoryCatch(). The latter is a backward compatibility breaking change. Any existing StoX project using SpeciesCategoryCatch() and ReportSpeciesCategoryCatch() will break in ReportSpeciesCategoryCatch(), and the ReportVariable needs to be set to the appropriate value in order to continue.</li>
+<li>Removed the function input Translation from ReportSpeciesCategoryCatch(). This was used to remove the species categories that were not translated, but such filtering should rather take place in a proecss using FilterStoxBiotic().</li>
 <li>Added SumSpeciesCategoryCatch() and MeanSpeciesCategoryCatch().</li>
 <li>Added the parameter SweptAreaDensityType in SweptAreaDensity() supporting both “LengthDistributed” and “TotalCatch” swept-area density.</li>
 <li>Added new column DensityType in DensityData with supported values “AreaNumberDensity” (the only option for AcousticDensity() and SweptAreaDensityType “LengthDistributed”) and “AreaMassDensity”.</li>
