@@ -14,6 +14,10 @@ SpeciesCategoryCatch <- function(
     SpeciesCategoryCatchType = c("Normalized", "Standard")
 ) {
     
+    # Store the sample names to remove them as columns in the end of the function:
+    sampleNames <- names(StoxBioticData$Sample)
+    sampleNamesToRemove <- c(sampleNames[!endsWith(sampleNames, "Key")], "SampleKey")
+    
     # Get the DensityUnit and DensityType:
     SpeciesCategoryCatchType <- match.arg(SpeciesCategoryCatchType)
     
@@ -46,11 +50,14 @@ SpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData[, SpeciesCategoryCatchType := ..SpeciesCategoryCatchType]
     SpeciesCategoryCatchData[, SpeciesCategoryCatchWeight := 1]
     
+    # Discard the variables in the Sample table, since we have summed over samples:
+    SpeciesCategoryCatchData[, (sampleNamesToRemove) := NULL]
+
     # Format the output:
-    formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = FALSE)
+    formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(SpeciesCategoryCatchData)
+    #RstoxData::setRstoxPrecisionLevel(SpeciesCategoryCatchData)
     
     
     return (SpeciesCategoryCatchData)
@@ -96,7 +103,7 @@ SumSpeciesCategoryCatch <- function(
     formatOutput(SumSpeciesCategoryCatchData, dataType = "SumSpeciesCategoryCatchData", keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(SumSpeciesCategoryCatchData)
+    #RstoxData::setRstoxPrecisionLevel(SumSpeciesCategoryCatchData)
     
     return(SumSpeciesCategoryCatchData)
 }
@@ -183,7 +190,7 @@ MeanSpeciesCategoryCatch <- function(
     formatOutput(MeanSpeciesCategoryCatchData, dataType = "MeanSpeciesCategoryCatchData", keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(MeanSpeciesCategoryCatchData)
+    #RstoxData::setRstoxPrecisionLevel(MeanSpeciesCategoryCatchData)
     
     return(MeanSpeciesCategoryCatchData)
 }

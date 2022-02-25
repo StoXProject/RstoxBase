@@ -6,12 +6,9 @@
 #' NASC function converts the StoxAcousticData into NASCData format
 #' 
 #' @inheritParams ModelData
-#' @inheritParams ProcessData
 #' 
 #' @return
 #' A \code{\link{NASCData}} object.
-#' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
 #' 
 #' @export
 NASC <- function(
@@ -55,6 +52,14 @@ getChannelDepth <- function(NASC, force = FALSE) {
 getDepth <- function(depth0, range, angle) {
     depth0 + range * (-cos(angle * pi / 180))
 }
+
+
+# We considered a function ExpandNASC() which should fill in all available AcousticCategory for each EDSU, thus avoiding the problem that a row with NA in AcousticCategory and other variables is generated for each EDSU which has not been scrutinized. However, an issue was how to treat channels. Should all possible channels be generated? And what if the channel definition changes in the cruise, will we then need to generate overlapping channels with 0 NASC? Also, could there be potential effects of removing the NA AcousticCategory, e.g. with respsect to order, sampling etc?
+#
+# Knowing that ICESAcoustic actually requires at least one AcousticCategory per EDSU, the problem of reports cluttered with AcousticCategory = NA can be avoided by moving to that input format instead. 
+#
+# A better suggestion was to add a FilterReport function which can actually filter away unwanted NAs. Then that choice is documented in the project.json file in a clear way.
+
 
 
 ##################################################
@@ -193,10 +198,12 @@ MeanNASC <- function(
     formatOutput(MeanNASCData, dataType = "MeanNASCData", keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(MeanNASCData)
+    #RstoxData::setRstoxPrecisionLevel(MeanNASCData)
     
     return(MeanNASCData)
 }
+
+
 
 ##################################################
 #' Split MeanNASCData to NASCData (deprecated)

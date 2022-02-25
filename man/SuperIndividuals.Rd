@@ -23,6 +23,9 @@ SuperIndividuals(
 \description{
 This function distributes Abundance to the individuals defined by \code{\link{Individuals}}.
 }
+\details{
+The \code{\link{SuperIndividualsData}} contains the variables \code{Abundance} and \code{Biomass}. The \code{Biomass} is given in gram, as it is generated from IndividualRoundWeight which is in gram. This is different from the \code{Biomass} column of \code{\link{QuantityData}}, which is in kilogram, as it is originates from \code{CatchFractionWeight} in \code{\link{StoxBioticData}}, which is in kilogram.
+}
 \seealso{
-\code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+\code{\link{Individuals}}, \code{\link{Quantity}} and \code{\link{LengthDistribution}} for generating the input to this function.
 }

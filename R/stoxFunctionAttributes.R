@@ -1130,14 +1130,14 @@ processPropertyFormats <- list(
             # Changed on 2020-06-30 from integer to character. There is no need to bring the integer definition of LUF20 on to StoxAcoustic!:
             "character", 
             "character"
-        )#, 
-        #possibleValues = function(AcousticTargetStrength, AssignmentLengthDistributionData) {
-        #    # Must be an unnamed list:
-        #    list(
-        #        unique(AcousticTargetStrength$TargetStrengthTable$AcousticCategory), 
-        #        unique(AssignmentLengthDistributionData$SpeciesCategory)
-        #    )
-        #}
+        ), 
+        possibleValues = function(MeanNASCData, AssignmentLengthDistributionData) {
+            # Must be an unnamed list:
+            list(
+                unique(MeanNASCData$Data$AcousticCategory), 
+                unique(AssignmentLengthDistributionData$SpeciesCategory)
+            )
+        }
     ), 
     
     acousticCategoryLinkTable = list(

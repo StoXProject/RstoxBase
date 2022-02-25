@@ -208,7 +208,7 @@ DefineStratumPolygon <- function(
             preserveTopology = FALSE
         )
     }
-
+    
     return(StratumPolygon)
 }
 
@@ -484,7 +484,7 @@ StratumArea <- function(
     }
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(areaDT)
+    #RstoxData::setRstoxPrecisionLevel(areaDT)
     
     return(areaDT)
 }

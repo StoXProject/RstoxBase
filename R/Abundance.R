@@ -9,11 +9,15 @@
 #' 
 #' @details
 #' The function merge the \code{\link{MeanDensityData}} with the \code{\link{StratumAreaData}} by Stratum and calculates the abundance  as the product of density (number by square nautical miles) and area (square nautical miles). 
-#' For acoustic-trawl surveys the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
-#' In swept-area surveys the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength 
+#' For acoustic-trawl estimates the abundance is calculated by Stratum, Layer, Beam, SpeciesCategory and IndividualTotalLength.
+#' In swept-area estimates the abundance is calculated by Stratum, Layer, SpeciesCategory and IndividualTotalLength 
+#' 
+#' For swept-area estimates the density calculated by \code{\link{SweptAreaDensity}} can be given as "AreaWeightDensity" (as indicated by the column \code{DensityType}). In this case the \code{Biomass} column and not the \code{Abundance} column is populated in the output \code{\link{QuantityData}} from this function. The biomass is given in kilogram in this case, as Density is in kilogram per square nautical mile if \code{DensityType} = "AreaWeightDensity". This is different from the \code{Biomass} column of \code{\link{SuperIndividualsData}}, which is in gram, as it is generated from IndividualRoundWeight which is in gram.
+#' 
+#' 
 #' 
 #' @return
-#' An object of StoX data type \code{\link{QuantityData}}. 
+#' An object of StoX data type \code{\link{QuantityData}}. The \code{\link{QuantityData}} contains both an Abundance and a Biomass column, but only one of these can be populated.
 #' 
 #' @seealso \code{\link{SuperIndividuals}} for distributing Abundance to individuals.
 #' 
@@ -45,7 +49,7 @@ Quantity <- function(
     formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(QuantityData)
+    #RstoxData::setRstoxPrecisionLevel(QuantityData)
     
     return(QuantityData)
 }
@@ -163,7 +167,9 @@ Individuals <- function(
 #' @inheritParams ProcessData
 #' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{QuantityData}} (via \code{link{DensityData}}).
 #' 
-#' @seealso \code{\link[roxygen2]{roxygenize}} is used to generate the documentation.
+#' @details The \code{\link{SuperIndividualsData}} contains the variables \code{Abundance} and \code{Biomass}. The \code{Biomass} is given in gram, as it is generated from IndividualRoundWeight which is in gram. This is different from the \code{Biomass} column of \code{\link{QuantityData}}, which is in kilogram, as it is originates from \code{CatchFractionWeight} in \code{\link{StoxBioticData}}, which is in kilogram.
+#' 
+#' @seealso \code{\link{Individuals}}, \code{\link{Quantity}} and \code{\link{LengthDistribution}} for generating the input to this function.
 #' 
 #' @export
 #' 
@@ -185,7 +191,7 @@ SuperIndividuals <- function(
     #### This is a potentially bakward reproducibiliti breaking change, scheduled for 4.0.0: ####
     # Subset to the positive data, as this can discard length groups that have been filtered out in Indivduals when computing the PSUs:
     #QuantityData$Data <- subset(QuantityData$Data, Abundance > 0)
-     
+    
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
     addLengthGroup(data = SuperIndividualsData, master = QuantityData$Data, warn = FALSE)
     # Add length groups also to the QuantityData:
@@ -209,7 +215,7 @@ SuperIndividuals <- function(
     variablesToGetFromQuantityData <- intersect(variablesToGetFromQuantityData, names(QuantityData$Data))
     
     
-    # Merge QuantityData into the IndividualsData
+    # Merge QuantityData into the IndividualsData:
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
         QuantityData$Data[, ..variablesToGetFromQuantityData], 
@@ -474,8 +480,8 @@ addLengthGroup <- function(
     if(warn && length(speciesOnlyInData)) {
         warning("StoX: The species categories ", paste(speciesOnlyInData, collapse = ", "), " are present in the data but not in the master. These species categories will be removed from the output.")
     }
-    
-    # Keep only the common species:    
+
+    # Keep only the common species:
     species <- intersect(speciesInData, speciesInMaster)
     
     if(!length(species)) {
