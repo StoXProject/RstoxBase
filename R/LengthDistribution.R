@@ -97,6 +97,8 @@ LengthDistribution <- function(
     StoxBioticDataMerged[ , numberOfIndividuals := sum(!is.na(IndividualTotalLength)), by = "Sample"]
     # Then subset to only sub samples with individuals, that is delete rows from samples with sub samples, and where there are no non-missing lengths:
     StoxBioticDataMerged <- subset(StoxBioticDataMerged, !(numberOfSubSamples > 1 & numberOfIndividuals == 0))
+    # Recalculate numberOfSubSamples as the samples with no fish has been removed:
+    StoxBioticDataMerged[ , numberOfSubSamples := length(unique(SampleKey)), by = "Haul"]
     ############################
     
     ####################################################
@@ -149,8 +151,8 @@ LengthDistribution <- function(
     # Create a data table of different raising factors in the columns:
     raisingFactorTable <- data.frame(
         Weight = LengthDistributionData$CatchFractionWeight / LengthDistributionData$SampleWeight, 
-        Number = LengthDistributionData$CatchFractionNumber / LengthDistributionData$SampleNumber, 
-        Percent = 1
+        Number = LengthDistributionData$CatchFractionNumber / LengthDistributionData$SampleNumber#, 
+        #Percent = 1
     )
     
     # Apply the parameter RaisingFactorPriority:
@@ -160,20 +162,43 @@ LengthDistribution <- function(
     
     # Get the raisingFactor:
     getIndexOfFirstNonNA <- function(x, LengthDistributionType) {
-        n <- if(LengthDistributionType == "Percent") 3 else 2
-        min(n, which(!is.na(x)))
+        #n <- if(LengthDistributionType == "Percent") 3 else 2
+        #min(n, which(!is.na(x)))
+        min(2, which(!is.na(x)))
     }
     raisingFactorIndex <- apply(raisingFactorTable, 1, getIndexOfFirstNonNA, LengthDistributionType = LengthDistributionType)
     LengthDistributionData$raisingFactor <- raisingFactorTable[cbind(seq_along(raisingFactorIndex), raisingFactorIndex)]
     
-    # Warnings for NA or Inf raising factor, but only if both Haul and SpeciesCategory are given:
-    atRaisingFactorNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(raisingFactor) & !is.na(SpeciesCategory)])
-    if(length(atRaisingFactorNA)) {
-        warning("StoX: The following Hauls have missing (NA) raising factor, which is an indication that both CatchFractionWeight and CatchFractionNumber, or both SampleWeight and SampleNumber are missing for those samples (or possibly other combinations of missing values).:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorNA]), collapse = "\n"))
+    # Set raisingFactor to 1 if LengthDistributionType == "Percent" and only one sample:
+    if(LengthDistributionType == "Percent") {
+        LengthDistributionData[numberOfSubSamples == 1 & is.na(raisingFactor), raisingFactor := 1]
     }
-    atRaisingFactorInf <- which(LengthDistributionData[, !is.na(Haul) & is.infinite(raisingFactor) & !is.na(SpeciesCategory)])
-    if(length(atRaisingFactorInf)) {
-        warning("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution, which in turn can result in loss of NASC in SplitNASC() or loss of density in AcousticDensity().:\n", paste("\t", unique(LengthDistributionData$Haul[atRaisingFactorInf]), collapse = "\n"))
+    
+    
+    
+    # Stop when NA or Inf raising factor, but only if both Haul and SpeciesCategory are given:
+    hasRaisingFactorNA <- LengthDistributionData[, !is.na(Haul) & is.na(raisingFactor) & !is.na(SpeciesCategory)]
+    if(any(hasRaisingFactorNA)) {
+        
+        # List the hauls and samples with missing raising factor:
+        LengthDistributionDataUniqueBySample <- unique(subset(LengthDistributionData, hasRaisingFactorNA), by = "Sample")
+        haulsWithNARaisingFactor <- LengthDistributionDataUniqueBySample$Haul
+        samplesWithNARaisingFactor <- LengthDistributionDataUniqueBySample$Sample
+        
+        # Report the error:
+        stop(getBadRaisingFactorError("NA", unique(haulsWithNARaisingFactor), unique(samplesWithNARaisingFactor)))
+    }
+    hasRaisingFactorInf <- LengthDistributionData[, !is.na(Haul) & is.infinite(raisingFactor) & !is.na(SpeciesCategory)]
+    if(any(hasRaisingFactorInf)) {
+        #stop("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution.\nThere are several options for solving the problem, the ideal being to correct the errors in the input data. Alternatively, the function FilterStoxBiotic can be used to filter out the hauls with NA raising factor, or when there is at least one sample with positive raising factor in the haul, one can filter out the specific samples with NA raising factor:\n", paste("\t", unique(LengthDistributionData$Haul[hasRaisingFactorInf]), collapse = ", "))
+        
+        # List the hauls and samples with missing raising factor:
+        LengthDistributionDataUniqueBySample <- unique(subset(LengthDistributionData, hasRaisingFactorNA), by = "Sample")
+        haulsWithInfRaisingFactor <- LengthDistributionDataUniqueBySample$Haul
+        samplesWithInfRaisingFactor <- LengthDistributionDataUniqueBySample$Sample
+        
+        # Report the error:
+        stop(getBadRaisingFactorError("Inf", unique(haulsWithNARaisingFactor), unique(samplesWithNARaisingFactor)))
     }
     
     # Apply the raising factor and sum over samples:
@@ -193,11 +218,11 @@ LengthDistribution <- function(
     if(LengthDistributionType == "Normalized") {
         atEffectiveTowDistance0 <- which(LengthDistributionData[, !is.na(Haul) & EffectiveTowDistance == 0])
         if(length(atEffectiveTowDistance0)) {
-            warning("StoX: The following Hauls have EffectiveTowDistance = 0, which causes WeightedNumber = Inf. This may result in loss of data at a later stage, e.g. in SplitNASC:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = "\n"))
+            stop("StoX: The following Hauls have EffectiveTowDistance = 0, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = ", "))
         }
         atEffectiveTowDistanceNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(EffectiveTowDistance)])
         if(length(atEffectiveTowDistanceNA)) {
-            warning("StoX: The following Hauls have EffectiveTowDistance = NA, which when LengthDistributionType == \"Normalized\" results in all WeightedNumber = NA, which will propagate through mean and sum proecsses throughout the project.:\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = "\n"))
+            stop("StoX: The following Hauls have EffectiveTowDistance = NA, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = ", "))
         }
         
         LengthDistributionData[, WeightedNumber := WeightedNumber / EffectiveTowDistance]
@@ -224,12 +249,34 @@ LengthDistribution <- function(
     #orderDataByReference(LengthDistributionData, "LengthDistributionData")
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(LengthDistributionData)
+    #RstoxData::setRstoxPrecisionLevel(LengthDistributionData)
     ########################
     
     
     return(LengthDistributionData)
 }
+
+
+getBadRaisingFactorError <- function(badness, badHauls, badSamples) {
+    if(badness == "NA") {
+        uniqueBadHauls <- unique(badHauls)
+        badSamplesList <- split(badSamples, badHauls)
+        paste0(
+            "StoX: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least on NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
+            paste0("The following lists the hauls and samples with ", badness, " raising factor:\n"), 
+            paste0("Haul: ", uniqueBadHauls, ":\n\t", sapply(badSamplesList, function(x) paste0("Sample: ", x, collapse = ",\n\t")), collapse = ";\n")
+        )
+    }
+    else {
+        paste0(
+            "StoX: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. These errors should be corrected in the database holding the input data.\n", 
+            paste0("The following lists the hauls and samples with ", badness, " raising factor:\n"), 
+            paste0("Haul: ", uniqueBadHauls, ":\n\t", sapply(badSamplesList, function(x) paste0("Sample: ", x, collapse = ",\n\t")), collapse = ";\n")
+        )
+    }
+    
+}
+
 
 
 ##################################################
@@ -432,7 +479,7 @@ GearDependentCatchCompensation <- function(
     formatOutput(dataCopy, dataType = InputDataType, keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(dataCopy)
+    #RstoxData::setRstoxPrecisionLevel(dataCopy)
     
     return(dataCopy)
 }
@@ -570,7 +617,7 @@ LengthDependentLengthDistributionCompensation <- function(
     formatOutput(LengthDistributionDataCopy, dataType = "LengthDistributionData", keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(LengthDistributionDataCopy)
+    #RstoxData::setRstoxPrecisionLevel(LengthDistributionDataCopy)
     
     return(LengthDistributionDataCopy)
 }
@@ -764,7 +811,7 @@ SumLengthDistribution <- function(
     formatOutput(SumLengthDistributionData, dataType = "SumLengthDistributionData", keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(SumLengthDistributionData)
+    #RstoxData::setRstoxPrecisionLevel(SumLengthDistributionData)
     
     return(SumLengthDistributionData)
 }
@@ -859,7 +906,7 @@ MeanLengthDistribution <- function(
     formatOutput(MeanLengthDistributionData, dataType = "MeanLengthDistributionData", keep.all = FALSE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(MeanLengthDistributionData)
+    #RstoxData::setRstoxPrecisionLevel(MeanLengthDistributionData)
     
     return(MeanLengthDistributionData)
 }

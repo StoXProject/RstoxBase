@@ -413,7 +413,7 @@ meanRawResolutionData <- function(
     aggregatedData <- applyMeanToData(data = dataCopy, dataType = dataType, targetResolution = "PSU")
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(aggregatedData)
+    #RstoxData::setRstoxPrecisionLevel(aggregatedData)
     
     # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
     return(
@@ -499,7 +499,7 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     horizontalResolution <- getDataTypeDefinition(dataType, elements = c("horizontalResolution"), unlist = TRUE)
     targetHorizontalResolution <- c(
         getDataTypeDefinition(targetDataType, elements = c("horizontalResolution"), unlist = TRUE), 
-        # Add the Beam for NASCData and DensiyData:
+        # Add the Beam for NASCData and DensiyData. This is not exactly a horizontal resolution, so the name is somewhat confusing:
         getDataTypeDefinition(targetDataType, elements = "obserationVariable", unlist = TRUE)
     )
     # Omit in case the obserationVariable is NULL or not given:
@@ -509,6 +509,7 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
         targetHorizontalResolution, 
         weightingVariable
     )
+    extract <- unique(extract)
     
     summedWeighting <- data[, ..extract]
     # Uniquify so that we get only one value per Station/EDSU. This ignores the categoryVariable and groupingVariables, and assumes that the weightingVariable is constant across these variables (length group for swept area data and beam for acoustic data):
@@ -679,7 +680,7 @@ checkTypes <- function(table) {
 
 orderListBy <- function(x, by) {
     o <- order(x[[by]])
-    lapply(x, "[", o)
+    lapply(x, function(thisx) if(!is.function(thisx)) thisx[o] else x)
 }
 
 
@@ -1362,6 +1363,41 @@ readBioticAssignmentFrom2.7 <- function(projectXMLFilePath) {
     
     return(BioticAssignment)
 }
+
+
+
+#expandStoxData <- function(stoxData, dimensionVariables, targetVariables, informationVariables = NULL) {
+#    
+#    # Get the grid of the dimensionVariables:
+#    grid <- do.call(data.table::CJ, lapply(stoxData[, ..dimensionVariables], unique))
+#    # Add the informationVariables:
+#    if(length(informationVariables)) {
+#        dimensionAndInformationVariables <- c(dimensionVariables, informationVariables)
+#        grid <- merge(grid, stoxData[, ..dimensionAndInformationVariables], all.x = TRUE, by = dimensionVariables)
+#    }
+#    grid$index_ <- seq.int(nrow(grid))
+#    
+#    # Save indices in the grid at which data are present:
+#    arePresent <- grid[stoxData[, ..dimensionVariables], on = dimensionVariables]$index_
+#    # Save indices in the grid at which there are NAs in the data:
+#    #areNA <- arePresent[is.na(stoxData[[targetVariable]])]
+#    #areNA <- intersect(which(rowSums(stoxData[, lapply(.SD, is.na), .SDcols = targetVariables]) == 0), arePresent)
+#    areNA <- lapply(targetVariables, function(x) stoxData[, which(is.na(get(x)))])
+#    names(areNA) <- targetVariables
+#    
+#    # Insert the data onto the grid:
+#    stoxData <- stoxData[grid[, ..dimensionVariables], on = dimensionVariables]
+#    
+#    # Convert the NAs to 0 for the targetVariables:
+#    # First, set all NA to 0, both those from the original stoxData and those introduced by the grid:
+#    replaceNAByReference(stoxData, cols = targetVariables, replacement = 0)
+#    # Then restore the NAs from the original stoxData!!:
+#    #stoxData[areNA, eval(targetVariables) := NA]
+#    lapply(targetVariables, function(x) stoxData[areNA[[x]], eval(x) := NA])
+#    
+#    return(stoxData)
+#}
+
 
 
 

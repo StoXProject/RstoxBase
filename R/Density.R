@@ -134,7 +134,7 @@ AcousticDensity <- function(
     formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(DensityData)
+    #RstoxData::setRstoxPrecisionLevel(DensityData)
     
     return(DensityData)
 }
@@ -483,6 +483,10 @@ SweptAreaDensity <- function(
         }
     }
     
+    if(Data[, all(is.na(get(dataVariable)))]) {
+        warning("StoX: All ", dataVariable, " are NA. The selected DensityType (", DensityType, ") results in missing density.")
+    }
+    
     # Do we need to account for the sweep width?:
     if(startsWith(firstNonNA(Data[[typeVariableName]]), "SweepWidthCompensated")) {
         if(SweepWidthMethod == "PreDefined") {
@@ -528,7 +532,7 @@ SweptAreaDensity <- function(
     formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(DensityData)
+    #RstoxData::setRstoxPrecisionLevel(DensityData)
     
     return(DensityData)
 }
@@ -570,7 +574,7 @@ MeanDensity <- function(
     formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE)
     
     # Ensure that the numeric values are rounded to the defined number of digits:
-    RstoxData::setRstoxPrecisionLevel(MeanDensityData)
+    #RstoxData::setRstoxPrecisionLevel(MeanDensityData)
     
     return(MeanDensityData)
 }

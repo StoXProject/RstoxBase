@@ -205,6 +205,18 @@ aggregateBaselineDataOneTable <- function(
     
     # Add a CJ operation here like in StoX 2.7 (function reportQuantityAtLevel). This needs an option, so that it is only used across bootstrap iterations:
     if(length(padWithZerosOn)) {
+        
+        # Attempt to generalize the creation of the grid and filling in the data, intended for use here and for an ExpandNASC function, but the latter was abandoned, so no need to generalize:
+        ### dimensionVariables <- c(GroupingVariables, padWithZerosOn)
+        ### informationVariables = setdiff(names(stoxData), c(dimensionVariables, TargetVariable))
+        ### stoxData2 <- data.table::copy(stoxData)
+        ### expandStoxData(
+        ###     stoxData = stoxData2, 
+        ###     dimensionVariables = dimensionVariables, 
+        ###     targetVariable = TargetVariable, 
+        ###     informationVariables = informationVariables
+        ### )
+        
         # Add NAs for missing combinations of the GroupingVariables:
         #stoxData <- stoxData[do.call(CJ, lapply(GroupingVariables, unique)), allow.cartesian = TRUE]
         paddingVariables <- c(GroupingVariables, padWithZerosOn)
@@ -261,7 +273,7 @@ aggregateBaselineDataOneTable <- function(
     
     
     # Set the number of digits. Added on 2021-03-04:
-    RstoxData::setRstoxPrecisionLevel(outputData)
+    #RstoxData::setRstoxPrecisionLevel(outputData)
     
     return(outputData)
 }
