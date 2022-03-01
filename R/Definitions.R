@@ -702,12 +702,26 @@ initiateRstoxBase <- function(){
         Regression = list(
             # Simple linear regression Y = a + bX:
             SimpleLinear = function(dependentVariable, independentVariable, data) {
-                fit <- stats::lm(get(dependentVariable) ~ get(independentVariable), data = data)
+                fit <- stats::lm(
+                    get(dependentVariable) ~ get(independentVariable), 
+                    data = data, 
+                    na.action = stats::na.exclude
+                )
                 return(fit)
             }, 
             # Power regression Y = aX^b:
             Power = function(dependentVariable, independentVariable, data) {
-                fit <- stats::lm(log(get(dependentVariable)) ~ log(get(independentVariable)), data = data)
+                # Throw an error if any values are 0, causing -Inf in log():
+                is0 <- which(data[, c(dependentVariable, independentVariable), with = FALSE] == 0, arr.ind = TRUE)
+                if(NROW(is0)) {
+                    stop("There are zeros in the data, causing -Inf in the regression. This can happen when regressing IndividualTotalLength in SuperIndividualsData, where the length resolution may have been reduced to that some individuals end up with IndividualTotalLength = 0.")
+                }
+                
+                fit <- stats::lm(
+                    log(get(dependentVariable)) ~ log(get(independentVariable)), 
+                    data = data, 
+                    na.action = stats::na.exclude
+                )
                 # After log-log we get log(Y) = log(a) + b log(X), so a = exp(fit$coefficients[1])
                 fit$coefficients[1] <- exp(fit$coefficients[1])
                 return(fit)

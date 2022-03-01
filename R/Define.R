@@ -279,6 +279,13 @@ DefinePSU <- function(
         stop("Inavlid DefinitionMethod")
     }
     
+    # Warn if there are strata with only one PSU, which may result in missing variance:
+    numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
+    stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
+    if(any(numberOfPSUsInStratum == 1)) {
+        warning("StoX: The following strata have only one PSU, which may result in missing (NA) variance estimate: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+    }
+    
     # Define the PSUProcessData:
     PSUProcessData <- list(
         Stratum_PSU = Stratum_PSU, 
@@ -2074,11 +2081,13 @@ DefineRegression <- function(
 #' @inheritParams ModelData
 #' @inheritParams DefineModel
 #' @inheritParams DefineRegression
-#' @param InputDataType The type of biotic data to estimate the regression parameters based on, one of "StoxBioticData", "IndividualsData" and "SuperIndividualsData".
+#' @param InputDataType The type of biotic data to estimate the regression parameters based on, one of "IndividualsData" and "SuperIndividualsData". See Details.
 #' @param DependentVariable The name of the dependent variable (respons variable).
 #' @param IndependentVariable The name of the independent variable (explanatory variable).
 #' 
 #' @details The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model Y ~ a X^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
+#' 
+#' When using IndividualTotalLength as \code{DependentVariable} it can happen that IndividualTotalLength = 0 in \code{\link{SuperIndividualsData}} due to lower length resolution in the \code{\link{QuantityData}} than in the \code{\link{IndividualsData}} going in to the \code{\link{SuperIndividuals}} function. In such cases the only option is to use InputDataType = "IndividualsData".
 #' 
 #' @return
 #' An object of StoX data type \code{\link{Regression}}.

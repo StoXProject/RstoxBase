@@ -207,19 +207,56 @@ DistributeNASC <- function(
     
     
     # And check whether there are PSU/Layer for which one or more hauls are empty for one or more of the target species:
-    resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
-    checkValidHaulsBy <- c(resolution, getDataTypeDefinition(dataType = "DensityData", elements = c("categoryVariable"), unlist = TRUE))
-    notAllHaulsHaveCatch <- NASCData[, .(notAllHaulsHaveCatch = NumberOfAssignedHaulsWithCatch != NumberOfAssignedHauls), by = checkValidHaulsBy]
-    
-    if(any(notAllHaulsHaveCatch$notAllHaulsHaveCatch, na.rm = TRUE)) {
-        withInvalidHauls <- unique(NASCData[notAllHaulsHaveCatch$notAllHaulsHaveCatch, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls"),with = FALSE], by = checkValidHaulsBy)
-        withInvalidHauls <- paste0(
-            withInvalidHauls[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = checkValidHaulsBy], 
+    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = c("categoryVariable"), unlist = TRUE)
+    checkValidHaulsBy <- c("Stratum", categoryVariable)
+    notAllHaulsHaveCatchInStratum <- NASCData[, .(notAllHaulsHaveCatchInStratum = NumberOfAssignedHaulsWithCatch != NumberOfAssignedHauls), by = checkValidHaulsBy]
+    if(any(notAllHaulsHaveCatchInStratum$notAllHaulsHaveCatchInStratum, na.rm = TRUE)) {
+        # Get the unique invalid hauls:
+        strataWithInvalidHauls <- unique(NASCData[notAllHaulsHaveCatchInStratum$notAllHaulsHaveCatchInStratum, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls"), with = FALSE], by = checkValidHaulsBy)
+        # Discard NAs in checkValidHaulsBy:
+        strataWithInvalidHauls <- data.table::na.omit(strataWithInvalidHauls, cols = checkValidHaulsBy)
+        # Create a strings with the Stratum-PSU-Layer-SpeciesCategory and the number of assigned hauls with catch versus the number of assigned hauls:
+        strataWithInvalidHauls <- paste0(
+            strataWithInvalidHauls[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = checkValidHaulsBy], 
             " (", 
-            withInvalidHauls[, Reduce(function(...) paste(..., sep = "/"), .SD), .SDcols = c("NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls")], 
+            strataWithInvalidHauls[, Reduce(function(...) paste(..., sep = "/"), .SD), .SDcols = c("NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls")], 
             ")"
         )
-        warning(paste("StoX: There are Stratum-PSU-Layer-SpeciesCategory that have assigned hauls with no length measured individuals, and consequently no length distribution of the target species. This can lead to underestimation in reports from bootstrap.\n\tDetails: If ONLY hauls with no length measured individuals are sampled in a bootstrap run, the assignment length distribution will be missing (NA), and acoustic density will be NA. This, in turn, can propagate as NA in the corresponding stratum through to SuperIndividuals of that bootstrap run. This can lead to underestimation for acoustic-trawl models, as NAs are treated as 0 across bootstrap runs. Please make sure that only hauls with length measured individuals of the target species are assigned to each PSU-Layer. The hauls with no length measured individuals are listed with (number of hauls with number of length measured individuals / total number of assigned hauls):", paste(withInvalidHauls, collapse = "\n\t"), sep = "\n\t"))
+        warning(paste("StoX: There are Strata-SpeciesCategory containing hauls with no length measured individuals and consequently no length distribution of the target species. This can lead to underestimation in reports from bootstrap.\n\tDetails: If ONLY hauls with no length measured individuals are sampled in a bootstrap run, the assignment length distribution will be missing (NA), and acoustic density will be NA even if the mean NASC of the acoustic PSU is positive. This implies that a portion of the obserevd NASC is lost, as StoX have no means to convert NASC to acoustic density without a length distribution. Please use FilterStoxBiotic() to keep only hauls with length measured individuals of the target species. The Stratum-SpeciesCategory with hauls with no length measured individuals are listed with (number of hauls with length measured individuals / total number of hauls):", paste(strataWithInvalidHauls, collapse = "\n\t"), sep = "\n\t"))
+    }
+    
+    
+    
+    #resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    #checkValidHaulsBy <- c(resolution, getDataTypeDefinition(dataType = "DensityData", elements = c("categoryVariable"), unlist = TRUE))
+    #notAllHaulsHaveCatch <- NASCData[, .(notAllHaulsHaveCatch = NumberOfAssignedHaulsWithCatch != NumberOfAssignedHauls), by = checkValidHaulsBy]
+    #if(any(notAllHaulsHaveCatch$notAllHaulsHaveCatch, na.rm = TRUE)) {
+    #    # Get the unique invalid hauls:
+    #    withInvalidHauls <- unique(NASCData[notAllHaulsHaveCatch$notAllHaulsHaveCatch, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls"), with = FALSE], by = checkValidHaulsBy)
+    #    # Create a strings with the Stratum-PSU-Layer-SpeciesCategory and the number of assigned hauls with catch versus the number of assigned hauls:
+    #    withInvalidHauls <- paste0(
+    #        withInvalidHauls[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = checkValidHaulsBy], 
+    #        " (", 
+    #        withInvalidHauls[, Reduce(function(...) paste(..., sep = "/"), .SD), .SDcols = c("NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls")], 
+    #        ")"
+    #    )
+    #    warning(paste("StoX: There are Stratum-PSU-Layer-SpeciesCategory that have assigned hauls with no length measured individuals, and consequently no length distribution of the target species. This can lead to underestimation in reports from bootstrap.\n\tDetails: If ONLY hauls with no length measured individuals are sampled in a bootstrap run, the assignment length distribution will be missing (NA), and acoustic density will be NA. This, in turn, can propagate as NA in the corresponding stratum through to SuperIndividuals of that bootstrap run. This can lead to underestimation for acoustic-trawl models, as NAs are treated as 0 across bootstrap runs. Please make sure that only hauls with length measured individuals of the target species are assigned to each PSU-Layer. The Stratum-PSU-Layer-SpeciesCategory with no assigned hauls with length measured individuals are listed with (number of hauls with number of length measured individuals / total number of assigned hauls):", paste(withInvalidHauls, collapse = "\n\t"), sep = "\n\t"))
+    #}
+    
+    
+    
+    # And check whether there are PSU/Layer win only one non-empty assigned haul:
+    resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    checkValidHaulsBy <- c(resolution, getDataTypeDefinition(dataType = "DensityData", elements = c("categoryVariable"), unlist = TRUE))
+    onlyOneHaulHasCatch <- NASCData[, .(onlyOneHaulHasCatch = NumberOfAssignedHaulsWithCatch == 1), by = checkValidHaulsBy]
+    if(any(onlyOneHaulHasCatch$onlyOneHaulHasCatch, na.rm = TRUE)) {
+        # Get the unique invalid hauls:
+        withOnlyOneHaul <- unique(NASCData[onlyOneHaulHasCatch$onlyOneHaulHasCatch, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch"), with = FALSE], by = checkValidHaulsBy)
+        # Discard NAs in checkValidHaulsBy:
+        withOnlyOneHaul <- data.table::na.omit(withOnlyOneHaul, cols = checkValidHaulsBy)
+        # Create a strings with the Stratum-PSU-Layer-SpeciesCategory and the number of assigned hauls with catch versus the number of assigned hauls:
+        withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = checkValidHaulsBy]
+        warning(paste("StoX: There are Stratum-PSU-Layer-SpeciesCategory that have assigned ONLY ONE haul with length measured individuals. This can lead to underestimation of variance in reports from bootstrap. The Stratum-PSU-Layer-SpeciesCategory with no assigned hauls with length measured individuals are listed with (number of hauls with number of length measured individuals / total number of assigned hauls):", paste(withOnlyOneHaul, collapse = "\n\t"), sep = "\n\t"))
     }
     
     

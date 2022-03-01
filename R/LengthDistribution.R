@@ -96,6 +96,7 @@ LengthDistribution <- function(
     StoxBioticDataMerged[ , numberOfSubSamples := length(unique(SampleKey)), by = "Haul"]
     StoxBioticDataMerged[ , numberOfIndividuals := sum(!is.na(IndividualTotalLength)), by = "Sample"]
     # Then subset to only sub samples with individuals, that is delete rows from samples with sub samples, and where there are no non-missing lengths:
+    #message("Ingoring the following samples with no individuals: ", paste(subset(StoxBioticDataMerged, (numberOfSubSamples > 1 & numberOfIndividuals == 0))$Haul, collapse = ", "))
     StoxBioticDataMerged <- subset(StoxBioticDataMerged, !(numberOfSubSamples > 1 & numberOfIndividuals == 0))
     # Recalculate numberOfSubSamples as the samples with no fish has been removed:
     StoxBioticDataMerged[ , numberOfSubSamples := length(unique(SampleKey)), by = "Haul"]
@@ -262,7 +263,7 @@ getBadRaisingFactorError <- function(badness, badHauls, badSamples) {
         uniqueBadHauls <- unique(badHauls)
         badSamplesList <- split(badSamples, badHauls)
         paste0(
-            "StoX: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least on NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
+            "StoX: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least one NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
             paste0("The following lists the hauls and samples with ", badness, " raising factor:\n"), 
             paste0("Haul: ", uniqueBadHauls, ":\n\t", sapply(badSamplesList, function(x) paste0("Sample: ", x, collapse = ",\n\t")), collapse = ";\n")
         )
