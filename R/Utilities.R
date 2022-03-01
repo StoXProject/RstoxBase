@@ -786,13 +786,21 @@ getSequenceToSampleFrom <- function(){
 #' @export
 #' 
 summaryStox <- function(x, na.rm = FALSE) {
-    c(
+    out <- c(
         # Accept na.rm = FALSE in quantile, as  in median():
         if(any(is.na(x)) && isFALSE(na.rm)) rep(NA, 3) else stats::quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
         mean = mean(x, na.rm = na.rm),
         sd = stats::sd(x, na.rm = na.rm),
         cv = cv(x, na.rm = na.rm)
     )
+    # Set 0 sd to NA, with a warning assuming that this is a result of only one PSU selected in the stratum:
+    if(!is.na(out["sd"]) && out["sd"] == 0) {
+        warning("StoX: Standard deviation 0 was set to NA. StoX does not accept standard deviation 0, as it is either a sign of insufficient number of bootstraps or only one value to sample from in the bootstrapping (e.g. only one station in a stratum).")
+        out["sd"] <- NA
+        out["cv"] <- NA
+    }
+    
+    return(out)
 }
 #' The coefficient of variation, i.e., the standard deviation divided by the mean.
 #' 

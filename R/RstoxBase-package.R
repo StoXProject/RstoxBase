@@ -27,7 +27,7 @@ utils::globalVariables(c(
 	 "IndividualTotalLengthMiddle", "Layer", "LengthDistributionType", "LengthExponent",
 	 "LengthGroup", "LengthResolution", "LogDuration", "LogKey", "LogOrigin", "MaxChannelDepth",
 	 "MaxChannelRange", "MeanNASCWeight", "MiddleDateTime", "MinChannelDepth", "MinChannelRange",
-	 "NASCKey", "NASCWeight", "NumberOfAssignedHauls", "NumberOfAssignedHaulsWithCatch", "PSU",
+	 "N", "NASCKey", "NASCWeight", "NumberOfAssignedHauls", "NumberOfAssignedHaulsWithCatch", "PSU",
 	 "ReplaceIndividual", "ReplaceIndividualIndex", "ReplaceLevel", "SSU", "SSUIndex",
 	 "SpeciesCategory", "SpeciesCategoryCatchWeight", "SplitAcousticCategory", "StartDateTime",
 	 "Station", "StationLevel", "StopDateTime", "Stratum", "SummedWeights", "Survey", "SweepWidth",

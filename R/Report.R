@@ -174,6 +174,19 @@ aggregateBaselineDataOneTable <- function(
         }
     }
     
+    # Define constants outside of the fun to save time:
+    # Whether we are using a function with weighting:
+    weighting <- isWeightingFunction(aggregationFunction)
+    if(weighting && !length(WeightingVariable)) {
+        stop("WeightingVariable must be given.")
+    }
+    weightingParameter <- getWeightingParameter(aggregationFunction)
+    # Define the environment to run the function in:
+    funEnvir <- as.environment(paste("package", getReportFunctionPackage(aggregationFunction), sep = ":"))
+    # Get the reportFunctionVariableName
+    reportFunctionVariableName <- getReportFunctionVariableName(aggregationFunction, TargetVariable)
+    
+    
     # Get the function to use:
     fun <- function(x) {
         # Create the list of inputs to the function:
@@ -181,22 +194,19 @@ aggregateBaselineDataOneTable <- function(
             x[[TargetVariable]], 
             na.rm = na.rm
         )
-        # Add weightin to the list of inputs to the function:
-        if(isWeightingFunction(aggregationFunction)) {
-            if(!length(WeightingVariable)) {
-                stop("WeightingVariable must be given.")
-            }
-            args[[getWeightingParameter(aggregationFunction)]] = x[[WeightingVariable]]
+        # Add weighting to the list of inputs to the function:
+        if(weighting) {
+            args[[weightingParameter]] = x[[WeightingVariable]]
         }
-        # Call the function in the appropriate enivronment:
+        # Call the function in the appropriate environment:
         out <- do.call(
             aggregationFunction, 
             args, 
-            envir = as.environment(paste("package", getReportFunctionPackage(aggregationFunction), sep = ":"))
+            envir = funEnvir
         )
         
         # Add the function name as names if the function does not name the output:
-        names(out) <- getReportFunctionVariableName(aggregationFunction, TargetVariable)
+        names(out) <- reportFunctionVariableName
         # Convert to list to insert each element to a named column of the data table:
         out <- as.list(out)
         

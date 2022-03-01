@@ -849,7 +849,8 @@ stoxFunctionAttributes <- list(
         functionParameterFormat = list(
             RegressionTable = "regressionTable", 
             DependentVariable = "dependentVariable_EstimateBioticRegression", 
-            IndependentVariable = "independentVariable_EstimateBioticRegression"
+            IndependentVariable = "independentVariable_EstimateBioticRegression", 
+            GroupingVariables = "groupingVariables_EstimateBioticRegression"
         ), 
         functionArgumentHierarchy = list(
             IndividualsData = list(
@@ -956,6 +957,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "ReportSuperIndividualsData", 
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
+            TargetVariable = "targetVariable_ReportSuperIndividuals", 
             GroupingVariables = "groupingVariables_ReportSuperIndividuals", 
             InformationVariables = "informationVariables_ReportSuperIndividuals"
         ), 
@@ -1036,11 +1038,30 @@ processPropertyFormats <- list(
     
     independentVariable_EstimateBioticRegression = list(
         class = "vector", 
-        title = "Select DependentVariable for regression", 
+        title = "Select IndependentVariable for regression", 
         variableTypes = "character", 
         possibleValues = function(DependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
             data <- get(InputDataType)
             setdiff(intersect(names(data), attr(data, "stoxDataVariableNames")$Individual), DependentVariable)
+        }
+    ), 
+    
+    groupingVariables_EstimateBioticRegression = list(
+        class = "vector", 
+        title = "Select GroupingVariables for regression", 
+        variableTypes = "character", 
+        possibleValues = function(DependentVariable, IndependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
+            data <- get(InputDataType)
+            setdiff(
+                intersect(
+                    names(data), 
+                    c(
+                        attr(data, "stoxDataVariableNames")$SpeciesCategory, 
+                        attr(data, "stoxDataVariableNames")$Individual
+                    )
+                ), 
+                c(DependentVariable, IndependentVariable)
+            )
         }
     ), 
     
@@ -1465,6 +1486,15 @@ processPropertyFormats <- list(
                 c("AreaNumberDensity", "AreaWeightDensity")
             }
         }
+    ), 
+    
+    targetVariable_ReportSuperIndividuals = list(
+        class = "vector", 
+        title = "One variable to group report from SuperIndividualsData", 
+        possibleValues = function(SuperIndividualsData) {
+            sort(names(SuperIndividualsData))
+        }, 
+        variableTypes <- "character"
     ), 
     
     groupingVariables_ReportSuperIndividuals = list(
