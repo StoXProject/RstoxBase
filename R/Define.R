@@ -253,7 +253,6 @@ DefinePSU <- function(
     
     # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
     else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
-        
         SSU_PSU <- data.table::data.table(
             SSU = SSUs, 
             PSU = NA_character_
@@ -280,10 +279,12 @@ DefinePSU <- function(
     }
     
     # Warn if there are strata with only one PSU, which may result in missing variance:
-    numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
-    stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
-    if(any(numberOfPSUsInStratum == 1)) {
-        warning("StoX: The following strata have only one PSU, which may result in missing (NA) variance estimate: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+    if(NROW(Stratum_PSU)) {
+        numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
+        stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
+        if(any(numberOfPSUsInStratum == 1)) {
+            warning("StoX: The following strata have only one PSU, which may result in missing (NA) variance estimate: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+        }
     }
     
     # Define the PSUProcessData:
