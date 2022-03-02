@@ -214,7 +214,7 @@ DistributeNASC <- function(
         # Get the unique invalid hauls:
         strataWithInvalidHauls <- unique(NASCData[notAllHaulsHaveCatchInStratum$notAllHaulsHaveCatchInStratum, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch", "NumberOfAssignedHauls"), with = FALSE], by = checkValidHaulsBy)
         # Discard NAs in checkValidHaulsBy:
-        strataWithInvalidHauls <- data.table::na.omit(strataWithInvalidHauls, cols = checkValidHaulsBy)
+        strataWithInvalidHauls <- stats::na.omit(strataWithInvalidHauls, cols = checkValidHaulsBy)
         # Create a strings with the Stratum-PSU-Layer-SpeciesCategory and the number of assigned hauls with catch versus the number of assigned hauls:
         strataWithInvalidHauls <- paste0(
             strataWithInvalidHauls[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = checkValidHaulsBy], 
@@ -253,7 +253,7 @@ DistributeNASC <- function(
         # Get the unique invalid hauls:
         withOnlyOneHaul <- unique(NASCData[onlyOneHaulHasCatch$onlyOneHaulHasCatch, c(checkValidHaulsBy, "NumberOfAssignedHaulsWithCatch"), with = FALSE], by = checkValidHaulsBy)
         # Discard NAs in checkValidHaulsBy:
-        withOnlyOneHaul <- data.table::na.omit(withOnlyOneHaul, cols = checkValidHaulsBy)
+        withOnlyOneHaul <- stats::na.omit(withOnlyOneHaul, cols = checkValidHaulsBy)
         # Create a strings with the Stratum-PSU-Layer-SpeciesCategory and the number of assigned hauls with catch versus the number of assigned hauls:
         withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = checkValidHaulsBy]
         warning(paste("StoX: There are Stratum-PSU-Layer-SpeciesCategory that have assigned ONLY ONE haul with length measured individuals. This can lead to underestimation of variance in reports from bootstrap. The Stratum-PSU-Layer-SpeciesCategory with no assigned hauls with length measured individuals are listed with (number of hauls with number of length measured individuals / total number of assigned hauls):", paste(withOnlyOneHaul, collapse = "\n\t"), sep = "\n\t"))
