@@ -1,3 +1,7 @@
+# RstoxBase v1.7.8 (2022-03-02)
+* Fixed bug in DefinePSU when there are no PSUs.
+
+
 # RstoxBase v1.7.6 (2022-03-01)
 * Reduced time of reports.
 * Added na.action = na.exclude to the regression functions applied by EstimateBioticRegression().
