@@ -93,6 +93,7 @@ jobs:
           rm '/usr/local/bin/gfortran'
           rm '/usr/local/bin/2to3'
           rm '/usr/local/bin/R'
+          rm '/usr/local/bin/Rscript'
           brew install gdal
         shell: bash
 
