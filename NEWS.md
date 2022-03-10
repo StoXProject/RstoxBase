@@ -1,3 +1,7 @@
+# RstoxBase v1.7.9 (2022-03-10)
+* Fixed bug in backward compatibility for AcousticLayer and BioticLayer.
+
+
 # RstoxBase v1.7.8 (2022-03-02)
 * Fixed bug in DefinePSU when there are no PSUs.
 
