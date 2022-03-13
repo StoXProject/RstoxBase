@@ -132,11 +132,9 @@ jobs:
           brew install gdal
         shell: bash
 
-      - name: Session info 5
+      - name: pkgType
         run: |
-          options(width = 100)
-          pkgs <- unname(installed.packages()[, "Package"])
-          pkgs
+          .Platform$pkgType
         shell: Rscript {0}
 
       - name: Prepare for dependencies on Linux
