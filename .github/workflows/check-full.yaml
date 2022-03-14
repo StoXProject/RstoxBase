@@ -112,6 +112,10 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           remotes::install_deps(dependencies = TRUE)
+          remotes::install_cran("rcmdcheck")
+          remotes::install_cran("git2r")
+          remotes::install_cran("drat")
+          remotes::install_cran("sessioninfo")
         shell: Rscript {0}
         
       - name: Install dependencies on Windows
@@ -127,6 +131,10 @@ jobs:
             message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
             utils::install.packages(missing, dependencies = TRUE)
           }
+          remotes::install_cran("rcmdcheck", type = "binary")
+          remotes::install_cran("git2r", type = "binary")
+          remotes::install_cran("drat", type = "binary")
+          remotes::install_cran("sessioninfo", type = "binary")
         shell: Rscript {0}
 
       - name: Install dependencies on macOS
@@ -149,58 +157,12 @@ jobs:
             message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
             utils::install.packages(missing, dependencies = TRUE)
           }
-          #latform <- .Platform
-          #latform$pkgType <- "source"
-          #nlockBinding(".Platform", .BaseNamespaceEnv)
-          #ssign(".Platform", platform, envir = .BaseNamespaceEnv)
-          #ockBinding(".Platform", .BaseNamespaceEnv)
-          #Platform$pkgType
+          remotes::install_cran("rcmdcheck", type = "binary")
+          remotes::install_cran("git2r", type = "binary")
+          remotes::install_cran("drat", type = "binary")
+          remotes::install_cran("sessioninfo", type = "binary")
         shell: Rscript {0}
 
-      - name: Install CRANdependencies on Linux
-        if: runner.os == 'Linux'
-        run: |
-          remotes::install_cran("rcmdcheck")
-          remotes::install_cran("git2r")
-          remotes::install_cran("drat")
-          remotes::install_cran("sessioninfo")
-        shell: Rscript {0}
-        
-      - name: Install CRANdependencies on Windows
-        if: runner.os == 'Windows'
-        run: |
-          remotes::install_cran("rcmdcheck", type = "binary")
-          remotes::install_cran("git2r", type = "binary")
-          remotes::install_cran("drat", type = "binary")
-          remotes::install_cran("sessioninfo", type = "binary")
-        shell: Rscript {0}
-       
-       - name: Install CRANdependencies on macOS
-        if: runner.os == 'macOS'
-        run: |
-          .Platform$pkgType
-          platform <- .Platform
-          platform$pkgType <- "mac.binary"
-          unlockBinding(".Platform", .BaseNamespaceEnv)
-          assign(".Platform", platform, envir = .BaseNamespaceEnv)
-          lockBinding(".Platform", .BaseNamespaceEnv)
-          .Platform$pkgType
-          remotes::install_cran("rcmdcheck", type = "binary")
-          remotes::install_cran("git2r", type = "binary")
-          remotes::install_cran("drat", type = "binary")
-          remotes::install_cran("sessioninfo", type = "binary")
-        shell: Rscript {0}
-        
-      
-      
-      #- name: Install CRANdependencies
-      #  run: |
-      #    remotes::install_cran("rcmdcheck", type = "binary")
-      #    remotes::install_cran("git2r", type = "binary")
-      #    remotes::install_cran("drat", type = "binary")
-      #    remotes::install_cran("sessioninfo", type = "binary")
-      #  shell: Rscript {0}
-        
       - name: Session info
         run: |
           options(width = 100)
