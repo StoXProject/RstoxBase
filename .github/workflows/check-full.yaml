@@ -157,13 +157,33 @@ jobs:
           #Platform$pkgType
         shell: Rscript {0}
 
-      - name: Install CRANdependencies
+      - name: Install CRANdependencies on Linux
+        if: runner.os == 'Linux'
         run: |
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("git2r")
           remotes::install_cran("drat")
           remotes::install_cran("sessioninfo")
         shell: Rscript {0}
+        
+      - name: Install CRANdependencies on Windows and macOS
+        if: runner.os != 'Linux'
+        run: |
+          remotes::install_cran("rcmdcheck", type = "binary")
+          remotes::install_cran("git2r", type = "binary")
+          remotes::install_cran("drat", type = "binary")
+          remotes::install_cran("sessioninfo", type = "binary")
+        shell: Rscript {0}
+        
+      
+      
+      #- name: Install CRANdependencies
+      #  run: |
+      #    remotes::install_cran("rcmdcheck", type = "binary")
+      #    remotes::install_cran("git2r", type = "binary")
+      #    remotes::install_cran("drat", type = "binary")
+      #    remotes::install_cran("sessioninfo", type = "binary")
+      #  shell: Rscript {0}
         
       - name: Session info
         run: |
