@@ -149,12 +149,12 @@ jobs:
             message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
             utils::install.packages(missing, dependencies = TRUE)
           }
-          platform <- .Platform
-          platform$pkgType <- "source"
-          unlockBinding(".Platform", .BaseNamespaceEnv)
-          assign(".Platform", platform, envir = .BaseNamespaceEnv)
-          lockBinding(".Platform", .BaseNamespaceEnv)
-          .Platform$pkgType
+          #latform <- .Platform
+          #latform$pkgType <- "source"
+          #nlockBinding(".Platform", .BaseNamespaceEnv)
+          #ssign(".Platform", platform, envir = .BaseNamespaceEnv)
+          #ockBinding(".Platform", .BaseNamespaceEnv)
+          #Platform$pkgType
         shell: Rscript {0}
 
       - name: Install CRANdependencies
@@ -162,6 +162,7 @@ jobs:
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("git2r")
           remotes::install_cran("drat")
+          remotes::install_cran("sessioninfo")
         shell: Rscript {0}
         
       - name: Session info
