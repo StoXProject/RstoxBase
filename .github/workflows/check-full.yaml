@@ -117,16 +117,19 @@ jobs:
       - name: Hack .Platform$pkgType to "mac.binary" for Mac to support Homebrew builds
         if: runner.os == 'macOS'
         run: |
+          .Platform$pkgType
           platform <- .Platform
           platform$pkgType <- "mac.binary"
           unlockBinding(".Platform", .BaseNamespaceEnv)
           assign(".Platform", platform, envir = .BaseNamespaceEnv)
           lockBinding(".Platform", .BaseNamespaceEnv)
+          .Platform$pkgType
         shell: Rscript {0}
 
       - name: Install dependencies on Windows and macOS
         if: runner.os != 'Linux'
         run: |
+          .Platform$pkgType
           # First try binary and then possibly source:
           options(install.packages.check.source = "no")
           remotes::install_deps(dependencies = TRUE, type = "binary")
