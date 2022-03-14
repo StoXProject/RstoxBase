@@ -169,6 +169,13 @@ jobs:
       - name: Install CRANdependencies on Windows and macOS
         if: runner.os != 'Linux'
         run: |
+          .Platform$pkgType
+          platform <- .Platform
+          platform$pkgType <- "mac.binary"
+          unlockBinding(".Platform", .BaseNamespaceEnv)
+          assign(".Platform", platform, envir = .BaseNamespaceEnv)
+          lockBinding(".Platform", .BaseNamespaceEnv)
+          .Platform$pkgType
           remotes::install_cran("rcmdcheck", type = "binary")
           remotes::install_cran("git2r", type = "binary")
           remotes::install_cran("drat", type = "binary")
