@@ -89,7 +89,7 @@
 				},
 				"required": [
 					"Layer",
-					"MinLayerDepthMinLayerDepth",
+					"MinLayerDepth",
 					"MaxLayerDepth"
 				]
 			}
@@ -109,7 +109,7 @@
 				},
 				"required": [
 					"Layer",
-					"MinLayerDepthMinLayerDepth",
+					"MinLayerDepth",
 					"MaxLayerDepth"
 				]
 			}

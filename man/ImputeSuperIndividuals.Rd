@@ -23,7 +23,7 @@ ImputeSuperIndividuals(
 
 \item{ImputeByEqual}{A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data \bold{from}. The source individuals need also to have non-missing \code{ImputeAtMissing}. In StoX 3.0.0 and older, \code{ImputeByEqual} was hard coded to c("SpeciesCategory","IndividualTotalLength").}
 
-\item{ToImpute}{A vector of strings naming the variable(s) to impute (copy to the target individual). Only variables that are non-missing in the source individual and missing in the target individual are copied to the target individual. In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
+\item{ToImpute}{A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when \code{ImputeAtMissing} is missing, so including many variables in \code{ToImpute} is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
 
@@ -34,6 +34,9 @@ An object of StoX data type \code{\link{SuperIndividualsData}}.
 }
 \description{
 For each (target) individual with missing value in \code{ImputeAtMissing}, identify all (source) individuals in the haul for which \code{ImputeAtMissing} is non-missing and for which the values in \code{ImputeByEqual} are identical to the target individual. Then sample one of these source individuals, and copy values of \code{ToImpute} to the target individual. Only values that are non-missing are copied from the sampled individual, and  only missing values in the target individual are replaced. If no source individuals are found in the haul, expand the search to the stratum, and finally to the survey. If no source individuals are found in the survey, leave the target individual unchanged.
+}
+\details{
+When \code{ToImpute} contains more variables than that given by \code{ImputeAtMissing} there is a risk that values remain missing even after successful imputation. E.g., if \code{ImputeAtMissing} is IndividualAge, and \code{ToImpute} includes IndividualRoundWeight, then the weight is only imputed when age is missing. Super-individuals with age but not weight will then still have missing weight. Variables that are naturally connected, such as IndividualRoundWeight and WeightMeasurement, or IndividualTotalLength and LengthResolution, should both be included in \code{ToImpute}.
 }
 \seealso{
 \code{\link{SuperIndividuals}} for distributing Abundance to the Individuals.
