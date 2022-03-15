@@ -97,6 +97,12 @@ DefinePSU <- function(
             processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
         }
         
+        # Remove any empty string PSUs, which were created with RstoxFramework::removeEDSU in RstoxFramework <= 3.3.5:
+        atEmptyStringPSUs <- processData$SSU_PSU[, nchar(PSU) == 0]
+        if(any(atEmptyStringPSUs, na.rm = TRUE)) {
+            processData$SSU_PSU[atEmptyStringPSUs, PSU := NA_character_]
+        }
+        
         # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
         usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
         if(any(usedButMissingInStoxData, na.rm = TRUE)) {

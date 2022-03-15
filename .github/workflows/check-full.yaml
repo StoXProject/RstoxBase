@@ -95,7 +95,6 @@ jobs:
           rm '/usr/local/bin/R'
           rm '/usr/local/bin/Rscript'
           brew install gdal
-          brew install udunits
         shell: bash
 
       - name: Prepare for dependencies on Linux
@@ -115,11 +114,25 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
 
+      - name: Show .Platform$pkgType
+        if: runner.os == 'macOS'
+        run: |
+          .Platform$pkgType
+        shell: Rscript {0}
+
       - name: Install dependencies on Windows and macOS
         if: runner.os != 'Linux'
         run: |
           # First try binary and then possibly source:
-          remotes::install_deps(dependencies = TRUE)
+          options(install.packages.check.source = "no")
+          remotes::install_deps(dependencies = TRUE, type = "binary")
+          installed <- utils::installed.packages()[, "Package"]
+          needed <- remotes::dev_package_deps()
+          missing <- setdiff(needed$package, installed)
+          if(length(missing)) {
+            message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
+            utils::install.packages(missing, dependencies = TRUE)
+          }
         shell: Rscript {0}
 
       - name: Install CRANdependencies
