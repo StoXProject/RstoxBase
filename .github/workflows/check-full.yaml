@@ -106,6 +106,7 @@ jobs:
           rm '/usr/local/bin/2to3'
           #rm '/usr/local/bin/R'
           #rm '/usr/local/bin/Rscript'
+          export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=false
           brew install gdal
         shell: bash
 
