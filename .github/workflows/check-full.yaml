@@ -95,6 +95,7 @@ jobs:
           rm '/usr/local/bin/R'
           rm '/usr/local/bin/Rscript'
           brew install gdal
+          brew install udunits
         shell: bash
 
       - name: Prepare for dependencies on Linux
