@@ -1405,7 +1405,3 @@ readBioticAssignmentFrom2.7 <- function(projectXMLFilePath) {
 #    
 #    return(stoxData)
 #}
-
-
-
-

@@ -329,7 +329,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "BioticAssignment", 
         functionParameterFormat = list(
             LengthExponent = "lengthExponentTable", 
-            SpeciesLink = "speciesLinkTable"
+            SpeciesLink = "speciesLinkTable_BioticAssignmentWeighting"
         ), 
         functionArgumentHierarchy = list(
             StoxBioticData = list(
@@ -355,10 +355,6 @@ stoxFunctionAttributes <- list(
                     "FunctionInput", 
                     "FunctionParameter"
                 )
-            ), 
-            SumNASCData = list(
-                WeightingMethod = c("NASC"), 
-                LayerDefinition = "PreDefined"
             ), 
             # Layer:
             LayerDefinitionMethod = list(
@@ -408,6 +404,9 @@ stoxFunctionAttributes <- list(
                 WeightingMethod = c("NASC")
             ), 
             Radius = list(
+                WeightingMethod = c("NASC")
+            ), 
+            MinNumberOfEDSUs = list(
                 WeightingMethod = c("NASC")
             )
         )
@@ -743,7 +742,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "NASCData", 
         functionParameterFormat = list(
-            SpeciesLink = "speciesLinkTable",
+            SpeciesLink = "speciesLinkTable_AcousticDensity",
             AcousticCategoryLink = "acousticCategoryLinkTable"
         )
     ),
@@ -753,7 +752,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "NASCData", 
         functionParameterFormat = list(
-            SpeciesLink = "speciesLinkTable",
+            SpeciesLink = "speciesLinkTable_Split",
             AcousticCategoryLink = "acousticCategoryLinkTable"
         )
     ),
@@ -798,7 +797,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "DensityData", 
         functionParameterFormat = list(
-            SpeciesLink = "speciesLinkTable"
+            SpeciesLink = "speciesLinkTable_AcousticDensity"
         ),
         functionArgumentHierarchy = list()
     ), 
@@ -1139,7 +1138,7 @@ processPropertyFormats <- list(
             )
         }
     ), 
-    speciesLinkTable = list(
+    speciesLinkTable_AcousticDensity = list(
         class = "table", 
         title = "Link acoustic categories and species categories", 
         columnNames = c(
@@ -1157,6 +1156,48 @@ processPropertyFormats <- list(
             list(
                 unique(MeanNASCData$Data$AcousticCategory), 
                 unique(AssignmentLengthDistributionData$SpeciesCategory)
+            )
+        }
+    ), 
+    speciesLinkTable_Split = list(
+        class = "table", 
+        title = "Link acoustic categories and species categories", 
+        columnNames = c(
+            "AcousticCategory",
+            "SpeciesCategory"
+        ), 
+        variableTypes = c(
+            #"integer", # This is how it is defined in the XSD, see http://www.imr.no/formats/nmdechosounder/v1/nmdechosounderv1.xsd
+            # Changed on 2020-06-30 from integer to character. There is no need to bring the integer definition of LUF20 on to StoxAcoustic!:
+            "character", 
+            "character"
+        ), 
+        possibleValues = function(NASCData, AssignmentLengthDistributionData) {
+            # Must be an unnamed list:
+            list(
+                unique(NASCData$AcousticCategory), 
+                unique(AssignmentLengthDistributionData$SpeciesCategory)
+            )
+        }
+    ), 
+    speciesLinkTable_BioticAssignmentWeighting = list(
+        class = "table", 
+        title = "Link acoustic categories and species categories", 
+        columnNames = c(
+            "AcousticCategory",
+            "SpeciesCategory"
+        ), 
+        variableTypes = c(
+            #"integer", # This is how it is defined in the XSD, see http://www.imr.no/formats/nmdechosounder/v1/nmdechosounderv1.xsd
+            # Changed on 2020-06-30 from integer to character. There is no need to bring the integer definition of LUF20 on to StoxAcoustic!:
+            "character", 
+            "character"
+        ), 
+        possibleValues = function(NASCData, LengthDistributionData) {
+            # Must be an unnamed list:
+            list(
+                unique(NASCData$AcousticCategory), 
+                unique(LengthDistributionData$SpeciesCategory)
             )
         }
     ), 

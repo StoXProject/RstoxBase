@@ -219,11 +219,11 @@ LengthDistribution <- function(
     if(LengthDistributionType == "Normalized") {
         atEffectiveTowDistance0 <- which(LengthDistributionData[, !is.na(Haul) & EffectiveTowDistance == 0])
         if(length(atEffectiveTowDistance0)) {
-            stop("StoX: The following Hauls have EffectiveTowDistance = 0, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = ", "))
+            stop("Invalid Haul error: The following Hauls have EffectiveTowDistance = 0, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = ", "))
         }
         atEffectiveTowDistanceNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(EffectiveTowDistance)])
         if(length(atEffectiveTowDistanceNA)) {
-            stop("StoX: The following Hauls have EffectiveTowDistance = NA, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = ", "))
+            stop("Invalid Haul error: The following Hauls have EffectiveTowDistance = NA, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = ", "))
         }
         
         LengthDistributionData[, WeightedNumber := WeightedNumber / EffectiveTowDistance]
@@ -263,21 +263,23 @@ getBadRaisingFactorError <- function(badness, badHauls, badSamples) {
         uniqueBadHauls <- unique(badHauls)
         badSamplesList <- split(badSamples, badHauls)
         paste0(
-            "StoX: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least one NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
-            paste0("The following lists the hauls and samples with ", badness, " raising factor:\n"), 
-            paste0("Haul: ", uniqueBadHauls, ":\n\t", sapply(badSamplesList, function(x) paste0("Sample: ", x, collapse = ",\n\t")), collapse = ";\n")
+            "StoX: Invalid Sample error: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least one NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
+            paste0("The following lists the samples with ", badness, " raising factor:\n"), 
+            printErrorIDs(errorName = "Sample", errorIDs = badSamples)
         )
     }
     else {
         paste0(
-            "StoX: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. These errors should be corrected in the database holding the input data.\n", 
-            paste0("The following lists the hauls and samples with ", badness, " raising factor:\n"), 
-            paste0("Haul: ", uniqueBadHauls, ":\n\t", sapply(badSamplesList, function(x) paste0("Sample: ", x, collapse = ",\n\t")), collapse = ";\n")
+            "StoX: Invalid Sample error: There are ", length(badSamples), " samples of ", length(badHauls), " hauls with infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. These errors should be corrected in the database holding the input data.\n", 
+            paste0("The following lists the samples with ", badness, " raising factor:\n"), 
+            printErrorIDs(errorName = "Sample", errorIDs = badSamples)
         )
     }
-    
 }
 
+printErrorIDs <- function(errorName, errorIDs, bullet = "* ", sep = ": ", collapse = "\n") {
+    out <- paste0(paste0(bullet, errorName, sep, errorIDs, collapse = collapse), collapse)
+}
 
 
 ##################################################
@@ -865,7 +867,6 @@ MeanLengthDistribution <- function(
     BioticPSU = NULL
 ) {
     
-    
     # Skip the sum part if predefined:
     LayerDefinition <- match.arg(LayerDefinition)
     if(LayerDefinition != "PreDefined") {
@@ -968,7 +969,7 @@ MeanLengthDistribution <- function(
 #' 
 AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignment) {
     
-    ### # Require LengthDistributionType "Percent":
+     ### # Require LengthDistributionType "Percent":
     ### if(!isLengthDistributionType(LengthDistributionData, "Percent")) {
     ###     stop("LengthDistributionData used as input to AssignmentLengthDistribution() must be of LengthDistributionType \"Percent\"")
     ### }
@@ -992,6 +993,25 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     # Set the LengthDistributionType to "Percent":
     AssignmentLengthDistributionData[, LengthDistributionType := "Percent"]
     
+    
+    
+    
+    # Identify the hauls that does not have all species categories and those that does not have all species categories. Then find which strata for which not all of the hauls are ok:
+    # Merge the BioticAssignment with a list of the species categories for each haul:
+    SpeciesCategoryPerHaul <- LengthDistributionData[, .(SpeciesCategory = unique(SpeciesCategory)), by = "Haul"]
+    SpeciesCategoryPerAssignment <- merge(BioticAssignment, SpeciesCategoryPerHaul, by = "Haul", allow.cartesian = T)
+    # Identify hauls where all or any species categories are present:
+    allSpeciesCategory <- SpeciesCategoryPerAssignment[, unique(SpeciesCategory)]
+    SpeciesCategoryPerAssignment[, ContainsAllSpeciesCategory := all(allSpeciesCategory %in% SpeciesCategory), by = c("Stratum", "Haul")]
+    SpeciesCategoryPerAssignment[, ContainsAnySpeciesCategory := any(allSpeciesCategory %in% SpeciesCategory), by = c("Stratum", "Haul")]
+    # Further condense down to the strata where all hauls have all species categories (used in AcousticDensity()) or any species categories (used in SplitNASC()):
+    SpeciesCategoryPerAssignment[, AllHaulsHaveAllSpeciesCategory := all(ContainsAllSpeciesCategory), by = "Stratum"]
+    SpeciesCategoryPerAssignment[, AllHaulsHaveAnySpeciesCategory := all(ContainsAnySpeciesCategory), by = "Stratum"]
+    SpeciesCategoryPerAssignment <- SpeciesCategoryPerAssignment[, c("Stratum", "AllHaulsHaveAllSpeciesCategory", "AllHaulsHaveAnySpeciesCategory")]
+    SpeciesCategoryPerAssignment <- unique(SpeciesCategoryPerAssignment, by = "Stratum")
+    # Merge into the AssignmentLengthDistributionData:
+    AssignmentLengthDistributionData <- merge(AssignmentLengthDistributionData, SpeciesCategoryPerAssignment, by = "Stratum", all.x = TRUE)
+    
     # Format the output:
     formatOutput(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
     
@@ -1011,11 +1031,11 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     WeightingFactors <- BioticAssignment$WeightingFactor
     thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
     
-    # Add the number of assigned hauls par PSU, and the number of assigned hauls with length distribution for each species
+    ### # Add the number of assigned hauls per Stratum/PSU and Layer, and the number of assigned hauls with length distribution for each species
     thisLengthDistributionData[, NumberOfAssignedHauls := length(unique(Haul))]
-    thisLengthDistributionData[, HasAnyPositiveWeightedNumber := any(!is.na(get(dataVariable)) & (get(dataVariable) > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
-    thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedNumber, Haul, NA)]
-    thisLengthDistributionData[, NumberOfAssignedHaulsWithCatch := length(unique(stats::na.omit(ValidHaul))), by = "SpeciesCategory"]
+    ### thisLengthDistributionData[, HasAnyPositiveWeightedNumber := any(!is.na(get(dataVariable)) & (get(dataVariable) > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
+    ### thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedNumber, Haul, NA)]
+    ### thisLengthDistributionData[, NumberOfAssignedHaulsWithCatch := length(unique(stats::na.omit(ValidHaul))), by = "SpeciesCategory"]
     
     # Overwrite the weights by those defined in the BioticAssignment object:
     weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
@@ -1031,9 +1051,9 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     removeColumnsByReference(
         data = thisLengthDistributionData, 
         toRemove = c(
-            getResolutionVariables("AssignmentLengthDistributionData"), 
-            "HasAnyPositiveWeightedNumber",
-            "ValidHaul"
+            getResolutionVariables("AssignmentLengthDistributionData")#, 
+            #"HasAnyPositiveWeightedNumber",
+            #"ValidHaul"
         )
     )
     

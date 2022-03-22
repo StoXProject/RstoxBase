@@ -80,7 +80,7 @@ DefinePSU <- function(
         
         # Add any SSUs present in the StoxData that are not present in the processData:
         missingSSUs <- ! SSUs %in% processData$SSU_PSU$SSU
-        if(any(missingSSUs)) {
+        if(any(missingSSUs, na.rm = TRUE)) {
             SSU_PSU <- data.table::data.table(
                 SSU = SSUs[missingSSUs], 
                 PSU = NA_character_
@@ -288,7 +288,7 @@ DefinePSU <- function(
     if(NROW(Stratum_PSU)) {
         numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
         stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
-        if(any(numberOfPSUsInStratum == 1)) {
+        if(any(numberOfPSUsInStratum == 1, na.rm = TRUE)) {
             warning("StoX: The following strata have only one PSU, which may result in missing (NA) variance estimate: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
         }
     }
@@ -1425,6 +1425,7 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @param LengthDistributionData The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
+#' @param MinNumberOfEDSUs For \code{WeightingMethod} = "NASC": The minimum number of EDSUs to link to each Haul, applied if there are less than \code{MinNumberOfEDSUs} EDSUs inside the \code{Radius}. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. \code{\link{FilterStoxAcoustic}} can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.
 #' 
 #' @details
 #' The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
@@ -1474,7 +1475,7 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 #'It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 #'
-#'\strong{NASC} Not yet implemented.
+#'\strong{NASC}
 #'
 #'The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
 #'
@@ -1507,7 +1508,6 @@ BioticAssignmentWeighting <- function(
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
     # Used in WeightingMethod = "NASC":
-    SumNASCData, 
     NASCData, 
     LayerDefinition = c("FunctionParameter", "FunctionInput"), 
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
@@ -1521,8 +1521,8 @@ BioticAssignmentWeighting <- function(
     Survey = NULL, 
     # PSU: 
     StratumPolygon = NULL, 
-    # Used in AcousticDensity: 
-    AcousticTargetStrength, SpeciesLink = data.table::data.table(), Radius = double()
+    # Used in AcousticDensity, which is used in WeightingMethod = "NASC":
+    AcousticTargetStrength, SpeciesLink = data.table::data.table(), Radius = double(), MinNumberOfEDSUs = integer()
 ) {
     
     # Get the DefinitionMethod:
@@ -1567,14 +1567,30 @@ BioticAssignmentWeighting <- function(
     # Search around each station for the NASC values inside the range 'Radius':
     else if(WeightingMethod == "NASC") {
         
-        # SpeciesLink must contain only one link, and the SpeciesCategory and AcousticCategory must be present in the data:
-        if(!(
-            nrow(SpeciesLink) == 1 && 
-            SpeciesLink$SpeciesCategory %in% LengthDistributionData$SpeciesCategory && 
-            SpeciesLink$AcousticCategory %in% NASCData$AcousticCategory
-        )) {
-            stop("StoX: SpeciesLink must contain only one row, with SpeciesCategory and AcousticCategory present in the LengthDistributionData and NASCData, respectively.")
+        ### # SpeciesLink must contain only one link, and the SpeciesCategory and AcousticCategory must be present in the data:
+        ### if(!(
+        ###     nrow(SpeciesLink) == 1 && 
+        ###     SpeciesLink$SpeciesCategory %in% LengthDistributionData$SpeciesCategory && 
+        ###     SpeciesLink$AcousticCategory %in% NASCData$AcousticCategory
+        ### )) {
+        ###     stop("SpeciesLink must contain only one row, with SpeciesCategory and AcousticCategory present in the LengthDistributionData and NASCData, respectively.")
+        ### }
+        
+        
+        # SpeciesLink must contain only one link, and the SpeciesCategory and AcousticCategory must be present in the data. The requirement of only one species when weighting by NASC is a choice made to prevent nonsensical weighting. If there is a strong demand for multiple species when weighting by NASC, we might re-consider.:
+        if(nrow(SpeciesLink) != 1) {
+            stop("SpeciesLink must contain only one row, as weighting by NASC should focus only on the target species.")
         }
+        if(!SpeciesLink$SpeciesCategory %in% LengthDistributionData$SpeciesCategory) {
+            stop("SpeciesCategory of SpeciesLink must be present in the LengthDistributionData.")
+        }
+        if(!SpeciesLink$AcousticCategory %in% NASCData$AcousticCategory) {
+            stop("AcousticCategory of SpeciesLink must be present in the NASCData")
+        }
+        
+        
+        
+        
         
         ## Also the NASCData cannot contain more than one frequency:
         #if(NASCData[, length(unique(Beam))] > 1) {
@@ -1603,12 +1619,13 @@ BioticAssignmentWeighting <- function(
             StratumPolygon = StratumPolygon, 
             Radius = Radius, 
             AcousticTargetStrength = AcousticTargetStrength,
-            SpeciesLink = SpeciesLink 
+            SpeciesLink = SpeciesLink, 
+            MinNumberOfEDSUs = MinNumberOfEDSUs
         )
         
         # Give a warning if any of the new weights are NA:
         if(any(is.na(weightsNASC))) {
-            warning("StoX: The following Hauls had no positive NASC inside a radius of ", Radius, " nautical miles, resulting in 0 biotic assignment weight:\n\t", paste(names(weightsNASC)[is.na(weightsNASC)], collapse = "\n\t"))
+            warning("StoX: The following Hauls had no positive NASC inside the specified radius of ", Radius, " nautical miles for the species given by the SpeciesLink, resulting in 0 biotic assignment weight:\n\t", paste(names(weightsNASC)[is.na(weightsNASC)], collapse = "\n\t"))
             # Replace NA by 0:
             weightsNASC[is.na(weightsNASC)] <- 0
         }
@@ -1713,7 +1730,8 @@ getMeanAcousticDensityAroundOneStation <- function(
     StratumPolygon, 
     Radius, 
     AcousticTargetStrength,
-    SpeciesLink
+    SpeciesLink, 
+    MinNumberOfEDSUs = integer()
 ) {
     
     # Get the distance from the station to the EDSUs:
@@ -1726,12 +1744,22 @@ getMeanAcousticDensityAroundOneStation <- function(
         pt = as.matrix(stationPosition), 
         longlat = TRUE
     )
+    EDSUData[, insideRadius := haulToEDSUDistance <= Radius]
+    
+    # Apply the minimum number of EDSU requirement:
+    if(length(MinNumberOfEDSUs)) {
+        numInsideRadius <- EDSUData[, sum(insideRadius)]
+        if(numInsideRadius < MinNumberOfEDSUs) {
+            EDSUData[, insideRadius := insideRadius | haulToEDSUDistance <= sort( haulToEDSUDistance)[MinNumberOfEDSUs]]
+        }
+    }
     
     # Identify EDSUs within the specified radius:
-    EDSUsInsideRadius <- subset(EDSUData, haulToEDSUDistance <= Radius)
+    EDSUsInsideRadius <- subset(EDSUData, insideRadius == TRUE)
     if(!nrow(EDSUsInsideRadius)) {
         return(NA)
     }
+    
     
     # Subset the NASCData:
     NASCDataInside <- subset(NASCData, EDSU %in% EDSUsInsideRadius$EDSU)
@@ -1772,6 +1800,7 @@ getMeanAcousticDensityAroundOneStation <- function(
     AssignmentLengthDistributionData <- AssignmentLengthDistribution(LengthDistributionData, BioticAssignment)
     
     # Convert the NASCData inside the radius to acoustic density: 
+    # The suppressWarnings avoids warnings if only one Haul is assigned in a Stratum, etc.:
     suppressWarnings(AcousticDensityData <- AcousticDensity(
         MeanNASCData = MeanNASCDataInside,
         AssignmentLengthDistributionData = AssignmentLengthDistributionData,

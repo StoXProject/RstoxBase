@@ -1,5 +1,14 @@
+# RstoxBase v1.7.10 (2022-03-22)
+* Changed warning when there are assigned hauls with no length distribution. Now there is a warning in AcousticDensity() if there are hauls in a stratum for which not ALL target species have length distribution. In SplitNASC() the warning is when not ANY target species have length distribution, as we only need one length distribution to distribute NASC between species.
+* Changed the warning "that have assigned ONLY ONE haul with length measured individuals" to "that have assigned ONLY ONE haul", since this warning concerns bootstrapping only one Haul, regardless of whether the Haul contains length distribution or not.
+* Added the MinNumberOfEDSUs parameter to BioticAssignmentWeighting() when WeightingMethod == "NASC".
+* Fixed bug in possible values for speciesLinkTable in  SplitNASC().
+* Fixed bug when checking for only one PSU in a stratum.
+
+
 # RstoxBase v1.7.9 (2022-03-10)
-* Fixed bug in backward compatibility for AcousticLayer and BioticLayer.
+* Fixed bug in JSON schema for AcousticLayer and BioticLayer.
+* Added removal of empty string PSUs, originating form a bug in RstoxFramework::removeEDSU().
 
 
 # RstoxBase v1.7.8 (2022-03-02)
