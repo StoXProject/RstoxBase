@@ -10,7 +10,7 @@ MeanDensity(DensityData)
 \item{DensityData}{The \code{\link{DensityData}} data.}
 }
 \description{
-This function calculates the weighted average of the density in each stratum (or possibly in each PSU, which implies returning the input DensityData unchanged). The weights are effective log distance for acoustic density and number of stations per biotic PSU for swept area density.
+This function calculates the weighted average of the density in each Stratum/Layer/SpeciesCategory/Beam. The weights are summed effective log distance for each acoustic PSU for acoustic density, and number of stations per biotic PSU for swept area density.
 }
 \seealso{
 See \code{\link{AcousticDensity}} for acoustic density and  \code{\link{SweptAreaDensity}} for swept-area density.

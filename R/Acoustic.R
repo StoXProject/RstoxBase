@@ -277,7 +277,8 @@ SplitMeanNASC <- function(
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
         SpeciesLink = SpeciesLink, 
-        sumBy = resolution
+        sumBy = resolution, 
+        emptyHaulWarning = "WarnIfNotAnySpeciesPresent"
     )
     
     # Then add to the MeanNASCDataNotToSplit and sum for each species of each Stratum, PSU and Layer:
@@ -431,7 +432,8 @@ splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLe
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
         SpeciesLink = SpeciesLink, 
-        sumBy = splitResolution
+        sumBy = splitResolution, 
+        emptyHaulWarning = "WarnIfNotAnySpeciesPresent"
     )
     
     # Check whether there are cells of the splitResolution ("EDSU", "Channel", "Beam", "Frequency") that are all NA in NASC, and then add the MixAcousticCategory for these cells, so that the NASC is restored:

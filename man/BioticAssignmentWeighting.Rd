@@ -11,7 +11,6 @@ BioticAssignmentWeighting(
   StoxBioticData,
   LengthDistributionData,
   MaxNumberOfLengthSamples = 100,
-  SumNASCData,
   NASCData,
   LayerDefinition = c("FunctionParameter", "FunctionInput"),
   LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"),
@@ -25,7 +24,8 @@ BioticAssignmentWeighting(
   StratumPolygon = NULL,
   AcousticTargetStrength,
   SpeciesLink = data.table::data.table(),
-  Radius = double()
+  Radius = double(),
+  MinNumberOfEDSUs = integer()
 )
 }
 \arguments{
@@ -38,8 +38,6 @@ BioticAssignmentWeighting(
 \item{LengthDistributionData}{The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).}
 
 \item{MaxNumberOfLengthSamples}{For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.}
-
-\item{SumNASCData}{The \code{\link{SumNASCData}} data.}
 
 \item{NASCData}{The \code{\link{NASCData}} data.}
 
@@ -68,6 +66,8 @@ BioticAssignmentWeighting(
 \item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
 
 \item{Radius}{For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated.}
+
+\item{MinNumberOfEDSUs}{For \code{WeightingMethod} = "NASC": The minimum number of EDSUs to link to each Haul, applied if there are less than \code{MinNumberOfEDSUs} EDSUs inside the \code{Radius}. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. \code{\link{FilterStoxAcoustic}} can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.}
 }
 \value{
 An object of StoX data type \code{\link{BioticAssignment}}.
@@ -123,7 +123,7 @@ The method is commonly used in split NASC (nautical area scattering coefficient)
 
 It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 
-\strong{NASC} Not yet implemented.
+\strong{NASC}
 
 The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
 
