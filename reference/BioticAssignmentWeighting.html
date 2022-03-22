@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.10</span>
       </span>
     </div>
 
@@ -60,7 +60,6 @@
   <span class="va">StoxBioticData</span>,
   <span class="va">LengthDistributionData</span>,
   MaxNumberOfLengthSamples <span class="op">=</span> <span class="fl">100</span>,
-  <span class="va">SumNASCData</span>,
   <span class="va">NASCData</span>,
   LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
   LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>, <span class="st">"Table"</span><span class="op">)</span>,
@@ -74,7 +73,8 @@
   StratumPolygon <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">AcousticTargetStrength</span>,
   SpeciesLink <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
-  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>
+  Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
+  MinNumberOfEDSUs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -90,8 +90,6 @@
 <dd><p>The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).</p></dd>
 <dt>MaxNumberOfLengthSamples</dt>
 <dd><p>For <code>WeightingMethod</code> = "NumberOfLengthSamples": Values of the number of length samples that exceed <code>MaxNumberOfLengthSamples</code> are set to <code>MaxNumberOfLengthSamples</code>. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.</p></dd>
-<dt>SumNASCData</dt>
-<dd><p>The <code><a href="SumNASCData.html">SumNASCData</a></code> data.</p></dd>
 <dt>NASCData</dt>
 <dd><p>The <code><a href="NASCData.html">NASCData</a></code> data.</p></dd>
 <dt>LayerDefinition</dt>
@@ -120,6 +118,8 @@
 <dd><p>A table of the two columns AcousticCategory and SpeciesCategory.</p></dd>
 <dt>Radius</dt>
 <dd><p>For <code>WeightingMethod</code> = "NASC": The radius inside which the average NASC is calculated.</p></dd>
+<dt>MinNumberOfEDSUs</dt>
+<dd><p>For <code>WeightingMethod</code> = "NASC": The minimum number of EDSUs to link to each Haul, applied if there are less than <code>MinNumberOfEDSUs</code> EDSUs inside the <code>Radius</code>. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. <code>FilterStoxAcoustic</code> can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -151,7 +151,7 @@ The assigned biotic hauls are given a weighting value according to the number of
 <p>\(c_{l,s,b}\) = number in length group <em>l</em> for species <em>s</em> in biotic haul <em>b</em></p>
 <p>The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.</p>
 <p>It is a requirement that the lengthdistribution data is of distribution type <em>Standard</em> or <em>Normalized</em> (normalized to one nautical mile towing distance).</p>
-<p><strong>NASC</strong> Not yet implemented.</p>
+<p><strong>NASC</strong></p>
 <p>The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.</p>
 <p>A search for acoustic NASC values (at EDSU resolution) is performed within a given radius around a biotic station. A weighted (by integrator distance of the EDSUs) mean NASC is calculated from the surrounding NASC values and this is used in the further weighting value calculations. Using this combined NASC value, the length distribution of the biotic station and a target strength (TS) versus length empirical relationship, the weighting variable density of the biotic station is first calculated by length group. The sum of densities (number per square nautical mile) for all length groups of the target species at the given biotic haul, is than calculated and applied as the weighting variable for the biotic haul.Note that if an EDSU NASC value is used for assignment to several biotic stations, the NASC value is split and devided between these biotic stations.</p>
 <p>The NASC WeightingMethod is associated with the following user parameters:</p>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.10</span>
       </span>
     </div>
 
@@ -47,6 +47,19 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.10" id="rstoxbase-v1710-2022-03-22">RstoxBase v1.7.10 (2022-03-22)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1710-2022-03-22"></a></h2>
+<ul><li>Changed warning when there are assigned hauls with no length distribution. Now there is a warning in AcousticDensity() if there are hauls in a stratum for which not ALL target species have length distribution. In SplitNASC() the warning is when not ANY target species have length distribution, as we only need one length distribution to distribute NASC between species.</li>
+<li>Changed the warning “that have assigned ONLY ONE haul with length measured individuals” to “that have assigned ONLY ONE haul”, since this warning concerns bootstrapping only one Haul, regardless of whether the Haul contains length distribution or not.</li>
+<li>Added the MinNumberOfEDSUs parameter to BioticAssignmentWeighting() when WeightingMethod == “NASC”.</li>
+<li>Fixed bug in possible values for speciesLinkTable in SplitNASC().</li>
+<li>Fixed bug when checking for only one PSU in a stratum.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.9" id="rstoxbase-v179-2022-03-10">RstoxBase v1.7.9 (2022-03-10)<a class="anchor" aria-label="anchor" href="#rstoxbase-v179-2022-03-10"></a></h2>
+<ul><li>Fixed bug in JSON schema for AcousticLayer and BioticLayer.</li>
+<li>Added removal of empty string PSUs, originating form a bug in RstoxFramework::removeEDSU().</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.7.8" id="rstoxbase-v178-2022-03-02">RstoxBase v1.7.8 (2022-03-02)<a class="anchor" aria-label="anchor" href="#rstoxbase-v178-2022-03-02"></a></h2>
 <ul><li>Fixed bug in DefinePSU when there are no PSUs.</li>

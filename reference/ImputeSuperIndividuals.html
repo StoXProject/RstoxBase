@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.10</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
 <dt>ImputeByEqual</dt>
 <dd><p>A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data <b>from</b>. The source individuals need also to have non-missing <code>ImputeAtMissing</code>. In StoX 3.0.0 and older, <code>ImputeByEqual</code> was hard coded to c("SpeciesCategory","IndividualTotalLength").</p></dd>
 <dt>ToImpute</dt>
-<dd><p>A vector of strings naming the variable(s) to impute (copy to the target individual). Only variables that are non-missing in the source individual and missing in the target individual are copied to the target individual. In StoX 3.0.0 and older, <code>ToImpute</code> was hard coded to all available variables of the BioticData contained in the <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p></dd>
+<dd><p>A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when <code>ImputeAtMissing</code> is missing, so including many variables in <code>ToImpute</code> is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, <code>ToImpute</code> was hard coded to all available variables of the BioticData contained in the <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p></dd>
 <dt>Seed</dt>
 <dd><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></dd>
 <dt>Regression</dt>
@@ -84,6 +84,10 @@
     <div id="value">
     <h2>Value</h2>
     <p>An object of StoX data type <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>When <code>ToImpute</code> contains more variables than that given by <code>ImputeAtMissing</code> there is a risk that values remain missing even after successful imputation. E.g., if <code>ImputeAtMissing</code> is IndividualAge, and <code>ToImpute</code> includes IndividualRoundWeight, then the weight is only imputed when age is missing. Super-individuals with age but not weight will then still have missing weight. Variables that are naturally connected, such as IndividualRoundWeight and WeightMeasurement, or IndividualTotalLength and LengthResolution, should both be included in <code>ToImpute</code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
