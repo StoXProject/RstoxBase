@@ -238,6 +238,7 @@ SuperIndividuals <- function(
     # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
     distributeQuantityBy <- intersect(distributeQuantityBy, names(QuantityData$Data))
     
+    #browser()
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(DistributionMethod == "Equal") {
         SuperIndividualsData[, individualNumber := as.double(.N), by = distributeQuantityBy]
@@ -294,6 +295,7 @@ SuperIndividuals <- function(
         # Count the length measured individuals of each Haul, species, beam and length group:
         #SuperIndividualsData[, individualNumber := .N, by = haulGrouping] # This was an error, since it did not take different beams into account.
         countGrouping <- c(
+            getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
             "Haul", 
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
             getDataTypeDefinition(dataType = "QuantityData", elements = "groupingVariables_acoustic", unlist = TRUE), 
@@ -319,11 +321,10 @@ SuperIndividuals <- function(
     SuperIndividualsData[, individualWeightFactor := haulWeightFactor / individualNumber]
     # ... and check that they sum to 1:
     SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeQuantityBy]
-    tol <- sqrt(.Machine$double.eps)
-    all1 <- SuperIndividualsData[!is.na(sumIndividualWeightFactor), all(sumIndividualWeightFactor > 1 - tol & sumIndividualWeightFactor < 1 + tol)]
-    #if(!all1) {
-    #    stop("An error occurred causing weights to not sum to 1")
-    #}
+    
+    if(!testEqualTo1(SuperIndividualsData$sumIndividualWeightFactor)) {
+        warning("StoX: An error occurred causing weights to not sum to 1.")
+    }
     SuperIndividualsData[, sumIndividualWeightFactor := NULL]
     
     # Multiply by abundance weighting factors:
@@ -332,6 +333,12 @@ SuperIndividuals <- function(
     # Divide by the number of individuals (regardless of DistributionMethod)
     #SuperIndividualsData[, Abundance := Abundance / individualNumber]
     SuperIndividualsData[, Abundance := Abundance * individualWeightFactor]
+    
+    # Test whether the sum of the Abundance is equal to that of the QuantityData:
+    if(!testEqualTo1(sum(SuperIndividualsData$Abundance, na.rm = TRUE) / sum(QuantityData$Data$Abundance, na.rm = TRUE))) {
+        stop("Sum of Abundance not equal in QuantityData and SuperIndividualsData. Please contact the developers of StoX.")
+    }
+    
     SuperIndividualsData[, individualWeightFactor := NULL]
     
     
@@ -372,6 +379,17 @@ SuperIndividuals <- function(
     #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
     
     return(SuperIndividualsData)
+}
+
+
+testEqualTo1 <- function(x, tol = sqrt(.Machine$double.eps)) {
+    notNA <- !is.na(x)
+    if(any(notNA)) {
+        all(x[notNA] > 1 - tol & x[notNA] < 1 + tol)
+    }
+    else {
+        NA
+    }
 }
 
 
