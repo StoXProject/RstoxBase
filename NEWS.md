@@ -1,3 +1,7 @@
+# RstoxBase v1.7.11 (2022-03-22)
+* Fixed critical bug in acoustic-trawl projects for SuperIndividuals when DistributionMethod = "HaulDensity" and Hauls are assigned to PSUs in more than one stratum, which led to under-estimation, as the number of individuals to distribute the Abundance to was counted over all strata per Haul ID, whereas only inside the stratum was correct.
+
+
 # RstoxBase v1.7.10 (2022-03-22)
 * Changed warning when there are assigned hauls with no length distribution. Now there is a warning in AcousticDensity() if there are hauls in a stratum for which not ALL target species have length distribution. In SplitNASC() the warning is when not ANY target species have length distribution, as we only need one length distribution to distribute NASC between species.
 * Changed the warning "that have assigned ONLY ONE haul with length measured individuals" to "that have assigned ONLY ONE haul", since this warning concerns bootstrapping only one Haul, regardless of whether the Haul contains length distribution or not.
