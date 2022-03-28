@@ -12,13 +12,13 @@ backwardCompatibility <- list(
             changeVersion = "1.5.2", 
             functionName = "GearDependentCatchCompensation", 
             modelName = "baseline", 
-            newFunctionName = "RstoxFramework::GearDependentLengthDistributionCompensation"
+            newFunctionName = "RstoxBase::GearDependentLengthDistributionCompensation"
         ), 
         list(
             changeVersion = "1.5.2", 
             functionName = "LengthDependentCatchCompensation", 
             modelName = "baseline", 
-            newFunctionName = "RstoxFramework::LengthDependentLengthDistributionCompensation"
+            newFunctionName = "RstoxBase::LengthDependentLengthDistributionCompensation"
         ), 
         list(
             changeVersion = "1.5.4", 

@@ -1631,8 +1631,15 @@ BioticAssignmentWeighting <- function(
         }
         
         # Add the weights:
-        BioticAssignmentCopy <- merge(BioticAssignmentCopy, data.table::data.table(Haul = names(weightsNASC), weightsNASC = weightsNASC), by = "Haul")
-        BioticAssignmentCopy[, WeightingFactor := weightsNASC]
+        #BioticAssignmentCopy <- merge(BioticAssignmentCopy, data.table::data.table(Haul = names(weightsNASC), weightsNASC = weightsNASC), by = "Haul")
+        #BioticAssignmentCopy[, WeightingFactor := weightsNASC]
+        weightsNASCTable <- data.table::data.table(Haul = names(weightsNASC), weightsNASC = weightsNASC)
+        BioticAssignmentCopy <- mergeIntoBioticAssignment(
+            BioticAssignment = BioticAssignmentCopy, 
+            toMerge = weightsNASCTable, 
+            variable = "weightsNASC", 
+            weightingVariable = weightingVariable
+        )
         
     }
     # Weight hauls by the summed CatchFractionWeight divided by the EffectiveTowDistance:
@@ -1848,14 +1855,17 @@ addSumWeightedNumber <- function(BioticAssignment, LengthDistributionData, weigh
     
     # Copy the SumWeightedNumber into the weightingVariable:
     if(inverse) {
-        BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedNumber]
+        #BioticAssignment[, eval(weightingVariable) := 1 / SumWeightedNumber]
+        BioticAssignment[, eval(weightingVariable) := get(weightingVariable) / SumWeightedNumber]
     }
     else {
-        BioticAssignment[, eval(weightingVariable) := SumWeightedNumber]
+        #BioticAssignment[, eval(weightingVariable) := SumWeightedNumber]
+        BioticAssignment[, eval(weightingVariable) := get(weightingVariable) * SumWeightedNumber]
     }
     
     BioticAssignment[]
 }
+
 
 
 
