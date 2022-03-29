@@ -12,13 +12,13 @@ backwardCompatibility <- list(
             changeVersion = "1.5.2", 
             functionName = "GearDependentCatchCompensation", 
             modelName = "baseline", 
-            newFunctionName = "RstoxFramework::GearDependentLengthDistributionCompensation"
+            newFunctionName = "RstoxBase::GearDependentLengthDistributionCompensation"
         ), 
         list(
             changeVersion = "1.5.2", 
             functionName = "LengthDependentCatchCompensation", 
             modelName = "baseline", 
-            newFunctionName = "RstoxFramework::LengthDependentLengthDistributionCompensation"
+            newFunctionName = "RstoxBase::LengthDependentLengthDistributionCompensation"
         ), 
         list(
             changeVersion = "1.5.4", 
@@ -64,6 +64,36 @@ backwardCompatibility <- list(
             functionName = "BioticAssignmentWeighting", 
             modelName = "baseline", 
             parameterName = c("StoxAcousticData", "LengthExponent")
+        ),  
+        list(
+            changeVersion = "1.7.12", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "StratumPolygon"
+        ),  
+        list(
+            changeVersion = "1.7.12", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "SurveyDefinition"
+        ),  
+        list(
+            changeVersion = "1.7.12", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "SurveyDefinitionMethod"
+        ),  
+        list(
+            changeVersion = "1.7.12", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "SurveyTable"
+        ),  
+        list(
+            changeVersion = "1.7.12", 
+            functionName = "BioticAssignmentWeighting", 
+            modelName = "baseline", 
+            parameterName = "Survey"
         )
     ),  
     
@@ -407,6 +437,14 @@ backwardCompatibility <- list(
 	        parameterName = "ReportVariable", 
 	        value = "TotalCatchCount", 
 	        newValue = "TotalCatchNumber"
+	    ),
+	    list(
+	        changeVersion = "1.7.12", 
+	        functionName = "BioticAssignmentWeighting", 
+	        modelName = "baseline", 
+	        parameterName = "WeightingMethod", 
+	        value = "NASC", 
+	        newValue = "AcousticDensity"
 	    )
 	), 
     
