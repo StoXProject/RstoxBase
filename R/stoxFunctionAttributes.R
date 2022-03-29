@@ -338,7 +338,7 @@ stoxFunctionAttributes <- list(
             ), 
             LengthDistributionData = list(
                 # The WeightingMethod can be any of these:
-                WeightingMethod = c("SumWeightedNumber", "InverseSumWeightedNumber", "NASC")
+                WeightingMethod = c("SumWeightedNumber", "InverseSumWeightedNumber", "AcousticDensity")
             ), 
             MaxNumberOfLengthSamples = list(
                 WeightingMethod = c("NumberOfLengthSamples")
@@ -346,10 +346,10 @@ stoxFunctionAttributes <- list(
             
             # Layer: 
             LayerDefinition = list(
-                WeightingMethod = c("NASC")
+                WeightingMethod = c("AcousticDensity")
             ), 
             NASCData = list(
-                WeightingMethod = c("NASC"), 
+                WeightingMethod = c("AcousticDensity"), 
                 # The LayerDefinition can be any of these:
                 LayerDefinition = c(
                     "FunctionInput", 
@@ -358,56 +358,35 @@ stoxFunctionAttributes <- list(
             ), 
             # Layer:
             LayerDefinitionMethod = list(
-                WeightingMethod = c("NASC"), 
+                WeightingMethod = c("AcousticDensity"), 
                 LayerDefinition = "FunctionParameter"
             ), 
             Resolution = list(
-                WeightingMethod = c("NASC"), 
+                WeightingMethod = c("AcousticDensity"), 
                 LayerDefinition = "FunctionParameter", 
                 LayerDefinitionMethod = "Resolution"
             ), 
             LayerTable = list(
-                WeightingMethod = c("NASC"), 
+                WeightingMethod = c("AcousticDensity"), 
                 LayerDefinition = "FunctionParameter", 
                 LayerDefinitionMethod = "Table"
             ), 
             AcousticLayer = list(
-                WeightingMethod = c("NASC"), 
+                WeightingMethod = c("AcousticDensity"), 
                 LayerDefinition = "FunctionInput"
-            ),
-            # Survey:
-            SurveyDefinition = list(
-                WeightingMethod = c("NASC")
-            ), 
-            Survey = list(
-                WeightingMethod = c("NASC"), 
-                SurveyDefinition = "FunctionInput"
-            ), 
-            SurveyDefinitionMethod = list(
-                WeightingMethod = c("NASC"), 
-                SurveyDefinition = "FunctionParameter"
-            ), 
-            SurveyTable = list(
-                WeightingMethod = c("NASC"), 
-                SurveyDefinition = "FunctionParameter", 
-                SurveyDefinitionMethod = "Table"
-            ),
-            # MeanNASC:
-            StratumPolygon = list(
-                WeightingMethod = c("NASC")
             ),
             # AcousticDensity:
             AcousticTargetStrength = list(
-                WeightingMethod = c("NASC")
+                WeightingMethod = c("AcousticDensity")
             ), 
             SpeciesLink = list(
-                WeightingMethod = c("NASC")
+                WeightingMethod = c("AcousticDensity")
             ), 
             Radius = list(
-                WeightingMethod = c("NASC")
+                WeightingMethod = c("AcousticDensity")
             ), 
             MinNumberOfEDSUs = list(
-                WeightingMethod = c("NASC")
+                WeightingMethod = c("AcousticDensity")
             )
         )
     ), 

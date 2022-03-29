@@ -165,7 +165,7 @@ Individuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{LengthDistributionData} that was used to produce the \code{\link{QuantityData}} (via \code{link{DensityData}}).
+#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{\link{LengthDistributionData}} that was used to produce the \code{\link{QuantityData}} (via \code{link{DensityData}}). If the length resolution is not the same in the \code{\link{QuantityData}} and \code{\link{LengthDistributionData}}, an error will be thown.
 #' 
 #' @details The \code{\link{SuperIndividualsData}} contains the variables \code{Abundance} and \code{Biomass}. The \code{Biomass} is given in gram, as it is generated from IndividualRoundWeight which is in gram. This is different from the \code{Biomass} column of \code{\link{QuantityData}}, which is in kilogram, as it is originates from \code{CatchFractionWeight} in \code{\link{StoxBioticData}}, which is in kilogram.
 #' 
@@ -238,7 +238,6 @@ SuperIndividuals <- function(
     # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
     distributeQuantityBy <- intersect(distributeQuantityBy, names(QuantityData$Data))
     
-    #browser()
     # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
     if(DistributionMethod == "Equal") {
         SuperIndividualsData[, individualNumber := as.double(.N), by = distributeQuantityBy]
@@ -260,7 +259,20 @@ SuperIndividuals <- function(
         # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
         LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
         
+        # Require the exact same length resolutions in the LengthDistributionData as in the QuantityData$Data:
+        lengthGroups_LengthDistributionData <- unique(LengthDistributionData[, c("IndividualTotalLength", "LengthResolution")])
+        lengthGroups_LengthDistributionData <- subset(lengthGroups_LengthDistributionData, !is.na(IndividualTotalLength))
+        lengthGroups_LengthDistributionData <- lengthGroups_LengthDistributionData[, do.call(paste, .SD)]
+        lengthGroups_QuantityData <- unique(QuantityData$Data[, c("IndividualTotalLength", "LengthResolution")])
+        lengthGroups_QuantityData <- subset(lengthGroups_QuantityData, !is.na(IndividualTotalLength))
+        lengthGroups_QuantityData <- lengthGroups_QuantityData[, do.call(paste, .SD)]
+        if(!all(lengthGroups_QuantityData %in% lengthGroups_LengthDistributionData)) {
+            stop("The length resolution of the LengthDistributionData must match that of the QuantityData.")
+        }
+        
+        # Add the LengthGroup variable:
         addLengthGroup(data = LengthDistributionData, master = QuantityData$Data, warn = FALSE)
+        
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
         
@@ -317,13 +329,15 @@ SuperIndividuals <- function(
         stop("Invalid DistributionMethod")
     }
     
+    
+    
     # Generate the weighting factors:
     SuperIndividualsData[, individualWeightFactor := haulWeightFactor / individualNumber]
     # ... and check that they sum to 1:
     SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeQuantityBy]
     
     if(!testEqualTo1(SuperIndividualsData$sumIndividualWeightFactor)) {
-        warning("StoX: An error occurred causing weights to not sum to 1.")
+        stop("StoX: An error occurred causing weights to not sum to 1. This could be due to mismatch between the LengthDistributionData used in SuperIndividuals() and that used to derive the QuantityData. If this is not the case, contact the StoX developers.")
     }
     SuperIndividualsData[, sumIndividualWeightFactor := NULL]
     

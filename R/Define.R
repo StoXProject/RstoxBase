@@ -1421,11 +1421,11 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #' @inheritParams ProcessData
 #' @inheritParams MeanNASC
 #' @inheritParams AcousticDensity
-#' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "NASC", weighting by the surrounding NASC converted by the haul length distribution to a density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalNumber", the same as "NormalizedTotalWeight" but for total number, "SumWeightedNumber", weighting by the summed WeightedNumber of the input LengthDistributionData; and "InverseSumWeightedNumber", weighting by the inverse of the summed WeightedNumber.
+#' @param WeightingMethod  Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "AcousticDensity", weighting by the surrounding NASC converted by the haul length distribution to an acoustic density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalNumber", the same as "NormalizedTotalWeight" but for total number, "SumWeightedNumber", weighting by the summed WeightedNumber of the input LengthDistributionData; and "InverseSumWeightedNumber", weighting by the inverse of the summed WeightedNumber.
 #' @param LengthDistributionData The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
-#' @param Radius For \code{WeightingMethod} = "NASC": The radius inside which the average NASC is calculated. 
-#' @param MinNumberOfEDSUs For \code{WeightingMethod} = "NASC": The minimum number of EDSUs to link to each Haul, applied if there are less than \code{MinNumberOfEDSUs} EDSUs inside the \code{Radius}. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. \code{\link{FilterStoxAcoustic}} can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.
+#' @param Radius For \code{WeightingMethod} = "AcousticDensity": The radius inside which the average AcousticDensity is calculated. 
+#' @param MinNumberOfEDSUs For \code{WeightingMethod} = "AcousticDensity": The minimum number of EDSUs to link to each Haul, applied if there are less than \code{MinNumberOfEDSUs} EDSUs inside the \code{Radius}. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. \code{\link{FilterStoxAcoustic}} can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.
 #' 
 #' @details
 #' The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
@@ -1461,9 +1461,9 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 #'\eqn{w_b} = weighting value of biotic haul \emph{b}
 #'
-#'\eqn{s_b} = species in the  biotic haul \emph{b}
+#'\eqn{s_b} = species in the biotic haul \emph{b}
 #'
-#'\eqn{n_b} = number of species in the input data off biotic haul \emph{b}
+#'\eqn{n_b} = number of species in the input data of biotic haul \emph{b}
 #'
 #'\eqn{l} =  length group number
 #'
@@ -1475,23 +1475,21 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 #'It is a requirement that the lengthdistribution data is of distribution type \emph{Standard} or \emph{Normalized} (normalized to one nautical mile towing distance).
 #'
-#'\strong{NASC}
+#'\strong{AcousticDensity}
 #'
-#'The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, a density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
+#'The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values. By combining these NASC values with the length distribution of the biotic haul, an acoustic density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.
 #'
-#'A search for acoustic NASC values (at EDSU resolution) is performed within a given radius around a biotic station. A weighted (by integrator distance of the EDSUs) mean NASC is calculated from the surrounding NASC values and this is used in the further weighting value calculations. Using this combined NASC value, the length distribution of the biotic station and a target strength (TS) versus length empirical relationship, the weighting variable density of the biotic station is first calculated by length group. The sum of densities (number per square nautical mile) for all length groups of the target species at the given biotic haul, is than calculated and applied as the weighting variable for the biotic haul.Note that if an EDSU NASC value is used for assignment to several biotic stations, the NASC value is split and devided between these biotic stations.
+#'A search for NASC values (at EDSU resolution) is performed within a given radius around a biotic station. For each EDSU inside the radius the length distribution of the biotic station and a target strength (TS) versus length empirical relationship is used to calculate acoustic density for each length group and beam. The sum of densities (number per square nautical mile) over all length groups of the target species at the given biotic haul is then calculated and applied as the weighting variable for the biotic haul.
 #'
-#'The NASC WeightingMethod is associated with the following user parameters:
+#'The AcousticDensity WeightingMethod is associated with the following function inputs and parameters:
+#'
+#'\emph{\emph{AcousticTargetStrength}: The acoustic target strength model and parameters, defined by \code{\link{DefineAcousticTargetStrength}}
+#'
+#'\emph{\emph{SpeciesLink}: The table linking the AcousticCategory and SpeciesCategory.
 #'
 #'\emph{Radius}: Search radius (nautical miles) for NASC values (at EDSU resolution) around a biotic station
 #'
-#'\emph{LengthExponent}: LengthExponent in the target stregth versus length formula.
-#'
-#' \emph{TargetStrength0}:  TargetStrength0 in the target stregth versus length formula as:
-#'
-#'\deqn{TS = LengthExponent \log_{10}{l} + TargetStrength0}
-#'
-#'where \emph{l} is the fish "total length" in centimeters given as the lower value of the length group interval. 
+#'\emph{MinNumberOfEDSUs} The minumum number of EDSUs to use, effectively expanding the radius to cover this number of EDSUs if an insufficent number of EDSUs is found using the specified radius
 #'  
 #' 
 #' @return
@@ -1503,25 +1501,18 @@ getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, v
 #'
 BioticAssignmentWeighting <- function(
     BioticAssignment, 
-    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber", "NASC"), 
+    WeightingMethod = c("Equal", "NumberOfLengthSamples", "NormalizedTotalWeight", "NormalizedTotalNumber", "SumWeightedNumber", "InverseSumWeightedNumber", "AcousticDensity"), 
     StoxBioticData, 
     LengthDistributionData, 
     MaxNumberOfLengthSamples = 100, 
-    # Used in WeightingMethod = "NASC":
+    # Used in WeightingMethod = "AcousticDensity":
     NASCData, 
     LayerDefinition = c("FunctionParameter", "FunctionInput"), 
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     AcousticLayer = NULL, 
-    # Survey: 
-    SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
-    SurveyDefinitionMethod = c("AllStrata", "Table"), 
-    SurveyTable = data.table::data.table(), 
-    Survey = NULL, 
-    # PSU: 
-    StratumPolygon = NULL, 
-    # Used in AcousticDensity, which is used in WeightingMethod = "NASC":
+    # Used in AcousticDensity, which is used in WeightingMethod = "AcousticDensity":
     AcousticTargetStrength, SpeciesLink = data.table::data.table(), Radius = double(), MinNumberOfEDSUs = integer()
 ) {
     
@@ -1565,7 +1556,7 @@ BioticAssignmentWeighting <- function(
         )
     }
     # Search around each station for the NASC values inside the range 'Radius':
-    else if(WeightingMethod == "NASC") {
+    else if(WeightingMethod == "AcousticDensity") {
         
         ### # SpeciesLink must contain only one link, and the SpeciesCategory and AcousticCategory must be present in the data:
         ### if(!(
@@ -1577,9 +1568,9 @@ BioticAssignmentWeighting <- function(
         ### }
         
         
-        # SpeciesLink must contain only one link, and the SpeciesCategory and AcousticCategory must be present in the data. The requirement of only one species when weighting by NASC is a choice made to prevent nonsensical weighting. If there is a strong demand for multiple species when weighting by NASC, we might re-consider.:
+        # SpeciesLink must contain only one link, and the SpeciesCategory and AcousticCategory must be present in the data. The requirement of only one species when weighting by AcousticDensity is a choice made to prevent nonsensical weighting. If there is a strong demand for multiple species when weighting by AcousticDensity, we might re-consider.:
         if(nrow(SpeciesLink) != 1) {
-            stop("SpeciesLink must contain only one row, as weighting by NASC should focus only on the target species.")
+            stop("SpeciesLink must contain only one row, as weighting by AcousticDensity should focus only on the target species.")
         }
         if(!SpeciesLink$SpeciesCategory %in% LengthDistributionData$SpeciesCategory) {
             stop("SpeciesCategory of SpeciesLink must be present in the LengthDistributionData.")
@@ -1587,10 +1578,6 @@ BioticAssignmentWeighting <- function(
         if(!SpeciesLink$AcousticCategory %in% NASCData$AcousticCategory) {
             stop("AcousticCategory of SpeciesLink must be present in the NASCData")
         }
-        
-        
-        
-        
         
         ## Also the NASCData cannot contain more than one frequency:
         #if(NASCData[, length(unique(Beam))] > 1) {
@@ -1612,11 +1599,7 @@ BioticAssignmentWeighting <- function(
             Resolution = Resolution,
             LayerTable = LayerTable,
             AcousticLayer = AcousticLayer,
-            SurveyDefinition = SurveyDefinition,
-            SurveyDefinitionMethod = SurveyDefinitionMethod,
-            SurveyTable = SurveyTable,
             Survey = Survey,
-            StratumPolygon = StratumPolygon, 
             Radius = Radius, 
             AcousticTargetStrength = AcousticTargetStrength,
             SpeciesLink = SpeciesLink, 
@@ -1730,34 +1713,33 @@ getMeanAcousticDensityAroundOneStation <- function(
     Resolution,
     LayerTable,
     AcousticLayer,
-    SurveyDefinition, 
-    SurveyDefinitionMethod, 
-    SurveyTable, 
     Survey, 
-    StratumPolygon, 
     Radius, 
     AcousticTargetStrength,
     SpeciesLink, 
     MinNumberOfEDSUs = integer()
 ) {
     
+    
     # Get the distance from the station to the EDSUs:
     stationPosition <- unique(LengthDistributionData[Haul == thisHaul, c("Longitude", "Latitude")])
     EDSUData <- subset(NASCData, !duplicated(EDSU))
     EDSUPositions <- EDSUData[, c("Longitude", "Latitude")]
+    
     # Get the distance using WGS84 ellipsoid:
-    haulToEDSUDistance <- sp::spDistsN1(
+    haulToEDSUDistance_km <- sp::spDistsN1(
         pts = as.matrix(EDSUPositions), 
         pt = as.matrix(stationPosition), 
         longlat = TRUE
     )
-    EDSUData[, insideRadius := haulToEDSUDistance <= Radius]
+    haulToEDSUDistance_nmi <- haulToEDSUDistance_km * 1000 / getRstoxBaseDefinitions("nauticalMileInMeters")
+    EDSUData[, insideRadius := haulToEDSUDistance_nmi <= Radius]
     
     # Apply the minimum number of EDSU requirement:
     if(length(MinNumberOfEDSUs)) {
         numInsideRadius <- EDSUData[, sum(insideRadius)]
         if(numInsideRadius < MinNumberOfEDSUs) {
-            EDSUData[, insideRadius := insideRadius | haulToEDSUDistance <= sort( haulToEDSUDistance)[MinNumberOfEDSUs]]
+            EDSUData[, insideRadius := insideRadius | haulToEDSUDistance_nmi <= sort( haulToEDSUDistance_nmi)[MinNumberOfEDSUs]]
         }
     }
     
@@ -1782,18 +1764,41 @@ getMeanAcousticDensityAroundOneStation <- function(
             AcousticLayer = AcousticLayer
         )
     }
+    uniqueEDSUs <- unique(SumNASCDataInside$Data$EDSU)
+    AcousticPSU <- list(
+        Stratum_PSU = data.table::data.table(
+            Stratum = "StratumForWeightingMethodAcousticDensity", 
+            PSU = uniqueEDSUs
+        ), 
+        EDSU_PSU = data.table::data.table(
+            EDSU = uniqueEDSUs, 
+            PSU = uniqueEDSUs
+        )
+    )
+    Survey <- data.table::data.table(
+        Stratum = "StratumForWeightingMethodAcousticDensity",
+        Survey = "SurveyForWeightingMethodAcousticDensity"
+    )
+    # The method of StoX 2.7, where MeanNASC is taken over all EDSUs for each Haul:
+    #AcousticPSU <- list(
+    #    Stratum_PSU = data.table::data.table(
+    #        Stratum = "StratumForWeightingMethodAcousticDensity", 
+    #        PSU = "PSUForWeightingMethodAcousticDensity"
+    #    ), 
+    #    EDSU_PSU = data.table::data.table(
+    #        EDSU = uniqueEDSUs, 
+    #        PSU = "PSUForWeightingMethodAcousticDensity"
+    #    )
+    #)
     suppressWarnings(MeanNASCDataInside <- MeanNASC(
         LayerDefinition = "PreDefined", 
         SumNASCData = SumNASCDataInside, 
         # Survey: 
-        SurveyDefinition = SurveyDefinition, 
-        SurveyDefinitionMethod = SurveyDefinitionMethod, 
-        SurveyTable = SurveyTable, 
+        SurveyDefinition = "FunctionInput", 
         Survey = Survey, 
         # PSU: 
-        PSUDefinition = "FunctionParameter", 
-        PSUDefinitionMethod = "EDSUToPSU", 
-        StratumPolygon = StratumPolygon
+        PSUDefinition = "FunctionInput", 
+        AcousticPSU = AcousticPSU
     ))
     
     # Contruct BioticAssignment, as the given Haul for all EDSUs inside the radius:
@@ -1816,15 +1821,16 @@ getMeanAcousticDensityAroundOneStation <- function(
     ))
     
     # Sum the acoustic density over length groups and beams:
-    AcousticDensityData$Data[, Density := sum(Density), by = "PSU"]
+    AcousticDensityData$Data[, Density := sum(Density, na.rm = TRUE), by = "PSU"]
     AcousticDensityData$Data <- unique(AcousticDensityData$Data, by = "PSU")
     
-    # Average the acoustic density, but trick MeanDensity() to average across all strata in the survey:
-    AcousticDensityData$Data[, Stratum := Survey]
+    ## Average the acoustic density, but trick MeanDensity() to average across all strata in the survey:
+    #AcousticDensityData$Data[, Stratum := Survey]
     MeanAcousticDensityData <- MeanDensity(AcousticDensityData)
     
     # Extract the row with non-missing Layer:
     averageAcousticDensity <- MeanAcousticDensityData$Data[!is.na(Layer) & !is.na(Survey), Density]
+    #averageAcousticDensity <- AcousticDensityData$Data[!is.na(Layer) & !is.na(Survey), Density]
     
     return(averageAcousticDensity)
 }
