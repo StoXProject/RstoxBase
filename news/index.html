@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.12</span>
       </span>
     </div>
 
@@ -47,6 +47,10 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.7.12" id="rstoxbase-v1712-2022-03-29">RstoxBase v1.7.12 (2022-03-29)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1712-2022-03-29"></a></h2>
+<ul><li>Fixed critical bug in acoustic-trawl projects for SuperIndividuals when DistributionMethod = “HaulDensity” and Hauls are assigned to PSUs in more than one stratum, which led to under-estimation, as the number of individuals to distribute the Abundance to was counted over all strata per Haul ID, whereas only inside the stratum was correct.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.7.11" id="rstoxbase-v1711-2022-03-22">RstoxBase v1.7.11 (2022-03-22)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1711-2022-03-22"></a></h2>
 <ul><li>Fixed critical bug in acoustic-trawl projects for SuperIndividuals when DistributionMethod = “HaulDensity” and Hauls are assigned to PSUs in more than one stratum, which led to under-estimation, as the number of individuals to distribute the Abundance to was counted over all strata per Haul ID, whereas only inside the stratum was correct.</li>
