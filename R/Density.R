@@ -96,6 +96,7 @@ AcousticDensity <- function(
     #    sumBy = sumBy
     #)
     
+    
     sumBy <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE)
     # Split the NASC by the AssignmentLengthDistributionData:
     NASCData <- DistributeNASC(

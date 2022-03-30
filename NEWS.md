@@ -1,5 +1,11 @@
+# RstoxBase v1.7.13 (2022-03-30)
+* Changed WeightingMethod "AcousticDensity" to only consider EDSUs that are tagged to an acoustic PSU.
+
+
 # RstoxBase v1.7.12 (2022-03-29)
-* Fixed critical bug in acoustic-trawl projects for SuperIndividuals when DistributionMethod = "HaulDensity" and Hauls are assigned to PSUs in more than one stratum, which led to under-estimation, as the number of individuals to distribute the Abundance to was counted over all strata per Haul ID, whereas only inside the stratum was correct.
+* Fixed bug in BioticAssignmentWeighting, WeightingMethod "SumWeightedNumber", "InverseSumWeightedNumber" and "NASC", where weights were overwritten instead of multiplied, with the consequence that the randomness introduced by the bootstrapping of hauls in acoustic-trawl models when the DefineBioticAssignment process is used in BootstrapMethodTable, and with any of these WeightingMethod, will be overwritten by the BioticAssignmentWeighting process, thus cancelling the randomness for hauls (randomness will still be present for the EDSUs).
+* Translated WeightingMethod "NASC" to "AcousticDensity" to reflect that AcousticDensity is calcuclated per EDSU around each Haul. Changed the description of the BioticAssignmentWeighting() to reflect that this happens rather than averaging NASC first and then calculating AcousticDensity. Fixed errors in BioticAssignmentWeighting() when WeightingMethod = "AcousticDensity".
+* Added error when weigths do not sum to 1 in SuperIndividuals, with a not indicating that this may be due to different input LengthDistributionData compared to that used to  derive the input QuantityData.
 
 
 # RstoxBase v1.7.11 (2022-03-22)

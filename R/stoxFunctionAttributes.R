@@ -376,6 +376,9 @@ stoxFunctionAttributes <- list(
                 LayerDefinition = "FunctionInput"
             ),
             # AcousticDensity:
+            AcousticPSU = list(
+                WeightingMethod = c("AcousticDensity")
+            ), 
             AcousticTargetStrength = list(
                 WeightingMethod = c("AcousticDensity")
             ), 
