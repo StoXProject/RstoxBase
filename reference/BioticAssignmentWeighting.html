@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.14</span>
       </span>
     </div>
 
@@ -67,6 +67,7 @@
   Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
   LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
   AcousticLayer <span class="op">=</span> <span class="cn">NULL</span>,
+  <span class="va">AcousticPSU</span>,
   <span class="va">AcousticTargetStrength</span>,
   SpeciesLink <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
   Radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
@@ -98,12 +99,14 @@
 <dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
 <dt>AcousticLayer</dt>
 <dd><p>The <code><a href="AcousticLayer.html">AcousticLayer</a></code> process data.</p></dd>
+<dt>AcousticPSU</dt>
+<dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
 <dt>AcousticTargetStrength</dt>
 <dd><p>The <code><a href="AcousticTargetStrength.html">AcousticTargetStrength</a></code> process data.</p></dd>
 <dt>SpeciesLink</dt>
 <dd><p>A table of the two columns AcousticCategory and SpeciesCategory.</p></dd>
 <dt>Radius</dt>
-<dd><p>For <code>WeightingMethod</code> = "AcousticDensity": The radius inside which the average AcousticDensity is calculated.</p></dd>
+<dd><p>For <code>WeightingMethod</code> = "AcousticDensity": The radius (nautical miles) inside which the average AcousticDensity is calculated.</p></dd>
 <dt>MinNumberOfEDSUs</dt>
 <dd><p>For <code>WeightingMethod</code> = "AcousticDensity": The minimum number of EDSUs to link to each Haul, applied if there are less than <code>MinNumberOfEDSUs</code> EDSUs inside the <code>Radius</code>. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. <code>FilterStoxAcoustic</code> can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.</p></dd>
 </dl></div>
@@ -113,9 +116,38 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    
-
-
+    <p>The <em>BioStationWeighting</em> function is used to update the weighting variables of the biotic stations that are associated in <code><a href="BioticAssignment.html">BioticAssignment</a></code>. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.</p>
+<p>A set of automatic <em>WeightingMethod</em>s are available to update the haul weighing variables. Note that the weighting may change if an additional species is included for all WeightingMethods except "Equal":</p>
+<p><strong>Equal</strong></p>
+<p>All assigned biotic hauls are given equal weight by assigning the value 1 to the weighting variables.</p>
+<p><strong>NumberOfLengthSamples</strong>
+The assigned biotic hauls are given a weighting value according to the number of individual length samples of the target species at the biotic station. The parameter <em>MaxNumberOfLengthSamples</em> is also associated with this method and is used to limit the weighting to a maximum number of length samplesof a haul. Note that the weighting may change if an additional species is included.</p>
+<p><strong>NormalizedTotalWeight</strong></p>
+<p>The assigned biotic hauls are given a weighting value according to the normalized catch weight of the target species at the station. The weighting value is calculated as catch weight divided by towing distance. This normalization makes the stations comparable regardless of catch effort.</p>
+<p><strong>NormalizedTotalNumber</strong></p>
+<p>The assigned biotic hauls are given a weighting value according to the normalized catch number (number of individuals) of the target species at the biotic station. The weighting value is calculated as catch number divided by towing distance. This normalization makes the stations comparable regardless of catch effort.</p>
+<p><strong>SumWeightedNumber</strong></p>
+<p>The assigned biotic hauls are given a weighting value according to the sum of the WeightedNumber of the target species at the biotic station. It is a requirement that the lengthdistribution data is of distribution type <em>Standard</em> or <em>Normalized</em> (normalized to one nautical mile towing distance).</p>
+<p><strong>InverseSumWeightedNumber</strong></p>
+<p>The assigned biotic hauls are given a weighting value as the inverse of the sum of the WeightedNumber of all length groups and all species. The weighting value \(w_b\) is calculated as:</p>
+<p>$$w_b = \frac{1}{\sum_{s_b}^{n_b} \sum_{l=1}^{m_{s,b}} c_{l,s,b} }$$</p>
+<p>where:</p>
+<p>\(w_b\) = weighting value of biotic haul <em>b</em></p>
+<p>\(s_b\) = species in the biotic haul <em>b</em></p>
+<p>\(n_b\) = number of species in the input data of biotic haul <em>b</em></p>
+<p>\(l\) =  length group number</p>
+<p>\(m_{s,b}\)  =	number of length groups for species <em>s</em> in biotic haul <em>b</em></p>
+<p>\(c_{l,s,b}\) = number in length group <em>l</em> for species <em>s</em> in biotic haul <em>b</em></p>
+<p>The method is commonly used in split NASC (nautical area scattering coefficient) models to split an acoustic category of several species by using the length distributions of the these species. The sum of the splitted NASC values of all the species will be equal to the NASC of the original combined acoustic multispecies category. By multiplying the calculated weighting value from this method, by the original (input) numbers in each length group for all species, a relative station length distribution can later be made (sum of length groups for all species is 1) and used in the split NASC process.</p>
+<p>It is a requirement that the LengthDistribution Data is of distribution type <em>Standard</em> or <em>Normalized</em> (normalized to one nautical mile towing distance).</p>
+<p><strong>AcousticDensity</strong></p>
+<p>The assigned biotic hauls are given weighting variable values with the basis in the surrounding NASC values that are tagged to an acoustic PSU. By combining these NASC values with the length distribution of the biotic haul, an acoustic density as number of fish per square nautical mile is calculated and used as the weighting variable value for each biotic haul.</p>
+<p>A search for NASC values (at EDSU resolution) is performed within a given radius around a biotic station. For each EDSU inside the radius the length distribution of the biotic station and a target strength (TS) versus length empirical relationship is used to calculate acoustic density for each length group and beam. The sum of densities (number per square nautical mile) over all length groups of the target species at the given biotic haul is then calculated and applied as the weighting variable for the biotic haul.</p>
+<p>The AcousticDensity WeightingMethod is associated with the following function inputs and parameters:</p>
+<p><em>AcousticTargetStrength</em>: The acoustic target strength model and parameters, defined by <code><a href="DefineAcousticTargetStrength.html">DefineAcousticTargetStrength</a></code></p>
+<p><em>SpeciesLink</em>: The table linking the AcousticCategory and SpeciesCategory.</p>
+<p><em>Radius</em>: Search radius (nautical miles) for NASC values (at EDSU resolution) around a biotic station</p>
+<p><em>MinNumberOfEDSUs</em> The minimum number of EDSUs to use, effectively expanding the radius to cover this number of EDSUs if an insufficient number of EDSUs is found using the specified radius</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
