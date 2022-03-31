@@ -795,7 +795,9 @@ summaryStox <- function(x, na.rm = FALSE) {
     )
     # Set 0 sd to NA, with a warning assuming that this is a result of only one PSU selected in the stratum:
     if(!is.na(out["sd"]) && out["sd"] == 0) {
-        warning("StoX: Standard deviation 0 was set to NA. StoX does not accept standard deviation 0, as it is either a sign of insufficient number of bootstraps; only one value to sample from in the bootstrapping (e.g. only one station in a stratum); or 0 in all bootstrap runs, which occurs e.g. if a length group is present in the survey but not in the stratum in question, causing 0 for all bootstrap runs in that stratum.")
+        if(out["mean"] != 0) {
+            warning("StoX: Standard deviation 0 was set to NA. StoX does not accept standard deviation 0, as it is either a sign of insufficient number of bootstraps; only one value to sample from in the bootstrapping (e.g. only one station in a stratum); or 0 in all bootstrap runs, which occurs e.g. if a length group is present in the survey but not in the stratum in question, causing 0 for all bootstrap runs in that stratum.")
+        }
         out["sd"] <- NA
         out["cv"] <- NA
     }

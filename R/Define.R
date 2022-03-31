@@ -475,6 +475,10 @@ DefineBioticPSU <- function(
     FileName = character()
 ) {
     
+    if(UseProcessData) {
+        return(processData)
+    }
+    
     # Get the DefinitionMethod:
     #DefinitionMethod <- match.arg(DefinitionMethod)
     DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
