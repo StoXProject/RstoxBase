@@ -1,3 +1,8 @@
+# RstoxBase v1.9.0 (2022-04-01)
+* Eased warning for single unique value in bootstrap report to when the mean is 0.
+* Bypassed warning for manual BioticPSU not yet being implemented when UseProcessData = TRUE.
+
+
 # RstoxBase v1.8.0 (2022-03-31)
 * Final version for StoX 3.4.0.
 
