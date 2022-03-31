@@ -1,3 +1,7 @@
+# RstoxBase v1.8.0 (2022-03-31)
+* Final version for StoX 3.4.0.
+
+
 # RstoxBase v1.7.13 (2022-03-30)
 * Changed WeightingMethod "AcousticDensity" to only consider EDSUs that are tagged to an acoustic PSU.
 
