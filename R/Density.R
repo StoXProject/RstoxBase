@@ -199,6 +199,7 @@ DistributeNASC <- function(
     
     # Merge the AssignmentLengthDistributionData into the NASCData. This adds the length distribution:
     mergeBy <- intersect(names(NASCData), names(AssignmentLengthDistributionData))
+    
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
     # Check whether there are any non-missing length distribution frequencies:
@@ -304,14 +305,12 @@ DistributeNASC <- function(
         warning(paste("StoX: There are Stratum/PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum/PSU have only one assigned haul:", paste(withOnlyOneHaul, collapse = "\n\t"), sep = "\n\t"))
     }
     
-    
-    
-    
-    
-    
     # Add a warning if any WeightedNumber are NA while NASC > 0:
     NASCData[, missingAssignment := all(is.na(WeightedNumber) & NASC > 0), by = sumBy]
-    unassignedPSUs <- unique(NASCData[missingAssignment == TRUE, PSU])
+    # Ralaxed this condition to that all WeightedNumber must be missing:
+    #unassignedPSUs <- unique(NASCData[missingAssignment == TRUE, PSU])
+    unassignedPSUs <- NASCData[,  PSU[all(missingAssignment, na.rm = TRUE)], by = "PSU"]$PSU
+    
     unassignedPSUs <- setdiff(unassignedPSUs, NA)
     NASCData[, missingAssignment := NULL]
     if(length(unassignedPSUs)) {

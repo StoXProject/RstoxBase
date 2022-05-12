@@ -30,7 +30,7 @@ Quantity <- function(
     
     # Merge the stratum area with the DensityData to an QuantityData (remove the area at the end of the function):
     QuantityData <- data.table::copy(MeanDensityData)
-    # Added all.x for StoX 3.2.0, as the defautl all = FALSE drops strata not present in StratumAreaData (particularly NA stratum):
+    # Added all.x for StoX 3.2.0, as the default all = FALSE drops strata not present in StratumAreaData (particularly NA stratum):
     QuantityData$Data <- merge(QuantityData$Data, StratumAreaData, by ="Stratum", all.x = TRUE)
     
     # Multiply the area and the density:
@@ -338,7 +338,7 @@ SuperIndividuals <- function(
     SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeQuantityBy]
     
     if(!testEqualTo1(SuperIndividualsData$sumIndividualWeightFactor)) {
-        stop("StoX: An error occurred causing weights to not sum to 1. This could be due to mismatch between the LengthDistributionData used in SuperIndividuals() and the LengthDistributionData used to derive the QuantityData.")
+        stop("An error occurred causing weights to not sum to 1. This could be due to mismatch between the LengthDistributionData used in SuperIndividuals() and the LengthDistributionData used to derive the QuantityData.")
     }
     SuperIndividualsData[, sumIndividualWeightFactor := NULL]
     
@@ -476,6 +476,10 @@ addLengthGroupOneSpecies <- function(
         eval(quote.convert(lengthVar)), 
         ..intervalVector
     )]
+    if(any(data$LengthGroup == 0, na.rm = TRUE)) {
+        stop("The length resolution of the inputs of SuperIndividuals does not match!")
+    }
+    
     # Convert to the indices in the uniqueLengthGroups:
     data[notExactlyMatched, LengthGroup := indexVector[LengthGroup]]
     

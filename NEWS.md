@@ -1,3 +1,8 @@
+# RstoxBase v1.9.1 (2022-05-12)
+* Fixed bug in AssignmentLengthDistribution(), where the sum of the WeightedNumber did not sum to 100. This did not have any implications on the estimates, as AcousticDensity() normalizes the WeightedNumber from the AssignmentLengthDistributionData.
+* Fixed bug in ReportSpeciesCategoryCatch(), where Hauls were duplicated.
+
+
 # RstoxBase v1.9.0 (2022-04-01)
 * Eased warning for single unique value in bootstrap report to when the mean is 0.
 * Bypassed warning for manual BioticPSU not yet being implemented when UseProcessData = TRUE.

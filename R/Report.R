@@ -402,7 +402,7 @@ ReportSpeciesCategoryCatch <- function(
     
     # Add haul info as the unique table of all variables except the category and data variables:
     dataVariables <- getDataTypeDefinition(dataType = "SpeciesCategoryCatchData", elements = "data", unlist = TRUE)
-    haulInfo <- unique(SpeciesCategoryCatchData[, !c(categoryVariable, dataVariables), with = FALSE])
+    haulInfo <- unique(SpeciesCategoryCatchData[, !c(categoryVariable, dataVariables), with = FALSE], by = "Haul")
     
     ReportSpeciesCategoryCatchData <- merge(
         haulInfo, 
