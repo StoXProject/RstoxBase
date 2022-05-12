@@ -223,7 +223,7 @@ simplifyStratumPolygon <- function(
         stop("SimplificationFactor must be between 0 and 1.")
     }
     
-    # Use the sf::st_simplify, but turn off s2, asit does not perform well on longitude-latitude data due to the us off infinite lines instead of lines along the great circle (https://r-spatial.github.io/sf/articles/sf7.html, and https://stackoverflow.com/questions/68478179/how-to-resolve-spherical-geometry-failures-when-joining-spatial-data):
+    # Use the sf::st_simplify, but turn off s2, as it does not perform well on longitude-latitude data due to the us off infinite lines instead of lines along the great circle (https://r-spatial.github.io/sf/articles/sf7.html, and https://stackoverflow.com/questions/68478179/how-to-resolve-spherical-geometry-failures-when-joining-spatial-data):
     sf::sf_use_s2(FALSE)
     # Transform to sf:
     sfStratumPolygon <- sf::st_as_sf(StratumPolygon)

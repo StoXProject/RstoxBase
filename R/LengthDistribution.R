@@ -994,8 +994,6 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     AssignmentLengthDistributionData[, LengthDistributionType := "Percent"]
     
     
-    
-    
     # Identify the hauls that does not have all species categories and those that does not have all species categories. Then find which strata for which not all of the hauls are ok:
     # Merge the BioticAssignment with a list of the species categories for each haul:
     SpeciesCategoryPerHaul <- LengthDistributionData[, .(SpeciesCategory = unique(SpeciesCategory)), by = "Haul"]
@@ -1061,6 +1059,9 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     # Subset to the unique rows (since the sum was by reference):
     #thisLengthDistributionData <- unique(thisLengthDistributionData)
     thisLengthDistributionData <- unique(thisLengthDistributionData, by = by)
+    
+    # Normalize to 100% per assignment ID (after comment from Atle Totland in https://jira.imr.no/browse/STOX-545):
+    thisLengthDistributionData[, c(dataVariable) := 100 * get(dataVariable) / sum(get(dataVariable), na.rm = TRUE)]
     
     # This was a misunderstanding: 
     ### # Normalize for each species category:

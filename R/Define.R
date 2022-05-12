@@ -118,7 +118,7 @@ DefinePSU <- function(
         # Remove PSUs that do not have a stratum:
         processData <- removePSUsWithMissingStratum(processData)
         
-        # Remove empy PSUs:
+        # Remove empty PSUs:
         processData <- removeEmptyPSUs(processData)
         
         # Rename back from "SSU" to "EDSU"/"Station": 
@@ -298,6 +298,7 @@ DefinePSU <- function(
         Stratum_PSU = Stratum_PSU, 
         SSU_PSU = SSU_PSU
     )
+    
     # Remove PSUs that do not have a stratum:
     PSUProcessData <- removePSUsWithMissingStratum(PSUProcessData)
     
