@@ -38,7 +38,7 @@ This function reads a \href{https://geojson.org/}{GeoJSON} file, \href{https://d
 \details{
 The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
 
-Polygons are expected to have the the following projection: getRstoxBaseDefinitions("proj4string")
+Polygons are expected to have the the following projection: getRstoxBaseDefinitions("proj4string_longlat")
 }
 \references{
 Additonal information on GeoJSON and shapefiles specification can be found here:

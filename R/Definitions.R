@@ -587,7 +587,9 @@ initiateRstoxBase <- function(){
     #dataTypeRequiredVariables <- lapply(dataTypeDefinition, getRequiredVariables)
     
     #proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-    proj4string <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    proj4string_longlat <- "+proj=longlat +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    #proj4string_aeqd <- "+proj=aeqd +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    proj4string_laea <- "+proj=laea +no_defs +ellps=WGS84 +towgs84=0,0,0"
     
     # Define an empty SpatialPolygonsDataFrame, with no projection, as it is not possible to assign projection to an empty SpatialPolygonsDataFrame:
     # Should we use new("SpatialPolygonsDataFrame") instead???????????????

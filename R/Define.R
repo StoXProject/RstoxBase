@@ -186,7 +186,10 @@ DefinePSU <- function(
         )
         
         # Find the stratum of each PSU:
-        Stratum_PSU <- getStratumOfPSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel)
+        apply_and_set_use_s2_to_FALSE(
+            Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel), 
+            msg = FALSE
+        )
     }
     # Use each SSU as a PSU:
     else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
@@ -253,7 +256,7 @@ DefinePSU <- function(
     #    )
     #    
     #    # Find the stratum of each PSU:
-    #    Stratum_PSU <- getStratumOfPSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, Stat#ionLevel)
+    #    Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, Stat#ionLevel)
     #}
     
     
@@ -321,7 +324,7 @@ DefinePSU <- function(
 }
 
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU i loacted geographically:
-getStratumOfPSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
+getStratumOfSSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
     # Get unique PSUs:
     allPSUs <- unique(SSU_PSU$PSU)
     allPSUs <- allPSUs[!is.na(allPSUs)]
@@ -341,13 +344,20 @@ getStratumOfPSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
     #)
     
     # Get the SSU positions and convert to spatialpoints:
-    pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSU_PSU$SSU, c("Longitude", "Latitude")]
-    SpatialPSUs <- sp::SpatialPoints(pos)
-    # Project and find in the StratumPolygonStratumPolygon:
-    sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
+    pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSU_PSU$SSU, c(SSULabel, "Longitude", "Latitude"), with = FALSE]
+    SpatialPSUs <- sp::SpatialPoints(pos[, c("Longitude", "Latitude")])
+    # Add the SSULabel as attribute for uses in warning messages in locateInStratum():
+    attr(SpatialPSUs, "pointLabel") <- SSULabel
+    attr(SpatialPSUs, SSULabel) <- pos[[SSULabel]]
+    
+    ## Project and find in the StratumPolygon:
+    #sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
     
     # Changed on 2021-09-10 to use getStratumNames():
-    StratumNames <- getStratumNames(sp::over(SpatialPSUs, StratumPolygon), check.unique = FALSE)
+    #StratumNames <- getStratumNames(sp::over(SpatialPSUs, StratumPolygon), check.unique = FALSE)
+    StratumNames <- locateInStratum(SpatialPSUs, StratumPolygon)
+    
+    
     Stratum_PSU <- data.table::data.table(
         Stratum = unlist(StratumNames), 
         PSU = SSU_PSU$PSU
@@ -1123,12 +1133,8 @@ DefineBioticAssignment <- function(
         
         # Create a spatial points object of the positions of the hauls:
         SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
-        sp::proj4string(SpatialHauls) <- getRstoxBaseDefinitions("proj4string")
-        
-        # Get the stratum for each haul:
-        #locatedStratum <- unname(unlist(sp::over(SpatialHauls, StratumPolygon)))
-        #locatedStratum <- sp::over(SpatialHauls, StratumPolygon)$StratumName
-        locatedStratum <- getStratumNames(sp::over(SpatialHauls, StratumPolygon), check.unique = FALSE)
+        locatedStratum <- locateInStratum(SpatialHauls, StratumPolygon)
+        # Add to the BioticAssignment:
         BioticAssignment <- MergeStoxBioticData
         BioticAssignment[, Stratum := ..locatedStratum]
         
