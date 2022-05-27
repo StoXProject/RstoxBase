@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.2</span>
       </span>
     </div>
 
@@ -47,6 +47,13 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.9.2" id="rstoxbase-v192-2022-05-26">RstoxBase v1.9.2 (2022-05-26)<a class="anchor" aria-label="anchor" href="#rstoxbase-v192-2022-05-26"></a></h2>
+<ul><li>Added warning occurring when there are samples with positive SampleNumber but no individuals, resulting in positive Abundance in the SuperIndividuals function to be set to NA.</li>
+<li>Replaced all use of functions from the packages rgdal and rgeos by the package sf, as per the planned retirement of these packages. See <a href="https://www.r-bloggers.com/2022/04/r-spatial-evolution-retirement-of-rgdal-rgeos-and-maptools/" class="external-link uri">https://www.r-bloggers.com/2022/04/r-spatial-evolution-retirement-of-rgdal-rgeos-and-maptools/</a>.</li>
+<li>Refactored location of stations and EDSUs in stratum, and added warnings when locating to multiple or zero stratum.</li>
+<li>Tested and saved for future reference the function StratumArea_supportingIterativeCentroidCalculation which sets the centroid more accurately when transforming to Cartesian coordinates for the area calcuclation.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.9.1" id="rstoxbase-v191-2022-05-12">RstoxBase v1.9.1 (2022-05-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v191-2022-05-12"></a></h2>
 <ul><li>Fixed bug in AssignmentLengthDistribution(), where the sum of the WeightedNumber did not sum to 100. This did not have any implications on the estimates, as AcousticDensity() normalizes the WeightedNumber from the AssignmentLengthDistributionData.</li>
