@@ -1,3 +1,10 @@
+# RstoxBase v1.9.2 (2022-05-26)
+* Added warning occurring when there are samples with positive SampleNumber but no individuals, resulting in positive Abundance in the SuperIndividuals function to be set to NA.
+* Replaced all use of functions from the packages rgdal and rgeos by the package sf, as per the planned retirement of these packages. See https://www.r-bloggers.com/2022/04/r-spatial-evolution-retirement-of-rgdal-rgeos-and-maptools/. 
+* Refactored location of stations and EDSUs in stratum, and added warnings when locating to multiple or zero stratum.
+* Tested and saved for future reference the function StratumArea_supportingIterativeCentroidCalculation which sets the centroid more accurately when transforming to Cartesian coordinates for the area calcuclation.
+
+
 # RstoxBase v1.9.1 (2022-05-12)
 * Fixed bug in AssignmentLengthDistribution(), where the sum of the WeightedNumber did not sum to 100. This did not have any implications on the estimates, as AcousticDensity() normalizes the WeightedNumber from the AssignmentLengthDistributionData.
 * Fixed bug in ReportSpeciesCategoryCatch(), where Hauls were duplicated.

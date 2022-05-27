@@ -295,6 +295,17 @@ SuperIndividuals <- function(
             all.x = TRUE
         )
         
+        # Check that no Abundance is linked to a species for missing individuals (missing length group, hence missing WeightedNumber):
+        atMissisngLengthButPresentAbundance <- SuperIndividualsData[, 
+            which(
+                Abundance > 0 & 
+                is.na(WeightedNumber) & 
+                !is.na(SpeciesCategory)
+            )]
+        if(length(atMissisngLengthButPresentAbundance)) {
+            warning("StoX: There are rows of the QuantityData with positive Abundance for a species that cannot be matched to any individuals of the IndividualsData. The reason for this may be that there are samples in the StoxBioticData used as input to the LengthDistribution process earlier in the Baseline model that have positive SampleNumber but no individuals. The consequence is that Abundance is set to NA in SuperIndividualsData for the following Stratum Layer and SpeciesCategory, resulting in loss of Abundance: ", paste(SuperIndividualsData[atMissisngLengthButPresentAbundance, paste0("Stratum: ", Stratum, ", Layer: ", Layer, ", SpeciesCategory: ", SpeciesCategory)], collapse = "\n"))
+        }
+        
         # Sum the haul densities (stored as WeightedNumber) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
         # No no, this was certainly wrong, as WeightedNumber could be duplicated within a Stratum for one length group:
         #SuperIndividualsData[, sumWeightedNumber := sum(unique(WeightedNumber), na.rm = TRUE), by = distributeQuantityBy]
@@ -334,9 +345,9 @@ SuperIndividuals <- function(
     
     # Generate the weighting factors:
     SuperIndividualsData[, individualWeightFactor := haulWeightFactor / individualNumber]
+    
     # ... and check that they sum to 1:
     SuperIndividualsData[, sumIndividualWeightFactor := sum(individualWeightFactor), by = distributeQuantityBy]
-    
     if(!testEqualTo1(SuperIndividualsData$sumIndividualWeightFactor)) {
         stop("An error occurred causing weights to not sum to 1. This could be due to mismatch between the LengthDistributionData used in SuperIndividuals() and the LengthDistributionData used to derive the QuantityData.")
     }
@@ -350,8 +361,10 @@ SuperIndividuals <- function(
     SuperIndividualsData[, Abundance := Abundance * individualWeightFactor]
     
     # Test whether the sum of the Abundance is equal to that of the QuantityData:
-    if(!testEqualTo1(sum(SuperIndividualsData$Abundance, na.rm = TRUE) / sum(QuantityData$Data$Abundance, na.rm = TRUE))) {
-        stop("Sum of Abundance not equal in QuantityData and SuperIndividualsData. Please contact the developers of StoX.")
+    totalAbundanceInSuperIndividualsData <- sum(SuperIndividualsData$Abundance, na.rm = TRUE)
+    totalAbundanceInQuantityData <- sum(QuantityData$Data$Abundance, na.rm = TRUE)
+    if(!testEqualTo1(totalAbundanceInSuperIndividualsData / totalAbundanceInQuantityData)) {
+        stop("Sum of Abundance not equal in QuantityData (", totalAbundanceInQuantityData, ") and SuperIndividualsData (", totalAbundanceInSuperIndividualsData, ").")
     }
     
     SuperIndividualsData[, individualWeightFactor := NULL]

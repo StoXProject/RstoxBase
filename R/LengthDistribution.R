@@ -91,6 +91,13 @@ LengthDistribution <- function(
     ############################
     StoxBioticDataMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
     
+    # Check for missing individuals due to positive sample number but no individuals of that sample:
+    atMissingIndividual <- StoxBioticDataMerged[,  which(is.na(IndividualKey) & (SampleWeight > 0 | SampleNumber > 0))]
+    if(length(atMissingIndividual)) {
+        warning("StoX: The following Samples have positive SampleNumber but no individuals, which is indicative of error in the input biotic data. This results in positive WeightedNumber while IndividualTotalLength is missing, which may propagate thoughout the StoX project:\n", printErrorIDs(errorName = "Sample", errorIDs = StoxBioticDataMerged[atMissingIndividual, Sample])
+        )
+    }
+    
     # Delete empty sub samples e.g. if all individuals are filtered out. In this case a row will exist in StoxBioticDataMerged for this sample, thus appearing as an individual although it is not:
     # First count the individuals in sub samples:
     StoxBioticDataMerged[ , numberOfSubSamples := length(unique(SampleKey)), by = "Haul"]
@@ -175,10 +182,9 @@ LengthDistribution <- function(
         LengthDistributionData[numberOfSubSamples == 1 & is.na(raisingFactor), raisingFactor := 1]
     }
     
+    # Stop when NA or Inf raising factor, but only if both Haul, SpeciesCategory and Sample are given:
+    hasRaisingFactorNA <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample)  &  is.na(raisingFactor)]
     
-    
-    # Stop when NA or Inf raising factor, but only if both Haul and SpeciesCategory are given:
-    hasRaisingFactorNA <- LengthDistributionData[, !is.na(Haul) & is.na(raisingFactor) & !is.na(SpeciesCategory)]
     if(any(hasRaisingFactorNA)) {
         
         # List the hauls and samples with missing raising factor:
@@ -189,7 +195,7 @@ LengthDistribution <- function(
         # Report the error:
         stop(getBadRaisingFactorError("NA", unique(haulsWithNARaisingFactor), unique(samplesWithNARaisingFactor)))
     }
-    hasRaisingFactorInf <- LengthDistributionData[, !is.na(Haul) & is.infinite(raisingFactor) & !is.na(SpeciesCategory)]
+    hasRaisingFactorInf <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample)  &  is.infinite(raisingFactor)]
     if(any(hasRaisingFactorInf)) {
         #stop("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution.\nThere are several options for solving the problem, the ideal being to correct the errors in the input data. Alternatively, the function FilterStoxBiotic can be used to filter out the hauls with NA raising factor, or when there is at least one sample with positive raising factor in the haul, one can filter out the specific samples with NA raising factor:\n", paste("\t", unique(LengthDistributionData$Haul[hasRaisingFactorInf]), collapse = ", "))
         

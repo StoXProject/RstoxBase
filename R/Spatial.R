@@ -38,34 +38,15 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
 
 
 dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
-    # 
-    StratumName <- as.character(DataTable$Stratum)
-    multipolygon <- DataTable$Polygon
     
-    # Convert each WKT strings to SpatialPolygonsDataFrame:
-    spatialPolygonsList <- lapply(multipolygon, rgeos::readWKT)
-    # Extract the Polygons objects to modify the IDs and merge to a SpatialPolygonsDataFrame:
-    polygonsList <- lapply(spatialPolygonsList, function(x) methods::slot(x, "polygons")[[1]])
-    # Add the polygon names as IDs:
-    for (ind in seq_along(polygonsList)) {
-        polygonsList[[ind]]@ID <- StratumName[ind]
-    }
-    # Merge to a SpatialPolygonsDataFrame object:
-    data <- data.frame(
-        StratumName = StratumName, 
-        stringsAsFactors = FALSE
-    )
-    rownames(data) <- StratumName
-    # Create a SpatialPolygons object, adding default longitude-latitude projection:
-    # We decided on 2020-01-21 to skip proj4string, and always assume WGS84:
-    #spatialPolygons = sp::SpatialPolygons(polygonsList, proj4string = getRstoxBaseDefinitions("proj4string"))
-    spatialPolygons = sp::SpatialPolygons(polygonsList)
-    # ... and convert to SpatialPolygonsDataFrame:
-    spatialPolygonsDataFrame = sp::SpatialPolygonsDataFrame(spatialPolygons, data = data, match.ID = FALSE)
-    #plot(SpP, col = 1:5, pbg="white")
+    # Read the WKT strings to sf object:
+    polygons <- sf::st_as_sf(DataTable, wkt = 2)
+    # Set default projection:
+    sf::st_crs(polygons) <- getRstoxBaseDefinitions("proj4string_longlat")
     
-    # Define default projection:
-    sp::proj4string(spatialPolygonsDataFrame) <- getRstoxBaseDefinitions("proj4string")
+    # Convert to spatialPolygonsDataFrame:
+    spatialPolygonsDataFrame <- sf::as_Spatial(polygons)
+    names(spatialPolygonsDataFrame) <- "StratumName"
     
     return(spatialPolygonsDataFrame)
 }
@@ -97,7 +78,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' @details
 #' The parameter \code{UseProcessData} is always set to TRUE when running a process, and needs to be explicitely set to FALSE to enable reading a file (It's set to FALSE at the moment).
 #' 
-#' Polygons are expected to have the the following projection: getRstoxBaseDefinitions("proj4string")
+#' Polygons are expected to have the the following projection: getRstoxBaseDefinitions("proj4string_longlat")
 #' 
 #' @return
 #' An object of StoX data type \code{\link{StratumPolygon}}.
@@ -184,7 +165,7 @@ DefineStratumPolygon <- function(
         }
         
         # Assume the default projection:
-        suppressWarnings(sp::proj4string(StratumPolygon) <- RstoxBase::getRstoxBaseDefinitions("proj4string"))
+        suppressWarnings(sp::proj4string(StratumPolygon) <- RstoxBase::getRstoxBaseDefinitions("proj4string_longlat"))
     }
     else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
@@ -202,10 +183,14 @@ DefineStratumPolygon <- function(
     }
     
     if(isTRUE(SimplifyStratumPolygon)) {
-        StratumPolygon <- simplifyStratumPolygon(
-            StratumPolygon = StratumPolygon, 
-            SimplificationFactor = SimplificationFactor, 
-            preserveTopology = FALSE
+        # Use the sf::st_simplify, but turn off s2, as it does not perform well on longitude-latitude data due to the us off infinite lines instead of lines along the great circle (https://r-spatial.github.io/sf/articles/sf7.html, and https://stackoverflow.com/questions/68478179/how-to-resolve-spherical-geometry-failures-when-joining-spatial-data):
+        apply_and_set_use_s2_to_FALSE(
+            StratumPolygon <- simplifyStratumPolygon(
+                StratumPolygon = StratumPolygon, 
+                SimplificationFactor = SimplificationFactor, 
+                preserveTopology = FALSE
+            ), 
+            msg = FALSE
         )
     }
     
@@ -223,8 +208,6 @@ simplifyStratumPolygon <- function(
         stop("SimplificationFactor must be between 0 and 1.")
     }
     
-    # Use the sf::st_simplify, but turn off s2, as it does not perform well on longitude-latitude data due to the us off infinite lines instead of lines along the great circle (https://r-spatial.github.io/sf/articles/sf7.html, and https://stackoverflow.com/questions/68478179/how-to-resolve-spherical-geometry-failures-when-joining-spatial-data):
-    sf::sf_use_s2(FALSE)
     # Transform to sf:
     sfStratumPolygon <- sf::st_as_sf(StratumPolygon)
     
@@ -443,12 +426,12 @@ getStratumPolygonList <- function(StratumPolygon) {
 #' This function calculated the area of each stratum.
 #' 
 #' @inheritParams ProcessData
-#' @param AreaMethod The method to use for the area calculation, defaulted to "Accurate", which applied a lambert azimuthal equal area projection. 
+#' @param AreaMethod The method to use for the area calculation, defaulted to "Accurate", which applied a Lambert azimuthal equal area projection. 
 #' 
 #' @details
 #' The area output is given in international square nautical miles. 
 #' 
-#' The \code{AreaMethod} "Accurate" projects the latitude and longitude startum polygons to Lambert Azimuthal Equal Area with origo in wkt center and coordinate reference system (CRS="+proj=longlat +ellps=WGS84") The areas are calculated using \code{\link[rgeos]{gArea}}.
+#' The \code{AreaMethod} "Accurate" calculates each stratum are using the function \code{\link[sf]{st_area}} with WGS84 Lambert Azimuthal Equal Area  projection with origin at the centroid of the stratum, as calculated from the geographical coordinates (longitude, latitude).
 #' 
 #' The \code{AreaMethod} "Simple" is used in StoX 2.7 and earlier versions and kept for backwards compatibility.
 #'  
@@ -474,7 +457,10 @@ StratumArea <- function(
     # Get the polygon areas:
     if(AreaMethod == "Accurate") {
         # StoX 2.7 calculated the area for each stratum separately, thus using an origin from each stratum. This requires subsetting the StratumPolygon and calculating the areas in a loop:
-        areaDT <- data.table::rbindlist(lapply(seq_along(StratumPolygon), function(ind) polygonAreaSP_accurate(StratumPolygon[ind, ])))
+        apply_and_set_use_s2_to_FALSE(
+            areaDT <- data.table::rbindlist(lapply(seq_along(StratumPolygon), function(ind) polygonAreaSP_accurate(StratumPolygon[ind, ], useLonLatCentroid = TRUE))), 
+            msg = FALSE
+        )
     }
     else if(AreaMethod == "Simple") {
         areaDT <- polygonAreaSP_simple(StratumPolygon)
@@ -489,7 +475,62 @@ StratumArea <- function(
     return(areaDT)
 }
 
+##################################################
+StratumArea_supportingIterativeCentroidCalculation <- function(
+        StratumPolygon, 
+        AreaMethod = c("Accurate", "AccurateProjection", "Simple")
+) {
+    
+    # This function was to see whether the inaccurate calculation of centriod for use as origin when transforming from geographical to Cartesian coordinates using the LEAE projection had any effect on the stratum areas. The effect was small, at maximum 1e-4 for elongated strata in the capelin BESS 2017 stratum system in the Barents Sea. Keeping the function for reference. Can be deleted with a note on which tag it exists in in git.
+    AreaMethod <- match.arg(AreaMethod)
+    
+    # Accept StratumPolygon contained in a list:
+    if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+        StratumPolygon <- StratumPolygon$StratumPolygon
+    }
+    
+    # Get the polygon areas:
+    if(AreaMethod %in% c("Accurate", "AccurateProjection")) {
+        # StoX 2.7 calculated the area for each stratum separately, thus using an origin from each stratum. This requires subsetting the StratumPolygon and calculating the areas in a loop:
+        apply_and_set_use_s2_to_FALSE(
+            areaDT <- data.table::rbindlist(lapply(seq_along(StratumPolygon), function(ind) polygonAreaSP_accurate(StratumPolygon[ind, ], useLonLatCentroid = AreaMethod == "Accurate"))), 
+            msg = FALSE
+        )
+    }
+    else if(AreaMethod == "Simple") {
+        areaDT <- polygonAreaSP_simple(StratumPolygon)
+    }
+    else {
+        stop("Invalid AreaMethod")
+    }
+    
+    # Ensure that the numeric values are rounded to the defined number of digits:
+    #RstoxData::setRstoxPrecisionLevel(areaDT)
+    
+    return(areaDT)
+}
 
+apply_and_set_use_s2_to_FALSE <- function(expr, msg = TRUE) {
+    if(!msg) {
+        suppressMessages(
+            apply_and_set_use_s2_to_FALSE_keep_msg(expr)
+        )
+    }
+    else {
+        apply_and_set_use_s2_to_FALSE_keep_msg(expr)
+    }
+}
+
+apply_and_set_use_s2_to_FALSE_keep_msg <- function(expr) {
+    use_s2 <- sf::sf_use_s2()
+    if(isTRUE(use_s2)) {
+        sf::sf_use_s2(FALSE)
+    }
+    expr
+    if(isTRUE(use_s2)) {
+        sf::sf_use_s2(TRUE)
+    }
+}
 
 
 
@@ -586,15 +627,16 @@ polygonAreaSP_simple <- function(stratumPolygon) {
     stratumAreas
 }
 
-polygonAreaSP_accurate <- function(stratumPolygon) {
+polygonAreaSP_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
     
-    
+    # Get the sf object, as we strive to use sf instead of sp:
     stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
     #sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
     
-    # Removed this on 2021.02.01, as we rather should ensure that the projection is added in the stratumPolygon:
-    sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string")
+    # Set default projection:
+    sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string_longlat")
     
+    # Removed this on 2021.02.01, as we rather should ensure that the projection is added in the stratumPolygon:
     #stratumPolygon1 <- sf::st_transform(ss, sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
     
     
@@ -621,31 +663,261 @@ polygonAreaSP_accurate <- function(stratumPolygon) {
     #    stratumPolygon@polygons[[1]]@labpt[1], 
     #    " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
     #)
-    centroid <- rgeos::gCentroid(stratumPolygon)@coords
+    
+    # Re-project for equal area projection, using the centroid of the multipolygon:
+    
+    # rgeos is retiring, so we use sf instead to get the centroid:
+    centroid <- getCentroid(stratumPolygon, iterativeCentroidCalculation = !useLonLatCentroid) 
+    
+    #centroid <- rgeos::gCentroid(stratumPolygon)@coords
     laea.CRS <- paste0(
         "+proj=laea +lat_0=", 
         centroid[2], 
         " +lon_0=", 
         centroid[1], 
-        " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
+        " +x_0=0 +y_0=0 +ellps=WGS84 +units=kmi +no_defs"
     )
-    
-    # Re-project:
     stratumPolygonSF <- sf::st_transform(stratumPolygonSF, laea.CRS)
     
+    ## Convert from sf to spatial and calculate area:
+    #stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
+    #area <- rgeos::gArea(stratumPolygon, byid = TRUE)
     
-    # Project data points from longlat to given laea
-            #stratumPolygon <- sp::spTransform(stratumPolygon, laea.CRS)
-            #area <- rgeos::gArea(stratumPolygon, byid = TRUE)
+    # Use sf to calculate the area, temporarily switching off s2:
+    area <- sf::st_area(stratumPolygonSF)
+    
+    # Convert back from sf to sp:
     stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
-    area <- rgeos::gArea(stratumPolygon, byid = TRUE)
     
-    
-    
+    # Output the stratum names and areas:
     output <- data.table::data.table(
         Stratum = getStratumNames(stratumPolygon),
-        Area = area
+        Area = units::drop_units(area)
     )
     return(output)
 }
+
+
+
+
+# Get the true centroid of a polygon, as calculated in x,y after projecting with aeqd (as default) to using the centroid in longitude,latitude as origin, transfoming the x,y centroid to longitude,latitude, and repeating the procecss until the centroid in longitude,latitude no longer change.
+getCentroid <- function(stratumPolygon, par = list(), tol = 1e-9, msg = FALSE, iterativeCentroidCalculation = FALSE) {
+    
+    # Get the sf object, as we strive to use sf instead of sp:
+    if("SpatialPolygonsDataFrame" %in% class(stratumPolygon)) {
+        stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
+    }
+    else {
+        stratumPolygonSF <- stratumPolygon
+    }
+    
+    # Cacluate the centroid iteratively in Cartesian coordinates using the continuously updated geographical centroid as projection origin:
+    if(iterativeCentroidCalculation) {
+        # Set default projection:
+        sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string_longlat")
+        
+        # Get the centroid for longitude/latitude, which is not correct, but may not be too far away:
+        suppressWarnings(centroidLongLat <- sf::st_coordinates(sf::st_centroid(sf::st_combine(stratumPolygonSF))))
+        
+        # Iterate to find the true centroid:
+        diff <- 1
+        iter <- 0
+        while(diff > tol) {
+            centroidLongLatNew <- getCentroidOne(stratumPolygonSF, centroidLongLat, par = par)
+            
+            diff <- max((centroidLongLatNew - centroidLongLat) / centroidLongLat)
+            centroidLongLat <- centroidLongLatNew
+            iter <- iter + 1
+        }
+        if(msg) {
+            message("Using ", iter, " iterations to calculate the centroid.")
+        }
+    }
+    # Centroid in geographica coordinates, suppressing warning of inaccurate calculation:
+    else {
+        suppressWarnings(centroidLongLat <- sf::st_coordinates(sf::st_centroid(sf::st_combine(stratumPolygonSF))))
+    }
+    
+    
+    
+    
+    return(centroidLongLat)
+}
+
+# Function to get the centroid of a polygon in sf by projecting onto x,y using Azimuthal Equidistant projection (aeqd) projection at the given origin, calculating the centroid in 2-D, and projecting back to longitude,latitude. So the true centroid as seen by the aeqd projection at the given origin. The function considers the entire polygon by applying sf::st_combine() before getting the centroid:
+getCentroidOne <- function(polygon, centroidLongLat, par = list()) {
+    
+    # Transform to x/y using Azimuthal Equidistant projection (aeqd) and re-calculate the centroid:
+    aeqd.CRS <- paste0(
+        "+proj=aeqd +lat_0=", 
+        centroidLongLat[2], 
+        " +lon_0=", 
+        centroidLongLat[1], 
+        " +ellps=WGS84 +units=kmi +no_defs"
+    )
+    aeqd.CRS <- modifyProj4String(aeqd.CRS, par)
+    polygon_XY <- sf::st_transform(polygon, aeqd.CRS)
+    # Recalculate centroid in x/y:
+    centroidXY <- sf::st_centroid(sf::st_combine(polygon_XY))
+    
+    # Convert back to longitude/latitude:
+    longlat.CRS <- modifyProj4String(aeqd.CRS, list(proj = "longlat", lon_0 = 0, lat_0 = 0))
+    
+    centroidLongLat_updated <- sf::st_coordinates(sf::st_transform(centroidXY, longlat.CRS))
+    
+    return(centroidLongLat_updated)
+}
+
+
+
+# Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU is loacted geographically:
+locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonlat", "leae"), iterativeCentroidCalculation = FALSE) {
+    
+    # We use sp::over(), as it is reported to be faster than sp::point.in.polygon() for complicated polygons, and also handles multipolygons better (https://stackoverflow.com/questions/32644301/r-point-in-polygon-speed-slow). Also, there does not seem to be stong enough reasons for using sf::st_intersects() (https://gis.stackexchange.com/questions/282750/identify-polygon-containing-point-with-r-sf-package).
+    
+    # Make sure both points and polygons have the default lonlat "projection":
+    pointLabel <- attr(points, "pointLabel")
+    pointNames <- attr(points, pointLabel)
+    points <- sf::st_as_sf(points)
+    stratumPolygon <- sf::st_as_sf(stratumPolygon)
+    
+    sf::st_crs(points) <- getRstoxBaseDefinitions("proj4string_longlat")
+    sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
+    
+    # Support using Lambert azimuthal equal area for potential future use, and for comparison:
+    locationProjection <- match.arg(locationProjection)
+    if (locationProjection == "leae") {
+        # Get the true centroid of the entire StratumPolygon:
+        centroid <- getCentroid(StratumPolygon, iterativeCentroidCalculation = iterativeCentroidCalculation)
+        
+        # Define the projection to use when transforming to Cartesian coordinates:
+        proj4String <- getRstoxBaseDefinitions("proj4string_laea")
+        proj4String <- modifyProj4String(proj4String, par = list(lon_0 = centroid[1], lat_0 = centroid[2]))
+        
+        points <- sf::st_transform(points, proj4String)
+        stratumPolygon <- sf::st_transform(stratumPolygon, proj4String)
+    }
+    
+    # Locate in the strata:
+    #stratumNames <- getStratumNames(sp::over(points, stratumPolygon), check.unique = FALSE)
+    hits <- sf::st_intersects(points, stratumPolygon)
+    # Detect points located in more than one stratum:
+    numberOfStrata <- lengths(lapply(split(hits, seq_along(hits)), unlist))
+    atMultipleStrata <- numberOfStrata > 1
+    at0Strata <- numberOfStrata == 0
+    if(any(atMultipleStrata)) {
+        bad <- pointNames[atMultipleStrata]
+        warning("StoX: The following ", pointLabel, " was detected in more than one stratum:\n", printErrorIDs(errorName = pointLabel, errorIDs = bad))
+    }
+    if(any(at0Strata)) {
+        bad <- pointNames[at0Strata]
+        warning("StoX: The following ", pointLabel, " was not detected in any stratum:\n", printErrorIDs(errorName = pointLabel, errorIDs = bad))
+    }
+    
+    ind <- lapply(hits, utils::head, 1)
+    ind[at0Strata] <- NA
+    ind <- unlist(ind)
+    
+    stratumNames <- getStratumNames(stratumPolygon)[ind]
+    
+    return(stratumNames)
+}
+
+
+
+
+
+
+
+
+
+
+#' Define a proj4 string
+#' 
+#' @param x				    A proj4 string or a list of proj4 parameters to modify.
+#' @param par				A proj4 string or a list of proj4 parameters to modify by.
+#' @param list.out			Logical: If TRUE the projection info is returned as a list instead of a concatenate string.
+#'
+modifyProj4String <- function(x, par, list.out = FALSE) {
+    
+    # Interpret the inputs as proj4 string:
+    if (is.character(x)) {
+        x <- proj4string2proj4list(x)
+    }
+    if (is.character(par)) {
+        par <- proj4string2proj4list(par)
+    }
+    
+    # Save the names of the original list:
+    xNames <- names(x)
+    # Include the freely specified args, set to override existing definitions:
+    par <- c(par, x)
+    # Get the CRS, using only the first of repeated parameters:
+    par <- par[!duplicated(names(par))]
+    
+    # Order so that the original parameters are first:
+    namesInOriginal <- names(par) %in% xNames
+    par <- c(par[xNames], par[!namesInOriginal])
+    
+    # Convert the args to a string:
+    if (!list.out) {
+        # Add the +:
+        parNamesPlus <- paste0("+", names(par))
+        parString <- paste0(parNamesPlus, "=", unlist(par, recursive = FALSE))
+        
+        # Identify non-set parameters:
+        nonSet <- is.na(par)
+        if(any(nonSet)) {
+            parString[nonSet] <- parNamesPlus[nonSet]
+        }
+        
+        par <- paste(parString, collapse = " ")
+    }
+    
+    par
+}
+
+
+proj4string2proj4list <- function(proj4string) {
+    if(!nchar(proj4string)) {
+        warning("proj4string does not contain a proj4 string.")
+        return(proj4string)
+    }
+    parSplit <- strsplit(proj4string, " ", fixed = TRUE)[[1]]
+    parSplit <- mapply(gsub, MoreArgs = list(pattern = "[[:blank:]]", replacement = ""), x = parSplit, SIMPLIFY = FALSE)
+    parSplit <- lapply(parSplit, function(x) if(grepl("=", x)) strsplit(x, "=")[[1]] else x)
+    parSplitNames <- sapply(parSplit, utils::head, 1)
+    parSplitNames <- sub(".*?\\+", "", parSplitNames)
+    parSplit <- lapply(parSplit, "[", 2)
+    names(parSplit) <- parSplitNames
+    return(parSplit)
+}
+
+
+modifyProjection <- function(spObject, proj4) {
+    # Get the current projection:
+    proj4string <- sf::st_crs(spObject)$proj4string
+    
+    # Change the projection:
+    suppressWarnings(proj4string <- modifyProj4String(proj4string, par = proj4))
+    
+    # Set the new projection:
+    suppressWarnings(sp::proj4string(spObject) <- proj4string)
+    
+    return(spObject)
+}
+
+addCentroidToProjection <- function(spObject, centroid = NULL) {
+    # Get the centroid:
+    if(!length(centroid)) {
+        #centroid <- rgeos::gCentroid(spObject)@coords
+        centroid <- getTrueCentroid(spObject, tol = 1e-9, msg = FALSE)
+    }
+    
+    # Set the centroid:
+    spObject <- modifyProjection(spObject, proj4 = list(lon_0 = centroid[1], lat_0 = centroid[2]))
+    
+    return(spObject)
+}
+
 
