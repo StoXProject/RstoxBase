@@ -102,8 +102,11 @@ jobs:
       - name: Prepare for dependencies on Linux
         if: runner.os == 'Linux'
         run: |
-          sudo add-apt-repository ppa:ubuntugis/ubuntugis-stable
-          sudo apt-get update
+          #sudo add-apt-repository ppa:ubuntugis/ubuntugis-stable
+          sudo add-apt-repository ppa:ubuntugis/ppa
+          sudo apt update
+        
+          #sudo apt-get update
           sudo apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev 
           #sudo apt-get -y update && sudo apt-get install -y  libudunits2-dev libgdal-dev libgeos-dev libproj-dev
           #sudo apt-get install -y libproj-dev
