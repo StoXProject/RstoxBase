@@ -114,7 +114,6 @@ jobs:
 
           #sudo apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev 
           sudo ls /usr/local/lib
-          sudo pkg-config --modversion proj
           #sudo apt-get -y update && sudo apt-get install -y  libudunits2-dev libgdal-dev libgeos-dev libproj-dev
           #sudo apt-get install -y libproj-dev
           #sudo apt-get install libgdal-dev
