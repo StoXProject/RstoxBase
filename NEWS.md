@@ -1,3 +1,8 @@
+# RstoxBase v1.9.4 (2022-06-15)
+* Added DependentResolutionVariable and IndependentResolutionVariable in the RegressionTable of DefineRegression() and as parameters in EstimateBioticRegression(), used for adding half the resolution of e.g. length intervals.
+* Reverted to identify all AcousticPSUs that have any missing assignment, as the proposed solution did not work.
+
+
 # RstoxBase v1.9.2 (2022-05-26)
 * Added warning occurring when there are samples with positive SampleNumber but no individuals, resulting in positive Abundance in the SuperIndividuals function to be set to NA.
 * Replaced all use of functions from the packages rgdal and rgeos by the package sf, as per the planned retirement of these packages. See https://www.r-bloggers.com/2022/04/r-spatial-evolution-retirement-of-rgdal-rgeos-and-maptools/. 

@@ -8,7 +8,9 @@ EstimateBioticRegression(
   InputDataType = c("IndividualsData", "SuperIndividualsData"),
   RegressionModel = c("SimpleLinear", "Power"),
   DependentVariable = character(),
+  DependentResolutionVariable = character(),
   IndependentVariable = character(),
+  IndependentResolutionVariable = character(),
   GroupingVariables = character(),
   IndividualsData,
   SuperIndividualsData
@@ -21,7 +23,11 @@ EstimateBioticRegression(
 
 \item{DependentVariable}{The name of the dependent variable (respons variable).}
 
+\item{DependentResolutionVariable}{The name of the dependent variable (respons variable).}
+
 \item{IndependentVariable}{The name of the independent variable (explanatory variable).}
+
+\item{IndependentResolutionVariable}{The name of the independent variable (explanatory variable).}
 
 \item{GroupingVariables}{An optional vector of strings defining variables seving as grouping variables in the RegressionTable. Setting this adds the its elements as columns in the RegressionTable in the GUI.}
 

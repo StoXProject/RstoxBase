@@ -158,6 +158,157 @@
 		]
 	}, 
 	
+    "AcousticTargetStrengthModel": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "AcousticTargetStrengthModel": { "type": "string" }
+                },
+                "required": [
+                    "AcousticTargetStrengthModel"
+                ]
+            }
+        ]
+    },
+    "AcousticTargetStrengthTable": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "AcousticCategory": { "type": "string" }, 
+                    "Frequency": { "type": "number" },
+                    "TargetStrength0": { "type": "number" },
+                    "LengthExponent": { "type": "number" },
+                    "DepthExponent": { "type": "number" },
+                    "TargetStrength": { "type": "number" },
+                    "TotalLength": { "type": "number" }
+                },
+                "required": [
+                    "AcousticCategory",
+                    "Frequency"
+                ]
+            }
+        ]
+    }, 
+
+    "RegressionModel": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "RegressionModel": { "type": "string" }
+                },
+                "required": [
+                    "RegressionModel"
+                ]
+            }
+        ]
+    },
+    "RegressionTable": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [ 
+            {
+                "type": "object",
+                "properties": {
+                    "DependentVariable": { "type": "string" }, 
+                    "DependentResolutionVariable": { "type": "string" }, 
+                    "IndependentVariable": { "type": "string" },
+                    "IndependentResolutionVariable": { "type": "string" },
+                    "Intercept": { "type": "number" },
+                    "Slope": { "type": "number" },
+                    "Factor": { "type": "number" },
+                    "Exponent": { "type": "number" }, 
+                    "ResidualStandardError": { "type": "number" },
+                    "EstimationMethod": { "type": "string" }
+                },
+                "required": [
+                    "DependentVariable",
+                    "IndependentVariable"
+                ]
+            }
+        ]
+    }, 
+    
+    "AcousticPSU": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "Stratum_PSU": {
+              "$ref": "#/Stratum_PSU"
+            },
+            "EDSU_PSU": {
+              "$ref": "#/EDSU_PSU"
+            },
+            "PSUByTime": {
+              "$ref": "#/PSUByTime"
+            }
+        },
+        "required": [
+            "Stratum_PSU",
+            "EDSU_PSU",
+            "PSUByTime"
+        ]
+    }, 
+   
+    "BioticPSU": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "Stratum_PSU": {
+              "$ref": "#/Stratum_PSU"
+            },
+            "EDSU_PSU": {
+              "$ref": "#/EDSU_PSU"
+            }
+        },
+        "required": [
+            "Stratum_PSU",
+            "Station_PSU"
+        ]
+    }, 	
+    
+    "AcousticTargetStrength": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "AcousticTargetStrengthModel": {
+              "$ref": "#/AcousticTargetStrengthModel"
+            },
+            "AcousticTargetStrengthTable": {
+              "$ref": "#/AcousticTargetStrengthTable"
+            }
+        },
+        "required": [
+            "AcousticTargetStrengthModel",
+            "AcousticTargetStrengthTable"
+        ]
+    },  	
+    
+    "Regression": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "RegressionModel": {
+              "$ref": "#/RegressionModel"
+            },
+            "RegressionTable": {
+              "$ref": "#/RegressionTable"
+            }
+        },
+        "required": [
+            "RegressionModel",
+            "RegressionTable"
+        ]
+    }, 
+    
     "StratumPolygon": {
 		"$schema": "https://json-schema.org/draft/2020-12/schema",
 		"$id": "https://geojson.org/schema/FeatureCollection.json",
@@ -410,154 +561,6 @@
 				}
 			}
 		}
-	}, 
-	
-    "AcousticTargetStrengthModel": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "array",
-        "items": [ 
-            {
-                "type": "object",
-                "properties": {
-                    "AcousticTargetStrengthModel": { "type": "string" }
-                },
-                "required": [
-                    "AcousticTargetStrengthModel"
-                ]
-            }
-        ]
-    },
-    "AcousticTargetStrengthTable": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "array",
-        "items": [ 
-            {
-                "type": "object",
-                "properties": {
-                    "AcousticCategory": { "type": "string" }, 
-                    "Frequency": { "type": "number" },
-                    "TargetStrength0": { "type": "number" },
-                    "LengthExponent": { "type": "number" },
-                    "DepthExponent": { "type": "number" },
-                    "TargetStrength": { "type": "number" },
-                    "TotalLength": { "type": "number" }
-                },
-                "required": [
-                    "AcousticCategory",
-                    "Frequency"
-                ]
-            }
-        ]
-    }, 
-
-    "RegressionModel": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "array",
-        "items": [ 
-            {
-                "type": "object",
-                "properties": {
-                    "RegressionModel": { "type": "string" }
-                },
-                "required": [
-                    "RegressionModel"
-                ]
-            }
-        ]
-    },
-    "RegressionTable": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "array",
-        "items": [ 
-            {
-                "type": "object",
-                "properties": {
-                    "DependentVariable": { "type": "string" }, 
-                    "IndependentVariable": { "type": "string" },
-                    "Intercept": { "type": "number" },
-                    "Slope": { "type": "number" },
-                    "Factor": { "type": "number" },
-                    "Exponent": { "type": "number" }, 
-                    "ResidualStandardError": { "type": "number" },
-                    "EstimationMethod": { "type": "string" }
-                },
-                "required": [
-                    "DependentVariable",
-                    "IndependentVariable"
-                ]
-            }
-        ]
-    }, 
-    
-    "AcousticPSU": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "object",
-        "properties": {
-            "Stratum_PSU": {
-              "$ref": "#/Stratum_PSU"
-            },
-            "EDSU_PSU": {
-              "$ref": "#/EDSU_PSU"
-            },
-            "PSUByTime": {
-              "$ref": "#/PSUByTime"
-            }
-        },
-        "required": [
-            "Stratum_PSU",
-            "EDSU_PSU",
-            "PSUByTime"
-        ]
-    }, 
-   
-    "BioticPSU": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "object",
-        "properties": {
-            "Stratum_PSU": {
-              "$ref": "#/Stratum_PSU"
-            },
-            "EDSU_PSU": {
-              "$ref": "#/EDSU_PSU"
-            }
-        },
-        "required": [
-            "Stratum_PSU",
-            "Station_PSU"
-        ]
-    }, 	
-    
-    "AcousticTargetStrength": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "object",
-        "properties": {
-            "AcousticTargetStrengthModel": {
-              "$ref": "#/AcousticTargetStrengthModel"
-            },
-            "AcousticTargetStrengthTable": {
-              "$ref": "#/AcousticTargetStrengthTable"
-            }
-        },
-        "required": [
-            "AcousticTargetStrengthModel",
-            "AcousticTargetStrengthTable"
-        ]
-    },  	
-    
-    "Regression": {
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "type": "object",
-        "properties": {
-            "RegressionModel": {
-              "$ref": "#/RegressionModel"
-            },
-            "RegressionTable": {
-              "$ref": "#/RegressionTable"
-            }
-        },
-        "required": [
-            "RegressionModel",
-            "RegressionTable"
-        ]
     }
+    
 }

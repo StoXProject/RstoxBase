@@ -2001,7 +2001,7 @@ checkModel <- function(modelClass, ParameterTable, ModelName) {
     
     # Check that the ParameterTable contains the required columns:
     if(! all(modelParameters[[ModelName]] %in% names(ParameterTable))) {
-        stop("The parameter table for ", ModelName, " must contain the required column; ", paste(modelParameters[[ModelName]], collapse = ", "))
+        stop("The parameter table for ", ModelName, " must contain the required parameter columns; ", paste(modelParameters[[ModelName]], collapse = ", "))
     }
     
     # Check for duplicated keys:
@@ -2148,7 +2148,9 @@ DefineRegression <- function(
 #' @inheritParams DefineRegression
 #' @param InputDataType The type of biotic data to estimate the regression parameters based on, one of "IndividualsData" and "SuperIndividualsData". See Details.
 #' @param DependentVariable The name of the dependent variable (respons variable).
+#' @param DependentResolutionVariable The name of the dependent variable (respons variable).
 #' @param IndependentVariable The name of the independent variable (explanatory variable).
+#' @param IndependentResolutionVariable The name of the independent variable (explanatory variable).
 #' 
 #' @details The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model Y ~ a X^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
 #' 
@@ -2165,7 +2167,9 @@ EstimateBioticRegression <- function(
     InputDataType = c("IndividualsData", "SuperIndividualsData"), 
     RegressionModel = c("SimpleLinear", "Power"), 
     DependentVariable = character(), 
+    DependentResolutionVariable = character(), 
     IndependentVariable = character(), 
+    IndependentResolutionVariable = character(), 
     GroupingVariables = character(), 
     IndividualsData, 
     SuperIndividualsData
@@ -2191,17 +2195,30 @@ EstimateBioticRegression <- function(
         stop("All of the GroupingVariables must be present in the data (", paste(setdiff(GroupingVariables, names(data)), collapse = ", "), " not present)")
     }
     
+    if(!length(DependentVariable) == 1) {
+        stop("DependentVariable must be given as the name of the dependent variable in the regression.")
+    }
+    if(!length(IndependentVariable) == 1) {
+        stop("IndependentVariable must be given as the name of the independent variable in the regression.")
+    }
+    
+    # Adjust for the resolution variables (adding half of the resolution to get mid interval values):
+    addHalfResolution(data = data, variable = DependentVariable, resolutionVariable = DependentResolutionVariable)
+    addHalfResolution(data = data, variable = IndependentVariable, resolutionVariable = IndependentResolutionVariable)
+    
     # Run the estimation by the GroupingVariables:
     RegressionTable <- data[, getRegressionTable(
         RegressionModel = RegressionModel, 
         DependentVariable = DependentVariable, 
+        DependentResolutionVariable = DependentResolutionVariable, 
         IndependentVariable = IndependentVariable, 
+        IndependentResolutionVariable = IndependentResolutionVariable, 
         GroupingVariables = GroupingVariables, 
         EstimationMethod = EstimationMethod,
         data = .SD
-    ), 
-    by = GroupingVariables, 
-    .SDcols = names(data)] # Inlcude all columns, as the default is to skip the 'by' columns.
+        ), 
+        by = GroupingVariables, 
+        .SDcols = names(data)] # Inlcude all columns, as the default is to skip the 'by' columns.
     
     ## Since this is such a flexible datatype, we define the column order here, and use it on the RegressionTable below:
     #columnOrder <- c(
@@ -2229,7 +2246,9 @@ EstimateBioticRegression <- function(
 getRegressionTable <- function(
     RegressionModel, 
     DependentVariable, 
+    DependentResolutionVariable, 
     IndependentVariable, 
+    IndependentResolutionVariable, 
     GroupingVariables, 
     EstimationMethod,
     data
@@ -2240,6 +2259,7 @@ getRegressionTable <- function(
     
     # Estimate the regression model:
     estimationFunction <- getRstoxBaseDefinitions("estimationFunctions")$Regression[[RegressionModel]]
+    
     regressionSummary <- tryCatch(
         summary(
             estimationFunction(
@@ -2271,7 +2291,9 @@ getRegressionTable <- function(
     # Add also the DependentVariable, IndependentVariable and GroupingVariables at the start, and EstimationMethod at the end:
     RegressionTable <- data.table::data.table(
         DependentVariable = DependentVariable, 
+        DependentResolutionVariable = DependentResolutionVariable, 
         IndependentVariable = IndependentVariable, 
+        IndependentResolutionVariable = IndependentResolutionVariable, 
         RegressionTable, 
         EstimationMethod = EstimationMethod
     )
