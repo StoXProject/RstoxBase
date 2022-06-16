@@ -882,19 +882,18 @@ ImputeDataByRegression <- function(
     # Get the data and add the RowIndex for use when identifying which rows to impute from:
     dataCopy <- data.table::copy(data)
     
-    # Check that DependentVariable and IndependentVariable are constant:
-    if(!allEqual(Regression$RegressionTable$DependentVariable)) {
-        stop("All DependentVariable must be equal.")
+    
+    # There should either be a demannd for only one row, or we should re-code to treating each row separately!!!!!!!!!!!!!!!!!!!!!!!!!111
+    if(NROW(Regression$RegressionTable) > 1) {
+        stop("Currently, only one row in the regression table is supported.")
     }
-    else {
-        DependentVariable <- Regression$RegressionTable$DependentVariable[1]
-    }
-    if(!allEqual(Regression$RegressionTable$IndependentVariable)) {
-        stop("All IndependentVariable must be equal.")
-    }
-    else {
-        IndependentVariable <- Regression$RegressionTable$IndependentVariable[1]
-    }
+    
+    # Store the variable names for convenience:
+    DependentVariable <- Regression$RegressionTable$DependentVariable[1]
+    IndependentVariable <- Regression$RegressionTable$IndependentVariable[1]
+    DependentResolutionVariable <- Regression$RegressionTable$DependentResolutionVariable[1]
+    IndependentResolutionVariable <- Regression$RegressionTable$IndependentResolutionVariable[1]
+    
     
     # Find rows with missing DependentVariable and present IndependentVariable:
     atImpute <- dataCopy[, which(is.na(get(DependentVariable)) & !is.na(get(IndependentVariable)))]
@@ -913,12 +912,38 @@ ImputeDataByRegression <- function(
         dataCopy <- cbind(dataCopy, Regression$RegressionTable[, ..tomerge])
     }
     
+    # Add half of the resolution:
+    #if(length(thisDependentResolutionVariable) && !is.na(thisDependentResolutionVariable)) {
+        addHalfResolution(data = dataCopy, variable = DependentVariable, resolutionVariable = DependentResolutionVariable)
+        on.exit(addHalfResolution(data = dataCopy, variable = DependentVariable, resolutionVariable = DependentResolutionVariable, reverse = TRUE))
+        #dataCopy[, eval(thisDependentVariable) := get(thisDependentVariable) + eval(get(thisDependentResolutionVariable)) / 2]
+    #}
+    #if(length(thisIndependentResolutionVariable) && !is.na(thisIndependentResolutionVariable)) {
+        addHalfResolution(data = dataCopy, variable = IndependentVariable, resolutionVariable = IndependentResolutionVariable)
+        on.exit(addHalfResolution(data = dataCopy, variable = IndependentVariable, resolutionVariable = IndependentResolutionVariable, reverse = TRUE))
+        #dataCopy[, eval(thisIndependentVariable) := get(thisIndependentVariable) + eval(get(thisIndependentResolutionVariable)) / 2]
+    #}
+    
     # Apply the regression model with the parameters:
     RegressionModel <- Regression$RegressionModel$RegressionModel
     modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
     regressionFunction <- getRstoxBaseDefinitions("modelFunctions")[["Regression"]][[RegressionModel]]
     dataCopy[atImpute, eval(DependentVariable) := regressionFunction(get(eval(IndependentVariable)), .SD), .SDcols = modelParameters]
     
+    dataCopy[, (removeAfterwards) := NULL]
+    
     
     return(dataCopy)
+}
+
+
+addHalfResolution <- function(data, variable, resolutionVariable, reverse = FALSE) {
+    if(length(resolutionVariable) && !is.na(resolutionVariable)) {
+        if(reverse) {
+            data[, eval(variable) := get(variable) - eval(get(resolutionVariable)) / 2]    
+        }
+        else {
+            data[, eval(variable) := get(variable) + eval(get(resolutionVariable)) / 2]
+        }
+    }
 }

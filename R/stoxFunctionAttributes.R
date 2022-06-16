@@ -830,7 +830,9 @@ stoxFunctionAttributes <- list(
         functionParameterFormat = list(
             RegressionTable = "regressionTable", 
             DependentVariable = "dependentVariable_EstimateBioticRegression", 
+            DependentResolutionVariable = "dependentResolutionVariable_EstimateBioticRegression", 
             IndependentVariable = "independentVariable_EstimateBioticRegression", 
+            IndependentResolutionVariable = "independentResolutionVariable_EstimateBioticRegression", 
             GroupingVariables = "groupingVariables_EstimateBioticRegression"
         ), 
         functionArgumentHierarchy = list(
@@ -1017,9 +1019,9 @@ processPropertyFormats <- list(
         }
     ), 
     
-    independentVariable_EstimateBioticRegression = list(
+    dependentResolutionVariable_EstimateBioticRegression = list(
         class = "vector", 
-        title = "Select IndependentVariable for regression", 
+        title = "Select DependentResolutionVariable for regression", 
         variableTypes = "character", 
         possibleValues = function(DependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
             data <- get(InputDataType)
@@ -1027,11 +1029,31 @@ processPropertyFormats <- list(
         }
     ), 
     
+    independentVariable_EstimateBioticRegression = list(
+        class = "vector", 
+        title = "Select IndependentVariable for regression", 
+        variableTypes = "character", 
+        possibleValues = function(DependentVariable, DependentResolutionVariable, InputDataType, IndividualsData, SuperIndividualsData) {
+            data <- get(InputDataType)
+            setdiff(intersect(names(data), attr(data, "stoxDataVariableNames")$Individual), c(DependentVariable, DependentResolutionVariable))
+        }
+    ), 
+    
+    independentResolutionVariable_EstimateBioticRegression = list(
+        class = "vector", 
+        title = "Select IndependentResolutionVariable for regression", 
+        variableTypes = "character", 
+        possibleValues = function(DependentVariable, DependentResolutionVariable, IndependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
+            data <- get(InputDataType)
+            setdiff(intersect(names(data), attr(data, "stoxDataVariableNames")$Individual), c(DependentVariable, DependentResolutionVariable, IndependentVariable))
+        }
+    ), 
+    
     groupingVariables_EstimateBioticRegression = list(
         class = "vector", 
         title = "Select GroupingVariables for regression", 
         variableTypes = "character", 
-        possibleValues = function(DependentVariable, IndependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
+        possibleValues = function(DependentVariable, DependentResolutionVariable, IndependentVariable, IndependentResolutionVariable, InputDataType, IndividualsData, SuperIndividualsData) {
             data <- get(InputDataType)
             setdiff(
                 intersect(
@@ -1041,7 +1063,7 @@ processPropertyFormats <- list(
                         attr(data, "stoxDataVariableNames")$Individual
                     )
                 ), 
-                c(DependentVariable, IndependentVariable)
+                c(DependentVariable, DependentResolutionVariable, IndependentVariable, IndependentResolutionVariable)
             )
         }
     ), 
@@ -1400,10 +1422,10 @@ processPropertyFormats <- list(
             RegressionModel <- match.arg(RegressionModel)
             
             if(identical(RegressionModel, "SimpleLinear")) {
-                title <- "Define parameters of the linear model (DependentVariable = Intercept + Slope * IndependentVariable)"
+                title <- "Define parameters of the linear model ((DependentVariable + DependentResolutionVariable / 2) = Intercept + Slope * (IndependentVariable + IndependentResolutionVariable / 2))"
             }
             else if(identical(RegressionModel, "Power")) {
-                title <- "Define parameters of the power model (DependentVariable = Factor * IndependentVariable ^ Exponent)"
+                title <- "Define parameters of the power model ((DependentVariable + DependentResolutionVariable / 2) = Factor * (IndependentVariable + IndependentResolutionVariable / 2) ^ Exponent)"
             }
             else {
                 stop("Wrong RegressionModel")
@@ -1417,7 +1439,9 @@ processPropertyFormats <- list(
             if(identical(RegressionModel, "SimpleLinear")) {
                 columnNames <- c(
                     "DependentVariable", 
+                    "DependentResolutionVariable", 
                     "IndependentVariable", 
+                    "IndependentResolutionVariable", 
                     "Intercept", 
                     "Slope", 
                     "ResidualStandardError", 
@@ -1427,7 +1451,9 @@ processPropertyFormats <- list(
             else if(identical(RegressionModel, "Power")) {
                 columnNames <- c(
                     "DependentVariable", 
+                    "DependentResolutionVariable", 
                     "IndependentVariable", 
+                    "IndependentResolutionVariable", 
                     "Factor", 
                     "Exponent", 
                     "ResidualStandardError", 
@@ -1451,6 +1477,8 @@ processPropertyFormats <- list(
                 variableTypes <- c(
                     "character",
                     "character",
+                    "character",
+                    "character",
                     "double",
                     "double",
                     "double",
@@ -1459,6 +1487,8 @@ processPropertyFormats <- list(
             }
             else if(identical(RegressionModel, "Power")) {
                 variableTypes <- c(
+                    "character",
+                    "character",
                     "character",
                     "character",
                     "double",
@@ -1492,7 +1522,7 @@ processPropertyFormats <- list(
             
             # Output must be an unnamed list:
             c(
-                rep(list(list()), 5 + as.numeric(length(GroupingVariables) && nchar(GroupingVariables))), 
+                rep(list(list()), 7 + as.numeric(length(GroupingVariables) && nchar(GroupingVariables))), 
                 list(EstimationMethod)
             )
         }

@@ -307,9 +307,7 @@ DistributeNASC <- function(
     
     # Add a warning if any WeightedNumber are NA while NASC > 0:
     NASCData[, missingAssignment := all(is.na(WeightedNumber) & NASC > 0), by = sumBy]
-    # Ralaxed this condition to that all WeightedNumber must be missing:
-    #unassignedPSUs <- unique(NASCData[missingAssignment == TRUE, PSU])
-    unassignedPSUs <- NASCData[,  PSU[all(missingAssignment, na.rm = TRUE)], by = "PSU"]$PSU
+    unassignedPSUs <- unique(NASCData[missingAssignment == TRUE, PSU])
     
     unassignedPSUs <- setdiff(unassignedPSUs, NA)
     NASCData[, missingAssignment := NULL]
