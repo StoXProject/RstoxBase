@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
       </span>
     </div>
 
@@ -68,22 +68,37 @@
     <h2>Arguments</h2>
     <dl><dt>SuperIndividualsData</dt>
 <dd><p>The <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code> data.</p></dd>
+
+
 <dt>ImputationMethod</dt>
 <dd><p>The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.</p></dd>
+
+
 <dt>ImputeAtMissing</dt>
 <dd><p>A single string naming the variable which when missing identifies target individuals to input data <b>to</b>. I.e., if <code>ImputeAtMissing</code> is missing for an individual, perform the imputation. In StoX 3.0.0 and older, <code>ImputeAtMissing</code> was hard coded to IndividualAge.</p></dd>
+
+
 <dt>ImputeByEqual</dt>
 <dd><p>A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data <b>from</b>. The source individuals need also to have non-missing <code>ImputeAtMissing</code>. In StoX 3.0.0 and older, <code>ImputeByEqual</code> was hard coded to c("SpeciesCategory","IndividualTotalLength").</p></dd>
+
+
 <dt>ToImpute</dt>
 <dd><p>A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when <code>ImputeAtMissing</code> is missing, so including many variables in <code>ToImpute</code> is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, <code>ToImpute</code> was hard coded to all available variables of the BioticData contained in the <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p></dd>
+
+
 <dt>Seed</dt>
 <dd><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></dd>
+
+
 <dt>Regression</dt>
 <dd><p>The <code><a href="Regression.html">Regression</a></code> process data.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of StoX data type <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p>
+    
+
+<p>An object of StoX data type <code><a href="SuperIndividualsData.html">SuperIndividualsData</a></code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -106,7 +121,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

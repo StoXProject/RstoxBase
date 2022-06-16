@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
       </span>
     </div>
 
@@ -67,16 +67,27 @@
     <h2>Arguments</h2>
     <dl><dt>SweptAreaDensityMethod</dt>
 <dd><p>The method to use for the swept-area calculation, one of \"LengthDistributed\" for calculating density from the length distribution (<code><a href="MeanLengthDistributionData.html">MeanLengthDistributionData</a></code>), and \"TotalCatch\" for calculating density from the total catch (<code><a href="MeanSpeciesCategoryCatchData.html">MeanSpeciesCategoryCatchData</a></code>).</p></dd>
+
+
 <dt>MeanLengthDistributionData</dt>
 <dd><p>The <code><a href="MeanLengthDistributionData.html">MeanLengthDistributionData</a></code> data.</p></dd>
+
+
 <dt>MeanSpeciesCategoryCatchData</dt>
 <dd><p>The <code><a href="MeanSpeciesCategoryCatchData.html">MeanSpeciesCategoryCatchData</a></code> data.</p></dd>
+
+
 <dt>SweepWidthMethod</dt>
 <dd><p>The method for calculating the sweep width. Possible options are (1) "Constant", which requires <code>SweepWidth</code> to be set as the constant sweep width, and (2) "PreDefined", impying that the sweep width is already incorporated in the <code>WeightedNumber</code> in the <code>MeanLengthDistributionData</code> using <code>link{GearDependentLengthDistributionCompensation}</code> or <code>link{LengthDependentLengthDistributionCompensation}</code>, or in the <code>MeanSpeciesCategoryCatchData</code> using <code>link{GearDependentSpeciesCategoryCatchCompensation}</code>.</p></dd>
+
+
 <dt>SweepWidth</dt>
 <dd><p>The constant sweep width in meters.</p></dd>
+
+
 <dt>DensityType</dt>
 <dd><p>The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaWeightDensity" (kg) for SweptAreaDensityMethod = "TotalCatch". All area densities are given per square nautical mile.</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -95,7 +106,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

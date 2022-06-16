@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
       </span>
     </div>
 
@@ -68,22 +68,37 @@
     <h2>Arguments</h2>
     <dl><dt>processData</dt>
 <dd><p>The current data produced by a previous instance of the function.</p></dd>
+
+
 <dt>UseProcessData</dt>
 <dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+
+
 <dt>DefinitionMethod</dt>
 <dd><p>A string naming the method to use, one of "ResourceFile", to read the file <code>FileName</code> holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.</p></dd>
+
+
 <dt>FileName</dt>
 <dd><p>The path to a <a href="https://geojson.org/" class="external-link">GeoJSON</a> file, <a href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm" class="external-link">shapefile</a> (may be a folder) or a <code><a href="StoX_multipolygon_WKT.html">StoX_multipolygon_WKT</a></code> file. Must include file extension.</p></dd>
+
+
 <dt>StratumNameLabel</dt>
 <dd><p>The name of the attribute representing the stratum names in the GeoJSON file or shapefile.</p></dd>
+
+
 <dt>SimplifyStratumPolygon</dt>
 <dd><p>Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from <a href="https://geocompr.robinlovelace.net/geometric-operations.html#simplification" class="external-link">Geocomputation with R</a>). This option is useful for very complex stratum polygon files to reduce time for opening, running and saving a project.</p></dd>
+
+
 <dt>SimplificationFactor</dt>
 <dd><p>A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size. Note that larger values require more  time than smaller values. It is advisable to start with a low value (e.g. 0.01) and check the resolution of the strata borders in the map, and gradually increase <code>SimplificationFactor</code> until an acceptable resolution is obtained. Note that simplification of stratum polygons can lead to inaccuracies such as gaps between strata, which can lead to hauls falling outside of any stratum, causing under-estimation of survey indices, or failure to complete the model in the case of SplitNASC models which require all hauls to be located in a stratum. If such problems occur, the strata can be modified manually after simplification to include all hauls. Another problem is the change in stratum areas, which is reported to the console when running the simplification. A very rough rule of thumb is that <code>SimplificationFactor</code> = 0.1 seems to be a compromise between increased speed and reduction of stratum border resolution.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of StoX data type <code><a href="StratumPolygon.html">StratumPolygon</a></code>.</p>
+    
+
+<p>An object of StoX data type <code><a href="StratumPolygon.html">StratumPolygon</a></code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -113,7 +128,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

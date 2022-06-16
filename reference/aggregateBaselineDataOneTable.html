@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
       </span>
     </div>
 
@@ -70,26 +70,45 @@
     <h2>Arguments</h2>
     <dl><dt>stoxData</dt>
 <dd><p>Output from any StoX function.</p></dd>
+
+
 <dt>TargetVariable</dt>
 <dd><p>The variable to report.</p></dd>
+
+
 <dt>aggregationFunction</dt>
 <dd><p>The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.</p></dd>
+
+
 <dt>subTable</dt>
 <dd><p>The name of the sub table to aggregate on, if <code>stoxData</code> is a list of tables.</p></dd>
+
+
 <dt>GroupingVariables</dt>
 <dd><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.</p></dd>
+
+
 <dt>InformationVariables</dt>
 <dd><p>Variables to include as columns to the end of the report table. These cannot have more unique combinations than the <code>GroupingVariables</code>.</p></dd>
+
+
 <dt>na.rm</dt>
 <dd><p>Used in the function specified by <code>aggregationFunction</code>.</p></dd>
+
+
 <dt>padWithZerosOn</dt>
 <dd><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></dd>
+
+
 <dt>WeightingVariable</dt>
 <dd><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An aggregated version of the input <code>stoxData</code>.</p>
+    
+
+<p>An aggregated version of the input <code>stoxData</code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -108,7 +127,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

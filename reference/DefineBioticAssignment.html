@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
       </span>
     </div>
 
@@ -82,48 +82,89 @@
     <h2>Arguments</h2>
     <dl><dt>processData</dt>
 <dd><p>The current data produced by a previous instance of the function.</p></dd>
+
+
 <dt>UseProcessData</dt>
 <dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
+
+
 <dt>DefinitionMethod</dt>
 <dd><p>Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in <code>Radius</code> to each acoustic PSU; and "EllipsoidalDistance" to provide <code>MinNumberOfHauls</code>, <code>Distance</code>, <code>TimeDifference</code>, <code>BottomDepthDifference</code>, <code>LongitudeDifference</code>, <code>LatitudeDifference</code>, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.</p></dd>
+
+
 <dt>StoxBioticData</dt>
 <dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxBioticData.html" class="external-link">StoxBioticData</a></code> data (defined in RstoxData).</p></dd>
+
+
 <dt>FileName</dt>
 <dd><p>The path to the StoX 2.7 project.xml file to read "bioticassignment", "suassignment" and "psustratum" from, in the case that <code>DefinitionMethod</code> is "ResourceFile".</p></dd>
+
+
 <dt>StratumPolygon</dt>
 <dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+
+
 <dt>AcousticPSU</dt>
 <dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
+
+
 <dt>LayerDefinition</dt>
 <dd><p>The method to use for defining the Layers, one of <code>FunctionParameter</code> to define the Layers on the fly in this function, or <code>FunctionInput</code> to import Layer process data from a previously run process using the function <code>DefineAcousticLayer</code>.</p></dd>
+
+
 <dt>LayerDefinitionMethod</dt>
 <dd><p>See <code><a href="DefineAcousticLayer.html">DefineAcousticLayer</a></code></p></dd>
+
+
 <dt>Resolution</dt>
 <dd><p>Numeric: A single numeric giving the thickness of the layers.</p></dd>
+
+
 <dt>LayerTable</dt>
 <dd><p>A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.</p></dd>
+
+
 <dt>AcousticLayer</dt>
 <dd><p>The <code><a href="AcousticLayer.html">AcousticLayer</a></code> process data.</p></dd>
+
+
 <dt>StoxAcousticData</dt>
 <dd><p>The <code><a href="https://rdrr.io/pkg/RstoxData/man/StoxAcousticData.html" class="external-link">StoxAcousticData</a></code> data (defined in RstoxData).</p></dd>
+
+
 <dt>Radius</dt>
 <dd><p>Numeric: The radius inside which to assign biotic stations to each acoustic PSU.</p></dd>
+
+
 <dt>MinNumberOfHauls</dt>
 <dd><p>For DefinitionMethod "EllipsoidalDistance": Integer minimum number of hauls selected inside the ellipsoid. If the number of hauls inside the ellispoid is lower than the <code>MinNumberOfHauls</code>, the <code>MinNumberOfHauls</code> closest Hauls will be used (in ellipsoidal distance).</p></dd>
+
+
 <dt>Distance</dt>
 <dd><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing distance in nautical miles.</p></dd>
+
+
 <dt>TimeDifference</dt>
 <dd><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing time difference in hours.</p></dd>
+
+
 <dt>BottomDepthDifference</dt>
 <dd><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in bottom depth in meters.</p></dd>
+
+
 <dt>LongitudeDifference</dt>
 <dd><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in longitude in degrees.</p></dd>
+
+
 <dt>LatitudeDifference</dt>
 <dd><p>For DefinitionMethod "EllipsoidalDistance": The semi axis of the ellipsoid representing difference in latitude in degrees.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of StoX data type <code><a href="BioticAssignment.html">BioticAssignment</a></code>.</p>
+    
+
+<p>An object of StoX data type <code><a href="BioticAssignment.html">BioticAssignment</a></code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -185,7 +226,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
       </span>
     </div>
 
@@ -68,22 +68,37 @@
     <h2>Arguments</h2>
     <dl><dt>DensityData</dt>
 <dd><p>The <code><a href="DensityData.html">DensityData</a></code> data.</p></dd>
+
+
 <dt>TargetVariable</dt>
 <dd><p>The variable to report.</p></dd>
+
+
 <dt>ReportFunction</dt>
 <dd><p>The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.</p></dd>
+
+
 <dt>GroupingVariables</dt>
 <dd><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.</p></dd>
+
+
 <dt>InformationVariables</dt>
 <dd><p>Variables to include as columns to the end of the report table. These cannot have more unique combinations than the <code>GroupingVariables</code>.</p></dd>
+
+
 <dt>RemoveMissingValues</dt>
 <dd><p>Logical: If TRUE, remove missing values (NAs) from the <code>TargetVariable</code>. The default (FALSE) implies to report NA if at least one of the values used in the <code>ReportFunction</code> is NA. Use <code>RemoveMissingValues</code> = TRUE with extreme caution, as it may lead to under-estimation. E.g., if <code>RemoveMissingValues</code> = TRUE and a super-individual lacks <code>IndividualRoundWeight</code>, <code>Biomass</code> will be NA, and the portion of <code>Abundance</code> distributed to that super-individual will be excluded when summing <code>Biomass</code> (but included when summing <code>Abundance</code>). It is advised to always run with <code>RemoveMissingValues</code> = FALSE first, and make a thorough investigation to identify the source of any missing values. The function <code>link{ImputeSuperIndividuals}</code> can be used to impute the missing information from other super-individuals.</p></dd>
+
+
 <dt>WeightingVariable</dt>
 <dd><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code><a href="ReportDensityData.html">ReportDensityData</a></code> object.</p>
+    
+
+<p>A <code><a href="ReportDensityData.html">ReportDensityData</a></code> object.</p>
     </div>
 
   </div>
@@ -98,7 +113,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>
