@@ -1133,6 +1133,9 @@ DefineBioticAssignment <- function(
         
         # Create a spatial points object of the positions of the hauls:
         SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
+        attr(SpatialHauls, "pointLabel") <- "Station"
+        attr(SpatialHauls, "Station") <- MergeStoxBioticData$Station
+        
         locatedStratum <- locateInStratum(SpatialHauls, StratumPolygon)
         # Add to the BioticAssignment:
         BioticAssignment <- MergeStoxBioticData

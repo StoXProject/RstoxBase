@@ -7,8 +7,8 @@
             {
                 "type": "object",
                 "properties": {
-                    "Stratum": { "type": "string" },
-                    "PSU": { "type": "string" }
+                    "Stratum": { "type": [ "string", "null" ] },
+                    "PSU": { "type": [ "string", "null" ] }
                 },
                 "required": [
                     "Stratum",
@@ -24,8 +24,8 @@
             {
                 "type": "object",
                 "properties": {
-                    "EDSU": { "type": "string" },
-                    "PSU": { "type": "string" }
+                    "EDSU": { "type": [ "string", "null" ] },
+                    "PSU": { "type": [ "string", "null" ] }
                 },
                 "required": [
                     "EDSU",
@@ -41,11 +41,11 @@
             {
                 "type": "object",
                 "properties": {
-                    "Stratum": { "type": "string" },
-    		        "PSU": { "type": "string" },
-    		        "Cruise": { "type": "string" },
-    		        "StartDateTime": { "type": "string" },
-    		        "StopDateTime": { "type": "string" }
+                    "Stratum": { "type": [ "string", "null" ] },
+    		        "PSU": { "type": [ "string", "null" ] },
+    		        "Cruise": { "type": [ "string", "null" ] },
+    		        "StartDateTime": { "type": [ "string", "null" ] },
+    		        "StopDateTime": { "type": [ "string", "null" ] }
                 },
                 "required": [
                     "Stratum",
@@ -65,8 +65,8 @@
             {
                 "type": "object",
                 "properties": {
-                    "Station": { "type": "string" },
-                    "PSU": { "type": "string" }
+                    "Station": { "type": [ "string", "null" ] },
+                    "PSU": { "type": [ "string", "null" ] }
                 },
                 "required": [
                     "Station",
@@ -83,9 +83,9 @@
 			{
 				"type": "object",
 				"properties": {
-				    "Layer": { "type": "string" }, 
-                    "MinLayerDepth": { "type": "number" }, 
-                    "MaxLayerDepth": { "type": "number" }
+				    "Layer": { "type": [ "string", "null" ] }, 
+                    "MinLayerDepth": { "type": [ "number", "null" ] }, 
+                    "MaxLayerDepth": { "type": [ "number", "null" ] }
 				},
 				"required": [
 					"Layer",
@@ -103,9 +103,9 @@
 			{
 				"type": "object",
 				"properties": {
-				    "Layer": { "type": "string" }, 
-                    "MinLayerDepth": { "type": "number" }, 
-                    "MaxLayerDepth": { "type": "number" }
+				    "Layer": { "type": [ "string", "null" ] }, 
+                    "MinLayerDepth": { "type": [ "number", "null" ] }, 
+                    "MaxLayerDepth": { "type": [ "number", "null" ] }
 				},
 				"required": [
 					"Layer",
@@ -123,11 +123,11 @@
 			{
 				"type": "object",
 				"properties": {
-					"Stratum": { "type": "string" },
-					"PSU": { "type": "string" },
-					"Layer": { "type": "string" },
-					"Haul": { "type": "string" },
-					"WeightingFactor": { "type": "number" }
+					"Stratum": { "type": [ "string", "null" ] },
+					"PSU": { "type": [ "string", "null" ] },
+					"Layer": { "type": [ "string", "null" ] },
+					"Haul": { "type": [ "string", "null" ] },
+					"WeightingFactor": { "type": [ "number", "null" ] }
 				},
 				"required": [
 					"Stratum",
@@ -147,8 +147,8 @@
 			{
 				"type": "object",
 				"properties": {
-					"Stratum": { "type": "string" },
-					"Survey": { "type": "string" }
+					"Stratum": { "type": [ "string", "null" ] },
+					"Survey": { "type": [ "string", "null" ] }
 				},
 				"required": [
 					"Stratum",
@@ -165,7 +165,7 @@
             {
                 "type": "object",
                 "properties": {
-                    "AcousticTargetStrengthModel": { "type": "string" }
+                    "AcousticTargetStrengthModel": { "type": [ "string", "null" ] }
                 },
                 "required": [
                     "AcousticTargetStrengthModel"
@@ -180,13 +180,13 @@
             {
                 "type": "object",
                 "properties": {
-                    "AcousticCategory": { "type": "string" }, 
-                    "Frequency": { "type": "number" },
-                    "TargetStrength0": { "type": "number" },
-                    "LengthExponent": { "type": "number" },
-                    "DepthExponent": { "type": "number" },
-                    "TargetStrength": { "type": "number" },
-                    "TotalLength": { "type": "number" }
+                    "AcousticCategory": { "type": [ "string", "null" ] }, 
+                    "Frequency": { "type": [ "number", "null" ] },
+                    "TargetStrength0": { "type": [ "number", "null" ] },
+                    "LengthExponent": { "type": [ "number", "null" ] },
+                    "DepthExponent": { "type": [ "number", "null" ] },
+                    "TargetStrength": { "type": [ "number", "null" ] },
+                    "TotalLength": { "type": [ "number", "null" ] }
                 },
                 "required": [
                     "AcousticCategory",
@@ -203,7 +203,7 @@
             {
                 "type": "object",
                 "properties": {
-                    "RegressionModel": { "type": "string" }
+                    "RegressionModel": { "type": [ "string", "null" ] }
                 },
                 "required": [
                     "RegressionModel"
@@ -218,16 +218,16 @@
             {
                 "type": "object",
                 "properties": {
-                    "DependentVariable": { "type": "string" }, 
-                    "DependentResolutionVariable": { "type": "string" }, 
-                    "IndependentVariable": { "type": "string" },
-                    "IndependentResolutionVariable": { "type": "string" },
-                    "Intercept": { "type": "number" },
-                    "Slope": { "type": "number" },
-                    "Factor": { "type": "number" },
-                    "Exponent": { "type": "number" }, 
-                    "ResidualStandardError": { "type": "number" },
-                    "EstimationMethod": { "type": "string" }
+                    "DependentVariable": { "type": [ "string", "null" ] }, 
+                    "DependentResolutionVariable": { "type": [ "string", "null" ] }, 
+                    "IndependentVariable": { "type": [ "string", "null" ] },
+                    "IndependentResolutionVariable": { "type": [ "string", "null" ] },
+                    "Intercept": { "type": [ "number", "null" ] },
+                    "Slope": { "type": [ "number", "null" ] },
+                    "Factor": { "type": [ "number", "null" ] },
+                    "Exponent": { "type": [ "number", "null" ] }, 
+                    "ResidualStandardError": { "type": [ "number", "null" ] },
+                    "EstimationMethod": { "type": [ "string", "null" ] }
                 },
                 "required": [
                     "DependentVariable",

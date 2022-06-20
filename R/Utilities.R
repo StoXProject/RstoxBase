@@ -965,10 +965,14 @@ readProjectXMLToList <- function(projectXMLFilePath = NULL, projectPath = NULL, 
     }
     
     # Read the project.xml file into a list:
+    if(!length(projectXMLFilePath)) {
+        stop("File path to the project.xml file must be given.")
+    }
     #doc = XML::xmlParse(projectXMLFile)
     doc = xml2::read_xml(projectXMLFilePath)
     #projectList <- XML::xmlToList(doc)
     projectList <- xml2::as_list(doc)$project
+    
     return(projectList)
 }
 

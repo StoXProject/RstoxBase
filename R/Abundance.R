@@ -938,7 +938,14 @@ ImputeDataByRegression <- function(
 
 
 addHalfResolution <- function(data, variable, resolutionVariable, reverse = FALSE) {
-    if(length(resolutionVariable) && !is.na(resolutionVariable)) {
+    if(length(variable) && !is.na(variable) && length(resolutionVariable) && !is.na(resolutionVariable)) {
+        if(! variable %in% names(data)) {
+            stop("The value \"", variable, "\" for the argument ", deparse(substitute(variable)), " was not found as a column in the data. Use one of the following names: ", paste(names(data), collapse = ", "), ".")
+        }
+        if(! resolutionVariable %in% names(data)) {
+            stop("The value \"", resolutionVariable, "\" for the argument ", deparse(substitute(resolutionVariable)), " was not found as a column in the data. Use one of the following names: ", paste(names(data), collapse = ", "), ".")
+        }
+        
         if(reverse) {
             data[, eval(variable) := get(variable) - eval(get(resolutionVariable)) / 2]    
         }
