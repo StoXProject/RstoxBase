@@ -1515,8 +1515,8 @@ processPropertyFormats <- list(
             }
             else if(RegressionModel == "Power") {
                 EstimationMethod <- c(
-                    "LogLogLinear", 
-                    "NonLinear"
+                    "LogLogLinear"#, 
+                    #"NonLinear"
                 )
             }
             

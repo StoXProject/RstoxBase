@@ -1,3 +1,10 @@
+# RstoxBase v1.9.5 (2022-06-20)
+* Fixed bug in DefineBioticAssignment() where DefinitionMethod "Stratum" failed due to unset attribute "pointLabel".
+* Added stop when project.xml file path is not set in a DefinitionMethod "ResourceFile"
+* Disabled the EstimationMethod "NonLinear" in the drop-down menu in the RegressionTable of function Regression() in the GUI.
+* Changed JSON schema so that all table columns of type "string" allow also type "null", supporting NAs.
+
+
 # RstoxBase v1.9.4 (2022-06-15)
 * Added DependentResolutionVariable and IndependentResolutionVariable in the RegressionTable of DefineRegression() and as parameters in EstimateBioticRegression(), used for adding half the resolution of e.g. length intervals.
 * Reverted to identify all AcousticPSUs that have any missing assignment, as the proposed solution did not work.
