@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.5</span>
       </span>
     </div>
 
@@ -47,6 +47,13 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.9.5" id="rstoxbase-v195-2022-06-20">RstoxBase v1.9.5 (2022-06-20)<a class="anchor" aria-label="anchor" href="#rstoxbase-v195-2022-06-20"></a></h2>
+<ul><li>Fixed bug in DefineBioticAssignment() where DefinitionMethod “Stratum” failed due to unset attribute “pointLabel”.</li>
+<li>Added stop when project.xml file path is not set in a DefinitionMethod “ResourceFile”</li>
+<li>Disabled the EstimationMethod “NonLinear” in the drop-down menu in the RegressionTable of function Regression() in the GUI.</li>
+<li>Changed JSON schema so that all table columns of type “string” allow also type “null”, supporting NAs.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.9.4" id="rstoxbase-v194-2022-06-15">RstoxBase v1.9.4 (2022-06-15)<a class="anchor" aria-label="anchor" href="#rstoxbase-v194-2022-06-15"></a></h2>
 <ul><li>Added DependentResolutionVariable and IndependentResolutionVariable in the RegressionTable of DefineRegression() and as parameters in EstimateBioticRegression(), used for adding half the resolution of e.g. length intervals.</li>
