@@ -883,14 +883,29 @@ StoxDataStartMiddleStopDateTime <- function(
 #' 
 #' @export
 #' 
+#replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
+#    if(!length(cols)) {
+#        cols <- names(DT)
+#    }
+#    for (j in cols) {
+#        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
+#    }
+#}
 replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
     if(!length(cols)) {
         cols <- names(DT)
     }
-    for (j in cols) {
-        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
+    if(length(replacement)) {
+        if(!is.list(replacement)) {
+            replacement <- structure(list(replacement), names = RstoxData::firstClass(replacement))
+        }
+        for (j in cols) {
+            data.table::set(DT, which(is.na(DT[[j]]) & class(DT[[j]]) %in% names(replacement)), j, replacement[[RstoxData::firstClass(DT[[j]])]])
+        }
     }
 }
+
+
 
 
 detectInvalidUTF8 <- function(x) {

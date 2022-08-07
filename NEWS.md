@@ -1,3 +1,10 @@
+# RstoxBase v1.9.6 (2022-06-23)
+* Fixed bug in LengthDistribution() with SampleWeight or SampleCount = 0, where haulsWithInfRaisingFactor and samplesWithInfRaisingFactor were missing on line 208.
+* Changed to not split NSAC = 0. 
+* Changed SplitNASC to remove rows with NA NASC originating from missing assignment length distribution. 
+* Changed to consider species to be split that are not present in the AssignmentLengthDistribution of a NASC value to be split as WeightedNumber = 0 instead of NA. This prevents NA NASC, and doubles the previous change.
+
+
 # RstoxBase v1.9.5 (2022-06-20)
 * Fixed bug in DefineBioticAssignment() where DefinitionMethod "Stratum" failed due to unset attribute "pointLabel".
 * Added stop when project.xml file path is not set in a DefinitionMethod "ResourceFile"
