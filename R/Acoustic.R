@@ -340,15 +340,12 @@ SplitNASC <- function(
 ) {
     
     # Add PSUs. This makes a copy, also:
-    NASCData <- merge(NASCData, AcousticPSU$EDSU_PSU)
-    # Fake a MeanNASCData table:
-    data.table::setnames(NASCData, c("MinChannelDepth", "MaxChannelDepth"), c("MinLayerDepth", "MaxLayerDepth"))
-    # ... and fake Layers by simply copying Channel to Layer:
-    NASCData[, Layer := Channel]
+    NASCData <- merge(NASCData, AcousticPSU$EDSU_PSU, by = "EDSU")
     
-    
-    # First consider only the rows with non-missing PSU, which are those that will be split:
-    rowToBeSplit <- !is.na(NASCData$PSU)
+    # Only split rows with non-missing PSU and positive NASC (this also discards splitting of NA NASC):
+    # # First consider only the rows with non-missing PSU, which are those that will be split:
+    # rowToBeSplit <- !is.na(NASCData$PSU)
+    rowToBeSplit <- !is.na(NASCData$PSU) & (NASCData$NASC > 0) %in% TRUE
     
     # Then find the mix categories in the NASCData.
     allAcousticCategory <- unique(NASCData$AcousticCategory[rowToBeSplit])
@@ -359,6 +356,17 @@ SplitNASC <- function(
     }
     # Keep only rows with mix categories present in the data:
     AcousticCategoryLink <- subset(AcousticCategoryLink, AcousticCategory %in% allAcousticCategory)
+    if(!NROW(AcousticCategoryLink)) {
+        warning("No AcousticCategory given by AcousticCategoryLink that are actually present in the data. Returning the NASCData unchanged")
+        return(NASCData)
+    }
+    
+    
+    # Fake a MeanNASCData table:
+    data.table::setnames(NASCData, c("MinChannelDepth", "MaxChannelDepth"), c("MinLayerDepth", "MaxLayerDepth"))
+    # ... and fake Layers by simply copying Channel to Layer:
+    NASCData[, Layer := Channel]
+    
     
     # Set aside the rows that will not be split:
     rowToBeSplit <- rowToBeSplit & NASCData$AcousticCategory %in% AcousticCategoryLink$AcousticCategory
@@ -436,7 +444,7 @@ splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLe
         emptyHaulWarning = "WarnIfNotAnySpeciesPresent"
     )
     
-    # Check whether there are cells of the splitResolution ("EDSU", "Channel", "Beam", "Frequency") that are all NA in NASC, and then add the MixAcousticCategory for these cells, so that the NASC is restored:
+    # Check whether there are cells of the splitResolution ("EDSU", "Channel", "Beam", "Frequency") that are all NA in NASC (all length groups have missing NASC), and then add the MixAcousticCategory for these cells, so that the NASC is restored:
     allNA <- NASCDataSplit[, .(allNA = all(is.na(NASC))), by = splitResolution]
     if(allNA[, any(allNA)]) {
         # Keep only the rows with all NAs in NASC:
@@ -444,14 +452,13 @@ splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLe
         # Merge with the NASCData, to create a table to add to the NASCDataSplit:
         NASCDataToAddForAllNA <- merge(allNA, NASCData, by = splitResolution, all.x = TRUE)
         
-        # Add the restored NASC:
+        # Add the restored NASC to the NASCDataSplit (splitted NASCData), but only keeping the rows with non-NA NASC in NASCDataSplit. This is to prevent rows which are generated from missing AssignmentLengthDistribution (e.g., PSUs with no assigned hauls):
         NASCDataSplit <- rbind(
-            NASCDataSplit, 
+            subset(NASCDataSplit, !is.na(NASC)), 
             NASCDataToAddForAllNA[, intersect(names(NASCDataSplit), names(NASCDataToAddForAllNA)), with = FALSE], 
             fill = TRUE
         )
     }
-    
     
     return(NASCDataSplit)
 }

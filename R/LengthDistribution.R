@@ -186,26 +186,11 @@ LengthDistribution <- function(
     hasRaisingFactorNA <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample)  &  is.na(raisingFactor)]
     
     if(any(hasRaisingFactorNA)) {
-        
-        # List the hauls and samples with missing raising factor:
-        LengthDistributionDataUniqueBySample <- unique(subset(LengthDistributionData, hasRaisingFactorNA), by = "Sample")
-        haulsWithNARaisingFactor <- LengthDistributionDataUniqueBySample$Haul
-        samplesWithNARaisingFactor <- LengthDistributionDataUniqueBySample$Sample
-        
-        # Report the error:
-        stop(getBadRaisingFactorError("NA", unique(haulsWithNARaisingFactor), unique(samplesWithNARaisingFactor)))
+        stop(getBadRaisingFactorError("NA", hasRaisingFactorNA, LengthDistributionData))
     }
     hasRaisingFactorInf <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample)  &  is.infinite(raisingFactor)]
     if(any(hasRaisingFactorInf)) {
-        #stop("StoX: The following Hauls have infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution.\nThere are several options for solving the problem, the ideal being to correct the errors in the input data. Alternatively, the function FilterStoxBiotic can be used to filter out the hauls with NA raising factor, or when there is at least one sample with positive raising factor in the haul, one can filter out the specific samples with NA raising factor:\n", paste("\t", unique(LengthDistributionData$Haul[hasRaisingFactorInf]), collapse = ", "))
-        
-        # List the hauls and samples with missing raising factor:
-        LengthDistributionDataUniqueBySample <- unique(subset(LengthDistributionData, hasRaisingFactorNA), by = "Sample")
-        haulsWithInfRaisingFactor <- LengthDistributionDataUniqueBySample$Haul
-        samplesWithInfRaisingFactor <- LengthDistributionDataUniqueBySample$Sample
-        
-        # Report the error:
-        stop(getBadRaisingFactorError("Inf", unique(haulsWithNARaisingFactor), unique(samplesWithNARaisingFactor)))
+        stop(getBadRaisingFactorError("Inf", hasRaisingFactorInf, LengthDistributionData))
     }
     
     # Apply the raising factor and sum over samples:
@@ -264,10 +249,17 @@ LengthDistribution <- function(
 }
 
 
-getBadRaisingFactorError <- function(badness, badHauls, badSamples) {
+getBadRaisingFactorError <- function(badness, hasBad, LengthDistributionData) {
+    
+    # List the hauls and samples with missing raising factor:
+    LengthDistributionDataUniqueBySample <- unique(subset(LengthDistributionData, hasBad), by = "Sample")
+    haulsWithBadRaisingFactor <- LengthDistributionDataUniqueBySample$Haul
+    samplesWithBadRaisingFactor <- LengthDistributionDataUniqueBySample$Sample
+    
+    badHauls <- unique(haulsWithBadRaisingFactor)
+    badSamples <- unique(samplesWithBadRaisingFactor)
+    
     if(badness == "NA") {
-        uniqueBadHauls <- unique(badHauls)
-        badSamplesList <- split(badSamples, badHauls)
         paste0(
             "StoX: Invalid Sample error: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least one NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
             paste0("The following lists the samples with ", badness, " raising factor:\n"), 

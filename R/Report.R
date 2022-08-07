@@ -215,7 +215,6 @@ aggregateBaselineDataOneTable <- function(
     
     # Add a CJ operation here like in StoX 2.7 (function reportQuantityAtLevel). This needs an option, so that it is only used across bootstrap iterations:
     if(length(padWithZerosOn)) {
-        
         # Attempt to generalize the creation of the grid and filling in the data, intended for use here and for an ExpandNASC function, but the latter was abandoned, so no need to generalize:
         ### dimensionVariables <- c(GroupingVariables, padWithZerosOn)
         ### informationVariables = setdiff(names(stoxData), c(dimensionVariables, TargetVariable))
@@ -248,7 +247,7 @@ aggregateBaselineDataOneTable <- function(
         if(length(abudanceVariables)) {
             # Set all NA to 0, both those from the original stoxData and those introduced by the grid:
             replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
-            # Restore the NAs from the original st  oxData:
+            # Restore the NAs from the original stoxData:
             stoxData[areNA, eval(TargetVariable) := NA]
         }
     }

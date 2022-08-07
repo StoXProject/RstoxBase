@@ -202,6 +202,10 @@ DistributeNASC <- function(
     
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
+    # Find PSUs with both missing and non-missing WeightedNumber, indicating that there are species present in the NASCData that have a length distribution in the AssignmentLengthDistributionData, and at the same time there are species in the NASCData that are not present in the AssignmentLengthDistributionData. The WeightedNumber for the latter species should be 0 and not NA (the merge fills with NA):
+    NASCData[, missingSpecies := (any(!is.na(WeightedNumber)) && any(is.na(WeightedNumber))) & is.na(WeightedNumber), by = "PSU"]
+    #NASCData[missingSpecies == TRUE & is.na(WeightedNumber), WeightedNumber := 0]
+    
     # Check whether there are any non-missing length distribution frequencies:
     anyNonNAWeightedNumber <- NASCData[, sum(!is.na(WeightedNumber))]
     if(! anyNonNAWeightedNumber) {
@@ -312,7 +316,7 @@ DistributeNASC <- function(
     unassignedPSUs <- setdiff(unassignedPSUs, NA)
     NASCData[, missingAssignment := NULL]
     if(length(unassignedPSUs)) {
-        warning("StoX: There are NASC values with no assigned length distibution. This can lead to un-splitted acoustic categories in SplitNASC() and missing (NA) density. Make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this. Missing length distribution for the following PSUs:\n", paste("\t", unassignedPSUs, collapse = "\n"))
+        warning("StoX: There are NASC values with no assigned length distibution. This can lead to un-splitted acoustic categories in SplitNASC() and missing (NA) density. Make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this. Missing length distribution was found for the following PSUs:\n", paste("\t", unassignedPSUs, collapse = "\n"))
     }
     
     # Calculate the target strength of each length group:
@@ -326,9 +330,19 @@ DistributeNASC <- function(
     # Divide by the sum of the representativeBackscatteringCrossSection for each PSU/Layer:
     # If the length distribution is misssing (NA) this will be NA/sum(NA, na.rm = TRUE) = NA, as expected.
     NASCData[, representativeBackscatteringCrossSectionNormalized := representativeBackscatteringCrossSection / sum(representativeBackscatteringCrossSection, na.rm = TRUE), by = sumBy]
+    #NASCData[is.na(representativeBackscatteringCrossSectionNormalized), representativeBackscatteringCrossSectionNormalized := 0]
+    
     
     # Distribute the NASC by the representativeBackscatteringCrossSectionNormalized:
     NASCData[, NASC := ifelse(NASC == 0, 0, NASC * representativeBackscatteringCrossSectionNormalized)]
+    #NASCData[, NASC := ifelse(
+    #    NASC == 0 | is.na(representativeBackscatteringCrossSectionNormalized), 
+    #    0, 
+    #    NASC * representativeBackscatteringCrossSectionNormalized
+    #)]
+    
+    
+    NASCData[missingSpecies == TRUE, NASC := 0]
     
     return(NASCData[])
 }
