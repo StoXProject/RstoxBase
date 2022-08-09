@@ -106,12 +106,24 @@ DefinePSU <- function(
         # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
         usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
         if(any(usedButMissingInStoxData, na.rm = TRUE)) {
+            SSULabel <- switch(PSUType, Acoustic = "EDSU", Biotic = "Station")
+            
+            # Get the SSUs that are missing in the StoxData:
+            usedButMissingInStoxData_SSU <- processData$SSU_PSU[usedButMissingInStoxData, SSU]
+            # Get a table of Stratum, PSU and SSU for these SSUs:
+            Stratum_PSU_SSU <- merge(processData$Stratum_PSU, processData$SSU_PSU, by = "PSU", all = TRUE)
+            Stratum_PSU_SSU <- subset(Stratum_PSU_SSU, SSU %in% usedButMissingInStoxData_SSU)
+            data.table::setnames(Stratum_PSU_SSU, "SSU", SSULabel)
+            # Reorder and paste to one line per SSU:
+            data.table::setcolorder(Stratum_PSU_SSU, c("Stratum", "PSU", SSULabel))
+            usedButMissingInStoxDataInfo <- do.call(paste, c(Stratum_PSU_SSU, list(sep = ",")))
+            
             warning(
-                "StoX: There are ", 
-                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", 
+                "StoX: There are ", sum(usedButMissingInStoxData), " out of ", length(usedButMissingInStoxData), " ", 
+                SSULabel, if(length(usedButMissingInStoxData) > 1) "(s)", 
                 " that are present as tagged to one or more PSUs in the process data, but that are not present in the ", 
                 "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data or using a filter. StoX should ignore these ", 
-                switch(PSUType, Acoustic = "EDSU", Biotic = "Station"), "(s)", " but for clarity it is advised to remove them from the PSUs."
+                SSULabel, "(s)", " but for clarity it is advised to remove them from the PSUs. This can be done manually in the Stratum/PSU winidow of the StoX GUI, or by re-running the Define", PSUType, "PSU proecss with an automatic DefinitionMethod. The following Stratum,PSU,", SSULabel, " are not present in the Stox", PSUType, "Data: \n", printErrorIDs(usedButMissingInStoxDataInfo)
             )
         }
         
@@ -355,8 +367,10 @@ getStratumOfSSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
     
     # Changed on 2021-09-10 to use getStratumNames():
     #StratumNames <- getStratumNames(sp::over(SpatialPSUs, StratumPolygon), check.unique = FALSE)
-    StratumNames <- locateInStratum(SpatialPSUs, StratumPolygon)
-    
+    apply_and_set_use_s2_to_FALSE(
+        StratumNames <- locateInStratum(SpatialPSUs, StratumPolygon), 
+        msg = FALSE
+    )
     
     Stratum_PSU <- data.table::data.table(
         Stratum = unlist(StratumNames), 
@@ -1136,7 +1150,11 @@ DefineBioticAssignment <- function(
         attr(SpatialHauls, "pointLabel") <- "Station"
         attr(SpatialHauls, "Station") <- MergeStoxBioticData$Station
         
-        locatedStratum <- locateInStratum(SpatialHauls, StratumPolygon)
+        apply_and_set_use_s2_to_FALSE(
+            locatedStratum <- locateInStratum(SpatialHauls, StratumPolygon), 
+            msg = FALSE
+        )
+        
         # Add to the BioticAssignment:
         BioticAssignment <- MergeStoxBioticData
         BioticAssignment[, Stratum := ..locatedStratum]
@@ -1146,6 +1164,13 @@ DefineBioticAssignment <- function(
         
         # Discard all rows with missing PSU:
         BioticAssignment <- subset(BioticAssignment, !is.na(PSU))
+        
+        # Give a warning if all Haul are NA, indicating no intersection between the Strata of the AcousticPSU$Stratum_PSU and BioticAssignment:
+        if(BioticAssignment[, all(is.na(Haul))]) {
+            warning("StoX: No Hauls are loacted in any of the strata of the Acoustic PSUs, resulting in empty BioticAssignment.")
+        }
+        # Discard  all rows with missing Haul:
+        BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
     }
     # Search for Hauls around all EDSUs of each PSU:
     else if(grepl("Radius|EllipsoidalDistance", DefinitionMethod, ignore.case = TRUE)) {
@@ -1529,6 +1554,10 @@ BioticAssignmentWeighting <- function(
     # Used in AcousticDensity, which is used in WeightingMethod = "AcousticDensity":
     AcousticPSU, AcousticTargetStrength, SpeciesLink = data.table::data.table(), Radius = double(), MinNumberOfEDSUs = integer()
 ) {
+    
+    if(!NROW(BioticAssignment)) {
+        stop("BioticAssignment is empty. No assigned Hauls to calculate weights for.")
+    }
     
     # Get the DefinitionMethod:
     WeightingMethod <- match.arg(WeightingMethod)
