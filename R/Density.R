@@ -305,8 +305,8 @@ DistributeNASC <- function(
     
     if(NROW(withOnlyOneHaul)) {
         # Get the unique invalid hauls:
-        withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = "-"), .SD), .SDcols = resolution]
-        warning(paste("StoX: There are Stratum/PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum/PSU have only one assigned haul:", paste(withOnlyOneHaul, collapse = "\n\t"), sep = "\n\t"))
+        withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = ","), .SD), .SDcols = resolution]
+        warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", printErrorIDs(withOnlyOneHaul)))
     }
     
     # Add a warning if any WeightedNumber are NA while NASC > 0:

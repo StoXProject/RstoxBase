@@ -507,7 +507,8 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     extract <- c(
         horizontalResolution, 
         targetHorizontalResolution, 
-        weightingVariable
+        weightingVariable, 
+        dataVariable
     )
     extract <- unique(extract)
     
@@ -517,7 +518,8 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     
     # Then sum the weights by the next resolution, PSU for mean of stations/EDSUs and Stratum for mean of PSUs:
     # Use utils::tail(horizontalResolution, 1) here to get the Station/Haul/PSU:
-    naWeights <- summedWeighting[, is.na(get(weightingVariable)) & !is.na(get(utils::tail(horizontalResolution, 1)))]
+    # 2022-08-08: Added !is.na(get(dataVariable)) here to avoid this warning for rows with e.g. missing NACS:
+    naWeights <- summedWeighting[, is.na(get(weightingVariable)) & !is.na(get(utils::tail(horizontalResolution, 1))) & !is.na(get(dataVariable))]
     if(any(naWeights)) {
         warning("StoX: There are missing values for ", weightingVariable, ". This can result in missing values in ", targetDataType, ". The following ", horizontalResolution, " have missing ", weightingVariable, ":\n\t", paste(summedWeighting[[utils::tail(horizontalResolution, 1)]][naWeights], collapse = "\n\t"))
     }

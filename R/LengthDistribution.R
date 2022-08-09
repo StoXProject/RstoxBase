@@ -94,7 +94,7 @@ LengthDistribution <- function(
     # Check for missing individuals due to positive sample number but no individuals of that sample:
     atMissingIndividual <- StoxBioticDataMerged[,  which(is.na(IndividualKey) & (SampleWeight > 0 | SampleNumber > 0))]
     if(length(atMissingIndividual)) {
-        warning("StoX: The following Samples have positive SampleNumber but no individuals, which is indicative of error in the input biotic data. This results in positive WeightedNumber while IndividualTotalLength is missing, which may propagate thoughout the StoX project:\n", printErrorIDs(errorName = "Sample", errorIDs = StoxBioticDataMerged[atMissingIndividual, Sample])
+        warning("StoX: The following Samples have positive SampleNumber but no individuals, which is indicative of error in the input biotic data. This results in positive WeightedNumber while IndividualTotalLength is missing, which may propagate thoughout the StoX project:\n", printErrorIDs(StoxBioticDataMerged[atMissingIndividual, Sample])
         )
     }
     
@@ -262,21 +262,23 @@ getBadRaisingFactorError <- function(badness, hasBad, LengthDistributionData) {
     if(badness == "NA") {
         paste0(
             "StoX: Invalid Sample error: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least one NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
-            paste0("The following lists the samples with ", badness, " raising factor:\n"), 
-            printErrorIDs(errorName = "Sample", errorIDs = badSamples)
+            paste0("The following lists the Samples with ", badness, " raising factor:\n"), 
+            printErrorIDs(badSamples)
         )
     }
     else {
         paste0(
             "StoX: Invalid Sample error: There are ", length(badSamples), " samples of ", length(badHauls), " hauls with infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. These errors should be corrected in the database holding the input data.\n", 
-            paste0("The following lists the samples with ", badness, " raising factor:\n"), 
-            printErrorIDs(errorName = "Sample", errorIDs = badSamples)
+            paste0("The following lists the Samples with ", badness, " raising factor:\n"), 
+            printErrorIDs(badSamples)
         )
     }
 }
 
-printErrorIDs <- function(errorName, errorIDs, bullet = "* ", sep = ": ", collapse = "\n") {
-    out <- paste0(paste0(bullet, errorName, sep, errorIDs, collapse = collapse), collapse)
+#printErrorIDs <- function(errorName, errorIDs, bullet = "* ", sep = ": ", collapse = "\n") {
+printErrorIDs <- function(errorIDs, collapse = "\n\t") {
+    #paste0(paste0(bullet, errorName, sep, errorIDs, collapse = collapse), collapse)
+    paste0(collapse,  paste0(errorIDs, collapse = collapse))
 }
 
 
@@ -971,6 +973,10 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     ### if(!isLengthDistributionType(LengthDistributionData, "Percent")) {
     ###     stop("LengthDistributionData used as input to AssignmentLengthDistribution() must be of LengthDistributionType \"Percent\"")
     ### }
+    
+    if(!NROW(BioticAssignment)) {
+        stop("BioticAssignment is empty. No AssignmentLengthDistributionData can be calculated.")
+    }
     
     # Determine assignment IDs:
     BioticAssignmentCollapsed <- BioticAssignment[, .(assignmentPasted = paste0(paste(Haul, WeightingFactor, sep = ",", collapse = "\n"), "\n")), by = c("Stratum", "PSU", "Layer")]

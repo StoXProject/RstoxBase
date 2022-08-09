@@ -1,4 +1,11 @@
-# RstoxBase v1.9.6 (2022-06-23)
+# RstoxBase v1.9.6 (2022-08-10)
+* Improved warning when EDSUs/Stations are tagged to a PSU but not present in the data. 
+* Turned off spherical geometry with apply_and_set_use_s2_to_FALSE() when locating EDSUs/Stations in Strata. 
+* Added warning when no assigned hauls are located in any Stratum of the PSUs. 
+* Cleaned up warnings that list up Hauls, PSUs etc, so that alle use printErrorIDs(), which was siimplified.
+
+
+# RstoxBase v1.9.6 (2022-08-08)
 * Fixed bug in LengthDistribution() with SampleWeight or SampleCount = 0, where haulsWithInfRaisingFactor and samplesWithInfRaisingFactor were missing on line 208.
 * Changed to not split NSAC = 0. 
 * Changed SplitNASC to remove rows with NA NASC originating from missing assignment length distribution. 
