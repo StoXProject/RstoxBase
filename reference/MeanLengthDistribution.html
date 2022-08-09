@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.7</span>
       </span>
     </div>
 
@@ -53,23 +53,23 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">MeanLengthDistribution</span><span class="op">(</span>
-  <span class="va">LengthDistributionData</span>,
-  <span class="va">SumLengthDistributionData</span>,
-  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span>, <span class="st">"PreDefined"</span><span class="op">)</span>,
-  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>, <span class="st">"Table"</span><span class="op">)</span>,
-  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
-  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
-  BioticLayer <span class="op">=</span> <span class="cn">NULL</span>,
-  SurveyDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
-  SurveyDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"Table"</span><span class="op">)</span>,
-  SurveyTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,
-  Survey <span class="op">=</span> <span class="cn">NULL</span>,
-  PSUDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,
-  PSUDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"StationToPSU"</span>, <span class="st">"None"</span><span class="op">)</span>,
-  StratumPolygon <span class="op">=</span> <span class="cn">NULL</span>,
-  BioticPSU <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">MeanLengthDistribution</span><span class="op">(</span></span>
+<span>  <span class="va">LengthDistributionData</span>,</span>
+<span>  <span class="va">SumLengthDistributionData</span>,</span>
+<span>  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span>, <span class="st">"PreDefined"</span><span class="op">)</span>,</span>
+<span>  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>, <span class="st">"Table"</span><span class="op">)</span>,</span>
+<span>  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  BioticLayer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  SurveyDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,</span>
+<span>  SurveyDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"Table"</span><span class="op">)</span>,</span>
+<span>  SurveyTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  Survey <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  PSUDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,</span>
+<span>  PSUDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"StationToPSU"</span>, <span class="st">"None"</span><span class="op">)</span>,</span>
+<span>  StratumPolygon <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  BioticPSU <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -153,7 +153,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>
