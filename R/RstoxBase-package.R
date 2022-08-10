@@ -38,8 +38,8 @@ utils::globalVariables(c(
 	 "crossSection", "distance", "functionName", "getTrueCentroid", "haulWeightFactor",
 	 "imputeSeed", "includeintotal", "individualNumber", "individualWeightFactor", "inside",
 	 "insideRadius", "intervalIndex", "midIndividualTotalLength", "minDistance",
-	 "missingAssignment", "multiple", "numberOfIndividuals", "numberOfSubSamples", "packageName",
-	 "raisingFactor", "representativeBackscatteringCrossSection",
+	 "missingAssignment", "missingSpecies", "multiple", "numberOfIndividuals", "numberOfSubSamples",
+	 "packageName", "raisingFactor", "representativeBackscatteringCrossSection",
 	 "representativeBackscatteringCrossSectionNormalized", "sumIndividualWeightFactor",
 	 "sumWeightedNumber", "weighted", "weightingParameter", "x", "y"))
 
