@@ -1,4 +1,4 @@
-# RstoxBase v1.9.6 (2022-08-10)
+# RstoxBase v1.9.7 (2022-08-10)
 * Improved warning when EDSUs/Stations are tagged to a PSU but not present in the data. 
 * Turned off spherical geometry with apply_and_set_use_s2_to_FALSE() when locating EDSUs/Stations in Strata. 
 * Added warning when no assigned hauls are located in any Stratum of the PSUs. 
