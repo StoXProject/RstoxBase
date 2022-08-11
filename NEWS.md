@@ -1,8 +1,18 @@
+# RstoxBase v1.10.0 (2022-08-12)
+* Removed from the GUI the warning for EDSUs/Stations detected in more than one stratum. 
+* Added warning is all EDSUs included in the AcousticPSU proecss data are missing in the StoxAcousticData, which is an indication of new data in an old project where AcousticPSUs should be re-defined from scratch. 
+* Start of using semantic versioning (https://semver.org/). Before this release the two first version numbers represented the major and minor release number, in accordance with semantic versioning, whereas the third version number identified test versions. The major and minor releases (versions ending with 0.0 or 0) were considered as official versions. From this release and onwards, the third version number will represent patches (bug fixes), and are to be considered equally official as the major and minor releases. In fact, as patches are restricted to fixing bugs and not adding new functionality, the latest patch will be the recommended version."
+
+
+# RstoxBase v1.9.8 (2022-08-10)
+* Fixed bug in applyMeanToData() introduced in RstoxBase 1.9.8.
+
+
 # RstoxBase v1.9.7 (2022-08-10)
 * Improved warning when EDSUs/Stations are tagged to a PSU but not present in the data. 
 * Turned off spherical geometry with apply_and_set_use_s2_to_FALSE() when locating EDSUs/Stations in Strata. 
 * Added warning when no assigned hauls are located in any Stratum of the PSUs. 
-* Cleaned up warnings that list up Hauls, PSUs etc, so that alle use printErrorIDs(), which was siimplified.
+* Cleaned up warnings that list up Hauls, PSUs etc, so that alle use printErrorIDs(), which was simplified.
 
 
 # RstoxBase v1.9.6 (2022-08-08)
