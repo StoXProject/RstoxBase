@@ -807,7 +807,9 @@ locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonl
     at0Strata <- numberOfStrata == 0
     if(any(atMultipleStrata)) {
         bad <- pointNames[atMultipleStrata]
-        warning("StoX: The following ", pointLabel, " was detected in more than one stratum:\n", printErrorIDs(bad))
+        # 2022-08-11: Removed this warning from the GUI:
+        #warning("StoX: The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:\n", printErrorIDs(bad))
+        warning("The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:\n", printErrorIDs(bad))
     }
     if(any(at0Strata)) {
         bad <- pointNames[at0Strata]

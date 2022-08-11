@@ -78,6 +78,22 @@ DefinePSU <- function(
         # Rename from "EDSU"/"Station" to "SSU": 
         processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
         
+        allSSUsMissing <- !length(intersect(SSUs, processData$SSU_PSU$SSU))
+        if(allSSUsMissing) {
+            warning(
+                "StoX: All ", 
+                SSULabel, "(s)", 
+                " that are present as tagged to one or more PSUs in the process data are missing in the ", 
+                "Stox", PSUType, "Data. If you are using a copy of an old project with new data, please be aware that DefineAcousticPSU and DefineBioticAssignment processes contains the process data of the old project, which usually does not fit to the new data. Rerun these processes with UseProcessData turned off, and an appropriate DefinitionMethod."
+            )
+        }
+        
+        # Remove any EDSUs that are not tagged to a PSU and that are missing in the StoxData:
+        unusedAndMissingInStoxData <- processData$SSU_PSU[, is.na(PSU) & ! SSU %in% SSUs]
+        if(any(unusedAndMissingInStoxData, na.rm = TRUE)) {
+            processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
+        }
+        
         # Add any SSUs present in the StoxData that are not present in the processData:
         missingSSUs <- ! SSUs %in% processData$SSU_PSU$SSU
         if(any(missingSSUs, na.rm = TRUE)) {
@@ -91,12 +107,6 @@ DefinePSU <- function(
             )
         }
         
-        # Remove any EDSUs that are not tagged to a PSU and that are missing in the StoxData:
-        unusedAndMissingInStoxData <- processData$SSU_PSU[, is.na(PSU) & ! SSU %in% SSUs]
-        if(any(unusedAndMissingInStoxData, na.rm = TRUE)) {
-            processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
-        }
-        
         # Remove any empty string PSUs, which were created with RstoxFramework::removeEDSU in RstoxFramework <= 3.3.5:
         atEmptyStringPSUs <- processData$SSU_PSU[, nchar(PSU) == 0]
         if(any(atEmptyStringPSUs, na.rm = TRUE)) {
@@ -105,8 +115,8 @@ DefinePSU <- function(
         
         # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
         usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
-        if(any(usedButMissingInStoxData, na.rm = TRUE)) {
-            SSULabel <- switch(PSUType, Acoustic = "EDSU", Biotic = "Station")
+        if(any(usedButMissingInStoxData, na.rm = TRUE) && !allSSUsMissing) {
+            #SSULabel <- switch(PSUType, Acoustic = "EDSU", Biotic = "Station")
             
             # Get the SSUs that are missing in the StoxData:
             usedButMissingInStoxData_SSU <- processData$SSU_PSU[usedButMissingInStoxData, SSU]
