@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
       </span>
     </div>
 
@@ -48,11 +48,20 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.10.0" id="rstoxbase-v1100-2022-08-12">RstoxBase v1.10.0 (2022-08-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1100-2022-08-12"></a></h2>
+<ul><li>Removed from the GUI the warning for EDSUs/Stations detected in more than one stratum.</li>
+<li>Added warning is all EDSUs included in the AcousticPSU proecss data are missing in the StoxAcousticData, which is an indication of new data in an old project where AcousticPSUs should be re-defined from scratch.</li>
+<li>Start of using semantic versioning (<a href="https://semver.org/" class="external-link uri">https://semver.org/</a>). Before this release the two first version numbers represented the major and minor release number, in accordance with semantic versioning, whereas the third version number identified test versions. The major and minor releases (versions ending with 0.0 or 0) were considered as official versions. From this release and onwards, the third version number will represent patches (bug fixes), and are to be considered equally official as the major and minor releases. In fact, as patches are restricted to fixing bugs and not adding new functionality, the latest patch will be the recommended version."</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.9.8" id="rstoxbase-v198-2022-08-10">RstoxBase v1.9.8 (2022-08-10)<a class="anchor" aria-label="anchor" href="#rstoxbase-v198-2022-08-10"></a></h2>
+<ul><li>Fixed bug in applyMeanToData() introduced in RstoxBase 1.9.8.</li></ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.9.7" id="rstoxbase-v197-2022-08-10">RstoxBase v1.9.7 (2022-08-10)<a class="anchor" aria-label="anchor" href="#rstoxbase-v197-2022-08-10"></a></h2>
 <ul><li>Improved warning when EDSUs/Stations are tagged to a PSU but not present in the data.</li>
 <li>Turned off spherical geometry with apply_and_set_use_s2_to_FALSE() when locating EDSUs/Stations in Strata.</li>
 <li>Added warning when no assigned hauls are located in any Stratum of the PSUs.</li>
-<li>Cleaned up warnings that list up Hauls, PSUs etc, so that alle use printErrorIDs(), which was siimplified.</li>
+<li>Cleaned up warnings that list up Hauls, PSUs etc, so that alle use printErrorIDs(), which was simplified.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.9.6" id="rstoxbase-v196-2022-08-08">RstoxBase v1.9.6 (2022-08-08)<a class="anchor" aria-label="anchor" href="#rstoxbase-v196-2022-08-08"></a></h2>
