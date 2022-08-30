@@ -813,7 +813,7 @@ locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonl
     }
     if(any(at0Strata)) {
         bad <- pointNames[at0Strata]
-        warning("StoX: The following ", pointLabel, " was not detected in any stratum:\n", printErrorIDs(bad))
+        warning("StoX: The following ", pointLabel, if(length(bad) > 1) "s", " was not detected in any stratum:\n", printErrorIDs(bad))
     }
     
     ind <- lapply(hits, utils::head, 1)

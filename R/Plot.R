@@ -19,9 +19,6 @@
 #' @return
 #' A \code{\link{ReportSuperIndividualsData}} object.
 #' 
-#' @examples
-#' 
-#' @seealso
 #' @noRd
 #' 
 PlotNASC <- function(
@@ -73,9 +70,6 @@ PlotNASC <- function(
 #' @return
 #' A \code{\link{ReportSuperIndividualsData}} object.
 #' 
-#' @examples
-#' 
-#' @seealso 
 #' @noRd
 #' 
 PlotSumNASC <- function(
@@ -328,10 +322,7 @@ zoom_xlim_ylim <- function(xlim, ylim, zoom = 1, offset = c(0.5, 0.5)){
 #' @param alpha The transparency.
 #' @param ... Not used, but allowing for unused arguments.
 #'
-#' @return
 #' @noRd
-#'
-#' @examples
 #' \dontrun{
 #' plot(1:10, 1:10, pch = 19, cex = 10, col = combined.color(10))
 #' plot(1:10, 1:10 + 1, pch = 19, cex = 10, col = combined.color(10, flip=TRUE))
