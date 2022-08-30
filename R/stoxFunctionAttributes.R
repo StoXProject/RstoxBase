@@ -238,9 +238,9 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            StoxBioticData = list(
-                UseProcessData = FALSE
-            ), 
+            #StoxBioticData = list(
+            #    UseProcessData = FALSE
+            #), 
             #AcousticPSU = list(
             #    UseProcessData = FALSE
             #), 

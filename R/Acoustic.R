@@ -7,8 +7,7 @@
 #' 
 #' @inheritParams ModelData
 #' 
-#' @return
-#' A \code{\link{NASCData}} object.
+#' @return A \code{\link{NASCData}} object.
 #' 
 #' @export
 NASC <- function(
@@ -470,7 +469,7 @@ splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLe
 #' 
 #' @seealso \code{\link{NASCData}} and \code{\link{StoxAcousticData}}.
 #'  
-#' @value A \code{\link{NASCData}} object.
+#' @return A \code{\link{NASCData}} object.
 #' 
 #' @export
 #'
