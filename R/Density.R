@@ -201,6 +201,7 @@ DistributeNASC <- function(
     #mergeBy <- intersect(names(NASCData), names(AssignmentLengthDistributionData))
     # This is "Stratum", "PSU", "Layer":
     mergeBy <- getDataTypeDefinition("AssignmentLengthDistributionData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE)
+    mergeBy <- intersect(mergeBy, intersect(names(NASCData), names(AssignmentLengthDistributionData)))
     
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     

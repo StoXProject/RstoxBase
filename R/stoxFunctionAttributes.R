@@ -518,6 +518,9 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 PSUDefinitionMethod = "StationToPSU"
             ), 
+            StratumPolygon = list(
+                SurveyDefinitionMethod = "Table"
+            ), 
             # Survey:
             Survey = list(
                 SurveyDefinition = "FunctionInput"
@@ -618,6 +621,9 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 PSUDefinitionMethod = "StationToPSU"
             ), 
+            StratumPolygon = list(
+                SurveyDefinitionMethod = "Table"
+            ), 
             # Survey:
             Survey = list(
                 SurveyDefinition = "FunctionInput"
@@ -705,6 +711,9 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 PSUDefinitionMethod = "EDSUToPSU"
             ), 
+            StratumPolygon = list(
+                SurveyDefinitionMethod = "Table"
+            ), 
             # Survey:
             Survey = list(
                 SurveyDefinition = "FunctionInput"
@@ -751,6 +760,88 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "NASCData"
     ),
+    
+    PlotAcousticTrawlSurvey = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "PlotAcousticTrawlSurveyData", 
+        functionArgumentHierarchy = list(
+            Zoom = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            LongitudeLimits = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            LatitudeLimits = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            # Options for the labels and other text:
+            Title = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            AxisTitleSize = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            AxisTickSize = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            LegendTitleSize = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            LegendTextSize = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            # Options for the colours:
+            ColourVariable = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            PointColour = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            PointColourScale = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            TrackColour = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            LandColour = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            BorderColour = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            OceanColour = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            GridColour = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            # Options for the point sizes and shapes:
+            MaxPointSize = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            MinPointSize = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            TrackSize = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            # Options for the output file:
+            Format = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            Width = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            Height = list(
+                UseDefaultPlotSettings = FALSE
+            ), 
+            DotsPerInch = list(
+                UseDefaultPlotSettings = FALSE
+            )
+        )
+    ),
+    
     ##########
     
     
@@ -780,8 +871,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "DensityData", 
         functionParameterFormat = list(
             SpeciesLink = "speciesLinkTable_AcousticDensity"
-        ),
-        functionArgumentHierarchy = list()
+        )
     ), 
     MeanDensity = list(
         functionType = "modelData", 

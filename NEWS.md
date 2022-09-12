@@ -1,3 +1,7 @@
+# RstoxBase v1.10.1 (2022-09-12)
+* Added (unfinished) PlotAcousticTrawlSurvey().
+
+
 # RstoxBase v1.10.0 (2022-08-12)
 * Removed from the GUI the warning for EDSUs/Stations detected in more than one stratum. 
 * Added warning is all EDSUs included in the AcousticPSU proecss data are missing in the StoxAcousticData, which is an indication of new data in an old project where AcousticPSUs should be re-defined from scratch. 

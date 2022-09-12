@@ -37,8 +37,6 @@ NULL
 ##################################################
 #' General report parameters of RstoxBase
 #' 
-#' All functions referring to a project, a model, a process or an output table use the same parameters, listed here.
-#' 
 #' @param TargetVariable The variable to report.
 #' @param GroupingVariables The variables to report by. For most applications \code{GroupingVariables} should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.
 #' @param InformationVariables Variables to include as columns to the end of the report table. These cannot have more unique combinations than the \code{GroupingVariables}.
@@ -47,6 +45,48 @@ NULL
 #' @name general_report_arguments
 #' 
 NULL
+
+
+##################################################
+##################################################
+#' General ploting parameters of RstoxBase
+#' 
+#' @param UseDefaultPlotSettings Logical: If TRUE (default) use the default settings of the plotting function. Setting this to FALSE will show all options of the plotting function in the StoX GUI.
+#' @param Zoom The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.
+#' @param Title The title of the plot, defaulted to no title.
+#' @param AxisTitleSize The size of the axis titles, defaulted to 20.
+#' @param AxisTickSize The size of the axis tick marks, defaulted to 20.
+#' @param LegendTitleSize The size of the legend title, defaulted to 20.
+#' @param LegendTextSize The size of the legend text, defaulted to 20.
+#' @param Format The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2{ggsave}}, including "tiff", "jpeg"  and "pdf".
+#' @param Width The width of the plot in centimeters, defaulted to 17, as per the \href{https://academic.oup.com/icesjms/pages/General_Instructions}{ICES Journal og Marine Science author recommendations}.
+#' @param Height The height of the plot in centimeters, defaulted to 17.
+#' @param DotsPerInch The number of dots per inch (DPI), defaulted to 1200.
+#' 
+#' @name general_plot_arguments
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' General map plot parameters of RstoxBase
+#' 
+#' @param LongitudeLimits The longitude limits of the map plot, defaulted to the range of the longitude of the data.
+#' @param LatitudeLimits The latitude limits of the map plot, defaulted to the range of the latitude of the data.
+#' @param LandColour The colour to use for the land, defaulted to the colour used for land in the StoX GUI map (yellow colour, rgb(253, 254, 204, maxColorValue = 255)).
+#' @param BorderColour The colour to use for the borders on land, defaulted to "grey50".
+#' @param OceanColour The colour to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.
+#' @param GridColour The colour to use for the longitude/latitude grid lines, defaulted to the colour used for the longitude/latitude grid in the StoX GUI map (blue colour, rgb(223, 242, 255, maxColorValue = 255).
+#' @param MaxPointSize The maximum size of the points, defaulted to 10.
+#' @param MinPointSize The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.
+#' @param TrackColour The colour to use for the vessel track, defaulted to "black".
+#' @param TrackSize The size of the track points, defaulted to 1.
+#' 
+#' @name general_map_plot_arguments
+#' 
+NULL
+
 
 ##################################################
 ##################################################
@@ -77,6 +117,7 @@ NULL
 #' @param IndividualsData The \code{\link{IndividualsData}} data.
 #' @param SuperIndividualsData The \code{\link{SuperIndividualsData}} data.
 #' @param ReportSuperIndividualsData The \code{\link{ReportSuperIndividualsData}} data.
+#' @param PlotAcousticTrawlSurveyData The \code{\link{PlotAcousticTrawlSurveyData}} data.
 #' 
 #' @name ModelData
 #' 
@@ -449,6 +490,19 @@ NULL
 #' @seealso This data type is produced by \code{\link{MeanNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name MeanNASCData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Plot Acoustic-Trawl Survey data
+#' 
+#' The PlotAcousticTrawlSurveyData model data is a ggplot2 object which can be plotted at a later stage.
+#' 
+#' @seealso This data type is produced by \code{\link{PlotAcousticTrawlSurvey}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name PlotAcousticTrawlSurveyData
 #' 
 NULL
 

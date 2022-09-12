@@ -961,8 +961,11 @@ firstNonNA <- function(x) {
 #' @param projectXMLFileName (Optional) The name of the StoX 2.7 project.xml file, defaulted to "project.xml".
 #' @param projectXMLFilePath The path to the project.xml file.
 #' @param projectXMLList A list as read by \code{\link{readProjectXMLToList}}.
-#' @param modelName,processName,parameterName The name of the parameter of the process of the model to modify.
-#' @param parameterValue,newParameterValue The new value of the parameter.
+#' @param modelName The name of the model (possible values are "baseline", "baseline-report", "r" and "r-report").
+#' @param processName he name of the process.
+#' @param parameterName The name of the parameter.
+#' @param parameterValue The value of the parameter.
+#' @param newParameterValue The new value of the parameter.
 #' @param functionName The name of the function of the process to add.
 #' @param modify A named list specifying the modification of a process. Possible elements are remove, add and modify.
 #' 
@@ -1433,3 +1436,78 @@ readBioticAssignmentFrom2.7 <- function(projectXMLFilePath) {
 #    
 #    return(stoxData)
 #}
+
+
+
+#' Get all arguments from inside a function
+#' 
+#' @param Logical: If TRUE use the original values (as defined in the function).
+#' @noRd
+#' 
+allargs <- function(orig_values = FALSE) {
+    
+    # Borrowed from https://stackoverflow.com/questions/11885207/get-all-parameters-as-list
+    
+    # get formals for parent function
+    parent_formals <- formals(sys.function(sys.parent(n = 1)))
+    
+    # Get names of implied arguments
+    fnames <- names(parent_formals)
+    
+    ## Remove '...' from list of parameter names if it exists
+    #fnames <- fnames[-which(fnames == '...')]
+    #
+    # Get currently set values for named variables in the parent frame
+    args <- evalq(as.list(environment()), envir = parent.frame())
+    
+    # Get the list of variables defined in '...'
+    #args <- c(args[fnames], evalq(list(...), envir = parent.frame()))
+    args <- args[fnames]
+    
+    
+    if(orig_values) {
+        # get default values
+        defargs <- as.list(parent_formals)
+        defargs <- defargs[unlist(lapply(defargs, FUN = function(x) class(x) != "name"))]
+        args[names(defargs)] <- defargs
+        setargs <- evalq(as.list(match.call())[-1], envir = parent.frame())
+        args[names(setargs)] <- setargs
+    }
+    return(args)
+}
+
+# Set default general options:
+setDefaults <- function(x, defaults) {
+    presentNames <- intersect(names(x), names(defaults))
+    for(name in presentNames) {
+        if(!length(x[[name]])) {
+            x[[name]] <- defaults[[name]]
+        }
+    }
+    
+    return(x)
+}
+
+
+
+renameListByNames <- function(list, old, new) {
+    if(length(old) != length(new)) {
+        stop("'old' and 'new' must have the same length.")
+    }
+    if(any(duplicated(old))) {
+        stop("'old' cannot contain duplicates.")
+    }
+    valid <- intersect(old, names(list))
+    invalid <- setdiff(old, names(list))
+    if(length(invalid)) {
+        warning("The following names are specified as 'old' but are not found in the list. These are ignored.")
+        new <- new[old %in% names(list)]
+    }
+    atRename <- match(valid, names(list))
+    names(list)[atRename] <- new
+    
+    return(list)
+}
+
+
+    
