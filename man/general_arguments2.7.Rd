@@ -12,9 +12,15 @@
 
 \item{projectXMLList}{A list as read by \code{\link{readProjectXMLToList}}.}
 
-\item{modelName, processName, parameterName}{The name of the parameter of the process of the model to modify.}
+\item{modelName}{The name of the model (possible values are "baseline", "baseline-report", "r" and "r-report").}
 
-\item{parameterValue, newParameterValue}{The new value of the parameter.}
+\item{processName}{he name of the process.}
+
+\item{parameterName}{The name of the parameter.}
+
+\item{parameterValue}{The value of the parameter.}
+
+\item{newParameterValue}{The new value of the parameter.}
 
 \item{functionName}{The name of the function of the process to add.}
 

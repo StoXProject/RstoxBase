@@ -311,7 +311,7 @@ readGeoJSON <- function(FileName) {
 
 #' Extract or add stratum names from a SpatialPolygonsDataFrame
 #' 
-#'  The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
+#' The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' 
 #' @param stratum A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile.
