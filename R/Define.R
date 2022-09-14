@@ -236,7 +236,6 @@ DefinePSU <- function(
     }
     
     
-    
     #### Warning action 1: ####
     # Warning if the is no intersection between the SSUs of the processData and StoxData. This can sometimes happen if the user makes a copy of an old project and does not redefine the PSUs:
     allSSUsMissing <- !length(intersect(SSUs, processData$SSU_PSU$SSU))

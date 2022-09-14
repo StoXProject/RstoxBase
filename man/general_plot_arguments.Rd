@@ -18,10 +18,6 @@
 
 \item{LegendTextSize}{The size of the legend text, defaulted to 20.}
 
-\item{MaxPointSize}{The maximum size of the points, defaulted to 10.}
-
-\item{MinPointSize}{The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.}
-
 \item{Format}{The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
 
 \item{Width}{The width of the plot in centimeters, defaulted to 17, as per the \href{https://academic.oup.com/icesjms/pages/General_Instructions}{ICES Journal og Marine Science author recommendations}.}
@@ -31,7 +27,5 @@
 \item{DotsPerInch}{The number of dots per inch (DPI), defaulted to 1200.}
 }
 \description{
-General ploting parameters of RstoxBase
-
 General ploting parameters of RstoxBase
 }

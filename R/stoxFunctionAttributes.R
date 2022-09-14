@@ -791,29 +791,29 @@ stoxFunctionAttributes <- list(
             LegendTextSize = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            # Options for the colours:
-            ColourVariable = list(
+            # Options for the colors:
+            ColorVariable = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            PointColour = list(
+            PointColor = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            PointColourScale = list(
+            PointColorScale = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            TrackColour = list(
+            TrackColor = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            LandColour = list(
+            LandColor = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            BorderColour = list(
+            BorderColor = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            OceanColour = list(
+            OceanColor = list(
                 UseDefaultPlotSettings = FALSE
             ), 
-            GridColour = list(
+            GridColor = list(
                 UseDefaultPlotSettings = FALSE
             ), 
             # Options for the point sizes and shapes:

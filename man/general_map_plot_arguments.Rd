@@ -8,20 +8,22 @@
 
 \item{LatitudeLimits}{The latitude limits of the map plot, defaulted to the range of the latitude of the data.}
 
-\item{LandColour}{The colour to use for the land, defaulted to the colour used for land in the StoX GUI map (yellow colour, rgb(253, 254, 204, maxColorValue = 255)).}
+\item{LandColor}{The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
 
-\item{BorderColour}{The colour to use for the borders on land, defaulted to "grey50".}
+\item{BorderColor}{The color to use for the borders on land, defaulted to "grey50".}
 
-\item{OceanColour}{The colour to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
+\item{OceanColor}{The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
 
-\item{GridColour}{The colour to use for the longitude/latitude grid lines, defaulted to the colour used for the longitude/latitude grid in the StoX GUI map (blue colour, rgb(223, 242, 255, maxColorValue = 255).}
+\item{GridColor}{The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
 
-\item{TrackColour}{The colour to use for the vessel track, defaulted to "black".}
+\item{MaxPointSize}{The maximum size of the points, defaulted to 10.}
+
+\item{MinPointSize}{The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.}
+
+\item{TrackColor}{The color to use for the vessel track, defaulted to "black".}
 
 \item{TrackSize}{The size of the track points, defaulted to 1.}
 }
 \description{
-General map plot parameters of RstoxBase
-
 General map plot parameters of RstoxBase
 }

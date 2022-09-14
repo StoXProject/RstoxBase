@@ -120,6 +120,10 @@ findLayer <- function(minDepth, maxDepth, layerProcessData, acceptNA = TRUE) {
     indMax <- findInterval(maxDepth, layerRangeVector, rightmost.closed = TRUE)
     LayerInd <- pmin(indMin, indMax, na.rm = acceptNA)
     
+    if(any(LayerInd %in% 0)) {
+        stop("There are max depth values that are smaller than the min depth values.")
+    }
+    
     if(acceptNA && nrow(layerProcessData) == 1 && layerProcessData$MinLayerDepth == 0 && layerProcessData$MaxLayerDepth == Inf) {
         LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
     }

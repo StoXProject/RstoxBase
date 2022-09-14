@@ -14,9 +14,9 @@
 #' @inheritParams ModelData
 #' @inheritParams general_plot_arguments
 #' @inheritParams general_map_plot_arguments
-#' @param ColourVariable The name of the variable determining the colours of the NASC data points, defaulted to "NASC" (both size AND colour reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colours can be set by the \code{PointColour} argument. If the variable is a continuous variable (numeric), the colour scale can be set by the \code{PointColourScale} argument.
-#' @param PointColour The discrete colours to use when plotting the data points, defaulted to the default ggplot2 colour palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colours). 
-#' @param PointColourScale The continuous colour scale to use when plotting the data points, given as the name of a color scale function with the first argument being the number of colours. The default is the \code{\link[RstoxBase]{combined.color}}. Other options are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".
+#' @param ColorVariable The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.
+#' @param PointColor The discrete colors to use when plotting the data points, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors). 
+#' @param PointColorScale The continuous color scale to use when plotting the data points, given as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".
 #' 
 #' @return
 #' A \code{\link{PlotAcousticTrawlSurveyData}} object.
@@ -57,42 +57,45 @@ PlotAcousticTrawlSurvey <- function(
     AxisTickSize = numeric(), 
     LegendTitleSize = numeric(), 
     LegendTextSize = numeric(), 
-    # Options for the colours:
-    ColourVariable = character(), 
-    PointColour = character(), 
-    PointColourScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
-    LandColour = character(), 
-    BorderColour = character(), 
-    OceanColour = character(), 
-    GridColour = character(), 
+    # Options for the colors:
+    ColorVariable = character(), 
+    PointColor = character(), 
+    #PointColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
+    PointColorScale = character(),  
+    LandColor = character(), 
+    BorderColor = character(), 
+    OceanColor = character(), 
+    GridColor = character(), 
     # Options for the point sizes and shapes:
     MaxPointSize = numeric(), 
     MinPointSize = numeric(), 
-    TrackColour = character(), 
+    TrackColor = character(), 
     TrackSize = numeric(), 
     #PointShape = integer(), 
     # Options for the output file:
-    Format = c("png", "tiff", "jpeg", "pdf"), 
+    #Format = c("png", "tiff", "jpeg", "pdf"), 
+    Format = character(), 
     Width = numeric(), 
     Height = numeric(), 
     DotsPerInch = numeric()	
 ) {
     
-    PointColourScale <- match.arg(PointColourScale)
-    Format <- match.arg(Format)
+    
     
     # Get the formals:
     plottingArguments <- allargs()
     
+    # Check function inputs specifically, as these have been included in plottingArguments:
+    if(missing(SumNASCData)) {
+        stop("argument \"SumNASCData\" is missing, with no default")
+    }
+    
     # Use only the Data table of the SumNASCData:
     plottingArguments$SumNASCData <- plottingArguments$SumNASCData$Data
-    # Apply custom specifications:
-    # Hard code to use 10 colour steps:
-    ncolors <- 10
-    plottingArguments$PointColourScale <- do.call(plottingArguments$PointColourScale, list(ncolors))
     
-    if(!length(plottingArguments$ColourVariable)) {
-        plottingArguments$ColourVariable <- "NASC"
+    # Apply custom specifications:
+    if(!length(plottingArguments$ColorVariable)) {
+        plottingArguments$ColorVariable <- "NASC"
     }
     # Set default general options:
     plottingArguments <- setDefaults(plottingArguments, getRstoxBaseDefinitions("defaultPlotOptions"))
@@ -132,14 +135,14 @@ PlotAcousticTrawlSurvey <- function(
         size.track = "TrackSize", 
         size.min = "MinPointSize", 
         size.max = "MaxPointSize", 
-        color = "ColourVariable",
-        color.track = "TrackColour", 
-        color.scale = "PointColourScale", 
-        color.discrete = "PointColour", 
-        color.land = "LandColour", 
-        color.border = "BorderColour", 
-        color.ocean = "OceanColour", 
-        color.grid = "GridColour", 
+        color = "ColorVariable",
+        color.track = "TrackColor", 
+        color.scale = "PointColorScale", 
+        color.discrete = "PointColor", 
+        color.land = "LandColor", 
+        color.border = "BorderColor", 
+        color.ocean = "OceanColor", 
+        color.grid = "GridColor", 
         zoom = "Zoom", 
         xlim = "LongitudeLimits", 
         ylim = "LatitudeLimits", 
@@ -247,8 +250,8 @@ plot_lon_lat <- function(
                 group = "group"
             ), 
             fill = color.land, 
-            colour = color.border
-            #colour = "red"
+            color = color.border
+            #color = "red"
         ) + 
         zoom_lon_lat(
             x = x, 
@@ -367,21 +370,32 @@ plot_lon_lat <- function(
         ggplot2::xlab(lon) + 
         ggplot2::ylab(lat)
     
+    
     # Use scale_color_manual() for categorical variables and scale_color_gradientn() for numeric:
-    if(is.character(x[[color]]) && is.integer(x[[color]])) {
+    if(is.character(x[[color]]) || is.integer(x[[color]])) {
         if(length(color.discrete)) {
-            numberOfDescreteColours <- length(color.discrete)
+            numberOfDescreteColors <- length(color.discrete)
             numberOfLevelsInTheColorVariable <- length(unique(x[[color]]))
             if(length(color.discrete) != length(unique(x[[color]]))) {
-                stop("The number of discrete colours (length of PointColour = ", numberOfDescreteColours, ") must match the number of levels of the categorical variable determining the colours of the points (", color, " has ", numberOfLevelsInTheColorVariable, " levels).")
+                stop("The number of discrete colors (length of PointColor = ", numberOfDescreteColors, ") must match the number of levels of the categorical variable determining the colors of the points (", color, " has ", numberOfLevelsInTheColorVariable, " levels).")
             }
             p <- p + ggplot2::scale_color_manual(values = color.discrete)
+        
+            
         }
     }
     else {
-        p <- p + ggplot2::scale_color_gradientn(colours = color.scale)
+        # Hard code to use 10 color steps:
+        ncolors <- 10
+        color.scale <- do.call(color.scale, list(ncolors))
+        p <- p + ggplot2::scale_color_gradientn(colors = color.scale)
+        
+        ## Bigger symbols in legend:
+        #p <- p + ggplot2::guides(
+        #    size = ggplot2::guide_legend(override.aes = list(stroke = 2)), 
+        #    color = ggplot2::guide_colorbar(barheight = ggplot2::unit(50, "cm"))
+        #)
     }
-    
     
     p <- p + ggplot2::theme(
         axis.title.x = ggplot2::element_text(size = if(length(lll$axis.title.size.x)) lll$axis.title.size.x else 10), 
@@ -390,9 +404,9 @@ plot_lon_lat <- function(
         axis.text.y = ggplot2::element_text(size = if(length(lll$axis.text.size.y)) lll$axis.text.size.y else 10), 
         legend.text = ggplot2::element_text(size = if(length(lll$legend.text.size)) lll$legend.text.size else 10), 
         legend.title = ggplot2::element_text(size = if(length(lll$legend.title.size)) lll$legend.title.size else 10),
-        panel.background = ggplot2::element_rect(fill = color.ocean, colour = "grey80"),
-        panel.grid.major = ggplot2::element_line(colour = color.grid), 
-        panel.grid.minor = ggplot2::element_line(colour = color.grid)
+        panel.background = ggplot2::element_rect(fill = color.ocean, color = "grey80"),
+        panel.grid.major = ggplot2::element_line(color = color.grid), 
+        panel.grid.minor = ggplot2::element_line(color = color.grid)
     )
     
     p <- p + ggplot2::labs(fill = expression(paste("NASC (", m^2, nmi^{-2}, ")")))
@@ -401,11 +415,7 @@ plot_lon_lat <- function(
         p <- p + ggtitle(main)
     }
     
-    # Bigger symbols in legend:
-    p <- p + ggplot2::guides(
-        size = ggplot2::guide_legend(override.aes = list(stroke = 2)), 
-        colour = ggplot2::guide_colourbar(barheight = ggplot2::unit(50, "cm"))
-    )
+    
     
     
     return(p)
@@ -451,8 +461,8 @@ plot_lon_lat_new <- function(
                 group = "group"
             ), 
             fill = color.land, 
-            colour = color.border
-            #colour = "red"
+            color = color.border
+            #color = "red"
         ) + 
         zoom_lon_lat(
             x = x, 
@@ -574,16 +584,16 @@ plot_lon_lat_new <- function(
     # Use scale_color_manual() for categorical variables and scale_color_gradientn() for numeric:
     if(is.character(x[[color]]) && is.integer(x[[color]])) {
         if(length(color.discrete)) {
-            numberOfDescreteColours <- length(color.discrete)
+            numberOfDescreteColors <- length(color.discrete)
             numberOfLevelsInTheColorVariable <- length(unique(x[[color]]))
             if(length(color.discrete) != length(unique(x[[color]]))) {
-                stop("The number of discrete colours (length of PointColour = ", numberOfDescreteColours, ") must match the number of levels of the categorical variable determining the colours of the points (", color, " has ", numberOfLevelsInTheColorVariable, " levels).")
+                stop("The number of discrete colors (length of PointColor = ", numberOfDescreteColors, ") must match the number of levels of the categorical variable determining the colors of the points (", color, " has ", numberOfLevelsInTheColorVariable, " levels).")
             }
             p <- p + ggplot2::scale_color_manual(values = color.discrete)
         }
     }
     else {
-        p <- p + ggplot2::scale_color_gradientn(colours = color.scale)
+        p <- p + ggplot2::scale_color_gradientn(colors = color.scale)
     }
     
     
@@ -594,9 +604,9 @@ plot_lon_lat_new <- function(
         axis.text.y = ggplot2::element_text(size = if(length(lll$axis.text.size.y)) lll$axis.text.size.y else 10), 
         legend.text = ggplot2::element_text(size = if(length(lll$legend.text.size)) lll$legend.text.size else 10), 
         legend.title = ggplot2::element_text(size = if(length(lll$legend.title.size)) lll$legend.title.size else 10),
-        panel.background = ggplot2::element_rect(fill = color.ocean, colour = "grey80"),
-        panel.grid.major = ggplot2::element_line(colour = color.grid), 
-        panel.grid.minor = ggplot2::element_line(colour = color.grid)
+        panel.background = ggplot2::element_rect(fill = color.ocean, color = "grey80"),
+        panel.grid.major = ggplot2::element_line(color = color.grid), 
+        panel.grid.minor = ggplot2::element_line(color = color.grid)
     )
     
     p <- p + ggplot2::labs(fill = expression(paste("NASC (", m^2, nmi^{-2}, ")")))
@@ -608,7 +618,7 @@ plot_lon_lat_new <- function(
     # Bigger symbols in legend:
     p <- p + ggplot2::guides(
         size = ggplot2::guide_legend(override.aes = list(stroke = 2)), 
-        colour = ggplot2::guide_colourbar(barheight = ggplot2::unit(2, "cm"))
+        color = ggplot2::guide_colorbar(barheight = ggplot2::unit(2, "cm"))
     )
     
     
@@ -617,213 +627,6 @@ plot_lon_lat_new <- function(
 
 
 
-
-
-
-
-
-
-
-
-plot_lon_lat <- function(
-    x, 
-    lon = "lon", lat = "lat", 
-    type = c("pl", "lp", "p", "l"), 
-    size = 1, size.track = 1, size.min = 0.1, size.max = 10, limitWidthFraction = 0.1, 
-    color = 1, color.track = 1, 
-    color.scale = combined.color(2), color.discrete = NULL, 
-    color.land = "grey50", color.border = "grey10", color.ocean = "grey90", color.grid = "white", 
-    shape = 16, 
-    alpha = 1, alpha.track = 1, 
-    zoom = 1, xlim = NA, ylim = NA, 
-    offset = c(0.5, 0.5), 
-    main = NULL, 
-    ...
-    )
-{
-    
-    # Get the type:
-    type <- match.arg(type)
-    
-    # Get the optional arguments:
-    lll <- list(...)
-    
-    # Get the map:
-    gmap <- ggplot2::map_data("world")
-    
-    # Initiate the plot, with the map and zoom:
-    p <- ggplot2::ggplot(data = x, x = lon, y = lat) + 
-            ggplot2::geom_polygon(
-            data = gmap, 
-            ggplot2::aes_string(
-                x = "long", 
-                y = "lat", 
-                group = "group"
-            ), 
-            fill = color.land, 
-            colour = color.border
-            #colour = "red"
-        ) + 
-        zoom_lon_lat(
-            x = x, 
-            lon = lon, 
-            lat = lat, 
-            xlim = xlim, 
-            ylim = ylim, 
-            zoom = zoom, 
-            offset = offset
-        ) #+ 
-        #ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(size = 5)))
-    
-    # Plot the lines:
-    if(grepl("l", type)) {
-        plotspec <- list(
-            data = x, 
-            ggplot2::aes_string(
-                x = lon, 
-                y = lat
-            ), 
-            color = color.track, 
-            size = size.track, 
-            alpha = alpha.track, 
-            show.legend = FALSE
-        )
-        
-        path <- do.call(ggplot2::geom_path, plotspec)
-    }
-    else {
-        path <- NULL
-    }
-    
-    
-    
-    # Plot the points:
-    if(grepl("p", type)) {
-        
-        plotspec <- list(
-            alpha = alpha
-        )
-        
-        scaleStroke  <- function(size, maxWidth = 0.1) {
-            exp(-size) * (1 - maxWidth) + maxWidth
-        }
-        
-        applyScale <- function(scalefun, size, maxSize, maxWidth = 0.1, add = 0.5) {
-            size <- size/max(size, na.rm = TRUE) * maxSize
-            scale <- scalefun(size, maxWidth = maxWidth - add/2/maxSize) 
-            size * scale + add/2
-        }
-        
-        if(length(color) && color %in% names(x) && length(size) && size %in% names(x)) {
-            
-            mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat, 
-                color = color, 
-                size = size,
-                stroke = paste0( "applyScale(scaleStroke, ", size, ", maxSize = ", size.max, ", maxWidth = ", limitWidthFraction, ", add = ", size.min, ")" )
-            )
-        }
-        else if(length(color) && color %in% names(x)) {
-            mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat, 
-                color = color
-            )
-            plotspec$size <- size
-        }
-        else if(length(size) && size %in% names(x)) {
-            
-            mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat, 
-                size = size,
-                stroke = paste0( "applyScale(scaleStroke, ", size, ", maxSize = ", size.max, ", maxWidth = ", limitWidthFraction, ", add = ", size.min, ")" )
-            )
-            
-            plotspec$color <- color
-        }
-        else {
-            mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat
-            )
-            plotspec$color <- color
-            plotspec$size <- size
-        }
-        
-        plotspec$data <- x
-        
-        plotspec$mapping <- mapping
-        
-        plotspec$shape <- shape
-        
-        point <- do.call(ggplot2::geom_point, plotspec)
-    }
-    else {
-        point <- NULL
-    }
-    
-    if(startsWith(type, "l")) {
-        toPlot <- list(path, point)
-    }
-    else {
-        toPlot <- list(point, path)
-    }
-    toPlot <- toPlot[lengths(toPlot) > 0]
-    
-    for(this in toPlot) {
-        p <- p + this
-    }
-    
-    p <- p + 
-        ggplot2::scale_size_continuous(range = c(0, size.max)) + 
-        ggplot2::xlab(lon) + 
-        ggplot2::ylab(lat)
-    
-    # Use scale_color_manual() for categorical variables and scale_color_gradientn() for numeric:
-    if(is.character(x[[color]]) && is.integer(x[[color]])) {
-        if(length(color.discrete)) {
-            numberOfDescreteColours <- length(color.discrete)
-            numberOfLevelsInTheColorVariable <- length(unique(x[[color]]))
-            if(length(color.discrete) != length(unique(x[[color]]))) {
-                stop("The number of discrete colours (length of PointColour = ", numberOfDescreteColours, ") must match the number of levels of the categorical variable determining the colours of the points (", color, " has ", numberOfLevelsInTheColorVariable, " levels).")
-            }
-            p <- p + ggplot2::scale_color_manual(values = color.discrete)
-        }
-    }
-    else {
-        p <- p + ggplot2::scale_color_gradientn(colours = color.scale)
-    }
-        
-    
-    p <- p + ggplot2::theme(
-        axis.title.x = ggplot2::element_text(size = if(length(lll$axis.title.size.x)) lll$axis.title.size.x else 10), 
-        axis.title.y = ggplot2::element_text(size = if(length(lll$axis.title.size.y)) lll$axis.title.size.y else 10), 
-        axis.text.x = ggplot2::element_text(size = if(length(lll$axis.text.size.x)) lll$axis.text.size.x else 10), 
-        axis.text.y = ggplot2::element_text(size = if(length(lll$axis.text.size.y)) lll$axis.text.size.y else 10), 
-        legend.text = ggplot2::element_text(size = if(length(lll$legend.text.size)) lll$legend.text.size else 10), 
-        legend.title = ggplot2::element_text(size = if(length(lll$legend.title.size)) lll$legend.title.size else 10),
-        panel.background = ggplot2::element_rect(fill = color.ocean, colour = "grey80"),
-        panel.grid.major = ggplot2::element_line(colour = color.grid), 
-        panel.grid.minor = ggplot2::element_line(colour = color.grid)
-    )
-    
-    p <- p + ggplot2::labs(fill = expression(paste("NASC (", m^2, nmi^{-2}, ")")))
-    
-    if(length(main)) {
-        p <- p + ggtitle(main)
-    }
-    
-    # Bigger symbols in legend:
-    p <- p + ggplot2::guides(
-        size = ggplot2::guide_legend(override.aes = list(stroke = 2)), 
-        colour = ggplot2::guide_colourbar(barheight = ggplot2::unit(2, "cm"))
-    )
-    
-    
-    return(p)
-}
 
 
 
@@ -856,7 +659,7 @@ zoom_xlim_ylim <- function(xlim, ylim, zoom = 1, offset = c(0.5, 0.5)){
 
 
 
-#' Combined rainbow and desaturation colour scale
+#' Combined rainbow and desaturation color scale
 #' 
 #' Returns a color vector of rainbow colors which are desaturated by 's' and darkened by 'v' to obtain the "combined" color scale.
 #'
@@ -890,7 +693,7 @@ combined.color <- function(n, nStart = 0, nEnd = floor(n / 5), colStart = "white
     
     out <- grDevices::hsv(h = h, s = s, v = v, alpha = alpha)
     
-    # Add the start and end colour:
+    # Add the start and end color:
     out <- c(
         rep(if(is.na(colStart)) out[1] else colStart, nStart), 
         out,

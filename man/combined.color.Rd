@@ -2,7 +2,7 @@
 % Please edit documentation in R/Plot.R
 \name{combined.color}
 \alias{combined.color}
-\title{Combined rainbow and desaturation colour scale}
+\title{Combined rainbow and desaturation color scale}
 \usage{
 combined.color(
   n,

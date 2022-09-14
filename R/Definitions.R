@@ -896,9 +896,9 @@ initiateRstoxBase <- function(){
     
     
     defaultMapPlotNASCOptions <- list(
-        # Options for the colours:
-        PointColourScale = "combined.color", 
-        TrackColour = "black", 
+        # Options for the colors:
+        PointColorScale = "combined.color", 
+        TrackColor = "black", 
         # Options for the point sizes and shapes:
         MaxPointSize = 20, 
         MinPointSize = 1, 
@@ -909,10 +909,10 @@ initiateRstoxBase <- function(){
     defaultMapPlotOptions <- list(
         # Options for the zoom and limits:
         Zoom = 1, 
-        LandColour = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
-        BorderColour = "grey50", 
-        OceanColour = "white", 
-        GridColour = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
+        LandColor = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
+        BorderColor = "grey50", 
+        OceanColor = "white", 
+        GridColor = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
     )
     
     

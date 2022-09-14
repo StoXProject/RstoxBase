@@ -11,7 +11,7 @@
 #' 
 #' @export
 NASC <- function(
-    StoxAcousticData = NULL
+    StoxAcousticData
 ) {
     
     # Merge the StoxAcousticData:

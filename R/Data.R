@@ -58,7 +58,7 @@ NULL
 #' @param AxisTickSize The size of the axis tick marks, defaulted to 20.
 #' @param LegendTitleSize The size of the legend title, defaulted to 20.
 #' @param LegendTextSize The size of the legend text, defaulted to 20.
-#' @param Format The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2{ggsave}}, including "tiff", "jpeg"  and "pdf".
+#' @param Format The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".
 #' @param Width The width of the plot in centimeters, defaulted to 17, as per the \href{https://academic.oup.com/icesjms/pages/General_Instructions}{ICES Journal og Marine Science author recommendations}.
 #' @param Height The height of the plot in centimeters, defaulted to 17.
 #' @param DotsPerInch The number of dots per inch (DPI), defaulted to 1200.
@@ -74,13 +74,13 @@ NULL
 #' 
 #' @param LongitudeLimits The longitude limits of the map plot, defaulted to the range of the longitude of the data.
 #' @param LatitudeLimits The latitude limits of the map plot, defaulted to the range of the latitude of the data.
-#' @param LandColour The colour to use for the land, defaulted to the colour used for land in the StoX GUI map (yellow colour, rgb(253, 254, 204, maxColorValue = 255)).
-#' @param BorderColour The colour to use for the borders on land, defaulted to "grey50".
-#' @param OceanColour The colour to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.
-#' @param GridColour The colour to use for the longitude/latitude grid lines, defaulted to the colour used for the longitude/latitude grid in the StoX GUI map (blue colour, rgb(223, 242, 255, maxColorValue = 255).
+#' @param LandColor The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).
+#' @param BorderColor The color to use for the borders on land, defaulted to "grey50".
+#' @param OceanColor The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.
+#' @param GridColor The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).
 #' @param MaxPointSize The maximum size of the points, defaulted to 10.
 #' @param MinPointSize The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.
-#' @param TrackColour The colour to use for the vessel track, defaulted to "black".
+#' @param TrackColor The color to use for the vessel track, defaulted to "black".
 #' @param TrackSize The size of the track points, defaulted to 1.
 #' 
 #' @name general_map_plot_arguments
