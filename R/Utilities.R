@@ -1445,8 +1445,8 @@ readBioticAssignmentFrom2.7 <- function(projectXMLFilePath) {
 
 #' Get all arguments from inside a function
 #' 
-#' @param Logical: If TRUE use the original values (as defined in the function).
-#' @noRd
+#' @param orig_values Logical: If TRUE use the original values (as defined in the function).
+#' @export
 #' 
 allargs <- function(orig_values = FALSE) {
     
@@ -1458,14 +1458,10 @@ allargs <- function(orig_values = FALSE) {
     # Get names of implied arguments
     fnames <- names(parent_formals)
     
-    ## Remove '...' from list of parameter names if it exists
-    #fnames <- fnames[-which(fnames == '...')]
-    #
     # Get currently set values for named variables in the parent frame
     args <- evalq(as.list(environment()), envir = parent.frame())
     
     # Get the list of variables defined in '...'
-    #args <- c(args[fnames], evalq(list(...), envir = parent.frame()))
     args <- args[fnames]
     
     
@@ -1491,6 +1487,30 @@ setDefaults <- function(x, defaults) {
     
     return(x)
 }
+
+
+
+
+# Set default general options:
+setDefaultsInStoxFunction <- function(x) {
+    StoxFunctionName <- as.list(sys.call(-1))[[1]]
+    defaults <- stoxFunctionAttributes[[StoxFunctionName]]$functionParameterDefaults
+    #if(length(condition) && is.character(condition) && nchar(condition)) {
+    #    
+    #}
+    
+    presentNames <- intersect(names(x), names(defaults))
+    for(name in presentNames) {
+        if(!length(x[[name]])) {
+            x[[name]] <- defaults[[name]]
+        }
+    }
+    
+    return(x)
+}
+
+
+
 
 
 

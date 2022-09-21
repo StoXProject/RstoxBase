@@ -5,8 +5,6 @@
 # 5. plotMultipleSegments - for NASC with depth
 
 
-##################################################
-##################################################
 #' Plot NASCData
 #' 
 #' Plots a map with cruise line and points with size and (optionally) color representing NASC.
@@ -46,34 +44,44 @@ PlotAcousticTrawlSurvey <- function(
     #PlotSuperIndividuals
     #
     SumNASCData, 
-    UseDefaultPlotSettings = TRUE, 
+    
+    ColorVariable = character(), 
+    
+    # Options for the colors:
+    UseDefaultColorSettings = TRUE, 
+    PointColor = character(), 
+    #PointColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
+    PointColorScale = character(),  
+    TrackColor = character(), 
+    LandColor = character(), 
+    BorderColor = character(), 
+    OceanColor = character(), 
+    GridColor = character(), 
+    
+    # Options for the point sizes and shapes:
+    UseDefaultSizeSettings = TRUE, 
+    MaxPointSize = numeric(), 
+    MinPointSize = numeric(), 
+    TrackSize = numeric(), 
+    #PointShape = integer(), 
+    
     # Options for the zoom and limits:
+    UseDefaultAspectSettings = TRUE, 
     Zoom = numeric(), 
     LongitudeLimits = numeric(), 
     LatitudeLimits = numeric(), 
+    
     # Options for the labels and other text:
+    UseDefaultTextSettings = TRUE, 
     Title = character(), 
     AxisTitleSize = numeric(), 
     AxisTickSize = numeric(), 
     LegendTitleSize = numeric(), 
     LegendTextSize = numeric(), 
-    # Options for the colors:
-    ColorVariable = character(), 
-    PointColor = character(), 
-    #PointColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
-    PointColorScale = character(),  
-    LandColor = character(), 
-    BorderColor = character(), 
-    OceanColor = character(), 
-    GridColor = character(), 
-    # Options for the point sizes and shapes:
-    MaxPointSize = numeric(), 
-    MinPointSize = numeric(), 
-    TrackColor = character(), 
-    TrackSize = numeric(), 
-    #PointShape = integer(), 
+    
     # Options for the output file:
     #Format = c("png", "tiff", "jpeg", "pdf"), 
+    UseDefaultFileSettings = TRUE, 
     Format = character(), 
     Width = numeric(), 
     Height = numeric(), 
@@ -83,40 +91,47 @@ PlotAcousticTrawlSurvey <- function(
     
     
     # Get the formals:
-    plottingArguments <- allargs()
+    plotArguments <- allargs()
     
-    # Check function inputs specifically, as these have been included in plottingArguments:
+    # Check function inputs specifically, as these have been included in plotArguments:
     if(missing(SumNASCData)) {
         stop("argument \"SumNASCData\" is missing, with no default")
     }
     
+    # # Set default general options:
+    # plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultPlotOptions"))
+    # 
+    # # Set default map plotting options:
+    # plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotNASCOptions"))
+    # 
+    # # Set default NASC-plotting options:
+    # plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotOptions"))
+    
+    plotArguments <- setDefaultsInStoxFunction(plotArguments)
+    
+    
+    
+    
+    
+    
+    
     # Use only the Data table of the SumNASCData:
-    plottingArguments$SumNASCData <- plottingArguments$SumNASCData$Data
+    plotArguments$SumNASCData <- plotArguments$SumNASCData$Data
     
-    # Apply custom specifications:
-    if(!length(plottingArguments$ColorVariable)) {
-        plottingArguments$ColorVariable <- "NASC"
-    }
-    # Set default general options:
-    plottingArguments <- setDefaults(plottingArguments, getRstoxBaseDefinitions("defaultPlotOptions"))
-    
-    # Set default map plotting options:
-    plottingArguments <- setDefaults(plottingArguments, getRstoxBaseDefinitions("defaultMapPlotNASCOptions"))
-    
-    # Set default NASC-plotting options:
-    plottingArguments <- setDefaults(plottingArguments, getRstoxBaseDefinitions("defaultMapPlotOptions"))
-    
-    
+    # # Apply custom specifications:
+    # if(!length(plotArguments$ColorVariable)) {
+    #     plotArguments$ColorVariable <- "NASC"
+    # }
     
     # These must be split up:
-    plottingArguments$axis.title.size.x <- plottingArguments$AxisTitleSize
-    plottingArguments$axis.title.size.y <- plottingArguments$AxisTitleSize
-    plottingArguments$axis.text.size.x <- plottingArguments$AxisTickSize
-    plottingArguments$axis.text.size.y <- plottingArguments$AxisTickSize
+    plotArguments$axis.title.size.x <- plotArguments$AxisTitleSize
+    plotArguments$axis.title.size.y <- plotArguments$AxisTitleSize
+    plotArguments$axis.text.size.x <- plotArguments$AxisTickSize
+    plotArguments$axis.text.size.y <- plotArguments$AxisTickSize
     
-    # Set hard coded values:
-    plottingArguments <- c(
-        plottingArguments, 
+    # Set hard coded values used in plot_lon_lat():
+    plotArguments <- c(
+        plotArguments, 
         list(
             lon = "Longitude", 
             lat = "Latitude", 
@@ -150,33 +165,46 @@ PlotAcousticTrawlSurvey <- function(
         legend.title.size = "LegendTitleSize", 
         main = "Title"
     )
-    
-    plottingArguments <- renameListByNames(
-        plottingArguments, 
+    plotArguments <- renameListByNames(
+        plotArguments, 
         old = traslation,  
         new = names(traslation)
     )
     
+    # Run the plot_lon_lat function:
+    PlotAcousticTrawlSurveyData <- do.call(plot_lon_lat, plotArguments)
     
+    # Set the plot attributes to the output:
+    PlotAcousticTrawlSurveyData <- setPlotAttributes(
+        plotObject = PlotAcousticTrawlSurveyData, 
+        plotArguments = plotArguments
+    )
     
-    
-    
-    
-    
-    
-    
-    PlotAcousticTrawlSurveyData <- do.call(plot_lon_lat, plottingArguments)
-    
-    
-    attr(PlotAcousticTrawlSurveyData, "Format") <- plottingArguments$Format
-    attr(PlotAcousticTrawlSurveyData, "Width") <- plottingArguments$Width
-    attr(PlotAcousticTrawlSurveyData, "Height") <- plottingArguments$Height
-    attr(PlotAcousticTrawlSurveyData, "DotsPerInch") <- plottingArguments$DotsPerInch
     
     return(PlotAcousticTrawlSurveyData)
 }
 
 
+
+
+
+
+#' Set plot attributes to a plot object
+#' 
+#' Sets the following attributes to the plot object (class ggplot): Format, Width, Height, DotsPerInch.
+#' 
+#' @param plotObject The plot object of class ggplot.
+#' @param plotArguments A list of the arguments to the plot function.
+#' 
+#' @export
+#' 
+setPlotAttributes <- function(plotObject, plotArguments) {
+    attr(plotObject, "Format") <- plotArguments$Format
+    attr(plotObject, "Width") <- plotArguments$Width
+    attr(plotObject, "Height") <- plotArguments$Height
+    attr(plotObject, "DotsPerInch") <- plotArguments$DotsPerInch
+    return(plotObject)
+}
 
 
 

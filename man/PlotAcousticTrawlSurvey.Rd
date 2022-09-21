@@ -6,26 +6,30 @@
 \usage{
 PlotAcousticTrawlSurvey(
   SumNASCData,
-  UseDefaultPlotSettings = TRUE,
+  ColorVariable = character(),
+  UseDefaultColorSettings = TRUE,
+  PointColor = character(),
+  PointColorScale = character(),
+  TrackColor = character(),
+  LandColor = character(),
+  BorderColor = character(),
+  OceanColor = character(),
+  GridColor = character(),
+  UseDefaultSizeSettings = TRUE,
+  MaxPointSize = numeric(),
+  MinPointSize = numeric(),
+  TrackSize = numeric(),
+  UseDefaultAspectSettings = TRUE,
   Zoom = numeric(),
   LongitudeLimits = numeric(),
   LatitudeLimits = numeric(),
+  UseDefaultTextSettings = TRUE,
   Title = character(),
   AxisTitleSize = numeric(),
   AxisTickSize = numeric(),
   LegendTitleSize = numeric(),
   LegendTextSize = numeric(),
-  ColorVariable = character(),
-  PointColor = character(),
-  PointColorScale = character(),
-  LandColor = character(),
-  BorderColor = character(),
-  OceanColor = character(),
-  GridColor = character(),
-  MaxPointSize = numeric(),
-  MinPointSize = numeric(),
-  TrackColor = character(),
-  TrackSize = numeric(),
+  UseDefaultFileSettings = TRUE,
   Format = character(),
   Width = numeric(),
   Height = numeric(),
@@ -35,7 +39,27 @@ PlotAcousticTrawlSurvey(
 \arguments{
 \item{SumNASCData}{The \code{\link{SumNASCData}} data.}
 
-\item{UseDefaultPlotSettings}{Logical: If TRUE (default) use the default settings of the plotting function. Setting this to FALSE will show all options of the plotting function in the StoX GUI.}
+\item{ColorVariable}{The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.}
+
+\item{PointColor}{The discrete colors to use when plotting the data points, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors).}
+
+\item{PointColorScale}{The continuous color scale to use when plotting the data points, given as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".}
+
+\item{TrackColor}{The color to use for the vessel track, defaulted to "black".}
+
+\item{LandColor}{The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
+
+\item{BorderColor}{The color to use for the borders on land, defaulted to "grey50".}
+
+\item{OceanColor}{The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
+
+\item{GridColor}{The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
+
+\item{MaxPointSize}{The maximum size of the points, defaulted to 10.}
+
+\item{MinPointSize}{The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.}
+
+\item{TrackSize}{The size of the track points, defaulted to 1.}
 
 \item{Zoom}{The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
 
@@ -52,28 +76,6 @@ PlotAcousticTrawlSurvey(
 \item{LegendTitleSize}{The size of the legend title, defaulted to 20.}
 
 \item{LegendTextSize}{The size of the legend text, defaulted to 20.}
-
-\item{ColorVariable}{The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.}
-
-\item{PointColor}{The discrete colors to use when plotting the data points, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors).}
-
-\item{PointColorScale}{The continuous color scale to use when plotting the data points, given as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".}
-
-\item{LandColor}{The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
-
-\item{BorderColor}{The color to use for the borders on land, defaulted to "grey50".}
-
-\item{OceanColor}{The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
-
-\item{GridColor}{The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
-
-\item{MaxPointSize}{The maximum size of the points, defaulted to 10.}
-
-\item{MinPointSize}{The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.}
-
-\item{TrackColor}{The color to use for the vessel track, defaulted to "black".}
-
-\item{TrackSize}{The size of the track points, defaulted to 1.}
 
 \item{Format}{The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
 

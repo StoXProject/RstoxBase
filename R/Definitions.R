@@ -879,45 +879,6 @@ initiateRstoxBase <- function(){
     }
     
     
-    defaultPlotOptions <- list(
-        # Options for the labels and other text:
-        AxisTitleSize = 40, 
-        AxisTickSize = 40, 
-        LegendTitleSize = 40, 
-        LegendTextSize = 40,
-        # Options for the point sizes and shapes:
-        # Options for the output file:
-        Format = "png", 
-        # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
-        Width = 17, 
-        Height = 17, 
-        DotsPerInch = 500
-    )
-    
-    
-    defaultMapPlotNASCOptions <- list(
-        # Options for the colors:
-        PointColorScale = "combined.color", 
-        TrackColor = "black", 
-        # Options for the point sizes and shapes:
-        MaxPointSize = 20, 
-        MinPointSize = 1, 
-        TrackSize = 2
-    )
-    
-    
-    defaultMapPlotOptions <- list(
-        # Options for the zoom and limits:
-        Zoom = 1, 
-        LandColor = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
-        BorderColor = "grey50", 
-        OceanColor = "white", 
-        GridColor = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
-    )
-    
-    
-    
-    
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
     definitions <- lapply(definitionsNames, get, pos = environment())

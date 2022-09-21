@@ -1,3 +1,38 @@
+defaultPlotOptions <- list(
+    # Options for the labels and other text:
+    AxisTitleSize = 40, 
+    AxisTickSize = 40, 
+    LegendTitleSize = 40, 
+    LegendTextSize = 40,
+    # Options for the point sizes and shapes:
+    # Options for the output file:
+    Format = "png", 
+    # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
+    Width = 17, 
+    Height = 17, 
+    DotsPerInch = 500
+)
+
+
+defaultMapPlotNASCOptions <- list(
+    # Options for the colors:
+    PointColorScale = "combined.color", 
+    TrackColor = "black", 
+    # Options for the point sizes and shapes:
+    MaxPointSize = 20, 
+    MinPointSize = 1, 
+    TrackSize = 2
+)
+
+
+defaultMapPlotOptions <- list(
+    # Options for the zoom and limits:
+    Zoom = 1, 
+    LandColor = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
+    BorderColor = "grey50", 
+    OceanColor = "white", 
+    GridColor = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
+)
 
 getIndividualNames <- function(SuperIndividualsData, remove = NULL, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) {
     individualNames <- unlist(attr(SuperIndividualsData, "stoxDataVariableNames")[tables])
@@ -41,6 +76,7 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "ResourceFile"
             ), 
+            # StratumPolygon is shown in the GUI either if DefinitionMethod is "AllStrata" or "Table":
             StratumPolygon = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "AllStrata"
@@ -766,78 +802,114 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "PlotAcousticTrawlSurveyData", 
         functionArgumentHierarchy = list(
-            Zoom = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
-            LongitudeLimits = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
-            LatitudeLimits = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
-            # Options for the labels and other text:
-            Title = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
-            AxisTitleSize = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
-            AxisTickSize = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
-            LegendTitleSize = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
-            LegendTextSize = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
             # Options for the colors:
-            ColorVariable = list(
-                UseDefaultPlotSettings = FALSE
-            ), 
+            #ColorVariable = list(
+            #    UseDefaultColorSettings = FALSE
+            #), 
             PointColor = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultColorSettings = FALSE, 
+                ColorVariable = function(functionArguments) {
+                    if(!length(functionArguments$ColorVariable)) {
+                        return(FALSE)
+                    }
+                    if(is.list(functionArguments$SumNASCData$Data)) {
+                        is.character(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]]) || 
+                            is.integer(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]])
+                    }
+                    else {
+                        FALSE
+                    }
+                }
             ), 
             PointColorScale = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultColorSettings = FALSE, 
+                ColorVariable = function(functionArguments) {
+                    if(!length(functionArguments$ColorVariable)) {
+                        return(FALSE)
+                    }
+                    if(is.list(functionArguments$SumNASCData$Data)) {
+                        is.numeric(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]])
+                    }
+                    else {
+                        FALSE
+                    }
+                }
             ), 
             TrackColor = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultColorSettings = FALSE
             ), 
             LandColor = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultColorSettings = FALSE
             ), 
             BorderColor = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultColorSettings = FALSE
             ), 
             OceanColor = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultColorSettings = FALSE
             ), 
             GridColor = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultColorSettings = FALSE
             ), 
             # Options for the point sizes and shapes:
             MaxPointSize = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultSizeSettings = FALSE
             ), 
             MinPointSize = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultSizeSettings = FALSE
             ), 
             TrackSize = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultSizeSettings = FALSE
+            ), 
+            # Options for zoom and limits:
+            Zoom = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeLimits = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeLimits = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            # Options for the labels and other text:
+            Title = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            AxisTitleSize = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            AxisTickSize = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            LegendTitleSize = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            LegendTextSize = list(
+                UseDefaultTextSettings = FALSE
             ), 
             # Options for the output file:
             Format = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultFileSettings = FALSE
             ), 
             Width = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultFileSettings = FALSE
             ), 
             Height = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultFileSettings = FALSE
             ), 
             DotsPerInch = list(
-                UseDefaultPlotSettings = FALSE
+                UseDefaultFileSettings = FALSE
+            )
+        ), 
+        functionParameterDefaults = c(
+            # Default general options:
+            defaultPlotOptions, 
+            # Default map plotting options:
+            defaultMapPlotNASCOptions, 
+            # Default NASC-plotting options:
+            defaultMapPlotOptions, 
+            # Other defaults:
+            list(
+                ColorVariable = "NASC"
             )
         )
     ),
