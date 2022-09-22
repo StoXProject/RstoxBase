@@ -880,10 +880,10 @@ initiateRstoxBase <- function(){
     
     defaultPlotOptions <- list(
         # Options for the labels and other text:
-        AxisTitleSize = 40, 
-        AxisTickSize = 40, 
-        LegendTitleSize = 40, 
-        LegendTextSize = 40,
+        AxisTitleSize = 15, 
+        AxisTickSize = 15, 
+        LegendTitleSize = 15, 
+        LegendTextSize = 15,
         # Options for the point sizes and shapes:
         # Options for the output file:
         Format = "png", 
@@ -899,9 +899,9 @@ initiateRstoxBase <- function(){
         PointColourScale = "combined.color", 
         TrackColour = "black", 
         # Options for the point sizes and shapes:
-        MaxPointSize = 20, 
-        MinPointSize = 1, 
-        TrackSize = 2
+        MaxPointSize = 10, 
+        MinPointSize = 0.5, 
+        TrackSize = 1
     )
     
     
