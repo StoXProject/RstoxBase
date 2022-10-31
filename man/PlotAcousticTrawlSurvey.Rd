@@ -9,7 +9,6 @@ PlotAcousticTrawlSurvey(
   ColorVariable = character(),
   UseDefaultColorSettings = TRUE,
   PointColor = character(),
-  PointColorScale = character(),
   TrackColor = character(),
   LandColor = character(),
   BorderColor = character(),
@@ -41,9 +40,9 @@ PlotAcousticTrawlSurvey(
 
 \item{ColorVariable}{The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.}
 
-\item{PointColor}{The discrete colors to use when plotting the data points, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors).}
+\item{UseDefaultColorSettings}{Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.}
 
-\item{PointColorScale}{The continuous color scale to use when plotting the data points, given as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".}
+\item{PointColor}{The colors to use when plotting the data points. If the \code{ColorVariable} is a discrete variable, a vector of color of the same length as the number of discrete values should be given, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors). If a continuous variable the colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".}
 
 \item{TrackColor}{The color to use for the vessel track, defaulted to "black".}
 
@@ -55,17 +54,23 @@ PlotAcousticTrawlSurvey(
 
 \item{GridColor}{The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
 
+\item{UseDefaultSizeSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+
 \item{MaxPointSize}{The maximum size of the points, defaulted to 10.}
 
 \item{MinPointSize}{The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.}
 
 \item{TrackSize}{The size of the track points, defaulted to 1.}
 
+\item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
+
 \item{Zoom}{The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
 
 \item{LongitudeLimits}{The longitude limits of the map plot, defaulted to the range of the longitude of the data.}
 
 \item{LatitudeLimits}{The latitude limits of the map plot, defaulted to the range of the latitude of the data.}
+
+\item{UseDefaultTextSettings}{Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
 
 \item{Title}{The title of the plot, defaulted to no title.}
 
@@ -76,6 +81,8 @@ PlotAcousticTrawlSurvey(
 \item{LegendTitleSize}{The size of the legend title, defaulted to 20.}
 
 \item{LegendTextSize}{The size of the legend text, defaulted to 20.}
+
+\item{UseDefaultFileSettings}{Logical: If TRUE (default) use the default file settings of the plotting function. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.}
 
 \item{Format}{The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
 

@@ -107,7 +107,7 @@ DefineStratumPolygon <- function(
     } 
     
     # Get the definition method:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Read the file:
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
@@ -447,7 +447,7 @@ StratumArea <- function(
     AreaMethod = c("Accurate", "Simple")
 ) {
     
-    AreaMethod <- match.arg(AreaMethod)
+    AreaMethod <- RstoxData::match_arg_informative(AreaMethod)
     
     # Accept StratumPolygon contained in a list:
     if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
@@ -482,7 +482,7 @@ StratumArea_supportingIterativeCentroidCalculation <- function(
 ) {
     
     # This function was to see whether the inaccurate calculation of centriod for use as origin when transforming from geographical to Cartesian coordinates using the LEAE projection had any effect on the stratum areas. The effect was small, at maximum 1e-4 for elongated strata in the capelin BESS 2017 stratum system in the Barents Sea. Keeping the function for reference. Can be deleted with a note on which tag it exists in in git.
-    AreaMethod <- match.arg(AreaMethod)
+    AreaMethod <- RstoxData::match_arg_informative(AreaMethod)
     
     # Accept StratumPolygon contained in a list:
     if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
@@ -785,7 +785,7 @@ locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonl
     sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
     
     # Support using Lambert azimuthal equal area for potential future use, and for comparison:
-    locationProjection <- match.arg(locationProjection)
+    locationProjection <- RstoxData::match_arg_informative(locationProjection)
     if (locationProjection == "leae") {
         # Get the true centroid of the entire StratumPolygon:
         centroid <- getCentroid(StratumPolygon, iterativeCentroidCalculation = iterativeCentroidCalculation)
@@ -808,12 +808,12 @@ locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonl
     if(any(atMultipleStrata)) {
         bad <- pointNames[atMultipleStrata]
         # 2022-08-11: Removed this warning from the GUI:
-        #warning("StoX: The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:\n", printErrorIDs(bad))
-        warning("The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:\n", printErrorIDs(bad))
+        #warning("StoX: The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:\n", RstoxData::printErrorIDs(bad))
+        warning("The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:\n", RstoxData::printErrorIDs(bad))
     }
     if(any(at0Strata)) {
         bad <- pointNames[at0Strata]
-        warning("StoX: The following ", pointLabel, if(length(bad) > 1) "s", " was not detected in any stratum:\n", printErrorIDs(bad))
+        warning("StoX: The following ", pointLabel, if(length(bad) > 1) "s", " was not detected in any stratum:\n", RstoxData::printErrorIDs(bad))
     }
     
     ind <- lapply(hits, utils::head, 1)

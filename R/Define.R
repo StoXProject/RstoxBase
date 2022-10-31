@@ -35,8 +35,8 @@ DefinePSU <- function(
 ) {
     
     # Get the DefinitionMethod and PSUType:
-    DefinitionMethod <- match.arg(DefinitionMethod)
-    PSUType <- match.arg(PSUType)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
+    PSUType <- RstoxData::match_arg_informative(PSUType)
     
     # Get the MergedStoxDataStationLevel if not given directly:
     if(!length(MergedStoxDataStationLevel)) {
@@ -70,7 +70,6 @@ DefinePSU <- function(
     
     # Get SSUs, as it is needed for more than one DefinitionMethod (Identity, DeleteAllPSUs, Manual):
     SSUs <- MergedStoxDataStationLevel[[SSULabel]]
-    
     
     # If UseProcessData = TRUE, from "EDSU"/"Station" to "SSU": 
     if(UseProcessData) {
@@ -297,7 +296,7 @@ DefinePSU <- function(
             SSULabel, if(length(usedButMissingInStoxData) > 1) "s", 
             " that are present as tagged to one or more PSUs in the process data, but that are not present in the ", 
             "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data or using a filter. StoX should ignore these ", 
-            SSULabel, if(length(usedButMissingInStoxData) > 1) "s", " but for clarity it is advised to remove them from the PSUs. This can be done manually in the Stratum/PSU winidow of the StoX GUI, or by re-running the Define", PSUType, "PSU proecss with an automatic DefinitionMethod. The following Stratum,PSU,", SSULabel, " are not present in the Stox", PSUType, "Data: \n", printErrorIDs(usedButMissingInStoxDataInfo)
+            SSULabel, if(length(usedButMissingInStoxData) > 1) "s", " but for clarity it is advised to remove them from the PSUs. This can be done manually in the Stratum/PSU winidow of the StoX GUI, or by re-running the Define", PSUType, "PSU proecss with an automatic DefinitionMethod. The following Stratum,PSU,", SSULabel, " are not present in the Stox", PSUType, "Data: \n", RstoxData::printErrorIDs(usedButMissingInStoxDataInfo)
         )
     }
     
@@ -328,7 +327,7 @@ DefinePSU <- function(
 
 
 onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
-    PSUType <- match.arg(PSUType)
+    PSUType <- RstoxData::match_arg_informative(PSUType)
     
     if(NROW(Stratum_PSU)) {
         numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
@@ -446,7 +445,7 @@ removeEmptyPSUs <- function(PSUProcessData) {
 }
 
 renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
-    PSUType <- match.arg(PSUType)
+    PSUType <- RstoxData::match_arg_informative(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
     if(reverse) {
@@ -466,7 +465,7 @@ renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic
 
 
 renameSSUToSSULabelInTable <- function(table, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
-    PSUType <- match.arg(PSUType)
+    PSUType <- RstoxData::match_arg_informative(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
     # Make a copy, since we are using setnames:
@@ -521,7 +520,7 @@ DefineBioticPSU <- function(
     
     # Get the DefinitionMethod:
     #DefinitionMethod <- match.arg(DefinitionMethod)
-    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else RstoxData::match_arg_informative(DefinitionMethod)
     if(grepl("StationToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
@@ -579,7 +578,7 @@ DefineAcousticPSU <- function(
     
     # Get the DefinitionMethod:
     #DefinitionMethod <- match.arg(DefinitionMethod)
-    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else RstoxData::match_arg_informative(DefinitionMethod)
     if(grepl("EDSUToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
@@ -776,9 +775,9 @@ DefineLayer <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     # Get the DefinitionMethod:
-    LayerType <- match.arg(LayerType)
+    LayerType <- RstoxData::match_arg_informative(LayerType)
     
     # If given as a list of data.tables, extract the table holding the vertical resolution:
     if(is.list(StoxData) && all(sapply(StoxData, data.table::is.data.table))) {
@@ -820,25 +819,31 @@ DefineLayer <- function(
     
     # If "WaterColumn" is requested use the full range:
     if(grepl("WaterColumn", DefinitionMethod, ignore.case = TRUE)) {
-        if(all(is.na(data[[VerticalResolutionMin]]))) {
-            MinLayerDepth <- 0
-        }
-        else {
-            MinLayerDepth <- min(data[[VerticalResolutionMin]], na.rm = TRUE)
-        }
-        if(all(is.na(data[[VerticalResolutionMax]]))) {
-            MaxLayerDepth <- Inf
-        }
-        else {
-            MaxLayerDepth <- max(data[[VerticalResolutionMax]], na.rm = TRUE)
-        }
+        #if(all(is.na(data[[VerticalResolutionMin]]))) {
+        #    MinLayerDepth <- 0
+        #}
+        #else {
+        #    MinLayerDepth <- min(data[[VerticalResolutionMin]], na.rm = TRUE)
+        #}
+        #if(all(is.na(data[[VerticalResolutionMax]]))) {
+        #    MaxLayerDepth <- Inf
+        #}
+        #else {
+        #    MaxLayerDepth <- max(data[[VerticalResolutionMax]], na.rm = TRUE)
+        #}
+        
+        #Layer <- data.table::data.table(
+        #    Layer = "WaterColumn", 
+        #    #MinLayerDepth = possibleIntervals[1, 1], 
+        #    MinLayerDepth = MinLayerDepth, 
+        #    #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
+        #    MaxLayerDepth = MaxLayerDepth
+        #)
         
         Layer <- data.table::data.table(
             Layer = "WaterColumn", 
-            #MinLayerDepth = possibleIntervals[1, 1], 
-            MinLayerDepth = MinLayerDepth, 
-            #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
-            MaxLayerDepth = MaxLayerDepth
+            MinLayerDepth = 0, 
+            MaxLayerDepth = NA
         )
     }
     
@@ -855,6 +860,9 @@ DefineLayer <- function(
         # Accept values outside of the range of the possibleIntervals:
         validBreaks <- allBreaks %in% unlist(possibleIntervals) | allBreaks < rangeOfPossibleIntervals[1] | allBreaks > rangeOfPossibleIntervals[2]
         
+        if(any(is.na(validBreaks))) {
+            stop("The LayerTable contains missing values (NA).")
+        }
         # Error if any of the specified breaks are invalid:
         if(any(!validBreaks)) {
             stop("Some of the specified breaks are not at common breaks of all Log(distance). Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
@@ -1111,7 +1119,7 @@ DefineBioticAssignment <- function(
 {
     
     # Get the DefinitionMethod:
-    LayerDefinition <- match.arg(LayerDefinition)
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -1142,7 +1150,7 @@ DefineBioticAssignment <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Merge the StoxBioticData:
     MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
@@ -1182,8 +1190,10 @@ DefineBioticAssignment <- function(
         if(BioticAssignment[, all(is.na(Haul))]) {
             warning("StoX: No Hauls are loacted in any of the strata of the Acoustic PSUs, resulting in empty BioticAssignment.")
         }
+        
+        # 2022-10-31: why was this included? It causes warnings when adding hauls to a PSU that does not have any assigned hauls:
         # Discard  all rows with missing Haul:
-        BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
+        #BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
     }
     # Search for Hauls around all EDSUs of each PSU:
     else if(grepl("Radius|EllipsoidalDistance", DefinitionMethod, ignore.case = TRUE)) {
@@ -1583,7 +1593,7 @@ BioticAssignmentWeighting <- function(
     }
     
     # Get the DefinitionMethod:
-    WeightingMethod <- match.arg(WeightingMethod)
+    WeightingMethod <- RstoxData::match_arg_informative(WeightingMethod)
     
     # Define the weighting variable:
     weightingVariable <- getDataTypeDefinition(dataType = "BioticAssignment", elements = "weighting", unlist = TRUE)
@@ -1655,7 +1665,7 @@ BioticAssignmentWeighting <- function(
         NASCData <- subset(NASCData, EDSU %in% taggedEDSUs)
         
         # Get the LayerDefinition
-        LayerDefinition <- match.arg(LayerDefinition)
+        LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
         
         # Get the weights for each Haul:
         uniqueHauls <- unique(LengthDistributionData$Haul)
@@ -1888,7 +1898,7 @@ getMeanAcousticDensityAroundOneStation <- function(
         SpeciesLink = SpeciesLink
     ))
     
-    # Sum the acoustic density over length groups and beams:
+    # Sum the acoustic density over length groups and beams (and SpeciesCategory):
     AcousticDensityData$Data[, Density := sum(Density, na.rm = TRUE), by = "PSU"]
     AcousticDensityData$Data <- unique(AcousticDensityData$Data, by = "PSU")
     
@@ -1896,9 +1906,11 @@ getMeanAcousticDensityAroundOneStation <- function(
     #AcousticDensityData$Data[, Stratum := Survey]
     MeanAcousticDensityData <- MeanDensity(AcousticDensityData)
     
-    # Extract the row with non-missing Layer:
-    averageAcousticDensity <- MeanAcousticDensityData$Data[!is.na(Layer) & !is.na(Survey), Density]
-    #averageAcousticDensity <- AcousticDensityData$Data[!is.na(Layer) & !is.na(Survey), Density]
+    # Extract the row with non-missing Layer, Survey:
+    MeanAcousticDensityData$Data <- subset(MeanAcousticDensityData$Data, !is.na(Layer) & !is.na(Survey))
+    
+    # In MeanDensity it may happen that if there are both PSUs (actually EDSUs) with and without the target species (both empty and positive EDSUs), resulting two rows, one with SpeciesCategory NA and one with the first SpeciesCategory per PSU. The SpeciesCategory is not interesting at this point, as we are producing a Haul weight, which is not species specific. So we simply sum over all rows of the MeanAcousticDensityData$Data with na.rm = TRUE, so as to get a value both if al EDSUs are empty and if there is a mix of empty and posistive EDSUs:
+    averageAcousticDensity <- MeanAcousticDensityData$Data[, sum(Density, na.rm = TRUE)]
     
     return(averageAcousticDensity)
 }
@@ -2003,7 +2015,7 @@ DefineModel <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Get or read the model parameters and return in a list with the model name:
     output <- getModel(
@@ -2117,7 +2129,7 @@ DefineAcousticTargetStrength <- function(
 ) {
     
     # Get the methods:
-    AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel)
+    AcousticTargetStrengthModel <- RstoxData::match_arg_informative(AcousticTargetStrengthModel)
     
     # Define the model:
     DefineModel(
@@ -2172,7 +2184,7 @@ DefineRegression <- function(
 ) {
     
     # Get the methods:
-    RegressionModel <- match.arg(RegressionModel)
+    RegressionModel <- RstoxData::match_arg_informative(RegressionModel)
     
     # Define the model:
     DefineModel(
@@ -2231,8 +2243,8 @@ EstimateBioticRegression <- function(
 ) {
     
     # Get the methods:
-    InputDataType <- match.arg(InputDataType)
-    RegressionModel <- match.arg(RegressionModel)
+    InputDataType <- RstoxData::match_arg_informative(InputDataType)
+    RegressionModel <- RstoxData::match_arg_informative(RegressionModel)
     
     # Get the appropriate data:
     #if(InputDataType == "StoxBioticData") {
@@ -2391,7 +2403,7 @@ DefineSurvey <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Read from a stoX 2.7 project.xml:
     if(DefinitionMethod == "ResourceFile") {

@@ -4,7 +4,15 @@
 \alias{general_plot_arguments}
 \title{General ploting parameters of RstoxBase}
 \arguments{
-\item{UseDefaultPlotSettings}{Logical: If TRUE (default) use the default settings of the plotting function. Setting this to FALSE will show all options of the plotting function in the StoX GUI.}
+\item{UseDefaultColorSettings}{Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.}
+
+\item{UseDefaultSizeSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+
+\item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
+
+\item{UseDefaultTextSettings}{Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
+
+\item{UseDefaultFileSettings}{Logical: If TRUE (default) use the default file settings of the plotting function. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.}
 
 \item{Zoom}{The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
 

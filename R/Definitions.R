@@ -651,7 +651,7 @@ initiateRstoxBase <- function(){
     
     defaultEstimationMethod <- list(
         Regression = list(
-            SimpleLinear = "Linear", 
+            SimpleLinear = "SimpleLinear", 
             Power = "LogLogLinear"
         )
     )
@@ -689,7 +689,7 @@ initiateRstoxBase <- function(){
             
             # Simple linear regression Y = a + bX:
             SimpleLinear = function(independentVariable, parameters) {
-                parameters$Intercept + parameters$Slope * get(independentVariable)
+                parameters$Intercept + parameters$Slope * independentVariable
             }, 
             
             # Power regression Y = aX^b:
@@ -1149,7 +1149,7 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
         dimension <- validDimensions
     }
     else {
-        dimension <- match.arg(dimension, validDimensions)
+        dimension <- RstoxData::match_arg_informative(dimension, validDimensions)
         if(other) {
             dimension <- setdiff(validDimensions, dimension)
         }

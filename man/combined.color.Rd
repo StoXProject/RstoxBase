@@ -6,10 +6,10 @@
 \usage{
 combined.color(
   n,
-  nStart = 0,
-  nEnd = floor(n/5),
   colStart = "white",
   colEnd = NA,
+  nStart = 0,
+  nEnd = floor(n/5),
   s = c(0.3, 1),
   v = c(1, 0.7),
   start = 0.8,
@@ -22,13 +22,21 @@ combined.color(
 \arguments{
 \item{n}{The number of colors to generate.}
 
+\item{colStart}{The first color, appended to the color scale, possibly repeated \code{nStart} times.}
+
+\item{colEnd}{The last color, appended to the color scale, possibly repeated \code{nSEnd} times.}
+
+\item{nStart}{The number of repeated \code{colStart}.}
+
+\item{nEnd}{The number of repeated \code{colEnd}.}
+
 \item{s}{The range of the saturation values applied to the colors, where lower values suppress saturation. The default applies less strong colors at the higher values of x.}
 
 \item{v}{The range of the value applied to the colors, where lower values causes darker colors. The default applies less darker colors at the lover values of x.}
 
-\item{start}{The start color, given as a value in between 0 and 1.}
+\item{start}{The start hue, given as a value in between 0 and 1.}
 
-\item{end}{The end color, given as a value in between 0 and 1.}
+\item{end}{The end hue, given as a value in between 0 and 1.}
 
 \item{flip}{Logical: If TRUE the color scale should be reversed.}
 

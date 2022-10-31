@@ -223,7 +223,7 @@ DistributeNASC <- function(
     
     if(any(allNAWeightedNumberPerPSULayer$allNAWeightedNumber)) {
         StratumLayerPSU <- do.call(paste, c(allNAWeightedNumberPerPSULayer[allNAWeightedNumber == TRUE, ..mergeBy], list(sep = ",")))
-        warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), "  for the following Stratum, Layer, PSU:\n",  printErrorIDs(StratumLayerPSU))
+        warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), "  for the following Stratum, Layer, PSU:\n",  RstoxData::printErrorIDs(StratumLayerPSU))
     }
     
     
@@ -256,7 +256,7 @@ DistributeNASC <- function(
     #    warning(paste("StoX: There are Strata-SpeciesCategory containing hauls with no length measured individuals and consequently no length distribution of the target species. This can lead to underestimation in reports from bootstrap.\n\tDetails: If ONLY hauls with no length measured individuals are sampled in a bootstrap run, the assignment length distribution will be missing (NA), and acoustic density will be NA even if the mean NASC of the acoustic PSU is positive. This implies that a portion of the obserevd NASC is lost, as StoX have no means to convert NASC to acoustic density without a length distribution. Please use FilterStoxBiotic() to keep only hauls with length measured individuals of the target species. The Stratum-SpeciesCategory with hauls with no length measured individuals are listed with (number of hauls with length measured individuals / total number of hauls):", paste(strataWithInvalidHauls, collapse = "\n\t"), sep = "\n\t"))
     #}
     
-    emptyHaulWarning <- match.arg(emptyHaulWarning) # "NoWarning" causes no none of the below warnings.
+    emptyHaulWarning <- RstoxData::match_arg_informative(emptyHaulWarning) # "NoWarning" causes no none of the below warnings.
     
     # This one is used in AcousticDensity:
     if(emptyHaulWarning == "WarnIfNotAllSpeciesPresent") {
@@ -318,7 +318,7 @@ DistributeNASC <- function(
     if(NROW(withOnlyOneHaul)) {
         # Get the unique invalid hauls:
         withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = ","), .SD), .SDcols = resolution]
-        warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", printErrorIDs(withOnlyOneHaul)))
+        warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", RstoxData::printErrorIDs(withOnlyOneHaul)))
     }
     
     
@@ -539,8 +539,8 @@ SweptAreaDensity <- function(
 ) {
     
     ## Get the DefinitionMethod:
-    SweepWidthMethod <- match.arg(SweepWidthMethod)
-    SweptAreaDensityMethod <- match.arg(SweptAreaDensityMethod)
+    SweepWidthMethod <- RstoxData::match_arg_informative(SweepWidthMethod)
+    SweptAreaDensityMethod <- RstoxData::match_arg_informative(SweptAreaDensityMethod)
     
     # Get the input data type:
     if(SweptAreaDensityMethod == "LengthDistributed") {

@@ -114,6 +114,11 @@ getStoxBioticKeys <- function(levels = NULL) {
 # Function to get Layer indices:
 findLayer <- function(minDepth, maxDepth, layerProcessData, acceptNA = TRUE) {
     
+    # Special case if layerProcessData$Layer == "WaterColumn", in which case NA is interpreted as Inf:
+    if(length(layerProcessData$Layer) == 1 && layerProcessData$Layer == "WaterColumn") {
+        layerProcessData$MaxLayerDepth <- Inf
+    }
+    
     # This needs to be verified!!!!!!!!!!!!!
     layerRangeVector <- c(layerProcessData$MinLayerDepth, utils::tail(layerProcessData$MaxLayerDepth, 1))
     indMin <- findInterval(minDepth, layerRangeVector)
@@ -282,7 +287,7 @@ sumRawResolutionData <- function(
     dataCopy = data.table::copy(data)
     
     # Add the Layers and PSUs either from function inputs or by automatic methods using function parameters:
-    LayerDefinition <- match.arg(LayerDefinition)
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     
     # Get the Layers:
     if(identical(LayerDefinition, "FunctionParameter")) {
@@ -354,7 +359,7 @@ meanRawResolutionData <- function(
     
     # Add the PSUs either from function input or by automatic method using function parameter:
     # Define the PSUs:
-    PSUDefinition <- match.arg(PSUDefinition)
+    PSUDefinition <- RstoxData::match_arg_informative(PSUDefinition)
     if(identical(PSUDefinition, "FunctionParameter")) {
         PSUProcessData <- DefinePSU(
             StratumPolygon = StratumPolygon, 
@@ -372,7 +377,7 @@ meanRawResolutionData <- function(
     }
     
     # Get the Surveys:
-    SurveyDefinition <- match.arg(SurveyDefinition)
+    SurveyDefinition <- RstoxData::match_arg_informative(SurveyDefinition)
     if(identical(SurveyDefinition, "FunctionParameter")) {
         # Get the stratum names and the SurveyTable:
         stratumNames <- unique(dataCopy$Stratum)
@@ -855,7 +860,7 @@ StoxDataStartMiddleStopDateTime <- function(
     StoxDataStationLevel, 
     type = c("Acoustic", "Biotic")
 ) {
-    type <- match.arg(type)
+    type <- RstoxData::match_arg_informative(type)
     
     if(type == "Acoustic") {
         
@@ -1492,8 +1497,9 @@ setDefaults <- function(x, defaults) {
 
 
 # Set default general options:
-setDefaultsInStoxFunction <- function(x) {
-    StoxFunctionName <- as.list(sys.call(-1))[[1]]
+setDefaultsInStoxFunction <- function(x, StoxFunctionName) {
+    # The following line failed if the StoX function was run inside e.g. an mapply():
+    #StoxFunctionName <- tail(as.character(as.list(sys.call(-1))[[1]]), 1)
     defaults <- stoxFunctionAttributes[[StoxFunctionName]]$functionParameterDefaults
     #if(length(condition) && is.character(condition) && nchar(condition)) {
     #    
@@ -1502,7 +1508,12 @@ setDefaultsInStoxFunction <- function(x) {
     presentNames <- intersect(names(x), names(defaults))
     for(name in presentNames) {
         if(!length(x[[name]])) {
-            x[[name]] <- defaults[[name]]
+            if(is.function(defaults[[name]])) {
+                x[[name]] <- defaults[[name]](x)
+            }
+            else {
+                x[[name]] <- defaults[[name]]
+            }
         }
     }
     
