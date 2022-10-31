@@ -198,7 +198,10 @@ DistributeNASC <- function(
     }
     
     # Merge the AssignmentLengthDistributionData into the NASCData. This adds the length distribution:
-    mergeBy <- intersect(names(NASCData), names(AssignmentLengthDistributionData))
+    #mergeBy <- intersect(names(NASCData), names(AssignmentLengthDistributionData))
+    # This is "Stratum", "PSU", "Layer":
+    mergeBy <- getDataTypeDefinition("AssignmentLengthDistributionData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE)
+    mergeBy <- intersect(mergeBy, intersect(names(NASCData), names(AssignmentLengthDistributionData)))
     
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
@@ -207,10 +210,20 @@ DistributeNASC <- function(
     #NASCData[missingSpecies == TRUE & is.na(WeightedNumber), WeightedNumber := 0]
     
     # Check whether there are any non-missing length distribution frequencies:
-    anyNonNAWeightedNumber <- NASCData[, sum(!is.na(WeightedNumber))]
-    if(! anyNonNAWeightedNumber) {
+    allNAWeightedNumber <- NASCData[, all(is.na(WeightedNumber))]
+    if(allNAWeightedNumber) {
         warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), ". A possible reason is that the LayerDefinition differs between the MeanNASCData and the AssignmentLengthDistributionData. In that case rerun BioticAssignment process data with the same Layer definition as used in the process using the function MeanNASC(). Another reason may be that the AcousticCategory of the AcousticTargetStrength process data and the parameter SpeciesLink of the AcousticDensity function do not match.")
         #"No length distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
+    }
+    
+    # Make the same check but for each combination of mergeBy, so as to flag PSUs with positive NASC but no assignment (all missing WeightedNumber):
+    allNAWeightedNumberPerPSULayer <- NASCData[, .(allNAWeightedNumber = all(is.na(WeightedNumber) & !is.na(NASC))), by = mergeBy]
+    # Ignore missing Stratum, PSU or Layer:
+    allNAWeightedNumberPerPSULayer <- subset(allNAWeightedNumberPerPSULayer, rowSums(is.na(allNAWeightedNumberPerPSULayer[, ..mergeBy])) == 0)
+    
+    if(any(allNAWeightedNumberPerPSULayer$allNAWeightedNumber)) {
+        StratumLayerPSU <- do.call(paste, c(allNAWeightedNumberPerPSULayer[allNAWeightedNumber == TRUE, ..mergeBy], list(sep = ",")))
+        warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), "  for the following Stratum, Layer, PSU:\n",  RstoxData::printErrorIDs(StratumLayerPSU))
     }
     
     
@@ -243,7 +256,7 @@ DistributeNASC <- function(
     #    warning(paste("StoX: There are Strata-SpeciesCategory containing hauls with no length measured individuals and consequently no length distribution of the target species. This can lead to underestimation in reports from bootstrap.\n\tDetails: If ONLY hauls with no length measured individuals are sampled in a bootstrap run, the assignment length distribution will be missing (NA), and acoustic density will be NA even if the mean NASC of the acoustic PSU is positive. This implies that a portion of the obserevd NASC is lost, as StoX have no means to convert NASC to acoustic density without a length distribution. Please use FilterStoxBiotic() to keep only hauls with length measured individuals of the target species. The Stratum-SpeciesCategory with hauls with no length measured individuals are listed with (number of hauls with length measured individuals / total number of hauls):", paste(strataWithInvalidHauls, collapse = "\n\t"), sep = "\n\t"))
     #}
     
-    emptyHaulWarning <- match.arg(emptyHaulWarning) # "NoWarning" causes no none of the below warnings.
+    emptyHaulWarning <- RstoxData::match_arg_informative(emptyHaulWarning) # "NoWarning" causes no none of the below warnings.
     
     # This one is used in AcousticDensity:
     if(emptyHaulWarning == "WarnIfNotAllSpeciesPresent") {
@@ -296,18 +309,18 @@ DistributeNASC <- function(
     #    warning(paste("StoX: There are Stratum-PSU-Layer-SpeciesCategory that have assigned ONLY ONE haul with length measured individuals. This can lead to underestimation of variance in reports from bootstrap. The Stratum-PSU-Layer-SpeciesCategory with no assigned hauls with length measured individuals are listed with (number of hauls with number of length measured individuals / total number of assigned hauls):", paste(withOnlyOneHaul, collapse = "\n\t"), sep = "\n\t"))
     #}
     
-    
-    
-    
     # And check whether there are PSU/Layer win only one non-empty assigned haul:
     resolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
-    withOnlyOneHaul <- subset(unique(NASCData, by = resolution), NumberOfAssignedHauls == 1)
+    # This was a bug, as it failed to detect NumberOfAssignedHauls = 1 when NumberOfAssignedHauls was NA in the first row of a resolution:
+    #withOnlyOneHaul <- subset(unique(NASCData, by = resolution), NumberOfAssignedHauls == 1)
+    withOnlyOneHaul <- unique(subset(NASCData, NumberOfAssignedHauls == 1), by = resolution)
     
     if(NROW(withOnlyOneHaul)) {
         # Get the unique invalid hauls:
         withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = ","), .SD), .SDcols = resolution]
-        warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", printErrorIDs(withOnlyOneHaul)))
+        warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", RstoxData::printErrorIDs(withOnlyOneHaul)))
     }
+    
     
     # Add a warning if any WeightedNumber are NA while NASC > 0:
     NASCData[, missingAssignment := all(is.na(WeightedNumber) & NASC > 0), by = sumBy]
@@ -472,12 +485,12 @@ getTargetStrength <- function(Data, AcousticTargetStrengthModel) {
     else if(grepl("TargetStrengthByLength", AcousticTargetStrengthModel, ignore.case = TRUE)) {
         # Apply the TargetStrengthByLengthTargetStrengthByLength equations: 
         Data[, TargetStrength := 
-            if(!is.na(TargetStrengthFunction)) 
-                    get("RstoxBaseEnv")[[TargetStrengthFunction]](midIndividualTotalLength)
-            else 
-                NA_real_, 
-            by = seq_len(nrow(Data)
-        )]
+                 if(!is.na(TargetStrengthFunction)) 
+                     get("RstoxBaseEnv")[[TargetStrengthFunction]](midIndividualTotalLength)
+             else 
+                 NA_real_, 
+             by = seq_len(nrow(Data)
+             )]
     }
     else{
         warning("StoX: Invalid AcousticTargetStrengthModel (", paste(names(getRstoxBaseDefinitions("modelParameters")$AcousticTargetStrength), collapse = ", "), " currently implemented)")
@@ -524,10 +537,10 @@ SweptAreaDensity <- function(
     SweepWidth = double(), 
     DensityType = character()
 ) {
-	
+    
     ## Get the DefinitionMethod:
-    SweepWidthMethod <- match.arg(SweepWidthMethod)
-    SweptAreaDensityMethod <- match.arg(SweptAreaDensityMethod)
+    SweepWidthMethod <- RstoxData::match_arg_informative(SweepWidthMethod)
+    SweptAreaDensityMethod <- RstoxData::match_arg_informative(SweptAreaDensityMethod)
     
     # Get the input data type:
     if(SweptAreaDensityMethod == "LengthDistributed") {

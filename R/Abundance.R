@@ -88,7 +88,7 @@ Individuals <- function(
 ) {
 
     # Get the DefinitionMethod:
-    QuantityType <- match.arg(QuantityType)
+    QuantityType <- RstoxData::match_arg_informative(QuantityType)
     
     # Merge StoxBtiotic:
     MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
@@ -179,9 +179,9 @@ SuperIndividuals <- function(
     DistributionMethod = c("Equal", "HaulDensity"), 
     LengthDistributionData
 ) {
-    
+
     # Get the DistributionMethod:
-    DistributionMethod <- match.arg(DistributionMethod)
+    DistributionMethod <- RstoxData::match_arg_informative(DistributionMethod)
     
     # Make a copy of the IndividualsData:
     SuperIndividualsData <- data.table::copy(IndividualsData)
@@ -591,7 +591,7 @@ ImputeSuperIndividuals <- function(
     #LengthInterval = numeric()
 ) {
     
-    ImputationMethod <- match.arg(ImputationMethod)
+    ImputationMethod <- RstoxData::match_arg_informative(ImputationMethod)
     
     if(ImputationMethod == "RandomSampling") {
         # Check that the length resolution is constant: 
@@ -883,6 +883,7 @@ ImputeDataByRegression <- function(
     dataCopy <- data.table::copy(data)
     
     
+    
     # There should either be a demannd for only one row, or we should re-code to treating each row separately!!!!!!!!!!!!!!!!!!!!!!!!!111
     if(NROW(Regression$RegressionTable) > 1) {
         stop("Currently, only one row in the regression table is supported.")
@@ -893,25 +894,33 @@ ImputeDataByRegression <- function(
     IndependentVariable <- Regression$RegressionTable$IndependentVariable[1]
     DependentResolutionVariable <- Regression$RegressionTable$DependentResolutionVariable[1]
     IndependentResolutionVariable <- Regression$RegressionTable$IndependentResolutionVariable[1]
+    checkWhetherVariableIsPresent(DependentVariable, dataCopy)
+    checkWhetherVariableIsPresent(IndependentVariable, dataCopy)
+    checkWhetherVariableIsPresent(DependentResolutionVariable, dataCopy)
+    checkWhetherVariableIsPresent(IndependentResolutionVariable, dataCopy)
     
-    
-    # Find rows with missing DependentVariable and present IndependentVariable:
-    atImpute <- dataCopy[, which(is.na(get(DependentVariable)) & !is.na(get(IndependentVariable)))]
     
     # Merge in the regression parameters:
     mergeBy <- intersect(
         names(dataCopy), 
         names(Regression$RegressionTable)
     )
+    
     tomerge <- setdiff(names(Regression$RegressionTable), c("DependentVariable", "IndependentVariable"))
-    removeAfterwards <- setdiff(names(Regression$RegressionTable), names(dataCopy))
+    removeAfterwards <- setdiff(names(Regression$RegressionTable), c(names(dataCopy), c("DependentVariable", "IndependentVariable")))
     if(length(mergeBy) > 0) {
-        dataCopy <- merge(dataCopy, Regression$RegressionTable[, ..tomerge], by = mergeBy, all.x = TRUE)
+        # Stop if there are no intersecting variables to merge by:
+        intersectingMergeBy <- fintersect(dataCopy[, mergeBy, with = FALSE], Regression$RegressionTable[, mergeBy, with = FALSE])
+        if(!nrow(intersectingMergeBy)) {
+            stop("There are no intersecting rows for the variables ", paste(mergeBy, collapse = ", "), ". No regression applied.")
+            return(dataCopy)
+        }
+        dataCopy <- merge(dataCopy, Regression$RegressionTable[, ..tomerge], by = mergeBy, all.x = TRUE, sort = FALSE)
     }
     else {
         dataCopy <- cbind(dataCopy, Regression$RegressionTable[, ..tomerge])
     }
-    
+
     # Add half of the resolution:
     #if(length(thisDependentResolutionVariable) && !is.na(thisDependentResolutionVariable)) {
         addHalfResolution(data = dataCopy, variable = DependentVariable, resolutionVariable = DependentResolutionVariable)
@@ -928,6 +937,10 @@ ImputeDataByRegression <- function(
     RegressionModel <- Regression$RegressionModel$RegressionModel
     modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
     regressionFunction <- getRstoxBaseDefinitions("modelFunctions")[["Regression"]][[RegressionModel]]
+    
+    # Find rows with missing DependentVariable and present IndependentVariable:
+    atImpute <- dataCopy[, which(is.na(get(DependentVariable)) & !is.na(get(IndependentVariable)))]
+    # Run the regression:
     dataCopy[atImpute, eval(DependentVariable) := regressionFunction(get(eval(IndependentVariable)), .SD), .SDcols = modelParameters]
     
     dataCopy[, (removeAfterwards) := NULL]
@@ -936,6 +949,11 @@ ImputeDataByRegression <- function(
     return(dataCopy)
 }
 
+checkWhetherVariableIsPresent <- function(var, data) {
+    if(length(var) && ! var %in% names(data)) {
+        stop("The variable ", var, " given by ", deparse(substitute(var)), " is not present in the data.")
+    } 
+}
 
 addHalfResolution <- function(data, variable, resolutionVariable, reverse = FALSE) {
     if(length(variable) && !is.na(variable) && length(resolutionVariable) && !is.na(resolutionVariable)) {

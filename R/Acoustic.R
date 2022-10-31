@@ -7,16 +7,24 @@
 #' 
 #' @inheritParams ModelData
 #' 
-#' @return
-#' A \code{\link{NASCData}} object.
+#' @return A \code{\link{NASCData}} object.
 #' 
 #' @export
 NASC <- function(
-    StoxAcousticData = NULL
+    StoxAcousticData
 ) {
     
     # Merge the StoxAcousticData:
     NASCData <- RstoxData::MergeStoxAcoustic(StoxAcousticData)
+    
+    # Merging StoxAcousticData may result in rows with present AcousticCategory but NA for all variables to the right of this variable. This happens if there are ChannelReferenceType that are not present while AcousticCategory is present on an EDSU. This can occur e.g. if an NMDEchosounder file contains ChannelReferenceType = "B" and "P", but "P" is not present on all EDSUs where "B" is present. This should not be possible in LSSS, and should be considered to be an error. However, the opposite case is valid, and should lead to missing AcousticCategory. The cause of these issues is that the table hierarchy of NMDEchosounder and StoxAcoustic differ. Specifically, in NMDEchosounder the level ch_type precedes sa_by_acocat, whereas in StoxAcoustic the level AcousticCategory precedes ChannelReferenceType. 
+    presentAcousticCategory <- NASCData[, !is.na(AcousticCategory)]
+    colsToCheckForNA <- names(NASCData)[seq(which(names(NASCData) == "AcousticCategory") + 1, length(NASCData))]
+    missingNASCAndChannelDepth <- rowSums(NASCData[, lapply(.SD, is.na), .SDcols = colsToCheckForNA]) == length(colsToCheckForNA)
+    presentAcousticCategoryButMissingNASCAndChannelDepth <- which(presentAcousticCategory & missingNASCAndChannelDepth)
+    if(length(presentAcousticCategoryButMissingNASCAndChannelDepth)) {
+        NASCData[presentAcousticCategoryButMissingNASCAndChannelDepth, AcousticCategory := NA_character_]
+    }
     
     # Check that the input StoxAcousticData has the same ChannelReferenceType throughout:
     type <- getDataTypeDefinition(dataType = "NASCData", elements = "type", unlist = TRUE)
@@ -155,7 +163,7 @@ MeanNASC <- function(
 ) {
     
     # Get the layer definition:
-    LayerDefinition <- match.arg(LayerDefinition)
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     if(LayerDefinition != "PreDefined") {
         SumNASCData <- SumNASC(
             NASCData = NASCData, 
@@ -167,11 +175,11 @@ MeanNASC <- function(
         )
     }
     
-    SurveyDefinition <- match.arg(SurveyDefinition)
-    PSUDefinition <- match.arg(PSUDefinition)
+    SurveyDefinition <- RstoxData::match_arg_informative(SurveyDefinition)
+    PSUDefinition <- RstoxData::match_arg_informative(PSUDefinition)
     # Convert the PSUDefinitionMethod to "Identity" if "EDSUToPSU":
     if(PSUDefinition == "FunctionParameter") {
-        PSUDefinitionMethod <- match.arg(PSUDefinitionMethod)
+        PSUDefinitionMethod <- RstoxData::match_arg_informative(PSUDefinitionMethod)
         if(grepl("EDSUToPSU", PSUDefinitionMethod, ignore.case = TRUE)) {
             PSUDefinitionMethod <- "Identity"
         }
@@ -335,8 +343,8 @@ SplitNASC <- function(
     AcousticPSU, 
     AssignmentLengthDistributionData, 
     AcousticTargetStrength, 
-    SpeciesLink, 
-    AcousticCategoryLink
+    AcousticCategoryLink, 
+    SpeciesLink
 ) {
     
     # Add PSUs. This makes a copy, also:
@@ -470,7 +478,7 @@ splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLe
 #' 
 #' @seealso \code{\link{NASCData}} and \code{\link{StoxAcousticData}}.
 #'  
-#' @value A \code{\link{NASCData}} object.
+#' @return A \code{\link{NASCData}} object.
 #' 
 #' @export
 #'

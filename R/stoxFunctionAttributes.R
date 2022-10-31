@@ -1,3 +1,54 @@
+isCategorical <- function(x) {
+    is.character(x) || is.integer(x)
+}
+
+defaultPlotOptions <- list(
+    # Options for the labels and other text:
+    AxisTitleSize = 15, 
+    AxisTickSize = 15, 
+    LegendTitleSize = 15, 
+    LegendTextSize = 15,
+    # Options for the point sizes and shapes:
+    # Options for the output file:
+    Format = "png", 
+    # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
+    Width = 17, 
+    Height = 17, 
+    DotsPerInch = 500
+)
+
+defaultMapPlotNASCOptions <- list(
+    # Options for the colors:
+    # Set the PointColorScale separately :s
+    PointColor = function(x) {
+        if(isCategorical(x$SumNASCData$Data[[x$ColorVariable]])) {
+            PointColor <- character()
+        }
+        else {
+            PointColor <- "combined.color"
+        }
+        return(PointColor)
+    },
+    # Use black vessel track:
+    TrackColor = "black", 
+    # Options for the point sizes and shapes:
+    MaxPointSize = 10, 
+    MinPointSize = 0.5, 
+    TrackSize = 1
+)
+
+defaultMapPlotOptions <- list(
+    # Options for the zoom and limits:
+    Zoom = 1, 
+    LandColor = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
+    BorderColor = "grey50", 
+    OceanColor = "white", 
+    GridColor = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
+)
+
+defaultColorVariable <- list(
+    ColorVariable = "NASC"
+)
 
 getIndividualNames <- function(SuperIndividualsData, remove = NULL, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) {
     individualNames <- unlist(attr(SuperIndividualsData, "stoxDataVariableNames")[tables])
@@ -41,6 +92,7 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "ResourceFile"
             ), 
+            # StratumPolygon is shown in the GUI either if DefinitionMethod is "AllStrata" or "Table":
             StratumPolygon = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "AllStrata"
@@ -238,9 +290,9 @@ stoxFunctionAttributes <- list(
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
-            StoxBioticData = list(
-                UseProcessData = FALSE
-            ), 
+            #StoxBioticData = list(
+            #    UseProcessData = FALSE
+            #), 
             #AcousticPSU = list(
             #    UseProcessData = FALSE
             #), 
@@ -518,6 +570,9 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 PSUDefinitionMethod = "StationToPSU"
             ), 
+            StratumPolygon = list(
+                SurveyDefinitionMethod = "Table"
+            ), 
             # Survey:
             Survey = list(
                 SurveyDefinition = "FunctionInput"
@@ -618,6 +673,9 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 PSUDefinitionMethod = "StationToPSU"
             ), 
+            StratumPolygon = list(
+                SurveyDefinitionMethod = "Table"
+            ), 
             # Survey:
             Survey = list(
                 SurveyDefinition = "FunctionInput"
@@ -705,6 +763,9 @@ stoxFunctionAttributes <- list(
             StratumPolygon = list(
                 PSUDefinitionMethod = "EDSUToPSU"
             ), 
+            StratumPolygon = list(
+                SurveyDefinitionMethod = "Table"
+            ), 
             # Survey:
             Survey = list(
                 SurveyDefinition = "FunctionInput"
@@ -751,6 +812,124 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "NASCData"
     ),
+    
+    PlotAcousticTrawlSurvey = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "PlotAcousticTrawlSurveyData", 
+        functionArgumentHierarchy = list(
+            # Options for the colors:
+            #ColorVariable = list(
+            #    UseDefaultColorSettings = FALSE
+            #), 
+            PointColor = list(
+                UseDefaultColorSettings = FALSE, 
+                ColorVariable = function(functionArguments) {
+                    if(!length(functionArguments$ColorVariable)) {
+                        return(FALSE)
+                    }
+                    if(is.list(functionArguments$SumNASCData$Data)) {
+                        is.character(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]]) || 
+                            is.integer(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]])
+                    }
+                    else {
+                        FALSE
+                    }
+                }
+            ), 
+            PointColorScale = list(
+                UseDefaultColorSettings = FALSE, 
+                ColorVariable = function(functionArguments) {
+                    if(!length(functionArguments$ColorVariable)) {
+                        return(FALSE)
+                    }
+                    if(is.list(functionArguments$SumNASCData$Data)) {
+                        is.numeric(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]])
+                    }
+                    else {
+                        FALSE
+                    }
+                }
+            ), 
+            TrackColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            LandColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            BorderColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            OceanColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            GridColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            # Options for the point sizes and shapes:
+            MaxPointSize = list(
+                UseDefaultSizeSettings = FALSE
+            ), 
+            MinPointSize = list(
+                UseDefaultSizeSettings = FALSE
+            ), 
+            TrackSize = list(
+                UseDefaultSizeSettings = FALSE
+            ), 
+            # Options for zoom and limits:
+            Zoom = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeLimits = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeLimits = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            # Options for the labels and other text:
+            Title = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            AxisTitleSize = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            AxisTickSize = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            LegendTitleSize = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            LegendTextSize = list(
+                UseDefaultTextSettings = FALSE
+            ), 
+            # Options for the output file:
+            Format = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            Width = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            Height = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            DotsPerInch = list(
+                UseDefaultFileSettings = FALSE
+            )
+        ), 
+        functionParameterDefaults = c(
+            # Default general options:
+            defaultPlotOptions, 
+            # Default map plotting options:
+            defaultMapPlotNASCOptions, 
+            # Default NASC-plotting options:
+            defaultMapPlotOptions, 
+            # Other defaults:
+            list(
+                ColorVariable = "NASC"
+            )
+        )
+    ),
+    
     ##########
     
     
@@ -780,8 +959,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "DensityData", 
         functionParameterFormat = list(
             SpeciesLink = "speciesLinkTable_AcousticDensity"
-        ),
-        functionArgumentHierarchy = list()
+        )
     ), 
     MeanDensity = list(
         functionType = "modelData", 
@@ -798,6 +976,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "Regression", 
         functionParameterFormat = list(
             FileName = "filePath",
+            GroupingVariables = "groupingVariables",
             RegressionTable = "regressionTable"
         ), 
         functionArgumentHierarchy = list(
@@ -1176,10 +1355,12 @@ processPropertyFormats <- list(
             "character", 
             "character"
         ), 
-        possibleValues = function(NASCData, AssignmentLengthDistributionData) {
-            # Must be an unnamed list:
+        #possibleValues = function(NASCData, AssignmentLengthDistributionData) {
+        possibleValues = function(AssignmentLengthDistributionData, AcousticCategoryLink) {
+                # Must be an unnamed list:
             list(
-                unique(NASCData$AcousticCategory), 
+                #unique(NASCData$AcousticCategory), 
+                sort(unique(AcousticCategoryLink$SplitAcousticCategory)), 
                 unique(AssignmentLengthDistributionData$SpeciesCategory)
             )
         }
@@ -1223,7 +1404,7 @@ processPropertyFormats <- list(
         class = "table", 
         title = "Sweep width for all gear", 
         columnNames = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
-            CompensationMethod <- match.arg(CompensationMethod)
+            CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
             columnNames <- c(
                 strsplit(CompensationMethod, "And")[[1]], 
                 "SweepWidth"
@@ -1232,7 +1413,7 @@ processPropertyFormats <- list(
             return(columnNames)
         }, 
         variableTypes = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
-            CompensationMethod <- match.arg(CompensationMethod)
+            CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
             columnNames <- strsplit(CompensationMethod, "And")[[1]]
             variableTypes <- c(
                 rep("character", length(columnNames)), 
@@ -1242,7 +1423,7 @@ processPropertyFormats <- list(
             return(variableTypes)
         }, 
         possibleValues = function(LengthDistributionData, CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
-            CompensationMethod <- match.arg(CompensationMethod)
+            CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
             Variables <- strsplit(CompensationMethod, "And")[[1]]
             
             if(!length(LengthDistributionData)) {
@@ -1267,7 +1448,7 @@ processPropertyFormats <- list(
         class = "table", 
         title = "Sweep width for all gear", 
         columnNames = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
-            CompensationMethod <- match.arg(CompensationMethod)
+            CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
             columnNames <- c(
                 strsplit(CompensationMethod, "And")[[1]], 
                 "SweepWidth"
@@ -1276,7 +1457,7 @@ processPropertyFormats <- list(
             return(columnNames)
         }, 
         variableTypes = function(CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
-            CompensationMethod <- match.arg(CompensationMethod)
+            CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
             columnNames <- strsplit(CompensationMethod, "And")[[1]]
             variableTypes <- c(
                 rep("character", length(columnNames)), 
@@ -1286,7 +1467,7 @@ processPropertyFormats <- list(
             return(variableTypes)
         }, 
         possibleValues = function(SpeciesCategoryCatchData, CompensationMethod = c("Gear", "Cruise", "GearAndCruise")) {
-            CompensationMethod <- match.arg(CompensationMethod)
+            CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
             Variables <- strsplit(CompensationMethod, "And")[[1]]
             
             if(!length(SpeciesCategoryCatchData)) {
@@ -1310,7 +1491,7 @@ processPropertyFormats <- list(
     targetStrengthTable = list(
         class = "table", 
         title = function(AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
-            AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel)
+            AcousticTargetStrengthModel <- RstoxData::match_arg_informative(AcousticTargetStrengthModel)
             
             if(identical(AcousticTargetStrengthModel, "LengthDependent")) {
                 title <- "Define parameters of (logarithmic) acoustic target strength as a function of length (TargetStrength = Targetstrength0 + LengthExponent * log10(Length))"
@@ -1331,7 +1512,7 @@ processPropertyFormats <- list(
             return(title)
         }, 
         columnNames = function(AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
-            AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel)
+            AcousticTargetStrengthModel <- RstoxData::match_arg_informative(AcousticTargetStrengthModel)
             
             if(identical(AcousticTargetStrengthModel, "LengthDependent")) {
                 columnNames <- c(
@@ -1372,7 +1553,7 @@ processPropertyFormats <- list(
             return(columnNames)
         }, 
         variableTypes = function(AcousticTargetStrengthModel = c("LengthDependent", "LengthAndDepthDependent", "TargetStrengthByLength", "LengthExponent")) {
-            AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel
+            AcousticTargetStrengthModel <- RstoxData::match_arg_informative(AcousticTargetStrengthModel
                                              )
             
             if(identical(AcousticTargetStrengthModel, "LengthDependent")) {
@@ -1419,7 +1600,8 @@ processPropertyFormats <- list(
     regressionTable = list(
         class = "table", 
         title = function(RegressionModel = c("SimpleLinear", "Power")) {
-            RegressionModel <- match.arg(RegressionModel)
+            
+            RegressionModel <- RstoxData::match_arg_informative(RegressionModel)
             
             if(identical(RegressionModel, "SimpleLinear")) {
                 title <- "Define parameters of the linear model ((DependentVariable + DependentResolutionVariable / 2) = Intercept + Slope * (IndependentVariable + IndependentResolutionVariable / 2))"
@@ -1433,45 +1615,61 @@ processPropertyFormats <- list(
             
             return(title)
         }, 
-        columnNames = function(RegressionModel = c("SimpleLinear", "Power"), GroupingVariables = character()) {
-            RegressionModel <- match.arg(RegressionModel)
+        columnNames = function(RegressionModel = c("SimpleLinear", "Power"), GroupingVariables = character(), RegressionTable = data.table::data.table()) {
+            
+            RegressionModel <- RstoxData::match_arg_informative(RegressionModel)
+            
+            variableSpecification <- c(
+                "DependentVariable", 
+                "DependentResolutionVariable", 
+                "IndependentVariable", 
+                "IndependentResolutionVariable"
+            )
+            
+            metaColumns <- c(
+                "ResidualStandardError", 
+                "EstimationMethod"
+            )
             
             if(identical(RegressionModel, "SimpleLinear")) {
-                columnNames <- c(
-                    "DependentVariable", 
-                    "DependentResolutionVariable", 
-                    "IndependentVariable", 
-                    "IndependentResolutionVariable", 
+                specificRegressionTableColumns <- c(
                     "Intercept", 
-                    "Slope", 
-                    "ResidualStandardError", 
-                    "EstimationMethod"
+                    "Slope"
                 )
             }
             else if(identical(RegressionModel, "Power")) {
-                columnNames <- c(
-                    "DependentVariable", 
-                    "DependentResolutionVariable", 
-                    "IndependentVariable", 
-                    "IndependentResolutionVariable", 
+                specificRegressionTableColumns <- c(
                     "Factor", 
-                    "Exponent", 
-                    "ResidualStandardError", 
-                    "EstimationMethod"
+                    "Exponent"
                 )
             }
             else {
                 stop("Wrong RegressionModel")
             }
             
-            if(length(GroupingVariables) && nchar(GroupingVariables)) {
-                columnNames <- c(GroupingVariables, columnNames)
+            #if(length(GroupingVariables) && nchar(GroupingVariables)) {
+            GroupingVariables <- GroupingVariables[nchar(GroupingVariables) > 0]
+                columnNames <- c(
+                    GroupingVariables, 
+                    variableSpecification, 
+                    specificRegressionTableColumns, 
+                    metaColumns
+                )
+            #}
+            
+            # Warninig if there are columns in the existing table that are no longer valid:
+            invalidColumns <- c(
+                setdiff(names(RegressionTable), columnNames), 
+                setdiff(columnNames, names(RegressionTable))
+            )
+            if(NROW(RegressionTable) & length(invalidColumns)) {
+                warning("StoX: RegressionTable no longer valid. Changing GroupingVariables or RegressionModel requires to create a new RegressionTable.")
             }
             
             return(columnNames)
         }, 
         variableTypes = function(RegressionModel = c("SimpleLinear", "Power"), GroupingVariables = character()) {
-            RegressionModel <- match.arg(RegressionModel)
+            RegressionModel <- RstoxData::match_arg_informative(RegressionModel)
             
             if(identical(RegressionModel, "SimpleLinear")) {
                 variableTypes <- c(
@@ -1501,7 +1699,7 @@ processPropertyFormats <- list(
                 stop("Wrong RegressionModel")
             }
             
-            if(length(GroupingVariables) && nchar(GroupingVariables)) {
+            if(length(GroupingVariables[nchar(GroupingVariables) > 0])) {
                 variableTypes <- c(rep("character", length(GroupingVariables)), variableTypes)
             }
             
@@ -1511,7 +1709,7 @@ processPropertyFormats <- list(
             
             # Get all unique combinations:
             if(RegressionModel == "SimpleLinear") {
-                EstimationMethod <- "Linear"
+                EstimationMethod <- "SimpleLinear"
             }
             else if(RegressionModel == "Power") {
                 EstimationMethod <- c(
@@ -1522,7 +1720,7 @@ processPropertyFormats <- list(
             
             # Output must be an unnamed list:
             c(
-                rep(list(list()), 7 + as.numeric(length(GroupingVariables) && nchar(GroupingVariables))), 
+                rep(list(list()), 7 + as.numeric(length(GroupingVariables[nchar(GroupingVariables) > 0]))), 
                 list(EstimationMethod)
             )
         }
@@ -1676,5 +1874,10 @@ processPropertyFormats <- list(
         possibleValues = function(SuperIndividualsData, ImputeByEqual) {
             getIndividualNames(SuperIndividualsData, remove = ImputeByEqual, tables = "Individual", removeKeys = TRUE) 
         }
+    ), 
+    
+    groupingVariables = list(
+        class = "vector", 
+        title = "Select GroupingVariables for regression"
     )
 )

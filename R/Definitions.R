@@ -651,7 +651,7 @@ initiateRstoxBase <- function(){
     
     defaultEstimationMethod <- list(
         Regression = list(
-            SimpleLinear = "Linear", 
+            SimpleLinear = "SimpleLinear", 
             Power = "LogLogLinear"
         )
     )
@@ -689,7 +689,7 @@ initiateRstoxBase <- function(){
             
             # Simple linear regression Y = a + bX:
             SimpleLinear = function(independentVariable, parameters) {
-                parameters$Intercept + parameters$Slope * get(independentVariable)
+                parameters$Intercept + parameters$Slope * independentVariable
             }, 
             
             # Power regression Y = aX^b:
@@ -877,6 +877,42 @@ initiateRstoxBase <- function(){
     RemoveMissingValuesWarning <- function(TargetVariable) {
         paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! The Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")
     }
+    
+    defaultPlotOptions <- list(
+        # Options for the labels and other text:
+        AxisTitleSize = 15, 
+        AxisTickSize = 15, 
+        LegendTitleSize = 15, 
+        LegendTextSize = 15,
+        # Options for the point sizes and shapes:
+        # Options for the output file:
+        Format = "png", 
+        # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
+        Width = 17, 
+        Height = 17, 
+        DotsPerInch = 500
+    )
+    
+    
+    defaultMapPlotNASCOptions <- list(
+        # Options for the colours:
+        PointColourScale = "combined.color", 
+        TrackColour = "black", 
+        # Options for the point sizes and shapes:
+        MaxPointSize = 10, 
+        MinPointSize = 0.5, 
+        TrackSize = 1
+    )
+    
+    
+    defaultMapPlotOptions <- list(
+        # Options for the zoom and limits:
+        Zoom = 1, 
+        LandColour = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
+        BorderColour = "grey50", 
+        OceanColour = "white", 
+        GridColour = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
+    )
     
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
@@ -1113,7 +1149,7 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
         dimension <- validDimensions
     }
     else {
-        dimension <- match.arg(dimension, validDimensions)
+        dimension <- RstoxData::match_arg_informative(dimension, validDimensions)
         if(other) {
             dimension <- setdiff(validDimensions, dimension)
         }

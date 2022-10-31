@@ -114,11 +114,20 @@ getStoxBioticKeys <- function(levels = NULL) {
 # Function to get Layer indices:
 findLayer <- function(minDepth, maxDepth, layerProcessData, acceptNA = TRUE) {
     
+    # Special case if layerProcessData$Layer == "WaterColumn", in which case NA is interpreted as Inf:
+    if(length(layerProcessData$Layer) == 1 && layerProcessData$Layer == "WaterColumn") {
+        layerProcessData$MaxLayerDepth <- Inf
+    }
+    
     # This needs to be verified!!!!!!!!!!!!!
     layerRangeVector <- c(layerProcessData$MinLayerDepth, utils::tail(layerProcessData$MaxLayerDepth, 1))
     indMin <- findInterval(minDepth, layerRangeVector)
     indMax <- findInterval(maxDepth, layerRangeVector, rightmost.closed = TRUE)
     LayerInd <- pmin(indMin, indMax, na.rm = acceptNA)
+    
+    if(any(LayerInd %in% 0)) {
+        stop("There are max depth values that are smaller than the min depth values.")
+    }
     
     if(acceptNA && nrow(layerProcessData) == 1 && layerProcessData$MinLayerDepth == 0 && layerProcessData$MaxLayerDepth == Inf) {
         LayerInd <- replace(LayerInd, is.na(LayerInd), 1)
@@ -278,7 +287,7 @@ sumRawResolutionData <- function(
     dataCopy = data.table::copy(data)
     
     # Add the Layers and PSUs either from function inputs or by automatic methods using function parameters:
-    LayerDefinition <- match.arg(LayerDefinition)
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     
     # Get the Layers:
     if(identical(LayerDefinition, "FunctionParameter")) {
@@ -350,7 +359,7 @@ meanRawResolutionData <- function(
     
     # Add the PSUs either from function input or by automatic method using function parameter:
     # Define the PSUs:
-    PSUDefinition <- match.arg(PSUDefinition)
+    PSUDefinition <- RstoxData::match_arg_informative(PSUDefinition)
     if(identical(PSUDefinition, "FunctionParameter")) {
         PSUProcessData <- DefinePSU(
             StratumPolygon = StratumPolygon, 
@@ -368,7 +377,7 @@ meanRawResolutionData <- function(
     }
     
     # Get the Surveys:
-    SurveyDefinition <- match.arg(SurveyDefinition)
+    SurveyDefinition <- RstoxData::match_arg_informative(SurveyDefinition)
     if(identical(SurveyDefinition, "FunctionParameter")) {
         # Get the stratum names and the SurveyTable:
         stratumNames <- unique(dataCopy$Stratum)
@@ -851,7 +860,7 @@ StoxDataStartMiddleStopDateTime <- function(
     StoxDataStationLevel, 
     type = c("Acoustic", "Biotic")
 ) {
-    type <- match.arg(type)
+    type <- RstoxData::match_arg_informative(type)
     
     if(type == "Acoustic") {
         
@@ -961,8 +970,11 @@ firstNonNA <- function(x) {
 #' @param projectXMLFileName (Optional) The name of the StoX 2.7 project.xml file, defaulted to "project.xml".
 #' @param projectXMLFilePath The path to the project.xml file.
 #' @param projectXMLList A list as read by \code{\link{readProjectXMLToList}}.
-#' @param modelName,processName,parameterName The name of the parameter of the process of the model to modify.
-#' @param parameterValue,newParameterValue The new value of the parameter.
+#' @param modelName The name of the model (possible values are "baseline", "baseline-report", "r" and "r-report").
+#' @param processName he name of the process.
+#' @param parameterName The name of the parameter.
+#' @param parameterValue The value of the parameter.
+#' @param newParameterValue The new value of the parameter.
 #' @param functionName The name of the function of the process to add.
 #' @param modify A named list specifying the modification of a process. Possible elements are remove, add and modify.
 #' 
@@ -1433,3 +1445,104 @@ readBioticAssignmentFrom2.7 <- function(projectXMLFilePath) {
 #    
 #    return(stoxData)
 #}
+
+
+
+#' Get all arguments from inside a function
+#' 
+#' @param orig_values Logical: If TRUE use the original values (as defined in the function).
+#' @export
+#' 
+allargs <- function(orig_values = FALSE) {
+    
+    # Borrowed from https://stackoverflow.com/questions/11885207/get-all-parameters-as-list
+    
+    # get formals for parent function
+    parent_formals <- formals(sys.function(sys.parent(n = 1)))
+    
+    # Get names of implied arguments
+    fnames <- names(parent_formals)
+    
+    # Get currently set values for named variables in the parent frame
+    args <- evalq(as.list(environment()), envir = parent.frame())
+    
+    # Get the list of variables defined in '...'
+    args <- args[fnames]
+    
+    
+    if(orig_values) {
+        # get default values
+        defargs <- as.list(parent_formals)
+        defargs <- defargs[unlist(lapply(defargs, FUN = function(x) class(x) != "name"))]
+        args[names(defargs)] <- defargs
+        setargs <- evalq(as.list(match.call())[-1], envir = parent.frame())
+        args[names(setargs)] <- setargs
+    }
+    return(args)
+}
+
+# Set default general options:
+setDefaults <- function(x, defaults) {
+    presentNames <- intersect(names(x), names(defaults))
+    for(name in presentNames) {
+        if(!length(x[[name]])) {
+            x[[name]] <- defaults[[name]]
+        }
+    }
+    
+    return(x)
+}
+
+
+
+
+# Set default general options:
+setDefaultsInStoxFunction <- function(x, StoxFunctionName) {
+    # The following line failed if the StoX function was run inside e.g. an mapply():
+    #StoxFunctionName <- tail(as.character(as.list(sys.call(-1))[[1]]), 1)
+    defaults <- stoxFunctionAttributes[[StoxFunctionName]]$functionParameterDefaults
+    #if(length(condition) && is.character(condition) && nchar(condition)) {
+    #    
+    #}
+    
+    presentNames <- intersect(names(x), names(defaults))
+    for(name in presentNames) {
+        if(!length(x[[name]])) {
+            if(is.function(defaults[[name]])) {
+                x[[name]] <- defaults[[name]](x)
+            }
+            else {
+                x[[name]] <- defaults[[name]]
+            }
+        }
+    }
+    
+    return(x)
+}
+
+
+
+
+
+
+renameListByNames <- function(list, old, new) {
+    if(length(old) != length(new)) {
+        stop("'old' and 'new' must have the same length.")
+    }
+    if(any(duplicated(old))) {
+        stop("'old' cannot contain duplicates.")
+    }
+    valid <- intersect(old, names(list))
+    invalid <- setdiff(old, names(list))
+    if(length(invalid)) {
+        warning("The following names are specified as 'old' but are not found in the list. These are ignored.")
+        new <- new[old %in% names(list)]
+    }
+    atRename <- match(valid, names(list))
+    names(list)[atRename] <- new
+    
+    return(list)
+}
+
+
+    

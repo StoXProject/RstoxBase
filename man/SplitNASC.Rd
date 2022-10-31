@@ -9,8 +9,8 @@ SplitNASC(
   AcousticPSU,
   AssignmentLengthDistributionData,
   AcousticTargetStrength,
-  SpeciesLink,
-  AcousticCategoryLink
+  AcousticCategoryLink,
+  SpeciesLink
 )
 }
 \arguments{
@@ -22,9 +22,9 @@ SplitNASC(
 
 \item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
 
-\item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
-
 \item{AcousticCategoryLink}{A table linking the acoustic categories to split and those to split into.}
+
+\item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
 }
 \description{
 This function splits NASCData of specific acoustic categories into other categories based on the acoustic target strength of these categories and the length distribution of corresponding species categories.
