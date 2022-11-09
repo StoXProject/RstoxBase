@@ -235,7 +235,7 @@ SplitMeanNASC <- function(
     AcousticCategoryLink
     ) {
     
-    warning("StoX: The function SplitMeanNASC is deprecated. Use SplitNASC instead.")
+    warning("StoX: The function SplitMeanNASC is deprecated, and will be removevd in StoX 3.7.0. Use SplitNASC instead.")
     
     # Require full resolution vertically and horizontally:
     numberOfUniquePSU_Layer <- nrow(unique(MeanNASCData$Resolution[!is.na(PSU), c("PSU", "Layer")]))
@@ -348,7 +348,7 @@ SplitNASC <- function(
 ) {
     
     # Add PSUs. This makes a copy, also:
-    NASCData <- merge(NASCData, AcousticPSU$EDSU_PSU, by = "EDSU")
+    NASCData <- merge(NASCData, merge(AcousticPSU$Stratum_PSU, AcousticPSU$EDSU_PSU, all = TRUE), by = "EDSU", )
     
     # Only split rows with non-missing PSU and positive NASC (this also discards splitting of NA NASC):
     # # First consider only the rows with non-missing PSU, which are those that will be split:

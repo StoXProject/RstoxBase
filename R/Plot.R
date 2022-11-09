@@ -42,9 +42,33 @@ PlotAcousticTrawlSurvey <- function(
     #PlotAbundance
     #PlotSuperIndividuals
     #
+    LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"), 
+    LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
+    Resolution = double(), 
+    LayerTable = data.table::data.table(), 
+    AcousticLayer = NULL, 
+    
+    NASCData, 
     SumNASCData, 
+    AcousticPSU, 
     
     ColorVariable = character(), 
+    
+    
+    
+    UseAcousticPSU = FALSE, 
+    AcousticPSULabelSize = numeric(), 
+    AcousticPSULabelColor = character(), 
+    AcousticPSULabelPosition = c("mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude", "atMaxLatitude"), 
+    AcousticPSULabelHjust = numeric(), 
+    AcousticPSULabelVjust = numeric(), 
+    
+    
+    #UseStratumPolygon = FALSE, 
+    #StratumPolygonColor = character(), 
+    #StratumPolygonLabelSize = numeric(), 
+    #StratumPolygonLabelColor = character(), 
+    
     
     # Options for the colors:
     UseDefaultColorSettings = TRUE, 
@@ -67,8 +91,12 @@ PlotAcousticTrawlSurvey <- function(
     # Options for the zoom and limits:
     UseDefaultAspectSettings = TRUE, 
     Zoom = numeric(), 
-    LongitudeLimits = numeric(), 
-    LatitudeLimits = numeric(), 
+    LongitudeMin = numeric(), 
+    LongitudeMax = numeric(), 
+    LatitudeMin = numeric(), 
+    LatitudeMax = numeric(), 
+    LongitudeCenter = numeric(), 
+    LatitudeCenter = numeric(), 
     
     # Options for the labels and other text:
     UseDefaultTextSettings = TRUE, 
@@ -87,14 +115,33 @@ PlotAcousticTrawlSurvey <- function(
     DotsPerInch = numeric()	
 ) {
     
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
+    
+    
     # Get the formals:
     plotArguments <- allargs()
     
-    # Check function inputs specifically, as these have been included in plotArguments:
-    if(missing(SumNASCData)) {
-        stop("argument \"SumNASCData\" is missing, with no default")
+    # Get the layer definition:
+    if(LayerDefinition != "PreDefined") {
+        plotArguments$SumNASCData <- SumNASC(
+            NASCData = plotArguments$NASCData, 
+            LayerDefinition = plotArguments$LayerDefinition, 
+            LayerDefinitionMethod = plotArguments$LayerDefinitionMethod, 
+            Resolution = plotArguments$Resolution, 
+            LayerTable = plotArguments$LayerTable, 
+            AcousticLayer = plotArguments$AcousticLayer
+        )
+    }
+    # If not PreDefined assume SumNASCData is given and remove the NASCData, since this will cause problems when calling plot_lon_lat
+    else {
+        plotArguments$NASCData <- NULL
     }
     
+    
+    ## Check function inputs specifically, as these have been included in plotArguments:
+    #if(missing(SumNASCData)) {
+    #    stop("argument \"SumNASCData\" is missing, with no default")
+    #}
     
     
     # # Set default general options:
@@ -129,9 +176,8 @@ PlotAcousticTrawlSurvey <- function(
             type = "lp", 
             size = "NASC", 
             shape = 1, 
-            alpha = 1, 
-            alpha.track = 1, 
-            offset = c(0.5, 0.5)
+            alpha.point = 1, 
+            alpha.track = 1
         )
     )
     
@@ -149,8 +195,8 @@ PlotAcousticTrawlSurvey <- function(
         color.ocean = "OceanColor", 
         color.grid = "GridColor", 
         zoom = "Zoom", 
-        xlim = "LongitudeLimits", 
-        ylim = "LatitudeLimits", 
+        #xlim = "LongitudeLimits", 
+        #ylim = "LatitudeLimits", 
         legend.text.size = "LegendTextSize", 
         legend.title.size = "LegendTitleSize", 
         main = "Title"
@@ -161,11 +207,101 @@ PlotAcousticTrawlSurvey <- function(
         plotArguments$SumNASCData <- plotArguments$SumNASCData$Data
     }
     
+    # Discard the transports if UseAcousticPSU:
+    if(UseAcousticPSU) {
+        # Merge in the PSUs:
+        plotArguments$SumNASCData <- merge(plotArguments$SumNASCData, AcousticPSU$EDSU_PSU, by = "EDSU")
+        plotArguments$SumNASCData <- subset(plotArguments$SumNASCData, !is.na(PSU))
+        
+        AcousticPSULabelPosition <- match.arg(AcousticPSULabelPosition)
+        AcousticPSULabelPositionFun <- switch (AcousticPSULabelPosition,
+            mean = function(Longitude, Latitude) {
+                list(
+                    mean(Longitude, na.rm = TRUE), 
+                    mean(Latitude, na.rm = TRUE)
+                )
+            }, 
+            atMinLongitude = function(Longitude, Latitude) {
+                atMinLongitude <- which.min(Longitude)
+                list(
+                    Longitude[atMinLongitude], 
+                    Latitude[atMinLongitude]
+                )
+            }, 
+            atMaxLongitude = function(Longitude, Latitude) {
+                atMaxLongitude <- which.max(Longitude)
+                list(
+                    Longitude[atMaxLongitude], 
+                    Latitude[atMaxLongitude]
+                )
+            }, 
+            atMinLatitude = function(Longitude, Latitude) {
+                atMinLatitude <- which.min(Latitude)
+                list(
+                    Longitude[atMinLatitude], 
+                    Latitude[atMinLatitude]
+                )
+            }, 
+            atMaxLatitude = function(Longitude, Latitude) {
+                atMaxLatitude <- which.max(Latitude)
+                list(
+                    Longitude[atMaxLatitude], 
+                    Latitude[atMaxLatitude]
+                )
+            }, 
+        )
+        
+        PSUText <- plotArguments$SumNASCData[, .(
+            label = PSU[1], 
+            size = plotArguments$AcousticPSULabelSize, 
+            hjust = AcousticPSULabelHjust,
+            vjust = AcousticPSULabelVjust, 
+            color = AcousticPSULabelColor
+        ), by = "PSU"]
+        
+        PSUPos <- plotArguments$SumNASCData[, AcousticPSULabelPositionFun(Longitude, Latitude), by = "PSU"]
+        names(PSUPos) <- c("PSU", "x", "y")
+        
+        PSUText <- cbind(
+            PSUText, 
+            subset(PSUPos, select = c("x", "y"))
+        )
+        
+        plotArguments$text <- as.list(PSUText)
+    }
+    # If not PreDefined assume SumNASCData is given and remove the NASCData, since this will cause problems when calling plot_lon_lat
+    else {
+        plotArguments$AcousticPSU <- NULL
+    }
+    
+    
+    # Add xlim and ylim and center for zooming:
+    plotArguments$xlim <- c(plotArguments$LongitudeMin, plotArguments$LongitudeMax)
+    plotArguments$ylim <- c(plotArguments$LatitudeMin, plotArguments$LatitudeMax)
+    
+    plotArguments$zoomCenter <- c(plotArguments$LongitudeCenter, plotArguments$LatitudeCenter)
+    
+    
+    ### # Add StratumPolygon:
+    ### if(UseStratumPolygon) {
+    ###     # Create a data.table of longitude, latitude and Stratum name:
+    ###     polygon <- data.table::rbindlist(getStratumPolygonList(StratumPolygon), , idcol = "Stratum")
+    ###     polygon <- data.table::data.table(
+    ###         longitude = polygon, 
+    ###         latitude = , 
+    ###         longitude = , 
+    ###     )
+    ###     
+    ###     
+    ### }
+    
+    
     plotArguments <- renameListByNames(
         plotArguments, 
         old = traslation,  
         new = names(traslation)
     )
+    
     
     # Run the plot_lon_lat function:
     PlotAcousticTrawlSurveyData <- do.call(plot_lon_lat, plotArguments)
@@ -210,20 +346,33 @@ setPlotAttributes <- function(plotObject, plotArguments) {
 zoom_lon_lat <- function(
     x, 
     lon = "lon", lat = "lat", 
-    xlim = NA, ylim = NA, zoom = 1, offset = c(0.5, 0.5)
+    xmin = NA, xmax = NA, 
+    ymin = NA, ymax = NA, 
+    zoom = 1, zoomCenter = c(0.5, 0.5)
 ) {
     
-    # If xlim or ylim is not present:
-    if(length(xlim) == 0 || is.na(xlim) || length(ylim) == 0 || is.na(ylim)){
-        # Get xlim and ylim:
-        xlim <- range(x[[lon]], na.rm = TRUE)
-        ylim <- range(x[[lat]], na.rm = TRUE)
-        
-        # Apply the zoom:
-        temp <- zoom_xlim_ylim(xlim, ylim, zoom, offset)
-        xlim <- temp$xlim
-        ylim <- temp$ylim
+    # Zooms first from the range of the values,:
+    temp <- zoom_data(x = x[[lon]], y = x[[lat]], zoom = zoom, zoomCenter = zoomCenter)
+    
+    # If xmin is not present:
+    if(length(xmin) == 0 || is.na(xmin)){
+        xmin <- temp$xlim[1]
     }
+    # If xmax is not present:
+    if(length(xmax) == 0 || is.na(xmax)){
+        xmax <- temp$xlim[2]
+    }
+    # If xmin is not present:
+    if(length(ymin) == 0 || is.na(ymin)){
+        ymin <- temp$ylim[1]
+    }
+    # If xmin is not present:
+    if(length(ymax) == 0 || is.na(ymax)){
+        ymax <- temp$ylim[2]
+    }
+    
+    xlim <- c(xmin, xmax)
+    ylim <- c(ymin, ymax)
     
     # Adjust the aspect ratio by latitude:
     ymid <- mean(ylim)
@@ -237,24 +386,25 @@ zoom_lon_lat <- function(
 
 
 
-
 plot_lon_lat <- function(
         x, 
+        polygon, 
         lon = "lon", lat = "lat", 
         type = c("pl", "lp", "p", "l"), 
-        size = 1, size.track = 1, size.min = 0.1, size.max = 10, limitWidthFraction = 0.1, 
-        color = 1, color.track = 1, 
-        color.scale = combined.color(2), 
-        color.land = "grey50", color.border = "grey10", color.ocean = "grey90", color.grid = "white", 
+        size = 1, size.track = 1, size.min = 0.1, size.max = 10, 
+        limitWidthFraction = 0.1, 
+        color = 1, 
+        color.track = 1, color.scale = combined.color(2), color.land = "grey50", color.border = "grey10", color.ocean = "grey90", color.grid = "white", color.polygon = "grey70", 
         shape = 16, 
-        alpha = 1, alpha.track = 1, 
+        fill.polygon = "grey50", 
+        alpha.point = 1, alpha.track = 1, alpha.polygon = 1, 
         zoom = 1, xlim = NA, ylim = NA, 
-        offset = c(0.5, 0.5), 
+        zoomCenter = c(0.5, 0.5), 
         main = NULL, 
+        text = NULL, 
         ...
 )
 {
-    
     # Get the type:
     type <- RstoxData::match_arg_informative(type)
     
@@ -281,12 +431,34 @@ plot_lon_lat <- function(
             x = x, 
             lon = lon, 
             lat = lat, 
-            xlim = xlim, 
-            ylim = ylim, 
+            xmin = xlim[1], 
+            xmax = xlim[2], 
+            ymin = ylim[1], 
+            ymax = ylim[2], 
             zoom = zoom, 
-            offset = offset
+            zoomCenter = zoomCenter
         ) #+ 
     #ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(size = 5)))
+    
+    ### # Add polygon:
+    ### if(length(polygon)) {
+    ###     p <- p + geom_polygon(data = polygon, 
+    ###         aes_string(
+    ###             x = "longitude", 
+    ###             y = "latitude", 
+    ###             fill = fill.polygon, 
+    ###             color = color.polygon
+    ###         ), 
+    ###         alpha = alpha.polygon #, 
+    ###         #inherit.aes = FALSE
+    ###     )
+    ###     
+    ###     polygonCentroid <- getCentroid(polygon)
+    ###     
+    ###     p <- p + geom_text(data = polygonCentroid, aes_string(group="stratum", x="lon_centroid", y="lat_centroid", label="stratum"), colour=strataNameCol)
+    ### }
+    
+    
     
     # Plot the track:
     if(grepl("l", type)) {
@@ -302,7 +474,7 @@ plot_lon_lat <- function(
             show.legend = FALSE
         )
         
-        path <- do.call(ggplot2::geom_path, plotspec)
+        path <- do.call(ggplot2::geom_point, plotspec)
     }
     else {
         path <- NULL
@@ -320,7 +492,7 @@ plot_lon_lat <- function(
         
         
         plotspec <- list(
-            alpha = alpha
+            alpha = alpha.point
         )
         
         scaleStroke  <- function(size, maxWidth = 0.1) {
@@ -464,25 +636,49 @@ plot_lon_lat <- function(
         p <- p + ggtitle(main)
     }
     
+    if(length(text) && is.list(text)) {
+        p <- p + ggplot2::annotate(
+            "text", 
+            x = text$x, 
+            y = text$y, 
+            label = text$label, 
+            hjust = text$hjust, 
+            vjust = text$vjust, 
+            size = text$size, 
+            color = text$color
+        )
+    }
     
+    ## Set order of the legends to size first then color:
+    #p <- p + ggplot2::guides(
+    #    size = ggplot2::guide_legend(order = 1), 
+    #    colour = ggplot2::guide_legend(order = 2)
+    #)
     
     
     return(p)
 }
 
 
-zoom_xlim_ylim <- function(xlim, ylim, zoom = 1, offset = c(0.5, 0.5)){
-    # Get the center of the plot, applying the offset:
-    xcenter <- min(xlim) + offset[1] * diff(xlim)
-    ycenter <- min(ylim) + offset[2] * diff(ylim)
+
+zoom_data <- function(x, y, zoom = 1, zoomCenter = c(0.5, 0.5)) {
+    
     if(zoom <= 0){
         warning("StoX: The value of 'zoom' must be positive, with default 1 implying no zoom. The default was used.")
+        zoom <- 1
     }
+    
+    # Get the center of the plot:
+    rangex <- range(x, na.rm = TRUE)
+    rangey <- range(y, na.rm = TRUE)
+    xcenter <- min(rangex) + zoomCenter[1] * diff(rangex)
+    ycenter <- min(rangey) + zoomCenter[2] * diff(rangey)
     
     # Zoom:
     fact <- c(-1, 1) * zoom
-    xlim <- xcenter + fact * diff(xlim) / 2
-    ylim <- ycenter + fact * diff(ylim) / 2
+    xlim <- xcenter + fact * diff(rangex) / 2
+    ylim <- ycenter + fact * diff(rangey) / 2
+    
     list(xlim = xlim, ylim = ylim)
 }
 

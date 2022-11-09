@@ -5,8 +5,22 @@
 \title{Plot NASCData}
 \usage{
 PlotAcousticTrawlSurvey(
+  LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"),
+  LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"),
+  Resolution = double(),
+  LayerTable = data.table::data.table(),
+  AcousticLayer = NULL,
+  NASCData,
   SumNASCData,
+  AcousticPSU,
   ColorVariable = character(),
+  UseAcousticPSU = FALSE,
+  AcousticPSULabelSize = numeric(),
+  AcousticPSULabelColor = character(),
+  AcousticPSULabelPosition = c("mean", "atMinLongitude", "atMaxLongitude",
+    "atMinLatitude", "atMaxLatitude"),
+  AcousticPSULabelHjust = numeric(),
+  AcousticPSULabelVjust = numeric(),
   UseDefaultColorSettings = TRUE,
   PointColor = character(),
   TrackColor = character(),
@@ -20,8 +34,12 @@ PlotAcousticTrawlSurvey(
   TrackSize = numeric(),
   UseDefaultAspectSettings = TRUE,
   Zoom = numeric(),
-  LongitudeLimits = numeric(),
-  LatitudeLimits = numeric(),
+  LongitudeMin = numeric(),
+  LongitudeMax = numeric(),
+  LatitudeMin = numeric(),
+  LatitudeMax = numeric(),
+  LongitudeCenter = numeric(),
+  LatitudeCenter = numeric(),
   UseDefaultTextSettings = TRUE,
   Title = character(),
   AxisTitleSize = numeric(),
@@ -36,6 +54,8 @@ PlotAcousticTrawlSurvey(
 )
 }
 \arguments{
+\item{NASCData}{The \code{\link{NASCData}} data.}
+
 \item{SumNASCData}{The \code{\link{SumNASCData}} data.}
 
 \item{ColorVariable}{The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.}
@@ -65,10 +85,6 @@ PlotAcousticTrawlSurvey(
 \item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
 
 \item{Zoom}{The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
-
-\item{LongitudeLimits}{The longitude limits of the map plot, defaulted to the range of the longitude of the data.}
-
-\item{LatitudeLimits}{The latitude limits of the map plot, defaulted to the range of the latitude of the data.}
 
 \item{UseDefaultTextSettings}{Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
 

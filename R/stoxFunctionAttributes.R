@@ -2,19 +2,33 @@ isCategorical <- function(x) {
     is.character(x) || is.integer(x)
 }
 
-defaultPlotOptions <- list(
+defaultPlotGeneralOptions <- list(
     # Options for the labels and other text:
-    AxisTitleSize = 15, 
-    AxisTickSize = 15, 
-    LegendTitleSize = 15, 
-    LegendTextSize = 15,
-    # Options for the point sizes and shapes:
+    AxisTitleSize = 10, 
+    AxisTickSize = 10, 
+    LegendTitleSize = 10, 
+    LegendTextSize = 10
+)
+
+defaultPlotFileOptions <- list(
     # Options for the output file:
     Format = "png", 
     # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
     Width = 17, 
     Height = 17, 
     DotsPerInch = 500
+)
+
+
+defaultMapPlotOptions <- list(
+    # Options for the zoom and limits:
+    Zoom = 1, 
+    LongitudeCenter = 0.5, 
+    LatitudeCenter = 0.5, 
+    LandColor = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
+    BorderColor = "grey50", 
+    OceanColor = "white", 
+    GridColor = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
 )
 
 defaultMapPlotNASCOptions <- list(
@@ -34,19 +48,29 @@ defaultMapPlotNASCOptions <- list(
     # Options for the point sizes and shapes:
     MaxPointSize = 10, 
     MinPointSize = 0.5, 
-    TrackSize = 1
+    TrackSize = 0.5
 )
 
-defaultMapPlotOptions <- list(
-    # Options for the zoom and limits:
-    Zoom = 1, 
-    LandColor = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
-    BorderColor = "grey50", 
-    OceanColor = "white", 
-    GridColor = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
+defaultAcousticPSUPlotOptions <- list(
+    # Options for AcousticPSU:
+    AcousticPSULabelSize = 4, 
+    AcousticPSULabelColor = "black", 
+    AcousticPSULabelPosition = "mean", 
+    AcousticPSULabelHjust = 0.5, 
+    AcousticPSULabelVjust = 0.5
 )
 
-defaultColorVariable <- list(
+#defaultStratumPolygonPlotOptions <- list(
+#    StratumPolygonColor = character(), 
+#    StratumPolygonLabelSize = numeric(), 
+#    StratumPolygonLabelColor = character(), 
+#)
+
+
+
+
+
+defaultColorVariableOptions <- list(
     ColorVariable = "NASC"
 )
 
@@ -880,10 +904,22 @@ stoxFunctionAttributes <- list(
             Zoom = list(
                 UseDefaultAspectSettings = FALSE
             ), 
-            LongitudeLimits = list(
+            LongitudeMin = list(
                 UseDefaultAspectSettings = FALSE
             ), 
-            LatitudeLimits = list(
+            LongitudeMax = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeMin = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeMax = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeCenter = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeCenter = list(
                 UseDefaultAspectSettings = FALSE
             ), 
             # Options for the labels and other text:
@@ -914,19 +950,65 @@ stoxFunctionAttributes <- list(
             ), 
             DotsPerInch = list(
                 UseDefaultFileSettings = FALSE
+            ), 
+            # Layer: 
+            NASCData = list(
+                # The LayerDefinition can be any of these:
+                LayerDefinition = c(
+                    "FunctionInput", 
+                    "FunctionParameter"
+                )
+            ), 
+            SumNASCData = list(
+                LayerDefinition = "PreDefined"
+            ), 
+            AcousticLayer = list(
+                LayerDefinition = "FunctionInput"
+            ),
+            LayerDefinitionMethod = list(
+                LayerDefinition = "FunctionParameter"
+            ), 
+            Resolution = list(
+                LayerDefinition = "FunctionParameter", 
+                LayerDefinitionMethod = "Resolution"
+            ), 
+            LayerTable = list(
+                LayerDefinition = "FunctionParameter", 
+                LayerDefinitionMethod = "Table"
+            ), 
+            # AcousticPSU:
+            AcousticPSU = list(
+                UseAcousticPSU = TRUE
+            ), 
+            AcousticPSULabelSize = list(
+                UseAcousticPSU = TRUE
+            ), 
+            AcousticPSULabelColor = list(
+                UseAcousticPSU = TRUE
+            ), 
+            AcousticPSULabelPosition = list(
+                UseAcousticPSU = TRUE
+            ), 
+            AcousticPSULabelHjust = list(
+                UseAcousticPSU = TRUE
+            ), 
+            AcousticPSULabelVjust = list(
+                UseAcousticPSU = TRUE
             )
         ), 
         functionParameterDefaults = c(
             # Default general options:
-            defaultPlotOptions, 
+            defaultPlotGeneralOptions, 
+            # Default file options:
+            defaultPlotFileOptions, 
             # Default map plotting options:
             defaultMapPlotNASCOptions, 
             # Default NASC-plotting options:
             defaultMapPlotOptions, 
-            # Other defaults:
-            list(
-                ColorVariable = "NASC"
-            )
+            # Defaults for the AcousticPSU (potting PSU names) text size and shift (from the mean EDSU position):
+            defaultAcousticPSUPlotOptions, 
+            # Defaults color variable:
+            defaultColorVariableOptions
         )
     ),
     

@@ -711,7 +711,7 @@ getCentroid <- function(stratumPolygon, par = list(), tol = 1e-9, msg = FALSE, i
         stratumPolygonSF <- stratumPolygon
     }
     
-    # Cacluate the centroid iteratively in Cartesian coordinates using the continuously updated geographical centroid as projection origin:
+    # Calculate the centroid iteratively in Cartesian coordinates using the continuously updated geographical centroid as projection origin:
     if(iterativeCentroidCalculation) {
         # Set default projection:
         sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string_longlat")
