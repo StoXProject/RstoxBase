@@ -19,7 +19,7 @@ SpeciesCategoryCatch <- function(
     sampleNamesToRemove <- c(sampleNames[!endsWith(sampleNames, "Key")], "SampleKey")
     
     # Get the DensityUnit and DensityType:
-    SpeciesCategoryCatchType <- match.arg(SpeciesCategoryCatchType)
+    SpeciesCategoryCatchType <- RstoxData::match_arg_informative(SpeciesCategoryCatchType)
     
     # Merge Station, ..., Sample table:
     SpeciesCategoryCatchData <- RstoxData::MergeStoxBiotic(StoxBioticData, TargetTable = "Sample")
@@ -150,7 +150,7 @@ MeanSpeciesCategoryCatch <- function(
 ) {
     
     # Skip the sum part if predefined:
-    LayerDefinition <- match.arg(LayerDefinition)
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     if(LayerDefinition != "PreDefined") {
         SumSpeciesCategoryCatchData <- SumSpeciesCategoryCatch(
             SpeciesCategoryCatchData = SpeciesCategoryCatchData, 
@@ -163,7 +163,7 @@ MeanSpeciesCategoryCatch <- function(
     }
     
     # Convert the PSUDefinitionMethod to "Identity" if "EDSUToPSU":
-    PSUDefinitionMethod <- match.arg(PSUDefinitionMethod)
+    PSUDefinitionMethod <- RstoxData::match_arg_informative(PSUDefinitionMethod)
     if(grepl("StationToPSU", PSUDefinitionMethod, ignore.case = TRUE)) {
         PSUDefinitionMethod <- "Identity"
     }

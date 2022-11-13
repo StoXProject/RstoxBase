@@ -1,3 +1,22 @@
+# RstoxBase v1.10.1-9001 (2022-10-31)
+* Pre-release before 1.10.1. Errors are expected.
+* Added (unfinished) PlotAcousticTrawlSurvey().
+* Applied RstoxData::match_arg_informative() to improve warning messages.
+* Added error if variables specified in Regression in ImputeSuperIndividuals() are not present in the data (preivously this was only a warning).
+* Added error if a LayerTable specified by the user contains missing values.
+* Fixed bug where "Linear" was used instead of "SimpleLinear" as EstimationMethod in EstimateBioticRegression().
+* Also fixed bug where the EstimationMethod "SimpleLinear" did not work as expected. 
+* Moved printErrorIDs() to RstoxData as an exported function.
+* Changed behavior of DefinitionMethod "WaterColumn" so that even data with missing depth information will have Layer = "WaterColumn". Before, if MinHaulDepth, MaxHaulDepth, MinChannelDepth or MaxHChannelDepth was missing, Layer would also be missing. 
+* Also, changed the MinLayerDepth and MaxLayerDepth from the range of the depths (set to 0 and Inf if min depth and max depth was misssing) to (0, NA), saying that "WaterColumn" means from surface to an unknown bottom, or at least not defined by a single value.
+* Added variable selection dialogue for GroupingVariables in DefineRegression() (typing, as there is no list of possible values).
+* Added a warning if the variables selected using GroupingVariables and RegressionModel have changed in DefineRegression(), making the RegressionTable not work properly in the current version of the GUI.
+* Fixed possible values for AcousticCategory in SpeciesLink in SplitNASC(), from the available AcousticCategory in the NASCData to the SplitAcousticCategory in the AcousticCategoryLink. Also reordered the parameters so that AcousticCategoryLink comes before SpeciesLink.
+* Changed to not remove rows with missing Haul in DefineBioticAssignment(). This was introduced when DefinitionMethod == "Stratum" for unknown reasons. The warning when all Hauls are missing is kept.
+* Removed error when there are Individuals with IndividualTotalLength smaller than the smallest IndividualTotalLength in the QuantityData in SuperIndividuals(). This was changed to warnings when IndividualTotalLength does not fit into any of the length intervals of the QuantityData.
+* Added warning when there are AcousticCategory present in the NASCData but not in the SpeciesLink in AcousticDensity.
+
+
 # RstoxBase v1.10.0 (2022-08-12)
 * Removed from the GUI the warning for EDSUs/Stations detected in more than one stratum. 
 * Added warning is all EDSUs included in the AcousticPSU proecss data are missing in the StoxAcousticData, which is an indication of new data in an old project where AcousticPSUs should be re-defined from scratch. 

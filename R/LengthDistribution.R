@@ -76,9 +76,9 @@ LengthDistribution <- function(
     ##### 0. Initial preparations: #####
     ####################################
     # Get the DefinitionMethod:
-    LengthDistributionType <- match.arg(LengthDistributionType)
+    LengthDistributionType <- RstoxData::match_arg_informative(LengthDistributionType)
     # Get the DefinitionMethod:
-    RaisingFactorPriority <- match.arg(RaisingFactorPriority)
+    RaisingFactorPriority <- RstoxData::match_arg_informative(RaisingFactorPriority)
     
     # Get specification of the data type:
     #dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")$LengthDistributionData
@@ -94,7 +94,7 @@ LengthDistribution <- function(
     # Check for missing individuals due to positive sample number but no individuals of that sample:
     atMissingIndividual <- StoxBioticDataMerged[,  which(is.na(IndividualKey) & (SampleWeight > 0 | SampleNumber > 0))]
     if(length(atMissingIndividual)) {
-        warning("StoX: The following Samples have positive SampleNumber but no individuals, which is indicative of error in the input biotic data. This results in positive WeightedNumber while IndividualTotalLength is missing, which may propagate thoughout the StoX project:\n", printErrorIDs(StoxBioticDataMerged[atMissingIndividual, Sample])
+        warning("StoX: The following Samples have positive SampleNumber but no individuals, which is indicative of error in the input biotic data. This results in positive WeightedNumber while IndividualTotalLength is missing, which may propagate thoughout the StoX project:\n", RstoxData::printErrorIDs(StoxBioticDataMerged[atMissingIndividual, Sample])
         )
     }
     
@@ -263,23 +263,19 @@ getBadRaisingFactorError <- function(badness, hasBad, LengthDistributionData) {
         paste0(
             "StoX: Invalid Sample error: There are ", length(badHauls), " samples of ", length(badSamples), " hauls with missing (NA) raising factor, which is an indication of at least one NA in each of the pairs CatchFractionWeight/SampleWeight and CatchFractionNumber/SampleNumber. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. The exception is for LengthDistributionType = \"Percent\" when there is only one sample, in which case NA raising factors are set to 1. These errors should be corrected in the database holding the input data.\n", 
             paste0("The following lists the Samples with ", badness, " raising factor:\n"), 
-            printErrorIDs(badSamples)
+            RstoxData::printErrorIDs(badSamples)
         )
     }
     else {
         paste0(
             "StoX: Invalid Sample error: There are ", length(badSamples), " samples of ", length(badHauls), " hauls with infinite raising factor, which is an indication SampleWeight or SampleNumber are 0 for those samples and will lead to Inf values in the length distribution. This is considered by StoX as an error in the data, making it impossible to calculate length distribution. These errors should be corrected in the database holding the input data.\n", 
             paste0("The following lists the Samples with ", badness, " raising factor:\n"), 
-            printErrorIDs(badSamples)
+            RstoxData::printErrorIDs(badSamples)
         )
     }
 }
 
-#printErrorIDs <- function(errorName, errorIDs, bullet = "* ", sep = ": ", collapse = "\n") {
-printErrorIDs <- function(errorIDs, collapse = "\n\t") {
-    #paste0(paste0(bullet, errorName, sep, errorIDs, collapse = collapse), collapse)
-    paste0(collapse,  paste0(errorIDs, collapse = collapse))
-}
+
 
 
 ##################################################
@@ -431,7 +427,7 @@ GearDependentCatchCompensation <- function(
 ) {
     
     # Get the input data type:
-    InputDataType <- match.arg(InputDataType)
+    InputDataType <- RstoxData::match_arg_informative(InputDataType)
     if(InputDataType == "LengthDistributionData") {
         dataCopy <- data.table::copy(LengthDistributionData)
     }
@@ -447,7 +443,7 @@ GearDependentCatchCompensation <- function(
     }
     
     # Get the compensation method:
-    CompensationMethod <- match.arg(CompensationMethod)
+    CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
     # Split by "And":
     CompensationMethod <- strsplit(CompensationMethod, "And")[[1]]
     
@@ -560,7 +556,7 @@ LengthDependentLengthDistributionCompensation <- function(
     LengthDependentSelectivityParameters = data.table::data.table()
 ) {
     # Get the catchability method:
-    CompensationMethod <- match.arg(CompensationMethod)
+    CompensationMethod <- RstoxData::match_arg_informative(CompensationMethod)
     
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
@@ -868,7 +864,7 @@ MeanLengthDistribution <- function(
 ) {
     
     # Skip the sum part if predefined:
-    LayerDefinition <- match.arg(LayerDefinition)
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     if(LayerDefinition != "PreDefined") {
         SumLengthDistributionData <- SumLengthDistribution(
             LengthDistributionData = LengthDistributionData, 
@@ -881,7 +877,7 @@ MeanLengthDistribution <- function(
     }
     
     # Convert the PSUDefinitionMethod to "Identity" if "EDSUToPSU":
-    PSUDefinitionMethod <- match.arg(PSUDefinitionMethod)
+    PSUDefinitionMethod <- RstoxData::match_arg_informative(PSUDefinitionMethod)
     if(grepl("StationToPSU", PSUDefinitionMethod, ignore.case = TRUE)) {
         PSUDefinitionMethod <- "Identity"
     }

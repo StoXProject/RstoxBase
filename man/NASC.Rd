@@ -4,7 +4,7 @@
 \alias{NASC}
 \title{NASC}
 \usage{
-NASC(StoxAcousticData = NULL)
+NASC(StoxAcousticData)
 }
 \arguments{
 \item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}

@@ -35,8 +35,8 @@ DefinePSU <- function(
 ) {
     
     # Get the DefinitionMethod and PSUType:
-    DefinitionMethod <- match.arg(DefinitionMethod)
-    PSUType <- match.arg(PSUType)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
+    PSUType <- RstoxData::match_arg_informative(PSUType)
     
     # Get the MergedStoxDataStationLevel if not given directly:
     if(!length(MergedStoxDataStationLevel)) {
@@ -60,7 +60,7 @@ DefinePSU <- function(
     prefix <- getRstoxBaseDefinitions("getPSUPrefix")(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
-    # Make sure that there is only one row per SSU:
+    # Make sure that there is only one row per SSU in the MergedStoxDataStationLevel:
     notDuplicatedSSUs <- !duplicated(MergedStoxDataStationLevel[[SSULabel]])
     MergedStoxDataStationLevel <- MergedStoxDataStationLevel[notDuplicatedSSUs, ]
     
@@ -68,281 +68,283 @@ DefinePSU <- function(
     ### # And order the SSUs by time:
     ### data.table::setorderv(MergedStoxDataStationLevel, "DateTime")
     
-    # Get SSUs:
+    # Get SSUs, as it is needed for more than one DefinitionMethod (Identity, DeleteAllPSUs, Manual):
     SSUs <- MergedStoxDataStationLevel[[SSULabel]]
     
-    
-    # Return immediately if UseProcessData = TRUE:
+    # If UseProcessData = TRUE, from "EDSU"/"Station" to "SSU": 
     if(UseProcessData) {
-        
-        # Rename from "EDSU"/"Station" to "SSU": 
         processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
-        
-        allSSUsMissing <- !length(intersect(SSUs, processData$SSU_PSU$SSU))
-        if(allSSUsMissing) {
-            warning(
-                "StoX: All ", 
-                SSULabel, "(s)", 
-                " that are present as tagged to one or more PSUs in the process data are missing in the ", 
-                "Stox", PSUType, "Data. If you are using a copy of an old project with new data, please be aware that DefineAcousticPSU and DefineBioticAssignment processes contains the process data of the old project, which usually does not fit to the new data. Rerun these processes with UseProcessData turned off, and an appropriate DefinitionMethod."
-            )
-        }
-        
-        # Remove any EDSUs that are not tagged to a PSU and that are missing in the StoxData:
-        unusedAndMissingInStoxData <- processData$SSU_PSU[, is.na(PSU) & ! SSU %in% SSUs]
-        if(any(unusedAndMissingInStoxData, na.rm = TRUE)) {
-            processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
-        }
-        
-        # Add any SSUs present in the StoxData that are not present in the processData:
-        missingSSUs <- ! SSUs %in% processData$SSU_PSU$SSU
-        if(any(missingSSUs, na.rm = TRUE)) {
-            SSU_PSU <- data.table::data.table(
-                SSU = SSUs[missingSSUs], 
-                PSU = NA_character_
-            )
-            processData$SSU_PSU <- rbind(
-                processData$SSU_PSU, 
-                SSU_PSU
-            )
-        }
-        
-        # Remove any empty string PSUs, which were created with RstoxFramework::removeEDSU in RstoxFramework <= 3.3.5:
-        atEmptyStringPSUs <- processData$SSU_PSU[, nchar(PSU) == 0]
-        if(any(atEmptyStringPSUs, na.rm = TRUE)) {
-            processData$SSU_PSU[atEmptyStringPSUs, PSU := NA_character_]
-        }
-        
-        # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
-        usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
-        if(any(usedButMissingInStoxData, na.rm = TRUE) && !allSSUsMissing) {
-            #SSULabel <- switch(PSUType, Acoustic = "EDSU", Biotic = "Station")
-            
-            # Get the SSUs that are missing in the StoxData:
-            usedButMissingInStoxData_SSU <- processData$SSU_PSU[usedButMissingInStoxData, SSU]
-            # Get a table of Stratum, PSU and SSU for these SSUs:
-            Stratum_PSU_SSU <- merge(processData$Stratum_PSU, processData$SSU_PSU, by = "PSU", all = TRUE)
-            Stratum_PSU_SSU <- subset(Stratum_PSU_SSU, SSU %in% usedButMissingInStoxData_SSU)
-            data.table::setnames(Stratum_PSU_SSU, "SSU", SSULabel)
-            # Reorder and paste to one line per SSU:
-            data.table::setcolorder(Stratum_PSU_SSU, c("Stratum", "PSU", SSULabel))
-            usedButMissingInStoxDataInfo <- do.call(paste, c(Stratum_PSU_SSU, list(sep = ",")))
-            
-            warning(
-                "StoX: There are ", sum(usedButMissingInStoxData), " out of ", length(usedButMissingInStoxData), " ", 
-                SSULabel, if(length(usedButMissingInStoxData) > 1) "(s)", 
-                " that are present as tagged to one or more PSUs in the process data, but that are not present in the ", 
-                "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data or using a filter. StoX should ignore these ", 
-                SSULabel, "(s)", " but for clarity it is advised to remove them from the PSUs. This can be done manually in the Stratum/PSU winidow of the StoX GUI, or by re-running the Define", PSUType, "PSU proecss with an automatic DefinitionMethod. The following Stratum,PSU,", SSULabel, " are not present in the Stox", PSUType, "Data: \n", printErrorIDs(usedButMissingInStoxDataInfo)
-            )
-        }
-        
-        # Remove PSUs that do not have a stratum:
-        processData <- removePSUsWithMissingStratum(processData)
-        
-        # Remove empty PSUs:
-        processData <- removeEmptyPSUs(processData)
-        
-        # Rename back from "SSU" to "EDSU"/"Station": 
-        processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
-        
-        ## Add the PSUByTime:
-        #if(SavePSUByTime) {
-        #    processData$PSUByTime <- getPSUByTime(
-        #        PSUProcessData = processData, 
-        #        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-        #        PSUType = PSUType
-        #    )
-        #}
-        return(processData)
     }
-    
-
-    # Speical care is needed if DefinitionMethod is "ResourceFile", which only applies to AcousicPSU:
-    if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
-        
-        if(PSUType == "Acoustic") {
-            # Read from the project.xml:
-            AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+    else {
+        # If DefinitionMethod is "ResourceFile", read from a project.xml file:
+        if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
             
-            # Add the PSUByTime:
-            if(SavePSUByTime) {
-                AcousticPSU$PSUByTime <- getPSUByTime(
-                    PSUProcessData = AcousticPSU, 
-                    MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-                    PSUType = PSUType
-                )
+            if(PSUType == "Acoustic") {
+                # Read from the project.xml:
+                AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+                
+                # Add the PSUByTime:
+                if(SavePSUByTime) {
+                    AcousticPSU$PSUByTime <- getPSUByTime(
+                        AcousticPSU, 
+                        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                        PSUType = PSUType
+                    )
+                }
+                return(AcousticPSU)
             }
-            return(AcousticPSU)
+            else if(PSUType == "Biotic") {
+                # Read from the project.xml:
+                MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
+                    StoxData, 
+                    tableNames = c("Cruise", "Station", "Haul"), 
+                    output.only.last = TRUE, 
+                    all = TRUE
+                )
+                
+                
+                BioticPSU <- readBioticPSUFrom2.7(FileName, MergedStoxDataHaulLevel = MergedStoxDataHaulLevel)
+                return(BioticPSU)
+            }
+            else {
+                stop("Invalid PSUType, must be one of \"Acoustic\" and \"Biotic\"")
+            }
         }
-        else if(PSUType == "Biotic") {
-            # Read from the project.xml:
-            MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
-                StoxData, 
-                tableNames = c("Cruise", "Station", "Haul"), 
-                output.only.last = TRUE, 
-                all = TRUE
+        
+        # If DefinitionMethod = "Identity", use each SSU as a PSU:
+        if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
+            
+            # Define PSUIDs and PSUNames:
+            PSUID <- seq_along(SSUs)
+            PSUName <- getPSUName(PSUID, prefix)
+            
+            # Set each SSU as a PSU:
+            SSU_PSU <- data.table::data.table(
+                SSU = SSUs, 
+                PSU = PSUName
             )
             
+            # Find the stratum of each PSU:
+            apply_and_set_use_s2_to_FALSE(
+                Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel), 
+                msg = FALSE
+            )
+        }
+        # If DefinitionMethod = "PreDefined" use times to interpret the PSUs (only used for acoustic PSUs):
+        else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
             
-            BioticPSU <- readBioticPSUFrom2.7(FileName, MergedStoxDataHaulLevel = MergedStoxDataHaulLevel)
-            return(BioticPSU)
-        }
-        else {
-            stop("Invalid PSUType, must be one of \"Acoustic\" and \"Biotic\"")
-        }
-    }
-    
-    
-    # Use each SSU as a PSU:
-    if(grepl("Identity", DefinitionMethod, ignore.case = TRUE)) {
-        
-        # Define PSUIDs and PSUNames:
-        PSUID <- seq_along(SSUs)
-        PSUName <- getPSUName(PSUID, prefix)
-        
-        # Set each SSU as a PSU:
-        SSU_PSU <- data.table::data.table(
-            SSU = SSUs, 
-            PSU = PSUName
-        )
-        
-        # Find the stratum of each PSU:
-        apply_and_set_use_s2_to_FALSE(
-            Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel), 
-            msg = FALSE
-        )
-    }
-    # Use each SSU as a PSU:
-    else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
-        
-        # Interpret middle times:
-        MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
-        
-        # Rename the SSULabel to "SSU":
-        MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
-        
-        # Get the SSU indices for each PSU:
-        Stratum_PSU_SSU <- PSUProcessData$PSUByTime[, data.table::data.table(
-            Stratum, 
-            PSU, 
-            Cruise, 
-            # Use closed interval on both sides here to allow for time points and not only time interavls:
-            SSUIndex = which(
-                MergedStoxDataStationLevel$MiddleDateTime >= StartDateTime & 
-                MergedStoxDataStationLevel$MiddleDateTime <= StopDateTime &
-                MergedStoxDataStationLevel$Cruise == Cruise
+            # Interpret middle times:
+            MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
+            
+            # Rename the SSULabel to "SSU":
+            MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
+            
+            # Get the SSU indices for each PSU:
+            Stratum_PSU_SSU <- PSUProcessData$PSUByTime[, data.table::data.table(
+                Stratum, 
+                PSU, 
+                Cruise, 
+                # Use closed interval on both sides here to allow for time points and not only time interavls:
+                SSUIndex = which(
+                    MergedStoxDataStationLevel$MiddleDateTime >= StartDateTime & 
+                        MergedStoxDataStationLevel$MiddleDateTime <= StopDateTime &
+                        MergedStoxDataStationLevel$Cruise == Cruise
                 )
             ), 
             by = seq_len(nrow(PSUProcessData$PSUByTime))]
-        
-        # Remove PSUs with no SSUs:
-        Stratum_PSU_SSU <- Stratum_PSU_SSU[!is.na(SSUIndex), ]
-        
-        # Add the SSUs:
-        Stratum_PSU_SSU[, SSU := MergedStoxDataStationLevel$SSU[SSUIndex]]
-        
-        # Split into Stratum_PSU and SSU_PSU:
-        Stratum_PSU <- unique(Stratum_PSU_SSU[, c("Stratum", "PSU")])
-        SSU_PSU <- unique(Stratum_PSU_SSU[, c("SSU", "PSU")])
-        
-        # Add all SSUs:
-        SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
-        
-        # Restore SSULabel:
-        MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType)
-    }
-    
-    #else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
-    #    
-    #    # Find intervals:
-    #    # Extract the interavl axis variable, such as DateTime or Log:
-    #    IntervalAxis <- MergedStoxDataStationLevel[[IntervalVariable]]
-    #    # Define the breaks, covering the range of the IntervalAxis, by steps defined by Interval:
-    #    IntervalBreaks <- seq(
-    #        Interval * floor(min(IntervalAxis/Interval)), 
-    #        Interval * ceiling(max(IntervalAxis/Interval)), 
-    #        Interval
-    #    )
-    #    # Find which intervals the IntervalAxis falls inside:
-    #    intervals <- findInterval(IntervalAxis, IntervalBreaks)
-    #    # Convert the intervals to 1, 2, 3, ...:
-    #    intervals <- match(intervals, unique(intervals))
-    #    # - and use these to define PSUs:
-    #    PSU <- getPSUName(intervals, prefix)
-    #    
-    #    # Return the PSU definition with empty stratum links:
-    #    SSU_PSU <- data.table::data.table(
-    #        SSU = SSU, 
-    #        PSU = PSU
-    #    )
-    #    
-    #    # Find the stratum of each PSU:
-    #    Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, Stat#ionLevel)
-    #}
-    
-    
-    # Otherwise return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
-    else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
-        SSU_PSU <- data.table::data.table(
-            SSU = SSUs, 
-            PSU = NA_character_
-        )
-        Stratum_PSU <- data.table::data.table()
-    }
-    else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
-        if(length(processData)) {
-            processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
-            #return(processData)
-            SSU_PSU <- processData$SSU_PSU
-            Stratum_PSU <- processData$Stratum_PSU
+            
+            # Remove PSUs with no SSUs:
+            Stratum_PSU_SSU <- Stratum_PSU_SSU[!is.na(SSUIndex), ]
+            
+            # Add the SSUs:
+            Stratum_PSU_SSU[, SSU := MergedStoxDataStationLevel$SSU[SSUIndex]]
+            
+            # Split into Stratum_PSU and SSU_PSU:
+            Stratum_PSU <- unique(Stratum_PSU_SSU[, c("Stratum", "PSU")])
+            SSU_PSU <- unique(Stratum_PSU_SSU[, c("SSU", "PSU")])
+            
+            # Add all SSUs:
+            SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
+            
+            # Restore SSULabel:
+            MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType)
         }
-        else {
+        
+        #else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
+        #    
+        #    # Find intervals:
+        #    # Extract the interavl axis variable, such as DateTime or Log:
+        #    IntervalAxis <- MergedStoxDataStationLevel[[IntervalVariable]]
+        #    # Define the breaks, covering the range of the IntervalAxis, by steps defined by Interval:
+        #    IntervalBreaks <- seq(
+        #        Interval * floor(min(IntervalAxis/Interval)), 
+        #        Interval * ceiling(max(IntervalAxis/Interval)), 
+        #        Interval
+        #    )
+        #    # Find which intervals the IntervalAxis falls inside:
+        #    intervals <- findInterval(IntervalAxis, IntervalBreaks)
+        #    # Convert the intervals to 1, 2, 3, ...:
+        #    intervals <- match(intervals, unique(intervals))
+        #    # - and use these to define PSUs:
+        #    PSU <- getPSUName(intervals, prefix)
+        #    
+        #    # Return the PSU definition with empty stratum links:
+        #    SSU_PSU <- data.table::data.table(
+        #        SSU = SSU, 
+        #        PSU = PSU
+        #    )
+        #    
+        #    # Find the stratum of each PSU:
+        #    Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, Stat#ionLevel)
+        #}
+        
+        
+        # If DefinitionMethod = "DeleteAllPSUs" return empty Stratum_PSU and SSU_PSU with all SSUs and empty string as PSU:
+        else if(grepl("DeleteAllPSUs", DefinitionMethod, ignore.case = TRUE)) {
             SSU_PSU <- data.table::data.table(
                 SSU = SSUs, 
                 PSU = NA_character_
             )
             Stratum_PSU <- data.table::data.table()
         }
-    }
-    else {
-        stop("Inavlid DefinitionMethod")
-    }
-    
-    # Warn if there are strata with only one PSU, which may result in missing variance:
-    if(NROW(Stratum_PSU)) {
-        numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
-        stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
-        if(any(numberOfPSUsInStratum == 1, na.rm = TRUE)) {
-            warning("StoX: The following strata have only one PSU, which may result in missing (NA) variance estimate: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+        # Manual implies to use the existing process data, or create an empty set if not present:
+        else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+            if(length(processData)) {
+                processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+                #return(processData)
+                SSU_PSU <- processData$SSU_PSU
+                Stratum_PSU <- processData$Stratum_PSU
+            }
+            else {
+                SSU_PSU <- data.table::data.table(
+                    SSU = SSUs, 
+                    PSU = NA_character_
+                )
+                Stratum_PSU <- data.table::data.table()
+            }
         }
+        else {
+            stop("Inavlid DefinitionMethod")
+        }
+        
+        # Define the processData:
+        processData <- list(
+            Stratum_PSU = Stratum_PSU, 
+            SSU_PSU = SSU_PSU
+        )
     }
     
-    # Define the PSUProcessData:
-    PSUProcessData <- list(
-        Stratum_PSU = Stratum_PSU, 
-        SSU_PSU = SSU_PSU
-    )
+    
+    #### Warning action 1: ####
+    # Warning if the is no intersection between the SSUs of the processData and StoxData. This can sometimes happen if the user makes a copy of an old project and does not redefine the PSUs:
+    allSSUsMissing <- !length(intersect(SSUs, processData$SSU_PSU$SSU))
+    if(allSSUsMissing) {
+        warning(
+            "StoX: All ", 
+            SSULabel, "s", 
+            " that are present as tagged to one or more PSUs in the process data are missing in the ", 
+            "Stox", PSUType, "Data. If you are using a copy of an old project with new data, please be aware that DefineAcousticPSU and DefineBioticAssignment processes contains the process data of the old project, which usually does not fit to the new data. Rerun these processes with UseProcessData turned off, and an appropriate DefinitionMethod."
+        )
+    }
+    
+    #### Warning action 2: ####
+    # Remove any SSUs that are not tagged to a PSU and that are missing in the StoxData. This should be quite safe, and fixes an obvivous error in the tagging:
+    unusedAndMissingInStoxData <- processData$SSU_PSU[, is.na(PSU) & ! SSU %in% SSUs]
+    if(any(unusedAndMissingInStoxData, na.rm = TRUE)) {
+        processData$SSU_PSU <- subset(processData$SSU_PSU, !unusedAndMissingInStoxData)
+    }
+    
+    #### Warning action 3: ####
+    # Add any SSUs present in the StoxData that are not present in the processData. This is important, as we require that all EDSUs are present in the PSU-data!!:
+    missingSSUs <- ! SSUs %in% processData$SSU_PSU$SSU
+    if(any(missingSSUs, na.rm = TRUE)) {
+        SSU_PSU <- data.table::data.table(
+            SSU = SSUs[missingSSUs], 
+            PSU = NA_character_
+        )
+        processData$SSU_PSU <- rbind(
+            processData$SSU_PSU, 
+            SSU_PSU
+        )
+    }
+    
+    #### Warning action 4: ####
+    # Remove any empty string PSUs, which were created with RstoxFramework::removeEDSU in RstoxFramework <= 3.3.5:
+    atEmptyStringPSUs <- processData$SSU_PSU[, nchar(PSU) == 0]
+    if(any(atEmptyStringPSUs, na.rm = TRUE)) {
+        processData$SSU_PSU[atEmptyStringPSUs, PSU := NA_character_]
+    }
+    
+    #### Warning action 5: ####
+    # Add a warning if there are EDSUs that are tagged but not present in the StoxAcousticData:
+    usedButMissingInStoxData <- processData$SSU_PSU[, !is.na(PSU) & ! SSU %in% SSUs]
+    if(any(usedButMissingInStoxData, na.rm = TRUE) && !allSSUsMissing) {
+        #SSULabel <- switch(PSUType, Acoustic = "EDSU", Biotic = "Station")
+        
+        # Get the SSUs that are missing in the StoxData:
+        usedButMissingInStoxData_SSU <- processData$SSU_PSU[usedButMissingInStoxData, SSU]
+        # Get a table of Stratum, PSU and SSU for these SSUs:
+        Stratum_PSU_SSU <- merge(processData$Stratum_PSU, processData$SSU_PSU, by = "PSU", all = TRUE)
+        Stratum_PSU_SSU <- subset(Stratum_PSU_SSU, SSU %in% usedButMissingInStoxData_SSU)
+        data.table::setnames(Stratum_PSU_SSU, "SSU", SSULabel)
+        # Reorder and paste to one line per SSU:
+        data.table::setcolorder(Stratum_PSU_SSU, c("Stratum", "PSU", SSULabel))
+        usedButMissingInStoxDataInfo <- do.call(paste, c(Stratum_PSU_SSU, list(sep = ",")))
+        
+        warning(
+            "StoX: There are ", sum(usedButMissingInStoxData), " out of ", length(usedButMissingInStoxData), " ", 
+            SSULabel, if(length(usedButMissingInStoxData) > 1) "s", 
+            " that are present as tagged to one or more PSUs in the process data, but that are not present in the ", 
+            "Stox", PSUType, "Data. This indicates that data used when defining the PSUs have been removed either in the input data or using a filter. StoX should ignore these ", 
+            SSULabel, if(length(usedButMissingInStoxData) > 1) "s", " but for clarity it is advised to remove them from the PSUs. This can be done manually in the Stratum/PSU winidow of the StoX GUI, or by re-running the Define", PSUType, "PSU proecss with an automatic DefinitionMethod. The following Stratum,PSU,", SSULabel, " are not present in the Stox", PSUType, "Data: \n", RstoxData::printErrorIDs(usedButMissingInStoxDataInfo)
+        )
+    }
     
     # Remove PSUs that do not have a stratum:
-    PSUProcessData <- removePSUsWithMissingStratum(PSUProcessData)
+    processData <- removePSUsWithMissingStratum(processData)
     
-    # Remove empy PSUs:
-    PSUProcessData <- removeEmptyPSUs(PSUProcessData)
+    # Remove empty PSUs:
+    processData <- removeEmptyPSUs(processData)
     
-    # Rename the data according to the model type:
-    PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData = PSUProcessData, PSUType = PSUType)
+    # Rename back from "SSU" to "EDSU"/"Station": 
+    processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
+    
+    # Warn if there are strata with only one PSU, which may result in missing variance:
+    onlyOnePSU_Warning(processData$Stratum_PSU)
+    
     
     # Add the PSU time information:
-    if(SavePSUByTime) {
-        PSUProcessData$PSUByTime <- getPSUByTime(
-            PSUProcessData = PSUProcessData, 
+    if(!UseProcessData && SavePSUByTime) {
+        processData$PSUByTime <- getPSUByTime(
+            processData, 
             MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
             PSUType = PSUType
         )
     }
     
-    return(PSUProcessData)
+    return(processData)
+}
+
+
+onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
+    PSUType <- RstoxData::match_arg_informative(PSUType)
+    
+    if(NROW(Stratum_PSU)) {
+        numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
+        stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
+        # This was a bug, where the warning was triggered when the Stratum name was "1". Changed this on 2022-08-15:
+        #if(any(numberOfPSUsInStratum == 1, na.rm = TRUE)) {
+        if(numberOfPSUsInStratum[, any(N == 1, na.rm = TRUE)]) {
+            # This warning adresses the problem of only one biotic PSU (often the same as one station) in a stratum, which implies identical SuperIndividualsData for all bootstrap runs in that stratum. When bootstrapping an acoustic-trawl project the biotic PSUs are not relevant, as Hauls are resampled in each Stratum. A warning for only one Haul in a Stratum is issued in BioticAssignment:
+            if(PSUType == "Biotic") {
+                warning("StoX: The following strata have only one BioticPSU, which is in conflict with the principle of bootstrapping as it causes identical SuperIndividualsData for all bootstrap runs in that stratum. When running ReportBootstrap for a swept-area estimate (bootstrapping a MeanLengthDistribution process) with \"Stratum\" included in GroupingVariables, the variance from this stratum will be NA. When  \"Stratum\" is NOT included in GroupingVariables, the stratum with only one PSU will not contibute to the variance, as all bootstrap runs will be identical from that stratum. This implies UNDER ESTIMATION of the variance! Please consider merging strata to avoid this problem: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+            } 
+            else {
+                warning("StoX: The following strata have only one AcousticPSU, which is in conflict with the principle of bootstrapping. When running ReportBootstrap for an acoustic-trawl estimate (bootstrapping a Biotic process) with \"Stratum\" included in GroupingVariables, the stratum with only one PSU will not contibute to the variance from resampling AcousticPSUs. This implies UNDER ESTIMATION of the variance! Please consider re-defining the AcousticPSUs or merging strata to avoid this problem: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+            } 
+            #warning("StoX: The following strata have only one PSU, which may result in missing (NA) variance estimate: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+        }
+    }
 }
 
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU i loacted geographically:
@@ -386,7 +388,7 @@ getStratumOfSSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
         Stratum = unlist(StratumNames), 
         PSU = SSU_PSU$PSU
     )
-
+    
     return(Stratum_PSU)
 }
 #getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
@@ -443,7 +445,7 @@ removeEmptyPSUs <- function(PSUProcessData) {
 }
 
 renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
-    PSUType <- match.arg(PSUType)
+    PSUType <- RstoxData::match_arg_informative(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
     if(reverse) {
@@ -463,7 +465,7 @@ renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic
 
 
 renameSSUToSSULabelInTable <- function(table, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
-    PSUType <- match.arg(PSUType)
+    PSUType <- RstoxData::match_arg_informative(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
     # Make a copy, since we are using setnames:
@@ -510,19 +512,19 @@ DefineBioticPSU <- function(
     FileName = character()
 ) {
     
-    if(UseProcessData) {
-        return(processData)
+    if(!UseProcessData) {
+        if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+            warning("StoX: Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
+        }
     }
     
     # Get the DefinitionMethod:
     #DefinitionMethod <- match.arg(DefinitionMethod)
-    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else RstoxData::match_arg_informative(DefinitionMethod)
     if(grepl("StationToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
-    if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
-        warning("StoX: Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
-    }
+    
     
     # Define the PSUs:
     BioticPSU <- DefinePSU(
@@ -576,7 +578,7 @@ DefineAcousticPSU <- function(
     
     # Get the DefinitionMethod:
     #DefinitionMethod <- match.arg(DefinitionMethod)
-    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else match.arg(DefinitionMethod)
+    DefinitionMethod <- if(isEmptyString(DefinitionMethod)) "" else RstoxData::match_arg_informative(DefinitionMethod)
     if(grepl("EDSUToPSU", DefinitionMethod, ignore.case = TRUE)) {
         DefinitionMethod <- "Identity"
     }
@@ -595,7 +597,7 @@ DefineAcousticPSU <- function(
         SavePSUByTime = TRUE, 
         PSUProcessData = AcousticPSU
     )
-
+    
     
     # Format the output:
     formatOutput(AcousticPSU, dataType = "AcousticPSU", keep.all = FALSE)
@@ -708,7 +710,7 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
         StationTable = StationTable
     )
     PSUStartStopDateTime <- data.table::rbindlist(PSUStartStopDateTime)
-
+    
     # Add the PSU:
     PSUStartStopDateTime <- data.table::data.table(
         PSU = PSU, 
@@ -773,9 +775,9 @@ DefineLayer <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     # Get the DefinitionMethod:
-    LayerType <- match.arg(LayerType)
+    LayerType <- RstoxData::match_arg_informative(LayerType)
     
     # If given as a list of data.tables, extract the table holding the vertical resolution:
     if(is.list(StoxData) && all(sapply(StoxData, data.table::is.data.table))) {
@@ -817,25 +819,31 @@ DefineLayer <- function(
     
     # If "WaterColumn" is requested use the full range:
     if(grepl("WaterColumn", DefinitionMethod, ignore.case = TRUE)) {
-        if(all(is.na(data[[VerticalResolutionMin]]))) {
-            MinLayerDepth <- 0
-        }
-        else {
-            MinLayerDepth <- min(data[[VerticalResolutionMin]], na.rm = TRUE)
-        }
-        if(all(is.na(data[[VerticalResolutionMax]]))) {
-            MaxLayerDepth <- Inf
-        }
-        else {
-            MaxLayerDepth <- max(data[[VerticalResolutionMax]], na.rm = TRUE)
-        }
+        #if(all(is.na(data[[VerticalResolutionMin]]))) {
+        #    MinLayerDepth <- 0
+        #}
+        #else {
+        #    MinLayerDepth <- min(data[[VerticalResolutionMin]], na.rm = TRUE)
+        #}
+        #if(all(is.na(data[[VerticalResolutionMax]]))) {
+        #    MaxLayerDepth <- Inf
+        #}
+        #else {
+        #    MaxLayerDepth <- max(data[[VerticalResolutionMax]], na.rm = TRUE)
+        #}
+        
+        #Layer <- data.table::data.table(
+        #    Layer = "WaterColumn", 
+        #    #MinLayerDepth = possibleIntervals[1, 1], 
+        #    MinLayerDepth = MinLayerDepth, 
+        #    #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
+        #    MaxLayerDepth = MaxLayerDepth
+        #)
         
         Layer <- data.table::data.table(
             Layer = "WaterColumn", 
-            #MinLayerDepth = possibleIntervals[1, 1], 
-            MinLayerDepth = MinLayerDepth, 
-            #MaxLayerDepth = possibleIntervals[nrow(possibleIntervals), 2]
-            MaxLayerDepth = MaxLayerDepth
+            MinLayerDepth = 0, 
+            MaxLayerDepth = NA
         )
     }
     
@@ -852,6 +860,9 @@ DefineLayer <- function(
         # Accept values outside of the range of the possibleIntervals:
         validBreaks <- allBreaks %in% unlist(possibleIntervals) | allBreaks < rangeOfPossibleIntervals[1] | allBreaks > rangeOfPossibleIntervals[2]
         
+        if(any(is.na(validBreaks))) {
+            stop("The LayerTable contains missing values (NA).")
+        }
         # Error if any of the specified breaks are invalid:
         if(any(!validBreaks)) {
             stop("Some of the specified breaks are not at common breaks of all Log(distance). Possible breaks are [", paste(unlist(possibleIntervals), collapse = ", "), "]")
@@ -1108,7 +1119,7 @@ DefineBioticAssignment <- function(
 {
     
     # Get the DefinitionMethod:
-    LayerDefinition <- match.arg(LayerDefinition)
+    LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -1139,7 +1150,7 @@ DefineBioticAssignment <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Merge the StoxBioticData:
     MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
@@ -1179,8 +1190,10 @@ DefineBioticAssignment <- function(
         if(BioticAssignment[, all(is.na(Haul))]) {
             warning("StoX: No Hauls are loacted in any of the strata of the Acoustic PSUs, resulting in empty BioticAssignment.")
         }
+        
+        # 2022-10-31: why was this included? It causes warnings when adding hauls to a PSU that does not have any assigned hauls:
         # Discard  all rows with missing Haul:
-        BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
+        #BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
     }
     # Search for Hauls around all EDSUs of each PSU:
     else if(grepl("Radius|EllipsoidalDistance", DefinitionMethod, ignore.case = TRUE)) {
@@ -1314,6 +1327,7 @@ DefineBioticAssignment <- function(
         ]
         
     }
+    # Is this for backward campatibility??????????????
     else if(isEmptyString(DefinitionMethod)){
         if(length(processData)) {
             return(processData)
@@ -1355,6 +1369,15 @@ DefineBioticAssignment <- function(
     
     return(BioticAssignment)
 }
+
+
+notAllStationsInStratum_Warning <- function(BioticAssignment, StoxBioticData) {
+    
+    
+    
+}
+
+
 
 # Function to add Layer to BioticAssignment:
 addLayerToBioticAssignmentAndFormat <- function(
@@ -1570,7 +1593,7 @@ BioticAssignmentWeighting <- function(
     }
     
     # Get the DefinitionMethod:
-    WeightingMethod <- match.arg(WeightingMethod)
+    WeightingMethod <- RstoxData::match_arg_informative(WeightingMethod)
     
     # Define the weighting variable:
     weightingVariable <- getDataTypeDefinition(dataType = "BioticAssignment", elements = "weighting", unlist = TRUE)
@@ -1642,7 +1665,7 @@ BioticAssignmentWeighting <- function(
         NASCData <- subset(NASCData, EDSU %in% taggedEDSUs)
         
         # Get the LayerDefinition
-        LayerDefinition <- match.arg(LayerDefinition)
+        LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
         
         # Get the weights for each Haul:
         uniqueHauls <- unique(LengthDistributionData$Haul)
@@ -1875,7 +1898,7 @@ getMeanAcousticDensityAroundOneStation <- function(
         SpeciesLink = SpeciesLink
     ))
     
-    # Sum the acoustic density over length groups and beams:
+    # Sum the acoustic density over length groups and beams (and SpeciesCategory):
     AcousticDensityData$Data[, Density := sum(Density, na.rm = TRUE), by = "PSU"]
     AcousticDensityData$Data <- unique(AcousticDensityData$Data, by = "PSU")
     
@@ -1883,9 +1906,11 @@ getMeanAcousticDensityAroundOneStation <- function(
     #AcousticDensityData$Data[, Stratum := Survey]
     MeanAcousticDensityData <- MeanDensity(AcousticDensityData)
     
-    # Extract the row with non-missing Layer:
-    averageAcousticDensity <- MeanAcousticDensityData$Data[!is.na(Layer) & !is.na(Survey), Density]
-    #averageAcousticDensity <- AcousticDensityData$Data[!is.na(Layer) & !is.na(Survey), Density]
+    # Extract the row with non-missing Layer, Survey:
+    MeanAcousticDensityData$Data <- subset(MeanAcousticDensityData$Data, !is.na(Layer) & !is.na(Survey))
+    
+    # In MeanDensity it may happen that if there are both PSUs (actually EDSUs) with and without the target species (both empty and positive EDSUs), resulting two rows, one with SpeciesCategory NA and one with the first SpeciesCategory per PSU. The SpeciesCategory is not interesting at this point, as we are producing a Haul weight, which is not species specific. So we simply sum over all rows of the MeanAcousticDensityData$Data with na.rm = TRUE, so as to get a value both if al EDSUs are empty and if there is a mix of empty and posistive EDSUs:
+    averageAcousticDensity <- MeanAcousticDensityData$Data[, sum(Density, na.rm = TRUE)]
     
     return(averageAcousticDensity)
 }
@@ -1990,7 +2015,7 @@ DefineModel <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Get or read the model parameters and return in a list with the model name:
     output <- getModel(
@@ -2104,7 +2129,7 @@ DefineAcousticTargetStrength <- function(
 ) {
     
     # Get the methods:
-    AcousticTargetStrengthModel <- match.arg(AcousticTargetStrengthModel)
+    AcousticTargetStrengthModel <- RstoxData::match_arg_informative(AcousticTargetStrengthModel)
     
     # Define the model:
     DefineModel(
@@ -2159,7 +2184,7 @@ DefineRegression <- function(
 ) {
     
     # Get the methods:
-    RegressionModel <- match.arg(RegressionModel)
+    RegressionModel <- RstoxData::match_arg_informative(RegressionModel)
     
     # Define the model:
     DefineModel(
@@ -2218,8 +2243,8 @@ EstimateBioticRegression <- function(
 ) {
     
     # Get the methods:
-    InputDataType <- match.arg(InputDataType)
-    RegressionModel <- match.arg(RegressionModel)
+    InputDataType <- RstoxData::match_arg_informative(InputDataType)
+    RegressionModel <- RstoxData::match_arg_informative(RegressionModel)
     
     # Get the appropriate data:
     #if(InputDataType == "StoxBioticData") {
@@ -2258,9 +2283,9 @@ EstimateBioticRegression <- function(
         GroupingVariables = GroupingVariables, 
         EstimationMethod = EstimationMethod,
         data = .SD
-        ), 
-        by = GroupingVariables, 
-        .SDcols = names(data)] # Inlcude all columns, as the default is to skip the 'by' columns.
+    ), 
+    by = GroupingVariables, 
+    .SDcols = names(data)] # Inlcude all columns, as the default is to skip the 'by' columns.
     
     ## Since this is such a flexible datatype, we define the column order here, and use it on the RegressionTable below:
     #columnOrder <- c(
@@ -2282,7 +2307,7 @@ EstimateBioticRegression <- function(
     )
     
     return(Regression)
-    }
+}
 
 
 getRegressionTable <- function(
@@ -2378,7 +2403,7 @@ DefineSurvey <- function(
     }
     
     # Get the DefinitionMethod:
-    DefinitionMethod <- match.arg(DefinitionMethod)
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Read from a stoX 2.7 project.xml:
     if(DefinitionMethod == "ResourceFile") {
@@ -2403,7 +2428,7 @@ DefineSurvey <- function(
         )
     }
     
-        
+    
     return(SurveyTable)
 }
 

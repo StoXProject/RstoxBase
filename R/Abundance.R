@@ -88,7 +88,7 @@ Individuals <- function(
 ) {
 
     # Get the DefinitionMethod:
-    QuantityType <- match.arg(QuantityType)
+    QuantityType <- RstoxData::match_arg_informative(QuantityType)
     
     # Merge StoxBtiotic:
     MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
@@ -179,9 +179,9 @@ SuperIndividuals <- function(
     DistributionMethod = c("Equal", "HaulDensity"), 
     LengthDistributionData
 ) {
-    
+
     # Get the DistributionMethod:
-    DistributionMethod <- match.arg(DistributionMethod)
+    DistributionMethod <- RstoxData::match_arg_informative(DistributionMethod)
     
     # Make a copy of the IndividualsData:
     SuperIndividualsData <- data.table::copy(IndividualsData)
@@ -473,28 +473,28 @@ addLengthGroupOneSpecies <- function(
     
     # (3) For the length intervals not exactly matched in the master, find the appropriate intervals. The intervalVector may contain intervals that are not present in the data (intervals between present intervals):
     #data[, is.na(LengthGroup)]
-    intervalVector <- sort(
-        unique(c(
-            uniqueLengthGroups[[lengthVar]], 
-            uniqueLengthGroups[[lengthVar]] + uniqueLengthGroups[[resolutionVar]]
-        ))
-    )
-    indexVector <- NA
-    present <- intervalVector %in% uniqueLengthGroups[[lengthVar]]
-    indexVector[present] <- seq_len(sum(present))
-    
-    # Get the LengthGroup using findInterval (and the quote.convert() function):
     notExactlyMatched <- atSpeciesInData[is.na(data$LengthGroup[atSpeciesInData])]
-    data[notExactlyMatched, LengthGroup := findInterval(
-        eval(quote.convert(lengthVar)), 
-        ..intervalVector
+    startLength <- uniqueLengthGroups$IndividualTotalLength
+    endLength <- startLength + uniqueLengthGroups$LengthResolution
+    data[notExactlyMatched, LengthGroup := findInterval_disjoint(
+        IndividualTotalLength, 
+        start = startLength, 
+        end = endLength, 
+        out = "start"
     )]
-    if(any(data$LengthGroup == 0, na.rm = TRUE)) {
-        stop("The length resolution of the inputs of SuperIndividuals does not match!")
-    }
     
-    # Convert to the indices in the uniqueLengthGroups:
-    data[notExactlyMatched, LengthGroup := indexVector[LengthGroup]]
+    
+    hasInvalidLength <- data[atSpeciesInData, is.na(LengthGroup)]
+    if(any(hasInvalidLength)) {
+        if("Individual" %in% names(data)) {
+            invalidIndividuals <- do.call(paste, c(subset(data[atSpeciesInData, ], hasInvalidLength, select = c("Individual", "IndividualTotalLength")), list(sep = ", ")))
+            warning("StoX: There are Individuals in the IndividualsData with IndividualTotalLength that do not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Individuals, IndividualTotalLength:\n", RstoxData::printErrorIDs(invalidIndividuals))
+        }
+        else if("Haul" %in% names(data)) {
+            invalidHauls <-data[atSpeciesInData[hasInvalidLength], Haul]
+            warning("StoX: There are Hauls in the LenghtDistributionData with IndividualTotalLength that do not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Hauls:\n", RstoxData::printErrorIDs(invalidHauls))
+        }
+  }
     
     # Also replace the lengthVar and resolutionVar by those in the master:
     data[atSpeciesInData, `:=`(c(lengthVar), uniqueLengthGroups[[lengthVar]][LengthGroup])]
@@ -503,6 +503,34 @@ addLengthGroupOneSpecies <- function(
     return(TRUE)
 }
 
+# Function to find intervals from start and end points:
+findInterval_disjoint <- function(x, start, end, out = c("index", "start", "end"), right.closed = FALSE) {
+    out <- match.arg(out)
+    if(length(start) != length(end)) {
+        stop("start and end must have the same length!")
+    }
+    output <- rep(NA, length(x))
+    for(ind in seq_along(start)) {
+        if(right.closed) {
+            at <- x >= start[ind] & x <= end[ind]
+        }
+        else {
+            at <- x >= start[ind] & x < end[ind]
+        }
+        if(any(at)) {
+            if(out == "index") {
+                output[at] <- ind
+            }
+            else if(out == "start") {
+                output[at] <- start[ind]
+            }
+            else if(out == "end") {
+                output[at] <- end[ind]
+            }
+        }
+    }
+    return(output)
+}
 
 
 
@@ -591,7 +619,7 @@ ImputeSuperIndividuals <- function(
     #LengthInterval = numeric()
 ) {
     
-    ImputationMethod <- match.arg(ImputationMethod)
+    ImputationMethod <- RstoxData::match_arg_informative(ImputationMethod)
     
     if(ImputationMethod == "RandomSampling") {
         # Check that the length resolution is constant: 
@@ -883,6 +911,7 @@ ImputeDataByRegression <- function(
     dataCopy <- data.table::copy(data)
     
     
+    
     # There should either be a demannd for only one row, or we should re-code to treating each row separately!!!!!!!!!!!!!!!!!!!!!!!!!111
     if(NROW(Regression$RegressionTable) > 1) {
         stop("Currently, only one row in the regression table is supported.")
@@ -893,25 +922,33 @@ ImputeDataByRegression <- function(
     IndependentVariable <- Regression$RegressionTable$IndependentVariable[1]
     DependentResolutionVariable <- Regression$RegressionTable$DependentResolutionVariable[1]
     IndependentResolutionVariable <- Regression$RegressionTable$IndependentResolutionVariable[1]
+    checkWhetherVariableIsPresent(DependentVariable, dataCopy)
+    checkWhetherVariableIsPresent(IndependentVariable, dataCopy)
+    checkWhetherVariableIsPresent(DependentResolutionVariable, dataCopy)
+    checkWhetherVariableIsPresent(IndependentResolutionVariable, dataCopy)
     
-    
-    # Find rows with missing DependentVariable and present IndependentVariable:
-    atImpute <- dataCopy[, which(is.na(get(DependentVariable)) & !is.na(get(IndependentVariable)))]
     
     # Merge in the regression parameters:
     mergeBy <- intersect(
         names(dataCopy), 
         names(Regression$RegressionTable)
     )
+    
     tomerge <- setdiff(names(Regression$RegressionTable), c("DependentVariable", "IndependentVariable"))
-    removeAfterwards <- setdiff(names(Regression$RegressionTable), names(dataCopy))
+    removeAfterwards <- setdiff(names(Regression$RegressionTable), c(names(dataCopy), c("DependentVariable", "IndependentVariable")))
     if(length(mergeBy) > 0) {
-        dataCopy <- merge(dataCopy, Regression$RegressionTable[, ..tomerge], by = mergeBy, all.x = TRUE)
+        # Stop if there are no intersecting variables to merge by:
+        intersectingMergeBy <- fintersect(dataCopy[, mergeBy, with = FALSE], Regression$RegressionTable[, mergeBy, with = FALSE])
+        if(!nrow(intersectingMergeBy)) {
+            stop("There are no intersecting rows for the variables ", paste(mergeBy, collapse = ", "), ". No regression applied.")
+            return(dataCopy)
+        }
+        dataCopy <- merge(dataCopy, Regression$RegressionTable[, ..tomerge], by = mergeBy, all.x = TRUE, sort = FALSE)
     }
     else {
         dataCopy <- cbind(dataCopy, Regression$RegressionTable[, ..tomerge])
     }
-    
+
     # Add half of the resolution:
     #if(length(thisDependentResolutionVariable) && !is.na(thisDependentResolutionVariable)) {
         addHalfResolution(data = dataCopy, variable = DependentVariable, resolutionVariable = DependentResolutionVariable)
@@ -928,6 +965,10 @@ ImputeDataByRegression <- function(
     RegressionModel <- Regression$RegressionModel$RegressionModel
     modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
     regressionFunction <- getRstoxBaseDefinitions("modelFunctions")[["Regression"]][[RegressionModel]]
+    
+    # Find rows with missing DependentVariable and present IndependentVariable:
+    atImpute <- dataCopy[, which(is.na(get(DependentVariable)) & !is.na(get(IndependentVariable)))]
+    # Run the regression:
     dataCopy[atImpute, eval(DependentVariable) := regressionFunction(get(eval(IndependentVariable)), .SD), .SDcols = modelParameters]
     
     dataCopy[, (removeAfterwards) := NULL]
@@ -936,6 +977,11 @@ ImputeDataByRegression <- function(
     return(dataCopy)
 }
 
+checkWhetherVariableIsPresent <- function(var, data) {
+    if(length(var) && ! var %in% names(data)) {
+        stop("The variable ", var, " given by ", deparse(substitute(var)), " is not present in the data.")
+    } 
+}
 
 addHalfResolution <- function(data, variable, resolutionVariable, reverse = FALSE) {
     if(length(variable) && !is.na(variable) && length(resolutionVariable) && !is.na(resolutionVariable)) {

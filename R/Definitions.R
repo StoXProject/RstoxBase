@@ -651,7 +651,7 @@ initiateRstoxBase <- function(){
     
     defaultEstimationMethod <- list(
         Regression = list(
-            SimpleLinear = "Linear", 
+            SimpleLinear = "SimpleLinear", 
             Power = "LogLogLinear"
         )
     )
@@ -689,7 +689,7 @@ initiateRstoxBase <- function(){
             
             # Simple linear regression Y = a + bX:
             SimpleLinear = function(independentVariable, parameters) {
-                parameters$Intercept + parameters$Slope * get(independentVariable)
+                parameters$Intercept + parameters$Slope * independentVariable
             }, 
             
             # Power regression Y = aX^b:
@@ -879,10 +879,30 @@ initiateRstoxBase <- function(){
     }
     
     
+    # Add the plot defaults for use by other packages:
+    defaultPlotOptions <- list(
+        # Default general options:
+        defaultPlotGeneralOptions = defaultPlotGeneralOptions, 
+        # Default file options:
+        defaultPlotFileOptions = defaultPlotFileOptions, 
+        # Default map plotting options:
+        defaultMapPlotNASCOptions = defaultMapPlotNASCOptions, 
+        # Default NASC-plotting options:
+        defaultMapPlotOptions = defaultMapPlotOptions, 
+        # Defaults for the AcousticPSU (potting PSU names) text size and shift (from the mean EDSU position):
+        defaultAcousticPSUPlotOptions = defaultAcousticPSUPlotOptions, 
+        # Defaults color variable:
+        defaultColorVariableOptions = defaultColorVariableOptions
+    )
+    
+    
+    
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
     definitions <- lapply(definitionsNames, get, pos = environment())
     names(definitions) <- definitionsNames
+    
+    
     
     #### Create the RstoxBaseEnv environment, holding definitions on folder structure and all the projects. This environment cna be accesses using RstoxBase:::RstoxBaseEnv: ####
     assign("RstoxBaseEnv", new.env(), parent.env(environment()))
@@ -1113,7 +1133,7 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
         dimension <- validDimensions
     }
     else {
-        dimension <- match.arg(dimension, validDimensions)
+        dimension <- RstoxData::match_arg_informative(dimension, validDimensions)
         if(other) {
             dimension <- setdiff(validDimensions, dimension)
         }

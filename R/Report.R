@@ -164,7 +164,7 @@ aggregateBaselineDataOneTable <- function(
     }
     
     # Get the aggregation function:
-    aggregationFunction <- match.arg(aggregationFunction)
+    aggregationFunction <- RstoxData::match_arg_informative(aggregationFunction)
     
     # Extract the sub table:
     if(length(subTable)) {
@@ -382,7 +382,7 @@ ReportSpeciesCategoryCatch <- function(
 ){
     
     # Get the ReportVariable:
-    ReportVariable <- match.arg(ReportVariable)
+    ReportVariable <- RstoxData::match_arg_informative(ReportVariable)
     
     # Warning if there are species categories which are empty string:
     categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
@@ -438,7 +438,7 @@ WriteStratumPolygon <- function(
 ) 
 {
     
-    FileFormat <- match.arg(FileFormat)
+    FileFormat <- RstoxData::match_arg_informative(FileFormat)
     output <- StratumPolygon
     
     if(FileFormat == "GeoJSON") {
