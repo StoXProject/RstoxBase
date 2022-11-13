@@ -13,6 +13,8 @@
 * Added a warning if the variables selected using GroupingVariables and RegressionModel have changed in DefineRegression(), making the RegressionTable not work properly in the current version of the GUI.
 * Fixed possible values for AcousticCategory in SpeciesLink in SplitNASC(), from the available AcousticCategory in the NASCData to the SplitAcousticCategory in the AcousticCategoryLink. Also reordered the parameters so that AcousticCategoryLink comes before SpeciesLink.
 * Changed to not remove rows with missing Haul in DefineBioticAssignment(). This was introduced when DefinitionMethod == "Stratum" for unknown reasons. The warning when all Hauls are missing is kept.
+* Removed error when there are Individuals with IndividualTotalLength smaller than the smallest IndividualTotalLength in the QuantityData in SuperIndividuals(). This was changed to warnings when IndividualTotalLength does not fit into any of the length intervals of the QuantityData.
+* Added warning when there are AcousticCategory present in the NASCData but not in the SpeciesLink in AcousticDensity.
 
 
 # RstoxBase v1.10.0 (2022-08-12)

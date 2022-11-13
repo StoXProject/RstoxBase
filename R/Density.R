@@ -160,12 +160,21 @@ DistributeNASC <- function(
             warning("StoX: The following SpeciesCategory are present in the AssignmentLengthDistributionData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
         }
     }
+    # Warning if the AcousticTargetStrengthTable does not contain all AcousticCategory of the NASCData:
     allAcousticCategory <- unique(NASCData$AcousticCategory)
     if(!all(allAcousticCategory %in% AcousticTargetStrength$AcousticTargetStrengthTable$AcousticCategory)) {
         notPresent <- setdiff(allAcousticCategory, AcousticTargetStrength$AcousticTargetStrengthTable$AcousticCategory)
         notPresent <- notPresent[!is.na(notPresent)]
         if(length(notPresent)) {
             warning("StoX: The following AcousticCategory are present in the NASCData but not in the AcousticTargetStrength: ", paste(notPresent, collapse = ", "), ".")
+        }
+    }
+    # Warning if the SpeciesLink does not contain all AcousticCategory of the AcousticTargetStrengthTable:
+    if(!all(allAcousticCategory %in% SpeciesLink$AcousticCategory)) {
+        notPresent <- setdiff(allAcousticCategory, SpeciesLink$AcousticCategory)
+        notPresent <- notPresent[!is.na(notPresent)]
+        if(length(notPresent)) {
+            warning("StoX: The following AcousticCategory are present in the NASCData but not in the SpeciesLink: ", paste(notPresent, collapse = ", "), ".")
         }
     }
     
@@ -205,9 +214,15 @@ DistributeNASC <- function(
     
     NASCData <- merge(NASCData, AssignmentLengthDistributionData, by = mergeBy, all.x = TRUE, allow.cartesian = TRUE)
     
-    # Find PSUs with both missing and non-missing WeightedNumber, indicating that there are species present in the NASCData that have a length distribution in the AssignmentLengthDistributionData, and at the same time there are species in the NASCData that are not present in the AssignmentLengthDistributionData. The WeightedNumber for the latter species should be 0 and not NA (the merge fills with NA):
-    NASCData[, missingSpecies := (any(!is.na(WeightedNumber)) && any(is.na(WeightedNumber))) & is.na(WeightedNumber), by = "PSU"]
+    # Find PSUs with both missing and non-missing WeightedNumber, indicating that there are species present in the NASCData that have a length distribution in the AssignmentLengthDistributionData, and at the same time there are species in the NASCData that are not present in the AssignmentLengthDistributionData. The WeightedNumber for the latter species should be 0 and not NA (the merge fills with NA) This is done at the end of the function:
+    
+    # AssignmentLengthDistributionData does not contain Layer yet, as it is not supported to define differentt assignment per Layer, so we use only the howizontal resolution here:
+    horizontalResolution <- getDataTypeDefinition("MeanNASCData", elements = c("horizontalResolution"), unlist = TRUE)
+    # The is.na(WeightedNumber) finds rows with NA WeightedNumber
+    # The any(!is.na(WeightedNumber)) requires also that there are any non missing WeightedNumber in the PSU
+    NASCData[, missingSpecies := is.na(WeightedNumber) & any(!is.na(WeightedNumber)), by = horizontalResolution]
     #NASCData[missingSpecies == TRUE & is.na(WeightedNumber), WeightedNumber := 0]
+    
     
     # Check whether there are any non-missing length distribution frequencies:
     allNAWeightedNumber <- NASCData[, all(is.na(WeightedNumber))]
@@ -216,14 +231,14 @@ DistributeNASC <- function(
         #"No length distribution frequencies were included from AssignmentLengthDistributionData. Please check that the AcousticLayer definition is common between the MeanNASCData and the AssignmentLengthDistributionData, and possibly re-generate the BioticAssignment used in the function AssignmentLengthDistribution using a LayerDefinition that is the same used to generate the MeanNASCData.")
     }
     
-    # Make the same check but for each combination of mergeBy, so as to flag PSUs with positive NASC but no assignment (all missing WeightedNumber):
-    allNAWeightedNumberPerPSULayer <- NASCData[, .(allNAWeightedNumber = all(is.na(WeightedNumber) & !is.na(NASC))), by = mergeBy]
-    # Ignore missing Stratum, PSU or Layer:
-    allNAWeightedNumberPerPSULayer <- subset(allNAWeightedNumberPerPSULayer, rowSums(is.na(allNAWeightedNumberPerPSULayer[, ..mergeBy])) == 0)
+    # Make the same check but for each horizontalResolution, so as to flag PSUs with positive NASC but no assignment (all missing WeightedNumber):
+    allNAWeightedNumberPerHorizontalResolution <- NASCData[, .(allNAWeightedNumber = all(is.na(WeightedNumber) & !is.na(NASC))), by = horizontalResolution]
+    # Ignore missing Stratum and PSU:
+    allNAWeightedNumberPerHorizontalResolution <- subset(allNAWeightedNumberPerHorizontalResolution, rowSums(is.na(allNAWeightedNumberPerHorizontalResolution[, ..horizontalResolution])) == 0)
     
-    if(any(allNAWeightedNumberPerPSULayer$allNAWeightedNumber)) {
-        StratumLayerPSU <- do.call(paste, c(allNAWeightedNumberPerPSULayer[allNAWeightedNumber == TRUE, ..mergeBy], list(sep = ",")))
-        warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), "  for the following Stratum, Layer, PSU:\n",  RstoxData::printErrorIDs(StratumLayerPSU))
+    if(any(allNAWeightedNumberPerHorizontalResolution$allNAWeightedNumber)) {
+        StratumPSU <- do.call(paste, c(allNAWeightedNumberPerHorizontalResolution[allNAWeightedNumber == TRUE, ..horizontalResolution], list(sep = ", ")))
+        warning("StoX: The NASCData and AssignmentLengthDistributionData have no intersecting values for the columns: ", paste0(mergeBy, collapse = ", "), "  for the following Stratum, PSU, Layer:\n",  RstoxData::printErrorIDs(StratumPSU))
     }
     
     
@@ -317,7 +332,7 @@ DistributeNASC <- function(
     
     if(NROW(withOnlyOneHaul)) {
         # Get the unique invalid hauls:
-        withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = ","), .SD), .SDcols = resolution]
+        withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = ", "), .SD), .SDcols = resolution]
         warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", RstoxData::printErrorIDs(withOnlyOneHaul)))
     }
     

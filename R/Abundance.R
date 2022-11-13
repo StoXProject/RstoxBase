@@ -473,28 +473,28 @@ addLengthGroupOneSpecies <- function(
     
     # (3) For the length intervals not exactly matched in the master, find the appropriate intervals. The intervalVector may contain intervals that are not present in the data (intervals between present intervals):
     #data[, is.na(LengthGroup)]
-    intervalVector <- sort(
-        unique(c(
-            uniqueLengthGroups[[lengthVar]], 
-            uniqueLengthGroups[[lengthVar]] + uniqueLengthGroups[[resolutionVar]]
-        ))
-    )
-    indexVector <- NA
-    present <- intervalVector %in% uniqueLengthGroups[[lengthVar]]
-    indexVector[present] <- seq_len(sum(present))
-    
-    # Get the LengthGroup using findInterval (and the quote.convert() function):
     notExactlyMatched <- atSpeciesInData[is.na(data$LengthGroup[atSpeciesInData])]
-    data[notExactlyMatched, LengthGroup := findInterval(
-        eval(quote.convert(lengthVar)), 
-        ..intervalVector
+    startLength <- uniqueLengthGroups$IndividualTotalLength
+    endLength <- startLength + uniqueLengthGroups$LengthResolution
+    data[notExactlyMatched, LengthGroup := findInterval_disjoint(
+        IndividualTotalLength, 
+        start = startLength, 
+        end = endLength, 
+        out = "start"
     )]
-    if(any(data$LengthGroup == 0, na.rm = TRUE)) {
-        stop("The length resolution of the inputs of SuperIndividuals does not match!")
-    }
     
-    # Convert to the indices in the uniqueLengthGroups:
-    data[notExactlyMatched, LengthGroup := indexVector[LengthGroup]]
+    
+    hasInvalidLength <- data[atSpeciesInData, is.na(LengthGroup)]
+    if(any(hasInvalidLength)) {
+        if("Individual" %in% names(data)) {
+            invalidIndividuals <- do.call(paste, c(subset(data[atSpeciesInData, ], hasInvalidLength, select = c("Individual", "IndividualTotalLength")), list(sep = ", ")))
+            warning("StoX: There are Individuals in the IndividualsData with IndividualTotalLength that do not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Individuals, IndividualTotalLength:\n", RstoxData::printErrorIDs(invalidIndividuals))
+        }
+        else if("Haul" %in% names(data)) {
+            invalidHauls <-data[atSpeciesInData[hasInvalidLength], Haul]
+            warning("StoX: There are Hauls in the LenghtDistributionData with IndividualTotalLength that do not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Hauls:\n", RstoxData::printErrorIDs(invalidHauls))
+        }
+  }
     
     # Also replace the lengthVar and resolutionVar by those in the master:
     data[atSpeciesInData, `:=`(c(lengthVar), uniqueLengthGroups[[lengthVar]][LengthGroup])]
@@ -503,6 +503,34 @@ addLengthGroupOneSpecies <- function(
     return(TRUE)
 }
 
+# Function to find intervals from start and end points:
+findInterval_disjoint <- function(x, start, end, out = c("index", "start", "end"), right.closed = FALSE) {
+    out <- match.arg(out)
+    if(length(start) != length(end)) {
+        stop("start and end must have the same length!")
+    }
+    output <- rep(NA, length(x))
+    for(ind in seq_along(start)) {
+        if(right.closed) {
+            at <- x >= start[ind] & x <= end[ind]
+        }
+        else {
+            at <- x >= start[ind] & x < end[ind]
+        }
+        if(any(at)) {
+            if(out == "index") {
+                output[at] <- ind
+            }
+            else if(out == "start") {
+                output[at] <- start[ind]
+            }
+            else if(out == "end") {
+                output[at] <- end[ind]
+            }
+        }
+    }
+    return(output)
+}
 
 
 

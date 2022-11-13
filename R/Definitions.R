@@ -878,47 +878,31 @@ initiateRstoxBase <- function(){
         paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! The Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")
     }
     
+    
+    # Add the plot defaults for use by other packages:
     defaultPlotOptions <- list(
-        # Options for the labels and other text:
-        AxisTitleSize = 15, 
-        AxisTickSize = 15, 
-        LegendTitleSize = 15, 
-        LegendTextSize = 15,
-        # Options for the point sizes and shapes:
-        # Options for the output file:
-        Format = "png", 
-        # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
-        Width = 17, 
-        Height = 17, 
-        DotsPerInch = 500
+        # Default general options:
+        defaultPlotGeneralOptions = defaultPlotGeneralOptions, 
+        # Default file options:
+        defaultPlotFileOptions = defaultPlotFileOptions, 
+        # Default map plotting options:
+        defaultMapPlotNASCOptions = defaultMapPlotNASCOptions, 
+        # Default NASC-plotting options:
+        defaultMapPlotOptions = defaultMapPlotOptions, 
+        # Defaults for the AcousticPSU (potting PSU names) text size and shift (from the mean EDSU position):
+        defaultAcousticPSUPlotOptions = defaultAcousticPSUPlotOptions, 
+        # Defaults color variable:
+        defaultColorVariableOptions = defaultColorVariableOptions
     )
     
-    
-    defaultMapPlotNASCOptions <- list(
-        # Options for the colours:
-        PointColourScale = "combined.color", 
-        TrackColour = "black", 
-        # Options for the point sizes and shapes:
-        MaxPointSize = 10, 
-        MinPointSize = 0.5, 
-        TrackSize = 1
-    )
-    
-    
-    defaultMapPlotOptions <- list(
-        # Options for the zoom and limits:
-        Zoom = 1, 
-        LandColour = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
-        BorderColour = "grey50", 
-        OceanColour = "white", 
-        GridColour = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
-    )
     
     
     #### Assign to RstoxBaseEnv and return the definitions: ####
     definitionsNames <- ls()
     definitions <- lapply(definitionsNames, get, pos = environment())
     names(definitions) <- definitionsNames
+    
+    
     
     #### Create the RstoxBaseEnv environment, holding definitions on folder structure and all the projects. This environment cna be accesses using RstoxBase:::RstoxBaseEnv: ####
     assign("RstoxBaseEnv", new.env(), parent.env(environment()))
