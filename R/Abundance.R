@@ -480,7 +480,7 @@ addLengthGroupOneSpecies <- function(
         IndividualTotalLength, 
         start = startLength, 
         end = endLength, 
-        out = "start"
+        out = "index"
     )]
     
     
@@ -517,7 +517,7 @@ findInterval_disjoint <- function(x, start, end, out = c("index", "start", "end"
         else {
             at <- x >= start[ind] & x < end[ind]
         }
-        if(any(at)) {
+        if(any(at, na.rm = TRUE)) {
             if(out == "index") {
                 output[at] <- ind
             }
