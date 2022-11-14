@@ -1,3 +1,6 @@
+# RstoxBase v1.10.2 (2022-10-31)
+* Fixed possible bug when using a Regression process data where GroupingVariables were set. The indices of the rows of the SuperIndividualsData to be imputed were previously identified before merging in the RegressionTable of the Regression process data. This could possibly change the order so that indices were incorrect when the actual imputation by regression was made. In the new version the indices are identified as the last step before the imputation.
+
 # RstoxBase v1.10.1-9001 (2022-10-31)
 * Pre-release before 1.10.1. Errors are expected.
 * Added (unfinished) PlotAcousticTrawlSurvey().
