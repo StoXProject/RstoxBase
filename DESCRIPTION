@@ -1,6 +1,6 @@
 Package: RstoxBase
-Version: 1.10.2
-Date: 2022-11-14
+Version: 1.10.3-9001
+Date: 2022-11-20
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", 

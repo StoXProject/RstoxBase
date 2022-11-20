@@ -7,6 +7,7 @@
 ReportSuperIndividuals(
   SuperIndividualsData,
   TargetVariable = character(),
+  TargetVariableUnit = character(),
   ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
   InformationVariables = character(),
@@ -18,6 +19,8 @@ ReportSuperIndividuals(
 \item{SuperIndividualsData}{The \code{\link{SuperIndividualsData}} data.}
 
 \item{TargetVariable}{The variable to report.}
+
+\item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).}
 
 \item{ReportFunction}{The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.}
 

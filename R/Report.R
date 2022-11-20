@@ -6,6 +6,7 @@
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
+#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).
 #' @param ReportFunction The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.
 #' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
 #'
@@ -19,6 +20,7 @@
 ReportSuperIndividuals <- function(
     SuperIndividualsData, 
     TargetVariable = character(), 
+    TargetVariableUnit = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
@@ -26,13 +28,19 @@ ReportSuperIndividuals <- function(
     WeightingVariable = character()
 ) 
 {
-    
     # Issue a warning if RemoveMissingValues = TRUE:
     if(isTRUE(RemoveMissingValues) && any(is.na(SuperIndividualsData[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
-    aggregateBaselineDataOneTable(
+    SuperIndividualsData[[TargetVariable]] <- setUnitRstoxBase(
+        SuperIndividualsData[[TargetVariable]], 
+        dataType =  "SuperIndividualsData", 
+        variableName = TargetVariable, 
+        unit = TargetVariableUnit
+    )
+    
+    output <- aggregateBaselineDataOneTable(
         stoxData = SuperIndividualsData, 
         TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
@@ -40,7 +48,14 @@ ReportSuperIndividuals <- function(
         InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         WeightingVariable = WeightingVariable
-    ) 
+    )
+    
+    if(RstoxData::hasUnit(SuperIndividualsData[[TargetVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(SuperIndividualsData[[TargetVariable]], property = "shortname")
+        output <- cbind(output, Unit = unit)
+    }
+    
+    return(output)
 }
 
 
@@ -52,6 +67,7 @@ ReportSuperIndividuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
+#' @param DensityUnit The unit to use for the \code{Density}. See subset(RstoxData::StoxUnits, quantity == "area_number_density") for possible units (use the shortname in the \code{DensityUnit}).
 #' @inheritParams ReportSuperIndividuals
 #' 
 #' @return
@@ -61,7 +77,8 @@ ReportSuperIndividuals <- function(
 #' 
 ReportDensity <- function(
     DensityData, 
-    TargetVariable = character(), 
+    DensityUnit = character(), 
+    #TargetVariable = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
@@ -69,12 +86,22 @@ ReportDensity <- function(
     WeightingVariable = character()
 ) 
 {
+    # Only Density is relevant here:
+    TargetVariable <- "Density"
+    
     # Issue a warning if RemoveMissingValues = TRUE:
     if(isTRUE(RemoveMissingValues) && any(is.na(DensityData[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
-    aggregateBaselineDataOneTable(
+    DensityData$Data[[TargetVariable]] <- setUnitRstoxBase(
+        DensityData$Data[[TargetVariable]], 
+        dataType =  "DensityData", 
+        variableName = TargetVariable, 
+        unit = DensityUnit
+    )
+    
+    output <- aggregateBaselineDataOneTable(
         stoxData = DensityData$Data, 
         TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
@@ -82,7 +109,14 @@ ReportDensity <- function(
         InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         WeightingVariable = WeightingVariable
-    ) 
+    )
+    
+    if(RstoxData::hasUnit(DensityData$Data[[TargetVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(DensityData$Data[[TargetVariable]], property = "shortname")
+        output <- cbind(output, Unit = unit)
+    }
+    
+    return(output)
 }
 
 
@@ -94,6 +128,7 @@ ReportDensity <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
+#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. For possible units, see subset(RstoxData::StoxUnits, quantity == "cardinality") for TargetVariable = "Abundance" and subset(RstoxData::StoxUnits, quantity == "mass") for TargetVariable = "Biomass".
 #' @inheritParams ReportSuperIndividuals
 #' 
 #' @return
@@ -103,7 +138,8 @@ ReportDensity <- function(
 #' 
 ReportQuantity <- function(
     QuantityData, 
-    TargetVariable = character(), 
+    TargetVariable = c("Abundance", "Biomass"), 
+    TargetVariableUnit = character(), 
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
@@ -116,7 +152,14 @@ ReportQuantity <- function(
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
-    aggregateBaselineDataOneTable(
+    QuantityData$Data[[TargetVariable]] <- setUnitRstoxBase(
+        QuantityData$Data[[TargetVariable]], 
+        dataType =  "QuantityData", 
+        variableName = TargetVariable, 
+        unit = TargetVariableUnit
+    )
+    
+    output <- aggregateBaselineDataOneTable(
         stoxData = QuantityData$Data, 
         TargetVariable = TargetVariable, 
         aggregationFunction = ReportFunction, 
@@ -124,7 +167,14 @@ ReportQuantity <- function(
         InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         WeightingVariable = WeightingVariable
-    ) 
+    )
+    
+    if(RstoxData::hasUnit(QuantityData$Data[[TargetVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(QuantityData$Data[[TargetVariable]], property = "shortname")
+        output <- cbind(output, Unit = unit)
+    }
+    
+    return(output)
 }
 
 
@@ -368,6 +418,7 @@ getReportFunctionPackage <- function(x) {
 #' 
 #' @inheritParams ModelData
 #' @param ReportVariable The column to report.
+#' @param ReportVariableUnit The unit to use for the \code{ReportVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{ReportVariableUnit}).
 #' 
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
 #' 
@@ -378,7 +429,8 @@ getReportFunctionPackage <- function(x) {
 #' 
 ReportSpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData, 
-    ReportVariable = c("TotalCatchNumber", "TotalCatchWeight")
+    ReportVariable = c("TotalCatchNumber", "TotalCatchWeight"), 
+    ReportVariableUnit = character()
 ){
     
     # Get the ReportVariable:
@@ -390,6 +442,13 @@ ReportSpeciesCategoryCatch <- function(
     if(any(emptyString, na.rm = TRUE)) {
         warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")
     }
+    
+    SpeciesCategoryCatchData[[ReportVariable]] <- setUnitRstoxBase(
+        SpeciesCategoryCatchData[[ReportVariable]], 
+        dataType =  "SpeciesCategoryCatchData", 
+        variableName = ReportVariable, 
+        unit = ReportVariableUnit
+    )
     
     # Create the table with species categories in the columns:
     ReportSpeciesCategoryCatchData <- data.table::dcast(
@@ -408,6 +467,11 @@ ReportSpeciesCategoryCatch <- function(
         ReportSpeciesCategoryCatchData, 
         by = "Haul"
     )
+    
+    if(RstoxData::hasUnit(SpeciesCategoryCatchData[[ReportVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(SpeciesCategoryCatchData[[ReportVariable]], property = "shortname")
+        ReportSpeciesCategoryCatchData <- cbind(ReportSpeciesCategoryCatchData, Unit = unit)
+    }
     
     return(ReportSpeciesCategoryCatchData)
 }

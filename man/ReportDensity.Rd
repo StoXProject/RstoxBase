@@ -6,7 +6,7 @@
 \usage{
 ReportDensity(
   DensityData,
-  TargetVariable = character(),
+  DensityUnit = character(),
   ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
   InformationVariables = character(),
@@ -17,7 +17,7 @@ ReportDensity(
 \arguments{
 \item{DensityData}{The \code{\link{DensityData}} data.}
 
-\item{TargetVariable}{The variable to report.}
+\item{DensityUnit}{The unit to use for the \code{Density}. See subset(RstoxData::StoxUnits, quantity == "area_number_density") for possible units (use the shortname in the \code{DensityUnit}).}
 
 \item{ReportFunction}{The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.}
 

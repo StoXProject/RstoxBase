@@ -1552,3 +1552,88 @@ renameListByNames <- function(list, old, new) {
 
 
     
+
+
+#' Get base unit of a variable of a StoX dataType
+#' 
+#' @param dataType The name of a StoX \code{\link{DataTypes}}.
+#' @param variableName The variable name to get base units from.
+#' @param element The element to get, one of "unit" and "quantity".
+#' @param list.out Logical: If TRUE return both elements in a list.
+#' @export
+#' 
+getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"), list.out = FALSE) {
+    
+    element <- match.arg(element)
+    dataTypeUnits <- getRstoxBaseDefinitions("dataTypeUnits")
+    
+    output <- dataTypeUnits[[dataType]][[variableName]]
+    if(!length(output)) {
+        output <- list(
+            unit = NA, 
+            quantity = NA
+        )
+    }
+    
+    if(!list.out) {
+        return(output[[element]])
+    }
+    else {
+        return(output)
+    }
+}
+
+#' Does the variable of the StoX dataType have a base unit?
+#' 
+#' @inheritParams getBaseUnit
+#' 
+hasBaseUnit <- function(dataType, variableName) {
+    
+    baseUnit <- getBaseUnit(dataType = dataType, variableName = variableName, list.out = TRUE)
+    
+    !is.na(baseUnit$unit) && !is.na(baseUnit$quantity)
+}
+
+#' Set base unit to a variable of the StoX dataType
+#' 
+#' @inheritParams getBaseUnit
+#' 
+setBaseUnit <- function(x, dataType, variableName) {
+    if(!RstoxData::hasUnit(x, property = "shortname")) {
+        baseUnit <- getBaseUnit(dataType = dataType, variableName = variableName, list.out = TRUE)
+        id <- RstoxData::findUnit(quantity = baseUnit$quantity, shortname = baseUnit$unit)
+        x <- setUnit(x, id)
+    }
+    return(x)
+}
+
+#' Set units to a variable of the StoX dataType
+#' 
+#' @param x A StoX data
+#' @inheritParams getBaseUnit
+#' @param unit The unit to set to the variable of the StoX Data
+#' @export
+#' 
+setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
+    this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName)
+    
+    if(length(unit) && this_hasBaseUnit) {
+        # Set the base unit if the objectt does not have a unit:
+        x <- setBaseUnit(x, dataType, variableName)
+        
+        # Get the quantity:
+        quantity <- getBaseUnit(dataType = dataType, variableName = variableName, element = "quantity")
+        id <- RstoxData::findUnit(quantity = quantity, shortname = unit)
+        x <- setUnit(x, id)
+    }
+    else if(length(unit) && !this_hasBaseUnit) {
+        warning("StoX: Units not defined for variable ", variableName, " of dataType ", dataType, ". The default unit is used (see ?", dataType, ")")
+    }
+    
+    return(x)
+}
+
+
+
+
+

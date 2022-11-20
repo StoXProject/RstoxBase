@@ -15,6 +15,7 @@ PlotAcousticTrawlSurvey(
   AcousticPSU,
   ColorVariable = character(),
   UseAcousticPSU = FALSE,
+  UseDefaultAcousticPSUSettings = TRUE,
   AcousticPSULabelSize = numeric(),
   AcousticPSULabelColor = character(),
   AcousticPSULabelPosition = c("mean", "atMinLongitude", "atMaxLongitude",

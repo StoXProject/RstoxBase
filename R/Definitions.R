@@ -362,179 +362,79 @@ initiateRstoxBase <- function(){
     
     
     dataTypeUnits <- list(
-        # NASC: 
-        NASCData = list(
-            Frequency = "Hz", 
-            NASC = "sA", 
-            MinChannelDepth = "m", 
-            MaxChannelDepth = "m",
-            ChannelReferenceDepth = "m", 
-            ChannelReferenceTilt = "degrees", 
-            EffectiveLogDistance = "nautical_mile", 
-            Longitude = "degrees", 
-            Latitude = "degrees"
-        ), 
-        SumNASCData = list(
-            Data = list(
-                Frequency = "Hz", 
-                NASC = "sA", 
-                MinLayerDepth = "m", 
-                MaxLayerDepth = "m",
-                ChannelReferenceDepth = "m", 
-                ChannelReferenceTilt = "degrees", 
-                EffectiveLogDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees"
-            ), 
-            Resolution = list()
-        ), 
-        MeanNASCData = list(
-            Data = list(
-                Frequency = "Hz", 
-                NASC = "sA", 
-                MinLayerDepth = "m", 
-                MaxLayerDepth = "m",
-                ChannelReferenceDepth = "m", 
-                ChannelReferenceTilt = "degrees"
-            ), 
-            Resolution = list(
-                EffectiveLogDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees"
-            )
-        ), 
-        # LengthDistribution:
-        LengthDistributionData = list(
-            IndividualTotalLength = "cm", 
-            LengthResolution = "cm", 
-            WeightedNumber = "individual", 
-            MinHaulDepth = "m",
-            MaxHaulDepth = "m",
-            EffectiveTowDistance = "nautical_mile", 
-            Longitude = "degrees", 
-            Latitude = "degrees",
-            VerticalNetOpening = "m",
-            HorizontalNetOpening = "m",
-            TrawlDoorSpread = "m"
-        ), 
-        SumLengthDistributionData = list(
-            Data = list(
-                IndividualTotalLength = "cm", 
-                LengthResolution = "cm", 
-                WeightedNumber = "individual", 
-                MinLayerDepth = "m",
-                MaxLayerDepth = "m",
-                EffectiveTowDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees"
-            ), 
-            Resolution = list(
-                VerticalNetOpening = "m",
-                HorizontalNetOpening = "m",
-                TrawlDoorSpread = "m"
-            )
-        ), 
-        MeanLengthDistributionData = list(
-            Data = list(
-                IndividualTotalLength = "cm", 
-                LengthResolution = "cm", 
-                WeightedNumber = "individual", 
-                MinLayerDepth = "m",
-                MaxLayerDepth = "m",
-                EffectiveTowDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees"
-            ), 
-            Resolution = list(
-                EffectiveTowDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees", 
-                VerticalNetOpening = "m",
-                HorizontalNetOpening = "m",
-                TrawlDoorSpread = "m"
-            )
-        ), 
-        AssignmentLengthDistributionData = list(
-            IndividualTotalLength = "cm", 
-            LengthResolution = "cm", 
-            WeightedNumber = "individual"
-        ), 
-        # Density:
-        DensityData = list(
-            Data = list(
-                IndividualTotalLength = "cm", 
-                LengthResolution = "cm", 
-                Frequency = "Hz", 
-                Density = "nautical_areal_number_density", 
-                MinLayerDepth = "m",
-                MaxLayerDepth = "m"
-            ), 
-            Resolution = list(
-                EffectiveLogDistance = "nautical_mile", 
-                EffectiveTowDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees", 
-                VerticalNetOpening = "m",
-                HorizontalNetOpening = "m",
-                TrawlDoorSpread = "m"
-            )
-        ), 
-        MeanDensityData = list(
-            Data = list(
-                IndividualTotalLength = "cm", 
-                LengthResolution = "cm", 
-                Frequency = "Hz", 
-                Density = "nautical_areal_number_density", 
-                MinLayerDepth = "m",
-                MaxLayerDepth = "m"
-            ), 
-            Resolution = list(
-                EffectiveLogDistance = "nautical_mile", 
-                EffectiveTowDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees", 
-                VerticalNetOpening = "m",
-                HorizontalNetOpening = "m",
-                TrawlDoorSpread = "m"
-            )
-        ), 
         # Quantity:
-        QuantityData = list(
-            Data = list(
-                IndividualTotalLength = "cm", 
-                LengthResolution = "cm", 
-                Frequency = "Hz", 
-                Abundance = "ind", 
-                MinLayerDepth = "m",
-                MaxLayerDepth = "m"
-            ), 
-            Resolution = list(
-                EffectiveLogDistance = "nautical_mile", 
-                EffectiveTowDistance = "nautical_mile", 
-                Longitude = "degrees", 
-                Latitude = "degrees", 
-                VerticalNetOpening = "m",
-                HorizontalNetOpening = "m",
-                TrawlDoorSpread = "m"
+        DensityData = list(
+            Density = list(
+                quantity = "area_number_density", 
+                unit = "individuals/nmi^2"
             )
         ), 
-        IndividualsData = list(), 
-        SuperIndividualsData = list(
-            Data = list(
-                IndividualTotalLength = "cm", 
-                LengthResolution = "cm", 
-                IndividualRoundWeight = "g", 
-                Frequency = "Hz", 
-                Abundance = "ind", 
-                Biomass = "g", 
-                MinLayerDepth = "m",
-                MaxLayerDepth = "m"
+        QuantityData = list(
+            Abundance = list(
+                quantity = "cardinality", 
+                unit = "individuals"
             ), 
-            VariableNames = list()
+            Biomass = list(
+                quantity = "mass", 
+                unit = "g"
+            )
         ), 
-        BioticAssignment = list(), 
-        BioticPSU = list(), 
-        AcousticPSU = list()
+        SpeciesCategoryCatchData = list(
+            TotalCatchNumber = list(
+                quantity = "cardinality", 
+                unit = "individuals"
+            ), 
+            TotalCatchWeight = list(
+                quantity = "mass", 
+                unit = "kg"
+            )
+        ), 
+        SuperIndividualsData = list(
+            IndividualTotalLength = list(
+                quantity = "length", 
+                unit = "cm"
+            ), 
+            IndividualRoundWeight = list(
+                quantity = "mass", 
+                unit = "g"
+            ), 
+            Abundance = list(
+                quantity = "cardinality", 
+                unit = "individuals"
+            ), 
+            Biomass = list(
+                quantity = "mass", 
+                unit = "g"
+            ), 
+            TowDistance = list(
+                quantity = "length", 
+                unit = "nmi"
+            ), 
+            EffectiveTowDistance = list(
+                quantity = "length", 
+                unit = "nmi"
+            ), 
+            CatchFractionWeight = list(
+                quantity = "mass", 
+                unit = "kg"
+            ), 
+            CatchFractionNumber = list(
+                quantity = "cardinality", 
+                unit = "individuals"
+            ), 
+            SampleWeight = list(
+                quantity = "mass", 
+                unit = "kg"
+            ), 
+            SampleNumber = list(
+                quantity = "cardinality", 
+                unit = "individuals"
+            ), 
+            IndividualAge = list(
+                quantity = "age", 
+                unit = "year"
+            )
+        )
     )
     
      
@@ -1228,3 +1128,5 @@ getReportFunctions <- function(getMultiple = NULL) {
     }
     
 }
+
+
