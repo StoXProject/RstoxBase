@@ -480,7 +480,7 @@ addLengthGroupOneSpecies <- function(
         IndividualTotalLength, 
         start = startLength, 
         end = endLength, 
-        out = "start"
+        out = "index"
     )]
     
     
@@ -488,11 +488,11 @@ addLengthGroupOneSpecies <- function(
     if(any(hasInvalidLength)) {
         if("Individual" %in% names(data)) {
             invalidIndividuals <- do.call(paste, c(subset(data[atSpeciesInData, ], hasInvalidLength, select = c("Individual", "IndividualTotalLength")), list(sep = ", ")))
-            warning("StoX: There are Individuals in the IndividualsData with IndividualTotalLength that do not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Individuals, IndividualTotalLength:\n", RstoxData::printErrorIDs(invalidIndividuals))
+            warning("StoX: There are Individuals in the IndividualsData with IndividualTotalLength that does not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Individuals, IndividualTotalLength:\n", RstoxData::printErrorIDs(invalidIndividuals))
         }
         else if("Haul" %in% names(data)) {
             invalidHauls <-data[atSpeciesInData[hasInvalidLength], Haul]
-            warning("StoX: There are Hauls in the LenghtDistributionData with IndividualTotalLength that do not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Hauls:\n", RstoxData::printErrorIDs(invalidHauls))
+            warning("StoX: There are Hauls in the LenghtDistributionData with IndividualTotalLength that does not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Hauls:\n", RstoxData::printErrorIDs(invalidHauls))
         }
   }
     
@@ -517,7 +517,7 @@ findInterval_disjoint <- function(x, start, end, out = c("index", "start", "end"
         else {
             at <- x >= start[ind] & x < end[ind]
         }
-        if(any(at)) {
+        if(any(at, na.rm = TRUE)) {
             if(out == "index") {
                 output[at] <- ind
             }
@@ -910,8 +910,6 @@ ImputeDataByRegression <- function(
     # Get the data and add the RowIndex for use when identifying which rows to impute from:
     dataCopy <- data.table::copy(data)
     
-    
-    
     # There should either be a demannd for only one row, or we should re-code to treating each row separately!!!!!!!!!!!!!!!!!!!!!!!!!111
     if(NROW(Regression$RegressionTable) > 1) {
         stop("Currently, only one row in the regression table is supported.")
@@ -978,7 +976,8 @@ ImputeDataByRegression <- function(
 }
 
 checkWhetherVariableIsPresent <- function(var, data) {
-    if(length(var) && ! var %in% names(data)) {
+    # Using identical(var, "NA") for safety:
+    if(length(var) && !is.na(var) && identical(var, "NA") && ! var %in% names(data)) {
         stop("The variable ", var, " given by ", deparse(substitute(var)), " is not present in the data.")
     } 
 }

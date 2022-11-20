@@ -6,7 +6,8 @@
 \usage{
 ReportQuantity(
   QuantityData,
-  TargetVariable = character(),
+  TargetVariable = c("Abundance", "Biomass"),
+  TargetVariableUnit = character(),
   ReportFunction = getReportFunctions(getMultiple = FALSE),
   GroupingVariables = character(),
   InformationVariables = character(),
@@ -18,6 +19,8 @@ ReportQuantity(
 \item{QuantityData}{The \code{\link{QuantityData}} data.}
 
 \item{TargetVariable}{The variable to report.}
+
+\item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}. For possible units, see subset(RstoxData::StoxUnits, quantity == "cardinality") for TargetVariable = "Abundance" and subset(RstoxData::StoxUnits, quantity == "mass") for TargetVariable = "Biomass".}
 
 \item{ReportFunction}{The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.}
 

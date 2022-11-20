@@ -94,6 +94,12 @@ backwardCompatibility <- list(
             functionName = "BioticAssignmentWeighting", 
             modelName = "baseline", 
             parameterName = "Survey"
+        ),  
+        list(
+            changeVersion = "1.10.3", 
+            functionName = "ReportDensity", 
+            modelName = "baseline", 
+            parameterName = "TargetVariable"
         )
     ),  
     
@@ -238,6 +244,30 @@ backwardCompatibility <- list(
             functionName = "BioticAssignmentWeighting", 
             modelName = "baseline", 
             parameterName = "SpeciesLink"
+        ), 
+        list(
+            changeVersion = "1.10.3", 
+            functionName = "ReportSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "TargetVariableUnit"
+        ), 
+        list(
+            changeVersion = "1.10.3", 
+            functionName = "ReportDensity", 
+            modelName = "baseline", 
+            parameterName = "DensityUnit"
+        ), 
+        list(
+            changeVersion = "1.10.3", 
+            functionName = "ReportQuantity", 
+            modelName = "baseline", 
+            parameterName = "TargetVariableUnit"
+        ), 
+        list(
+            changeVersion = "1.10.3", 
+            functionName = "ReportSpeciesCategoryCatch", 
+            modelName = "baseline", 
+            parameterName = "ReportVariableUnit"
         )
     ),  
     

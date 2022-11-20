@@ -57,6 +57,7 @@ PlotAcousticTrawlSurvey <- function(
     
     
     UseAcousticPSU = FALSE, 
+    UseDefaultAcousticPSUSettings = TRUE, 
     AcousticPSULabelSize = numeric(), 
     AcousticPSULabelColor = character(), 
     AcousticPSULabelPosition = c("mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude", "atMaxLatitude"), 
@@ -204,7 +205,16 @@ PlotAcousticTrawlSurvey <- function(
     
     # Use only the Data table of the SumNASCData:
     if("Data" %in% names(plotArguments$SumNASCData)) {
-        plotArguments$SumNASCData <- plotArguments$SumNASCData$Data
+        plotArguments$SumNASCData <- data.table::copy(plotArguments$SumNASCData$Data)
+    }
+    
+    # Discard NA Layer:
+    if(plotArguments$SumNASCData[, any(is.na(Layer))]) {
+        totalNASC <- plotArguments$SumNASCData[, .(totalNASC = sum(NASC, na.rm = TRUE)), by = "Layer"]
+        fractionOfNASCInNALayer <- totalNASC[is.na(Layer), totalNASC] / totalNASC[, sum(totalNASC, na.rm = TRUE)]
+        message("StoX: Removing missing Layer (fraction of summed NASC: ", fractionOfNASCInNALayer, ").")
+        plotArguments$SumNASCData[is.na(Layer), NASC := NA]
+        #plotArguments$SumNASCData <- subset(plotArguments$SumNASCData, !is.na(Layer))
     }
     
     # Discard the transports if UseAcousticPSU:
@@ -738,3 +748,6 @@ combined.color <- function(n, colStart = "white", colEnd = NA, nStart = 0, nEnd 
     
     return(out)
 }
+
+
+
