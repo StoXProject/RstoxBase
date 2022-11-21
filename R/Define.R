@@ -1125,7 +1125,7 @@ DefineBioticAssignment <- function(
     if(UseProcessData) {
         
         # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
-        newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, processData$BioticAssignment$PSU)
+        newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, subset(processData$BioticAssignment, !is.na(Haul))$PSU)
         if(length(newPSUs)) {
             warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData. Please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
         }
