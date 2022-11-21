@@ -6,13 +6,16 @@
 \usage{
 ReportSpeciesCategoryCatch(
   SpeciesCategoryCatchData,
-  ReportVariable = c("TotalCatchNumber", "TotalCatchWeight")
+  ReportVariable = c("TotalCatchNumber", "TotalCatchWeight"),
+  ReportVariableUnit = character()
 )
 }
 \arguments{
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
 
 \item{ReportVariable}{The column to report.}
+
+\item{ReportVariableUnit}{The unit to use for the \code{ReportVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{ReportVariableUnit}).}
 }
 \value{
 A \code{\link{ReportSpeciesCategoryCatchData}} object.

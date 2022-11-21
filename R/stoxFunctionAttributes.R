@@ -33,16 +33,15 @@ defaultMapPlotOptions <- list(
 
 defaultMapPlotNASCOptions <- list(
     # Options for the colors:
-    # Set the PointColorScale separately :s
-    PointColor = function(x) {
-        if(isCategorical(x$SumNASCData$Data[[x$ColorVariable]])) {
-            PointColor <- character()
-        }
-        else {
-            PointColor <- "combined.color"
-        }
-        return(PointColor)
-    },
+    #PointColor = function(x) {
+    #    if(isCategorical(x$SumNASCData$Data[[x$ColorVariable]])) {
+    #        PointColor <- character()
+    #    }
+    #    else {
+    #        PointColor <- "combined.color"
+    #    }
+    #    return(PointColor)
+    #},
     # Use black vessel track:
     TrackColor = "black", 
     # Options for the point sizes and shapes:
@@ -841,39 +840,17 @@ stoxFunctionAttributes <- list(
         functionType = "modelData", 
         functionCategory = "report", 
         functionOutputDataType = "PlotAcousticTrawlSurveyData", 
+        functionParameterFormat = list(
+            LayerTable = "layerTable", 
+            PointColor = "pointColor"
+        ),
         functionArgumentHierarchy = list(
             # Options for the colors:
             #ColorVariable = list(
             #    UseDefaultColorSettings = FALSE
             #), 
             PointColor = list(
-                UseDefaultColorSettings = FALSE, 
-                ColorVariable = function(functionArguments) {
-                    if(!length(functionArguments$ColorVariable)) {
-                        return(FALSE)
-                    }
-                    if(is.list(functionArguments$SumNASCData$Data)) {
-                        is.character(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]]) || 
-                            is.integer(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]])
-                    }
-                    else {
-                        FALSE
-                    }
-                }
-            ), 
-            PointColorScale = list(
-                UseDefaultColorSettings = FALSE, 
-                ColorVariable = function(functionArguments) {
-                    if(!length(functionArguments$ColorVariable)) {
-                        return(FALSE)
-                    }
-                    if(is.list(functionArguments$SumNASCData$Data)) {
-                        is.numeric(functionArguments$SumNASCData$Data[[functionArguments$ColorVariable]])
-                    }
-                    else {
-                        FALSE
-                    }
-                }
+                UseDefaultColorSettings = FALSE
             ), 
             TrackColor = list(
                 UseDefaultColorSettings = FALSE
@@ -980,20 +957,28 @@ stoxFunctionAttributes <- list(
             AcousticPSU = list(
                 UseAcousticPSU = TRUE
             ), 
-            AcousticPSULabelSize = list(
+            UseDefaultAcousticPSUSettings <- list(
                 UseAcousticPSU = TRUE
+            ), 
+            AcousticPSULabelSize = list(
+                UseAcousticPSU = TRUE, 
+                UseDefaultAcousticPSUSettings = FALSE
             ), 
             AcousticPSULabelColor = list(
-                UseAcousticPSU = TRUE
+                UseAcousticPSU = TRUE, 
+                UseDefaultAcousticPSUSettings = FALSE
             ), 
             AcousticPSULabelPosition = list(
-                UseAcousticPSU = TRUE
+                UseAcousticPSU = TRUE, 
+                UseDefaultAcousticPSUSettings = FALSE
             ), 
             AcousticPSULabelHjust = list(
-                UseAcousticPSU = TRUE
+                UseAcousticPSU = TRUE, 
+                UseDefaultAcousticPSUSettings = FALSE
             ), 
             AcousticPSULabelVjust = list(
-                UseAcousticPSU = TRUE
+                UseAcousticPSU = TRUE, 
+                UseDefaultAcousticPSUSettings = FALSE
             )
         ), 
         functionParameterDefaults = c(
@@ -1203,7 +1188,8 @@ stoxFunctionAttributes <- list(
         functionParameterFormat = list(
             TargetVariable = "targetVariable_ReportSuperIndividuals", 
             GroupingVariables = "groupingVariables_ReportSuperIndividuals", 
-            InformationVariables = "informationVariables_ReportSuperIndividuals"
+            InformationVariables = "informationVariables_ReportSuperIndividuals", 
+            TargetVariableUnit = "targetVariableUnit_ReportSuperIndividuals"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -1219,7 +1205,8 @@ stoxFunctionAttributes <- list(
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
             GroupingVariables = "groupingVariables_ReportDensity", 
-            InformationVariables = "informationVariables_ReportDensity"
+            InformationVariables = "informationVariables_ReportDensity", 
+            DensityUnit = "densityUnit"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -1235,7 +1222,8 @@ stoxFunctionAttributes <- list(
         # This is an example of using an expression to determine when to show a parameter:
         functionParameterFormat = list(
             GroupingVariables = "groupingVariables_ReportQuantity", 
-            InformationVariables = "informationVariables_ReportQuantity"
+            InformationVariables = "informationVariables_ReportQuantity", 
+            TargetVariableUnit = "targetVariableUnit_ReportQuantity"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -1248,7 +1236,10 @@ stoxFunctionAttributes <- list(
     ReportSpeciesCategoryCatch = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "ReportSpeciesCategoryCatchData"
+        functionOutputDataType = "ReportSpeciesCategoryCatchData", 
+        functionParameterFormat = list(
+            ReportVariableUnit = "reportVariableUnit_ReportSpeciesCategoryCatch"
+        )
     )
     
     
@@ -1825,7 +1816,7 @@ processPropertyFormats <- list(
         class = "vector", 
         title = "One variable to group report from SuperIndividualsData", 
         possibleValues = function(SuperIndividualsData) {
-            sort(names(SuperIndividualsData))
+            sort(subset(names(SuperIndividualsData), sapply(SuperIndividualsData, class) == "numeric"))
         }, 
         variableTypes <- "character"
     ), 
@@ -1961,5 +1952,82 @@ processPropertyFormats <- list(
     groupingVariables = list(
         class = "vector", 
         title = "Select GroupingVariables for regression"
+    ), 
+    
+    pointColor = list(
+        class = "vector", 
+        title = "Select color/oclor scale for the points", 
+        possibleValues = function(NASCData, SumNASCData, ColorVariable) {
+            if(missing(SumNASCData)) {
+                var <- NASCData[[ColorVariable]]
+            }
+            else {
+                var <- SumNASCData$Data[[ColorVariable]]
+            }
+            if(isCategorical(var)) {
+                PointColor <- list()
+            }
+            else {
+                PointColor <- "combined.color"
+            }
+            
+            return(PointColor)
+        }
+    ), 
+    
+    targetVariableUnit_ReportSuperIndividuals = list(
+        class = "vector", 
+        title = "Select Unit for the TargetVariable", 
+        possibleValues = function(TargetVariable) {
+            quantity <- getBaseUnit(dataType = "SuperIndividualsData", variableName = TargetVariable, element = "quantity")
+            if(is.na(quantity)) {
+                list()
+            }
+            else {
+                RstoxData::getUnitOptions(quantity)
+            }
+        }
+    ), 
+    
+    densityUnit = list(
+        class = "vector", 
+        title = "Select unit for the Density", 
+        possibleValues = function() {
+            quantity <- getBaseUnit(dataType = "DensityData", variableName = "Density", element = "quantity")
+            if(is.na(quantity)) {
+                list()
+            }
+            else {
+                RstoxData::getUnitOptions(quantity)
+            }
+        }
+    ), 
+
+    targetVariableUnit_ReportQuantity = list(
+        class = "vector", 
+        title = "Select Unit for the TargetVariable", 
+        possibleValues = function(TargetVariable) {
+            quantity <- getBaseUnit(dataType = "QuantityData", variableName = TargetVariable, element = "quantity")
+            if(is.na(quantity)) {
+                list()
+            }
+            else {
+                RstoxData::getUnitOptions(quantity)
+            }
+        }
+    ), 
+    
+    reportVariableUnit_ReportSpeciesCategoryCatch = list(
+        class = "vector", 
+        title = "Select unit for the ReportVariable", 
+        possibleValues = function(ReportVariable) {
+            quantity <- getBaseUnit(dataType = "SpeciesCategoryCatchData", variableName = ReportVariable, element = "quantity")
+            if(is.na(quantity)) {
+                list()
+            }
+            else {
+                RstoxData::getUnitOptions(quantity)
+            }
+        }
     )
 )
