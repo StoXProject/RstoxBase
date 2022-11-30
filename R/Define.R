@@ -2406,7 +2406,7 @@ DefineSurvey <- function(
     DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Read from a stoX 2.7 project.xml:
-    if(DefinitionMethod == "ResourceFile") {
+    if(DefinitionMethod == "ResourceFile" && tolower(tools::file_ext(FileName)) == "xml") {
         # Read the StratumPolygon from the project.xml file:
         StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = FALSE)
         
@@ -2424,7 +2424,8 @@ DefineSurvey <- function(
         SurveyTable <- getSurveyTable(
             DefinitionMethod = DefinitionMethod, 
             stratumNames = stratumNames, 
-            SurveyTable = SurveyTable
+            SurveyTable = SurveyTable, 
+            FileName = FileName
         )
     }
     
@@ -2447,26 +2448,52 @@ getSurveyTable <- function(
             Survey = "Survey"
         )
     }
-    # Or accept/reject the input SurveyTable:
-    else if(DefinitionMethod == "Table") {
-        # Delete rows with missing Survey:
-        if(any(is.na(SurveyTable$Survey))) {
-            warning("StoX: Removing rows of missing Survey in SurveyTable")
-            SurveyTable <- SurveyTable[!is.na(Survey)]
+    ### # Or accept/reject the input SurveyTable:
+    ### else if(DefinitionMethod == "Table") {
+    ###     # Delete rows with missing Survey:
+    ###     if(any(is.na(SurveyTable$Survey))) {
+    ###         warning("StoX: Removing rows of missing Survey in SurveyTable")
+    ###         SurveyTable <- SurveyTable[!is.na(Survey)]
+    ###     }
+    ###     if(any(is.na(SurveyTable$Stratum))) {
+    ###         warning("StoX: Removing rows of missing Stratum in SurveyTable")
+    ###         SurveyTable <- SurveyTable[!is.na(Stratum)]
+    ###     }
+    ###     # Delete also rows with unrecognized Stratum:
+    ###     if(!all(SurveyTable$Stratum %in% stratumNames)) {
+    ###         warning("StoX: Removing rows of Stratum not present in the SurveyTable")
+    ###         SurveyTable <- SurveyTable[Stratum %in% stratumNames, ]
+    ###     }
+    ###     # If no rows in the SurveyTable, issue an error:
+    ###     if(!nrow(SurveyTable)) {
+    ###         stop("SurveyTable must be a table of at least one row, with Stratum and Survey as columns")
+    ###     }
+    ### }
+    # Read the table from a file:
+    else if(DefinitionMethod == "ResourceFile") {
+        SurveyTable <- data.table::fread(FileName)
+        data.table::setnames(SurveyTable, names(SurveyTable), tools::toTitleCase(names(SurveyTable)))
+        if(!all(c("Survey", "Stratum") %in% names(SurveyTable))) {
+            stop("The file ", FileName, " does not have column names \"Survey\" and \"Stratum\" (present columns are ", paste(names(SurveyTable), collapse = ", "), ").")
         }
-        if(any(is.na(SurveyTable$Stratum))) {
-            warning("StoX: Removing rows of missing Stratum in SurveyTable")
-            SurveyTable <- SurveyTable[!is.na(Stratum)]
-        }
-        # Delete also rows with unrecognized Stratum:
-        if(!all(SurveyTable$Stratum %in% stratumNames)) {
-            warning("StoX: Removing rows of Stratum not present in the SurveyTable")
-            SurveyTable <- SurveyTable[Stratum %in% stratumNames, ]
-        }
-        # If no rows in the SurveyTable, issue an error:
-        if(!nrow(SurveyTable)) {
-            stop("SurveyTable must be a table of at least one row, with Stratum and Survey as columns")
-        }
+    }
+    # Delete rows with missing Survey:
+    if(any(is.na(SurveyTable$Survey))) {
+        warning("StoX: Removing rows of missing Survey in SurveyTable")
+        SurveyTable <- SurveyTable[!is.na(Survey)]
+    }
+    if(any(is.na(SurveyTable$Stratum))) {
+        warning("StoX: Removing rows of missing Stratum in SurveyTable")
+        SurveyTable <- SurveyTable[!is.na(Stratum)]
+    }
+    # Delete also rows with unrecognized Stratum:
+    if(!all(SurveyTable$Stratum %in% stratumNames)) {
+        warning("StoX: Removing rows of Stratum not present in the SurveyTable")
+        SurveyTable <- SurveyTable[Stratum %in% stratumNames, ]
+    }
+    # If no rows in the SurveyTable, issue an error:
+    if(!nrow(SurveyTable)) {
+        stop("SurveyTable must be a table of at least one row, with Stratum and Survey as columns")
     }
     
     return(SurveyTable)

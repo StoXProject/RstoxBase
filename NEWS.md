@@ -1,3 +1,14 @@
+# RstoxBase v1.10.6 (2022-11-30)
+* Removed rows of the output from ReportBootstrap() that contained combinations of the GroupingVariables that are not present in the BootstrapData. There rows were created to ensure that all bootstrap runs contain all combinations of the GroupingVariables, but also introduced non-existing combinations.
+* Fixed bug in DefineSurvey() when reading from a table text file, which was attempted read as a project.xml file.
+* Improved warning when using RemoveMissingValues. This warning now informs the user that GruopingVariables can be useful to isolate missing values out from the relevant rows of the report.
+* Fixed error in the documentation of GroupingVariables.
+* Fixed bug in pkgdown.yaml.
+* Added support for pre-releases, which are not deployed to the StoX repo.
+
+# RstoxBase v1.10.5 (2022-11-22)
+* Fixed bug in DefineSurvey(), where reading a table from a text file (e.g. csv) caused a crash.
+
 # RstoxBase v1.10.4 (2022-11-21)
 * Improved warning for PSU not present in BioticAssignment.
 
