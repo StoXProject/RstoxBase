@@ -21,11 +21,11 @@ jobs:
           - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
           - {os: macOS-latest,   r: 'oldrel',  pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'}
+          # - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'} # Not used in RstoxFramework
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
           - {os: windows-latest, r: 'oldrel',  pkgext: '.zip'}
           - {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
-          - {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
+          #- {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           - {os: ubuntu-latest,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-18.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-18.04,   r: '4.0',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
@@ -52,6 +52,7 @@ jobs:
           curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output deploy.sh
           chmod +x ./checktag.sh ./deploy.sh
           . checktag.sh
+          echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
           echo "FINAL_TAG=${FINAL_TAG}" >> $GITHUB_ENV
           echo "PKG_FILE_PREFIX=${PKG_FILE_PREFIX}" >> $GITHUB_ENV
           echo "PKG_FILE=${PKG_FILE_PREFIX}${{ matrix.config.pkgext }}" >> $GITHUB_ENV

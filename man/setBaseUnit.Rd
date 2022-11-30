@@ -7,6 +7,8 @@
 setBaseUnit(x, dataType, variableName)
 }
 \arguments{
+\item{x}{The object to set base units to.}
+
 \item{dataType}{The name of a StoX \code{\link{DataTypes}}.}
 
 \item{variableName}{The variable name to get base units from.}

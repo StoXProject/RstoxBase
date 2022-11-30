@@ -13,7 +13,8 @@ aggregateBaselineDataOneTable(
   InformationVariables = character(),
   na.rm = FALSE,
   padWithZerosOn = character(),
-  WeightingVariable = character()
+  WeightingVariable = character(),
+  uniqueGroupingVariablesToKeep = NULL
 )
 }
 \arguments{
@@ -25,7 +26,7 @@ aggregateBaselineDataOneTable(
 
 \item{subTable}{The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.}
 
-\item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.}
+\item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.}
 
 \item{InformationVariables}{Variables to include as columns to the end of the report table. These cannot have more unique combinations than the \code{GroupingVariables}.}
 
@@ -34,6 +35,8 @@ aggregateBaselineDataOneTable(
 \item{padWithZerosOn}{Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}.}
 
 \item{WeightingVariable}{The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".}
+
+\item{uniqueGroupingVariablesToKeep}{A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.}
 }
 \value{
 An aggregated version of the input \code{stoxData}.

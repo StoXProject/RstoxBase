@@ -12,6 +12,21 @@
 #' @inheritParams ModelData
 #' @inheritParams general_plot_arguments
 #' @inheritParams general_map_plot_arguments
+#' @inheritParams MeanNASC
+#' @inheritParams DefineLayer
+#' @param UseAcousticPSU Logical: If TRUE plot only EDSUs tagged to acoustic PSUs.
+#' @param UseDefaultAcousticPSUSettings Logical: If TRUE (default) use the default settings for indicating acoustic PSU in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.
+#' @param AcousticPSULabelSize The text size of the plotted acoustic PSU labels.
+#' @param AcousticPSULabelColor The text color of the plotted acoustic PSU labels.
+#' @param AcousticPSULabelPosition The position of the text of the plotted acoustic PSU labels, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".
+#' @param AcousticPSULabelHjust A value to displace the acoustic PSU label with, where 0 means left-justified and 1 means right-justified, and values outside of [0, 1] are valid.
+#' @param AcousticPSULabelVjust  value to displace the acoustic PSU label with, where 0 means bottom-justified and 1 means top-justified, and values outside of [0, 1] are valid.
+#' @param LongitudeMin The minimum longitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LongitudeMax The maximum longitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LatitudeMin The minimum latitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LatitudeMax The maximum latitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LongitudeCenter The longitude of the point around which the plot is zoomed usinng \code{Zoom}.
+#' @param LatitudeCenter The latitude of the point around which the plot is zoomed usinng \code{Zoom}.
 #' @param ColorVariable The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.
 #' @param PointColor The colors to use when plotting the data points. If the \code{ColorVariable} is a discrete variable, a vector of color of the same length as the number of discrete values should be given, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors). If a continuous variable the colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".
 #' 
@@ -491,7 +506,6 @@ plot_lon_lat <- function(
     }
     
     
-    
     # Plot the points:
     if(grepl("p", type)) {
         
@@ -499,7 +513,6 @@ plot_lon_lat <- function(
         if(!isCategorical(x[[color]]) && length(color.scale) == 1 && !is.function(try(get(color.scale), silent = TRUE))) {
             color <- color.scale
         }
-        
         
         plotspec <- list(
             alpha = alpha.point
@@ -748,6 +761,5 @@ combined.color <- function(n, colStart = "white", colEnd = NA, nStart = 0, nEnd 
     
     return(out)
 }
-
 
 

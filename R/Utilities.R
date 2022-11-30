@@ -1596,6 +1596,7 @@ hasBaseUnit <- function(dataType, variableName) {
 
 #' Set base unit to a variable of the StoX dataType
 #' 
+#' @param x The object to set base units to.
 #' @inheritParams getBaseUnit
 #' 
 setBaseUnit <- function(x, dataType, variableName) {
@@ -1635,5 +1636,40 @@ setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
 
 
 
+#' Convert to factor and put NAs first
+#' 
+#' @param x A vector.
+#' @export
+#' 
+factorNAfirst <- function(x){
+    
+    if(is.numeric(x)){
+        # Create an ordered vector spanning the range of x:
+        r <- range(x, na.rm=TRUE)
+        if(diff(r) == 0){
+            levels <- r[1]
+        }
+        else{
+            levels <- seq(r[1], r[2], by=median(diff(sort(unique(x))), na.rm=TRUE))
+        }
+        
+        # Add NAs first:
+        if(any(is.na(x))){
+            levels <- c(NA, levels)
+        }
+    }
+    else{
+        levels <- unique(x)
+    }
+    # Convert a single NA to "NA":
+    if(length(levels)==1 && is.na(levels)){
+        levels <- "NA"
+        x <- rep("NA", length(x))
+    }
+    
+    levels <- sort(levels, na.last=FALSE)
+    
+    factor(x, levels=levels, exclude=NULL)
+}
 
 
