@@ -169,6 +169,12 @@
     <loc>/reference/PSU.html</loc>
   </url>
   <url>
+    <loc>/reference/PlotAcousticTrawlSurvey.html</loc>
+  </url>
+  <url>
+    <loc>/reference/PlotAcousticTrawlSurveyData.html</loc>
+  </url>
+  <url>
     <loc>/reference/ProcessData.html</loc>
   </url>
   <url>
@@ -286,10 +292,19 @@
     <loc>/reference/allEqual.html</loc>
   </url>
   <url>
+    <loc>/reference/allargs.html</loc>
+  </url>
+  <url>
     <loc>/reference/backwardCompatibility.html</loc>
   </url>
   <url>
+    <loc>/reference/combined.color.html</loc>
+  </url>
+  <url>
     <loc>/reference/cv.html</loc>
+  </url>
+  <url>
+    <loc>/reference/factorNAfirst.html</loc>
   </url>
   <url>
     <loc>/reference/formatOutput.html</loc>
@@ -301,7 +316,16 @@
     <loc>/reference/general_arguments2.7.html</loc>
   </url>
   <url>
+    <loc>/reference/general_map_plot_arguments.html</loc>
+  </url>
+  <url>
+    <loc>/reference/general_plot_arguments.html</loc>
+  </url>
+  <url>
     <loc>/reference/general_report_arguments.html</loc>
+  </url>
+  <url>
+    <loc>/reference/getBaseUnit.html</loc>
   </url>
   <url>
     <loc>/reference/getCommonIntervals.html</loc>
@@ -340,6 +364,9 @@
     <loc>/reference/getWeightingParameter.html</loc>
   </url>
   <url>
+    <loc>/reference/hasBaseUnit.html</loc>
+  </url>
+  <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
@@ -374,6 +401,18 @@
   </url>
   <url>
     <loc>/reference/sampleSorted.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setBaseUnit.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setDefaultsInStoxFunction.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setPlotAttributes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setUnitRstoxBase.html</loc>
   </url>
   <url>
     <loc>/reference/stoxFunctionAttributes.html</loc>

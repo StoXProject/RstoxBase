@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.10.5</span>
       </span>
     </div>
 
@@ -62,7 +62,8 @@
 <span>  InformationVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  padWithZerosOn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  uniqueGroupingVariablesToKeep <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -85,7 +86,7 @@
 
 
 <dt>GroupingVariables</dt>
-<dd><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" or "SpeciesCategory", unless the user needs to sum over all Survey and SpeciesCategory.</p></dd>
+<dd><p>The variables to report by. For most applications <code>GroupingVariables</code> should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.</p></dd>
 
 
 <dt>InformationVariables</dt>
@@ -102,6 +103,10 @@
 
 <dt>WeightingVariable</dt>
 <dd><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></dd>
+
+
+<dt>uniqueGroupingVariablesToKeep</dt>
+<dd><p>A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.</p></dd>
 
 </dl></div>
     <div id="value">
