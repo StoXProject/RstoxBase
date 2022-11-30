@@ -55,11 +55,37 @@ PlotAcousticTrawlSurvey(
 )
 }
 \arguments{
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.}
+
+\item{LayerDefinitionMethod}{See \code{\link{DefineAcousticLayer}}}
+
+\item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
+
+\item{LayerTable}{A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.}
+
+\item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
+
 \item{NASCData}{The \code{\link{NASCData}} data.}
 
 \item{SumNASCData}{The \code{\link{SumNASCData}} data.}
 
+\item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
+
 \item{ColorVariable}{The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.}
+
+\item{UseAcousticPSU}{Logical: If TRUE plot only EDSUs tagged to acoustic PSUs.}
+
+\item{UseDefaultAcousticPSUSettings}{Logical: If TRUE (default) use the default settings for indicating acoustic PSU in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.}
+
+\item{AcousticPSULabelSize}{The text size of the plotted acoustic PSU labels.}
+
+\item{AcousticPSULabelColor}{The text color of the plotted acoustic PSU labels.}
+
+\item{AcousticPSULabelPosition}{The position of the text of the plotted acoustic PSU labels, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".}
+
+\item{AcousticPSULabelHjust}{A value to displace the acoustic PSU label with, where 0 means left-justified and 1 means right-justified, and values outside of [0, 1] are valid.}
+
+\item{AcousticPSULabelVjust}{value to displace the acoustic PSU label with, where 0 means bottom-justified and 1 means top-justified, and values outside of [0, 1] are valid.}
 
 \item{UseDefaultColorSettings}{Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.}
 
@@ -86,6 +112,18 @@ PlotAcousticTrawlSurvey(
 \item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
 
 \item{Zoom}{The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
+
+\item{LongitudeMin}{The minimum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LongitudeMax}{The maximum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LatitudeMin}{The minimum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LatitudeMax}{The maximum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LongitudeCenter}{The longitude of the point around which the plot is zoomed usinng \code{Zoom}.}
+
+\item{LatitudeCenter}{The latitude of the point around which the plot is zoomed usinng \code{Zoom}.}
 
 \item{UseDefaultTextSettings}{Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
 

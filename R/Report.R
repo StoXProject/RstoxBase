@@ -188,6 +188,7 @@ ReportQuantity <- function(
 #' @param na.rm Used in the function specified by \code{aggregationFunction}.
 #' @param padWithZerosOn Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}. 
 #' @inheritParams ReportSuperIndividuals
+#' @param uniqueGroupingVariablesToKeep A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.
 #'
 #' @return
 #' An aggregated version of the input \code{stoxData}.
@@ -206,7 +207,8 @@ aggregateBaselineDataOneTable <- function(
     InformationVariables = character(), 
     na.rm = FALSE, 
     padWithZerosOn = character(), 
-    WeightingVariable = character()
+    WeightingVariable = character(), 
+    uniqueGroupingVariablesToKeep = NULL
 )
 {
     if(!length(stoxData)) {
@@ -263,6 +265,9 @@ aggregateBaselineDataOneTable <- function(
         return(out)
     }
     
+    # Keep the original stoxData before padding with zeros. The original is used when adding information variables, so that this process is not corrupted by any NAs introduced when CJ-ing:
+    stoxData0 <- data.table::copy(stoxData)
+    
     # Add a CJ operation here like in StoX 2.7 (function reportQuantityAtLevel). This needs an option, so that it is only used across bootstrap iterations:
     if(length(padWithZerosOn)) {
         # Attempt to generalize the creation of the grid and filling in the data, intended for use here and for an ExpandNASC function, but the latter was abandoned, so no need to generalize:
@@ -304,6 +309,18 @@ aggregateBaselineDataOneTable <- function(
     
     outputData <- stoxData[, fun(.SD), by = GroupingVariables]
     
+    if(length(uniqueGroupingVariablesToKeep)) {
+        # Discard all rows with combinations of the GroupingVariables that are not present in the BootstrapData[[BaselineProcess]]:
+        outputData <- outputData[uniqueGroupingVariablesToKeep, , on = names(uniqueGroupingVariablesToKeep)]
+    }
+    
+    # New as of 2022-11-23:
+    # This is a possible solution, butt maybe the best is to solve the issue in the bootstrap data, so that all super-individuals are kept, but with data variable 0 for those that are excluded in a bootstrap run. There is a positive probability that e.g. an age is excluded in ALL bootstrap runs, in which case the padWithZerosOn cannot regrenerate the age. 
+    # The CJ operation when padWithZerosOn is given expannds to a grid of all possible combinations of the GroupingVariables. However, not all of these combinations are relevant, or present in the original data. So we delete all rows with 0 or NA for all data columns, except if all are NA:
+    #allNA <- apply(outputData[, sapply(.SD, is.na), .SDcols = -GroupingVariables], 1, all)
+    #all0OrNA <- apply(outputData[, sapply(.SD, function(x) is.na(x) | x == 0), .SDcols = -GroupingVariables], 1, all)
+    #outputData <- subset(outputData, allNA | !all0OrNA)
+    
     # Order by the grouping variables:
     if(length(GroupingVariables)) {
         data.table::setorderv(outputData, GroupingVariables)
@@ -316,7 +333,7 @@ aggregateBaselineDataOneTable <- function(
             InformationVariables <- setdiff(InformationVariables, GroupingVariables)
         }
         if(length(InformationVariables)) {
-            toAdd <- unique(stoxData[, c(GroupingVariables, InformationVariables), with = FALSE])
+            toAdd <- unique(stoxData0[, c(GroupingVariables, InformationVariables), with = FALSE])
             nUniqueLevelsOfGroupingVariables <- nrow(unique(outputData[, GroupingVariables, with = FALSE]))
             nUniqueLevelsOfInformationVariables <- nrow(toAdd)
             if(nUniqueLevelsOfInformationVariables > nUniqueLevelsOfGroupingVariables) {
@@ -326,7 +343,10 @@ aggregateBaselineDataOneTable <- function(
                 outputData, 
                 toAdd,  
                 all.x = TRUE, 
-                by = GroupingVariables)
+                by = GroupingVariables
+            )
+            
+            data.table::setcolorder(outputData, c(GroupingVariables, InformationVariables))
         }
     }
     

@@ -114,16 +114,16 @@ stoxFunctionAttributes <- list(
             FileName = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "ResourceFile"
-            ), 
-            # StratumPolygon is shown in the GUI either if DefinitionMethod is "AllStrata" or "Table":
-            StratumPolygon = list(
-                UseProcessData = FALSE, 
-                DefinitionMethod = "AllStrata"
-            ), 
-            StratumPolygon = list(
-                UseProcessData = FALSE, 
-                DefinitionMethod = "Table"
-            )
+            )#, 
+            # # StratumPolygon is shown in the GUI either if DefinitionMethod is "AllStrata" or "Table":
+            # StratumPolygon = list(
+            #     UseProcessData = FALSE, 
+            #     DefinitionMethod = "AllStrata"
+            # ), 
+            # StratumPolygon = list(
+            #     UseProcessData = FALSE, 
+            #     DefinitionMethod = "Table"
+            # )
         )
     ), 
     ##########
@@ -841,17 +841,18 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "PlotAcousticTrawlSurveyData", 
         functionParameterFormat = list(
-            LayerTable = "layerTable", 
-            PointColor = "pointColor"
+            LayerTable = "layerTable"#, 
+            #PointColor = "pointColor"
         ),
         functionArgumentHierarchy = list(
             # Options for the colors:
             #ColorVariable = list(
             #    UseDefaultColorSettings = FALSE
             #), 
-            PointColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
+            # PointColor cannot have a default, as it depends on whether the ColorVariable is categorical of continuous:
+            #PointColor = list(
+            #    UseDefaultColorSettings = FALSE
+            #), 
             TrackColor = list(
                 UseDefaultColorSettings = FALSE
             ), 

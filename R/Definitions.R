@@ -775,7 +775,7 @@ initiateRstoxBase <- function(){
     # Warning when using RemoveMissingValues:
     #RemoveMissingValuesWarning <- "StoX: Using RemoveMissingValues = TRUE implies the risk of under-estimation. E.g., if RemoveMissingValues = TRUE and a super-individual lacks IndividualRoundWeight, Biomass will be NA, and the portion of Abundance distributed to that super-individual will be excluded when summing Biomass (but included when summing Abundance). It is advised to always run with RemoveMissingValues = FALSE first, and make a thorough investigation to identify the source of any missing values. The function ImputeSuperIndividuals can be used to impute the missing information from other super-individuals."
     RemoveMissingValuesWarning <- function(TargetVariable) {
-        paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! The Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")
+        paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! Instead, GroupingVariables can be used to isolate missing values in the TargetVariable. E.g., using SpeciesCategory and Survey often suffices to isolate missing values to missing SpeciesCategory and missing Survey. In addition, the Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")
     }
     
     
