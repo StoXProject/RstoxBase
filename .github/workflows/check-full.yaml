@@ -50,7 +50,9 @@ jobs:
         run: |
           curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/checktag-actions.sh" --output checktag.sh
           curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output deploy.sh
+          echo "11111111111"
           chmod +x ./checktag.sh ./deploy.sh
+          echo "222222222222"
           . checktag.sh
           echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
           echo "FINAL_TAG=${FINAL_TAG}" >> $GITHUB_ENV
