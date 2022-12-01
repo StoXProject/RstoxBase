@@ -66,7 +66,7 @@ jobs:
           rtools-version: ${{ matrix.config.rtools }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
 
-      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Query dependencies
         run: |
@@ -77,7 +77,7 @@ jobs:
 
       - name: Cache R packages
         if: runner.os != 'Windows'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
@@ -127,6 +127,30 @@ jobs:
           if(length(missing)) {
             message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
             utils::install.packages(missing, dependencies = TRUE)
+          }
+        shell: Rscript {0}
+
+      - name: Install pre-releases
+        run: |
+          # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
+          # Get the installed versions:
+          installed <- as.data.frame(utils::installed.packages())
+          # Find minimum versions:
+          deps <- strsplit(read.dcf("./DESCRIPTION", all = TRUE)$Imports, ",\n")[[1]]
+          Rstox_deps <- deps[startsWith(deps, "Rstox")]
+          Rstox_deps <- data.frame(
+          	Package = sub("[ (].*", "", Rstox_deps),
+          	MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps)
+          )
+          Rstox_deps <- merge(Rstox_deps, installed)
+          differ <- which(Rstox_deps$MinimumVersion != Rstox_deps$Version)
+          for(ind in differ) {
+            thisPackage <- Rstox_deps$Package[ind]
+            thisMinimumVersion <- Rstox_deps$MinimumVersion[ind]
+            remotes::install_github(
+                repo = paste("stoxproject", thisPackage, sep = "/"), 
+                ref = paste(thisPackage, thisMinimumVersion, sep = "-v")
+	        )
           }
         shell: Rscript {0}
 

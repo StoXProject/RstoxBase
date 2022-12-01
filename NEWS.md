@@ -1,3 +1,6 @@
+# RstoxBase v1.11.0-9001 (2022-12-01)
+* Changed the check-full.yaml to install pre-releases from the package repo (as pre-releases are no longer deployed to the drat repo "https://github.com/StoXProject/repo").
+
 # RstoxBase v1.10.6 (2022-11-30)
 * Removed rows of the output from ReportBootstrap() that contained combinations of the GroupingVariables that are not present in the BootstrapData. There rows were created to ensure that all bootstrap runs contain all combinations of the GroupingVariables, but also introduced non-existing combinations.
 * Fixed bug in DefineSurvey() when reading from a table text file, which was attempted read as a project.xml file.
