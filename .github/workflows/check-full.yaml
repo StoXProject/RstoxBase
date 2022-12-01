@@ -131,7 +131,7 @@ jobs:
           }
         shell: Rscript {0}
 
-      - name: Install pre-releases
+      - name: Install prereleases
         run: |
           # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
           # Get the installed versions:
@@ -148,10 +148,7 @@ jobs:
           for(ind in differ) {
             thisPackage <- Rstox_deps$Package[ind]
             thisMinimumVersion <- Rstox_deps$MinimumVersion[ind]
-            remotes::install_github(
-                repo = paste("stoxproject", thisPackage, sep = "/"), 
-                ref = paste(thisPackage, thisMinimumVersion, sep = "-v")
-	        )
+            remotes::install_github(repo = paste("stoxproject", thisPackage, sep = "/"), ref = paste(thisPackage, thisMinimumVersion, sep = "-v"))
           }
         shell: Rscript {0}
 
