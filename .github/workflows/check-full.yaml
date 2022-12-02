@@ -143,8 +143,8 @@ jobs:
           deps <- strsplit(read.dcf("./DESCRIPTION", all = TRUE)$Imports, ",\n")[[1]]
           Rstox_deps <- deps[startsWith(deps, "Rstox")]
           Rstox_deps <- data.frame(
-          	Package = sub("[ (].*", "", Rstox_deps),
-          	MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps)
+              Package = sub("[ (].*", "", Rstox_deps),
+              MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps)
           )
           Rstox_deps <- merge(Rstox_deps, installed)
           differ <- which(Rstox_deps$MinimumVersion != Rstox_deps$Version)
@@ -164,30 +164,30 @@ jobs:
           deps <- strsplit(read.dcf("./DESCRIPTION", all = TRUE)$Imports, ",\n")[[1]]
           Rstox_deps <- deps[startsWith(deps, "Rstox")]
           Rstox_deps <- data.frame(
-          	Package = sub("[ (].*", "", Rstox_deps),
-          	MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps)
+              Package = sub("[ (].*", "", Rstox_deps),
+              MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps)
           )
           Rstox_deps <- merge(Rstox_deps, installed)
           differ <- which(Rstox_deps$MinimumVersion != Rstox_deps$Version)
           for(ind in differ) {
             thisPackage <- Rstox_deps$Package[ind]
             thisMinimumVersion <- Rstox_deps$MinimumVersion[ind]
-			thisRelease <- paste(thisPackage, thisMinimumVersion, sep = "-v")
-			RMinorVersion <- paste(R.Version()$"major", gsub( "[.].*$", "", R.Version()$minor ), sep = ".")
-			thisReleaseFile <- paste0(thisPackage, "_", thisMinimumVersion, "-R.", RMinorVersion, if(.Platform$OS.type == "windows") "-Windows.zip" else "-macOS.tgz")
-			thisPackageURL <- paste(
-				"https://github.com/StoXProject", 
-				thisPackage, 
-				"releases/download", 
-				thisRelease, 
-				thisReleaseFile, 
-				sep = "/"
-			)
-			downloadedFile <- file.path(tempdir(), thisReleaseFile)
-			# Download the binary package file:
-			download.file(thisPackageURL, destfile = downloadedFile)
-			# Instal from the file:
-			install.packages(downloadedFile, repos = NULL, type = "binary")
+            thisRelease <- paste(thisPackage, thisMinimumVersion, sep = "-v")
+            RMinorVersion <- paste(R.Version()$"major", gsub( "[.].*$", "", R.Version()$minor ), sep = ".")
+            thisReleaseFile <- paste0(thisPackage, "_", thisMinimumVersion, "-R.", RMinorVersion, if(.Platform$OS.type == "windows") "-Windows.zip" else "-macOS.tgz")
+            thisPackageURL <- paste(
+                "https://github.com/StoXProject", 
+                thisPackage, 
+                "releases/download", 
+                thisRelease, 
+                thisReleaseFile, 
+                sep = "/"
+            )
+            downloadedFile <- file.path(tempdir(), thisReleaseFile)
+            # Download the binary package file:
+            download.file(thisPackageURL, destfile = downloadedFile)
+            # Instal from the file:
+            install.packages(downloadedFile, repos = NULL, type = "binary")
           }
         shell: Rscript {0}
 
