@@ -1,3 +1,6 @@
+# RstoxBase v1.11.0-9002 (2022-12-02)
+* Changed the check-full.yaml to download and install binary pre-releases on macOS and Windows.
+
 # RstoxBase v1.11.0-9001 (2022-12-01)
 * Changed the check-full.yaml to install pre-releases from the package repo (as pre-releases are no longer deployed to the drat repo "https://github.com/StoXProject/repo").
 
