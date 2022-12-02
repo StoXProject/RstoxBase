@@ -5,7 +5,6 @@ on:
   pull_request:
     branches:
       - master
-      - develop
 
 name: R-CMD-check
 
@@ -15,20 +14,24 @@ jobs:
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
+    # We include 'release' in order to always test the altest release, but mac and Windows binaries are not deployed to the drat repo:
     strategy:
       fail-fast: false
       matrix:
         config:
           - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
-          - {os: macOS-latest,   r: 'oldrel',  pkgext: '.tgz'}
+          - {os: macOS-latest,   r: '4.2', pkgext: '.tgz'}
+          - {os: macOS-latest,   r: '4.1',  pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'}
           # - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'} # Not used in RstoxFramework
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
-          - {os: windows-latest, r: 'oldrel',  pkgext: '.zip'}
+          - {os: windows-latest, r: '4.2', pkgext: '.zip'}
+          - {os: windows-latest, r: '4.1',  pkgext: '.zip'}
           - {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
           #- {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           - {os: ubuntu-latest,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-18.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-18.04,   r: '4.2',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-18.04,   r: '4.1',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-18.04,   r: '4.0',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-18.04,   r: '3.6',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
 
@@ -131,7 +134,7 @@ jobs:
           }
         shell: Rscript {0}
 
-      - name: Install prereleases
+      - name: Install prereleases on Linux
         run: |
           # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
           # Get the installed versions:
@@ -149,6 +152,42 @@ jobs:
             thisPackage <- Rstox_deps$Package[ind]
             thisMinimumVersion <- Rstox_deps$MinimumVersion[ind]
             remotes::install_github(repo = paste("stoxproject", thisPackage, sep = "/"), ref = paste(thisPackage, thisMinimumVersion, sep = "-v"))
+          }
+        shell: Rscript {0}
+
+      - name: Install prereleases on macOS and Windows
+        run: |
+          # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
+          # Get the installed versions:
+          installed <- as.data.frame(utils::installed.packages())
+          # Find minimum versions:
+          deps <- strsplit(read.dcf("./DESCRIPTION", all = TRUE)$Imports, ",\n")[[1]]
+          Rstox_deps <- deps[startsWith(deps, "Rstox")]
+          Rstox_deps <- data.frame(
+          	Package = sub("[ (].*", "", Rstox_deps),
+          	MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps)
+          )
+          Rstox_deps <- merge(Rstox_deps, installed)
+          differ <- which(Rstox_deps$MinimumVersion != Rstox_deps$Version)
+          for(ind in differ) {
+            thisPackage <- Rstox_deps$Package[ind]
+            thisMinimumVersion <- Rstox_deps$MinimumVersion[ind]
+			thisRelease <- paste(thisPackage, thisMinimumVersion, sep = "-v")
+			RMinorVersion <- paste(R.Version()$"major", gsub( "[.].*$", "", R.Version()$minor ), sep = ".")
+			thisReleaseFile <- paste0(thisPackage, "_", thisMinimumVersion, "-R.", RMinorVersion, if(.Platform$OS.type == "windows") "-Windows.zip" else "-macOS.tgz")
+			thisPackageURL <- paste(
+				"https://github.com/StoXProject", 
+				thisPackage, 
+				"releases/download", 
+				thisRelease, 
+				thisReleaseFile, 
+				sep = "/"
+			)
+			downloadedFile <- file.path(tempdir(), thisReleaseFile)
+			# Download the binary package file:
+			download.file(thisPackageURL, destfile = downloadedFile)
+			# Instal from the file:
+			install.packages(downloadedFile, repos = NULL, type = "binary")
           }
         shell: Rscript {0}
 
@@ -213,8 +252,9 @@ jobs:
       #     name: ${{ runner.os }}-${{ matrix.config.r }}-pkg
       #     path: '${{ github.workspace }}/*${{ matrix.config.pkgext }}'
 
+        # Upload to drat repo only for release on Linux, and onlly for all the specifically given R versions for macOS and Windows, where release is included to detect errors immediatelly when the new R is released:
       - name: Upload to DRAT repo
-        if: (runner.os == 'Windows' || runner.os == 'macOS' || (runner.os == 'Linux' && matrix.config.r == 'release')) && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
           BUILD_NUMBER: ${{ github.sha  }}
           DRAT_DEPLOY_TOKEN: ${{ secrets.DRAT_DEPLOY_TOKEN }}
@@ -222,7 +262,7 @@ jobs:
         shell: bash
 
       - name: Create release and upload files
-        if: (runner.os == 'Windows' || runner.os == 'macOS' || (runner.os == 'Linux' && matrix.config.r == 'release')) && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
