@@ -169,7 +169,7 @@ PlotAcousticTrawlSurvey <- function(
     # # Set default NASC-plotting options:
     # plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotOptions"))
     
-    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey")
+    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey", stoxFunctionAttributes = stoxFunctionAttributes)
     
     
     # # Apply custom specifications:

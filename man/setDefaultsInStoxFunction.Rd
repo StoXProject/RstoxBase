@@ -4,12 +4,14 @@
 \alias{setDefaultsInStoxFunction}
 \title{Set default general options}
 \usage{
-setDefaultsInStoxFunction(x, StoxFunctionName)
+setDefaultsInStoxFunction(x, StoxFunctionName, stoxFunctionAttributes)
 }
 \arguments{
 \item{x}{A list of arguments to the StoxFunction.}
 
 \item{StoxFunctionName}{The name of the StoxFunction.}
+
+\item{stoxFunctionAttributes}{The stoxFunctionAttributes to use.}
 }
 \description{
 Set default general options
