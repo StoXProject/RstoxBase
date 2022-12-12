@@ -1501,9 +1501,11 @@ setDefaults <- function(x, defaults) {
 #' 
 #' @param x A list of arguments to the StoxFunction.
 #' @param StoxFunctionName The name of the StoxFunction.
+#' @param stoxFunctionAttributes The stoxFunctionAttributes to use.
+#' 
 #' @export
 #' 
-setDefaultsInStoxFunction <- function(x, StoxFunctionName) {
+setDefaultsInStoxFunction <- function(x, StoxFunctionName, stoxFunctionAttributes) {
     # The following line failed if the StoX function was run inside e.g. an mapply():
     #StoxFunctionName <- tail(as.character(as.list(sys.call(-1))[[1]]), 1)
     defaults <- stoxFunctionAttributes[[StoxFunctionName]]$functionParameterDefaults
@@ -1642,15 +1644,14 @@ setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
 #' @export
 #' 
 factorNAfirst <- function(x){
-    
     if(is.numeric(x)){
         # Create an ordered vector spanning the range of x:
-        r <- range(x, na.rm=TRUE)
+        r <- range(x, na.rm = TRUE)
         if(diff(r) == 0){
             levels <- r[1]
         }
         else{
-            levels <- seq(r[1], r[2], by=median(diff(sort(unique(x))), na.rm=TRUE))
+            levels <- seq(r[1], r[2], by = median(diff(sort(unique(x))), na.rm = TRUE))
         }
         
         # Add NAs first:
@@ -1662,14 +1663,14 @@ factorNAfirst <- function(x){
         levels <- unique(x)
     }
     # Convert a single NA to "NA":
-    if(length(levels)==1 && is.na(levels)){
+    if(length(levels) == 1 && is.na(levels)){
         levels <- "NA"
         x <- rep("NA", length(x))
     }
     
-    levels <- sort(levels, na.last=FALSE)
+    levels <- sort(levels, na.last = FALSE)
     
-    factor(x, levels=levels, exclude=NULL)
+    factor(x, levels = levels, exclude = NULL)
 }
 
 

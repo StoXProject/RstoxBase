@@ -50,7 +50,7 @@
 #' 
 #' 3) \strong{Percent}
 #' 
-#' Length distribution in percent. Length distributions of this type reflects the shape of the length distribution and contains therefore no implicit weighting.The calculation of percent length distributions is done as follows:
+#' Length distribution in percent per SpeciesCategory. Length distributions of this type reflects the shape of the length distribution and contains therefore no implicit weighting.The calculation of percent length distributions is done as follows:
 #'
 #' A) If a SpeciesCategory at a station only have one Sample, the percent distribution is generated directly from the Sample length distribution. There is no need for knowing the raising factor.
 #'
@@ -759,7 +759,7 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
     # Make a copy of the input, since we are averaging and setting values by reference:
     LengthDistributionDataCopy = data.table::copy(LengthDistributionData)
     
-    # Get the columns to aggregate over, excluding the length groups (summing over these):
+    # Get the columns to aggregate over, excluding the length groups (summing over these). These columns are "Station", "Haul" and "SpeciesCategory":
     by <- getAllAggregationVariables(dataType="LengthDistributionData", exclude.groupingVariables = TRUE)
     
     # Apply the division by the sum:

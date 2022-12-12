@@ -1,3 +1,7 @@
+# RstoxBase v1.11.0-9003 (2022-12-13)
+* Improved the documentation EstimateBioticRegression().
+* Improved warning when acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls.
+
 # RstoxBase v1.11.0-9002 (2022-12-02)
 * Changed the check-full.yaml to download and install binary pre-releases on macOS and Windows.
 
