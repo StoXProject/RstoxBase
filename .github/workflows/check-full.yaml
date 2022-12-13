@@ -135,6 +135,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Install prereleases on Linux
+        if: runner.os == 'Linux'
         run: |
           # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
           # Get the installed versions:
@@ -156,6 +157,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Install prereleases on macOS and Windows
+        if: runner.os != 'Linux'
         run: |
           # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
           # Get the installed versions:
