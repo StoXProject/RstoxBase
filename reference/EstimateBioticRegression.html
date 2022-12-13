@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0-9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0-9003</span>
       </span>
     </div>
 
@@ -77,11 +77,11 @@
 
 
 <dt>DependentVariable</dt>
-<dd><p>The name of the dependent variable (respons variable).</p></dd>
+<dd><p>The name of the dependent variable (response variable).</p></dd>
 
 
 <dt>DependentResolutionVariable</dt>
-<dd><p>The name of the dependent variable (respons variable).</p></dd>
+<dd><p>(Optional) The name of the variable that gives the resolution of the <code>DependentVariable</code>. If the <code>DependentResolutionVariable</code> is given, half of the resolution is added to the <code>DependentVariable</code>, and the regression model is fitted at those values. E.g., if <code>DependentVariable</code> = "IndividualTotalLength" and <code>DependentResolutionVariable</code> = "LengthResolution", the regression model is fitted at IndividualTotalLength + LengthResolution/2.</p></dd>
 
 
 <dt>IndependentVariable</dt>
@@ -89,7 +89,7 @@
 
 
 <dt>IndependentResolutionVariable</dt>
-<dd><p>The name of the independent variable (explanatory variable).</p></dd>
+<dd><p>(Optional) The name of the variable that gives the resolution of the <code>IndependentVariable</code>. See also <code>DependentResolutionVariable</code>.</p></dd>
 
 
 <dt>GroupingVariables</dt>
