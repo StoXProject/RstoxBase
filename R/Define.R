@@ -1127,7 +1127,7 @@ DefineBioticAssignment <- function(
         # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
         newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, subset(processData$BioticAssignment, !is.na(Haul))$PSU)
         if(length(newPSUs)) {
-            warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData. Please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
+            warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls. This may not be a problem if there is no NASC in those PSUs. Otherwise, please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
         }
         
         # Also issue a warning for assignment to non-existing acoustic PSUs:
@@ -2214,10 +2214,10 @@ DefineRegression <- function(
 #' @inheritParams DefineModel
 #' @inheritParams DefineRegression
 #' @param InputDataType The type of biotic data to estimate the regression parameters based on, one of "IndividualsData" and "SuperIndividualsData". See Details.
-#' @param DependentVariable The name of the dependent variable (respons variable).
-#' @param DependentResolutionVariable The name of the dependent variable (respons variable).
+#' @param DependentVariable The name of the dependent variable (response variable).
+#' @param DependentResolutionVariable (Optional) The name of the variable that gives the resolution of the \code{DependentVariable}. If the \code{DependentResolutionVariable} is given, half of the resolution is added to the \code{DependentVariable}, and the regression model is fitted at those values. E.g., if \code{DependentVariable} = "IndividualTotalLength" and \code{DependentResolutionVariable} = "LengthResolution", the regression model is fitted at IndividualTotalLength + LengthResolution/2.
 #' @param IndependentVariable The name of the independent variable (explanatory variable).
-#' @param IndependentResolutionVariable The name of the independent variable (explanatory variable).
+#' @param IndependentResolutionVariable (Optional) The name of the variable that gives the resolution of the \code{IndependentVariable}. See also \code{DependentResolutionVariable}.
 #' 
 #' @details The \code{RegressionModel} "Power" performs a log-log transformed simple linear regression of the model Y ~ a X^b exp(epsilon), where the error term epsilon is assumed to follow the normal distibution with mean 0 (see \href{http://derekogle.com/fishR/examples/oldFishRVignettes/LengthWeight.pdf}{fishR}).
 #' 

@@ -65,7 +65,7 @@ Normalized length distribution to one nautical mile towing distance. This distri
 
 3) \strong{Percent}
 
-Length distribution in percent. Length distributions of this type reflects the shape of the length distribution and contains therefore no implicit weighting.The calculation of percent length distributions is done as follows:
+Length distribution in percent per SpeciesCategory. Length distributions of this type reflects the shape of the length distribution and contains therefore no implicit weighting.The calculation of percent length distributions is done as follows:
 
 A) If a SpeciesCategory at a station only have one Sample, the percent distribution is generated directly from the Sample length distribution. There is no need for knowing the raising factor.
 

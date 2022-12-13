@@ -21,13 +21,13 @@ EstimateBioticRegression(
 
 \item{RegressionModel}{Character: A string naming the model to use for the regression. See Details for options.}
 
-\item{DependentVariable}{The name of the dependent variable (respons variable).}
+\item{DependentVariable}{The name of the dependent variable (response variable).}
 
-\item{DependentResolutionVariable}{The name of the dependent variable (respons variable).}
+\item{DependentResolutionVariable}{(Optional) The name of the variable that gives the resolution of the \code{DependentVariable}. If the \code{DependentResolutionVariable} is given, half of the resolution is added to the \code{DependentVariable}, and the regression model is fitted at those values. E.g., if \code{DependentVariable} = "IndividualTotalLength" and \code{DependentResolutionVariable} = "LengthResolution", the regression model is fitted at IndividualTotalLength + LengthResolution/2.}
 
 \item{IndependentVariable}{The name of the independent variable (explanatory variable).}
 
-\item{IndependentResolutionVariable}{The name of the independent variable (explanatory variable).}
+\item{IndependentResolutionVariable}{(Optional) The name of the variable that gives the resolution of the \code{IndependentVariable}. See also \code{DependentResolutionVariable}.}
 
 \item{GroupingVariables}{An optional vector of strings defining variables seving as grouping variables in the RegressionTable. Setting this adds the its elements as columns in the RegressionTable in the GUI.}
 
