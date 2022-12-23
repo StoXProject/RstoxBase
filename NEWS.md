@@ -1,3 +1,7 @@
+# RstoxBase v1.11.0-9004 (2022-12-23)
+* Fixed bug in SuperIndividuals, where the temporary column LengthGroup is generated but might already be present if the user has created a LengthGroup with the new Copy functionality.
+* Cleaned up documentation of ModelData.
+
 # RstoxBase v1.11.0-9003 (2022-12-13)
 * Improved the documentation EstimateBioticRegression().
 * Improved warning when acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls.

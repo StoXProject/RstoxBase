@@ -836,167 +836,167 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "NASCData"
     ),
     
-    PlotAcousticTrawlSurvey = list(
-        functionType = "modelData", 
-        functionCategory = "report", 
-        functionOutputDataType = "PlotAcousticTrawlSurveyData", 
-        functionParameterFormat = list(
-            LayerTable = "layerTable"#, 
-            #PointColor = "pointColor"
-        ),
-        functionArgumentHierarchy = list(
-            # Options for the colors:
-            #ColorVariable = list(
-            #    UseDefaultColorSettings = FALSE
-            #), 
-            # PointColor cannot have a default, as it depends on whether the ColorVariable is categorical of continuous:
-            #PointColor = list(
-            #    UseDefaultColorSettings = FALSE
-            #), 
-            TrackColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            LandColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            BorderColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            OceanColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            GridColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            # Options for the point sizes and shapes:
-            MaxPointSize = list(
-                UseDefaultSizeSettings = FALSE
-            ), 
-            MinPointSize = list(
-                UseDefaultSizeSettings = FALSE
-            ), 
-            TrackSize = list(
-                UseDefaultSizeSettings = FALSE
-            ), 
-            # Options for zoom and limits:
-            Zoom = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LongitudeMin = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LongitudeMax = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LatitudeMin = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LatitudeMax = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LongitudeCenter = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LatitudeCenter = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            # Options for the labels and other text:
-            Title = list(
-                UseDefaultTextSettings = FALSE
-            ), 
-            AxisTitleSize = list(
-                UseDefaultTextSettings = FALSE
-            ), 
-            AxisTickSize = list(
-                UseDefaultTextSettings = FALSE
-            ), 
-            LegendTitleSize = list(
-                UseDefaultTextSettings = FALSE
-            ), 
-            LegendTextSize = list(
-                UseDefaultTextSettings = FALSE
-            ), 
-            # Options for the output file:
-            Format = list(
-                UseDefaultFileSettings = FALSE
-            ), 
-            Width = list(
-                UseDefaultFileSettings = FALSE
-            ), 
-            Height = list(
-                UseDefaultFileSettings = FALSE
-            ), 
-            DotsPerInch = list(
-                UseDefaultFileSettings = FALSE
-            ), 
-            # Layer: 
-            NASCData = list(
-                # The LayerDefinition can be any of these:
-                LayerDefinition = c(
-                    "FunctionInput", 
-                    "FunctionParameter"
-                )
-            ), 
-            SumNASCData = list(
-                LayerDefinition = "PreDefined"
-            ), 
-            AcousticLayer = list(
-                LayerDefinition = "FunctionInput"
-            ),
-            LayerDefinitionMethod = list(
-                LayerDefinition = "FunctionParameter"
-            ), 
-            Resolution = list(
-                LayerDefinition = "FunctionParameter", 
-                LayerDefinitionMethod = "Resolution"
-            ), 
-            LayerTable = list(
-                LayerDefinition = "FunctionParameter", 
-                LayerDefinitionMethod = "Table"
-            ), 
-            # AcousticPSU:
-            AcousticPSU = list(
-                UseAcousticPSU = TRUE
-            ), 
-            UseDefaultAcousticPSUSettings <- list(
-                UseAcousticPSU = TRUE
-            ), 
-            AcousticPSULabelSize = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
-            ), 
-            AcousticPSULabelColor = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
-            ), 
-            AcousticPSULabelPosition = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
-            ), 
-            AcousticPSULabelHjust = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
-            ), 
-            AcousticPSULabelVjust = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
-            )
-        ), 
-        functionParameterDefaults = c(
-            # Default general options:
-            defaultPlotGeneralOptions, 
-            # Default file options:
-            defaultPlotFileOptions, 
-            # Default map plotting options:
-            defaultMapPlotNASCOptions, 
-            # Default NASC-plotting options:
-            defaultMapPlotOptions, 
-            # Defaults for the AcousticPSU (potting PSU names) text size and shift (from the mean EDSU position):
-            defaultAcousticPSUPlotOptions, 
-            # Defaults color variable:
-            defaultColorVariableOptions
-        )
-    ),
+    #PlotAcousticTrawlSurvey = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "report", 
+    #    functionOutputDataType = "PlotAcousticTrawlSurveyData", 
+    #    functionParameterFormat = list(
+    #        LayerTable = "layerTable"#, 
+    #        #PointColor = "pointColor"
+    #    ),
+    #    functionArgumentHierarchy = list(
+    #        # Options for the colors:
+    #        #ColorVariable = list(
+    #        #    UseDefaultColorSettings = FALSE
+    #        #), 
+    #        # PointColor cannot have a default, as it depends on whether the ColorVariable is categorical of continuous:
+    #        #PointColor = list(
+    #        #    UseDefaultColorSettings = FALSE
+    #        #), 
+    #        TrackColor = list(
+    #            UseDefaultColorSettings = FALSE
+    #        ), 
+    #        LandColor = list(
+    #            UseDefaultColorSettings = FALSE
+    #        ), 
+    #        BorderColor = list(
+    #            UseDefaultColorSettings = FALSE
+    #        ), 
+    #        OceanColor = list(
+    #            UseDefaultColorSettings = FALSE
+    #        ), 
+    #        GridColor = list(
+    #            UseDefaultColorSettings = FALSE
+    #        ), 
+    #        # Options for the point sizes and shapes:
+    #        MaxPointSize = list(
+    #            UseDefaultSizeSettings = FALSE
+    #        ), 
+    #        MinPointSize = list(
+    #            UseDefaultSizeSettings = FALSE
+    #        ), 
+    #        TrackSize = list(
+    #            UseDefaultSizeSettings = FALSE
+    #        ), 
+    #        # Options for zoom and limits:
+    #        Zoom = list(
+    #            UseDefaultAspectSettings = FALSE
+    #        ), 
+    #        LongitudeMin = list(
+    #            UseDefaultAspectSettings = FALSE
+    #        ), 
+    #        LongitudeMax = list(
+    #            UseDefaultAspectSettings = FALSE
+    #        ), 
+    #        LatitudeMin = list(
+    #            UseDefaultAspectSettings = FALSE
+    #        ), 
+    #        LatitudeMax = list(
+    #            UseDefaultAspectSettings = FALSE
+    #        ), 
+    #        LongitudeCenter = list(
+    #            UseDefaultAspectSettings = FALSE
+    #        ), 
+    #        LatitudeCenter = list(
+    #            UseDefaultAspectSettings = FALSE
+    #        ), 
+    #        # Options for the labels and other text:
+    #        Title = list(
+    #            UseDefaultTextSettings = FALSE
+    #        ), 
+    #        AxisTitleSize = list(
+    #            UseDefaultTextSettings = FALSE
+    #        ), 
+    #        AxisTickSize = list(
+    #            UseDefaultTextSettings = FALSE
+    #        ), 
+    #        LegendTitleSize = list(
+    #            UseDefaultTextSettings = FALSE
+    #        ), 
+    #        LegendTextSize = list(
+    #            UseDefaultTextSettings = FALSE
+    #        ), 
+    #        # Options for the output file:
+    #        Format = list(
+    #            UseDefaultFileSettings = FALSE
+    #        ), 
+    #        Width = list(
+    #            UseDefaultFileSettings = FALSE
+    #        ), 
+    #        Height = list(
+    #            UseDefaultFileSettings = FALSE
+    #        ), 
+    #        DotsPerInch = list(
+    #            UseDefaultFileSettings = FALSE
+    #        ), 
+    #        # Layer: 
+    #        NASCData = list(
+    #            # The LayerDefinition can be any of these:
+    #            LayerDefinition = c(
+    #                "FunctionInput", 
+    #                "FunctionParameter"
+    #            )
+    #        ), 
+    #        SumNASCData = list(
+    #            LayerDefinition = "PreDefined"
+    #        ), 
+    #        AcousticLayer = list(
+    #            LayerDefinition = "FunctionInput"
+    #        ),
+    #        LayerDefinitionMethod = list(
+    #            LayerDefinition = "FunctionParameter"
+    #        ), 
+    #        Resolution = list(
+    #            LayerDefinition = "FunctionParameter", 
+    #            LayerDefinitionMethod = "Resolution"
+    #        ), 
+    #        LayerTable = list(
+    #            LayerDefinition = "FunctionParameter", 
+    #            LayerDefinitionMethod = "Table"
+    #        ), 
+    #        # AcousticPSU:
+    #        AcousticPSU = list(
+    #            UseAcousticPSU = TRUE
+    #        ), 
+    #        UseDefaultAcousticPSUSettings <- list(
+    #            UseAcousticPSU = TRUE
+    #        ), 
+    #        AcousticPSULabelSize = list(
+    #            UseAcousticPSU = TRUE, 
+    #            UseDefaultAcousticPSUSettings = FALSE
+    #        ), 
+    #        AcousticPSULabelColor = list(
+    #            UseAcousticPSU = TRUE, 
+    #            UseDefaultAcousticPSUSettings = FALSE
+    #        ), 
+    #        AcousticPSULabelPosition = list(
+    #            UseAcousticPSU = TRUE, 
+    #            UseDefaultAcousticPSUSettings = FALSE
+    #        ), 
+    #        AcousticPSULabelHjust = list(
+    #            UseAcousticPSU = TRUE, 
+    #            UseDefaultAcousticPSUSettings = FALSE
+    #        ), 
+    #        AcousticPSULabelVjust = list(
+    #            UseAcousticPSU = TRUE, 
+    #            UseDefaultAcousticPSUSettings = FALSE
+    #        )
+    #    ), 
+    #    functionParameterDefaults = c(
+    #        # Default general options:
+    #        defaultPlotGeneralOptions, 
+    #        # Default file options:
+    #        defaultPlotFileOptions, 
+    #        # Default map plotting options:
+    #        defaultMapPlotNASCOptions, 
+    #        # Default NASC-plotting options:
+    #        defaultMapPlotOptions, 
+    #        # Defaults for the AcousticPSU (potting PSU names) text size and shift (from the mean EDSU position):
+    #        defaultAcousticPSUPlotOptions, 
+    #        # Defaults color variable:
+    #        defaultColorVariableOptions
+    #    )
+    #),
     
     ##########
     

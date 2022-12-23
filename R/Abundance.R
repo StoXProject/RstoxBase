@@ -197,11 +197,11 @@ SuperIndividuals <- function(
     # Add length groups also to the QuantityData:
     addLengthGroup(data = QuantityData$Data, master = QuantityData$Data, warn = FALSE)
     
-    # Merge the QuantityData into the SuperIndividualsData, by the resolution and category variables of the QuantityData and the LengthGroup introduced in addLengthGroups().
-    # Stratum/Layer/SpeciesCategory/LengthGroup
+    # Merge the QuantityData into the SuperIndividualsData, by the resolution and category variables of the QuantityData and the TempLengthGroupUsedInSuperIndividuals introduced in addLengthGroups().
+    # Stratum/Layer/SpeciesCategory/TempLengthGroupUsedInSuperIndividuals
     mergeBy <- c(
         getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
-        "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
+        "TempLengthGroupUsedInSuperIndividuals" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
     # Get the variables to add from the QuantityData, which are the Abundance, the surveyDefinition, the vertical dimension, and the acoustic grouping variables:
     # Abundance/Survey/MinLayerDepth/MaxLayerDepth/Beam/Frequency
@@ -233,12 +233,12 @@ SuperIndividuals <- function(
     # Append an individualNumber to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     distributeQuantityBy <- c(
         getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
-        "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
+        "TempLengthGroupUsedInSuperIndividuals" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
     # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
     distributeQuantityBy <- intersect(distributeQuantityBy, names(QuantityData$Data))
     
-    # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and LengthGroup:
+    # Distributing abundance equally between all individuals of each Stratum, Layer, SpeciesCategory and TempLengthGroupUsedInSuperIndividuals:
     if(DistributionMethod == "Equal") {
         SuperIndividualsData[, individualNumber := as.double(.N), by = distributeQuantityBy]
         SuperIndividualsData[, haulWeightFactor := 1]
@@ -271,7 +271,7 @@ SuperIndividuals <- function(
         #     stop("The length resolution of the LengthDistributionData must match that of the QuantityData.")
         # }
         
-        # Add the LengthGroup variable:
+        # Add the TempLengthGroupUsedInSuperIndividuals variable:
         addLengthGroup(data = LengthDistributionData, master = QuantityData$Data, warn = FALSE)
         
         # We need to unique since there may have been multiple lines in the same length group:
@@ -281,7 +281,7 @@ SuperIndividuals <- function(
         haulGrouping <- c(
             "Haul", 
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
-            "LengthGroup"
+            "TempLengthGroupUsedInSuperIndividuals"
         )
         # Add the haul density as the WeightedNumber to the SuperIndividualsData (requiring Normalized LengthDistributionType):
         # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl:
@@ -306,7 +306,7 @@ SuperIndividuals <- function(
             warning("StoX: There are rows of the QuantityData with positive Abundance for a species that cannot be matched to any individuals of the IndividualsData. The reason for this may be that there are samples in the StoxBioticData used as input to the LengthDistribution process earlier in the Baseline model that have positive SampleNumber but no individuals. The consequence is that Abundance is set to NA in SuperIndividualsData for the following Stratum Layer and SpeciesCategory, resulting in loss of Abundance: ", paste(SuperIndividualsData[atMissisngLengthButPresentAbundance, paste0("Stratum: ", Stratum, ", Layer: ", Layer, ", SpeciesCategory: ", SpeciesCategory)], collapse = "\n"))
         }
         
-        # Sum the haul densities (stored as WeightedNumber) over all hauls of each Stratum/Layer/SpeciesCategory/LengthGroup/Frequency/Beam:
+        # Sum the haul densities (stored as WeightedNumber) over all hauls of each Stratum/Layer/SpeciesCategory/TempLengthGroupUsedInSuperIndividuals/Frequency/Beam:
         # No no, this was certainly wrong, as WeightedNumber could be duplicated within a Stratum for one length group:
         #SuperIndividualsData[, sumWeightedNumber := sum(unique(WeightedNumber), na.rm = TRUE), by = distributeQuantityBy]
         # Sum the WeightedNumber over all hauls of the columns specified by distributeQuantityBy:
@@ -323,7 +323,7 @@ SuperIndividuals <- function(
             "Haul", 
             getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
             getDataTypeDefinition(dataType = "QuantityData", elements = "groupingVariables_acoustic", unlist = TRUE), 
-            "LengthGroup" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
+            "TempLengthGroupUsedInSuperIndividuals" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
         )
         # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
         countGrouping <- intersect(countGrouping, names(SuperIndividualsData))
@@ -385,10 +385,10 @@ SuperIndividuals <- function(
     #SuperIndividualsData[, haulWeightFactor := NULL]
     #SuperIndividualsData[, individualNumber := NULL]
     ##SuperIndividualsData[, abundanceWeightFactor := NULL]
-    #SuperIndividualsData[, LengthGroup := NULL]
+    #SuperIndividualsData[, TempLengthGroupUsedInSuperIndividuals := NULL]
     removeColumnsByReference(
         data = SuperIndividualsData, 
-        toRemove = c("haulWeightFactor", "individualNumber", "LengthGroup")
+        toRemove = c("haulWeightFactor", "individualNumber", "TempLengthGroupUsedInSuperIndividuals")
     )
     
     ## Order the rows:
@@ -451,7 +451,7 @@ addLengthGroupOneSpecies <- function(
     uniqueLengthGroups <- uniqueLengthGroups[order(uniqueLengthGroups[[lengthVar]]), ]
     
     # (1) Match the length groups exactly:
-    data[atSpeciesInData, LengthGroup := match(
+    data[atSpeciesInData, TempLengthGroupUsedInSuperIndividuals := match(
         paste(..lengthVar, ..resolutionVar), 
         eval(
             paste(
@@ -467,16 +467,16 @@ addLengthGroupOneSpecies <- function(
         # The 'atMissingLengthGroup' is guaranteed to be of length 1:
         atMissingLengthGroup <- which(is.na(uniqueLengthGroups[[lengthVar]]))
         if(length(atMissingLengthGroup)) {
-            data[missingLength, LengthGroup := ..atMissingLengthGroup]
+            data[missingLength, TempLengthGroupUsedInSuperIndividuals := ..atMissingLengthGroup]
         }
     }
     
     # (3) For the length intervals not exactly matched in the master, find the appropriate intervals. The intervalVector may contain intervals that are not present in the data (intervals between present intervals):
-    #data[, is.na(LengthGroup)]
-    notExactlyMatched <- atSpeciesInData[is.na(data$LengthGroup[atSpeciesInData])]
+    #data[, is.na(TempLengthGroupUsedInSuperIndividuals)]
+    notExactlyMatched <- atSpeciesInData[is.na(data$TempLengthGroupUsedInSuperIndividuals[atSpeciesInData])]
     startLength <- uniqueLengthGroups$IndividualTotalLength
     endLength <- startLength + uniqueLengthGroups$LengthResolution
-    data[notExactlyMatched, LengthGroup := findInterval_disjoint(
+    data[notExactlyMatched, TempLengthGroupUsedInSuperIndividuals := findInterval_disjoint(
         IndividualTotalLength, 
         start = startLength, 
         end = endLength, 
@@ -484,7 +484,7 @@ addLengthGroupOneSpecies <- function(
     )]
     
     
-    hasInvalidLength <- data[atSpeciesInData, is.na(LengthGroup)]
+    hasInvalidLength <- data[atSpeciesInData, is.na(TempLengthGroupUsedInSuperIndividuals)]
     if(any(hasInvalidLength)) {
         if("Individual" %in% names(data)) {
             invalidIndividuals <- do.call(paste, c(subset(data[atSpeciesInData, ], hasInvalidLength, select = c("Individual", "IndividualTotalLength")), list(sep = ", ")))
@@ -497,8 +497,8 @@ addLengthGroupOneSpecies <- function(
   }
     
     # Also replace the lengthVar and resolutionVar by those in the master:
-    data[atSpeciesInData, `:=`(c(lengthVar), uniqueLengthGroups[[lengthVar]][LengthGroup])]
-    data[atSpeciesInData, `:=`(c(resolutionVar), uniqueLengthGroups[[resolutionVar]][LengthGroup])]
+    data[atSpeciesInData, `:=`(c(lengthVar), uniqueLengthGroups[[lengthVar]][TempLengthGroupUsedInSuperIndividuals])]
+    data[atSpeciesInData, `:=`(c(resolutionVar), uniqueLengthGroups[[resolutionVar]][TempLengthGroupUsedInSuperIndividuals])]
     
     return(TRUE)
 }
@@ -563,7 +563,7 @@ addLengthGroup <- function(
     species <- intersect(speciesInData, speciesInMaster)
     
     if(!length(species)) {
-        data[, LengthGroup := NA_integer_]
+        data[, TempLengthGroupUsedInSuperIndividuals := NA_integer_]
     }
     else {
         for(thisspecies in species) {

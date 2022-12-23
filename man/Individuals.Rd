@@ -12,7 +12,7 @@ Individuals(
 )
 }
 \arguments{
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
+\item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} (defined in RstoxData).}
 
 \item{QuantityType}{The type of abundance, one of "Acoustic" and "SweptArea".}
 
