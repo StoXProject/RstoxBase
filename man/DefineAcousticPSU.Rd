@@ -22,7 +22,7 @@ DefineAcousticPSU(
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
+\item{StoxAcousticData}{\code{\link[RstoxData]{StoxAcousticData}} (defined in RstoxData).}
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
 

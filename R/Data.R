@@ -99,12 +99,6 @@ NULL
 #' 
 #' The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.
 #' 
-#' @param BioticData The \code{\link[RstoxData]{BioticData}} data (defined in RstoxData).
-#' @param AcousticData The \code{\link[RstoxData]{AcousticData}} data (defined in RstoxData).
-#' @param LandingData The \code{\link[RstoxData]{LandingData}} data (defined in RstoxData).
-#' @param StoxBioticData The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).
-#' @param StoxAcousticData The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).
-#' @param StoxLandingData The \code{\link[RstoxData]{StoxLandingData}} data (defined in RstoxData).
 #' @param StratumAreaData The \code{\link{StratumAreaData}} data.
 #' @param NASCData The \code{\link{NASCData}} data.
 #' @param SumNASCData The \code{\link{SumNASCData}} data.
@@ -123,6 +117,20 @@ NULL
 #' @param SuperIndividualsData The \code{\link{SuperIndividualsData}} data.
 #' @param ReportSuperIndividualsData The \code{\link{ReportSuperIndividualsData}} data.
 #' @param PlotAcousticTrawlSurveyData The \code{\link{PlotAcousticTrawlSurveyData}} data.
+#' @param BioticData \code{\link[RstoxData]{BioticData}} (defined in RstoxData).
+#' @param AcousticData \code{\link[RstoxData]{AcousticData}} (defined in RstoxData).
+#' @param LandingData \code{\link[RstoxData]{LandingData}} (defined in RstoxData).
+#' @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} (defined in RstoxData).
+#' @param StoxAcousticData \code{\link[RstoxData]{StoxAcousticData}} (defined in RstoxData).
+#' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} (defined in RstoxData).
+#' @param MergeStoxBioticData \code{\link[RstoxData]{MergeStoxBioticData}} (defined in RstoxData).
+#' @param MergeStoxAcousticData \code{\link[RstoxData]{MergeStoxAcousticData}} (defined in RstoxData).
+#' @param ICESBioticData \code{\link[RstoxData]{ICESBioticData}} (defined in RstoxData).
+#' @param ICESAcousticData \code{\link[RstoxData]{ICESAcousticData}} (defined in RstoxData).
+#' @param ICESDatrasData \code{\link[RstoxData]{ICESDatrasData}} (defined in RstoxData).
+#' @param WriteICESBioticData \code{\link[RstoxData]{WriteICESBioticData}} (defined in RstoxData).
+#' @param WriteICESAcousticData \code{\link[RstoxData]{WriteICESAcousticData}} (defined in RstoxData).
+#' @param WriteICESDatrasData \code{\link[RstoxData]{WriteICESDatrasData}} (defined in RstoxData).
 #' 
 #' @name ModelData
 #' 
@@ -134,8 +142,7 @@ NULL
 ##################################################
 #' Process data used by RstoxBase
 #' 
-#' The process data of a StoX model are data that are saved to the project description (project.json file), typically manual settings (tagging of \code{\link{EDSU}}s to \code{\link{PSU}}s) or data read from resource files other than acoustic, biotic and landing input data files stored in the input folder. 
-#' 
+#' The process data of a StoX model are data that are saved to the project description (project.json file), typically manual settings (tagging of \code{\link{EDSU}}s to \code{\link{PSU}}s) or data read from resource files other than acoustic, biotic and landing input data files stored in the input folder. #' 
 #' @param StratumPolygon The \code{\link{StratumPolygon}} process data.
 #' @param Survey The \code{\link{Survey}} process data.
 #' @param AcousticLayer The \code{\link{AcousticLayer}} process data.
@@ -145,6 +152,7 @@ NULL
 #' @param BioticAssignment The \code{\link{BioticAssignment}} process data.
 #' @param AcousticTargetStrength The \code{\link{AcousticTargetStrength}} process data.
 #' @param Regression The \code{\link{Regression}} process data.
+#' @param Translation \code{\link[RstoxData]{Translation}} (defined in RstoxData).
 #' 
 #' @name ProcessData
 #' 

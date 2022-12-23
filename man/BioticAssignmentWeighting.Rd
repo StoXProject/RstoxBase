@@ -30,7 +30,7 @@ BioticAssignmentWeighting(
 
 \item{WeightingMethod}{Character: A string naming the method to use, one of "Equal", giving weight 1 to all Hauls; "NumberOfLengthSamples", weighting hauls by the number of length samples; "AcousticDensity", weighting by the surrounding NASC converted by the haul length distribution to an acoustic density equivalent; "NormalizedTotalWeight", weighting hauls by the total weight of the catch, normalized by dividing by towed distance; "NormalizedTotalNumber", the same as "NormalizedTotalWeight" but for total number, "SumWeightedNumber", weighting by the summed WeightedNumber of the input LengthDistributionData; and "InverseSumWeightedNumber", weighting by the inverse of the summed WeightedNumber.}
 
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
+\item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} (defined in RstoxData).}
 
 \item{LengthDistributionData}{The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).}
 

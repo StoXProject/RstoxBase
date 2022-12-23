@@ -11,7 +11,7 @@ LengthDistribution(
 )
 }
 \arguments{
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
+\item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} (defined in RstoxData).}
 
 \item{LengthDistributionType}{The type of length distribution to use, one of "Standard", "Normalized" and "Percent" (see 'Details').}
 
