@@ -10,7 +10,7 @@ SpeciesCategoryCatch(
 )
 }
 \arguments{
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
+\item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} (defined in RstoxData).}
 
 \item{SpeciesCategoryCatchType}{The type of the total catch variables, either "Standard" for the raw total catch and "Normalized" for normalizing by tow distance by dividing by the EffectiveTowDistance in nautical miles.}
 }

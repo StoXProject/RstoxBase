@@ -7,7 +7,7 @@
 NASC(StoxAcousticData)
 }
 \arguments{
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
+\item{StoxAcousticData}{\code{\link[RstoxData]{StoxAcousticData}} (defined in RstoxData).}
 }
 \value{
 A \code{\link{NASCData}} object.

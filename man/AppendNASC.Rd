@@ -9,7 +9,7 @@ AppendNASC(NASCData, StoxAcousticData)
 \arguments{
 \item{NASCData}{The \code{\link{NASCData}} data.}
 
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
+\item{StoxAcousticData}{\code{\link[RstoxData]{StoxAcousticData}} (defined in RstoxData).}
 }
 \description{
 This function converts a StoxAcousticData to NASCData and appends to another NASCData.

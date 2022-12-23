@@ -4,18 +4,6 @@
 \alias{ModelData}
 \title{Model data used by RstoxBase}
 \arguments{
-\item{BioticData}{The \code{\link[RstoxData]{BioticData}} data (defined in RstoxData).}
-
-\item{AcousticData}{The \code{\link[RstoxData]{AcousticData}} data (defined in RstoxData).}
-
-\item{LandingData}{The \code{\link[RstoxData]{LandingData}} data (defined in RstoxData).}
-
-\item{StoxBioticData}{The \code{\link[RstoxData]{StoxBioticData}} data (defined in RstoxData).}
-
-\item{StoxAcousticData}{The \code{\link[RstoxData]{StoxAcousticData}} data (defined in RstoxData).}
-
-\item{StoxLandingData}{The \code{\link[RstoxData]{StoxLandingData}} data (defined in RstoxData).}
-
 \item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
 
 \item{NASCData}{The \code{\link{NASCData}} data.}
@@ -51,6 +39,34 @@
 \item{ReportSuperIndividualsData}{The \code{\link{ReportSuperIndividualsData}} data.}
 
 \item{PlotAcousticTrawlSurveyData}{The \code{\link{PlotAcousticTrawlSurveyData}} data.}
+
+\item{BioticData}{\code{\link[RstoxData]{BioticData}} (defined in RstoxData).}
+
+\item{AcousticData}{\code{\link[RstoxData]{AcousticData}} (defined in RstoxData).}
+
+\item{LandingData}{\code{\link[RstoxData]{LandingData}} (defined in RstoxData).}
+
+\item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} (defined in RstoxData).}
+
+\item{StoxAcousticData}{\code{\link[RstoxData]{StoxAcousticData}} (defined in RstoxData).}
+
+\item{StoxLandingData}{\code{\link[RstoxData]{StoxLandingData}} (defined in RstoxData).}
+
+\item{MergeStoxBioticData}{\code{\link[RstoxData]{MergeStoxBioticData}} (defined in RstoxData).}
+
+\item{MergeStoxAcousticData}{\code{\link[RstoxData]{MergeStoxAcousticData}} (defined in RstoxData).}
+
+\item{ICESBioticData}{\code{\link[RstoxData]{ICESBioticData}} (defined in RstoxData).}
+
+\item{ICESAcousticData}{\code{\link[RstoxData]{ICESAcousticData}} (defined in RstoxData).}
+
+\item{ICESDatrasData}{\code{\link[RstoxData]{ICESDatrasData}} (defined in RstoxData).}
+
+\item{WriteICESBioticData}{\code{\link[RstoxData]{WriteICESBioticData}} (defined in RstoxData).}
+
+\item{WriteICESAcousticData}{\code{\link[RstoxData]{WriteICESAcousticData}} (defined in RstoxData).}
+
+\item{WriteICESDatrasData}{\code{\link[RstoxData]{WriteICESDatrasData}} (defined in RstoxData).}
 }
 \description{
 The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.

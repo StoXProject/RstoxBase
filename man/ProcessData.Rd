@@ -21,9 +21,11 @@
 \item{AcousticTargetStrength}{The \code{\link{AcousticTargetStrength}} process data.}
 
 \item{Regression}{The \code{\link{Regression}} process data.}
+
+\item{Translation}{\code{\link[RstoxData]{Translation}} (defined in RstoxData).}
 }
 \description{
-The process data of a StoX model are data that are saved to the project description (project.json file), typically manual settings (tagging of \code{\link{EDSU}}s to \code{\link{PSU}}s) or data read from resource files other than acoustic, biotic and landing input data files stored in the input folder.
+The process data of a StoX model are data that are saved to the project description (project.json file), typically manual settings (tagging of \code{\link{EDSU}}s to \code{\link{PSU}}s) or data read from resource files other than acoustic, biotic and landing input data files stored in the input folder. #'
 }
 \seealso{
 \code{\link{ModelData}} for model data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}.
