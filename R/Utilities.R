@@ -796,15 +796,25 @@ getSequenceToSampleFrom <- function(){
 
 #' The summary function introduced in StoX <= 2.7.
 #' 
-#' @param x A numeric object
-#' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
+#' @inheritParams stats::quantile
+#' @param percentages The percentages to get percentiles for, equivalent to 100 * probs in \code{\link[stats]{quantile}}.
 #' 
 #' @export
 #' 
-summaryStox <- function(x, na.rm = FALSE) {
+summaryStox <- function(x, percentages = c(5, 50, 95), na.rm = FALSE) {
+    probs <- percentages / 100
+    if(any(is.na(x)) && isFALSE(na.rm)) {
+        # Get quantiles of 0 just to get the names:
+        percentilesVector <- stats::quantile(0, probs = probs, na.rm = FALSE)
+        percentilesVector[seq_along(percentilesVector)] <- NA_real_
+    }
+    else {
+        percentilesVector <- stats::quantile(x, probs = probs, na.rm = na.rm)
+    }
+    
     out <- c(
         # Accept na.rm = FALSE in quantile, as  in median():
-        if(any(is.na(x)) && isFALSE(na.rm)) rep(NA, 3) else stats::quantile(x, c(0.05, 0.5, 0.95), na.rm = na.rm),
+        percentilesVector,
         mean = mean(x, na.rm = na.rm),
         sd = stats::sd(x, na.rm = na.rm),
         cv = cv(x, na.rm = na.rm)
@@ -820,6 +830,8 @@ summaryStox <- function(x, na.rm = FALSE) {
     
     return(out)
 }
+
+
 #' The coefficient of variation, i.e., the standard deviation divided by the mean.
 #' 
 #' @param x A numeric object
@@ -830,16 +842,7 @@ summaryStox <- function(x, na.rm = FALSE) {
 cv <- function(x, na.rm = FALSE) {
     stats::sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
 }
-### #' The 5 and 95 percentile.
-### #' 
-### #' @param x A numeric object
-### #' @param na.rm Logical: If TRUE remove the missing values prior to calculation.
-### #' 
-### #' @export
-### #' 
-### percentile_5_95 <- function(x, na.rm = FALSE) {
-###     stats::quantile(x, c(0.05, 0.95), na.rm = na.rm)
-### }
+
 
 
 isEmptyString <- function(x) {

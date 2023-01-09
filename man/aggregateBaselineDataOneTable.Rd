@@ -14,6 +14,7 @@ aggregateBaselineDataOneTable(
   na.rm = FALSE,
   padWithZerosOn = character(),
   WeightingVariable = character(),
+  SpecificationParameter = character(),
   uniqueGroupingVariablesToKeep = NULL
 )
 }
@@ -35,6 +36,8 @@ aggregateBaselineDataOneTable(
 \item{padWithZerosOn}{Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}.}
 
 \item{WeightingVariable}{The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".}
+
+\item{SpecificationParameter}{A parameter to be used if the \code{aggregationFunction} \code{hasSpecificationParameter}. See getRstoxBaseDefinitions("reportFunctions") and the \code{specified} column.}
 
 \item{uniqueGroupingVariablesToKeep}{A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.}
 }

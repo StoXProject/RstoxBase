@@ -4,9 +4,9 @@ isCategorical <- function(x) {
 
 defaultPlotGeneralOptions <- list(
     # Options for the labels and other text:
-    AxisTitleSize = 10, 
+    AxisTitleSize = 12, 
     AxisTickSize = 10, 
-    LegendTitleSize = 10, 
+    LegendTitleSize = 12, 
     LegendTextSize = 10
 )
 
@@ -15,7 +15,7 @@ defaultPlotFileOptions <- list(
     Format = "png", 
     # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
     Width = 17, 
-    Height = 17, 
+    Height = 10, 
     DotsPerInch = 500
 )
 
@@ -1190,24 +1190,8 @@ stoxFunctionAttributes <- list(
             TargetVariable = "targetVariable_ReportSuperIndividuals", 
             GroupingVariables = "groupingVariables_ReportSuperIndividuals", 
             InformationVariables = "informationVariables_ReportSuperIndividuals", 
-            TargetVariableUnit = "targetVariableUnit_ReportSuperIndividuals"
-        ), 
-        functionArgumentHierarchy = list(
-            WeightingVariable = list(
-                ReportFunction = expression(RstoxBase::getWeightingFunctions())
-            )
-        )
-    ), 
-    
-    ReportDensity = list(
-        functionType = "modelData", 
-        functionCategory = "report", 
-        functionOutputDataType = "ReportDensityData", 
-        # This is an example of using an expression to determine when to show a parameter:
-        functionParameterFormat = list(
-            GroupingVariables = "groupingVariables_ReportDensity", 
-            InformationVariables = "informationVariables_ReportDensity", 
-            DensityUnit = "densityUnit"
+            TargetVariableUnit = "targetVariableUnit_ReportSuperIndividuals", 
+            WeightingVariable = "weightingVariable_ReportSuperIndividuals"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -1224,7 +1208,8 @@ stoxFunctionAttributes <- list(
         functionParameterFormat = list(
             GroupingVariables = "groupingVariables_ReportQuantity", 
             InformationVariables = "informationVariables_ReportQuantity", 
-            TargetVariableUnit = "targetVariableUnit_ReportQuantity"
+            TargetVariableUnit = "targetVariableUnit_ReportQuantity", 
+            WeightingVariable = "weightingVariable_ReportQuantity"
         ), 
         functionArgumentHierarchy = list(
             WeightingVariable = list(
@@ -1233,6 +1218,23 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
+    ReportDensity = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "ReportDensityData", 
+        # This is an example of using an expression to determine when to show a parameter:
+        functionParameterFormat = list(
+            GroupingVariables = "groupingVariables_ReportDensity", 
+            InformationVariables = "informationVariables_ReportDensity", 
+            DensityUnit = "densityUnit", 
+            WeightingVariable = "weightingVariable_ReportDensity"
+        ), 
+        functionArgumentHierarchy = list(
+            WeightingVariable = list(
+                ReportFunction = expression(RstoxBase::getWeightingFunctions())
+            )
+        )
+    ), 
     
     ReportSpeciesCategoryCatch = list(
         functionType = "modelData", 
@@ -1813,6 +1815,7 @@ processPropertyFormats <- list(
         }
     ), 
     
+    # ReportSuperIndividuals: 
     targetVariable_ReportSuperIndividuals = list(
         class = "vector", 
         title = "One variable to group report from SuperIndividualsData", 
@@ -1821,25 +1824,45 @@ processPropertyFormats <- list(
         }, 
         variableTypes <- "character"
     ), 
-    
     groupingVariables_ReportSuperIndividuals = list(
         class = "vector", 
         title = "One or more variables to group super-individuals by when reporting SuperIndividualsData", 
-        possibleValues = function(SuperIndividualsData) {
-            sort(names(SuperIndividualsData))
+        possibleValues = function(SuperIndividualsData, TargetVariable) {
+            setdiff(sort(names(SuperIndividualsData)), TargetVariable)
         }, 
         variableTypes <- "character"
     ), 
-    
-    groupingVariables_ReportDensity = list(
+    informationVariables_ReportSuperIndividuals = list(
         class = "vector", 
-        title = "One or more variables to group by when reporting DensityData", 
-        possibleValues = function(DensityData) {
-            sort(names(DensityData$Data))
+        title = "One or more columns to inlcude as information in ReportSuperIndividualsData", 
+        possibleValues = function(SuperIndividualsData, TargetVariable, GroupingVariables) {
+            sort(setdiff(names(SuperIndividualsData), c(TargetVariable, GroupingVariables)))
+        }, 
+        variableTypes <- "character"
+    ), 
+    targetVariableUnit_ReportSuperIndividuals = list(
+        class = "vector", 
+        title = "Select Unit for the TargetVariable", 
+        possibleValues = function(TargetVariable) {
+            quantity <- getBaseUnit(dataType = "SuperIndividualsData", variableName = TargetVariable, element = "quantity")
+            if(is.na(quantity)) {
+                list()
+            }
+            else {
+                RstoxData::getUnitOptions(quantity)
+            }
+        }
+    ), 
+    weightingVariable_ReportSuperIndividuals = list(
+        class = "vector", 
+        title = "Select weighting variable", 
+        possibleValues = function(SuperIndividualsData, TargetVariable, GroupingVariables, InformationVariables) {
+            sort(setdiff(names(SuperIndividualsData), c(TargetVariable, GroupingVariables, InformationVariables)))
         }, 
         variableTypes <- "character"
     ), 
     
+    # ReportQuantity: 
     groupingVariables_ReportQuantity = list(
         class = "vector", 
         title = "One or more variables to group by when reporting QuantityData", 
@@ -1848,34 +1871,77 @@ processPropertyFormats <- list(
         }, 
         variableTypes <- "character"
     ), 
-    
-    
-    informationVariables_ReportSuperIndividuals = list(
-        class = "vector", 
-        title = "One or more columns to inlcude in ReportSuperIndividualsData", 
-        possibleValues = function(SuperIndividualsData, GroupingVariables) {
-            sort(setdiff(names(SuperIndividualsData), GroupingVariables))
-        }, 
-        variableTypes <- "character"
-    ), 
-    
-    informationVariables_ReportDensity = list(
-        class = "vector", 
-        title = "One or more columns to inlcude in ReportDensityData", 
-        possibleValues = function(DensityData, GroupingVariables) {
-            sort(setdiff(names(DensityData$Data), GroupingVariables))
-        }, 
-        variableTypes <- "character"
-    ), 
-    
     informationVariables_ReportQuantity = list(
         class = "vector", 
-        title = "One or more columns to inlcude in ReportQuantityData", 
+        title = "One or more columns to inlcude as information in ReportQuantityData", 
         possibleValues = function(QuantityData, GroupingVariables) {
             sort(setdiff(names(QuantityData$Data), GroupingVariables))
         }, 
         variableTypes <- "character"
     ), 
+    targetVariableUnit_ReportQuantity = list(
+        class = "vector", 
+        title = "Select Unit for the TargetVariable", 
+        possibleValues = function(TargetVariable) {
+            quantity <- getBaseUnit(dataType = "QuantityData", variableName = TargetVariable, element = "quantity")
+            if(is.na(quantity)) {
+                list()
+            }
+            else {
+                RstoxData::getUnitOptions(quantity)
+            }
+        }
+    ), 
+    weightingVariable_ReportQuantity = list(
+        class = "vector", 
+        title = "Select weighting variable", 
+        possibleValues = function(QuantityData, GroupingVariables, InformationVariables) {
+            sort(setdiff(names(QuantityData), c(GroupingVariables, InformationVariables)))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
+    # ReportDensity: 
+    groupingVariables_ReportDensity = list(
+        class = "vector", 
+        title = "One or more variables to group by when reporting DensityData", 
+        possibleValues = function(DensityData) {
+            sort(names(DensityData$Data))
+        }, 
+        variableTypes <- "character"
+    ), 
+    informationVariables_ReportDensity = list(
+        class = "vector", 
+        title = "One or more columns to inlcude as information in ReportDensityData", 
+        possibleValues = function(DensityData, GroupingVariables) {
+            sort(setdiff(names(DensityData$Data), GroupingVariables))
+        }, 
+        variableTypes <- "character"
+    ), 
+    densityUnit = list(
+        class = "vector", 
+        title = "Select unit for the Density", 
+        possibleValues = function() {
+            quantity <- getBaseUnit(dataType = "DensityData", variableName = "Density", element = "quantity")
+            if(is.na(quantity)) {
+                list()
+            }
+            else {
+                RstoxData::getUnitOptions(quantity)
+            }
+        }
+    ), 
+    weightingVariable_ReportDensity = list(
+        class = "vector", 
+        title = "Select weighting variable", 
+        possibleValues = function(DensityData, GroupingVariables, InformationVariables) {
+            sort(setdiff(names(DensityData), c(GroupingVariables, InformationVariables)))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
+    
+    
     
     
     surveyTable = list(
@@ -1976,47 +2042,9 @@ processPropertyFormats <- list(
         }
     ), 
     
-    targetVariableUnit_ReportSuperIndividuals = list(
-        class = "vector", 
-        title = "Select Unit for the TargetVariable", 
-        possibleValues = function(TargetVariable) {
-            quantity <- getBaseUnit(dataType = "SuperIndividualsData", variableName = TargetVariable, element = "quantity")
-            if(is.na(quantity)) {
-                list()
-            }
-            else {
-                RstoxData::getUnitOptions(quantity)
-            }
-        }
-    ), 
     
-    densityUnit = list(
-        class = "vector", 
-        title = "Select unit for the Density", 
-        possibleValues = function() {
-            quantity <- getBaseUnit(dataType = "DensityData", variableName = "Density", element = "quantity")
-            if(is.na(quantity)) {
-                list()
-            }
-            else {
-                RstoxData::getUnitOptions(quantity)
-            }
-        }
-    ), 
-
-    targetVariableUnit_ReportQuantity = list(
-        class = "vector", 
-        title = "Select Unit for the TargetVariable", 
-        possibleValues = function(TargetVariable) {
-            quantity <- getBaseUnit(dataType = "QuantityData", variableName = TargetVariable, element = "quantity")
-            if(is.na(quantity)) {
-                list()
-            }
-            else {
-                RstoxData::getUnitOptions(quantity)
-            }
-        }
-    ), 
+    
+    
     
     reportVariableUnit_ReportSpeciesCategoryCatch = list(
         class = "vector", 

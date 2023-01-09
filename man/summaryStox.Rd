@@ -4,12 +4,18 @@
 \alias{summaryStox}
 \title{The summary function introduced in StoX <= 2.7.}
 \usage{
-summaryStox(x, na.rm = FALSE)
+summaryStox(x, percentages = c(5, 50, 95), na.rm = FALSE)
 }
 \arguments{
-\item{x}{A numeric object}
+\item{x}{numeric vector whose sample quantiles are wanted, or an
+    object of a class for which a method has been defined (see also
+    \sQuote{details}). \code{\link{NA}} and \code{NaN} values are not
+    allowed in numeric vectors unless \code{na.rm} is \code{TRUE}.}
 
-\item{na.rm}{Logical: If TRUE remove the missing values prior to calculation.}
+\item{percentages}{The percentages to get percentiles for, equivalent to 100 * probs in \code{\link[stats]{quantile}}.}
+
+\item{na.rm}{logical; if true, any \code{\link{NA}} and \code{NaN}'s
+    are removed from \code{x} before the quantiles are computed.}
 }
 \description{
 The summary function introduced in StoX <= 2.7.

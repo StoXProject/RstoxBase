@@ -188,6 +188,7 @@ ReportQuantity <- function(
 #' @param na.rm Used in the function specified by \code{aggregationFunction}.
 #' @param padWithZerosOn Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}. 
 #' @inheritParams ReportSuperIndividuals
+#' @param SpecificationParameter A parameter to be used if the \code{aggregationFunction} \code{hasSpecificationParameter}. See getRstoxBaseDefinitions("reportFunctions") and the \code{specified} column.
 #' @param uniqueGroupingVariablesToKeep A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.
 #'
 #' @return
@@ -208,6 +209,7 @@ aggregateBaselineDataOneTable <- function(
     na.rm = FALSE, 
     padWithZerosOn = character(), 
     WeightingVariable = character(), 
+    SpecificationParameter = character(), 
     uniqueGroupingVariablesToKeep = NULL
 )
 {
@@ -227,16 +229,24 @@ aggregateBaselineDataOneTable <- function(
     }
     
     # Define constants outside of the fun to save time:
+    
     # Whether we are using a function with weighting:
-    weighting <- isWeightingFunction(aggregationFunction)
-    if(weighting && !length(WeightingVariable)) {
+    weighted <- hasWeightingParameter(aggregationFunction)
+    if(weighted && !length(WeightingVariable)) {
         stop("WeightingVariable must be given.")
     }
     weightingParameter <- getWeightingParameter(aggregationFunction)
+    
+    # Whether we are using a function with a specification parameter:
+    specified <- hasSpecificationParameter(aggregationFunction)
+    if(specified && !length(SpecificationParameter)) {
+        stop("SpecificationParameter must be given.")
+    }
+    specificationParameter <- getSpecificationParameter(aggregationFunction)
+    
     # Define the environment to run the function in:
     funEnvir <- as.environment(paste("package", getReportFunctionPackage(aggregationFunction), sep = ":"))
     # Get the reportFunctionVariableName
-    reportFunctionVariableName <- getReportFunctionVariableName(aggregationFunction, TargetVariable)
     
     
     # Get the function to use:
@@ -246,18 +256,25 @@ aggregateBaselineDataOneTable <- function(
             x[[TargetVariable]], 
             na.rm = na.rm
         )
+        
         # Add weighting to the list of inputs to the function:
-        if(weighting) {
+        if(weighted) {
             args[[weightingParameter]] = x[[WeightingVariable]]
         }
+        # Add weighting to the list of inputs to the function:
+        if(specified) {
+            args[[specificationParameter]] = as.numeric(SpecificationParameter)
+        }
         # Call the function in the appropriate environment:
-        out <- do.call(
+        out <- RstoxData::do.call_robust(
             aggregationFunction, 
             args, 
-            envir = funEnvir
+            envir = funEnvir, 
+            keep.unnamed = TRUE
         )
         
         # Add the function name as names if the function does not name the output:
+        reportFunctionVariableName <- getReportFunctionVariableName(aggregationFunction, TargetVariable, args = args)
         names(out) <- reportFunctionVariableName
         # Convert to list to insert each element to a named column of the data table:
         out <- as.list(out)
@@ -359,12 +376,16 @@ aggregateBaselineDataOneTable <- function(
 
 
 # Get/define the report function result variable name suffix:
-getReportFunctionOutputNames <- function(functionName, packageName) {
+getReportFunctionOutputNames <- function(functionName, packageName, args = list()) {
     result <- names(
-        do.call(
+        RstoxData::do.call_robust(
             functionName, 
-            args = list(0), 
-            envir = as.environment(paste("package", packageName, sep = ":"))
+            args = c(
+                list(0), 
+                args[! names(args) %in% c("x", "")]
+            ), 
+            envir = as.environment(paste("package", packageName, sep = ":")), 
+            keep.unnamed = TRUE
         )
     )
     if(!length(result)) {
@@ -380,20 +401,26 @@ getReportFunctionOutputNames <- function(functionName, packageName) {
 #' 
 #' @inheritParams general_report_arguments
 #' @param functionName The aggregation function name.
+#' @param args A list of arguments to apply to the function given by \code{functionName}.
 #'
 #' @export
 #' 
-getReportFunctionVariableName <- function(functionName, TargetVariable) {
+getReportFunctionVariableName <- function(functionName, TargetVariable, args = list()) {
     suffix <- getReportFunctionOutputNames(
         functionName = functionName, 
-        packageName = getReportFunctionPackage(functionName)
+        packageName = getReportFunctionPackage(functionName), 
+        args = args
     )
     paste(TargetVariable, suffix, sep = "_")
 }
 
 
-isWeightingFunction <- function(x) {
+hasWeightingParameter <- function(x) {
     getRstoxBaseDefinitions("reportFunctions")[functionName == x, weighted]
+}
+
+hasSpecificationParameter <- function(x) {
+    getRstoxBaseDefinitions("reportFunctions")[functionName == x, specified]
 }
 
 
@@ -405,7 +432,6 @@ isWeightingFunction <- function(x) {
 getWeightingFunctions <- function() {
     getRstoxBaseDefinitions("reportFunctions")[weighted == TRUE, functionName]
 }
-
 #' List weighting parameters
 #' 
 #' @param x The name of the report function for which to list parameters.
@@ -414,6 +440,23 @@ getWeightingFunctions <- function() {
 #' 
 getWeightingParameter <- function(x) {
     getRstoxBaseDefinitions("reportFunctions")[functionName == x, weightingParameter]
+}
+
+#' List specification functions
+#' 
+#' @export
+#' 
+getSpecificationFunctions <- function() {
+    getRstoxBaseDefinitions("reportFunctions")[specified == TRUE, functionName]
+}
+#' List specification parameters
+#' 
+#' @param x The name of the report function for which to list parameters.
+#' 
+#' @export
+#' 
+getSpecificationParameter <- function(x) {
+    getRstoxBaseDefinitions("reportFunctions")[functionName == x, specificationParameter]
 }
 
 #' List report function packages

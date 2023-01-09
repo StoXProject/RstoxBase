@@ -752,6 +752,36 @@ initiateRstoxBase <- function(){
             #"", 
             #""
         ), 
+        specified = c(
+            TRUE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE, 
+            FALSE#, 
+            #FALSE, 
+            #FALSE, 
+            #FALSE
+        ), 
+        specificationParameter = c(
+            "percentages", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            ""#, 
+            #"", 
+            #"", 
+            #""
+        ), 
         multiple = c(
             TRUE, 
             FALSE, 
