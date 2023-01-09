@@ -146,14 +146,14 @@ jobs:
         run: |
           # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
           # Get the installed versions:
-          installed <- as.data.frame(utils::installed.packages())
+          installed <- as.data.frame(utils::installed.packages(), stringsAsFactors = FALSE)
           # Find minimum versions:
           deps <- strsplit(read.dcf("./DESCRIPTION", all = TRUE)$Imports, ",\n")[[1]]
           Rstox_deps <- deps[startsWith(deps, "Rstox")]
           Rstox_deps <- data.frame(
               Package = sub("[ (].*", "", Rstox_deps),
               MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps), 
-              StringsAsFactors = FALSE
+              stringsAsFactors = FALSE
           )
           Rstox_deps <- merge(Rstox_deps, installed)
           differ <- which(Rstox_deps$MinimumVersion != Rstox_deps$Version)
