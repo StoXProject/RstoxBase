@@ -1,3 +1,8 @@
+# RstoxBase v1.11.0-9005 (2023-01-06)
+* Added the parameter percentages defaulted to c(0.05, 0.5, 0.95) in summaryStox().
+* Changed defaultPlotGeneralOptions AxisTitleSize (10 to 12) and LegendTitleSize (10 to 12).
+* Changed defaultPlotFileOptions Height (17 to 10).
+
 # RstoxBase v1.11.0-9004 (2022-12-23)
 * Fixed bug in SuperIndividuals, where the temporary column LengthGroup is generated but might already be present if the user has created a LengthGroup with the new Copy functionality.
 * Cleaned up documentation of ModelData.
