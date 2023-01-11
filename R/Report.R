@@ -274,6 +274,9 @@ aggregateBaselineDataOneTable <- function(
         )
         
         # Add the function name as names if the function does not name the output:
+        if(aggregationFunction %in% getReportFunctions(getMultiple = TRUE)) {
+            
+        }
         reportFunctionVariableName <- getReportFunctionVariableName(aggregationFunction, TargetVariable, args = args)
         names(out) <- reportFunctionVariableName
         # Convert to list to insert each element to a named column of the data table:
@@ -324,6 +327,7 @@ aggregateBaselineDataOneTable <- function(
         }
     }
     
+    # Run the function:
     outputData <- stoxData[, fun(.SD), by = GroupingVariables]
     
     if(length(uniqueGroupingVariablesToKeep)) {
@@ -377,18 +381,21 @@ aggregateBaselineDataOneTable <- function(
 
 # Get/define the report function result variable name suffix:
 getReportFunctionOutputNames <- function(functionName, packageName, args = list()) {
-    result <- names(
-        RstoxData::do.call_robust(
-            functionName, 
-            args = c(
-                list(0), 
-                args[! names(args) %in% c("x", "")]
-            ), 
-            envir = as.environment(paste("package", packageName, sep = ":")), 
-            keep.unnamed = TRUE
+    # If a function returning av vector, this vector is named. We get the names:
+    if(functionName %in% getReportFunctions(getMultiple = TRUE)) {
+        result <- names(
+            RstoxData::do.call_robust(
+                functionName, 
+                args = c(
+                    list(0), 
+                    args[! names(args) %in% c("x", "")]
+                ), 
+                envir = as.environment(paste("package", packageName, sep = ":")), 
+                keep.unnamed = TRUE
+            )
         )
-    )
-    if(!length(result)) {
+    }
+    else {
         result <- functionName
     }
     
