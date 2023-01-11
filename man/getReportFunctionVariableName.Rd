@@ -4,12 +4,14 @@
 \alias{getReportFunctionVariableName}
 \title{Get the name of the target variable after aggregating.}
 \usage{
-getReportFunctionVariableName(functionName, TargetVariable)
+getReportFunctionVariableName(functionName, TargetVariable, args = list())
 }
 \arguments{
 \item{functionName}{The aggregation function name.}
 
 \item{TargetVariable}{The variable to report.}
+
+\item{args}{A list of arguments to apply to the function given by \code{functionName}.}
 }
 \description{
 Get the name of the target variable after aggregating.

@@ -41,12 +41,6 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Anticipate Bintray shutdown
-        if: runner.os == 'macOS'
-        run: |
-          brew update
-        shell: bash
-
       - uses: actions/checkout@v3
 
       - name: Do autorelease increment, tagging, and environment setup
@@ -67,8 +61,14 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
-          rtools-version: ${{ matrix.config.rtools }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
+          #rtools-version: ${{ matrix.config.rtools }} # Not present in the matrix...
+          #http-user-agent: ${{ matrix.config.http-user-agent }} # Not present in the matrix...
+
+      - name: Anticipate Bintray shutdown
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+        shell: bash
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -100,6 +100,14 @@ jobs:
         run: |
           rm '/usr/local/bin/gfortran'
           rm '/usr/local/bin/2to3'
+          rm '/usr/local/bin/2to3-3.11'
+          rm '/usr/local/bin/idle3.11'
+          rm '/usr/local/bin/pydoc3'
+          rm '/usr/local/bin/python3'
+          rm '/usr/local/bin/python3-config'
+          rm '/usr/local/bin/pydoc3.11'
+          rm '/usr/local/bin/python3.11'
+          rm '/usr/local/bin/python3.11-config'
           export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=false # This prevents Homebrew from re-installing R, which will lead to .Platform$pkgType = "source".
           brew install gdal
         shell: bash
@@ -110,7 +118,8 @@ jobs:
           # The following two lines caused trouble for sf on the new R 4.2 on Ubuntu in May 2022:
           #sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
           #sudo apt-get update
-          sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev
+          # We needed to add libxslt1-dev as RstoxData <= RstoxData-v1.8.0-9006 was using it (we should try to skip this after StoX 3.6.0):
+          sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev libxslt1-dev
         shell: bash
       
       - name: Install dependencies on Linux
@@ -138,14 +147,14 @@ jobs:
         run: |
           # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. The following installs from the package repos directlly, those packages that difffer (from source):
           # Get the installed versions:
-          installed <- as.data.frame(utils::installed.packages())
+          installed <- as.data.frame(utils::installed.packages(), stringsAsFactors = FALSE)
           # Find minimum versions:
           deps <- strsplit(read.dcf("./DESCRIPTION", all = TRUE)$Imports, ",\n")[[1]]
           Rstox_deps <- deps[startsWith(deps, "Rstox")]
           Rstox_deps <- data.frame(
               Package = sub("[ (].*", "", Rstox_deps),
               MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps), 
-              StringsAsFactors = FALSE
+              stringsAsFactors = FALSE
           )
           Rstox_deps <- merge(Rstox_deps, installed)
           differ <- which(Rstox_deps$MinimumVersion != Rstox_deps$Version)
