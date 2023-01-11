@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0-9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0-9005</span>
       </span>
     </div>
 
@@ -63,6 +63,7 @@
 <span>  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  padWithZerosOn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  SpecificationParameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  uniqueGroupingVariablesToKeep <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -103,6 +104,10 @@
 
 <dt>WeightingVariable</dt>
 <dd><p>The variable to weight by. Only relevant for <code>ReportFunction</code> "weighted.mean".</p></dd>
+
+
+<dt>SpecificationParameter</dt>
+<dd><p>A parameter to be used if the <code>aggregationFunction</code> <code>hasSpecificationParameter</code>. See getRstoxBaseDefinitions("reportFunctions") and the <code>specified</code> column.</p></dd>
 
 
 <dt>uniqueGroupingVariablesToKeep</dt>

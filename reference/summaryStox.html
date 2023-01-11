@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0-9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0-9005</span>
       </span>
     </div>
 
@@ -53,17 +53,25 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">summaryStox</span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">summaryStox</span><span class="op">(</span><span class="va">x</span>, percentages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">50</span>, <span class="fl">95</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>A numeric object</p></dd>
+<dd><p>numeric vector whose sample quantiles are wanted, or an
+    object of a class for which a method has been defined (see also
+    ‘details’). <code><a href="https://rdrr.io/r/base/NA.html" class="external-link">NA</a></code> and <code>NaN</code> values are not
+    allowed in numeric vectors unless <code>na.rm</code> is <code>TRUE</code>.</p></dd>
+
+
+<dt>percentages</dt>
+<dd><p>The percentages to get percentiles for, equivalent to 100 * probs in <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></code>.</p></dd>
 
 
 <dt>na.rm</dt>
-<dd><p>Logical: If TRUE remove the missing values prior to calculation.</p></dd>
+<dd><p>logical; if true, any <code><a href="https://rdrr.io/r/base/NA.html" class="external-link">NA</a></code> and <code>NaN</code>'s
+    are removed from <code>x</code> before the quantiles are computed.</p></dd>
 
 </dl></div>
 
