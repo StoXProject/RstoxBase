@@ -1,3 +1,6 @@
+# RstoxBase v1.11.0 (2023-01-13)
+* Added warning when Percentages are outside of [0, 100] in ReportBootstrap when BootstrapReportFunction = "summaryStox".
+
 # RstoxBase v1.11.0-9005 (2023-01-06)
 * Added the parameter percentages defaulted to c(0.05, 0.5, 0.95) in summaryStox().
 * Changed defaultPlotGeneralOptions AxisTitleSize (10 to 12) and LegendTitleSize (10 to 12).

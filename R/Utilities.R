@@ -803,6 +803,9 @@ getSequenceToSampleFrom <- function(){
 #' 
 summaryStox <- function(x, percentages = c(5, 50, 95), na.rm = FALSE) {
     probs <- percentages / 100
+    if(any(probs < 0 | probs > 1 | is.na(probs))) {
+        stop("StoX: The Percentages must be between 0 and 100.")
+    }
     if(any(is.na(x)) && isFALSE(na.rm)) {
         # Get quantiles of 0 just to get the names:
         percentilesVector <- stats::quantile(0, probs = probs, na.rm = FALSE)
