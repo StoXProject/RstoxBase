@@ -126,6 +126,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           remotes::install_deps(dependencies = TRUE)
+          # Force RstoxData and RstoxBase:
+          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE)
         shell: Rscript {0}
 
       - name: Install dependencies on Windows and macOS
@@ -141,6 +143,8 @@ jobs:
             message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
             utils::install.packages(missing, dependencies = TRUE)
           }
+          # Force RstoxData and RstoxBase:
+          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "binary")
         shell: Rscript {0}
 
       - name: Install prereleases
