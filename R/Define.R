@@ -301,7 +301,7 @@ DefinePSU <- function(
     }
     
     # Remove PSUs that do not have a stratum:
-    processData <- removePSUsWithMissingStratum(processData)
+    processData <- removePSUsWithMissingStratum(processData, SSULabel = SSULabel)
     
     # Remove empty PSUs:
     processData <- removeEmptyPSUs(processData)
@@ -349,6 +349,11 @@ onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
 
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU i loacted geographically:
 getStratumOfSSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
+    # Error if StratumPolygon is missing:
+    if(missing(StratumPolygon) || !length(StratumPolygon)) {
+        stop("StratumPolygon mustt be given.")
+    }
+    
     # Get unique PSUs:
     allPSUs <- unique(SSU_PSU$PSU)
     allPSUs <- allPSUs[!is.na(allPSUs)]
@@ -416,7 +421,7 @@ getStratumOfSSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
 #}
 
 # Function to remove PSUs with missing Stratum:
-removePSUsWithMissingStratum <- function(PSUProcessData) {
+removePSUsWithMissingStratum <- function(PSUProcessData, SSULabel) {
     
     validPSUs <- unique(PSUProcessData$Stratum_PSU$PSU[!is.na(PSUProcessData$Stratum_PSU$Stratum)])
     if(!length(validPSUs)) {
@@ -425,7 +430,8 @@ removePSUsWithMissingStratum <- function(PSUProcessData) {
     }
     invalidPSUs <- setdiff(PSUProcessData$Stratum_PSU$PSU, validPSUs)
     if(length(invalidPSUs)) {
-        warning("StoX: Removing the following PSUs with no Stratum:\n\t", paste(invalidPSUs, collapse = ", "))
+        invalidSSUs <- sapply(lapply(split(subset(PSUProcessData$SSU_PSU, PSU %in% invalidPSUs), by = "PSU"), subset, select = "SSU"), paste, collapse = ", ")
+        warning("StoX: Removing the following PSUs with no Stratum:\n\t", paste(paste0(invalidPSUs, "(", SSULabel, ": ", invalidSSUs, ")"), collapse = "\n\t"))
         PSUProcessData$Stratum_PSU <- PSUProcessData$Stratum_PSU[ PSU %in% validPSUs ]
         PSUProcessData$SSU_PSU[! PSU %in% validPSUs, PSU := NA_character_]
     }
