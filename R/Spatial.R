@@ -615,7 +615,7 @@ polygonAreaSP_simple <- function(stratumPolygon) {
     stratumArea <- function(DT) {
         areas <- as.list(by(DT$Area, DT$IsHole, sum))
         data.table(
-            Stratum = DT$ID,
+            Stratum = unique(DT$ID),
             Area = if (length(areas) == 2) areas$"FALSE" - areas$"TRUE" else unlist(areas)
         )
     }
