@@ -1572,15 +1572,21 @@ renameListByNames <- function(list, old, new) {
 #' 
 getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"), list.out = FALSE) {
     
+    emptyOutput <- output <- list(
+        unit = NA, 
+        quantity = NA
+    )
+    
+    if(!length(dataType)) {
+        return(emptyOutput)
+    }
+    
     element <- match.arg(element)
     dataTypeUnits <- getRstoxBaseDefinitions("dataTypeUnits")
     
     output <- dataTypeUnits[[dataType]][[variableName]]
     if(!length(output)) {
-        output <- list(
-            unit = NA, 
-            quantity = NA
-        )
+        return(emptyOutput)
     }
     
     if(!list.out) {
