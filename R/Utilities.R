@@ -1368,7 +1368,9 @@ readBioticPSUFrom2.7 <- function(projectXMLFilePath, MergedStoxDataHaulLevel) {
     # Station, which we are replacing edsu in the edsu in the StoX 2.7 edsupsu process data by 
     toMergeFromStoxData <- MergedStoxDataHaulLevel[, c("CruiseKey", "Station", "HaulKey")]
     toMergeFromStoxData[, CruiseKey1 := sapply(strsplit(CruiseKey, "/"), "[[", 1)]
-    BioticPSU$Station_PSU[, CruiseKey := NULL]
+    if("CruiseKey" %in% names(BioticPSU$Station_PSU)) {
+        BioticPSU$Station_PSU[, CruiseKey := NULL]
+    }
     
     # Get the CruiseKey1 and the HaulKey to merge by:
     BioticPSU$Station_PSU[, CruiseKey1 := sapply(strsplit(Station, "/"), "[[", 1)]

@@ -24,6 +24,7 @@ ReportSuperIndividuals <- function(
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
+    Filter = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character()
 ) 
@@ -55,6 +56,8 @@ ReportSuperIndividuals <- function(
         output <- cbind(output, Unit = unit)
     }
     
+    output <- filterTable(output, filter = Filter)
+    
     return(output)
 }
 
@@ -82,6 +85,7 @@ ReportDensity <- function(
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
+    Filter = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character()
 ) 
@@ -116,6 +120,8 @@ ReportDensity <- function(
         output <- cbind(output, Unit = unit)
     }
     
+    output <- filterTable(output, filter = Filter)
+    
     return(output)
 }
 
@@ -143,6 +149,7 @@ ReportQuantity <- function(
     ReportFunction = getReportFunctions(getMultiple = FALSE), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
+    Filter = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character()
 ) 
@@ -173,6 +180,8 @@ ReportQuantity <- function(
         unit <- RstoxData::getUnit(QuantityData$Data[[TargetVariable]], property = "shortname")
         output <- cbind(output, Unit = unit)
     }
+    
+    output <- filterTable(output, filter = Filter)
     
     return(output)
 }
@@ -225,6 +234,9 @@ aggregateBaselineDataOneTable <- function(
         subTable <- strsplit(subTable, "/")
         for(tableName in subTable) {
             stoxData <- stoxData[[tableName]]
+            # Free the memory of the large object:
+            gc()
+            
         }
     }
     
@@ -285,8 +297,9 @@ aggregateBaselineDataOneTable <- function(
         return(out)
     }
     
-    # Keep the original stoxData before padding with zeros. The original is used when adding information variables, so that this process is not corrupted by any NAs introduced when CJ-ing:
-    stoxData0 <- data.table::copy(stoxData)
+    # Keep the original unique GroupingVariables, InformationVariables, to add after the CJ-ing, so that this process is not corrupted by any NAs introduced when CJ-ing:
+    #stoxData0 <- data.table::copy(stoxData) #  This made a copy and took up too much memory
+    toAdd <- unique(stoxData[, c(GroupingVariables, InformationVariables), with = FALSE])
     
     # Add a CJ operation here like in StoX 2.7 (function reportQuantityAtLevel). This needs an option, so that it is only used across bootstrap iterations:
     if(length(padWithZerosOn)) {
@@ -311,7 +324,11 @@ aggregateBaselineDataOneTable <- function(
         arePresent <- grid[stoxData[, ..paddingVariables], on = paddingVariables]$index_
         areNA <- arePresent[is.na(stoxData[[TargetVariable]])]
         
+        # This temporarily doubles the memory, as stoxData is modified:
         stoxData <- stoxData[grid[, ..paddingVariables], on = paddingVariables]
+        # Free the memory of the large object:
+        gc()
+        
         # Convert the NAs to 0 for the abundance and biomass columns:
         abudanceVariables <- setdiff(names(stoxData), paddingVariables)
         # Convert NA to 0 only for Biomass or Abundance:
@@ -329,6 +346,9 @@ aggregateBaselineDataOneTable <- function(
     
     # Run the function:
     outputData <- stoxData[, fun(.SD), by = GroupingVariables]
+    # Free the memory of the large object:
+    rm(stoxData)
+    gc()
     
     if(length(uniqueGroupingVariablesToKeep)) {
         # Discard all rows with combinations of the GroupingVariables that are not present in the BootstrapData[[BaselineProcess]]:
@@ -354,7 +374,7 @@ aggregateBaselineDataOneTable <- function(
             InformationVariables <- setdiff(InformationVariables, GroupingVariables)
         }
         if(length(InformationVariables)) {
-            toAdd <- unique(stoxData0[, c(GroupingVariables, InformationVariables), with = FALSE])
+            
             nUniqueLevelsOfGroupingVariables <- nrow(unique(outputData[, GroupingVariables, with = FALSE]))
             nUniqueLevelsOfInformationVariables <- nrow(toAdd)
             if(nUniqueLevelsOfInformationVariables > nUniqueLevelsOfGroupingVariables) {
@@ -555,7 +575,7 @@ ReportSpeciesCategoryCatch <- function(
 #' 
 #' Writes a StratumPolygon to GeoJSON, StoX_WKT or shapefile.
 #' 
-#' @inheritParams ModelData
+#' @inheritParams ProcessData
 #' @param FileFormat The format of the files to write the StratumPolygon to. \code{\link{StoX_multipolygon_WKT}} is the table of stratum name and WKT multipolygon used by StoX. 
 #' 
 #' @details The actual writing takes place in RstoxFramework. This function only converts the data to appropriate classes interpreted by RstoxFramework.
@@ -563,9 +583,8 @@ ReportSpeciesCategoryCatch <- function(
 #' @return
 #' A \code{\link{WriteStratumPolygonData}} object.
 #' 
-#' @noRd
-# #' @export
-# #' 
+#' @export
+#' 
 WriteStratumPolygon <- function(
     StratumPolygon, 
     FileFormat = c("GeoJSON", "StoX_multipolygon_WKT", "StoX_shapefile")
@@ -600,5 +619,32 @@ WriteStratumPolygon <- function(
 
 
 
+##################################################
+##################################################
+#' Filter a table
+#' 
+#' @param table The data.table to filter.
+#' @param filter A string with an R expression to filter out unwanted rows of the report, e.g. "IndividualAge \%notin\% NA" or "Survey \%notin\% NA & SpeciesCategory \%notin\% NA".
+#' 
+#' @export
+#' 
+filterTable <- function(table, filter = character()) {
+    if(!sum(nchar(filter))) {
+        return(table)
+    }
+    
+    `%notin%` <- Negate(`%in%`)
+    `%notequal%` <- function(x, table) is.na(x) | x %notin% table
+    
+    # Accept quoted string:
+    filter <- gsub('[\"]', '', filter)
+    
+    test <- try(table <- table[eval(parse(text = filter)), ], silent = TRUE)
+    if(class(test)[1] == "try-error") {
+        stop("StoX: Invalid Filter.")
+    }
+    
+    return(table)
+}
 
 

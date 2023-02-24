@@ -268,6 +268,13 @@ backwardCompatibility <- list(
             functionName = "ReportSpeciesCategoryCatch", 
             modelName = "baseline", 
             parameterName = "ReportVariableUnit"
+        ), 
+        list(
+            changeVersion = "1.11.1", 
+            functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "RegressionDefinition", 
+            parameterValue = "FunctionInput"
         )
     ),  
     

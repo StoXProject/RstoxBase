@@ -337,12 +337,11 @@ onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
         if(numberOfPSUsInStratum[, any(N == 1, na.rm = TRUE)]) {
             # This warning adresses the problem of only one biotic PSU (often the same as one station) in a stratum, which implies identical SuperIndividualsData for all bootstrap runs in that stratum. When bootstrapping an acoustic-trawl project the biotic PSUs are not relevant, as Hauls are resampled in each Stratum. A warning for only one Haul in a Stratum is issued in BioticAssignment:
             if(PSUType == "Biotic") {
-                warning("StoX: The following strata have only one BioticPSU, which is in conflict with the principle of bootstrapping as it causes identical SuperIndividualsData for all bootstrap runs in that stratum. When running ReportBootstrap for a swept-area estimate (bootstrapping a MeanLengthDistribution process) with \"Stratum\" included in GroupingVariables, the variance from this stratum will be NA. When  \"Stratum\" is NOT included in GroupingVariables, the stratum with only one PSU will not contibute to the variance, as all bootstrap runs will be identical from that stratum. This implies UNDER ESTIMATION of the variance! Please consider merging strata to avoid this problem: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
-            } 
+                warning("StoX: The following strata have only one BioticPSU, which is in conflict with the principle of bootstrapping as it causes identical SuperIndividualsData for all bootstrap runs in that stratum. When running ReportBootstrap for a swept-area estimate (bootstrapping a MeanLengthDistribution process) with \"Stratum\" included in GroupingVariables, the variance from this stratum will be NA. When  \"Stratum\" is NOT included in GroupingVariables, the stratum with only one PSU will not contibute to the variance, as all bootstrap runs will be identical from that stratum. This implies UNDER ESTIMATION of the variance! Please consider merging strata to avoid this problem:", RstoxData::printErrorIDs(stratumWithOnlyOnePSU))
+            }
             else {
-                warning("StoX: The following strata have only one AcousticPSU, which is in conflict with the principle of bootstrapping. When running ReportBootstrap for an acoustic-trawl estimate (bootstrapping a Biotic process) with \"Stratum\" included in GroupingVariables, the stratum with only one PSU will not contibute to the variance from resampling AcousticPSUs. This implies UNDER ESTIMATION of the variance! Please consider re-defining the AcousticPSUs or merging strata to avoid this problem: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
-            } 
-            #warning("StoX: The following strata have only one PSU, which may result in missing (NA) variance estimate: ", paste(stratumWithOnlyOnePSU, collapse = ", "), ".")
+                warning("StoX: The following strata have only one AcousticPSU, which is in conflict with the principle of bootstrapping. When running ReportBootstrap for an acoustic-trawl estimate (bootstrapping a Biotic process) with \"Stratum\" included in GroupingVariables, the stratum with only one PSU will not contibute to the variance from resampling AcousticPSUs. This implies UNDER ESTIMATION of the variance! Please consider re-defining the AcousticPSUs or merging strata to avoid this problem:", RstoxData::printErrorIDs(stratumWithOnlyOnePSU))
+            }
         }
     }
 }
@@ -632,6 +631,11 @@ getPSUByTime <- function(
 
 # Function to get the start and stop time:
 getPSUStartStopDateTime <- function(PSUProcessData, MergedStoxDataStationLevel, PSUType) {
+    
+    if(!NROW(PSUProcessData$SSU_PSU)) {
+        PSUStartStopDateTime <- data.table(1)[,`:=`(unlist(getRstoxBaseDefinitions("PSUByTime")), NA)][, V1 := NULL][.0]
+        return(PSUStartStopDateTime)
+    }
     
     # Rename to the general SSU label:
     PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData, PSUType = PSUType, reverse = TRUE)
@@ -1009,7 +1013,7 @@ DefineBioticLayer <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference}, \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", to assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference}, \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.
 #' @param FileName The path to the StoX 2.7 project.xml file to read "bioticassignment", "suassignment" and "psustratum" from, in the case that \code{DefinitionMethod} is "ResourceFile".
 #' @inheritParams SumNASC
 #' @inheritParams DefineAcousticLayer
@@ -1129,6 +1133,11 @@ DefineBioticAssignment <- function(
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
+        
+        # If emtpy BioticAssignment, return immediately:
+        if(!NROW(processData$BioticAssignment)) {
+            return(processData$BioticAssignment)
+        }
         
         # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
         newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, subset(processData$BioticAssignment, !is.na(Haul))$PSU)
@@ -2494,7 +2503,7 @@ getSurveyTable <- function(
     }
     # Delete also rows with unrecognized Stratum:
     if(!all(SurveyTable$Stratum %in% stratumNames)) {
-        warning("StoX: Removing rows of Stratum not present in the SurveyTable")
+        warning("StoX: Removing the following (not used) Strata from in the SurveyTable: ", RstoxData::printErrorIDs(setdiff(SurveyTable$Stratum, stratumNames)))
         SurveyTable <- SurveyTable[Stratum %in% stratumNames, ]
     }
     # If no rows in the SurveyTable, issue an error:

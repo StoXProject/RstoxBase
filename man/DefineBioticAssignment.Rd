@@ -33,7 +33,7 @@ DefineBioticAssignment(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference}, \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Stratum", to assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference}, \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.}
 
 \item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} (defined in RstoxData).}
 
