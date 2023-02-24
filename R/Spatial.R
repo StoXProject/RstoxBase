@@ -71,7 +71,7 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' @inheritParams general_arguments
 #' @inheritParams getStratumNames
 #' @param DefinitionMethod A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.
-#' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} (may be a folder) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.
+#' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.
 #' @param SimplifyStratumPolygon Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://geocompr.robinlovelace.net/geometric-operations.html#simplification}{Geocomputation with R}). This option is useful for very complex stratum polygon files to reduce time for opening, running and saving a project.
 #' @param SimplificationFactor A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size. Note that larger values require more  time than smaller values. It is advisable to start with a low value (e.g. 0.01) and check the resolution of the strata borders in the map, and gradually increase \code{SimplificationFactor} until an acceptable resolution is obtained. Note that simplification of stratum polygons can lead to inaccuracies such as gaps between strata, which can lead to hauls falling outside of any stratum, causing under-estimation of survey indices, or failure to complete the model in the case of SplitNASC models which require all hauls to be located in a stratum. If such problems occur, the strata can be modified manually after simplification to include all hauls. Another problem is the change in stratum areas, which is reported to the console when running the simplification. A very rough rule of thumb is that \code{SimplificationFactor} = 0.1 seems to be a compromise between increased speed and reduction of stratum border resolution.
 #' 
@@ -600,11 +600,20 @@ polygonAreaSP_simple <- function(stratumPolygon) {
     
     # Function to create a polygon area data table of polygon area, whether the polygon is a hole, and the ID:
     polygon2AreaDT <- function(polygon, ID) {
-        data.table::data.table(
-            Area = polygonAreaPolygonXY(polygon@coords[, "x"], polygon@coords[, "y"]),
-            IsHole = polygon@hole,
-            ID = ID
-        )
+        if(all(c("x", "y") %in% colnames(polygon@coords))) {
+            data.table::data.table(
+                Area = polygonAreaPolygonXY(polygon@coords[, "x"], polygon@coords[, "y"]),
+                IsHole = polygon@hole,
+                ID = ID
+            )
+        }
+        else{
+            data.table::data.table(
+                Area = polygonAreaPolygonXY(polygon@coords[, 1], polygon@coords[, 2]),
+                IsHole = polygon@hole,
+                ID = ID
+            )
+        }
     }
     
     # Function to rbind the polygon area data tables:
@@ -813,7 +822,7 @@ locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonl
     }
     if(any(at0Strata)) {
         bad <- pointNames[at0Strata]
-        warning("StoX: The following ", pointLabel, if(length(bad) > 1) "s", " was not detected in any stratum:", RstoxData::printErrorIDs(bad))
+        warning("StoX: The following ", pointLabel, if(length(bad) > 1) "s", " were not detected in any stratum:", RstoxData::printErrorIDs(bad))
     }
     
     ind <- lapply(hits, utils::head, 1)

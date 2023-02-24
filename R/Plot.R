@@ -138,7 +138,7 @@ PlotAcousticTrawlSurvey <- function(
     plotArguments <- allargs()
     
     # Get the layer definition:
-    if(LayerDefinition != "PreDefined") {
+    if(LayerDefinition != "PreDefined" && "data.table" %in% class(plotArguments$NASCData) && NROW(plotArguments$NASCData) > 0) {
         plotArguments$SumNASCData <- SumNASC(
             NASCData = plotArguments$NASCData, 
             LayerDefinition = plotArguments$LayerDefinition, 
@@ -160,16 +160,18 @@ PlotAcousticTrawlSurvey <- function(
     #}
     
     
+     
+    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey", stoxFunctionAttributes = stoxFunctionAttributes)
+    
     # # Set default general options:
-    # plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultPlotOptions"))
+    plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultPlotOptions"))
     # 
     # # Set default map plotting options:
-    # plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotNASCOptions"))
+    plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotNASCOptions"))
     # 
     # # Set default NASC-plotting options:
-    # plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotOptions"))
+    plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotOptions"))
     
-    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey", stoxFunctionAttributes = stoxFunctionAttributes)
     
     
     # # Apply custom specifications:

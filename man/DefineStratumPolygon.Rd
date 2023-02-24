@@ -21,7 +21,7 @@ DefineStratumPolygon(
 
 \item{DefinitionMethod}{A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.}
 
-\item{FileName}{The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile} (may be a folder) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.}
+\item{FileName}{The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.}
 
 \item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
 

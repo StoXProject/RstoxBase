@@ -1129,11 +1129,29 @@ stoxFunctionAttributes <- list(
             #ImputeAtMissing = "getIndividualVaiableNamesSingle", 
             ImputeAtMissing = "getImputeAtMissing", 
             ImputeByEqual = "getImputeByEqual", 
-            ToImpute = "getToImpute"
+            ToImpute = "getToImpute", 
+            GroupingVariables = "groupingVariables_ImputeSuperIndividuals",
+            RegressionTable = "regressionTable"
         ),
         functionArgumentHierarchy = list(
-            Regression = list(
+            RegressionDefinition = list(
                 ImputationMethod = "Regression"
+            ), 
+            GroupingVariables = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            RegressionModel = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            RegressionTable = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            Regression = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionInput"
             ), 
             ImputeAtMissing = list(
                 ImputationMethod = "RandomSampling"
@@ -2016,10 +2034,21 @@ processPropertyFormats <- list(
         }
     ), 
     
+    
     groupingVariables = list(
         class = "vector", 
         title = "Select GroupingVariables for regression"
     ), 
+    
+    groupingVariables_ImputeSuperIndividuals = list(
+        class = "vector", 
+        title = "One or more variables to group by when defining Regression for imputation", 
+        possibleValues = function(SuperIndividualsData) {
+            sort(names(SuperIndividualsData))
+        }, 
+        variableTypes <- "character"
+    ), 
+    
     
     pointColor = list(
         class = "vector", 

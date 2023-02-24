@@ -1,3 +1,8 @@
+# RstoxBase v1.11.1 (2023-02-08)
+* Changed how IndividualsData and QuantityData are merged in SuperIndividuals(). Before, when bootstrapping swept-area models, if there were rows of QuantityData with Abundance == 0, these rows could (or maybe would) originate from length groups that because of resampling got WeightedNumber = 0 (a consequence of how resampling works in the current StoX, by setting values to 0 instead of completely removing rows). In Individuals the Hauls with all WeightedNumber = 0 are not used, so if one of these hauls contained a special length group that is not present in the other resampled Hauls in the Stratum, this length group will be missing in IndividualsData but present with Abundance = 0 in QuantityData. This has now been changed to remoivng rows with Abundance == 0 also in QuantityData before merging with the IndividualsData. The benefit is that this prevents NAs in the reports.
+* Added support for more than one row in the Regression input to ImputeSuperIndividuals.
+* Corrected the documentation of RegroupLengthDistribution().
+
 # RstoxBase v1.11.0 (2023-01-13)
 * Added warning when Percentages are outside of [0, 100] in ReportBootstrap when BootstrapReportFunction = "summaryStox".
 

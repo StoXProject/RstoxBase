@@ -179,7 +179,6 @@ SuperIndividuals <- function(
     DistributionMethod = c("Equal", "HaulDensity"), 
     LengthDistributionData
 ) {
-
     # Get the DistributionMethod:
     DistributionMethod <- RstoxData::match_arg_informative(DistributionMethod)
     
@@ -188,9 +187,11 @@ SuperIndividuals <- function(
     # Make sure the QuantityData is proper data.table. Comment on 2021-03-18: Why is this needed????:
     QuantityData$Data <- data.table::setDT(QuantityData$Data)
     
-    #### This is a potentially bakward reproducibiliti breaking change, scheduled for 4.0.0: ####
+    #### This is a potentially backward reproducibility breaking change, scheduled for 4.0.0: ####
     # Subset to the positive data, as this can discard length groups that have been filtered out in Indivduals when computing the PSUs:
-    #QuantityData$Data <- subset(QuantityData$Data, Abundance > 0)
+    # In Individuals() only Hauls with BioticAssignment$WeightingFactor > 0 for QuantityType "Acoustic" and only Abundance > 0 for "SweptArea":
+    #QuantityData$Data <- subset(QuantityData$Data, Abundance > 0 | is.na(Abundance))
+    # Rather we should maybe change bootstrapping to exclude PSUs that are not resampled, instead of including them with 0 in the datavariable.
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
     addLengthGroup(data = SuperIndividualsData, master = QuantityData$Data, warn = FALSE)
@@ -591,11 +592,13 @@ addLengthGroup <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
+#' @inheritParams DefineRegression
 #' @param ImputationMethod The method to use for the imputation. Currently, only "RandomSampling" is implemented, but may be accompanied "Regression" in a coming release.
 #' @param ImputeAtMissing A single string naming the variable which when missing identifies target individuals to input data \bold{to}. I.e., if \code{ImputeAtMissing} is missing for an individual, perform the imputation. In StoX 3.0.0 and older, \code{ImputeAtMissing} was hard coded to IndividualAge.
 #' @param ImputeByEqual A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data \bold{from}. The source individuals need also to have non-missing \code{ImputeAtMissing}. In StoX 3.0.0 and older, \code{ImputeByEqual} was hard coded to c("SpeciesCategory","IndividualTotalLength").
 #' @param ToImpute A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when \code{ImputeAtMissing} is missing, so including many variables in \code{ToImpute} is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}. 
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
+#' @param RegressionDefinition Character: A string naming the method to use, one of \code{FunctionParameter} to define the Regression on the fly in this function (using \code{GroupingVariables}, \code{RegressionModel} and \code{RegressionTable}), or \code{FunctionInput} to import Regression process data from a previously run process using the function
 #' 
 #' @details When \code{ToImpute} contains more variables than that given by \code{ImputeAtMissing} there is a risk that values remain missing even after successful imputation. E.g., if \code{ImputeAtMissing} is IndividualAge, and \code{ToImpute} includes IndividualRoundWeight, then the weight is only imputed when age is missing. Super-individuals with age but not weight will then still have missing weight. Variables that are naturally connected, such as IndividualRoundWeight and WeightMeasurement, or IndividualTotalLength and LengthResolution, should both be included in \code{ToImpute}.
 #' 
@@ -614,6 +617,10 @@ ImputeSuperIndividuals <- function(
     ImputeByEqual = character(), 
     ToImpute = character(), 
     Seed = 1, 
+    RegressionDefinition = c("FunctionParameter", "FunctionInput"), 
+    GroupingVariables = character(), 
+    RegressionModel = c("SimpleLinear", "Power"), 
+    RegressionTable = data.table::data.table(), 
     Regression
     #RegroupIndividualTotalLength = FALSE, 
     #LengthInterval = numeric()
@@ -652,11 +659,29 @@ ImputeSuperIndividuals <- function(
         )
     }
     else if(ImputationMethod == "Regression") {
-        ImputeSuperIndividualsData <- ImputeDataByRegression (
-            data = SuperIndividualsData, 
-            Regression = Regression
-        )
-    }
+        
+        RegressionDefinition <- RstoxData::match_arg_informative(RegressionDefinition)
+        
+        if(RegressionDefinition == "FunctionParameter") {
+            Regression <- DefineRegression(
+                DefinitionMethod = "Table",
+                GroupingVariables = GroupingVariables, 
+                RegressionModel = RegressionModel, 
+                RegressionTable = RegressionTable
+            )
+        }
+        
+        for(rowInd in seq_len(NROW(Regression$RegressionTable))) {
+            thisRegression <- Regression
+            thisRegression$RegressionTable <- Regression$RegressionTable[rowInd, ]
+            
+            ImputeSuperIndividualsData <- ImputeDataByRegressionOneRow(
+                data = SuperIndividualsData, 
+                Regression = thisRegression
+            )
+        }
+    
+        }
     
     
     
@@ -902,7 +927,7 @@ replaceMissingData <- function(x, columnNames) {
 
 
 
-ImputeDataByRegression <- function(
+ImputeDataByRegressionOneRow <- function(
     data, 
     Regression
 ) {
