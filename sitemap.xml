@@ -286,6 +286,12 @@
     <loc>/reference/SweptAreaDensity.html</loc>
   </url>
   <url>
+    <loc>/reference/WriteStratumPolygon.html</loc>
+  </url>
+  <url>
+    <loc>/reference/WriteStratumPolygonData.html</loc>
+  </url>
+  <url>
     <loc>/reference/aggregateBaselineDataOneTable.html</loc>
   </url>
   <url>
@@ -305,6 +311,9 @@
   </url>
   <url>
     <loc>/reference/factorNAfirst.html</loc>
+  </url>
+  <url>
+    <loc>/reference/filterTable.html</loc>
   </url>
   <url>
     <loc>/reference/formatOutput.html</loc>

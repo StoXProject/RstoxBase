@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0-9001</span>
       </span>
     </div>
 
@@ -47,6 +47,12 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.11.1" id="rstoxbase-v1111-2023-02-08">RstoxBase v1.11.1 (2023-02-08)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1111-2023-02-08"></a></h2>
+<ul><li>Changed how IndividualsData and QuantityData are merged in SuperIndividuals(). Before, when bootstrapping swept-area models, if there were rows of QuantityData with Abundance == 0, these rows could (or maybe would) originate from length groups that because of resampling got WeightedNumber = 0 (a consequence of how resampling works in the current StoX, by setting values to 0 instead of completely removing rows). In Individuals the Hauls with all WeightedNumber = 0 are not used, so if one of these hauls contained a special length group that is not present in the other resampled Hauls in the Stratum, this length group will be missing in IndividualsData but present with Abundance = 0 in QuantityData. This has now been changed to remoivng rows with Abundance == 0 also in QuantityData before merging with the IndividualsData. The benefit is that this prevents NAs in the reports.</li>
+<li>Added support for more than one row in the Regression input to ImputeSuperIndividuals.</li>
+<li>Corrected the documentation of RegroupLengthDistribution().</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.11.0" id="rstoxbase-v1110-2023-01-13">RstoxBase v1.11.0 (2023-01-13)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1110-2023-01-13"></a></h2>
 <ul><li>Added warning when Percentages are outside of [0, 100] in ReportBootstrap when BootstrapReportFunction = “summaryStox”.</li>

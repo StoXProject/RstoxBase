@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0-9001</span>
       </span>
     </div>
 
@@ -60,6 +60,10 @@
 <span>  ImputeByEqual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ToImpute <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  Seed <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  RegressionDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,</span>
+<span>  GroupingVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  RegressionModel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SimpleLinear"</span>, <span class="st">"Power"</span><span class="op">)</span>,</span>
+<span>  RegressionTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">Regression</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -88,6 +92,22 @@
 
 <dt>Seed</dt>
 <dd><p>An integer giving the seed to use for the random sampling used to obtain the imputed data.</p></dd>
+
+
+<dt>RegressionDefinition</dt>
+<dd><p>Character: A string naming the method to use, one of <code>FunctionParameter</code> to define the Regression on the fly in this function (using <code>GroupingVariables</code>, <code>RegressionModel</code> and <code>RegressionTable</code>), or <code>FunctionInput</code> to import Regression process data from a previously run process using the function</p></dd>
+
+
+<dt>GroupingVariables</dt>
+<dd><p>An optional vector of strings defining variables seving as grouping variables in the RegressionTable. Setting this adds the its elements as columns in the RegressionTable in the GUI.</p></dd>
+
+
+<dt>RegressionModel</dt>
+<dd><p>Character: A string naming the model to use for the regression. See Details for options.</p></dd>
+
+
+<dt>RegressionTable</dt>
+<dd><p>A table with one row defining the name of the dependent variable (column name <code>DependentVariable</code>), the name of the independent variable (column name <code>IndependentVariable</code>), and the <code>Intersect</code> and <code>Slope</code> if <code>RegressionModel</code> = "SimpleLinear" and <code>Factor</code> and <code>Exponent</code> if <code>RegressionModel</code> = "Power".</p></dd>
 
 
 <dt>Regression</dt>

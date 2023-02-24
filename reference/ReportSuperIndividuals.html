@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0-9001</span>
       </span>
     </div>
 
@@ -60,6 +60,7 @@
 <span>  ReportFunction <span class="op">=</span> <span class="fu"><a href="getReportFunctions.html">getReportFunctions</a></span><span class="op">(</span>getMultiple <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
 <span>  GroupingVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  InformationVariables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  Filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  RemoveMissingValues <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  WeightingVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -89,6 +90,10 @@
 
 <dt>InformationVariables</dt>
 <dd><p>Variables to include as columns to the end of the report table. These cannot have more unique combinations than the <code>GroupingVariables</code>.</p></dd>
+
+
+<dt>Filter</dt>
+<dd><p>A string with an R expression to filter out unwanted rows of the report, e.g. "IndividualAge %notin% NA" or "Survey %notin% NA &amp; SpeciesCategory %notin% NA".</p></dd>
 
 
 <dt>RemoveMissingValues</dt>
