@@ -9,7 +9,7 @@ RegroupLengthDistribution(LengthDistributionData, LengthInterval = numeric())
 \arguments{
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
-\item{LengthInterval}{Specifies the new length intervals, either given as a single numeric value representing the constant length interval widths, (starting from 0), or a vector of the interval breaks.}
+\item{LengthInterval}{Specifies the new length intervals, given as a single numeric value representing the constant length interval widths, (starting from 0).}
 }
 \value{
 An object of StoX data type \code{\link{LengthDistributionData}}.
@@ -18,7 +18,5 @@ An object of StoX data type \code{\link{LengthDistributionData}}.
 The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the output length distribution dataset. The function aggregates the \code{WeightedNumber} of the LengthDistributionData
 }
 \details{
-NOTE. Function parameter \emph{SpeciesCategory} is NOT YET IMPLEMENTED. Consequently, a common LengthInterval is applied to all SpeciesCategories in the input data.
-
-The RegroupLengthDistribution function is used to set a common length group resolution for one or all SpeciesCategories throughout the length distributions in the output dataset and across all Hauls.A function parameter \emph{SpeciesCategory} is used to choose either All or one SpeciesCategory from the input LengthDistribution data set. A dropdown list of available SpeciesCategories in the input data is available for the selection. The function parameter \emph{LengthInterval} is used to set the desired output length interval in centimeters.  The new length interval can never have finer resolution than the coarsest resolution found in the data that are due to be regrouped. A least common multiple of the length group intervals in the input is calculated. This value is the highest resolution possible. If the user chooses a finer resolution than this for the parameter LengthInterval, a warning will be given, and the least common multiple will be applied for the output LengthDistribution dataset from the process.
+An intevral vector starting from 0 with increments of \code{Resolution} will be created, and the current length intervals (IndividualTotalLength, IndividualTotalLength + LengthResolution) will be located into the interval vector. Present intervals that intersect with more than one interval in the interval vector result in an error (e.g. IndividualTotalLength = 2.4 with LengthResolution = 0.3 will intersect with two intervals when \code{Resolution} = 0.5, and IndividualTotalLength = 2.4 with LengthResolution = 0.1 will intersect with two intervals when \code{Resolution} = 0.05).
 }

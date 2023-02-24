@@ -11,6 +11,10 @@ ImputeSuperIndividuals(
   ImputeByEqual = character(),
   ToImpute = character(),
   Seed = 1,
+  RegressionDefinition = c("FunctionParameter", "FunctionInput"),
+  GroupingVariables = character(),
+  RegressionModel = c("SimpleLinear", "Power"),
+  RegressionTable = data.table::data.table(),
   Regression
 )
 }
@@ -26,6 +30,14 @@ ImputeSuperIndividuals(
 \item{ToImpute}{A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when \code{ImputeAtMissing} is missing, so including many variables in \code{ToImpute} is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
+
+\item{RegressionDefinition}{Character: A string naming the method to use, one of \code{FunctionParameter} to define the Regression on the fly in this function (using \code{GroupingVariables}, \code{RegressionModel} and \code{RegressionTable}), or \code{FunctionInput} to import Regression process data from a previously run process using the function}
+
+\item{GroupingVariables}{An optional vector of strings defining variables seving as grouping variables in the RegressionTable. Setting this adds the its elements as columns in the RegressionTable in the GUI.}
+
+\item{RegressionModel}{Character: A string naming the model to use for the regression. See Details for options.}
+
+\item{RegressionTable}{A table with one row defining the name of the dependent variable (column name \code{DependentVariable}), the name of the independent variable (column name \code{IndependentVariable}), and the \code{Intersect} and \code{Slope} if \code{RegressionModel} = "SimpleLinear" and \code{Factor} and \code{Exponent} if \code{RegressionModel} = "Power".}
 
 \item{Regression}{The \code{\link{Regression}} process data.}
 }
