@@ -165,7 +165,7 @@ Individuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{\link{LengthDistributionData}} that was used to produce the \code{\link{QuantityData}} (via \code{link{DensityData}}). If the length resolution is not the same in the \code{\link{QuantityData}} and \code{\link{LengthDistributionData}}, an error will be thrown.
+#' @param DistributionMethod The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{\link{LengthDistributionData}} that was used to produce the \code{\link{QuantityData}} (via \code{\link{DensityData}}). If the length resolution is not the same in the \code{\link{QuantityData}} and \code{\link{LengthDistributionData}}, an error will be thrown.
 #' 
 #' @details The \code{\link{SuperIndividualsData}} contains the variables \code{Abundance} and \code{Biomass}. The \code{Biomass} is given in gram, as it is generated from IndividualRoundWeight which is in gram. This is different from the \code{Biomass} column of \code{\link{QuantityData}}, which is in kilogram, as it is originates from \code{CatchFractionWeight} in \code{\link{StoxBioticData}}, which is in kilogram.
 #' 
@@ -179,6 +179,7 @@ SuperIndividuals <- function(
     DistributionMethod = c("Equal", "HaulDensity"), 
     LengthDistributionData
 ) {
+    
     # Get the DistributionMethod:
     DistributionMethod <- RstoxData::match_arg_informative(DistributionMethod)
     
@@ -215,7 +216,6 @@ SuperIndividuals <- function(
     # Keep only variables present in SuperIndividualsData:
     variablesToGetFromQuantityData <- intersect(variablesToGetFromQuantityData, names(QuantityData$Data))
     
-    
     # Merge QuantityData into the IndividualsData:
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
@@ -230,6 +230,7 @@ SuperIndividuals <- function(
         #all.x = TRUE
         all = TRUE
     )
+    
     
     # Append an individualNumber to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     distributeQuantityBy <- c(
@@ -308,14 +309,13 @@ SuperIndividuals <- function(
         }
         
         # Sum the haul densities (stored as WeightedNumber) over all hauls of each Stratum/Layer/SpeciesCategory/TempLengthGroupUsedInSuperIndividuals/Frequency/Beam:
-        # No no, this was certainly wrong, as WeightedNumber could be duplicated within a Stratum for one length group:
-        #SuperIndividualsData[, sumWeightedNumber := sum(unique(WeightedNumber), na.rm = TRUE), by = distributeQuantityBy]
-        # Sum the WeightedNumber over all hauls of the columns specified by distributeQuantityBy:
-        #SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = TRUE), by = distributeQuantityBy]
         SuperIndividualsData[, sumWeightedNumber := sum(WeightedNumber[!duplicated(Haul)], na.rm = FALSE), by = distributeQuantityBy]
         
         # Get the Haul weight factor as the WeightedNumber divided by sumWeightedNumber:
         SuperIndividualsData[, haulWeightFactor := WeightedNumber / sumWeightedNumber]
+        
+        # Do not scale Abundance for missing Haul, as the whole point of the DistributionMethod == "HaulDensity" is to weight by the haul density, which is not relevant for missing Haul:
+        SuperIndividualsData[is.na(Haul), haulWeightFactor := 1]
         
         # Count the length measured individuals of each Haul, species, beam and length group:
         #SuperIndividualsData[, individualNumber := .N, by = haulGrouping] # This was an error, since it did not take different beams into account.
@@ -331,8 +331,6 @@ SuperIndividuals <- function(
         SuperIndividualsData[, individualNumber := .N, by = countGrouping]
         
         # Remove WeightedNumber and sumWeightedNumber:
-        #SuperIndividualsData[, WeightedNumber := NULL]
-        #SuperIndividualsData[, sumWeightedNumber := NULL]
         removeColumnsByReference(
             data = SuperIndividualsData, 
             toRemove = c("WeightedNumber", "sumWeightedNumber")
@@ -341,7 +339,6 @@ SuperIndividuals <- function(
     else{
         stop("Invalid DistributionMethod")
     }
-    
     
     
     # Generate the weighting factors:
@@ -361,10 +358,10 @@ SuperIndividuals <- function(
     #SuperIndividualsData[, Abundance := Abundance / individualNumber]
     SuperIndividualsData[, Abundance := Abundance * individualWeightFactor]
     
-    # Test whether the sum of the Abundance is equal to that of the QuantityData:
+    # Test whether the sum of the Abundance is equal to that of the QuantityData. Note that if all SuperIndividualsData$Abundance and all QuantityData$Data$Abundance are NA, the totalAbundanceInSuperIndividualsData and totalAbundanceInQuantityData will be 0 due to the na.rm = TRUE. Before, testEqualTo1() was used here, but this returned NA for 0 / 0 = NaN, and the condition in the test failed. Thus the testEqual() is used instead:
     totalAbundanceInSuperIndividualsData <- sum(SuperIndividualsData$Abundance, na.rm = TRUE)
     totalAbundanceInQuantityData <- sum(QuantityData$Data$Abundance, na.rm = TRUE)
-    if(!testEqualTo1(totalAbundanceInSuperIndividualsData / totalAbundanceInQuantityData)) {
+    if(!testEqual(totalAbundanceInSuperIndividualsData, totalAbundanceInQuantityData)) {
         stop("Sum of Abundance not equal in QuantityData (", totalAbundanceInQuantityData, ") and SuperIndividualsData (", totalAbundanceInSuperIndividualsData, ").")
     }
     
@@ -411,6 +408,17 @@ SuperIndividuals <- function(
 }
 
 
+testEqual <- function(x, y, tol = sqrt(.Machine$double.eps)) {
+    notNA <- !is.na(x) & !is.na(y)
+    if(any(notNA)) {
+        ratio <- y[notNA] / x[notNA]
+        all(ratio > 1 - tol & ratio < 1 + tol | (x[notNA] == 0 & y[notNA] == 0))
+    }
+    else {
+        NA
+    }
+}
+
 testEqualTo1 <- function(x, tol = sqrt(.Machine$double.eps)) {
     notNA <- !is.na(x)
     if(any(notNA)) {
@@ -420,7 +428,6 @@ testEqualTo1 <- function(x, tol = sqrt(.Machine$double.eps)) {
         NA
     }
 }
-
 
 # Function to add length group IDs in two tables given the length groups in the second:
 addLengthGroupOneSpecies <- function(
@@ -445,6 +452,8 @@ addLengthGroupOneSpecies <- function(
     uniqueLengthGroups <- unique(master[atSpeciesInMaster, c(..lengthVar, ..resolutionVar)])
     
     if(all(is.na(uniqueLengthGroups))) {
+        # Add the TempLengthGroupUsedInSuperIndividuals as NA:
+        data[atSpeciesInData, TempLengthGroupUsedInSuperIndividuals := NA_integer_]
         return(FALSE)
     }
     

@@ -19,6 +19,7 @@ initiateRstoxBase <- function(){
         groupingVariables = c("StartDateTime", "StopDateTime")
     )
     
+    #### Data type definitions: ####
     dataTypeDefinition <- list(
         # NASC: 
         NASCData = list(
@@ -359,85 +360,44 @@ initiateRstoxBase <- function(){
         #    groupingVariables = c("StartDateTime", "StopDateTime")
         #)
     )
+    ####
     
-    
+    #### Data type units: ####
     dataTypeUnits <- list(
-        # Quantity:
-        DensityData = list(
-            Density = list(
-                quantity = "area_number_density", 
-                unit = "individuals/nmi^2"
-            )
-        ), 
-        QuantityData = list(
-            Abundance = list(
-                quantity = "cardinality", 
-                unit = "individuals"
-            ), 
-            Biomass = list(
-                quantity = "mass", 
-                unit = "g"
-            )
-        ), 
-        SpeciesCategoryCatchData = list(
-            TotalCatchNumber = list(
-                quantity = "cardinality", 
-                unit = "individuals"
-            ), 
-            TotalCatchWeight = list(
-                quantity = "mass", 
-                unit = "kg"
-            )
-        ), 
-        SuperIndividualsData = list(
-            IndividualTotalLength = list(
-                quantity = "length", 
-                unit = "cm"
-            ), 
-            IndividualRoundWeight = list(
-                quantity = "mass", 
-                unit = "g"
-            ), 
-            Abundance = list(
-                quantity = "cardinality", 
-                unit = "individuals"
-            ), 
-            Biomass = list(
-                quantity = "mass", 
-                unit = "g"
-            ), 
-            TowDistance = list(
-                quantity = "length", 
-                unit = "nmi"
-            ), 
-            EffectiveTowDistance = list(
-                quantity = "length", 
-                unit = "nmi"
-            ), 
-            CatchFractionWeight = list(
-                quantity = "mass", 
-                unit = "kg"
-            ), 
-            CatchFractionNumber = list(
-                quantity = "cardinality", 
-                unit = "individuals"
-            ), 
-            SampleWeight = list(
-                quantity = "mass", 
-                unit = "kg"
-            ), 
-            SampleNumber = list(
-                quantity = "cardinality", 
-                unit = "individuals"
-            ), 
-            IndividualAge = list(
-                quantity = "age", 
-                unit = "year"
-            )
-        )
+        # DensityData
+        list(dataType = "DensityData", variableName = "Density", quantity = "area_number_density", unit = "individuals/nmi^2"), 
+        # QuantityData
+        list(dataType = "QuantityData", variableName = "Abundance", quantity = "cardinality", unit = "individuals"), 
+        list(dataType = "QuantityData", variableName = "Biomass", quantity = "mass", unit = "g"),
+        # SpeciesCategoryCatchData
+        list(dataType = "SpeciesCategoryCatchData", variableName = "TotalCatchNumber", quantity = "cardinality", unit = "individuals"), 
+        list(dataType = "SpeciesCategoryCatchData", variableName = "TotalCatchWeight", quantity = "mass", unit = "kg"),
+        # SuperIndividualsData
+        list(dataType = "SuperIndividualsData", variableName = "IndividualTotalLength", quantity = "length", unit = "cm"), 
+        list(dataType = "SuperIndividualsData", variableName = "IndividualRoundWeight", quantity = "mass", unit = "g"), 
+        list(dataType = "SuperIndividualsData", variableName = "Abundance", quantity = "cardinality", unit = "individuals"), 
+        list(dataType = "SuperIndividualsData", variableName = "Biomass", quantity = "mass", unit = "g"), 
+        list(dataType = "SuperIndividualsData", variableName = "TowDistance", quantity = "length", unit = "nmi"), 
+        list(dataType = "SuperIndividualsData", variableName = "EffectiveTowDistance", quantity = "length", unit = "nmi"), 
+        list(dataType = "SuperIndividualsData", variableName = "CatchFractionWeight", quantity = "mass", unit = "kg"), 
+        list(dataType = "SuperIndividualsData", variableName = "CatchFractionNumber", quantity = "cardinality", unit = "individuals"), 
+        list(dataType = "SuperIndividualsData", variableName = "SampleWeight", quantity = "mass", unit = "kg"), 
+        list(dataType = "SuperIndividualsData", variableName = "SampleNumber", quantity = "cardinality", unit = "individuals"), 
+        list(dataType = "SuperIndividualsData", variableName = "IndividualAge", quantity = "age", unit = "year"),
+        # Copied from RstoxData:
+        list(dataType = "SuperIndividualsData", variableName = "Longitude", quantity = "angle", unit = "degree east"), 
+        list(dataType = "SuperIndividualsData", variableName = "Latitude", quantity = "angle", unit = "degree north"), 
+        list(dataType = "SuperIndividualsData", variableName = "BottomDepth", quantity = "length", unit = "m"), 
+        list(dataType = "SuperIndividualsData", variableName = "MinHaulDepth", quantity = "length", unit = "m"), 
+        list(dataType = "SuperIndividualsData", variableName = "MaxHaulDepth", quantity = "length", unit = "m"), 
+        list(dataType = "SuperIndividualsData", variableName = "VerticalNetOpening", quantity = "length", unit = "m"), 
+        list(dataType = "SuperIndividualsData", variableName = "HorizontalNetOpening", quantity = "lengthlength", unit = "m"), 
+        list(dataType = "SuperIndividualsData", variableName = "TrawlDoorSpread", quantity = "length", unit = "m")
     )
+    dataTypeUnits <- data.table::rbindlist(dataTypeUnits)
+
     
-     
+    #### Resolution: ####
     resolutionClasses <- list(
         NASC = list(
             vertical= c("Layer", "Channel"), 
