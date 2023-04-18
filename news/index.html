@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0-9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
       </span>
     </div>
 
@@ -48,8 +48,23 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.11.1" id="rstoxbase-v1111-2023-02-08">RstoxBase v1.11.1 (2023-02-08)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1111-2023-02-08"></a></h2>
-<ul><li>Changed how IndividualsData and QuantityData are merged in SuperIndividuals(). Before, when bootstrapping swept-area models, if there were rows of QuantityData with Abundance == 0, these rows could (or maybe would) originate from length groups that because of resampling got WeightedNumber = 0 (a consequence of how resampling works in the current StoX, by setting values to 0 instead of completely removing rows). In Individuals the Hauls with all WeightedNumber = 0 are not used, so if one of these hauls contained a special length group that is not present in the other resampled Hauls in the Stratum, this length group will be missing in IndividualsData but present with Abundance = 0 in QuantityData. This has now been changed to remoivng rows with Abundance == 0 also in QuantityData before merging with the IndividualsData. The benefit is that this prevents NAs in the reports.</li>
+<h2 class="page-header" data-toc-text="1.11.1" id="rstoxbase-1111-2023-04-18">RstoxBase 1.11.1 (2023-04-18)<a class="anchor" aria-label="anchor" href="#rstoxbase-1111-2023-04-18"></a></h2>
+<ul><li>Fixed bug in SuperIndividuals() where bootstrapping could result in artificial rows with missing Abundance for certain length grups only present in biotic PSUs that are not resampled in a bootstrap replicate. This was only a problem when DistributionMethod = “HaulDensity”. The result was that when not using IndividualTotal in the GroupingVariables in ReportBootstrap, many rows contained NAs. In the new version the NAs can be isolated by including “Survey”” and “SpeciesCategory” in the GroupingVariables.</li>
+<li>Fixed bug in SuperIndividuals() where the test for equal total Abundance from the QuantityData and in the SuperIndividualsData failed when both were 0.</li>
+<li>Fixed bug in SuperIndividuals() for when all lengths of the QuantityData are NA.</li>
+<li>Fixed slow aggregateBaselineDataOneTable() used by e.g. RstoxFramework::ReportBootstrap() by removing repeated unnecessary call to getReportFunctions(getMultiple = TRUE) to get the column names of the output.</li>
+<li>Added test for non-empty AcousticPSU in BioticAssignment().</li>
+<li>Added support for starting out with no PSUs in DefineAcousticPSU.</li>
+<li>Now reporting a warning if the user tries to set unit to a variable that has no units defined in ReportSuperIndividuals().</li>
+<li>Improved warning when EstimateBioticRegression() returns NA.</li>
+<li>Fixed bug where only the varaibles from the Individual table of StoxBioticData were available as GroupingVariables in EstimateBioticRegression() in the GUI.</li>
+<li>Added support for more than one row in the Regression input to ImputeSuperIndividuals.</li>
+<li>Corrected the documentation of RegroupLengthDistribution().</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.12.0-9001" id="rstoxbase-1120-9001-2023-04-14">RstoxBase 1.12.0-9001 (2023-04-14)<a class="anchor" aria-label="anchor" href="#rstoxbase-1120-9001-2023-04-14"></a></h2>
+<ul><li>Improved warning when EstimateBioticRegression() returns NA.</li>
+<li>Fixed bug where only the varaibles from the Individual table of StoxBioticData were available as GroupingVariables in EstimateBioticRegression() in the GUI.</li>
 <li>Added support for more than one row in the Regression input to ImputeSuperIndividuals.</li>
 <li>Corrected the documentation of RegroupLengthDistribution().</li>
 </ul></div>
