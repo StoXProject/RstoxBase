@@ -16,7 +16,7 @@ SuperIndividuals(
 
 \item{QuantityData}{The \code{\link{QuantityData}} data.}
 
-\item{DistributionMethod}{The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{\link{LengthDistributionData}} that was used to produce the \code{\link{QuantityData}} (via \code{link{DensityData}}). If the length resolution is not the same in the \code{\link{QuantityData}} and \code{\link{LengthDistributionData}}, an error will be thrown.}
+\item{DistributionMethod}{The method used for distributing the abundance, one of "Equal" for equal abundance to all individuals of each Stratum, Layer, SpeciesCategory and length group, and "HaulDensity" to weight by the haul density. For \code{DistributionMethod} = "HaulDensity" the \code{LengthDistributionData} must be given. It is recommended to use the same \code{\link{LengthDistributionData}} that was used to produce the \code{\link{QuantityData}} (via \code{\link{DensityData}}). If the length resolution is not the same in the \code{\link{QuantityData}} and \code{\link{LengthDistributionData}}, an error will be thrown.}
 
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 }

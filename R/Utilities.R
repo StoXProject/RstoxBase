@@ -1574,6 +1574,7 @@ renameListByNames <- function(list, old, new) {
 #' 
 getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"), list.out = FALSE) {
     
+    
     emptyOutput <- output <- list(
         unit = NA, 
         quantity = NA
@@ -1586,7 +1587,11 @@ getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"),
     element <- match.arg(element)
     dataTypeUnits <- getRstoxBaseDefinitions("dataTypeUnits")
     
-    output <- dataTypeUnits[[dataType]][[variableName]]
+    #output <- dataTypeUnits[[dataType]][[variableName]]
+    # The dataTypeUnits were changed to a data.table on 2023-03-08:
+    this_dataType <- dataType
+    this_variableName <- variableName
+    output <- subset(dataTypeUnits, dataType == this_dataType & variableName == this_variableName)
     if(!length(output)) {
         return(emptyOutput)
     }
@@ -1604,10 +1609,14 @@ getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"),
 #' @inheritParams getBaseUnit
 #' 
 hasBaseUnit <- function(dataType, variableName) {
-    
     baseUnit <- getBaseUnit(dataType = dataType, variableName = variableName, list.out = TRUE)
     
-    !is.na(baseUnit$unit) && !is.na(baseUnit$quantity)
+    if(NROW(baseUnit)) {
+        !is.na(baseUnit$unit) && !is.na(baseUnit$quantity)
+    }
+    else {
+        FALSE
+    }
 }
 
 #' Set base unit to a variable of the StoX dataType
@@ -1644,7 +1653,7 @@ setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
         x <- setUnit(x, id)
     }
     else if(length(unit) && !this_hasBaseUnit) {
-        warning("StoX: Units not defined for variable ", variableName, " of dataType ", dataType, ". The default unit is used (see ?", dataType, ")")
+        warning("StoX: Units not defined for variable ", variableName, " of dataType ", dataType, ". The unit (", unit, ") was ignored.")
     }
     
     return(x)

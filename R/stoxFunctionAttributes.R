@@ -1329,13 +1329,7 @@ processPropertyFormats <- list(
         possibleValues = function(DependentVariable, DependentResolutionVariable, IndependentVariable, IndependentResolutionVariable, InputDataType, IndividualsData, SuperIndividualsData) {
             data <- get(InputDataType)
             setdiff(
-                intersect(
-                    names(data), 
-                    c(
-                        attr(data, "stoxDataVariableNames")$SpeciesCategory, 
-                        attr(data, "stoxDataVariableNames")$Individual
-                    )
-                ), 
+                names(data), 
                 c(DependentVariable, DependentResolutionVariable, IndependentVariable, IndependentResolutionVariable)
             )
         }
@@ -1862,8 +1856,10 @@ processPropertyFormats <- list(
         class = "vector", 
         title = "Select Unit for the TargetVariable", 
         possibleValues = function(TargetVariable) {
-            quantity <- getBaseUnit(dataType = "SuperIndividualsData", variableName = TargetVariable, element = "quantity")
-            if(is.na(quantity)) {
+            dataType <- "SuperIndividualsData"
+            quantity <- getBaseUnit(dataType = dataType, variableName = TargetVariable, element = "quantity")
+            if(!length(quantity) || is.na(quantity)) {
+                warning("StoX: No units defined for the variable ", TargetVariable, " of datatype ", dataType)
                 list()
             }
             else {
@@ -1901,8 +1897,10 @@ processPropertyFormats <- list(
         class = "vector", 
         title = "Select Unit for the TargetVariable", 
         possibleValues = function(TargetVariable) {
-            quantity <- getBaseUnit(dataType = "QuantityData", variableName = TargetVariable, element = "quantity")
-            if(is.na(quantity)) {
+            dataType <- "QuantityData"
+            quantity <- getBaseUnit(dataType = dataType, variableName = TargetVariable, element = "quantity")
+            if(!length(quantity) || is.na(quantity)) {
+                warning("StoX: No units defined for the variable ", TargetVariable, " of datatype ", dataType)
                 list()
             }
             else {
@@ -1940,8 +1938,10 @@ processPropertyFormats <- list(
         class = "vector", 
         title = "Select unit for the Density", 
         possibleValues = function() {
-            quantity <- getBaseUnit(dataType = "DensityData", variableName = "Density", element = "quantity")
-            if(is.na(quantity)) {
+            dataType <- "DensityData"
+            quantity <- getBaseUnit(dataType = dataType, variableName = "Density", element = "quantity")
+            if(!length(quantity) || is.na(quantity)) {
+                warning("StoX: No units defined for the variable Density of datatype ", dataType)
                 list()
             }
             else {
@@ -2079,8 +2079,10 @@ processPropertyFormats <- list(
         class = "vector", 
         title = "Select unit for the ReportVariable", 
         possibleValues = function(ReportVariable) {
-            quantity <- getBaseUnit(dataType = "SpeciesCategoryCatchData", variableName = ReportVariable, element = "quantity")
-            if(is.na(quantity)) {
+            dataType <- "SpeciesCategoryCatchData"
+            quantity <- getBaseUnit(dataType = dataType, variableName = ReportVariable, element = "quantity")
+            if(!length(quantity) || is.na(quantity)) {
+                warning("StoX: No units defined for the variable ", ReportVariable, " of datatype ", dataType)
                 list()
             }
             else {

@@ -285,12 +285,15 @@ aggregateBaselineDataOneTable <- function(
             keep.unnamed = TRUE
         )
         
-        # Add the function name as names if the function does not name the output:
-        if(aggregationFunction %in% getReportFunctions(getMultiple = TRUE)) {
-            
+        # Add the target variable as prefix in the column names of the output:
+        if(length(names(out))) {
+            names(out) <- paste(TargetVariable, names(out), sep = "_")
         }
-        reportFunctionVariableName <- getReportFunctionVariableName(aggregationFunction, TargetVariable, args = args)
-        names(out) <- reportFunctionVariableName
+        # Use the aggregationFunction if no names are present in the output:
+        else {
+            names(out) <- paste(TargetVariable, aggregationFunction, sep = "_")
+        }
+        
         # Convert to list to insert each element to a named column of the data table:
         out <- as.list(out)
         

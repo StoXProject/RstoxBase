@@ -1,29 +1,51 @@
-# RstoxBase v1.11.1 (2023-02-08)
-* Changed how IndividualsData and QuantityData are merged in SuperIndividuals(). Before, when bootstrapping swept-area models, if there were rows of QuantityData with Abundance == 0, these rows could (or maybe would) originate from length groups that because of resampling got WeightedNumber = 0 (a consequence of how resampling works in the current StoX, by setting values to 0 instead of completely removing rows). In Individuals the Hauls with all WeightedNumber = 0 are not used, so if one of these hauls contained a special length group that is not present in the other resampled Hauls in the Stratum, this length group will be missing in IndividualsData but present with Abundance = 0 in QuantityData. This has now been changed to remoivng rows with Abundance == 0 also in QuantityData before merging with the IndividualsData. The benefit is that this prevents NAs in the reports.
+# RstoxBase 1.11.1 (2023-04-18)
+* Fixed bug in SuperIndividuals() where bootstrapping could result in artificial rows with missing Abundance for certain length grups only present in biotic PSUs that are not resampled in a bootstrap replicate. This was only a problem when DistributionMethod = "HaulDensity". The result was that when not using IndividualTotal in the GroupingVariables in ReportBootstrap, many rows contained NAs. In the new version the NAs can be isolated by including "Survey"" and "SpeciesCategory" in the GroupingVariables.
+* Fixed bug in SuperIndividuals() where the test for equal total Abundance from the QuantityData and in the SuperIndividualsData failed when both were 0.
+* Fixed bug in SuperIndividuals() for when all lengths of the QuantityData are NA.
+* Fixed slow aggregateBaselineDataOneTable() used by e.g. RstoxFramework::ReportBootstrap() by removing repeated unnecessary call to getReportFunctions(getMultiple = TRUE) to get the column names of the output.
+* Added test for non-empty AcousticPSU in BioticAssignment().
+* Added support for starting out with no PSUs in DefineAcousticPSU.
+* Now reporting a warning if the user tries to set unit to a variable that has no units defined in ReportSuperIndividuals().
+* Improved warning when EstimateBioticRegression() returns NA.
+* Fixed bug where only the varaibles from the Individual table of StoxBioticData were available as GroupingVariables in EstimateBioticRegression() in the GUI.
 * Added support for more than one row in the Regression input to ImputeSuperIndividuals.
 * Corrected the documentation of RegroupLengthDistribution().
 
+
+# RstoxBase 1.12.0-9001 (2023-04-14)
+* Improved warning when EstimateBioticRegression() returns NA.
+* Fixed bug where only the varaibles from the Individual table of StoxBioticData were available as GroupingVariables in EstimateBioticRegression() in the GUI.
+* Added support for more than one row in the Regression input to ImputeSuperIndividuals.
+* Corrected the documentation of RegroupLengthDistribution().
+
+
 # RstoxBase v1.11.0 (2023-01-13)
 * Added warning when Percentages are outside of [0, 100] in ReportBootstrap when BootstrapReportFunction = "summaryStox".
+
 
 # RstoxBase v1.11.0-9005 (2023-01-06)
 * Added the parameter percentages defaulted to c(0.05, 0.5, 0.95) in summaryStox().
 * Changed defaultPlotGeneralOptions AxisTitleSize (10 to 12) and LegendTitleSize (10 to 12).
 * Changed defaultPlotFileOptions Height (17 to 10).
 
+
 # RstoxBase v1.11.0-9004 (2022-12-23)
 * Fixed bug in SuperIndividuals, where the temporary column LengthGroup is generated but might already be present if the user has created a LengthGroup with the new Copy functionality.
 * Cleaned up documentation of ModelData.
+
 
 # RstoxBase v1.11.0-9003 (2022-12-13)
 * Improved the documentation EstimateBioticRegression().
 * Improved warning when acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls.
 
+
 # RstoxBase v1.11.0-9002 (2022-12-02)
 * Changed the check-full.yaml to download and install binary pre-releases on macOS and Windows.
 
+
 # RstoxBase v1.11.0-9001 (2022-12-01)
 * Changed the check-full.yaml to install pre-releases from the package repo (as pre-releases are no longer deployed to the drat repo "https://github.com/StoXProject/repo").
+
 
 # RstoxBase v1.10.6 (2022-11-30)
 * Removed rows of the output from ReportBootstrap() that contained combinations of the GroupingVariables that are not present in the BootstrapData. There rows were created to ensure that all bootstrap runs contain all combinations of the GroupingVariables, but also introduced non-existing combinations.
@@ -33,17 +55,22 @@
 * Fixed bug in pkgdown.yaml.
 * Added support for pre-releases, which are not deployed to the StoX repo.
 
+
 # RstoxBase v1.10.5 (2022-11-22)
 * Fixed bug in DefineSurvey(), where reading a table from a text file (e.g. csv) caused a crash.
+
 
 # RstoxBase v1.10.4 (2022-11-21)
 * Improved warning for PSU not present in BioticAssignment.
 
+
 # RstoxBase v1.10.3 (2022-11-21)
 * Added the parameter TargetVariableUnit in ReportSuperIndividuals() and ReportQuantity(), DensityUnit in ReportDensity(), and ReportVariableUnit in ReportSpeciesCategoryCatch(), which all acn be used to set the units for the report.
 
+
 # RstoxBase v1.10.2 (2022-10-31)
 * Fixed possible bug when using a Regression process data where GroupingVariables were set. The indices of the rows of the SuperIndividualsData to be imputed were previously identified before merging in the RegressionTable of the Regression process data. This could possibly change the order so that indices were incorrect when the actual imputation by regression was made. In the new version the indices are identified as the last step before the imputation.
+
 
 # RstoxBase v1.10.1-9001 (2022-10-31)
 * Pre-release before 1.10.1. Errors are expected.
