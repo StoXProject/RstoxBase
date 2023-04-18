@@ -73,6 +73,18 @@ DefinePSU <- function(
     
     # If UseProcessData = TRUE, from "EDSU"/"Station" to "SSU": 
     if(UseProcessData) {
+        if(!length(processData)) {
+            processData <- list(
+                SSU_PSU = data.table::data.table(
+                    SSU = SSUs, 
+                    PSU = NA_character_
+                ), 
+                Stratum_PSU = data.table::data.table()
+            )
+            processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
+            return(processData)
+        }
+        
         processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
     }
     else {
@@ -1130,6 +1142,10 @@ DefineBioticAssignment <- function(
     
     # Get the DefinitionMethod:
     LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
+    
+    if(!length(AcousticPSU$Stratum_PSU)) {
+        stop("The input AcousticPSU does not contain any PSUs, which is required to assign biotic hauls to acoustic PSUs.")
+    }
     
     # Return immediately if UseProcessData = TRUE:
     if(UseProcessData) {
@@ -2289,18 +2305,19 @@ EstimateBioticRegression <- function(
     addHalfResolution(data = data, variable = IndependentVariable, resolutionVariable = IndependentResolutionVariable)
     
     # Run the estimation by the GroupingVariables:
-    RegressionTable <- data[, getRegressionTable(
-        RegressionModel = RegressionModel, 
-        DependentVariable = DependentVariable, 
-        DependentResolutionVariable = DependentResolutionVariable, 
-        IndependentVariable = IndependentVariable, 
-        IndependentResolutionVariable = IndependentResolutionVariable, 
-        GroupingVariables = GroupingVariables, 
-        EstimationMethod = EstimationMethod,
-        data = .SD
-    ), 
-    by = GroupingVariables, 
-    .SDcols = names(data)] # Inlcude all columns, as the default is to skip the 'by' columns.
+    RegressionTable <- data[, 
+        getRegressionTable(
+            RegressionModel = RegressionModel, 
+            DependentVariable = DependentVariable, 
+            DependentResolutionVariable = DependentResolutionVariable, 
+            IndependentVariable = IndependentVariable, 
+            IndependentResolutionVariable = IndependentResolutionVariable, 
+            GroupingVariables = GroupingVariables, 
+            EstimationMethod = EstimationMethod,
+            data = .SD
+        ), 
+        by = GroupingVariables, 
+        .SDcols = names(data)] # Inlcude all columns, as the default is to skip the 'by' columns.
     
     ## Since this is such a flexible datatype, we define the column order here, and use it on the RegressionTable below:
     #columnOrder <- c(
@@ -2351,7 +2368,7 @@ getRegressionTable <- function(
             )
         ), 
         error = function(err) {
-            warning("StoX: ", err)
+            warning("StoX: Unable to estimate regression for ", paste(GroupingVariables, sapply(GroupingVariables, function(x) unique(data[[x]])), sep = " = " ), " (details: ", err, ").")
             list(
                 coefficients = array(NA_real_, dim = c(length(getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]), 1)), 
                 sigma = NA_real_
