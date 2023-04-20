@@ -2368,7 +2368,14 @@ getRegressionTable <- function(
             )
         ), 
         error = function(err) {
-            warning("StoX: Unable to estimate regression for ", paste(GroupingVariables, sapply(GroupingVariables, function(x) unique(data[[x]])), sep = " = " ), " (details: ", err, ").")
+            if(length(GroupingVariables)) {
+                warning("StoX: Unable to estimate regression for ", paste(GroupingVariables, sapply(GroupingVariables, function(x) unique(data[[x]])), sep = " = " ), " (details: ", err, ").")
+            }
+            else {
+                warning("StoX: Unable to estimate regression (details: ", err, ").")
+            }
+            
+            # Return NAs:
             list(
                 coefficients = array(NA_real_, dim = c(length(getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]), 1)), 
                 sigma = NA_real_
@@ -2380,19 +2387,38 @@ getRegressionTable <- function(
     modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
     
     # Create a table with the parameters and residual stndard error:
-    RegressionTable <- data.table::as.data.table(
-        c(
-            structure(as.list(regressionSummary$coefficients[, 1]), names = modelParameters), 
-            list(ResidualStandardError = regressionSummary$sigma)
+    sumNonMissing <- sum(!is.na(data[[DependentVariable]]) & !is.na(data[[IndependentVariable]]))
+    if(NROW(regressionSummary$coefficients) < length(modelParameters)) {
+        if(length(GroupingVariables)) {
+            warning("StoX: Insufficient data to estimate regression for ", paste(GroupingVariables, sapply(GroupingVariables, function(x) unique(data[[x]])), sep = " = " ), " (Number of non-missing values: ", sumNonMissing, ").")
+        }
+        else {
+            warning("StoX: Insufficient data to estimate regression (Number of non-missing values: ", sumNonMissing, ").")
+        }
+        
+        
+        RegressionTable <- data.table::as.data.table(
+            c(
+                structure(as.list(rep(NA_real_, length(modelParameters))), names = modelParameters), 
+                list(ResidualStandardError = rep(NA_real_, length(modelParameters)))
+            )
         )
-    )
+    }
+    else {
+        RegressionTable <- data.table::as.data.table(
+            c(
+                structure(as.list(regressionSummary$coefficients[, 1]), names = modelParameters), 
+                list(ResidualStandardError = regressionSummary$sigma)
+            )
+        )
+    }
     
     # Add also the DependentVariable, IndependentVariable and GroupingVariables at the start, and EstimationMethod at the end:
     RegressionTable <- data.table::data.table(
         DependentVariable = DependentVariable, 
-        DependentResolutionVariable = DependentResolutionVariable, 
+        DependentResolutionVariable = if(length(DependentResolutionVariable)) DependentResolutionVariable else NA_character_, 
         IndependentVariable = IndependentVariable, 
-        IndependentResolutionVariable = IndependentResolutionVariable, 
+        IndependentResolutionVariable = if(length(IndependentResolutionVariable)) IndependentResolutionVariable else NA_character_, 
         RegressionTable, 
         EstimationMethod = EstimationMethod
     )
