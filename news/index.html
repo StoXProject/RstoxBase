@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.2</span>
       </span>
     </div>
 
@@ -48,9 +48,13 @@
     </div>
 
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.11.2" id="rstoxbase-1112-2023-04-20">RstoxBase 1.11.2 (2023-04-20)<a class="anchor" aria-label="anchor" href="#rstoxbase-1112-2023-04-20"></a></h2>
+<ul><li>Fixed bug in EstimateRegression when insufficient data to estimate the regression. Now returning NA for all parameters.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.11.1" id="rstoxbase-1111-2023-04-18">RstoxBase 1.11.1 (2023-04-18)<a class="anchor" aria-label="anchor" href="#rstoxbase-1111-2023-04-18"></a></h2>
-<ul><li>Fixed bug in SuperIndividuals() where bootstrapping could result in artificial rows with missing Abundance for certain length grups only present in biotic PSUs that are not resampled in a bootstrap replicate. This was only a problem when DistributionMethod = “HaulDensity”. The result was that when not using IndividualTotal in the GroupingVariables in ReportBootstrap, many rows contained NAs. In the new version the NAs can be isolated by including “Survey”” and “SpeciesCategory” in the GroupingVariables.</li>
-<li>Fixed bug in SuperIndividuals() where the test for equal total Abundance from the QuantityData and in the SuperIndividualsData failed when both were 0.</li>
+<ul><li>Fixed bug in SuperIndividuals() where bootstrapping could result in artificial rows with missing Abundance for certain length grups only present in biotic PSUs that are not resampled in a bootstrap replicate. This was only a problem when DistributionMethod = “HaulDensity”. The result was that when not using IndividualTotalLength in the GroupingVariables in ReportBootstrap(), many rows contained NAs. In the new version the NAs can be isolated by including “Survey” and “SpeciesCategory” in the GroupingVariables.</li>
+<li>Fixed bug in SuperIndividuals() where the test for equal total Abundance from the QuantityData and in the SuperIndividualsData failed when both were 0. This could be a problem if there were no NASC or no catch of the target species in a stratum for acoustic-trawl or swept-area models, respectively.</li>
 <li>Fixed bug in SuperIndividuals() for when all lengths of the QuantityData are NA.</li>
 <li>Fixed slow aggregateBaselineDataOneTable() used by e.g. RstoxFramework::ReportBootstrap() by removing repeated unnecessary call to getReportFunctions(getMultiple = TRUE) to get the column names of the output.</li>
 <li>Added test for non-empty AcousticPSU in BioticAssignment().</li>
