@@ -1,3 +1,16 @@
+# Trikc to avoid warning for imported lwgeom and maps
+# lwgeom: Used for calculation of area of sf object in simplifyStratumPolygon(). Added here since it is only suggested by sf, but RstoxBase needs it.
+# Taken from ?lwgeom ::st_is_polygon_cw:
+test_lwgeom <- function() {
+    polys <- sf::st_sf(cw = c(FALSE, TRUE), sf::st_as_sfc(c('POLYGON ((0 0, 1 0, 1 1, 0 0))', 'POLYGON ((1 1, 2 2, 2 1, 1 1))')))
+    lwgeom::st_is_polygon_cw(polys)
+}
+
+# maps: Only suggested by ggplot2, but needed for map_data in plotting functions.
+test_maps <- function() {
+    maps::map('france', fill = TRUE, col = 1:10)
+}
+
 ##################################################
 ##################################################
 #' StoX multipolygon WKT
