@@ -20,16 +20,19 @@ jobs:
       matrix:
         config:
           - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
+          - {os: macOS-latest,   r: '4.3', pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.2', pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.1',  pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'}
           # - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'} # Not used in RstoxFramework
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
+          - {os: windows-latest, r: '4.3', pkgext: '.zip'}
           - {os: windows-latest, r: '4.2', pkgext: '.zip'}
           - {os: windows-latest, r: '4.1',  pkgext: '.zip'}
           - {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
           #- {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           - {os: ubuntu-latest,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-22.04,   r: '4.3',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-22.04,   r: '4.2',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-20.04,   r: '4.1',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-20.04,   r: '4.0',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
@@ -98,7 +101,7 @@ jobs:
       - name: Install MacOS dependencies
         if: runner.os == 'macOS'
         run: |
-          rm '/usr/local/bin/gfortran'
+          #rm '/usr/local/bin/gfortran'
           rm '/usr/local/bin/2to3'
           rm '/usr/local/bin/2to3-3.11'
           rm '/usr/local/bin/idle3.11'
@@ -126,7 +129,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           remotes::install_deps(dependencies = TRUE)
-          # Force RstoxData and RstoxBase:
+          # Force RstoxData:
           utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE)
         shell: Rscript {0}
 
@@ -143,8 +146,18 @@ jobs:
             message("Installing the following packages using default type:\n", paste0(missing, collapse = ", "))
             utils::install.packages(missing, dependencies = TRUE)
           }
-          # Force RstoxData and RstoxBase:
+        shell: Rscript {0}
+
+      - name: Install RstoxData on Windows
+        if: runner.os == 'Windows'
+        run: |
           utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "binary")
+        shell: Rscript {0}
+
+      - name: Install RstoxData on macOS
+        if: runner.os == 'macOS'
+        run: |
+          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "source")
         shell: Rscript {0}
 
       - name: Install prereleases

@@ -1,4 +1,4 @@
-# RstoxBase 1.11.2 (2023-04-20)
+# RstoxBase 1.11.2 (2023-04-30)
 * Fixed bug in EstimateRegression when insufficient data to estimate the regression. Now returning NA for all parameters.
 
 
