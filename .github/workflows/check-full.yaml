@@ -101,7 +101,7 @@ jobs:
       - name: Install MacOS dependencies
         if: runner.os == 'macOS'
         run: |
-          #rm '/usr/local/bin/gfortran'
+          #rm '/usr/local/bin/gfortran' # No longer needed, and causes error as from R 4.3
           rm '/usr/local/bin/2to3'
           rm '/usr/local/bin/2to3-3.11'
           rm '/usr/local/bin/idle3.11'
