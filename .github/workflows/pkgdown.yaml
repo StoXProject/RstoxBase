@@ -59,10 +59,20 @@ jobs:
         run: |
           install.packages("remotes")
           remotes::install_dev("pkgdown")
-          # Add RstoxData:
-          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE)
           # Add dependencies:
           remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Install RstoxData on Windows
+        if: runner.os == 'Windows'
+        run: |
+          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "binary")
+        shell: Rscript {0}
+
+      - name: Install RstoxData on macOS and Linux
+        if: runner.os != 'Windows'
+        run: |
+          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "source")
         shell: Rscript {0}
 
       - name: Install package
