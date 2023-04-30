@@ -39,7 +39,8 @@ jobs:
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
       - name: Install MacOS dependencies
-        if: runner.os == 'macOS'
+        # We are on macOS as per the "runs-on":
+        #if: runner.os == 'macOS'
         run: |
           #rm '/usr/local/bin/gfortran' # No longer needed, and causes error as from R 4.3
           rm '/usr/local/bin/2to3'
@@ -53,25 +54,15 @@ jobs:
           rm '/usr/local/bin/python3.11-config'
           export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=false # This prevents Homebrew from re-installing R, which will lead to .Platform$pkgType = "source".
           brew install gdal
+          brew install udunits
         shell: bash
 
       - name: Install dependencies
         run: |
           install.packages("remotes")
           remotes::install_dev("pkgdown")
-          # Add dependencies:
+            # Add dependencies:
           remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
-
-      - name: Install RstoxData on Windows
-        if: runner.os == 'Windows'
-        run: |
-          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "binary")
-        shell: Rscript {0}
-
-      - name: Install RstoxData on macOS and Linux
-        if: runner.os != 'Windows'
-        run: |
           utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "source")
         shell: Rscript {0}
 
