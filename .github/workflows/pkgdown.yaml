@@ -27,6 +27,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages('remotes')
+          # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
@@ -42,7 +43,11 @@ jobs:
         # We are on macOS as per the "runs-on":
         #if: runner.os == 'macOS'
         run: |
-          #rm '/usr/local/bin/gfortran' # No longer needed, and causes error as from R 4.3
+          # gfortran may not exist in a period after a new R minor release:
+          gfortranFile='/usr/local/bin/gfortran'
+          if [ -f "$gfortranFile" ] ; then
+            rm "$gfortranFile"
+          fi
           rm '/usr/local/bin/2to3'
           rm '/usr/local/bin/2to3-3.11'
           rm '/usr/local/bin/idle3.11'
@@ -53,15 +58,15 @@ jobs:
           rm '/usr/local/bin/python3.11'
           rm '/usr/local/bin/python3.11-config'
           export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=false # This prevents Homebrew from re-installing R, which will lead to .Platform$pkgType = "source".
-          brew install gdal
-          brew install udunits
+          brew install gdal udunits
         shell: bash
 
       - name: Install dependencies
         run: |
           install.packages("remotes")
+          options(install.packages.compile.from.source = "never") # Avoid installing sources which need compilation
           remotes::install_dev("pkgdown")
-            # Add dependencies:
+          # Add dependencies:
           remotes::install_deps(dependencies = TRUE)
           utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "source")
         shell: Rscript {0}
