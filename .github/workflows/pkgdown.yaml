@@ -63,12 +63,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages("remotes")
+          # Show the repos:
+          getOption("repos")
+          
+          # Install the dependencies:
           options(install.packages.compile.from.source = "never") # Avoid installing sources which need compilation
-          remotes::install_dev("pkgdown")
-          # Add dependencies:
-          remotes::install_deps(dependencies = TRUE)
-          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE, type = "source")
+          # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
+          remotes::install_deps(dependencies = TRUE, type = "both")
+          
+          # Used in "Deploy package" below:
+          install.packages("pkgdown", type = "binary")
         shell: Rscript {0}
 
       - name: Install package
