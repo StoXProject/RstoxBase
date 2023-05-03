@@ -6,6 +6,7 @@ name: pkgdown
 
 jobs:
   pkgdown:
+    # Use macOS here to speed up by binary R package install (and Windows may have more issues, such as Rtools)
     runs-on: macOS-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -63,11 +64,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # Show the repos:
-          getOption("repos")
-          
           # Install the dependencies:
-          options(install.packages.compile.from.source = "never") # Avoid installing sources which need compilation
           # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
           remotes::install_deps(dependencies = TRUE, type = "both")
           
