@@ -140,8 +140,15 @@ jobs:
       - name: Install dependencies on Windows and macOS
         if: runner.os != 'Linux'
         run: |
+          # Show the repos:
           getOption("repos")
-          options(install.packages.compile.from.source = "never")
+          
+          # Make sure rlang is the latest (>= 1.1.0) since dependencies of ggplot2 actually require 1.1.0 (released 2023-03) on 2023-05-03:
+          options(install.packages.compile.from.source = "always")
+          install.packages("rlang")
+          
+          # Install the rest of the dependencies:
+          options(install.packages.compile.from.source = "never") # Avoid installing sources which need compilation
           # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
           remotes::install_deps(dependencies = TRUE, type = "both")
         shell: Rscript {0}
