@@ -627,6 +627,12 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "SpeciesCategoryCatchData"
     ), 
     
+    #SpeciesCategoryCatch_Old = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "SpeciesCategoryCatchData"
+    #), 
+    
     SumSpeciesCategoryCatch = list(
         functionType = "modelData", 
         functionCategory = "baseline", 

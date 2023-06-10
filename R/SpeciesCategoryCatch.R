@@ -63,6 +63,77 @@ SpeciesCategoryCatch <- function(
     return (SpeciesCategoryCatchData)
 }
 
+# ##################################################
+# ##################################################
+# #' Table of total catch weight and number per Haul and SpeciesCategory
+# #' 
+# #' This function sums the catch fraction weight and number per Haul and SpeciesCategory.
+# #' 
+# #' @inheritParams ModelData
+# #' @param SpeciesCategoryCatchType The type of the total catch variables, either "Standard" for the raw total catch and "Normalized" for normalizing by tow distance # by dividing by the EffectiveTowDistance in nautical miles.
+# #' 
+# #' @export
+# #' 
+# SpeciesCategoryCatch_Old <- function(
+#     StoxBioticData, 
+#     SpeciesCategoryCatchType = c("Normalized", "Standard")
+# ) {
+#     
+#     # Store the sample names to remove them as columns in the end of the function:
+#     sampleNames <- names(StoxBioticData$Sample)
+#     sampleNamesToRemove <- c(sampleNames[!endsWith(sampleNames, "Key")], "SampleKey")
+#     
+#     # Get the DensityUnit and DensityType:
+#     SpeciesCategoryCatchType <- RstoxData::match_arg_informative(SpeciesCategoryCatchType)
+#     
+#     # Merge Station, ..., Sample table:
+#     SpeciesCategoryCatchData <- RstoxData::MergeStoxBiotic(StoxBioticData, TargetTable = "Sample")
+#     
+#     # Sum the CatchFractionWeight for each Haul (verticalResolution) and SpeciesCategory (categoryVariable):
+#     dataVariables <- getDataTypeDefinition(dataType = "SpeciesCategoryCatchData", elements = "data", unlist = TRUE)
+#     CatchFractionVariables <- sub("TotalCatch", "CatchFraction", dataVariables)
+#     sumBy <-  getDataTypeDefinition(
+#         dataType = "SpeciesCategoryCatchData", 
+#         elements = c("verticalResolution", "categoryVariable"), 
+#         unlist = TRUE
+#     )
+#     # Sum for weight and number separately:
+#     for(ind in seq_along(dataVariables)) {
+#         SpeciesCategoryCatchData[, eval(dataVariables[ind]) := sum(get(CatchFractionVariables[ind])), by = sumBy]
+#     }
+#     
+#     # Replicate the old bug where subsamples were multiplied by the number of sumbsamples:
+#     SpeciesCategoryCatchData <- unique(SpeciesCategoryCatchData, by = c("Sample", sumBy))
+#     SpeciesCategoryCatchData[, NumberOfSamples := .N, by = sumBy]
+#     
+#     # Uniquify, as the above sum is by reference, and thus keeps all rows:
+#     SpeciesCategoryCatchData <- unique(SpeciesCategoryCatchData, by = sumBy)
+#     SpeciesCategoryCatchData[, eval(dataVariables[ind]) := get(dataVariables[ind]) * NumberOfSamples]
+#     
+#     # Normalize if requested:
+#     if(SpeciesCategoryCatchType == "Normalized") {
+#         for(ind in seq_along(dataVariables)) {
+#             SpeciesCategoryCatchData[, eval(dataVariables[ind]) := get(dataVariables[ind]) / EffectiveTowDistance, by = sumBy]
+#         }
+#     }
+#     
+#     # Add SpeciesCategoryCatchType and SpeciesCategoryCatchWeight:
+#     SpeciesCategoryCatchData[, SpeciesCategoryCatchType := ..SpeciesCategoryCatchType]
+#     SpeciesCategoryCatchData[, SpeciesCategoryCatchWeight := 1]
+#     
+#     # Discard the variables in the Sample table, since we have summed over samples:
+#     SpeciesCategoryCatchData[, (sampleNamesToRemove) := NULL]
+#     
+#     # Format the output:
+#     formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = TRUE)
+#     
+#     # Ensure that the numeric values are rounded to the defined number of digits:
+#     #RstoxData::setRstoxPrecisionLevel(SpeciesCategoryCatchData)
+#     
+#     
+#     return (SpeciesCategoryCatchData)
+# } 
+
 
 ##################################################
 ##################################################

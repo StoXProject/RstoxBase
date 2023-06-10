@@ -1,3 +1,9 @@
+# RstoxBase 1.12.0-9002 (2023-06-10)
+* Increased speed of frequently used functions in RstoxFramework by using list instead of data.table for the definition og reportFunctions.
+* Skipped gc() in aggregateBaselineDataOneTable() to reduce CPU time.
+* Removed SpeciesCategoryKey from ReportSpeciesCategoryCatch(), as the output is per haul.
+
+
 # RstoxBase 1.11.2 (2023-04-30)
 * Fixed bug in EstimateRegression when insufficient data to estimate the regression. Now returning NA for all parameters.
 

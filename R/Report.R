@@ -235,7 +235,7 @@ aggregateBaselineDataOneTable <- function(
         for(tableName in subTable) {
             stoxData <- stoxData[[tableName]]
             # Free the memory of the large object:
-            gc()
+            #gc()
             
         }
     }
@@ -330,7 +330,7 @@ aggregateBaselineDataOneTable <- function(
         # This temporarily doubles the memory, as stoxData is modified:
         stoxData <- stoxData[grid[, ..paddingVariables], on = paddingVariables]
         # Free the memory of the large object:
-        gc()
+        #gc()
         
         # Convert the NAs to 0 for the abundance and biomass columns:
         abudanceVariables <- setdiff(names(stoxData), paddingVariables)
@@ -351,7 +351,7 @@ aggregateBaselineDataOneTable <- function(
     outputData <- stoxData[, fun(.SD), by = GroupingVariables]
     # Free the memory of the large object:
     rm(stoxData)
-    gc()
+    #gc()
     
     if(length(uniqueGroupingVariablesToKeep)) {
         # Discard all rows with combinations of the GroupingVariables that are not present in the BootstrapData[[BaselineProcess]]:
@@ -446,11 +446,13 @@ getReportFunctionVariableName <- function(functionName, TargetVariable, args = l
 
 
 hasWeightingParameter <- function(x) {
-    getRstoxBaseDefinitions("reportFunctions")[functionName == x, weighted]
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$weighted[reportFunctions$functionName == x]
 }
 
 hasSpecificationParameter <- function(x) {
-    getRstoxBaseDefinitions("reportFunctions")[functionName == x, specified]
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$specified[reportFunctions$functionName == x]
 }
 
 
@@ -460,7 +462,8 @@ hasSpecificationParameter <- function(x) {
 #' @export
 #' 
 getWeightingFunctions <- function() {
-    getRstoxBaseDefinitions("reportFunctions")[weighted == TRUE, functionName]
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$functionName[reportFunctions$weighted == TRUE]
 }
 #' List weighting parameters
 #' 
@@ -469,7 +472,8 @@ getWeightingFunctions <- function() {
 #' @export
 #' 
 getWeightingParameter <- function(x) {
-    getRstoxBaseDefinitions("reportFunctions")[functionName == x, weightingParameter]
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$weightingParameter[reportFunctions$functionName == x]
 }
 
 #' List specification functions
@@ -477,7 +481,8 @@ getWeightingParameter <- function(x) {
 #' @export
 #' 
 getSpecificationFunctions <- function() {
-    getRstoxBaseDefinitions("reportFunctions")[specified == TRUE, functionName]
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$functionName[reportFunctions$specified == TRUE]
 }
 #' List specification parameters
 #' 
@@ -486,7 +491,8 @@ getSpecificationFunctions <- function() {
 #' @export
 #' 
 getSpecificationParameter <- function(x) {
-    getRstoxBaseDefinitions("reportFunctions")[functionName == x, specificationParameter]
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$specificationParameter[reportFunctions$functionName == x]
 }
 
 #' List report function packages
@@ -496,11 +502,9 @@ getSpecificationParameter <- function(x) {
 #' @export
 #' 
 getReportFunctionPackage <- function(x) {
-    getRstoxBaseDefinitions("reportFunctions")[functionName == x, packageName]
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$packageName[reportFunctions$functionName == x]
 }
-
-
-
 
 
 ##################################################
@@ -553,7 +557,12 @@ ReportSpeciesCategoryCatch <- function(
     
     # Add haul info as the unique table of all variables except the category and data variables:
     dataVariables <- getDataTypeDefinition(dataType = "SpeciesCategoryCatchData", elements = "data", unlist = TRUE)
-    haulInfo <- unique(SpeciesCategoryCatchData[, !c(categoryVariable, dataVariables), with = FALSE], by = "Haul")
+    # Also remove the variables of the Sample and SpeciesCategory that are not present in the higher tables of StoxBiotic:
+    stoxDataVariableNames <- attr(SpeciesCategoryCatchData, "stoxDataVariableNames")
+    removeAlso <- setdiff(unlist(stoxDataVariableNames[c("SpeciesCategory", "Sample")]), unlist(stoxDataVariableNames[c("Cruise", "Station", "Haul")]))
+    removeAlso <- intersect(removeAlso, names(SpeciesCategoryCatchData))
+    
+    haulInfo <- unique(SpeciesCategoryCatchData[, !c(categoryVariable, dataVariables, removeAlso), with = FALSE], by = "Haul")
     
     ReportSpeciesCategoryCatchData <- merge(
         haulInfo, 

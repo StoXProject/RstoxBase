@@ -75,7 +75,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Query dependencies
+      - name: Query R package dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
@@ -98,7 +98,7 @@ jobs:
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "18.04"))')
 
-      - name: Install MacOS dependencies
+      - name: Install macOS system dependencies
         if: runner.os == 'macOS'
         run: |
           # gfortran may not exist in a period after a new R minor release:
@@ -119,7 +119,7 @@ jobs:
           brew install gdal udunits
         shell: bash
 
-      - name: Prepare for dependencies on Linux
+      - name: Prepare for R package dependencies on Linux
         if: runner.os == 'Linux'
         run: |
           # The following two lines caused trouble for sf on the new R 4.2 on Ubuntu in May 2022:
@@ -129,15 +129,13 @@ jobs:
           sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev libxslt1-dev
         shell: bash
       
-      - name: Install dependencies on Linux
+      - name: Install R package dependencies on Linux
         if: runner.os == 'Linux'
         run: |
           remotes::install_deps(dependencies = TRUE)
-          # Force RstoxData:
-          utils::install.packages("RstoxData", repos = "https://stoxproject.github.io/repo/", dependencies = FALSE)
         shell: Rscript {0}
 
-      - name: R version specific dependency versions on Windows
+      - name: R version specific R package dependency versions on Windows
         if: runner.os == 'Windows' && matrix.config.r == '4.0'
         run: |
           # Make sure rlang is the latest (>= 1.1.0) since dependencies of ggplot2 actually require 1.1.0 (released 2023-03) on 2023-05-03:
@@ -149,7 +147,7 @@ jobs:
           install.packages("ellipsis")
         shell: Rscript {0}
 
-      - name: Install dependencies on Windows and macOS
+      - name: Install R package dependencies on Windows and macOS
         if: runner.os != 'Linux'
         run: |
           # Show the repos:
@@ -185,7 +183,6 @@ jobs:
       - name: Install CRANdependencies
         run: |
           remotes::install_cran("rcmdcheck")
-          #remotes::install_cran("git2r")
           remotes::install_cran("drat")
           remotes::install_cran("sessioninfo")
         shell: Rscript {0}
