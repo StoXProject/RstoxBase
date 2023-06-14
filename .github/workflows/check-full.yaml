@@ -137,7 +137,7 @@ jobs:
         shell: Rscript {0}
 
       - name: R version specific R package dependency versions
-        if: runner.os v && matrix.config.r == '4.0'
+        if: runner.os != 'Linux' && matrix.config.r == '4.0'
         run: |
           # Make sure rlang is the latest (>= 1.1.0) since dependencies of ggplot2 actually require 1.1.0 (released 2023-03) on 2023-05-03:
           options(install.packages.compile.from.source = "always")
