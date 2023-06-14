@@ -156,7 +156,9 @@ jobs:
           # Install the rest of the dependencies:
           options(install.packages.compile.from.source = "never") # Avoid installing sources which need compilation
           # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
-          remotes::install_deps(dependencies = TRUE, type = "both")
+          remotes::install_deps(dependencies = TRUE, type = "both", repos = 
+            c("https://stoxproject.github.io/repo", "https://stoxproject.github.io/testingRepo", "https://cloud.r-project.org")
+          )
         shell: Rscript {0}
 
       - name: Install prereleases
