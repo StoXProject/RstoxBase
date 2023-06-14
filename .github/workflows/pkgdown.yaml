@@ -25,7 +25,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Query dependencies
+      - name: Query R package dependencies
         run: |
           install.packages('remotes')
           # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
@@ -40,7 +40,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install MacOS dependencies
+      - name: Install MacOS system dependencies
         # We are on macOS as per the "runs-on":
         #if: runner.os == 'macOS'
         run: |
@@ -62,7 +62,7 @@ jobs:
           brew install gdal udunits
         shell: bash
 
-      - name: Install dependencies
+      - name: Install R package dependencies
         run: |
           # Install the dependencies:
           # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies

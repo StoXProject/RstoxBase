@@ -651,7 +651,7 @@ initiateRstoxBase <- function(){
     nauticalMileInMeters <- 1852
     
     # List of functions avilable for report functions:
-    reportFunctions <- data.table::data.table(
+    reportFunctions <- list(
         functionName = c(
             "summaryStox", 
             "sum", 
@@ -758,6 +758,7 @@ initiateRstoxBase <- function(){
             #TRUE
         )
     )
+    
     
     # Define the length of the sequence to draw seeds from:
     seedSequenceLength <- 1e7
@@ -1111,7 +1112,7 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
 getReportFunctions <- function(getMultiple = NULL) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
     if(length(getMultiple)) {
-        reportFunctions[multiple == getMultiple, functionName]
+        reportFunctions$functionName[reportFunctions$multiple == getMultiple]
     }
     else {
         reportFunctions$functionName
