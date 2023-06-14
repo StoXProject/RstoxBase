@@ -1,6 +1,6 @@
 # Get all datatype units:
 dataTypeUnits_all <- rbind(
-    RstoxData::getRstoxDataDefinitions("dataTypeUnits")
+    RstoxData::getRstoxDataDefinitions("dataTypeUnits"), 
     RstoxBase::getRstoxBaseDefinitions("dataTypeUnits")
 )
 
