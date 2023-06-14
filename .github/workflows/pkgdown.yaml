@@ -67,7 +67,9 @@ jobs:
         run: |
           # Install the dependencies:
           # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
-          remotes::install_deps(dependencies = TRUE, type = "both")
+          remotes::install_deps(dependencies = TRUE, type = "both", repos = 
+            c("https://stoxproject.github.io/repo", "https://stoxproject.github.io/testingRepo", "https://cloud.r-project.org")
+          )
           
           # Used in "Deploy package" below:
           install.packages("pkgdown", type = "binary")

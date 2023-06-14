@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mission missiontype="4" startyear="2004" platform="1173" missionnumber="3" xmlns="http://www.imr.no/formats/nmdbiotic/v3.1">
+    <missiontypename>Forskningsfartøy</missiontypename>
+    <callsignal>LAHV</callsignal>
+    <platformname>Jan Mayen</platformname>
+    <cruise>2004703</cruise>
+    <missionstartdate>2004-09-10Z</missionstartdate>
+    <missionstopdate>2004-10-01Z</missionstopdate>
+    <purpose>Trålakustisk survey med vekt på reker, blåkveite, torsk, hyse og uer. Bunntråltokt etter yngel og ungfisk av blåkveite, utbredelse og mengde av reker.</purpose>
+    <fishstation serialnumber="2112">
+        <nation>58</nation>
+        <catchplatform>1173</catchplatform>
+        <station>22</station>
+        <stationstartdate>2004-09-11Z</stationstartdate>
+        <stationstarttime>07:55:00.000Z</stationstarttime>
+        <stationstopdate>2004-09-11Z</stationstopdate>
+        <stationstoptime>08:15:00.000Z</stationstoptime>
+        <latitudestart>80.06167</latitudestart>
+        <longitudestart>6.145</longitudestart>
+        <system>2</system>
+        <area>25</area>
+        <location> 30</location>
+        <bottomdepthstart>799.0</bottomdepthstart>
+        <bottomdepthstop>799.0</bottomdepthstop>
+        <fishingdepthmax>802.0</fishingdepthmax>
+        <fishingdepthmin>795.0</fishingdepthmin>
+        <gear>3271</gear>
+        <gearcount>1</gearcount>
+        <direction>320.0</direction>
+        <gearflow>3.2</gearflow>
+        <logstart>64.6</logstart>
+        <distance>1.0</distance>
+        <gearcondition>1</gearcondition>
+        <samplequality>1</samplequality>
+        <verticaltrawlopening>5.6</verticaltrawlopening>
+        <trawldoorspread>41.0</trawldoorspread>
+        <wirelength>1700</wirelength>
+        <dataquality>2</dataquality>
+        <catchsample catchsampleid="1">
+            <commonname>torsk</commonname>
+            <catchcategory>164712</catchcategory>
+            <catchpartnumber>1</catchpartnumber>
+            <aphia>126436</aphia>
+            <sampletype>21</sampletype>
+            <conservation>1</conservation>
+            <catchproducttype>1</catchproducttype>
+            <catchweight>6.004</catchweight>
+            <catchcount>3</catchcount>
+            <sampleproducttype>1</sampleproducttype>
+            <lengthmeasurement>E</lengthmeasurement>
+            <lengthsampleweight>6.004</lengthsampleweight>
+            <lengthsamplecount>3</lengthsamplecount>
+            <specimensamplecount>3</specimensamplecount>
+            <agingstructure>2</agingstructure>
+            <stomach>2</stomach>
+            <individual specimenid="1">
+                <individualproducttype>1</individualproducttype>
+                <individualweight>1.766</individualweight>
+                <lengthresolution>3</lengthresolution>
+                <length>0.56</length>
+                <sex>2</sex>
+                <maturationstage>1</maturationstage>
+                <agedetermination agedeterminationid="1">
+                    <age>4</age>
+                    <readability>1</readability>
+                    <otolithtype>5</otolithtype>
+                    <otolithedge>2</otolithedge>
+                </agedetermination>
+                <prey preysampleid="1">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>93294</preycategory>
+                    <preydigestion>4</preydigestion>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.028607</totalweight>
+                </prey>
+                <prey preysampleid="2">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>96967</preycategory>
+                    <preydigestion>3</preydigestion>
+                    <totalcount>1</totalcount>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.008631</totalweight>
+                </prey>
+            </individual>
+            <individual specimenid="2">
+                <individualproducttype>1</individualproducttype>
+                <individualweight>1.676</individualweight>
+                <lengthresolution>3</lengthresolution>
+                <length>0.6</length>
+                <sex>2</sex>
+                <maturationstage>1</maturationstage>
+                <agedetermination agedeterminationid="1">
+                    <age>5</age>
+                    <readability>1</readability>
+                    <otolithtype>5</otolithtype>
+                    <otolithedge>2</otolithedge>
+                </agedetermination>
+                <prey preysampleid="3">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>82590</preycategory>
+                    <preydigestion>3</preydigestion>
+                    <totalcount>1</totalcount>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.007956</totalweight>
+                </prey>
+                <prey preysampleid="4">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>96967</preycategory>
+                    <preydigestion>4</preydigestion>
+                    <totalcount>1</totalcount>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.005932</totalweight>
+                </prey>
+            </individual>
+            <individual specimenid="3">
+                <individualproducttype>1</individualproducttype>
+                <individualweight>2.556</individualweight>
+                <lengthresolution>3</lengthresolution>
+                <length>0.66</length>
+                <sex>2</sex>
+                <maturationstage>4</maturationstage>
+                <agedetermination agedeterminationid="1">
+                    <age>6</age>
+                    <spawningage>6</spawningage>
+                    <spawningzones>0</spawningzones>
+                    <readability>1</readability>
+                    <otolithtype>5</otolithtype>
+                    <otolithedge>2</otolithedge>
+                </agedetermination>
+                <prey preysampleid="5">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>93294</preycategory>
+                    <preydigestion>4</preydigestion>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.048785</totalweight>
+                </prey>
+            </individual>
+        </catchsample>
+        <catchsample catchsampleid="2">
+            <commonname>torsk</commonname>
+            <catchcategory>164712</catchcategory>
+            <catchpartnumber>1</catchpartnumber>
+            <aphia>126436</aphia>
+            <sampletype>21</sampletype>
+            <conservation>1</conservation>
+            <catchproducttype>1</catchproducttype>
+            <catchweight>6.004</catchweight>
+            <catchcount>3</catchcount>
+            <sampleproducttype>1</sampleproducttype>
+            <lengthmeasurement>E</lengthmeasurement>
+            <lengthsampleweight>6.004</lengthsampleweight>
+            <lengthsamplecount>3</lengthsamplecount>
+            <specimensamplecount>3</specimensamplecount>
+            <agingstructure>2</agingstructure>
+            <stomach>2</stomach>
+            <individual specimenid="1">
+                <lengthresolution>3</lengthresolution>
+                <length>0.2</length>
+            </individual>
+            <individual specimenid="2">
+                <lengthresolution>3</lengthresolution>
+                <length>0.21</length>
+            </individual>
+            <individual specimenid="3">
+                <lengthresolution>3</lengthresolution>
+                <length>0.31</length>
+            </individual>
+            <individual specimenid="94">
+                <lengthresolution>3</lengthresolution>
+                <length>0.21</length>
+            </individual>
+        </catchsample>
+    </fishstation>
+    <fishstation serialnumber="2126">
+        <nation>58</nation>
+        <catchplatform>1173</catchplatform>
+        <station>36</station>
+        <stationstartdate>2004-09-12Z</stationstartdate>
+        <stationstarttime>20:39:00.000Z</stationstarttime>
+        <stationstopdate>2004-09-12Z</stationstopdate>
+        <stationstoptime>20:59:00.000Z</stationstoptime>
+        <latitudestart>80.53667</latitudestart>
+        <longitudestart>13.04</longitudestart>
+        <system>2</system>
+        <area>25</area>
+        <location> 41</location>
+        <bottomdepthstart>717.0</bottomdepthstart>
+        <bottomdepthstop>717.0</bottomdepthstop>
+        <fishingdepthmax>718.0</fishingdepthmax>
+        <fishingdepthmin>706.0</fishingdepthmin>
+        <gear>3271</gear>
+        <gearcount>1</gearcount>
+        <direction>30.0</direction>
+        <gearflow>3.0</gearflow>
+        <logstart>291.4</logstart>
+        <distance>1.0</distance>
+        <gearcondition>1</gearcondition>
+        <samplequality>1</samplequality>
+        <verticaltrawlopening>5.0</verticaltrawlopening>
+        <trawldoorspread>48.0</trawldoorspread>
+        <wirelength>1540</wirelength>
+        <dataquality>2</dataquality>
+        <catchsample catchsampleid="1">
+            <commonname>torsk</commonname>
+            <catchcategory>164712</catchcategory>
+            <catchpartnumber>1</catchpartnumber>
+            <aphia>126436</aphia>
+            <sampletype>21</sampletype>
+            <conservation>1</conservation>
+            <catchproducttype>1</catchproducttype>
+            <catchweight>1.992</catchweight>
+            <catchcount>94</catchcount>
+            <sampleproducttype>1</sampleproducttype>
+            <lengthmeasurement>E</lengthmeasurement>
+            <lengthsampleweight>1.992</lengthsampleweight>
+            <lengthsamplecount>94</lengthsamplecount>
+            <specimensamplecount>4</specimensamplecount>
+            <agingstructure>2</agingstructure>
+            <stomach>2</stomach>
+            <individual specimenid="1">
+                <individualproducttype>1</individualproducttype>
+                <individualweight>0.902</individualweight>
+                <lengthresolution>3</lengthresolution>
+                <length>0.44</length>
+                <sex>1</sex>
+                <maturationstage>5</maturationstage>
+                <agedetermination agedeterminationid="1">
+                    <age>4</age>
+                    <readability>1</readability>
+                    <otolithtype>3</otolithtype>
+                    <otolithedge>1</otolithedge>
+                </agedetermination>
+                <prey preysampleid="1">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>162035</preycategory>
+                    <preydigestion>3</preydigestion>
+                    <totalcount>8</totalcount>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.090366</totalweight>
+                </prey>
+            </individual>
+            <individual specimenid="2">
+                <individualproducttype>1</individualproducttype>
+                <individualweight>0.57</individualweight>
+                <lengthresolution>3</lengthresolution>
+                <length>0.38</length>
+                <sex>2</sex>
+                <maturationstage>1</maturationstage>
+                <agedetermination agedeterminationid="1">
+                    <age>3</age>
+                    <readability>1</readability>
+                    <otolithtype>3</otolithtype>
+                    <otolithedge>2</otolithedge>
+                </agedetermination>
+                <prey preysampleid="2">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>161105</preycategory>
+                    <preydigestion>4</preydigestion>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.019143</totalweight>
+                </prey>
+            </individual>
+            <individual specimenid="3">
+                <individualproducttype>1</individualproducttype>
+                <individualweight>0.124</individualweight>
+                <lengthresolution>3</lengthresolution>
+                <length>0.24</length>
+                <sex>1</sex>
+                <maturationstage>1</maturationstage>
+                <agedetermination agedeterminationid="1">
+                    <age>2</age>
+                    <readability>1</readability>
+                    <otolithtype>3</otolithtype>
+                    <otolithedge>2</otolithedge>
+                </agedetermination>
+                <prey preysampleid="3">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>95500</preycategory>
+                    <preydigestion>4</preydigestion>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.002442</totalweight>
+                </prey>
+            </individual>
+            <individual specimenid="4">
+                <individualproducttype>1</individualproducttype>
+                <individualweight>0.058</individualweight>
+                <lengthresolution>3</lengthresolution>
+                <length>0.19</length>
+                <sex>2</sex>
+                <maturationstage>1</maturationstage>
+                <agedetermination agedeterminationid="1">
+                    <age>1</age>
+                    <readability>1</readability>
+                    <otolithtype>3</otolithtype>
+                    <otolithedge>2</otolithedge>
+                </agedetermination>
+                <prey preysampleid="4">
+                    <preypartnumber>1</preypartnumber>
+                    <preycategory>95500</preycategory>
+                    <preydigestion>4</preydigestion>
+                    <weightresolution>3</weightresolution>
+                    <totalweight>0.000788</totalweight>
+                </prey>
+            </individual>
+            <individual specimenid="5">
+                <lengthresolution>3</lengthresolution>
+                <length>0.06</length>
+            </individual>
+            <individual specimenid="6">
+                <lengthresolution>3</lengthresolution>
+                <length>0.06</length>
+            </individual>
+            <individual specimenid="7">
+                <lengthresolution>3</lengthresolution>
+                <length>0.07</length>
+            </individual>
+            <individual specimenid="8">
+                <lengthresolution>3</lengthresolution>
+                <length>0.07</length>
+            </individual>
+            <individual specimenid="9">
+                <lengthresolution>3</lengthresolution>
+                <length>0.07</length>
+            </individual>
+            <individual specimenid="10">
+                <lengthresolution>3</lengthresolution>
+                <length>0.07</length>
+            </individual>
+            <individual specimenid="11">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="12">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="13">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="14">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="15">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="16">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="17">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="18">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="19">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="20">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="21">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="22">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="23">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="24">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="25">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="26">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="27">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="28">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="29">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="30">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="31">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="32">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="33">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="34">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="35">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="36">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="37">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="38">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="39">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="40">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="41">
+                <lengthresolution>3</lengthresolution>
+                <length>0.08</length>
+            </individual>
+            <individual specimenid="42">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="43">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="44">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="45">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="46">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="47">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="48">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="49">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="50">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="51">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="52">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="53">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="54">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="55">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="56">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="57">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="58">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="59">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="60">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="61">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="62">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="63">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="64">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="65">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="66">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="67">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="68">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="69">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="70">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="71">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="72">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="73">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="74">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="75">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="76">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="77">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="78">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="79">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="80">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="81">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="82">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="83">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="84">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="85">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="86">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="87">
+                <lengthresolution>3</lengthresolution>
+                <length>0.09</length>
+            </individual>
+            <individual specimenid="88">
+                <lengthresolution>3</lengthresolution>
+                <length>0.1</length>
+            </individual>
+            <individual specimenid="89">
+                <lengthresolution>3</lengthresolution>
+                <length>0.1</length>
+            </individual>
+            <individual specimenid="90">
+                <lengthresolution>3</lengthresolution>
+                <length>0.1</length>
+            </individual>
+            <individual specimenid="91">
+                <lengthresolution>3</lengthresolution>
+                <length>0.1</length>
+            </individual>
+            <individual specimenid="92">
+                <lengthresolution>3</lengthresolution>
+                <length>0.11</length>
+            </individual>
+            <individual specimenid="93">
+                <lengthresolution>3</lengthresolution>
+                <length>0.11</length>
+            </individual>
+            <individual specimenid="94">
+                <lengthresolution>3</lengthresolution>
+                <length>0.11</length>
+            </individual>
+        </catchsample>
+    </fishstation>
+</mission>
