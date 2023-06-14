@@ -651,6 +651,11 @@ filterTable <- function(table, filter = character()) {
     # Accept quoted string:
     filter <- gsub('[\"]', '', filter)
     
+    # In case the table is not data.table or not recognized as such by R:
+    if(!data.table::is.data.table(table)) {
+        data.table::setDT(table)
+    }
+    
     test <- try(table <- table[eval(parse(text = filter)), ], silent = TRUE)
     if(class(test)[1] == "try-error") {
         stop("StoX: Invalid Filter.")
