@@ -229,27 +229,22 @@ jobs:
           file.copy(Sys.getenv("PKG_FILE"), Sys.getenv("PKG_FREL"))
         shell: Rscript {0}
 
-      # - name: Upload package source as artifact
-      #   if: runner.os == 'Linux' && matrix.config.r == 'release'
-      #   uses: actions/upload-artifact@master
-      #   with:
-      #     name: ${{ env.PKG_FILE }}
-      #     path: '${{ github.workspace }}/${{ env.PKG_FILE }}'
-
-      # - name: Upload package binary as artifact
-      #   if: runner.os == 'Windows' || runner.os == 'macOS'
-      #   uses: actions/upload-artifact@master
-      #   with:
-      #     name: ${{ runner.os }}-${{ matrix.config.r }}-pkg
-      #     path: '${{ github.workspace }}/*${{ matrix.config.pkgext }}'
-
-        # Upload to drat repo only for release on Linux, and onlly for all the specifically given R versions for macOS and Windows, where release is included to detect errors immediatelly when the new R is released:
+      # We include 'release' in order to always test the latest release, but (mac and Windows) binaries are not deployed to the drat repo:
       - name: Upload to DRAT repo
         if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
           BUILD_NUMBER: ${{ github.sha  }}
           DRAT_DEPLOY_TOKEN: ${{ secrets.DRAT_DEPLOY_TOKEN }}
-        run: . deploy.sh
+        run: . repo_deploy.sh
+        shell: bash
+
+      # We include 'release' in order to always test the latest release, but (mac and Windows) binaries are not deployed to the drat repo:
+      - name: Upload to DRAT testingRepo
+        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          BUILD_NUMBER: ${{ github.sha  }}
+          DRAT_DEPLOY_TOKEN: ${{ secrets.DRAT_DEPLOY_TOKEN }}
+        run: . testingRepo_deploy.sh
         shell: bash
 
       - name: Create release and upload files
