@@ -49,10 +49,14 @@ jobs:
       - name: Do autorelease increment, tagging, and environment setup
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
-          curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/checktag-actions.sh" --output checktag.sh
-          curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output deploy.sh
-          chmod +x ./checktag.sh ./deploy.sh
-          . checktag.sh
+          curl "https://raw.githubusercontent.com/StoXProject/testingRepo/main/scripts/checktag-actions.sh" --output testingRepo_checktag.sh
+          curl "https://raw.githubusercontent.com/StoXProject/testingRepo/main/scripts/deploy-actions.sh" --output testingRepo_deploy.sh
+          chmod +x ./testingRepo_checktag.sh ./testingRepo_deploy.sh
+          . testingRepo_checktag.sh
+          curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/checktag-actions.sh" --output repo_checktag.sh
+          curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output repo_deploy.sh
+          chmod +x ./repo_checktag.sh ./repo_deploy.sh
+          . repo_checktag.sh
           echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
           echo "FINAL_TAG=${FINAL_TAG}" >> $GITHUB_ENV
           echo "PKG_FILE_PREFIX=${PKG_FILE_PREFIX}" >> $GITHUB_ENV
