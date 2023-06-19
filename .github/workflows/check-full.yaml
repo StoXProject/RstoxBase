@@ -20,21 +20,21 @@ jobs:
       matrix:
         config:
           - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.3', pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.2', pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.1',  pkgext: '.tgz'}
+          - {os: macOS-latest,   r: '4.3',     pkgext: '.tgz'}
+          - {os: macOS-latest,   r: '4.2',     pkgext: '.tgz'}
+          - {os: macOS-latest,   r: '4.1',     pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'}
           # - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'} # Not used in RstoxFramework
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
-          - {os: windows-latest, r: '4.3', pkgext: '.zip'}
-          - {os: windows-latest, r: '4.2', pkgext: '.zip'}
-          - {os: windows-latest, r: '4.1',  pkgext: '.zip'}
+          - {os: windows-latest, r: '4.3',     pkgext: '.zip'}
+          - {os: windows-latest, r: '4.2',     pkgext: '.zip'}
+          - {os: windows-latest, r: '4.1',     pkgext: '.zip'}
           - {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
           #- {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           - {os: ubuntu-latest,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-22.04,   r: '4.3',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-22.04,   r: '4.2',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-20.04,   r: '4.1',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-20.04,   r: '4.3',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-20.04,   r: '4.2',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-20.04,   r: '4.1',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-20.04,   r: '4.0',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-20.04,   r: '3.6',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
 
@@ -71,11 +71,11 @@ jobs:
           #rtools-version: ${{ matrix.config.rtools }} # Not present in the matrix...
           #http-user-agent: ${{ matrix.config.http-user-agent }} # Not present in the matrix...
 
-      - name: Anticipate Bintray shutdown
-        if: runner.os == 'macOS'
-        run: |
-          brew update
-        shell: bash
+      #- name: Anticipate Bintray shutdown
+      #  if: runner.os == 'macOS'
+      #  run: |
+      #    brew update
+      #  shell: bash
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -94,7 +94,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install system dependencies
+      - name: Install system dependencies on Linux
         if: runner.os == 'Linux'
         run: |
           while read -r cmd
@@ -193,7 +193,7 @@ jobs:
           remotes::install_cran("git2r")
           remotes::install_cran("sessioninfo")
           # Using the modfied drat that supports big sur:
-          remotes::install_github(repo = 'eddelbuettel/drat', dependencies = FALSE)
+          remotes::install_github(repo = 'eddelbuettel/drat', dependencies = FALSE, force = TRUE)
         shell: Rscript {0}
         
       - name: Session info
