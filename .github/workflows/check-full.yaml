@@ -146,6 +146,10 @@ jobs:
         if: runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: |
           pkgbuild::build(".", dest_path = ".", binary = FALSE)
+          print("PKG_FILE")
+          print(Sys.getenv("PKG_FILE"))
+          print("PKG_FREL")
+          print(Sys.getenv("PKG_FREL"))
           system(paste0("PKG_FREL=", Sys.getenv("PKG_FILE"), " >> ", Sys.getenv("GITHUB_ENV")))
         shell: Rscript {0}
 
