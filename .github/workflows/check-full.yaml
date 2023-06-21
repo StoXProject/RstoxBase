@@ -29,7 +29,7 @@ jobs:
           - {os: windows-latest, r: '4.3',     pkgext: '.zip'}
           - {os: windows-latest, r: '4.2',     pkgext: '.zip'}
           - {os: windows-latest, r: '4.1',     pkgext: '.zip'}
-          - {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
+          #- {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           #- {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           - {os: ubuntu-latest,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-22.04,   r: '4.3',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
