@@ -19,17 +19,17 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
+          ##- {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.3',     pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.2',     pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.1',     pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'}
+          ##- {os: macOS-latest,   r: '4.2',     pkgext: '.tgz'}
+          ##- {os: macOS-latest,   r: '4.1',     pkgext: '.tgz'}
+          ##- {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'}
           # - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'} # Not used in RstoxFramework
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
           - {os: windows-latest, r: '4.3',     pkgext: '.zip'}
           - {os: windows-latest, r: '4.2',     pkgext: '.zip'}
           - {os: windows-latest, r: '4.1',     pkgext: '.zip'}
-          - {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"}
+          #- {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           #- {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
           - {os: ubuntu-latest,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
           - {os: ubuntu-22.04,   r: '4.3',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
@@ -184,9 +184,10 @@ jobs:
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("git2r")
           remotes::install_cran("sessioninfo")
+          #remotes::install_cran("drat")
           # Using the modfied drat that supports big sur:
           #remotes::install_github(repo = "stoxproject/drat", dependencies = FALSE)
-          remotes::install_github(repo = 'eddelbuettel/drat', dependencies = FALSE, force = TRUE)
+          remotes::install_github(repo = 'eddelbuettel/drat', dependencies = FALSE)
         shell: Rscript {0}
         
       - name: Session info
@@ -194,19 +195,13 @@ jobs:
           options(width = 100)
           pkgs <- installed.packages()[, "Package"]
           sessioninfo::session_info(pkgs, include_base = TRUE)
-          #utils::sessionInfo(pkgs)
         shell: Rscript {0}
     
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "error", check_dir = "check")
+        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
-
-      - name: Show testthat output
-        if: always()
-        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
 
       - name: Upload check results
         if: failure()
