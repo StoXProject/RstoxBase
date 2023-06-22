@@ -133,7 +133,7 @@ jobs:
       - name: Install R package dependencies on Linux
         if: runner.os == 'Linux'
         run: |
-          remotes::install_deps(dependencies = TRUE, type = "both", repos = 
+          remotes::install_deps(dependencies = TRUE, repos = 
             c(if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo", "https://cloud.r-project.org")
           )
         shell: Rscript {0}
