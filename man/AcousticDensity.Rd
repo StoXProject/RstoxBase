@@ -21,7 +21,7 @@ AcousticDensity(
 \item{SpeciesLink}{A table of the two columns AcousticCategory and SpeciesCategory.}
 }
 \value{
-An object of StoX data type \code{\link{DensityData}}.
+An object of StoX data type \code{\link{DensityData}}. Note that the Density column of the Data table has unit nmi^-2 and DensityType "AreaNumberDensity".
 }
 \description{
 This function converts NASC to area number density for each species category based on the acoustic target strength as a function of length for each acoustic category.
@@ -84,5 +84,5 @@ Ona, E. 2003, An expanded target strength relationship for herring, ICES Journal
 Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.
 }
 \seealso{
-To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}.
+See \code{\link{SweptAreaDensity}} for swept-area density. To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}. The DensityData leads to the \code{\link{QuantityData}} in a typical survey estimation model.
 }

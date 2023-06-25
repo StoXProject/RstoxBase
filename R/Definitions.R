@@ -368,7 +368,7 @@ initiateRstoxBase <- function(){
         list(dataType = "DensityData", variableName = "Density", quantity = "area_number_density", unit = "individuals/nmi^2"), 
         # QuantityData
         list(dataType = "QuantityData", variableName = "Abundance", quantity = "cardinality", unit = "individuals"), 
-        list(dataType = "QuantityData", variableName = "Biomass", quantity = "mass", unit = "g"),
+        list(dataType = "QuantityData", variableName = "Biomass", quantity = "mass", unit = "kg"),
         # SpeciesCategoryCatchData
         list(dataType = "SpeciesCategoryCatchData", variableName = "TotalCatchNumber", quantity = "cardinality", unit = "individuals"), 
         list(dataType = "SpeciesCategoryCatchData", variableName = "TotalCatchWeight", quantity = "mass", unit = "kg"),

@@ -6,6 +6,30 @@
 \description{
 The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedNumber, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
 }
+\details{
+\tabular{lllll}{
+\bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \cr   
+Haul \tab Unique Haul identifier \tab None \tab Character \tab "2021105-1-2" \cr
+SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \cr
+IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \cr
+LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \cr     
+WeightedNumber \tab The number of individuals of the length group. \tab None \tab Numeric \tab 12 \cr
+MinHaulDepth \tab Minimum depth of the haul (trawl headline) \tab m \tab Numeric \tab 65 \cr
+MaxHaulDepth \tab Maximum depth of the haul (trawl headline) \tab m \tab Numeric \tab 35 \cr
+LengthDistributionWeight \tab The weight of the WeightedNumber, always 1 \tab None \tab Numeric \tab 1 \cr
+LengthDistributionType \tab The type of length distribution, one of "Normalized", "Standard" and "Percent" (see \code{\link{LengthDistribution}}) \tab None \tab Character \tab "AreaNumberDensity" \cr
+Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \cr
+DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+Gear \tab Identifier of the gear \tab None \tab Character \tab "3270" \cr
+VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \cr
+HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \cr
+TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \cr
+}
+}
 \seealso{
-This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. LengthDistributionData is used in \code{\link{SumLengthDistribution}} with output \code{\link{SumLengthDistributionData}} and \code{\link{MeanLengthDistribution}} with output \code{\link{MeanLengthDistributionData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

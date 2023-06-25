@@ -67,9 +67,9 @@
 #' Simmonds, J., and MacLennan, D. 2005. Fisheries Acoustics. Theory and Practice, Blackwell Science, Oxford. 437 pp.
 #'
 #' @return
-#' An object of StoX data type \code{\link{DensityData}}.
+#' An object of StoX data type \code{\link{DensityData}}. Note that the Density column of the Data table has unit nmi^-2 and DensityType "AreaNumberDensity".
 #' 
-#' @seealso To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}.
+#' @seealso See \code{\link{SweptAreaDensity}} for swept-area density. To define the acoustic target strength, see \code{\link{AcousticTargetStrength}}. The DensityData leads to the \code{\link{QuantityData}} in a typical survey estimation model.
 #' 
 #' @export
 #' 
@@ -540,7 +540,10 @@ getMidIndividualTotalLength <- function(x) {
 #' @param SweepWidth The constant sweep width in meters.
 #' @param DensityType The requested density type, currently only "AreaNumberDensity" is supported for SweptAreaDensityMethod = "LengthDistributed", and one of "AreaNumberDensity" and "AreaWeightDensity" (kg) for SweptAreaDensityMethod = "TotalCatch". All area densities are given per square nautical mile.
 #' 
-#' @seealso See \code{\link{AcousticDensity}} for acoustic density.
+#' @return
+#' An object of StoX data type \code{\link{DensityData}}. Note that the Density column of the Data table has unit kg nmi^-2 if SweptAreaDensityMethod is "TotalCatch" and DensityType is "AreaWeightensity". See also \code{\link{QuantityData}}
+#' 
+#' @seealso See \code{\link{AcousticDensity}} for acoustic density. The DensityData leads to the \code{\link{QuantityData}} in a typical survey estimation model.
 #' 
 #' @export
 #' 
