@@ -1,3 +1,9 @@
+# RstoxBase 1.12.0-9003 (2023-06-25)
+* Changed defined unit of Biomass in QuantityData from g to kg, as Biomass originates from SweptAreaMethod "TotalCatch" which is in kg.
+* Added tables listing the variables of the data types NASC, SumNASC, MeanNASC, LengthDistribution, SumLengthDistribution, MeanLengthDistribution, Density, MeanDensity and Quantity. 
+* Relaxed testUnits.R to accept that Biomass has different units in QuantityData and SuperIndividualsData.
+
+
 # RstoxBase 1.12.0-9002 (2023-06-10)
 * Increased speed of frequently used functions in RstoxFramework by using list instead of data.table for the definition og reportFunctions.
 * Skipped gc() in aggregateBaselineDataOneTable() to reduce CPU time.

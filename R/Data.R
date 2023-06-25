@@ -436,7 +436,30 @@ NULL
 #' 
 #' The LengthDistributionData model data contains the columns Station, Haul, SpeciesCategory, IndividualTotalLength, LengthResolution, WeightedNumber, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and LengthDistributionType.
 #' 
-#' @seealso This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' \tabular{lllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \cr   
+#' Haul \tab Unique Haul identifier \tab None \tab Character \tab "2021105-1-2" \cr
+#' SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \cr
+#' IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \cr
+#' LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \cr     
+#' WeightedNumber \tab The number of individuals of the length group. \tab None \tab Numeric \tab 12 \cr
+#' MinHaulDepth \tab Minimum depth of the haul (trawl headline) \tab m \tab Numeric \tab 65 \cr
+#' MaxHaulDepth \tab Maximum depth of the haul (trawl headline) \tab m \tab Numeric \tab 35 \cr
+#' LengthDistributionWeight \tab The weight of the WeightedNumber, always 1 \tab None \tab Numeric \tab 1 \cr
+#' LengthDistributionType \tab The type of length distribution, one of "Normalized", "Standard" and "Percent" (see \code{\link{LengthDistribution}}) \tab None \tab Character \tab "AreaNumberDensity" \cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+#' EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+#' Gear \tab Identifier of the gear \tab None \tab Character \tab "3270" \cr
+#' VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \cr
+#' HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \cr
+#' TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \cr
+#' }
+#' 
+#' @seealso This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. LengthDistributionData is used in \code{\link{SumLengthDistribution}} with output \code{\link{SumLengthDistributionData}} and \code{\link{MeanLengthDistribution}} with output \code{\link{MeanLengthDistributionData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name LengthDistributionData
 #' 
@@ -449,7 +472,38 @@ NULL
 #' 
 #' The SumLengthDistributionData model data is a list of two elements; the Data, which are similar to \code{\link{LengthDistributionData}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns Station, Layer and Haul containing the link between the vertical resolution variables before summing.
 #' 
-#' @seealso This data type is produced by \code{\link{SumLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' \bold{Data}:
+#' \tabular{lllll}{
+#' Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1"\cr
+#' SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \cr
+#' IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \cr
+#' LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \cr     
+#' WeightedNumber \tab The number of individuals of the length group. \tab None \tab Numeric \tab 12 \cr
+#' MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \cr
+#' MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \cr
+#' SumLengthDistributionWeight \tab The weight of the WeightedNumber, always 1 \tab None \tab Numeric \tab 1 \cr
+#' LengthDistributionType \tab The type of length distribution, one of "Normalized", "Standard" and "Percent" (see \code{\link{LengthDistribution}}) \tab None \tab Character \tab "AreaNumberDensity"\cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+#' EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+#' }
+#' 
+#' \bold{Resolution}:
+#' \tabular{lllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1"\cr
+#' Haul \tab Unique Haul identifier \tab None \tab Character \tab "2021105-1-2" \cr
+#' Gear \tab Identifier of the gear \tab None \tab Character \tab "3270" \cr
+#' VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \cr
+#' HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \cr
+#' TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \cr
+#' }
+#' 
+#' @seealso This data type is produced by \code{\link{SumLengthDistribution}} with input \code{\link{LengthDistributionData}} from \code{\link{LengthDistribution}}. SumLengthDistributionData is used in \code{\link{MeanLengthDistribution}} with output \code{\link{MeanLengthDistributionData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name SumLengthDistributionData
 #' 
@@ -462,7 +516,47 @@ NULL
 #' 
 #' The MeanLengthDistributionData model data is a list of two elements; the Data, which are similar to \code{\link{LengthDistributionData}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, Station, Layer and Haul containing the link between the horizontal and vertical resolution variables before summing and averaging.
 #' 
-#' @seealso This data type is produced by \code{\link{MeanLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' \bold{Data}:
+#' \tabular{llllll}{
+#' Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1"\cr
+#' SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \cr
+#' IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \cr
+#' LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \cr     
+#' WeightedNumber \tab The number of individuals of the length group. \tab None \tab Numeric \tab 12 \cr
+#' MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \cr
+#' MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \cr
+#' MeanLengthDistributionWeight \tab The weight of the WeightedNumber, equal to the number of Stations of the PSU \tab None \tab Numeric \tab 1 \cr
+#' LengthDistributionType \tab The type of length distribution, one of "Normalized", "Standard" and "Percent" (see \code{\link{LengthDistribution}}) \tab None \tab Character \tab "AreaNumberDensity" \cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+#' EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+#' }
+#' 
+#' \bold{Resolution}:
+#' \tabular{lllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+#' Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1"\cr
+#' Haul \tab Unique Haul identifier \tab None \tab Character \tab "2021105-1-2" \cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+#' EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+#' Gear \tab Identifier of the gear \tab None \tab Character \tab "3270" \cr
+#' VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \cr
+#' HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \cr
+#' TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \cr
+#' }
+#' 
+#' @seealso This data type is produced by \code{\link{MeanLengthDistribution}} with input \code{\link{LengthDistributionData}} from \code{\link{LengthDistribution}} or \code{\link{SumLengthDistributionData}} from \code{\link{SumLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name MeanLengthDistributionData
 #' 
@@ -473,7 +567,7 @@ NULL
 ##################################################
 #' Assignment length distribution data
 #' 
-#' The AssignmentLengthDistributionData model data is a table averaged length distribution for each combination of Stratum (acoustic)PSU and (acoustic)Layer.
+#' The AssignmentLengthDistributionData model data is a table of averaged length distribution for each combination of Stratum (acoustic)PSU and (acoustic)Layer.
 #' 
 #' @seealso This data type is produced by \code{\link{AssignmentLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -486,9 +580,30 @@ NULL
 ##################################################
 #' Nautical area scattering coefficient (NASC) data
 #' 
-#' The NASCData model data gives the includes NASC for each acoustic channel or Layer, and ESDU, PSU or Stratum. 
+#' The NASCData model data gives the NASC for each acoustic channel or Layer, and ESDU, PSU or Stratum. 
 #' 
-#' @seealso This data type is produced by \code{\link{NASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' \tabular{lllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \cr   
+#' Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \cr
+#' Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \cr
+#' AcousticCategory \tab The acoustic category \tab None \tab Character \tab "HER" \cr
+#' Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \cr
+#' NASC \tab The nautical area scattering coefficient. \tab m^2/nmi^2 \tab Numeric \tab 59.24813 \cr
+#' MinChannelDepth \tab The minimum depth of the depth Channel \tab m \tab Numeric \tab 0 \cr
+#' MaxChannelDepth \tab The maximum depth of the depth Channel \tab m \tab Numeric \tab 10 \cr
+#' NASCWeight \tab The LogDistance of the EDSU \tab None \tab None \tab 0.1 \cr
+#' ChannelReferenceType \tab Unique ChannelReference identifier \tab None \tab Character \tab "P" \cr
+#' ChannelReferenceDepth \tab The depth of the ChannelReference origin. 0 for pelagic channels. Not yet given for bottom channels, as BottomDepth is not yet defined for NMDEchosounder data \tab m \tab Numeric \tab 0 \cr
+#' ChannelReferenceTilt \tab The tilt angle of the beam, where 180 is vertically downwards and 0 is vertically upwards \tab degree \tab Numeric \tab 180 \cr 
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+#' EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+#' }
+#' 
+#' @seealso This data type is produced by \code{\link{NASC}}. NASCData is used in \code{\link{SumNASC}} with output \code{\link{SumNASCData}} and \code{\link{MeanNASC}} with output \code{\link{MeanNASCData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name NASCData
 #' 
@@ -501,7 +616,37 @@ NULL
 #' 
 #' The SumNASCData model data is a list of two elements; the Data, which are similar to \code{\link{NASCData}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns EDSU, Layer and Channel containing the link between the vertical resolution variables before summing.
 #' 
-#' @seealso This data type is produced by \code{\link{SumNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' \bold{Data}:
+#' \tabular{lllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1"\cr
+#' Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \cr
+#' AcousticCategory \tab The acoustic category \tab None \tab Character \tab "HER" \cr
+#' Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \cr
+#' NASC \tab The nautical area scattering coefficient. \tab m^2/nmi^2 \tab Numeric \tab 59.24813 \cr
+#' MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \cr
+#' MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \cr
+#' SumNASCWeight \tab The LogDistance of the EDSU (same as NASCWeight of the \code{\link{NASCData}}) \tab None \tab None \tab 0.1 \cr
+#' ChannelReferenceType \tab Unique ChannelReference identifier \tab None \tab Character \tab "P" \cr
+#' ChannelReferenceDepth \tab The depth of the ChannelReference origin. 0 for pelagic channels. Not yet given for bottom channels, as BottomDepth is not yet defined for NMDEchosounder data \tab m \tab Numeric \tab 0 \cr
+#' ChannelReferenceTilt \tab The tilt angle of the beam, where 180 is vertically downwards and 0 is vertically upwards \tab degree \tab Numeric \tab 180 \cr 
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+#' EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+#' }
+#' 
+#' \bold{Resolution}:
+#' \tabular{llllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \cr
+#' Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \cr
+#' }
+#' 
+#' @seealso This data type is produced by \code{\link{SumNASC}} with input \code{\link{NASCData}} from \code{\link{NASC}}. SumNASCData is used in \code{\link{MeanNASC}} with output \code{\link{MeanNASCData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name SumNASCData
 #' 
@@ -514,7 +659,41 @@ NULL
 #' 
 #' The MeanNASCData model data is a list of two elements; the Data, which are similar to \code{\link{NASCData}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, EDSU, Layer and Channel containing the link between the horizontal and vertical resolution variables before summing and averaging.
 #' 
-#' @seealso This data type is produced by \code{\link{MeanNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' \bold{Data}:
+#' \tabular{lllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \cr
+#' Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \cr
+#' AcousticCategory \tab The acoustic category \tab None \tab Character \tab "HER" \cr
+#' Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \cr
+#' NASC \tab The nautical area scattering coefficient. \tab m^2/nmi^2 \tab Numeric \tab 59.24813 \cr
+#' MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \cr
+#' MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \cr
+#' MeanNASCWeight \tab The total LogDistance of the PSU \tab None \tab None \tab 0.1 \cr
+#' ChannelReferenceType \tab Unique ChannelReference identifier \tab None \tab Character \tab "P" \cr
+#' ChannelReferenceDepth \tab The depth of the ChannelReference origin. 0 for pelagic channels. Not yet given for bottom channels, as BottomDepth is not yet defined for NMDEchosounder data \tab m \tab Numeric \tab 0 \cr
+#' ChannelReferenceTilt \tab The tilt angle of the beam, where 180 is vertically downwards and 0 is vertically upwards \tab degree \tab Numeric \tab 180 \cr 
+#' }
+#' 
+#' \bold{Resolution}:
+#' \tabular{lllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+#' EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \cr
+#' Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+#' EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+#' }
+#' 
+#' @seealso This data type is produced by \code{\link{MeanNASC}} with input \code{\link{NASCData}} from \code{\link{NASC}} or \code{\link{SumNASCData}} from \code{\link{SumNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name MeanNASCData
 #' 
@@ -551,7 +730,46 @@ NULL
 ##################################################
 #' Density data
 #' 
-#' The DensityData model data holds the density of individuals as number per square nautical mile, by PSU and Layer. The data type contains the tables Data and Resolution.
+#' The DensityData model data is a common datatype for acoustic and swept-area density produced by the functions \code{\link{AcousticDensity}} and \code{\link{SweptAreaDensity}}, respectively, and contains the tables Data and Resolution with variables given in the following tables:
+#' 
+#' \bold{Data}:
+#' \tabular{llllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+#' Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \tab Always \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \tab Always \cr
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+#' Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \tab \code{\link{AcousticDensity}} \cr
+#' SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \tab Always \cr
+#' IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \tab \code{\link{SweptAreaDensity}} \cr
+#' LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \tab \code{\link{SweptAreaDensity}} \cr     
+#' Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \tab \code{\link{AcousticDensity}} \cr
+#' Density \tab The density, either given as number of individuals or weight per square nautical mile (when DensityType is "AreaNumberDensity" or AreaWeightDensity, respectively) \tab nmi^-2 if DensityType is "AreaNumberDensity", and kg nmi^-2 if DensityType is "AreaWeightDensity" (only relevant when SweptAreaDensityMethod is "TotalCatch") \tab Numeric \tab 123.4 \tab Always \cr
+#' MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \tab Always \cr
+#' MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \tab Always \cr
+#' DensityWeight \tab The weight of the density value associated with the PSU, i.e., the number of Stations for \code{\link{SweptAreaDensity}} and total LogDistance for \code{\link{AcousticDensity}} \tab None \tab Numeric \tab 8 \tab Always \cr
+#' DensityType \tab The type of density, currently one of "AreaNumberDensity" and "AreaWeightDensity" \tab None \tab Character \tab "AreaNumberDensity" \tab Always \cr
+#' }
+#' 
+#' \bold{Resolution}:
+#' \tabular{llllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \tab Always \cr
+#' EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \tab \code{\link{AcousticDensity}} \cr   
+#' Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \tab \code{\link{SweptAreaDensity}} \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+#' Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \tab \code{\link{AcousticDensity}} \cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \tab Always \cr
+#' EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \tab \code{\link{AcousticDensity}} \cr
+#' EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \tab \code{\link{SweptAreaDensity}} \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \tab Always \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \tab Always \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \tab Always \cr
+#' VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \tab \code{\link{SweptAreaDensity}} \cr
+#' HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \tab \code{\link{SweptAreaDensity}} \cr
+#' TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \tab \code{\link{SweptAreaDensity}} \cr
+#' }
 #' 
 #' @seealso This data type is produced by \code{\link{AcousticDensity}} and \code{\link{SweptAreaDensity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -564,7 +782,45 @@ NULL
 ##################################################
 #' Mean density data
 #' 
-#' The MeanDensityData model data holds the density of individuals as number per square nautical mile, by Stratum and Layer. The data type contains the tables Data and Resolution.
+#' The MeanDensityData model data holds the density of individuals as number per square nautical mile, by Stratum and Layer. The data type contains the tables Data and Resolution. The variables of the MeanDensityData are the same as in \code{\link{DensityData}}, except that the variable PSU is not present in the table Data, and that the variable DensityWeight is replaced by the variable MeanDensityWeight:
+#' 
+#' \bold{Data}:
+#' \tabular{llllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+#' Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \tab Always \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+#' Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \tab \code{\link{AcousticDensity}} \cr
+#' SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \tab Always \cr
+#' IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \tab \code{\link{SweptAreaDensity}} \cr
+#' LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \tab \code{\link{SweptAreaDensity}} \cr     
+#' Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \tab \code{\link{AcousticDensity}} \cr
+#' Density \tab The density, either given as number of individuals or weight per square nautical mile (when DensityType is "AreaNumberDensity" or AreaWeightDensity, respectively) \tab nmi^-2 if DensityType is "AreaNumberDensity", and kg nmi^-2 if DensityType is "AreaWeightDensity" (only relevant when SweptAreaDensityMethod is "TotalCatch") \tab Numeric \tab 123.4 \tab Always \cr
+#' MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \tab Always \cr
+#' MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \tab Always \cr
+#' MeanDensityWeight \tab The weight of the density value associated with the Stratum, i.e., the number of Stations for \code{\link{SweptAreaDensity}} and total LogDistance for \code{\link{AcousticDensity}} \tab None \tab Numeric \tab 8 \tab Always \cr
+#' DensityType \tab The type of density, currently one of "AreaNumberDensity" and "AreaWeightDensity" \tab None \tab Character \tab "AreaNumberDensity" \tab Always \cr
+#' }
+#' 
+#' \bold{Resolution}:
+#' \tabular{llllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \tab Always \cr
+#' EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \tab \code{\link{AcousticDensity}} \cr   
+#' Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \tab \code{\link{SweptAreaDensity}} \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+#' Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \tab \code{\link{AcousticDensity}} \cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \tab Always \cr
+#' EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \tab \code{\link{AcousticDensity}} \cr
+#' EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \tab \code{\link{SweptAreaDensity}} \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \tab Always \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \tab Always \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \tab Always \cr
+#' VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \tab \code{\link{SweptAreaDensity}} \cr
+#' HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \tab \code{\link{SweptAreaDensity}} \cr
+#' TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \tab \code{\link{SweptAreaDensity}} \cr
+#' }
 #' 
 #' @seealso This data type is produced by \code{\link{MeanDensity}} based on \code{\link{DensityData}} See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -604,8 +860,44 @@ NULL
 ##################################################
 #' Quantity data
 #' 
-#' The Quantity model data holds the abundance and biomass of individuals as number and weight (g), respectively, per Stratum and Layer. The data type contains the tables Data and Resolution.
-
+#' The Quantity model data holds the abundance and biomass of individuals as number and weight, respectively, per Stratum and Layer. The data type contains the tables Data and Resolution with variables given in the following tables:
+#' 
+#' \bold{Data}:
+#' \tabular{llllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+#' Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \tab Always \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+#' Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \tab \code{\link{AcousticDensity}} \cr
+#' SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \tab Always \cr
+#' IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \tab \code{\link{SweptAreaDensity}} \cr
+#' LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \tab \code{\link{SweptAreaDensity}} \cr     
+#' Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \tab \code{\link{AcousticDensity}} \cr
+#' Abundance \tab The number of individuals \tab individuals \tab Numeric \tab 1234567.8 \tab If MeanDensityType is"AreaNumberDensity" in the input MeanDensityData \cr
+#' Biomass \tab The total weight of the species \tab kg \tab Numeric \tab 123456.7 \tab If DensityType is "AreaWeightDensity" (only relevant when SweptAreaDensityMethod is "TotalCatch" in \code{\link{SweptAreaDensity}}) \cr
+#' MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \tab Always \cr
+#' MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \tab Always \cr
+#' }
+#' 
+#' \bold{Resolution}:
+#' \tabular{llllll}{
+#' \bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+#' Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+#' PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \tab Always \cr
+#' EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \tab \code{\link{AcousticDensity}} \cr   
+#' Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \tab \code{\link{SweptAreaDensity}} \cr   
+#' Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+#' Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \tab \code{\link{AcousticDensity}} \cr
+#' Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \tab Always \cr
+#' EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \tab \code{\link{AcousticDensity}} \cr
+#' EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \tab \code{\link{SweptAreaDensity}} \cr
+#' DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \tab Always \cr
+#' Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \tab Always \cr
+#' Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \tab Always \cr
+#' VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \tab \code{\link{SweptAreaDensity}} \cr
+#' HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \tab \code{\link{SweptAreaDensity}} \cr
+#' TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \tab \code{\link{SweptAreaDensity}} \cr
+#' }
 #' 
 #' @seealso This data type is produced by \code{\link{Quantity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -631,7 +923,7 @@ NULL
 ##################################################
 #' Super-individuals data
 #' 
-#' The SuperIndividualsData model data is the \code{\link{IndividualsData}} added Abundance and Biomass.
+#' The SuperIndividualsData model data is the \code{\link{IndividualsData}} added Abundance and Biomass. Note that the Abundance is number of individuals and the Biomass is weight in g.
 #' 
 #' @seealso This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 

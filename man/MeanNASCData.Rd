@@ -6,6 +6,41 @@
 \description{
 The MeanNASCData model data is a list of two elements; the Data, which are similar to \code{\link{NASCData}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, EDSU, Layer and Channel containing the link between the horizontal and vertical resolution variables before summing and averaging.
 }
+\details{
+\bold{Data}:
+\tabular{lllll}{
+\bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \cr
+Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \cr
+Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \cr
+AcousticCategory \tab The acoustic category \tab None \tab Character \tab "HER" \cr
+Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \cr
+NASC \tab The nautical area scattering coefficient. \tab m^2/nmi^2 \tab Numeric \tab 59.24813 \cr
+MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \cr
+MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \cr
+MeanNASCWeight \tab The total LogDistance of the PSU \tab None \tab None \tab 0.1 \cr
+ChannelReferenceType \tab Unique ChannelReference identifier \tab None \tab Character \tab "P" \cr
+ChannelReferenceDepth \tab The depth of the ChannelReference origin. 0 for pelagic channels. Not yet given for bottom channels, as BottomDepth is not yet defined for NMDEchosounder data \tab m \tab Numeric \tab 0 \cr
+ChannelReferenceTilt \tab The tilt angle of the beam, where 180 is vertically downwards and 0 is vertically upwards \tab degree \tab Numeric \tab 180 \cr 
+}
+
+\bold{Resolution}:
+\tabular{lllll}{
+\bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \cr   
+Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \cr
+Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \cr
+Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \cr
+DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+}
+}
 \seealso{
-This data type is produced by \code{\link{MeanNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{MeanNASC}} with input \code{\link{NASCData}} from \code{\link{NASC}} or \code{\link{SumNASCData}} from \code{\link{SumNASC}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }

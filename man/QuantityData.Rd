@@ -4,7 +4,45 @@
 \alias{QuantityData}
 \title{Quantity data}
 \description{
-The Quantity model data holds the abundance and biomass of individuals as number and weight (g), respectively, per Stratum and Layer. The data type contains the tables Data and Resolution.
+The Quantity model data holds the abundance and biomass of individuals as number and weight, respectively, per Stratum and Layer. The data type contains the tables Data and Resolution with variables given in the following tables:
+}
+\details{
+\bold{Data}:
+\tabular{llllll}{
+\bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \tab Always \cr
+Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+Beam \tab Unique Beam identifier \tab None \tab Character \tab "38000/2" \tab \code{\link{AcousticDensity}} \cr
+SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \tab Always \cr
+IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \tab \code{\link{SweptAreaDensity}} \cr
+LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \tab \code{\link{SweptAreaDensity}} \cr     
+Frequency \tab The acoustic frequency of the Beam \tab hertz \tab Numeric \tab 38000 \tab \code{\link{AcousticDensity}} \cr
+Abundance \tab The number of individuals \tab individuals \tab Numeric \tab 1234567.8 \tab If MeanDensityType is"AreaNumberDensity" in the input MeanDensityData \cr
+Biomass \tab The total weight of the species \tab kg \tab Numeric \tab 123456.7 \tab If DensityType is "AreaWeightDensity" (only relevant when SweptAreaDensityMethod is "TotalCatch" in \code{\link{SweptAreaDensity}}) \cr
+MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \tab Always \cr
+MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \tab Always \cr
+}
+
+\bold{Resolution}:
+\tabular{llllll}{
+\bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \tab \bold{Occurrence} \cr
+Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \tab Always \cr
+PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \tab Always \cr
+EDSU \tab Unique elementary distance sampling unit (EDSU/Log) identifier \tab None \tab Character \tab "2020821/2020-04-24T03:51:26.000Z" \tab \code{\link{AcousticDensity}} \cr   
+Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \tab \code{\link{SweptAreaDensity}} \cr   
+Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1" \tab Always \cr
+Channel \tab Unique NASC depth channel identifier \tab None \tab Character \tab "2" \tab \code{\link{AcousticDensity}} \cr
+Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \tab Always \cr
+EffectiveLogDistance \tab The effective length of the EDSU \tab nmi \tab Numeric \tab 0.09 \tab \code{\link{AcousticDensity}} \cr
+EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \tab \code{\link{SweptAreaDensity}} \cr
+DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \tab Always \cr
+Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \tab Always \cr
+Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \tab Always \cr
+VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \tab \code{\link{SweptAreaDensity}} \cr
+HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \tab \code{\link{SweptAreaDensity}} \cr
+TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \tab \code{\link{SweptAreaDensity}} \cr
+}
 }
 \seealso{
 This data type is produced by \code{\link{Quantity}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}

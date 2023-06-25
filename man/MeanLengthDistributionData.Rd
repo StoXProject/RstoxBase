@@ -6,6 +6,47 @@
 \description{
 The MeanLengthDistributionData model data is a list of two elements; the Data, which are similar to \code{\link{LengthDistributionData}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, Station, Layer and Haul containing the link between the horizontal and vertical resolution variables before summing and averaging.
 }
+\details{
+\bold{Data}:
+\tabular{llllll}{
+Survey \tab The survey identifier \tab None \tab Character \tab "MainSurvey" \cr
+Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1"\cr
+SpeciesCategory \tab The species category \tab None \tab Character \tab "Herring" \cr
+IndividualTotalLength \tab Total length (from snout to end of fin), given as the lower end of the interval of width given by LengthResolution \tab cm \tab Numeric \tab 14.5 \cr
+LengthResolution \tab Resolution of IndividualTotalLength \tab cm \tab Numeric \tab 0.5 \cr     
+WeightedNumber \tab The number of individuals of the length group. \tab None \tab Numeric \tab 12 \cr
+MinLayerDepth \tab The minimum depth of the depth Layer \tab m \tab Numeric \tab 0 \cr
+MaxLayerDepth \tab The maximum depth of the depth Layer \tab m \tab Numeric \tab 100 \cr
+MeanLengthDistributionWeight \tab The weight of the WeightedNumber, equal to the number of Stations of the PSU \tab None \tab Numeric \tab 1 \cr
+LengthDistributionType \tab The type of length distribution, one of "Normalized", "Standard" and "Percent" (see \code{\link{LengthDistribution}}) \tab None \tab Character \tab "AreaNumberDensity" \cr
+Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \cr
+DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+}
+
+\bold{Resolution}:
+\tabular{lllll}{
+\bold{Variable} \tab \bold{Description} \tab \bold{Unit} \tab \bold{Data type} \tab \bold{Example} \cr
+Stratum \tab The stratum identifier \tab None \tab Character \tab "Stratum1" \cr
+PSU \tab The PSU identifier \tab None \tab Character \tab "PSU1" \cr
+Station \tab Unique Station identifier \tab None \tab Character \tab "2021105-1" \cr   
+Layer \tab The depth Layer identifier \tab None \tab Character \tab "Layer1"\cr
+Haul \tab Unique Haul identifier \tab None \tab Character \tab "2021105-1-2" \cr
+Cruise \tab Unique Cruise identifier (see \code{\link[RstoxData]{StoxAcousticFormat}} for output from \code{\link{AcousticDensity}} and \code{\link[RstoxData]{StoxBioticFormat}} for output from \code{\link{SweptAreaDensity}}) \tab None \tab Character \tab "2021105" \cr
+EffectiveTowDistance \tab Effective tow distance of the Haul \tab nmi \tab Numeric \tab 1.5 \cr
+DateTime \tab UTC time at start of the EDSU or Station, stored as \code{\link{POSIXct}} \tab ISO8601 \tab Character \tab 2020-09-09T01:02:03.456Z \cr
+Longitude \tab Longitude at start of the EDSU or Station \tab degree east \tab Numeric \tab 62.5 \cr
+Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Numeric \tab 5.1 \cr
+Gear \tab Identifier of the gear \tab None \tab Character \tab "3270" \cr
+VerticalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 23 \cr
+HorizontalNetOpening \tab Vertical span of the net \tab m \tab Numeric \tab 105 \cr
+TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 125 \cr
+}
+}
 \seealso{
-This data type is produced by \code{\link{MeanLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{MeanLengthDistribution}} with input \code{\link{LengthDistributionData}} from \code{\link{LengthDistribution}} or \code{\link{SumLengthDistributionData}} from \code{\link{SumLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 }
