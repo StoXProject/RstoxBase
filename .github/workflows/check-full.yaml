@@ -59,6 +59,7 @@ jobs:
           curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output repo_deploy.sh
           chmod +x ./repo_checktag.sh ./repo_deploy.sh
           . repo_checktag.sh
+          echo "PKGNAME=${PKGNAME}" >> $GITHUB_ENV
           echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
           echo "FINAL_TAG=${FINAL_TAG}" >> $GITHUB_ENV
           echo "PKG_FILE_PREFIX=${PKG_FILE_PREFIX}" >> $GITHUB_ENV
@@ -131,64 +132,33 @@ jobs:
           # We needed to add libxslt1-dev as RstoxData <= RstoxData-v1.8.0-9006 was using it (we should try to skip this after StoX 3.6.0):
           sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev libxslt1-dev
         shell: bash
+        
+        
+        
+        
+        - name: Install R package dependencies from CRAN
+        run: |
+          remotes::install_deps(dependencies = TRUE, repos = "https://cloud.r-project.org")
+        shell: Rscript {0}
+        
+        - name: Install R package dependencies from StoX repo
+        run: |
+          # The testingRepo is used for pre-releases:
+          repo <- if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo")
+          # Find Rstox dependencies:
+          db <- available.packages(contriburl = contrib.url(repo))
+          deps <- tools::package_dependencies (Sys.getenv("PKGNAME"), db =  db)[[1]]
+          deps <- deps[startsWith(deps, "Rstox")]
+          # Install the Rstox dependencies:
+          utils::install.packages(deps, repo = repo)
+        shell: Rscript {0}
+        
+        
+        
+        
+        
       
-      - name: Install R package dependencies on Linux
-        if: runner.os == 'Linux'
-        run: |
-          remotes::install_deps(dependencies = TRUE, repos = 
-            c(if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo", "https://cloud.r-project.org")
-          )
-        shell: Rscript {0}
-
-      - name: R version specific R package dependency versions
-        if: runner.os != 'Linux' && matrix.config.r == '4.0'
-        run: |
-          # Make sure rlang is the latest (>= 1.1.0) since dependencies of ggplot2 actually require 1.1.0 (released 2023-03) on 2023-05-03:
-          options(install.packages.compile.from.source = "always")
-          install.packages("rlang")
-          # Also vctrs need the latest version for pillar to install (used by tibble -> ggplot2):
-          install.packages("vctrs")
-          # remotes::install_deps() does not seem to pick up ellipsis on R 4.0 on Windows, which is used by the following packages suggested by ggplot2: Hmisc, profvis, rmarkdown, testthat, vdiffr. We install it specifically here:
-          install.packages("ellipsis")
-        shell: Rscript {0}
-
-      - name: Install R package dependencies on Windows and macOS
-        if: runner.os != 'Linux'
-        run: |
-          # Install the rest of the dependencies:
-          options(install.packages.compile.from.source = "never") # Avoid installing sources which need compilation
-          # dependencies = TRUE installs "Depends", "Imports", "LinkingTo" and "Suggests", and the  "Depends", "Imports" and "LinkingTo" recursively from those dependencies
-          remotes::install_deps(dependencies = TRUE, type = "both", repos = 
-            c(if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo", "https://cloud.r-project.org")
-          )
-        shell: Rscript {0}
-
-      ### - name: Install prereleases
-      ###   run: |
-      ###     # After installing Rstox pakcages from the drat repo it may be that the installed versions are not the minimum versions
-      ###     #   specified in the DESCRIPTION file, since pre-releases are not deployed to the drat repo due to size restrictions. 
-      ###     # The following installs from the package repos directlly, those packages that difffer (from source):
-      ###     # Get the installed versions:
-      ###     installed <- as.data.frame(utils::installed.packages(), stringsAsFactors = FALSE)
-      ###     # Find minimum versions:
-      ###     deps <- strsplit(read.dcf("./DESCRIPTION", all = TRUE)$Imports, ",\n")[[1]]
-      ###     Rstox_deps <- deps[startsWith(deps, "Rstox")]
-      ###     Rstox_deps <- data.frame(
-      ###         Package = sub("[ (].*", "", Rstox_deps),
-      ###         MinimumVersion = sub(".*>=  *(.*?) *).*", "\\1", Rstox_deps), 
-      ###         stringsAsFactors = FALSE
-      ###     )
-      ###     Rstox_deps <- merge(Rstox_deps, installed)
-      ###     differ <- which(Rstox_deps$MinimumVersion != Rstox_deps$Version)
-      ###     for(ind in differ) {
-      ###       thisPackage <- Rstox_deps$Package[ind]
-      ###       thisMinimumVersion <- Rstox_deps$MinimumVersion[ind]
-      ###       remotes::install_github(repo = paste("stoxproject", thisPackage, sep = "/"), ref = paste(thisPackage, thisMinimumVersion, sep = "-v"))
-      ###     }
-      ###   shell: Rscript {0}
-      ### 
-      
-      - name: Install CRANdependencies
+      - name: Install additional used in the actions CRANdependencies
         run: |
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("git2r")
