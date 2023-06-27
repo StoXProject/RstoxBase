@@ -150,6 +150,8 @@ jobs:
           db <- available.packages(contriburl = contrib.url(repo))
           print(contrib.url(repo))
           print(db)
+          print(Sys.getenv("PKGNAME"))
+          print(tools::package_dependencies (Sys.getenv("PKGNAME"), db =  db))
           deps <- tools::package_dependencies (Sys.getenv("PKGNAME"), db =  db)[[1]]
           print(deps)
           if(length(deps)) {
