@@ -145,13 +145,17 @@ jobs:
         run: |
           # The testingRepo is used for pre-releases:
           repo <- if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo"
+          print(repo)
           # Find Rstox dependencies:
           db <- available.packages(contriburl = contrib.url(repo))
+          print(contrib.url(repo))
+          print(db)
           deps <- tools::package_dependencies (Sys.getenv("PKGNAME"), db =  db)[[1]]
           print(deps)
           if(length(deps)) {
             deps <- deps[startsWith(deps, "Rstox")]
           }
+          print(deps)
           # Install the Rstox dependencies:
           if(length(deps)) {
             utils::install.packages(deps, repo = repo)
