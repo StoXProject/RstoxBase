@@ -144,7 +144,7 @@ jobs:
         - name: Install R package dependencies from StoX repo
         run: |
           # The testingRepo is used for pre-releases:
-          repo <- if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo")
+          repo <- if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo"
           # Find Rstox dependencies:
           db <- available.packages(contriburl = contrib.url(repo))
           deps <- tools::package_dependencies (Sys.getenv("PKGNAME"), db =  db)[[1]]
