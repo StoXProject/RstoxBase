@@ -148,9 +148,14 @@ jobs:
           # Find Rstox dependencies:
           db <- available.packages(contriburl = contrib.url(repo))
           deps <- tools::package_dependencies (Sys.getenv("PKGNAME"), db =  db)[[1]]
-          deps <- deps[startsWith(deps, "Rstox")]
+          print(deps)
+          if(length(deps)) {
+            deps <- deps[startsWith(deps, "Rstox")]
+          }
           # Install the Rstox dependencies:
-          utils::install.packages(deps, repo = repo)
+          if(length(deps)) {
+            utils::install.packages(deps, repo = repo)
+          }
         shell: Rscript {0}
         
         
