@@ -136,12 +136,12 @@ jobs:
         
         
         
-        - name: Install R package dependencies from CRAN
+      - name: Install R package dependencies from CRAN
         run: |
           remotes::install_deps(dependencies = TRUE, repos = "https://cloud.r-project.org")
         shell: Rscript {0}
         
-        - name: Install R package dependencies from StoX repo
+      - name: Install R package dependencies from StoX repo
         run: |
           # The testingRepo is used for pre-releases:
           repo <- if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo"
