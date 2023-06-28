@@ -59,8 +59,6 @@ jobs:
           curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output repo_deploy.sh
           chmod +x ./repo_checktag.sh ./repo_deploy.sh
           . repo_checktag.sh
-          echo "PKGNAME=${PKGNAME}" >> $GITHUB_ENV
-          echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
           echo "FINAL_TAG=${FINAL_TAG}" >> $GITHUB_ENV
           echo "PKG_FILE_PREFIX=${PKG_FILE_PREFIX}" >> $GITHUB_ENV
           echo "PKG_FILE=${PKG_FILE_PREFIX}${{ matrix.config.pkgext }}" >> $GITHUB_ENV
@@ -136,21 +134,34 @@ jobs:
         
         
         
-        - name: Install R package dependencies from CRAN
+      - name: Install R package dependencies from CRAN
         run: |
           remotes::install_deps(dependencies = TRUE, repos = "https://cloud.r-project.org")
         shell: Rscript {0}
         
-        - name: Install R package dependencies from StoX repo
+      - name: Install R package dependencies from StoX repo
         run: |
+          # Get the package name:
+          packageName <- read.dcf("./DESCRIPTION", all = TRUE)$Package
+          # Detect pre-release by dash, which is used to denote pre-releases of Rstox packages:
+          isPreRelease <- grepl("-", read.dcf("./DESCRIPTION", all = TRUE)$Version, fixed = TRUE)
           # The testingRepo is used for pre-releases:
-          repo <- if(Sys.getenv("PRERELEASE") == "false") "https://stoxproject.github.io/repo" else "https://stoxproject.github.io/testingRepo")
+          repo <- if(isPreRelease) "https://stoxproject.github.io/testingRepo" else "https://stoxproject.github.io/repo"
+          print(repo)
           # Find Rstox dependencies:
           db <- available.packages(contriburl = contrib.url(repo))
-          deps <- tools::package_dependencies (Sys.getenv("PKGNAME"), db =  db)[[1]]
-          deps <- deps[startsWith(deps, "Rstox")]
+          print(contrib.url(repo))
+          print(db)
+          deps <- tools::package_dependencies(packageName, db =  db)[[1]]
+          print(deps)
+          if(length(deps)) {
+            deps <- deps[startsWith(deps, "Rstox")]
+          }
+          print(deps)
           # Install the Rstox dependencies:
-          utils::install.packages(deps, repo = repo)
+          if(length(deps)) {
+            utils::install.packages(deps, repo = repo)
+          }
         shell: Rscript {0}
         
         
