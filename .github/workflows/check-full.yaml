@@ -59,6 +59,7 @@ jobs:
           curl "https://raw.githubusercontent.com/StoXProject/repo/master/scripts/deploy-actions.sh" --output repo_deploy.sh
           chmod +x ./repo_checktag.sh ./repo_deploy.sh
           . repo_checktag.sh
+          echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
           echo "FINAL_TAG=${FINAL_TAG}" >> $GITHUB_ENV
           echo "PKG_FILE_PREFIX=${PKG_FILE_PREFIX}" >> $GITHUB_ENV
           echo "PKG_FILE=${PKG_FILE_PREFIX}${{ matrix.config.pkgext }}" >> $GITHUB_ENV
