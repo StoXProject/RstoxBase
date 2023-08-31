@@ -421,9 +421,6 @@ meanRawResolutionData <- function(
     # Average the data horizontally:
     aggregatedData <- applyMeanToData(data = dataCopy, dataType = dataType, targetResolution = "PSU")
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(aggregatedData)
-    
     # Get the resolution as the resolution columns defined for NASCData (identical to those of L)
     return(
         list(
@@ -1275,7 +1272,7 @@ stratumpolygon2.7ToTable <- function(stratumpolygon) {
     # Rbind to a data.table and add names:
     stratumpolygonTable <- do.call(rbind, stratumpolygonList)
     stratumpolygonTable <- data.table::data.table(names(stratumpolygonList), stratumpolygonTable)
-    names(stratumpolygonTable) <- c("polygonkey", "includeintotal", "polygon")
+    names(stratumpolygonTable) <- c("polygonkey", "includeintotal", "geometry")
     
     return(stratumpolygonTable)
 }
@@ -1375,6 +1372,12 @@ readBioticPSUFrom2.7 <- function(projectXMLFilePath, MergedStoxDataHaulLevel) {
     # Get the CruiseKey1 and the HaulKey to merge by:
     BioticPSU$Station_PSU[, CruiseKey1 := sapply(strsplit(Station, "/"), "[[", 1)]
     BioticPSU$Station_PSU[, HaulKey := sapply(strsplit(Station, "/"), "[[", 2)]
+    
+    # Issue a warning if there are cruises that are present in the process data read from the project.xml file but not in the data:
+    notPresent <- ! BioticPSU$Station_PSU$CruiseKey1 %in% toMergeFromStoxData$CruiseKey1
+    if(any(notPresent)) {
+        warning("StoX: The following biotic PSUs were not recognized in the StoxBioticData. This can either be due to different data used in the original (StoX <= 2.7) and new (StoX >= 3.0.0) project, or that the table edsupsu of the old project.xml file contains errors in the edsu column. In the latter case, it may be that Methtod = \"Station\" and not \"UseProcessData\" in DefineSweptAreaPSU() so that the edsupsu process data is not relevant. In that case please rerun the old StoX project, save so that the edsupsu table is updatted, and try again:\n", paste("\t", BioticPSU$Station_PSU$Station[notPresent], collapse = "\n"))
+    }
     # .. and delete Station, as it will be replaced by the Station from toMergeFromStoxData:
     BioticPSU$Station_PSU[, Station := NULL]
     

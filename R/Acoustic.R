@@ -42,10 +42,6 @@ NASC <- function(
     # Format the output:
     formatOutput(NASCData, dataType = "NASCData", keep.all = FALSE)
     
-    # Not needed here, since we only copy data: 
-    #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(NASCData)
-    
     return(NASCData)
 }
 
@@ -109,10 +105,6 @@ SumNASC <- function(
     
     # Format the output:
     formatOutput(SumNASCData, dataType = "SumNASCData", keep.all = FALSE)
-    
-    # Not needed here, since we only aggregate data: 
-    #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(SumNASCData)
     
     return(SumNASCData)
 }
@@ -204,9 +196,6 @@ MeanNASC <- function(
     
     # Format the output:
     formatOutput(MeanNASCData, dataType = "MeanNASCData", keep.all = FALSE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(MeanNASCData)
     
     return(MeanNASCData)
 }

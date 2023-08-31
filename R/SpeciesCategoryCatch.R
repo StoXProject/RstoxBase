@@ -24,7 +24,7 @@ SpeciesCategoryCatch <- function(
     # Merge Station, ..., Sample table:
     SpeciesCategoryCatchData <- RstoxData::MergeStoxBiotic(StoxBioticData, TargetTable = "Sample")
     
-    # Sum the CatchFractionWeight for each Haul (verticalResolution) and SpeciesCategory (categoryVariable):
+    # Sum the CatchFractionWeight and CatchFractionNumber (separately) for each Haul (verticalResolution) and SpeciesCategory (categoryVariable):
     dataVariables <- getDataTypeDefinition(dataType = "SpeciesCategoryCatchData", elements = "data", unlist = TRUE)
     CatchFractionVariables <- sub("TotalCatch", "CatchFraction", dataVariables)
     sumBy <-  getDataTypeDefinition(
@@ -34,7 +34,9 @@ SpeciesCategoryCatch <- function(
     )
     # Sum for weight and number separately:
     for(ind in seq_along(dataVariables)) {
+        # Make sure that these are numeric, as data.table somehow performs an integer operation when normalizing below (which does not happen in the console, but for some reason here):
         SpeciesCategoryCatchData[, eval(dataVariables[ind]) := sum(get(CatchFractionVariables[ind])), by = sumBy]
+        #SpeciesCategoryCatchData[, eval(dataVariables[ind]) := as.numeric(sum(get(CatchFractionVariables[ind]))), by = sumBy]
     }
     # Uniquify, as the above sum is by reference, and thus keeps all rows:
     SpeciesCategoryCatchData <- unique(SpeciesCategoryCatchData, by = sumBy)
@@ -55,10 +57,6 @@ SpeciesCategoryCatch <- function(
 
     # Format the output:
     formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = TRUE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(SpeciesCategoryCatchData)
-    
     
     return (SpeciesCategoryCatchData)
 }
@@ -127,10 +125,6 @@ SpeciesCategoryCatch <- function(
 #     # Format the output:
 #     formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = TRUE)
 #     
-#     # Ensure that the numeric values are rounded to the defined number of digits:
-#     #RstoxData::setRstoxPrecisionLevel(SpeciesCategoryCatchData)
-#     
-#     
 #     return (SpeciesCategoryCatchData)
 # } 
 
@@ -172,9 +166,6 @@ SumSpeciesCategoryCatch <- function(
     
     # Format the output:
     formatOutput(SumSpeciesCategoryCatchData, dataType = "SumSpeciesCategoryCatchData", keep.all = FALSE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(SumSpeciesCategoryCatchData)
     
     return(SumSpeciesCategoryCatchData)
 }
@@ -260,9 +251,6 @@ MeanSpeciesCategoryCatch <- function(
     # Format the output:
     formatOutput(MeanSpeciesCategoryCatchData, dataType = "MeanSpeciesCategoryCatchData", keep.all = FALSE)
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(MeanSpeciesCategoryCatchData)
-    
     return(MeanSpeciesCategoryCatchData)
 }
 
@@ -294,7 +282,8 @@ GearDependentSpeciesCategoryCatchCompensation <- function(
         InputDataType = "SpeciesCategoryCatchData",
         SpeciesCategoryCatchData = SpeciesCategoryCatchData, 
         CompensationMethod = CompensationMethod, 
-        CompensationTable = CompensationTable
+        CompensationTable = CompensationTable, 
+        keep.all = TRUE
     )
         
         return(SpeciesCategoryCatchData)

@@ -135,9 +135,6 @@ AcousticDensity <- function(
     #formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
     formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE, allow.missing = TRUE)
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(DensityData)
-    
     return(DensityData)
 }
 
@@ -659,9 +656,6 @@ SweptAreaDensity <- function(
     #formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
     formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(DensityData)
-    
     return(DensityData)
 }
 
@@ -700,9 +694,6 @@ MeanDensity <- function(
     # Format the output:
     # Use keep.all = FALSE, as the difference between acoustic and swept area density is sorted out in the DensityData:
     formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(MeanDensityData)
     
     return(MeanDensityData)
 }

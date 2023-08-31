@@ -24,9 +24,9 @@ DefineAcousticPSU(
 
 \item{StoxAcousticData}{\code{\link[RstoxData]{StoxAcousticData}} (defined in RstoxData).}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs; "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU().}
 
-\item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.}
+\item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read. Must include file extension.}
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 }

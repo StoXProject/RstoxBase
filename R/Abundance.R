@@ -48,9 +48,6 @@ Quantity <- function(
     #formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE)
     formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE, allow.missing = TRUE)
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(QuantityData)
-    
     return(QuantityData)
 }
 
@@ -147,10 +144,6 @@ Individuals <- function(
     #    attr(MergeStoxBioticData, "stoxDataVariableNames")
     #)
     attr(IndividualsData, "stoxDataVariableNames") <- attr(MergeStoxBioticData, "stoxDataVariableNames")
-    
-    # Not needed here, since we only copy data: 
-    #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(IndividualsData)
     
     return(IndividualsData)
 }
@@ -399,10 +392,6 @@ SuperIndividuals <- function(
         "stoxDataVariableNames",
         attr(IndividualsData, "stoxDataVariableNames")
     )
-    
-    # Not needed here, since we only copy data: 
-    #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
     
     return(SuperIndividualsData)
 }
@@ -711,10 +700,6 @@ ImputeSuperIndividuals <- function(
         "stoxDataVariableNames",
         attr(SuperIndividualsData, "stoxDataVariableNames")
     )
-    
-    # Not needed here, since we only copy data: 
-    #Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(SuperIndividualsData)
     
     return(ImputeSuperIndividualsData)
 }

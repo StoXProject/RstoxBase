@@ -7,7 +7,7 @@
 DefineStratumPolygon(
   processData,
   UseProcessData = FALSE,
-  DefinitionMethod = c("ResourceFile", "Manual"),
+  DefinitionMethod = c("Manual", "ResourceFile"),
   FileName = character(),
   StratumNameLabel = character(),
   SimplifyStratumPolygon = FALSE,
@@ -19,9 +19,9 @@ DefineStratumPolygon(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
-\item{DefinitionMethod}{A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.}
+\item{DefinitionMethod}{A string naming the method to use, one of "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI; or "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon.}
 
-\item{FileName}{The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.}
+\item{FileName}{The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles); a \code{\link{StoX_multipolygon_WKT}} file; or a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineStrata(). Must include file extension.}
 
 \item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
 

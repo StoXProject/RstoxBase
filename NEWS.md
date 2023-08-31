@@ -1,7 +1,16 @@
-# RstoxData v1.11.3  (2023-06-27)
+# RstoxBase v1.11.4-9001  (2023-08-30)
+* Removed dependency on the retiring package sp.
+* Changed GearDependentCatchCompensation() to keep all variables from the input SpeciesCategoryCatchData.
+* Improved error message then Percentages is not given (now saying exactly that and not "SpecificationParameter must be given").
+* Removed exported functions getStratumPolygonList and readGeoJSON.
+* Improved documentation of DefinitionMethod in DefineBioticPSU(), DefineAcousticPSU() and DefineBioticAssignment().
+* Added a warning when reading BioticPSUs from a StoX 2.7 project.xml file where Method is Station and not UseProcessData in DefineSweptAreaPSU(), which makes the BioticPSUs of the project.xml file unused.
+
+
+# RstoxBase v1.11.3  (2023-06-27)
 * Version for StoX 3.6.2.
 * Changed defined unit of Biomass in QuantityData from g to kg, as Biomass originates from SweptAreaMethod "TotalCatch" which is in kg.
-* Added tables listing the variables of the data types NASC, SumNASC, MeanNASC, LengthDistribution, SumLengthDistribution, MeanLengthDistribution, Density, MeanDensity and Quantity. 
+* Added tables listing the variables of the data types NASCData, SumNASCData, MeanNASCData, LengthDistributionData, SumLengthDistributionData, MeanLengthDistributionData, DensityData, MeanDensityData and QuantityData.  
 * Relaxed testUnits.R to accept that Biomass has different units in QuantityData and SuperIndividualsData.
 * Increased speed of frequently used functions in RstoxFramework by using list instead of data.table for the definition og reportFunctions.
 * Skipped gc() in aggregateBaselineDataOneTable() to reduce CPU time.

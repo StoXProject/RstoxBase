@@ -240,11 +240,6 @@ LengthDistribution <- function(
     ## Order the rows:
     #orderDataByReference(LengthDistributionData, "LengthDistributionData")
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(LengthDistributionData)
-    ########################
-    
-    
     return(LengthDistributionData)
 }
 
@@ -417,6 +412,7 @@ strictlyInside <- function(x, table, margin = 1e-6) {
 #' This function multiplies the WeightedNumber of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").
 #' 
 #' @inheritParams ModelData
+#' @inheritParams formatOutput
 #' @param InputDataType The datatype of the input, one of LengthDistributionData, SpeciesCategoryCatchData.
 #' @param CompensationMethod The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.
 #' @param CompensationTable A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedNumber.
@@ -426,7 +422,8 @@ GearDependentCatchCompensation <- function(
     LengthDistributionData, 
     SpeciesCategoryCatchData, 
     CompensationMethod = c("Gear", "Cruise", "GearAndCruise"), 
-    CompensationTable = data.table::data.table()
+    CompensationTable = data.table::data.table(), 
+    keep.all = FALSE
 ) {
     
     # Get the input data type:
@@ -478,10 +475,7 @@ GearDependentCatchCompensation <- function(
     dataCopy[, eval(typeVariableName) := paste0("SweepWidthCompensated", get(typeVariableName))]
     
     # Format the output:
-    formatOutput(dataCopy, dataType = InputDataType, keep.all = FALSE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(dataCopy)
+    formatOutput(dataCopy, dataType = InputDataType, keep.all = keep.all)
     
     return(dataCopy)
 }
@@ -617,9 +611,6 @@ LengthDependentLengthDistributionCompensation <- function(
     
     # Format the output:
     formatOutput(LengthDistributionDataCopy, dataType = "LengthDistributionData", keep.all = FALSE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(LengthDistributionDataCopy)
     
     return(LengthDistributionDataCopy)
 }
@@ -812,9 +803,6 @@ SumLengthDistribution <- function(
     # Format the output:
     formatOutput(SumLengthDistributionData, dataType = "SumLengthDistributionData", keep.all = FALSE)
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(SumLengthDistributionData)
-    
     return(SumLengthDistributionData)
 }
 
@@ -905,9 +893,6 @@ MeanLengthDistribution <- function(
     
     # Format the output:
     formatOutput(MeanLengthDistributionData, dataType = "MeanLengthDistributionData", keep.all = FALSE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(MeanLengthDistributionData)
     
     return(MeanLengthDistributionData)
 }
