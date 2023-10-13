@@ -121,7 +121,7 @@ LengthDistribution <- function(
         # The length group is defined as the combination of IndividualTotalLength and LengthResolution. See 'dataTypeDefinition' in initiateRstoxBase(): 
         dataTypeDefinition$groupingVariables
     )
-    browser()
+    
     # Declare the variables used below:
     LengthDistributionData <- StoxBioticDataMerged[, WeightedNumber := as.double(.N), by = keys]
     if(!nrow(LengthDistributionData)) {
