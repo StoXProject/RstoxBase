@@ -9,6 +9,7 @@
 * Improved warning for when there are positive NASC values with no assignment length distribution, also removing the list of the  affected PSUs.
 * Improved simplifyStratumPolygon() used in DefineStratumPolygon() which got stuck in an endless loop in certain cases.
 * Exposing PlotAcousticTrawlSurvey().
+* Fixed bug in LengthDistribution() where missing raising factor was reported for samples with no individuals.
 
 
 # RstoxBase v1.11.3  (2023-06-27)

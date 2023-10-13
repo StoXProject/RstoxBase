@@ -121,7 +121,7 @@ LengthDistribution <- function(
         # The length group is defined as the combination of IndividualTotalLength and LengthResolution. See 'dataTypeDefinition' in initiateRstoxBase(): 
         dataTypeDefinition$groupingVariables
     )
-    
+    browser()
     # Declare the variables used below:
     LengthDistributionData <- StoxBioticDataMerged[, WeightedNumber := as.double(.N), by = keys]
     if(!nrow(LengthDistributionData)) {
@@ -183,12 +183,12 @@ LengthDistribution <- function(
     }
     
     # Stop when NA or Inf raising factor, but only if both Haul, SpeciesCategory and Sample are given:
-    hasRaisingFactorNA <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample)  &  is.na(raisingFactor)]
+    hasRaisingFactorNA <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample) & numberOfIndividuals > 0  &  is.na(raisingFactor)]
     
     if(any(hasRaisingFactorNA)) {
         stop(getBadRaisingFactorError("NA", hasRaisingFactorNA, LengthDistributionData))
     }
-    hasRaisingFactorInf <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample)  &  is.infinite(raisingFactor)]
+    hasRaisingFactorInf <- LengthDistributionData[, !is.na(Haul) & !is.na(SpeciesCategory) & !is.na(Sample) & numberOfIndividuals > 0  &  is.infinite(raisingFactor)]
     if(any(hasRaisingFactorInf)) {
         stop(getBadRaisingFactorError("Inf", hasRaisingFactorInf, LengthDistributionData))
     }
