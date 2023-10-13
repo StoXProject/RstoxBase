@@ -5,6 +5,10 @@
 * Removed exported functions getStratumPolygonList and readGeoJSON.
 * Improved documentation of DefinitionMethod in DefineBioticPSU(), DefineAcousticPSU() and DefineBioticAssignment().
 * Added a warning when reading BioticPSUs from a StoX 2.7 project.xml file where Method is Station and not UseProcessData in DefineSweptAreaPSU(), which makes the BioticPSUs of the project.xml file unused.
+* Improved warning when there are Individuals in the IndividualsData with IndividualTotalLength that does not match any of the length intervals of the QuantityData.
+* Improved warning for when there are positive NASC values with no assignment length distribution, also removing the list of the  affected PSUs.
+* Improved simplifyStratumPolygon() used in DefineStratumPolygon() which got stuck in an endless loop in certain cases.
+* Exposing PlotAcousticTrawlSurvey().
 
 
 # RstoxBase v1.11.3  (2023-06-27)
@@ -323,7 +327,7 @@
 * Fixed bug in SplitMeanNASC(), where now acoustic categories not to be split are added to the AcousticCategoryLink only if of positive length.
 * Fixed warning 'the condition has length > 1 and only the first element will be used'
 * Fixed bug with multiple species in catchCompensationTable, selectivityTable and gearCompensationTable parameter formats.
-* Added stop if not all EDSUs are inside a stratum in SplitMeanNASC()Fixed bug where stations with 0 fish were removed in LenghtDistribution()
+* Added stop if not all EDSUs are inside a stratum in SplitMeanNASC()Fixed bug where stations with 0 fish were removed in LengthDistribution()
 * Fixed several bugs related to DensityData and onwards being flexible datatypes which may or may not contain Beam and Frequency
 * Added parameters to ImputeSuperIndividuals().
 * Fixed column order for datatypes *IndividualsData

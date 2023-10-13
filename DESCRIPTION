@@ -1,6 +1,6 @@
 Package: RstoxBase
 Version: 1.11.4-9001
-Date: 2023-08-31
+Date: 2023-10-13
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", 
@@ -21,6 +21,9 @@ Authors@R: c(
     role = "aut"), 
   person(given = "Esmael Musema", 
     family = "Hassen", 
+    role = "aut"), 
+  person(given = "Anthony", 
+    family = "Hennessey", 
     role = "aut"), 
   person(given = "Espen", 
     family = "Johnsen", 

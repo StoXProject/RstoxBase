@@ -364,7 +364,7 @@ onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
 getStratumOfSSUs_SF <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
     # Error if StratumPolygon is missing:
     if(missing(StratumPolygon) || !length(StratumPolygon)) {
-        stop("StratumPolygon mustt be given.")
+        stop("StratumPolygon must be given.")
     }
     
     # Get unique PSUs:
@@ -1184,7 +1184,7 @@ DefineBioticAssignment <- function(
         attr(HaulData, "Station") <- HaulData$Station
         
         turn_off_s2(
-            locatedStratum <- locateInStratum(SpatialHauls, StratumPolygon, SSULabel = SSULabel), 
+            locatedStratum <- locateInStratum(HaulData, StratumPolygon, SSULabel = SSULabel), 
             msg = FALSE
         )
         
@@ -1237,6 +1237,7 @@ DefineBioticAssignment <- function(
             )
             
             # Tag the Hauls that are inside the radius:
+            Radius <- units::set_units(Radius, "nautical_mile")
             differenceTable[, inside := distance <= Radius]
         }
         else if(grepl("EllipsoidalDistance", DefinitionMethod, ignore.case = TRUE)) {

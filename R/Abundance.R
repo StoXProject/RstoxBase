@@ -63,8 +63,10 @@ Quantity <- function(
 #' @param QuantityType The type of abundance, one of "Acoustic" and "SweptArea".
 #' 
 #' @details 
+#' Individuals are retrieved from only Hauls that contribute to the Abundance. For QuantityType = "Acoustic" these are the Hauls that have positive WeightingFactor in the BioticAssignment input, and for QuantityType = "SweptArea" the Hauls that have positive WeightedNumber.
+#' 
 #' The \code{\link{IndividualsData}} contains variables from \code{\link{StoxBioticData}} in addition to the columns Stratum and Layer. The Stratum column is not necessarily the actual stratum containing the Haul in which an individual was sampled, but rather the stratum linked to the haul via \code{\link{DefineBioticAssignment}} for acoustic-trawl models and \code{\link{MeanLengthDistribution}} for swept-area models. In detail:
-#' * DefineAcousticPSU(): Defines acoustic PSUs, which are assigned to a stratum, and that conntainns EDSUs, possibly from other strata than the assigned stratum.
+#' * DefineAcousticPSU(): Defines acoustic PSUs, which are assigned to a stratum, and that containns EDSUs, possibly from other strata than the assigned stratum.
 #' * DefineBioticPSU(): Defines biotic PSUs, which are assigned to a stratum, and that conntainns Stations, possibly from other strata than the assigned stratum.
 #' * DefineBioticAssignment(): Assignes hauls to acoustic PSUs, possibly from other strata than the stratum assigned to the acoustic PSU. In this datatype it is possible that EDSUs of an acoustic PSU are located in different strata, or even that all the EDSUs of the acoustic PSU are located in another stratum than the assigned stratum; and that the hauls assigned to the acoustic PSU are located in yet another stratum.
 #' * In Individuals() the StoxBioticData are merged with BioticAssignment in the case of acoustic-trawl models and with MeanLengthDistributionData in the case of swept-area models, by the Haul identifier stored in the StoxBioticData, the BioticAssignment, and in the Resolution table of the MeanLengthDistributionData. As the hauls may be linked to a different statum than the one containing the haul, as per the description of DefineBioticAssignment() above, the Stratum column of the IndividualsData may not correspond to the actual stratum of the haul.
@@ -487,11 +489,12 @@ addLengthGroupOneSpecies <- function(
     if(any(hasInvalidLength)) {
         if("Individual" %in% names(data)) {
             invalidIndividuals <- do.call(paste, c(subset(data[atSpeciesInData, ], hasInvalidLength, select = c("Individual", "IndividualTotalLength")), list(sep = ", ")))
-            warning("StoX: There are Individuals in the IndividualsData with IndividualTotalLength that does not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Individuals, IndividualTotalLength:\n", RstoxData::printErrorIDs(invalidIndividuals))
+            #warning("StoX: There are Individuals in the IndividualsData with IndividualTotalLength that does not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This can happen if a length group is only present in Hauls that are all assigned to AcousticPSUs with missing NASC (no acoustic data). The result is only that there will be rows in SuperIndividualsData with missing IndividualTotalLength for the following Individuals, IndividualTotalLength:\n", RstoxData::printErrorIDs(invalidIndividuals))
+            warning("StoX: There are Individuals in the IndividualsData with IndividualTotalLength that does not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This can happen if a length group is only present in Hauls that are all assigned to AcousticPSUs with missing NASC (no acoustic data). The result is only that there will be rows in SuperIndividualsData with missing IndividualTotalLength")
         }
         else if("Haul" %in% names(data)) {
             invalidHauls <-data[atSpeciesInData[hasInvalidLength], Haul]
-            warning("StoX: There are Hauls in the LenghtDistributionData with IndividualTotalLength that does not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Hauls:\n", RstoxData::printErrorIDs(invalidHauls))
+            warning("StoX: There are Hauls in the LengthDistributionData with IndividualTotalLength that does not match any of the length intervals of the QuantityData, ((", paste(startLength, endLength, sep = ", ", collapse = "), ("), ")). This involves the following Hauls:\n", RstoxData::printErrorIDs(invalidHauls))
         }
   }
     

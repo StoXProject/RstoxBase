@@ -230,6 +230,7 @@ simplifyStratumPolygon <- function(
     preserveTopology = FALSE
 ) {
     
+    
     if(SimplificationFactor <= 0 || SimplificationFactor >= 1) {
         stop("SimplificationFactor must be between 0 and 1.")
     }
@@ -243,7 +244,8 @@ simplifyStratumPolygon <- function(
     originalSize <- utils::object.size(StratumPolygon)
     size <- originalSize
     desiredSize <- originalSize * SimplificationFactor
-    margin <- 0.001 * originalSize
+    margins <- seq(0.001, 1, length.out = 10) * originalSize
+    marginInd <- 1
     
     # Define objects to update in the loop:
     down <- TRUE
@@ -255,8 +257,15 @@ simplifyStratumPolygon <- function(
     lastDiffInTolerance <- dTolerance * scalingFactor
     root <- 1
     
+    diffs <- Inf
+    
+    
     # Run the loop and stop when the object size is close enough to the desired size:
-    while(abs(size - desiredSize) > margin) {
+    while(utils::tail(diffs, 1) > margins[marginInd]) {
+        
+        if(iteration > 100) {
+            stop("Simplification did not converge. Try a different SimplificationFactor.")
+        }
         
         iteration <- iteration + 1
         dTolerance_preivous <- dTolerance
@@ -264,6 +273,9 @@ simplifyStratumPolygon <- function(
         # Reduce or increase the tolerance value:
         if(!down) {
             root <- root / 2
+        }
+        else {
+            root <- root * 2
         }
         dTolerance <- dTolerance * scalingFactor^root
         
@@ -290,6 +302,10 @@ simplifyStratumPolygon <- function(
         if(!down) {
             dTolerance <- dTolerance_preivous
         }
+        
+        diffs <- append(diffs, abs(size - desiredSize))
+        marginInd <- sum(utils::tail(diffs, 1) == diffs, na.rm = TRUE)
+        
     }
     
     # Get the area of the strata, and replace empty strata by the original:
