@@ -1,4 +1,4 @@
-# Trikc to avoid warning for imported lwgeom and maps
+# Trick to avoid warning for imported lwgeom and maps
 # lwgeom: Used for calculation of area of sf object in simplifyStratumPolygon(). Added here since it is only suggested by sf, but RstoxBase needs it.
 # Taken from ?lwgeom ::st_is_polygon_cw:
 test_lwgeom <- function() {

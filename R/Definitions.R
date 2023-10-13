@@ -452,13 +452,16 @@ initiateRstoxBase <- function(){
     proj4string_laea <- "+proj=laea +no_defs +ellps=WGS84 +towgs84=0,0,0"
     
     # Define an empty SpatialPolygonsDataFrame, with no projection, as it is not possible to assign projection to an empty SpatialPolygonsDataFrame:
-    # Should we use new("SpatialPolygonsDataFrame") instead???????????????
-    emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
-        sp::SpatialPolygons(list()), 
-        data = data.frame()
-    )
-    # This failed due to the above note:
-    #suppressWarnings(sp::proj4string(emptyStratumPolygon) <- proj4string)
+    
+    # Removing sp altogether:
+    # # Should we use new("SpatialPolygonsDataFrame") instead???????????????
+    # emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
+    #     sp::SpatialPolygons(list()), 
+    #     data = data.frame()
+    # )
+    # # This failed due to the above note:
+    # #suppressWarnings(sp::proj4string(emptyStratumPolygon) <- proj4string)
+    emptyStratumPolygon <- sf::st_sf(sf::st_sfc())
     
     
     ##### Definitions of implemented model classes, such as target strength and regression: #####
@@ -729,6 +732,21 @@ initiateRstoxBase <- function(){
         ), 
         specificationParameter = c(
             "percentages", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            "", 
+            ""#, 
+            #"", 
+            #"", 
+            #""
+        ), 
+        specificationParameterDisplayName = c(
+            "Percentages", 
             "", 
             "", 
             "", 

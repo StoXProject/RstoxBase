@@ -9,7 +9,8 @@ GearDependentCatchCompensation(
   LengthDistributionData,
   SpeciesCategoryCatchData,
   CompensationMethod = c("Gear", "Cruise", "GearAndCruise"),
-  CompensationTable = data.table::data.table()
+  CompensationTable = data.table::data.table(),
+  keep.all = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ GearDependentCatchCompensation(
 \item{CompensationMethod}{The method to use for the length dependent catch compensation, i.e. specifying which columns to provide the sweep width for.}
 
 \item{CompensationTable}{A table of the sweep width per combination of the variables specified in \code{CompensationMethod}. Note that all combinations present in the data must be given in the table, as the output should be sweep width compensated for all rows with non-missing WeightedNumber.}
+
+\item{keep.all}{Logical: If TRUE keep all columns, and if FALSE delete undefined columns.}
 }
 \description{
 This function multiplies the WeightedNumber of a LengthDistributionData by the sweep width given by \code{CompensationTable}. The result is a sweep width compensated length distribution (LengthDistributionType starting with "SweepWidthCompensated").

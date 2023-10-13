@@ -17,7 +17,7 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
         stop("The StoX multipolygon WKT file ", FilePath, " does not exist or is a directory.")
     }
     tab <- data.table::fread(FilePath, sep = "\t", header = FALSE, colClasses = list(character=1:2), encoding = "UTF-8")
-    names(tab) <- c("Stratum", "Polygon")
+    names(tab) <- c("Stratum", "geometry")
     
     ### # Do a check for scandinavian letters given as hex code, and issue an error stating that the file needs to be converted to UTF-8:
     ### scandinavianLettersAsHex <- c("\xe6", "\xf8", "\xe5", "\xc6", "\xd8", "\xc5")
@@ -37,30 +37,53 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
 
 
 
-dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
-    
-    # Read the WKT strings to sf object:
-    polygons <- sf::st_as_sf(DataTable, wkt = 2)
-    # Set default projection:
-    sf::st_crs(polygons) <- getRstoxBaseDefinitions("proj4string_longlat")
-    
-    # Convert to spatialPolygonsDataFrame:
-    spatialPolygonsDataFrame <- sf::as_Spatial(polygons)
-    names(spatialPolygonsDataFrame) <- "StratumName"
-    
-    return(spatialPolygonsDataFrame)
-}
+#dataTable2SpatialPolygonsDataFrame <- function(DataTable) {
+#    
+#    # Read the WKT strings to sf object:
+#    polygons <- sf::st_as_sf(DataTable, wkt = 2)
+#    # Set default projection:
+#    sf::st_crs(polygons) <- getRstoxBaseDefinitions("proj4string_longlat")
+#    
+#    # Convert to spatialPolygonsDataFrame:
+#    spatialPolygonsDataFrame <- sf::as_Spatial(polygons)
+#    names(spatialPolygonsDataFrame) <- "StratumName"
+#    
+#    return(spatialPolygonsDataFrame)
+#}
+#dataTable2sf_MULTIPOLYGON <- function(x) {
+#    
+#    # Read the WKT strings to sf object:
+#    polygons <- sf::st_as_sf(x, wkt = 2)
+#    # Set default projection:
+#    sf::st_crs(polygons) <- getRstoxBaseDefinitions("proj4string_longlat")
+#    
+#    return(polygons)
+#}
 
 
 
-stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
-    
-    # Read the file as data.table:
-    dataTable <- readStoxMultipolygonWKTFromFile(FilePath)
-    # Convert to SpatialPolygonsDataFrame:
-    dataTable2SpatialPolygonsDataFrame(dataTable)
-}
 
+
+
+
+#stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
+#    
+#    # Read the file as data.table:
+#    dataTable <- readStoxMultipolygonWKTFromFile(FilePath)
+#    # Convert to SpatialPolygonsDataFrame:
+#    dataTable2SpatialPolygonsDataFrame(dataTable)
+#}
+
+#stoxMultipolygonWKT2sf <- function(FilePath) {
+#    
+#    # Read the file as data.table:
+#    dataTable <- readStoxMultipolygonWKTFromFile(FilePath)
+#    ## Convert to SpatialPolygonsDataFrame:
+#    #dataTable2SpatialPolygonsDataFrame(dataTable)
+#    # Convert to sf:
+#    dataTable2sf_MULTIPOLYGON(dataTable)
+#}
+#
 
 ##################################################
 ##################################################
@@ -70,8 +93,8 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #' 
 #' @inheritParams general_arguments
 #' @inheritParams getStratumNames
-#' @param DefinitionMethod A string naming the method to use, one of "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.
-#' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles) or a \code{\link{StoX_multipolygon_WKT}} file. Must include file extension.
+#' @param DefinitionMethod A string naming the method to use, one of "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI; or "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon.
+#' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles); a \code{\link{StoX_multipolygon_WKT}} file; or a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineStrata(). Must include file extension.
 #' @param SimplifyStratumPolygon Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://geocompr.robinlovelace.net/geometric-operations.html#simplification}{Geocomputation with R}). This option is useful for very complex stratum polygon files to reduce time for opening, running and saving a project.
 #' @param SimplificationFactor A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size. Note that larger values require more  time than smaller values. It is advisable to start with a low value (e.g. 0.01) and check the resolution of the strata borders in the map, and gradually increase \code{SimplificationFactor} until an acceptable resolution is obtained. Note that simplification of stratum polygons can lead to inaccuracies such as gaps between strata, which can lead to hauls falling outside of any stratum, causing under-estimation of survey indices, or failure to complete the model in the case of SplitNASC models which require all hauls to be located in a stratum. If such problems occur, the strata can be modified manually after simplification to include all hauls. Another problem is the change in stratum areas, which is reported to the console when running the simplification. A very rough rule of thumb is that \code{SimplificationFactor} = 0.1 seems to be a compromise between increased speed and reduction of stratum border resolution.
 #' 
@@ -95,77 +118,24 @@ stoxMultipolygonWKT2SpatialPolygonsDataFrame <- function(FilePath) {
 #'
 DefineStratumPolygon <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("ResourceFile", "Manual"), 
+    DefinitionMethod = c("Manual", "ResourceFile"), 
     FileName = character(), 
     StratumNameLabel = character(), 
     SimplifyStratumPolygon = FALSE, 
     SimplificationFactor = 1
 ) {
+    
     #if(!is.null(processData) & UseProcessData) {
     if(UseProcessData) {
         return(processData)
-    } 
+    }
     
     # Get the definition method:
     DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Read the file:
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
-        
-        if(length(unlist(strsplit(FileName, "\\."))) < 2) {
-            stop("FileName must include file extension.")
-        }
-        else {
-            fileParts <- unlist(strsplit(FileName, "\\."))
-            FileExt <- utils::tail(fileParts, 1)
-        }
-        
-        if(tolower(FileExt) %in% c("wkt", "txt")) {
-            StratumNameLabel <- "StratumName"
-            StratumPolygon <- stoxMultipolygonWKT2SpatialPolygonsDataFrame(FileName)
-        }
-        # If the FileName is a shapefile, or a directory with a shapefile:
-        else if(tolower(FileExt) == "shp" || (isTRUE(file.info(FileName)$isdir) && any(tools::file_ext(list.files(FileName)) == "shp"))) {
-            # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
-            #StratumPolygon <- rgdal::readOGR(FileName, verbose = FALSE)
-            
-            # FileName can the the path to one of the shapefile or to the directory holding the shapefiles:
-            StratumPolygon <- sf::as_Spatial(sf::read_sf(FileName))
-        }
-        else if(tolower(FileExt) %in% c("json", "geojson")) {
-            # On 2020-12-19 we got rid of rgdal, which is slower for reading shapefiles than sf:
-            #if(!"GeoJSON" %in% rgdal::ogrDrivers()$name) {
-            #    stop("rgdal::ogrDrivers does not contain GeoJSON format. Cannot read these types of files. Install the driver or change fi#le format.")
-            #}
-            #
-            #StratumPolygon <- rgdal::readOGR(FileName, "OGRGeoJSON")
-            
-            #StratumPolygon <- geojsonio::geojson_sp(
-            #    toJSON_Rstox(
-            #        geojsonio::geojson_read(
-            #            FileName
-            #        ), 
-            #        pretty = TRUE
-            #    )
-            #)
-            
-            # StratumPolygon <-  sf::as_Spatial(geojsonsf::geojson_sf(FileName))
-            
-            StratumPolygon <- readGeoJSON(FileName)
-        }
-        else if(tolower(FileExt) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
-            # Read the StratumPolygon from the project.xml file:
-            StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = TRUE)
-            
-            # Convert to SpatialPolygonsDataFrame:
-            StratumPolygon <- dataTable2SpatialPolygonsDataFrame(StratumPolygon)
-        }
-        else {
-            stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
-        }
-        
-        # Assume the default projection:
-        suppressWarnings(sp::proj4string(StratumPolygon) <- RstoxBase::getRstoxBaseDefinitions("proj4string_longlat"))
+        StratumPolygon <- readStratumPolygonFromFile(FileName)
     }
     else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
@@ -173,6 +143,7 @@ DefineStratumPolygon <- function(
     else {
         stop("Inavlid DefinitionMethod")
     }
+    
     
     # Add an attribute named StratumName:
     if(NROW(StratumPolygon)) {
@@ -184,7 +155,7 @@ DefineStratumPolygon <- function(
     
     if(isTRUE(SimplifyStratumPolygon)) {
         # Use the sf::st_simplify, but turn off s2, as it does not perform well on longitude-latitude data due to the us off infinite lines instead of lines along the great circle (https://r-spatial.github.io/sf/articles/sf7.html, and https://stackoverflow.com/questions/68478179/how-to-resolve-spherical-geometry-failures-when-joining-spatial-data):
-        apply_and_set_use_s2_to_FALSE(
+        turn_off_s2(
             StratumPolygon <- simplifyStratumPolygon(
                 StratumPolygon = StratumPolygon, 
                 SimplificationFactor = SimplificationFactor, 
@@ -198,25 +169,83 @@ DefineStratumPolygon <- function(
 }
 
 
+
+
+readStratumPolygonFromFile <- function(FileName) {
+    
+    if(length(unlist(strsplit(FileName, "\\."))) < 2) {
+        stop("FileName must include file extension.")
+    }
+    else {
+        fileParts <- unlist(strsplit(FileName, "\\."))
+        FileExt <- utils::tail(fileParts, 1)
+    }
+    
+    if(tolower(FileExt) %in% c("wkt", "txt")) {
+        # Read the table of wkt strings:
+        dataTable <- readStoxMultipolygonWKTFromFile(FileName)
+        # Convert to sf (POLYGON or MULTIPOLYGON):
+        StratumPolygon <- sf::st_as_sf(dataTable, wkt = 2)
+    }
+    # If the FileName is a shapefile, or a directory with a shapefile:
+    else if(tolower(FileExt) == "shp" || (isTRUE(file.info(FileName)$isdir) && any(tools::file_ext(list.files(FileName)) == "shp"))) {
+        # Read the shape files:
+        StratumPolygon <- sf::st_read(FileName, quiet = TRUE)
+    }
+    else if(tolower(FileExt) %in% c("json", "geojson")) {
+        # Read the geojson:
+        StratumPolygon <-  geojsonsf::geojson_sf(FileName)
+    }
+    else if(tolower(FileExt) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+        # Read the table of wkt strings:
+        StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = TRUE)
+        # Convert to sf (POLYGON or MULTIPOLYGON):
+        StratumPolygon <- sf::st_as_sf(dataTable, wkt = 2)
+    }
+    else {
+        stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
+    }
+    
+    # Set the assumed pojection:
+    suppressWarnings(sf::st_crs(StratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat"))
+    # Make sure that the StratumPolygon is a MULTIPOLYGON object:
+    StratumPolygon <- sf::st_cast(StratumPolygon, "MULTIPOLYGON")
+    
+    return(StratumPolygon)
+}
+
+#setDefaultProjectionAndMULTIPOLYGON <- function(StratumPolygon) {
+#    # Set the assumed pojection:
+#    suppressWarnings(sf::st_crs(StratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat"))
+#    # Make sure that the StratumPolygon is a MULTIPOLYGON object:
+#    StratumPolygon <- sf::st_cast(StratumPolygon, "MULTIPOLYGON")
+#    
+#    return(StratumPolygon)
+#}
+
+
 simplifyStratumPolygon <- function(
     StratumPolygon = StratumPolygon, 
     SimplificationFactor = SimplificationFactor, 
     preserveTopology = FALSE
 ) {
     
+    
     if(SimplificationFactor <= 0 || SimplificationFactor >= 1) {
         stop("SimplificationFactor must be between 0 and 1.")
     }
     
-    # Transform to sf:
-    sfStratumPolygon <- sf::st_as_sf(StratumPolygon)
+    # Not needed as we no longer use sp:
+    ## Transform to sf:
+    #sfStratumPolygon <- sf::st_as_sf(StratumPolygon)
     
     
     # Iterate to find the object size SimplificationFactor as a fraction of the original utils::object.size:
-    originalSize <- utils::object.size(sfStratumPolygon)
+    originalSize <- utils::object.size(StratumPolygon)
     size <- originalSize
     desiredSize <- originalSize * SimplificationFactor
-    margin <- 0.001 * originalSize
+    margins <- seq(0.001, 1, length.out = 10) * originalSize
+    marginInd <- 1
     
     # Define objects to update in the loop:
     down <- TRUE
@@ -224,12 +253,19 @@ simplifyStratumPolygon <- function(
     #dTolerance_preivous <- dTolerance
     scalingFactor <- 0.1
     iteration <- 0
-    sfStratumPolygon_temp <- NULL
+    StratumPolygon_out <- NULL
     lastDiffInTolerance <- dTolerance * scalingFactor
     root <- 1
     
+    diffs <- Inf
+    
+    
     # Run the loop and stop when the object size is close enough to the desired size:
-    while(abs(size - desiredSize) > margin) {
+    while(utils::tail(diffs, 1) > margins[marginInd]) {
+        
+        if(iteration > 100) {
+            stop("Simplification did not converge. Try a different SimplificationFactor.")
+        }
         
         iteration <- iteration + 1
         dTolerance_preivous <- dTolerance
@@ -238,17 +274,20 @@ simplifyStratumPolygon <- function(
         if(!down) {
             root <- root / 2
         }
+        else {
+            root <- root * 2
+        }
         dTolerance <- dTolerance * scalingFactor^root
         
         # Simplify.
-        suppressWarnings(sfStratumPolygon_temp <- sf::st_simplify(
-            sfStratumPolygon, 
+        suppressWarnings(StratumPolygon_out <- sf::st_simplify(
+            StratumPolygon, 
             dTolerance = dTolerance, 
             preserveTopology = preserveTopology
         ))
         
         # Update size and check if we should go down or up in tolerance:
-        size <- utils::object.size(sfStratumPolygon_temp)
+        size <- utils::object.size(StratumPolygon_out)
         down <- size < desiredSize
         sizeInPercentOfOriginal <- signif(100  *  as.numeric(size) / as.numeric(originalSize), digits = 2)
         
@@ -263,49 +302,40 @@ simplifyStratumPolygon <- function(
         if(!down) {
             dTolerance <- dTolerance_preivous
         }
+        
+        diffs <- append(diffs, abs(size - desiredSize))
+        marginInd <- sum(utils::tail(diffs, 1) == diffs, na.rm = TRUE)
+        
     }
     
     # Get the area of the strata, and replace empty strata by the original:
-    area0 <- sf::st_area(sfStratumPolygon)
-    area <- sf::st_area(sfStratumPolygon_temp)
+    area0 <- sf::st_area(StratumPolygon)
+    area <- sf::st_area(StratumPolygon_out)
     StratumAreaTable <- data.table::data.table(
-        Stratum = sfStratumPolygon_temp$StratumName, 
+        Stratum = StratumPolygon_out$StratumName, 
         OriginalArea = area0, 
         SimplifiedArea = area
     )
     
-    # Issue a warning iff any strata are smaller than 1 square meter:
+    # Issue a warning if any strata are smaller than 1 square meter:
     empty <- area < units::set_units(1,  "m^2")
     if(any(empty)) {
         warning("StoX: The following strata was empty after simplification (less than 1 square meter), and were replaced by the original strata: \n", paste0(utils::capture.output(StratumAreaTable[empty]), collapse = "\n"))
     }
     
     # Replace empty strata by the original:
-    sfStratumPolygon_temp$geometry[empty] <- sfStratumPolygon$geometry[empty]
+    StratumPolygon_out$geometry[empty] <- StratumPolygon$geometry[empty]
     
-    StratumPolygon <- methods::as(sfStratumPolygon_temp, "Spatial")
+    # The StratumPolygon is an sf object as of StoX 4.0.0, so we skip this line:
+    #StratumPolygon <- methods::as(sfStratumPolygon_out, "Spatial")
 
     
     message("Used ", iteration, " iterations to obtain desired object size  (SimplificationFactor = ", SimplificationFactor, " of the original size).")
     
     
-    return(StratumPolygon)
+    return(StratumPolygon_out)
 }
 
-
-
-
-##################################################
-##################################################
-#' Read geojson file
-#' 
-#' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file.
-#' 
-#' @export
-#'
-readGeoJSON <- function(FileName) {
-    sf::as_Spatial(geojsonsf::geojson_sf(FileName))
-}
 
 
 
@@ -322,7 +352,7 @@ readGeoJSON <- function(FileName) {
 #' 
 getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
     
-    if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
+    #if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
         
         # No names for empty polygons:
         if(!length(stratum)) {
@@ -353,10 +383,10 @@ getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
         }
         
         #sapply(methods::slot(stratum, "polygons"), function(x) methods::slot(x, "ID"))
-    }
-    else {
-        stop("Stratum polygon must be of class SpatialPolygonsDataFrame")
-    }
+    #}
+    #else {
+    #    stop("Stratum polygon must be of class SpatialPolygonsDataFrame")
+    #}
     
     return(stratumNames)
 }
@@ -379,44 +409,47 @@ addStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
         names(stratum) <- "StratumName"
     }
     
-    # Create a new SpatialPolygonsDataFrame with only one column being the "StratumName" column holding the stratum names:
+    # Delete the columns (except the geometry column which sticks)  and then add the "StratumName" column holding the stratum names:
     stratum <- stratum[, NULL]
     stratum$StratumName <- stratumNames
+    # Place geometry last, as this seems to be the default in sf, e.g. in st_cast:
+    newOrder <- c(setdiff(names(stratum), "geometry"), "geometry")
+    stratum <- stratum[, newOrder]
     
     
     return(stratum)
 }
 
 
-##################################################
-##################################################
-#' Convert StratumPolygon to list of polygon tables
-#' 
-#' This function extracts the polygons as a named list of tables of class \code{\link[data.table]{data.table}}
-#' 
-#' @inheritParams StratumArea
-#' 
-#' @return
-#' A table of stratum name and area.
-#' 
-#' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
-#' 
-#' @export
-#' 
-getStratumPolygonList <- function(StratumPolygon) {
-    # Accept StratumPolygon contained in a list:
-    if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
-        StratumPolygon <- StratumPolygon$StratumPolygon
-    }
-    # Get the names of the polygons:
-    StratumNames <- names(StratumPolygon)
-    # Get a list of the coordinates:
-    stratumPolygonList <- lapply(StratumPolygon@polygons, function(x) data.table::as.data.table(x@Polygons[[1]]@coords))
-    # Set the names of the list:
-    names(stratumPolygonList) <- StratumNames
-    
-    stratumPolygonList
-}
+# ##################################################
+# ##################################################
+# #' Convert StratumPolygon to list of polygon tables
+# #' 
+# #' This function extracts the polygons as a named list of tables of class \code{\link[data.table]{data.table}}
+# #' 
+# #' @inheritParams StratumArea
+# #' 
+# #' @return
+# #' A table of stratum name and area.
+# #' 
+# #' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
+# #' 
+# #' @export
+# #' 
+# getStratumPolygonList <- function(StratumPolygon) {
+#     # Accept StratumPolygon contained in a list:
+#     if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+#         StratumPolygon <- StratumPolygon$StratumPolygon
+#     }
+#     # Get the names of the polygons:
+#     StratumNames <- names(StratumPolygon)
+#     # Get a list of the coordinates:
+#     stratumPolygonList <- lapply(StratumPolygon@polygons, function(x) data.table::as.data.table(x@Polygons[[1]]@coords))
+#     # Set the names of the list:
+#     names(stratumPolygonList) <- StratumNames
+#     
+#     stratumPolygonList
+# }
 
 
 ##################################################
@@ -457,20 +490,17 @@ StratumArea <- function(
     # Get the polygon areas:
     if(AreaMethod == "Accurate") {
         # StoX 2.7 calculated the area for each stratum separately, thus using an origin from each stratum. This requires subsetting the StratumPolygon and calculating the areas in a loop:
-        apply_and_set_use_s2_to_FALSE(
-            areaDT <- data.table::rbindlist(lapply(seq_along(StratumPolygon), function(ind) polygonAreaSP_accurate(StratumPolygon[ind, ], useLonLatCentroid = TRUE))), 
+        turn_off_s2(
+            areaDT <- data.table::rbindlist(lapply(seq_len(nrow(StratumPolygon)), function(ind) polygonArea_accurate(StratumPolygon[ind, ], useLonLatCentroid = TRUE))), 
             msg = FALSE
         )
     }
     else if(AreaMethod == "Simple") {
-        areaDT <- polygonAreaSP_simple(StratumPolygon)
+        areaDT <- polygonArea_simple(StratumPolygon)
     }
     else {
         stop("Invalid AreaMethod")
     }
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(areaDT)
     
     return(areaDT)
 }
@@ -492,8 +522,8 @@ StratumArea_supportingIterativeCentroidCalculation <- function(
     # Get the polygon areas:
     if(AreaMethod %in% c("Accurate", "AccurateProjection")) {
         # StoX 2.7 calculated the area for each stratum separately, thus using an origin from each stratum. This requires subsetting the StratumPolygon and calculating the areas in a loop:
-        apply_and_set_use_s2_to_FALSE(
-            areaDT <- data.table::rbindlist(lapply(seq_along(StratumPolygon), function(ind) polygonAreaSP_accurate(StratumPolygon[ind, ], useLonLatCentroid = AreaMethod == "Accurate"))), 
+        turn_off_s2(
+            areaDT <- data.table::rbindlist(lapply(seq_along(StratumPolygon), function(ind) polygonArea_accurate(StratumPolygon[ind, ], useLonLatCentroid = AreaMethod == "Accurate"))), 
             msg = FALSE
         )
     }
@@ -504,31 +534,30 @@ StratumArea_supportingIterativeCentroidCalculation <- function(
         stop("Invalid AreaMethod")
     }
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(areaDT)
-    
     return(areaDT)
 }
 
-apply_and_set_use_s2_to_FALSE <- function(expr, msg = TRUE) {
+
+turn_off_s2 <- function(expr, msg = TRUE) {
     if(!msg) {
         suppressMessages(
-            apply_and_set_use_s2_to_FALSE_keep_msg(expr)
+            turn_off_s2_keep_msg(expr)
         )
     }
     else {
-        apply_and_set_use_s2_to_FALSE_keep_msg(expr)
+        turn_off_s2_keep_msg(expr)
     }
 }
 
-apply_and_set_use_s2_to_FALSE_keep_msg <- function(expr) {
-    use_s2 <- sf::sf_use_s2()
-    if(isTRUE(use_s2)) {
-        sf::sf_use_s2(FALSE)
+turn_off_s2_keep_msg <- function(expr) {
+    current_use_s2 <- getOption("sf_use_s2", default = TRUE)
+    if(isTRUE(current_use_s2)) {
+        options(sf_use_s2 = FALSE)
+        expr
+        options(sf_use_s2 = TRUE)
     }
-    expr
-    if(isTRUE(use_s2)) {
-        sf::sf_use_s2(TRUE)
+    else {
+        expr
     }
 }
 
@@ -595,55 +624,100 @@ polygonAreaPolygonDT <- function(df) {
 }
 
 
-# polygonAreaSP_simple calculates simple GCD polygon area taking SpatialPolygons or SpatialPolygonsDataFrame:
-polygonAreaSP_simple <- function(stratumPolygon) {
+# # polygonAreaSP_simple calculates simple GCD polygon area taking SpatialPolygons or SpatialPolygonsDataFrame:
+# polygonAreaSP_simple <- function(stratumPolygon) {
+#     
+#     # Function to create a polygon area data table of polygon area, whether the polygon is a hole, and the ID:
+#     polygon2AreaDT <- function(polygon, ID) {
+#         if(all(c("x", "y") %in% colnames(polygon@coords))) {
+#             data.table::data.table(
+#                 Area = polygonAreaPolygonXY(polygon@coords[, "x"], polygon@coords[, "y"]),
+#                 IsHole = polygon@hole,
+#                 ID = ID
+#             )
+#         }
+#         else{
+#             data.table::data.table(
+#                 Area = polygonAreaPolygonXY(polygon@coords[, 1], polygon@coords[, 2]),
+#                 IsHole = polygon@hole,
+#                 ID = ID
+#             )
+#         }
+#     }
+#     
+#     # Function to rbind the polygon area data tables:
+#     stratumAreaDT <- function(stratum) {
+#         data.table::rbindlist(lapply(stratum@Polygons, polygon2AreaDT, ID = stratum@ID))
+#     }
+#     # Function to calculate the area of the multipolygon, and output a data table of stratun name and area:
+#     stratumArea <- function(DT) {
+#         areas <- as.list(by(DT$Area, DT$IsHole, sum))
+#         data.table(
+#             Stratum = unique(DT$ID),
+#             Area = if (length(areas) == 2) areas$"FALSE" - areas$"TRUE" else unlist(areas)
+#         )
+#     }
+#     
+#     # Get the tables of areas of individual polygons in each multipolygon:
+#     d <- lapply(stratumPolygon@polygons, stratumAreaDT)
+#     # Extract the multipolygon area and rbind to a data table:
+#     stratumAreas <- data.table::rbindlist(lapply(d, stratumArea))
+#     stratumAreas
+# }
+
+
+
+polygonAreaSimpleOnePolygon <- function(DT) {
+    x1 <- utils::head(DT[[1]], -1)
+    x2 <- utils::tail(DT[[1]], -1)
+    y1 <- utils::head(DT[[2]], -1)
+    y2 <- utils::tail(DT[[2]], -1)
     
-    # Function to create a polygon area data table of polygon area, whether the polygon is a hole, and the ID:
-    polygon2AreaDT <- function(polygon, ID) {
-        if(all(c("x", "y") %in% colnames(polygon@coords))) {
-            data.table::data.table(
-                Area = polygonAreaPolygonXY(polygon@coords[, "x"], polygon@coords[, "y"]),
-                IsHole = polygon@hole,
-                ID = ID
-            )
-        }
-        else{
-            data.table::data.table(
-                Area = polygonAreaPolygonXY(polygon@coords[, 1], polygon@coords[, 2]),
-                IsHole = polygon@hole,
-                ID = ID
-            )
-        }
-    }
+    area <- sum(deg2rad(x1 - x2) * (2 + sin(deg2rad(y1)) + sin(deg2rad(y2))))
     
-    # Function to rbind the polygon area data tables:
-    stratumAreaDT <- function(stratum) {
-        data.table::rbindlist(lapply(stratum@Polygons, polygon2AreaDT, ID = stratum@ID))
-    }
-    # Function to calculate the area of the multipolygon, and output a data table of stratun name and area:
-    stratumArea <- function(DT) {
-        areas <- as.list(by(DT$Area, DT$IsHole, sum))
-        data.table(
-            Stratum = unique(DT$ID),
-            Area = if (length(areas) == 2) areas$"FALSE" - areas$"TRUE" else unlist(areas)
-        )
-    }
+    r <- 6371000.0 * 0.000539956803
+    area <- abs(area * r ^ 2 / 2.0)
     
-    # Get the tables of areas of individual polygons in each multipolygon:
-    d <- lapply(stratumPolygon@polygons, stratumAreaDT)
-    # Extract the multipolygon area and rbind to a data table:
-    stratumAreas <- data.table::rbindlist(lapply(d, stratumArea))
-    stratumAreas
+    return(area)
 }
 
-polygonAreaSP_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
+# polygonArea_simple calculates simple GCD polygon area taking SpatialPolygons or SpatialPolygonsDataFrame:
+polygonArea_simple <- function(stratumPolygon) {
     
+    # Get the coordinates. The columns L1, L2 and L3 are IDs of holes, polygons and strata, respecively:
+    coordinates <- data.table::as.data.table(sf::st_coordinates(stratumPolygon))
+    
+    # Calculate the area of each individual polygon:
+    areas  <- coordinates[, .(area = polygonAreaSimpleOnePolygon(.SD)), by = c("L1", "L2", "L3")]
+    
+    # Sum the areas for each stratum:
+    areasPerStratum <- areas[, .(sumArea = sum(area)), by  = "L3"]
+    
+    # Calculate the areas of the holes:
+    areasOfHoles <- areas[L1 > 1, .(area_hole = sum(area)), by  = "L3"]
+    
+    # Merge in the areas of the holes and subtract these (twice, since the holes are included in the sumArea):
+    stratumAreas <- merge(areasPerStratum, areasOfHoles, all = TRUE)
+    data.table::setnafill(stratumAreas, fill = 0)
+    stratumAreas <- stratumAreas[, sumArea - 2 * area_hole]
+    
+    output <- data.table::data.table(
+        Stratum = stratumPolygon$StratumName, 
+        Area = stratumAreas
+    )
+    
+    return(output)
+}
+
+polygonArea_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
+    
+    # No need for this anymore, as we have stoped using sp:
     # Get the sf object, as we strive to use sf instead of sp:
-    stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
+    #stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
     #sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
     
     # Set default projection:
-    sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string_longlat")
+    sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
     
     # Removed this on 2021.02.01, as we rather should ensure that the projection is added in the stratumPolygon:
     #stratumPolygon1 <- sf::st_transform(ss, sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
@@ -686,17 +760,18 @@ polygonAreaSP_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
         centroid[1], 
         " +x_0=0 +y_0=0 +ellps=WGS84 +units=kmi +no_defs"
     )
-    stratumPolygonSF <- sf::st_transform(stratumPolygonSF, laea.CRS)
+    stratumPolygon <- sf::st_transform(stratumPolygon, laea.CRS)
     
     ## Convert from sf to spatial and calculate area:
     #stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
     #area <- rgeos::gArea(stratumPolygon, byid = TRUE)
     
     # Use sf to calculate the area, temporarily switching off s2:
-    area <- sf::st_area(stratumPolygonSF)
+    area <- sf::st_area(stratumPolygon)
     
+    # No longer needed, as we only use sf:
     # Convert back from sf to sp:
-    stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
+    #stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
     
     # Output the stratum names and areas:
     output <- data.table::data.table(
@@ -712,27 +787,19 @@ polygonAreaSP_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
 # Get the true centroid of a polygon, as calculated in x,y after projecting with aeqd (as default) to using the centroid in longitude,latitude as origin, transfoming the x,y centroid to longitude,latitude, and repeating the procecss until the centroid in longitude,latitude no longer change.
 getCentroid <- function(stratumPolygon, par = list(), tol = 1e-9, msg = FALSE, iterativeCentroidCalculation = FALSE) {
     
-    # Get the sf object, as we strive to use sf instead of sp:
-    if("SpatialPolygonsDataFrame" %in% class(stratumPolygon)) {
-        stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
-    }
-    else {
-        stratumPolygonSF <- stratumPolygon
-    }
-    
     # Calculate the centroid iteratively in Cartesian coordinates using the continuously updated geographical centroid as projection origin:
     if(iterativeCentroidCalculation) {
         # Set default projection:
-        sf::st_crs(stratumPolygonSF) <- getRstoxBaseDefinitions("proj4string_longlat")
+        sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
         
         # Get the centroid for longitude/latitude, which is not correct, but may not be too far away:
-        suppressWarnings(centroidLongLat <- sf::st_coordinates(sf::st_centroid(sf::st_combine(stratumPolygonSF))))
+        suppressWarnings(centroidLongLat <- sf::st_coordinates(sf::st_centroid(sf::st_combine(stratumPolygon))))
         
         # Iterate to find the true centroid:
         diff <- 1
         iter <- 0
         while(diff > tol) {
-            centroidLongLatNew <- getCentroidOne(stratumPolygonSF, centroidLongLat, par = par)
+            centroidLongLatNew <- getCentroidOne(stratumPolygon, centroidLongLat, par = par)
             
             diff <- max((centroidLongLatNew - centroidLongLat) / centroidLongLat)
             centroidLongLat <- centroidLongLatNew
@@ -744,7 +811,7 @@ getCentroid <- function(stratumPolygon, par = list(), tol = 1e-9, msg = FALSE, i
     }
     # Centroid in geographica coordinates, suppressing warning of inaccurate calculation:
     else {
-        suppressWarnings(centroidLongLat <- sf::st_coordinates(sf::st_centroid(sf::st_combine(stratumPolygonSF))))
+        suppressWarnings(centroidLongLat <- sf::st_coordinates(sf::st_centroid(sf::st_combine(stratumPolygon))))
     }
     
     
@@ -780,17 +847,24 @@ getCentroidOne <- function(polygon, centroidLongLat, par = list()) {
 
 
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU is loacted geographically:
-locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonlat", "leae"), iterativeCentroidCalculation = FALSE) {
+locateInStratum <- function(points, stratumPolygon, SSULabel, locationProjection = c("lonlat", "leae"), iterativeCentroidCalculation = FALSE, coords = c("Longitude", "Latitude")) {
     
     # We use sp::over(), as it is reported to be faster than sp::point.in.polygon() for complicated polygons, and also handles multipolygons better (https://stackoverflow.com/questions/32644301/r-point-in-polygon-speed-slow). Also, there does not seem to be stong enough reasons for using sf::st_intersects() (https://gis.stackexchange.com/questions/282750/identify-polygon-containing-point-with-r-sf-package).
     
-    # Make sure both points and polygons have the default lonlat "projection":
-    pointLabel <- attr(points, "pointLabel")
-    pointNames <- attr(points, pointLabel)
-    points <- sf::st_as_sf(points)
-    stratumPolygon <- sf::st_as_sf(stratumPolygon)
+    # Get the label and names of the points for use in the warnings:
+    pointNames <- points[[SSULabel]]
     
-    sf::st_crs(points) <- getRstoxBaseDefinitions("proj4string_longlat")
+    # Create an sf POINTS objects:
+    points <- sf::st_as_sf(
+        subset(points, select = coords), 
+        coords = coords, 
+        crs = getRstoxBaseDefinitions("proj4string_longlat")
+    )
+    
+    # No longer needed, as all stratumPolygon are sf:
+    #stratumPolygon <- sf::st_as_sf(stratumPolygon)
+    
+    # Make sure the stratumPolygon has the same projection. We do this since stratumPolygon is an input and could potentially have a different projection, althoug the should not be the case:
     sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
     
     # Support using Lambert azimuthal equal area for potential future use, and for comparison:
@@ -809,20 +883,21 @@ locateInStratum <- function(points, stratumPolygon, locationProjection = c("lonl
     
     # Locate in the strata:
     #stratumNames <- getStratumNames(sp::over(points, stratumPolygon), check.unique = FALSE)
+    
     hits <- sf::st_intersects(points, stratumPolygon)
+    
+    
     # Detect points located in more than one stratum:
     numberOfStrata <- lengths(lapply(split(hits, seq_along(hits)), unlist))
     atMultipleStrata <- numberOfStrata > 1
     at0Strata <- numberOfStrata == 0
     if(any(atMultipleStrata)) {
         bad <- pointNames[atMultipleStrata]
-        # 2022-08-11: Removed this warning from the GUI:
-        #warning("StoX: The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:\n", RstoxData::printErrorIDs(bad))
-        warning("The following ", pointLabel, " was detected in more than one stratum. The first stratum was selected:", RstoxData::printErrorIDs(bad))
+        warning("The following ", SSULabel, " was detected in more than one stratum. The first stratum was selected:", RstoxData::printErrorIDs(bad))
     }
     if(any(at0Strata)) {
         bad <- pointNames[at0Strata]
-        warning("StoX: The following ", pointLabel, if(length(bad) > 1) "s", " were not detected in any stratum:", RstoxData::printErrorIDs(bad))
+        warning("StoX: The following ", SSULabel, if(length(bad) > 1) "s", " were not detected in any stratum:", RstoxData::printErrorIDs(bad))
     }
     
     ind <- lapply(hits, utils::head, 1)
@@ -902,33 +977,6 @@ proj4string2proj4list <- function(proj4string) {
     parSplit <- lapply(parSplit, "[", 2)
     names(parSplit) <- parSplitNames
     return(parSplit)
-}
-
-
-modifyProjection <- function(spObject, proj4) {
-    # Get the current projection:
-    proj4string <- sf::st_crs(spObject)$proj4string
-    
-    # Change the projection:
-    suppressWarnings(proj4string <- modifyProj4String(proj4string, par = proj4))
-    
-    # Set the new projection:
-    suppressWarnings(sp::proj4string(spObject) <- proj4string)
-    
-    return(spObject)
-}
-
-addCentroidToProjection <- function(spObject, centroid = NULL) {
-    # Get the centroid:
-    if(!length(centroid)) {
-        #centroid <- rgeos::gCentroid(spObject)@coords
-        centroid <- getTrueCentroid(spObject, tol = 1e-9, msg = FALSE)
-    }
-    
-    # Set the centroid:
-    spObject <- modifyProjection(spObject, proj4 = list(lon_0 = centroid[1], lat_0 = centroid[2]))
-    
-    return(spObject)
 }
 
 

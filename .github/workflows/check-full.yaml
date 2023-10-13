@@ -170,7 +170,7 @@ jobs:
         
         
       
-      - name: Install additional used in the actions CRANdependencies
+      - name: Install additional CRAN dependencies used in the actions
         run: |
           remotes::install_cran("rcmdcheck")
           remotes::install_cran("git2r")
