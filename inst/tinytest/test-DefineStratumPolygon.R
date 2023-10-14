@@ -1,7 +1,8 @@
 stratumFile_wkt <- system.file("testresources", "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase")
 stratumPolygon_wkt <- RstoxBase::DefineStratumPolygon(
     DefinitionMethod = "ResourceFile", 
-    FileName = stratumFile_wkt
+    FileName = stratumFile_wkt, 
+    StratumNameLabel = "Stratum"
 )
 
 stratumFile_GeoJSON <- system.file("testresources", "strata_sandeel_2020_firstCoverage.geojson", package = "RstoxBase")
@@ -31,5 +32,5 @@ expect_equal(
 )
 expect_equal(
     class(stratumPolygon_wkt)[1], 
-    "SpatialPolygonsDataFrame"
+    "sf"
 )

@@ -252,7 +252,8 @@ aggregateBaselineDataOneTable <- function(
     # Whether we are using a function with a specification parameter:
     specified <- hasSpecificationParameter(aggregationFunction)
     if(specified && !length(SpecificationParameter)) {
-        stop("SpecificationParameter must be given.")
+        specificationParameterDisplayName <- getSpecificationParameterDisplayName(aggregationFunction)
+        stop("The parameter '", specificationParameterDisplayName, "' must be given.")
     }
     specificationParameter <- getSpecificationParameter(aggregationFunction)
     
@@ -273,7 +274,7 @@ aggregateBaselineDataOneTable <- function(
         if(weighted) {
             args[[weightingParameter]] = x[[WeightingVariable]]
         }
-        # Add weighting to the list of inputs to the function:
+        # Add specification to the list of inputs to the function:
         if(specified) {
             args[[specificationParameter]] = as.numeric(SpecificationParameter)
         }
@@ -394,10 +395,6 @@ aggregateBaselineDataOneTable <- function(
         }
     }
     
-    
-    # Set the number of digits. Added on 2021-03-04:
-    #RstoxData::setRstoxPrecisionLevel(outputData)
-    
     return(outputData)
 }
 
@@ -453,6 +450,11 @@ hasWeightingParameter <- function(x) {
 hasSpecificationParameter <- function(x) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
     reportFunctions$specified[reportFunctions$functionName == x]
+}
+
+getSpecificationParameterDisplayName <- function(x) {
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$specificationParameterDisplayName[reportFunctions$functionName == x]
 }
 
 

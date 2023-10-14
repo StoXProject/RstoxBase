@@ -135,9 +135,6 @@ AcousticDensity <- function(
     #formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
     formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE, allow.missing = TRUE)
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(DensityData)
-    
     return(DensityData)
 }
 
@@ -150,6 +147,7 @@ DistributeNASC <- function(
     sumBy, 
     emptyHaulWarning = c("WarnIfNotAllSpeciesPresent", "WarnIfNotAnySpeciesPresent", "NoWarning")
 ) {
+    
     
     # Warning if the SpeciesLink does not contain all SpeciesCategory of the AssignmentLengthDistributionData:
     allSpeciesCategory <- unique(AssignmentLengthDistributionData$SpeciesCategory)
@@ -344,7 +342,9 @@ DistributeNASC <- function(
     unassignedPSUs <- setdiff(unassignedPSUs, NA)
     NASCData[, missingAssignment := NULL]
     if(length(unassignedPSUs)) {
-        warning("StoX: There are NASC values with no assigned length distibution. This can lead to un-splitted acoustic categories in SplitNASC() and missing (NA) density. Make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this. Missing length distribution was found for the following PSUs:\n", paste("\t", unassignedPSUs, collapse = "\n"))
+        #warning("StoX: There are positive NASC values with no assignment length distibution. This can lead to un-splitted acoustic categories in SplitNASC() and missing (NA) density. Make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this. Missing length distribution was found for the following PSUs:\n", paste("\t", unassignedPSUs, collapse = "\n"))
+        warning("StoX: There are positive NASC values with no assignment length distribution!\nIf this warning occurs in a Bootstrap process, it implies that there are AcousticPSUs where none of the assigned hauls were resampled in one or more bootstrap replicates. This causes missing values in the AcousticDensityData, QuantityData and SuperIndividualsData, with the result that the only way to get non-missing values in ReportBootstrap is to use RemoveMissingValues = TRUE, which directly leads to under-estimation!!!! This can occur if Hauls are assigned differently for the different AcousticPSUs in a stratum (e.g., using DefinitionMethod = \"Radius\") and ResampleBioticAssignmentByStratum is used as the ResampleFunction for the DefineBioticAssignment process in the BootstrapMethodTable of the Bootstrap function. In this case it is adviced to use ResampleBioticAssignmentByPSU as the ResampleFunction instead, which resamples only the Hauls assigned to each AccousticPSU.\nIf this warning occurs in Baseline, it can lead to un-split acoustic categories in SplitNASC() and missing (NA) acoustic density. Please make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this.")
+        #stop("StoX: There are positive NASC values with no assignment length distibution. This is considered to be an error as of StoX 4.0.0. If this error occurres in a Bootstrap process, it implies that none of the assigned hauls of the acoustic PSUs were resampled in a bootstrap replicate. This is known to occur if Hauls are assigned differently for the different AcousticPSUs in a stratum (e.g., using DefinitionMethod = \"Radius\") and ResampleBioticAssignmentByStratum is used as the ResampleFunction of the DefineBioticAssignment process in the BootstrapMethodTable of the Bootstrap function. This induces in missing values in the  AcousticDensityData and consequently in the QuantityData and SuperIndividualsData, with the result that the only way to get non-missing values in ReportBootstrap is to use RemoveMissingValues = TRUE, which directly causes under-estimation! If Hauls are assigned differently for the different AcousticPSUs in a stratum it is adivced to use the ResampleBioticAssignmentByPSU as the ResampleFunction, which resamples only the Hauls assigned to each AccousticPSU, which will never cause missing assignment length distibution.")
     }
     
     # Calculate the target strength of each length group:
@@ -659,9 +659,6 @@ SweptAreaDensity <- function(
     #formatOutput(DensityData, dataType = "DensityData", keep.all = FALSE)
     formatOutput(DensityData, dataType = "DensityData", keep.all = TRUE, allow.missing = TRUE)
     
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(DensityData)
-    
     return(DensityData)
 }
 
@@ -700,9 +697,6 @@ MeanDensity <- function(
     # Format the output:
     # Use keep.all = FALSE, as the difference between acoustic and swept area density is sorted out in the DensityData:
     formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE)
-    
-    # Ensure that the numeric values are rounded to the defined number of digits:
-    #RstoxData::setRstoxPrecisionLevel(MeanDensityData)
     
     return(MeanDensityData)
 }

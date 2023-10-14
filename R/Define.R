@@ -9,7 +9,7 @@
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param MergedStoxDataStationLevel The merged StoxData at the station level. Used in \code{meanRawResolutionData}.
 #' @param DefinitionMethod A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
-#' @param FileName The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.
+#' @param FileName The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read. Must include file extension.
 #' @param SavePSUByTime Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.
 #' @param PSUProcessData Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.
 #' 
@@ -106,6 +106,7 @@ DefinePSU <- function(
                 return(AcousticPSU)
             }
             else if(PSUType == "Biotic") {
+                
                 # Read from the project.xml:
                 MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
                     StoxData, 
@@ -136,11 +137,11 @@ DefinePSU <- function(
                 PSU = PSUName
             )
             
-            # Find the stratum of each PSU:
-            apply_and_set_use_s2_to_FALSE(
-                Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel), 
-                msg = FALSE
-            )
+            # Find the stratum of each PSU (here s2 is used inside getStratumOfSSUs_SF() when locateInStratum(), so we do not apply s2 around this):
+            #turn_off_s2(
+                Stratum_PSU <- getStratumOfSSUs_SF(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel)#, 
+            #    msg = FALSE
+            #)
         }
         # If DefinitionMethod = "PreDefined" use times to interpret the PSUs (only used for acoustic PSUs):
         else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
@@ -207,7 +208,7 @@ DefinePSU <- function(
         #    )
         #    
         #    # Find the stratum of each PSU:
-        #    Stratum_PSU <- getStratumOfSSUs(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, Stat#ionLevel)
+        #    Stratum_PSU <- getStratumOfSSUs_SP(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, Stat#ionLevel)
         #}
         
         
@@ -322,7 +323,7 @@ DefinePSU <- function(
     processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
     
     # Warn if there are strata with only one PSU, which may result in missing variance:
-    onlyOnePSU_Warning(processData$Stratum_PSU)
+    onlyOnePSU_Warning(processData$Stratum_PSU, PSUType = PSUType)
     
     
     # Add the PSU time information:
@@ -358,45 +359,25 @@ onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
     }
 }
 
+
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU i loacted geographically:
-getStratumOfSSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
+getStratumOfSSUs_SF <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
     # Error if StratumPolygon is missing:
     if(missing(StratumPolygon) || !length(StratumPolygon)) {
-        stop("StratumPolygon mustt be given.")
+        stop("StratumPolygon must be given.")
     }
     
     # Get unique PSUs:
     allPSUs <- unique(SSU_PSU$PSU)
     allPSUs <- allPSUs[!is.na(allPSUs)]
     
-    # Get the strata:
-    # This was extremely slow. Not sure why this loop over SSUs was chosen.
-    #Stratum_PSU <- data.table::rbindlist(
-    #    lapply(
-    #        X = allPSUs, 
-    #        FUN = getStratumOfPSU, 
-    #        SSU_PSU = SSU_PSU, 
-    #        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-    #        StratumPolygon = StratumPolygon, 
-    #        SSULabel = SSULabel, 
-    #        StationLevel = StationLevel
-    #    )
-    #)
-    
     # Get the SSU positions and convert to spatialpoints:
     pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSU_PSU$SSU, c(SSULabel, "Longitude", "Latitude"), with = FALSE]
-    SpatialPSUs <- sp::SpatialPoints(pos[, c("Longitude", "Latitude")])
-    # Add the SSULabel as attribute for uses in warning messages in locateInStratum():
-    attr(SpatialPSUs, "pointLabel") <- SSULabel
-    attr(SpatialPSUs, SSULabel) <- pos[[SSULabel]]
-    
-    ## Project and find in the StratumPolygon:
-    #sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
     
     # Changed on 2021-09-10 to use getStratumNames():
     #StratumNames <- getStratumNames(sp::over(SpatialPSUs, StratumPolygon), check.unique = FALSE)
-    apply_and_set_use_s2_to_FALSE(
-        StratumNames <- locateInStratum(SpatialPSUs, StratumPolygon), 
+    turn_off_s2(
+        StratumNames <- locateInStratum(pos, StratumPolygon, SSULabel = SSULabel), 
         msg = FALSE
     )
     
@@ -407,6 +388,7 @@ getStratumOfSSUs <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon
     
     return(Stratum_PSU)
 }
+
 #getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
 #    
 #    # Get the MergedStoxDataStationLevel of the specified PSU:
@@ -512,7 +494,7 @@ getPSUName <- function(ind, prefix) {
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @inheritParams DefinePSU
-#' @param DefinitionMethod Character: A string naming the method to use, one of "StationToPSU", which sets each Station as a PSU, and "DeleteAllPSUs" to delete all PSUs.
+#' @param DefinitionMethod Character: A string naming the method to use, one of "Manual" for manual tagging of stations to PSUs (not yet implemented); "StationToPSU", which sets each Station as a PSU; "DeleteAllPSUs" to delete all PSUs; and "ResourceFile" to read from a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that Method = "UseProcessData" in DefineSweptAreaPSU().
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticPSU}}.
@@ -571,7 +553,7 @@ DefineBioticPSU <- function(
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @inheritParams DefinePSU
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs; "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU().
 #' 
 #' @return
 #' An object of StoX data type \code{\link{AcousticPSU}}.
@@ -1025,8 +1007,8 @@ DefineBioticLayer <- function(
 #' @inheritParams general_arguments
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", to assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference}, \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read a project.xml file from StoX 2.7.
-#' @param FileName The path to the StoX 2.7 project.xml file to read "bioticassignment", "suassignment" and "psustratum" from, in the case that \code{DefinitionMethod} is "ResourceFile".
+#' @param DefinitionMethod  Character: A string naming the method to use, one of "Stratum", to assign all stations of each stratum to all acoustic PSUs; "Radius", to assign all stations within the radius given in \code{Radius} to each acoustic PSU; and "EllipsoidalDistance" to provide \code{MinNumberOfHauls}, \code{Distance}, \code{TimeDifference}, \code{BottomDepthDifference}, \code{LongitudeDifference}, \code{LatitudeDifference}, specifying the axes of an ellipsoid inside which to assign stations to acoustic PSUs, and "ResourceFile" to read from a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in BioStationAssignment().
+#' @param FileName The path to the StoX 2.7 project.xml file to read "bioticassignment", "suassignment" and "psustratum" from, in the case that \code{DefinitionMethod} is "ResourceFile". Must include file extension.
 #' @inheritParams SumNASC
 #' @inheritParams DefineAcousticLayer
 #' @param Radius Numeric: The radius inside which to assign biotic stations to each acoustic PSU.
@@ -1184,7 +1166,7 @@ DefineBioticAssignment <- function(
     DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Merge the StoxBioticData:
-    MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, "Haul")
+    HaulData <- RstoxData::MergeStoxBiotic(StoxBioticData, TargetTable = "Haul")
     
     # If DefinitionMethod == "Stratum", assign all stations of each stratum to all PSUs of the stratum:
     if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
@@ -1197,18 +1179,17 @@ DefineBioticAssignment <- function(
     }
     else if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
         
-        # Create a spatial points object of the positions of the hauls:
-        SpatialHauls <- sp::SpatialPoints(MergeStoxBioticData[, c("Longitude", "Latitude")])
-        attr(SpatialHauls, "pointLabel") <- "Station"
-        attr(SpatialHauls, "Station") <- MergeStoxBioticData$Station
+        # :
+        attr(HaulData, "pointLabel") <- "Station"
+        attr(HaulData, "Station") <- HaulData$Station
         
-        apply_and_set_use_s2_to_FALSE(
-            locatedStratum <- locateInStratum(SpatialHauls, StratumPolygon), 
+        turn_off_s2(
+            locatedStratum <- locateInStratum(HaulData, StratumPolygon, SSULabel = SSULabel), 
             msg = FALSE
         )
         
         # Add to the BioticAssignment:
-        BioticAssignment <- MergeStoxBioticData
+        BioticAssignment <- HaulData
         BioticAssignment[, Stratum := ..locatedStratum]
         
         # Add the PSUs to the BioticAssignment:
@@ -1229,12 +1210,12 @@ DefineBioticAssignment <- function(
     # Search for Hauls around all EDSUs of each PSU:
     else if(grepl("Radius|EllipsoidalDistance", DefinitionMethod, ignore.case = TRUE)) {
         # Merge the StoxBioticData:
-        MergeStoxAcousticData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, "Log")
+        LogData <- RstoxData::MergeStoxAcoustic(StoxAcousticData, TargetTable = "Log")
         
-        # Get a table of EDSUs and Hauls present in the StoxAcoustic and StoxBiotic data:
+        # Get a table of EDSUs and Hauls present in the StoxAcoustic and StoxBiotic data. Here all hauls are listed for each EDSU, i.e., hauls are in the fastest changing column:
         EDSU_Haul <- data.table::CJ(
-            EDSU = MergeStoxAcousticData$EDSU, 
-            Haul = MergeStoxBioticData$Haul, 
+            EDSU = LogData$EDSU, 
+            Haul = HaulData$Haul, 
             sorted = FALSE
         )
         
@@ -1245,15 +1226,18 @@ DefineBioticAssignment <- function(
         
         # Get the distance units:
         if(grepl("Radius", DefinitionMethod, ignore.case = TRUE)) {
-            
+            # Calculate distances in a matrix with hauls as rows and EDSUs as columns, so that hauls change the fastest after converting to a vector, consistent with EDSU_Haul:
             differenceTable = data.table::data.table(
-                distance = getDistance(
-                    MergeStoxAcousticData = MergeStoxAcousticData, 
-                    MergeStoxBioticData = MergeStoxBioticData
+                distance = c(
+                    getEDSUToHaulDistance(
+                        LogData = LogData, 
+                        HaulData = HaulData
+                    )
                 )
             )
             
             # Tag the Hauls that are inside the radius:
+            Radius <- units::set_units(Radius, "nautical_mile")
             differenceTable[, inside := distance <= Radius]
         }
         else if(grepl("EllipsoidalDistance", DefinitionMethod, ignore.case = TRUE)) {
@@ -1261,24 +1245,24 @@ DefineBioticAssignment <- function(
                 # Get the distance between the EDSUs and Hauls:
                 Distance = if(length(Distance)) {
                     getSquaredRelativeDistance(
-                        MergeStoxAcousticData = MergeStoxAcousticData, 
-                        MergeStoxBioticData = MergeStoxBioticData, 
+                        LogData = LogData, 
+                        HaulData = HaulData, 
                         Distance = Distance
                     )
                 }, 
                 # Get the time difference between the EDSUs and Hauls:
                 TimeDifference = if(length(TimeDifference)) {
                     getSquaredRelativeTimeDiff(
-                        MergeStoxAcousticData = MergeStoxAcousticData, 
-                        MergeStoxBioticData = MergeStoxBioticData, 
+                        LogData = LogData, 
+                        HaulData = HaulData, 
                         TimeDifference = TimeDifference
                     )
                 }, 
                 # Get the difference in bottom depth between the EDSUs and Hauls:
                 BottomDepthDifference = if(length(BottomDepthDifference)) {
                     getSquaredRelativeDiff(
-                        MergeStoxAcousticData = MergeStoxAcousticData, 
-                        MergeStoxBioticData = MergeStoxBioticData, 
+                        LogData = LogData, 
+                        HaulData = HaulData, 
                         variableName = "BottomDepth", 
                         axisLength = BottomDepthDifference
                     )
@@ -1286,8 +1270,8 @@ DefineBioticAssignment <- function(
                 # Get the longitude difference between the EDSUs and Hauls:
                 LongitudeDifference = if(length(LongitudeDifference)) {
                     getSquaredRelativeDiff(
-                        MergeStoxAcousticData = MergeStoxAcousticData, 
-                        MergeStoxBioticData = MergeStoxBioticData, 
+                        LogData = LogData, 
+                        HaulData = HaulData, 
                         variableName = "Longitude", 
                         axisLength = LongitudeDifference
                     )
@@ -1295,8 +1279,8 @@ DefineBioticAssignment <- function(
                 # Get the latitude differerence between the EDSUs and Hauls:
                 LatitudeDifference = if(length(LatitudeDifference)) {
                     getSquaredRelativeDiff(
-                        MergeStoxAcousticData = MergeStoxAcousticData, 
-                        MergeStoxBioticData = MergeStoxBioticData, 
+                        LogData = LogData, 
+                        HaulData = HaulData, 
                         variableName = "Latitude", 
                         axisLength = LatitudeDifference
                     )
@@ -1348,9 +1332,9 @@ DefineBioticAssignment <- function(
         BioticAssignment <- readBioticAssignmentFrom2.7(FileName)
         
         # Translate to the Haul defined by StoX >=3:
-        HaulsAsIn2.7 <- sub("/.*&*-", "/", MergeStoxBioticData$Haul)
+        HaulsAsIn2.7 <- sub("/.*&*-", "/", HaulData$Haul)
         
-        BioticAssignment$Haul <- MergeStoxBioticData$Haul[
+        BioticAssignment$Haul <- HaulData$Haul[
             match(
                 BioticAssignment$Haul, 
                 HaulsAsIn2.7
@@ -1453,25 +1437,40 @@ addLayerToBioticAssignmentAndFormat <- function(
     return(BioticAssignment)
 }
 
-# Function to get the great circle distance between EDSUs in the MergeStoxAcousticData and Hauls in the MergeStoxBioticData: 
-getDistance <- function(MergeStoxAcousticData, MergeStoxBioticData) {
-    # Extract the goegraphical positions:
-    HaulPositions <- as.matrix(MergeStoxBioticData[, c("Longitude", "Latitude")])
-    EDSUPositions <- as.matrix(MergeStoxAcousticData[, c("Longitude", "Latitude")])
-    # Get the distances between EDUSs and Hauls (sp::spDists() returns km when longlat = TRUE):
-    #EDSUToHaulDistance <- c(sp::spDists(EDSUPositions, HaulPositions, longlat = TRUE))
-    EDSUToHaulDistance <- c(sp::spDists(HaulPositions, EDSUPositions, longlat = TRUE))
+
+
+
+
+
+
+getEDSUToHaulDistance <- function(LogData, HaulData, nautical_mile = FALSE) {
+    
+    # Extract the geographical positions:
+    HaulPositions <- sf::st_as_sf(HaulData[, c("Longitude", "Latitude")], coords = c("Longitude", "Latitude"), crs = sf::st_crs("WGS84"))
+    EDSUPositions <- sf::st_as_sf(LogData[, c("Longitude", "Latitude")], coords = c("Longitude", "Latitude"), crs = sf::st_crs("WGS84"))
+    
+    # Get the distances between EDUSs and Hauls returns km:
+    turn_off_s2(
+        EDSUToHaulDistance <- sf::st_distance(HaulPositions, EDSUPositions), 
+        msg = FALSE
+    )
+    
     # Convert to nautical miles:
-    EDSUToHaulDistance <- EDSUToHaulDistance * 1000 / getRstoxBaseDefinitions("nauticalMileInMeters")
+    if(nautical_mile) {
+        EDSUToHaulDistance <- units::set_units(EDSUToHaulDistance, "nautical_mile")
+    }
+    
     return(EDSUToHaulDistance)
 }
 
 # Function to ge the squared distance in units of the Distance squared:
-getSquaredRelativeDistance <- function(MergeStoxAcousticData, MergeStoxBioticData, Distance) {
+getSquaredRelativeDistance <- function(LogData, HaulData, Distance) {
     # Get the distances between EDUSs and Hauls:
-    EDSUToHaulDistance <- getDistance(
-        MergeStoxAcousticData = MergeStoxAcousticData, 
-        MergeStoxBioticData = MergeStoxBioticData
+    EDSUToHaulDistance <- c(
+        getEDSUToHaulDistance(
+            LogData = LogData, 
+            HaulData = HaulData
+        )
     )
     # Square and return:
     SquaredRelativeDistance <- EDSUToHaulDistance^2 / Distance^2
@@ -1479,11 +1478,11 @@ getSquaredRelativeDistance <- function(MergeStoxAcousticData, MergeStoxBioticDat
 }
 
 # Function to get the squared time difference in units of the TimeDifference squared:
-getSquaredRelativeTimeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, TimeDifference, variableName = "DateTime") {
+getSquaredRelativeTimeDiff <- function(LogData, HaulData, TimeDifference, variableName = "DateTime") {
     # Get the time difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
-        x = MergeStoxAcousticData[[variableName]], 
-        y = MergeStoxBioticData[[variableName]], 
+        x = LogData[[variableName]], 
+        y = HaulData[[variableName]], 
         sorted = FALSE
     )
     TimeDiff <- as.numeric(out[, difftime(x, y, units = "hours")])
@@ -1492,11 +1491,11 @@ getSquaredRelativeTimeDiff <- function(MergeStoxAcousticData, MergeStoxBioticDat
     return(SquaredTimeDiff)
 }
 
-getSquaredRelativeDiff <- function(MergeStoxAcousticData, MergeStoxBioticData, variableName, axisLength) {
+getSquaredRelativeDiff <- function(LogData, HaulData, variableName, axisLength) {
     # Get the absolute difference between all EDSUs and all Hauls:
     out <- data.table::CJ(
-        x = MergeStoxAcousticData[[variableName]], 
-        y = MergeStoxBioticData[[variableName]], 
+        x = LogData[[variableName]], 
+        y = HaulData[[variableName]], 
         sorted = FALSE
     )
     # Square and return:
@@ -1834,22 +1833,21 @@ getMeanAcousticDensityAroundOneStation <- function(
     # Get the distance from the station to the EDSUs:
     stationPosition <- unique(LengthDistributionData[Haul == thisHaul, c("Longitude", "Latitude")])
     EDSUData <- subset(NASCData, !duplicated(EDSU))
-    EDSUPositions <- EDSUData[, c("Longitude", "Latitude")]
     
-    # Get the distance using WGS84 ellipsoid:
-    haulToEDSUDistance_km <- sp::spDistsN1(
-        pts = as.matrix(EDSUPositions), 
-        pt = as.matrix(stationPosition), 
-        longlat = TRUE
-    )
-    haulToEDSUDistance_nmi <- haulToEDSUDistance_km * 1000 / getRstoxBaseDefinitions("nauticalMileInMeters")
-    EDSUData[, insideRadius := haulToEDSUDistance_nmi <= Radius]
+    
+    # Get the great circle distance:
+    haulToEDSUDistance <- getEDSUToHaulDistance(LogData = EDSUData, HaulData = stationPosition, nautical_mile = TRUE)
+    # Set the unit of Radius also to nautical_mile:
+    Radius <- units::set_units(Radius, "nautical_mile")
+    
+    # Find hauls inside the radius:
+    EDSUData[, insideRadius := haulToEDSUDistance <= Radius]
     
     # Apply the minimum number of EDSU requirement:
     if(length(MinNumberOfEDSUs)) {
         numInsideRadius <- EDSUData[, sum(insideRadius)]
         if(numInsideRadius < MinNumberOfEDSUs) {
-            EDSUData[, insideRadius := insideRadius | haulToEDSUDistance_nmi <= sort( haulToEDSUDistance_nmi)[MinNumberOfEDSUs]]
+            EDSUData[, insideRadius := insideRadius | haulToEDSUDistance <= sort(haulToEDSUDistance)[MinNumberOfEDSUs]]
         }
     }
     

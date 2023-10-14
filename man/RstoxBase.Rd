@@ -29,6 +29,7 @@ Authors:
   \item Edvin Fuglebakk
   \item Aasmund Skaalevik
   \item Esmael Musema Hassen
+  \item Anthony Hennessey
   \item Espen Johnsen
   \item Atle Totland
 }
