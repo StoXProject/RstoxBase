@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.4-9001</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">DefineStratumPolygon</span><span class="op">(</span></span>
 <span>  <span class="va">processData</span>,</span>
 <span>  UseProcessData <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ResourceFile"</span>, <span class="st">"Manual"</span><span class="op">)</span>,</span>
+<span>  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Manual"</span>, <span class="st">"ResourceFile"</span><span class="op">)</span>,</span>
 <span>  FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  StratumNameLabel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  SimplifyStratumPolygon <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -75,11 +75,11 @@
 
 
 <dt>DefinitionMethod</dt>
-<dd><p>A string naming the method to use, one of "ResourceFile", to read the file <code>FileName</code> holding the stratum multipolygon, or "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI.</p></dd>
+<dd><p>A string naming the method to use, one of "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI; or "ResourceFile", to read the file <code>FileName</code> holding the stratum multipolygon.</p></dd>
 
 
 <dt>FileName</dt>
-<dd><p>The path to a <a href="https://geojson.org/" class="external-link">GeoJSON</a> file, <a href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm" class="external-link">shapefile, use the file with extension "shp"</a> (may be a folder containing the shapefiles) or a <code><a href="StoX_multipolygon_WKT.html">StoX_multipolygon_WKT</a></code> file. Must include file extension.</p></dd>
+<dd><p>The path to a <a href="https://geojson.org/" class="external-link">GeoJSON</a> file, <a href="https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm" class="external-link">shapefile, use the file with extension "shp"</a> (may be a folder containing the shapefiles); a <code><a href="StoX_multipolygon_WKT.html">StoX_multipolygon_WKT</a></code> file; or a project.xml file from StoX &lt;= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX &lt;= 2.7 project, i.e. that UseProcessData = TRUE in DefineStrata(). Must include file extension.</p></dd>
 
 
 <dt>StratumNameLabel</dt>
@@ -124,7 +124,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
+  <p></p><p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Anthony Hennessey, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">

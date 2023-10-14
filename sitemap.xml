@@ -370,9 +370,6 @@
     <loc>/reference/getStratumNames.html</loc>
   </url>
   <url>
-    <loc>/reference/getStratumPolygonList.html</loc>
-  </url>
-  <url>
     <loc>/reference/getWeightingFunctions.html</loc>
   </url>
   <url>
@@ -401,9 +398,6 @@
   </url>
   <url>
     <loc>/reference/readBioticPSUFrom2.7.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readGeoJSON.html</loc>
   </url>
   <url>
     <loc>/reference/readProjectXMLToList.html</loc>

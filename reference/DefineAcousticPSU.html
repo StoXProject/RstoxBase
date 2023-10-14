@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.4-9001</span>
       </span>
     </div>
 
@@ -84,11 +84,11 @@
 
 
 <dt>DefinitionMethod</dt>
-<dd><p>Character: A string naming the method to use, one of "EDSUToPSU", which sets each EDSU as a PSU, and "DeleteAllPSUs" to delete all PSUs.</p></dd>
+<dd><p>Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs; "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from a project.xml file from StoX &lt;= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX &lt;= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU().</p></dd>
 
 
 <dt>FileName</dt>
-<dd><p>The path to a resource file from which to read PSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read.</p></dd>
+<dd><p>The path to a resource file from which to read PSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read. Must include file extension.</p></dd>
 
 
 <dt>AcousticPSU</dt>
@@ -114,7 +114,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
+  <p></p><p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Anthony Hennessey, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">

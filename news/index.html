@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.4-9001</span>
       </span>
     </div>
 
@@ -47,6 +47,30 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.11.4-9001" id="rstoxbase-v1114-9001-2023-08-30">RstoxBase v1.11.4-9001 (2023-08-30)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1114-9001-2023-08-30"></a></h2>
+<ul><li>Removed dependency on the retiring package sp.</li>
+<li>Changed GearDependentCatchCompensation() to keep all variables from the input SpeciesCategoryCatchData.</li>
+<li>Improved error message then Percentages is not given (now saying exactly that and not “SpecificationParameter must be given”).</li>
+<li>Removed exported functions getStratumPolygonList and readGeoJSON.</li>
+<li>Improved documentation of DefinitionMethod in DefineBioticPSU(), DefineAcousticPSU() and DefineBioticAssignment().</li>
+<li>Added a warning when reading BioticPSUs from a StoX 2.7 project.xml file where Method is Station and not UseProcessData in DefineSweptAreaPSU(), which makes the BioticPSUs of the project.xml file unused.</li>
+<li>Improved warning when there are Individuals in the IndividualsData with IndividualTotalLength that does not match any of the length intervals of the QuantityData.</li>
+<li>Improved warning for when there are positive NASC values with no assignment length distribution, also removing the list of the affected PSUs.</li>
+<li>Improved simplifyStratumPolygon() used in DefineStratumPolygon() which got stuck in an endless loop in certain cases.</li>
+<li>Exposing PlotAcousticTrawlSurvey().</li>
+<li>Fixed bug in LengthDistribution() where missing raising factor was reported for samples with no individuals.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.11.3" id="rstoxbase-v1113-2023-06-27">RstoxBase v1.11.3 (2023-06-27)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1113-2023-06-27"></a></h2>
+<ul><li>Version for StoX 3.6.2.</li>
+<li>Changed defined unit of Biomass in QuantityData from g to kg, as Biomass originates from SweptAreaMethod “TotalCatch” which is in kg.</li>
+<li>Added tables listing the variables of the data types NASCData, SumNASCData, MeanNASCData, LengthDistributionData, SumLengthDistributionData, MeanLengthDistributionData, DensityData, MeanDensityData and QuantityData.<br></li>
+<li>Relaxed testUnits.R to accept that Biomass has different units in QuantityData and SuperIndividualsData.</li>
+<li>Increased speed of frequently used functions in RstoxFramework by using list instead of data.table for the definition og reportFunctions.</li>
+<li>Skipped gc() in aggregateBaselineDataOneTable() to reduce CPU time.</li>
+<li>Removed SpeciesCategoryKey from ReportSpeciesCategoryCatch(), as the output is per haul.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.11.2" id="rstoxbase-1112-2023-04-30">RstoxBase 1.11.2 (2023-04-30)<a class="anchor" aria-label="anchor" href="#rstoxbase-1112-2023-04-30"></a></h2>
 <ul><li>Fixed bug in EstimateRegression when insufficient data to estimate the regression. Now returning NA for all parameters.</li>
@@ -352,7 +376,7 @@
 <li>Fixed bug in SplitMeanNASC(), where now acoustic categories not to be split are added to the AcousticCategoryLink only if of positive length.</li>
 <li>Fixed warning ‘the condition has length &gt; 1 and only the first element will be used’</li>
 <li>Fixed bug with multiple species in catchCompensationTable, selectivityTable and gearCompensationTable parameter formats.</li>
-<li>Added stop if not all EDSUs are inside a stratum in SplitMeanNASC()Fixed bug where stations with 0 fish were removed in LenghtDistribution()</li>
+<li>Added stop if not all EDSUs are inside a stratum in SplitMeanNASC()Fixed bug where stations with 0 fish were removed in LengthDistribution()</li>
 <li>Fixed several bugs related to DensityData and onwards being flexible datatypes which may or may not contain Beam and Frequency</li>
 <li>Added parameters to ImputeSuperIndividuals().</li>
 <li>Fixed column order for datatypes *IndividualsData</li>
@@ -444,7 +468,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
+  <p></p><p>Developed by Arne Johannes Holmin, Ibrahim Umar, Sindre Vatnehol, Edvin Fuglebakk, Aasmund Skaalevik, Esmael Musema Hassen, Anthony Hennessey, Espen Johnsen, Atle Totland, Norwegian Institute of Marine Research.</p>
 </div>
 
 <div class="pkgdown">
