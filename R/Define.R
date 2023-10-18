@@ -2466,8 +2466,8 @@ DefineSurvey <- function(
         
         # Define all strata that have includeintotal = TRUE as a survey named "Survey", and all others as individual surveys:
         SurveyTable <- data.table::data.table(
-            Stratum = StratumPolygon$Stratum, 
-            Survey = StratumPolygon$Stratum
+            Stratum = StratumPolygon$StratumaName, 
+            Survey = StratumPolygon$StratumaName
         )
         indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
         SurveyTable[indcludedInTotal, Survey := "Survey"]
