@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.4-9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.4-9002</span>
       </span>
     </div>
 
@@ -53,7 +53,11 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readStratumPolygonFrom2.7</span><span class="op">(</span><span class="va">projectXMLFilePath</span>, remove_includeintotal <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readStratumPolygonFrom2.7</span><span class="op">(</span></span>
+<span>  <span class="va">projectXMLFilePath</span>,</span>
+<span>  remove_includeintotal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  StratumNameLabel <span class="op">=</span> <span class="st">"StratumName"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">writeStratumPolygonFrom2.7</span><span class="op">(</span></span>
 <span>  <span class="va">projectXMLFilePath</span>,</span>
@@ -70,6 +74,10 @@
 
 <dt>remove_includeintotal</dt>
 <dd><p>Logical: If TRUE, remove the column includeintotal column.</p></dd>
+
+
+<dt>StratumNameLabel</dt>
+<dd><p>The label of the column giving the stratum names.</p></dd>
 
 
 <dt>stratumPolygonFilePath</dt>
