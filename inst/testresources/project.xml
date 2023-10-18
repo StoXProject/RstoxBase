@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project template="" rstoxversion="1.11" xmlns="http://www.imr.no/formats/stox/v1" lastmodified="31/03/22 19:58" rversion="4.1.3" stoxversion="2.7" resourceversion="1.87">
+  <model name="baseline">
+    <process name="ReadProcessData">
+      <function>ReadProcessData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <output>ProcessData</output>
+    </process>
+    <process name="ReadAcousticXML">
+      <function>ReadAcousticXML</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>false</fileoutput>
+      <parameter name="FileName1">input/acoustic/echosounder_cruiseNumber_2020620_Kristine+Bonnevie_translated_18_to_38kHz.xml</parameter>
+      <output>AcousticData</output>
+    </process>
+    <process name="FilterAcoustic">
+      <function>FilterAcoustic</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="AcousticData">Process(ReadAcousticXML)</parameter>
+      <parameter name="FreqExpr">frequency == 38000</parameter>
+      <parameter name="NASCExpr">acocat == 31</parameter>
+      <output>AcousticData</output>
+    </process>
+    <process name="NASC">
+      <function>NASC</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="AcousticData">Process(FilterAcoustic)</parameter>
+      <parameter name="LayerType">WaterColumn</parameter>
+      <output>NASC</output>
+    </process>
+    <process name="ReadBioticXML">
+      <function>ReadBioticXML</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>false</fileoutput>
+      <parameter name="FileName1">input/biotic/biotic_cruiseNumber_2020620_Kristine+Bonnevie_LGWS_2021-06-22T22.01.39.945Z.xml</parameter>
+      <output>BioticData</output>
+    </process>
+    <process name="FilterBiotic">
+      <function>FilterBiotic</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="BioticData">Process(ReadBioticXML)</parameter>
+      <parameter name="FishStationExpr">fs.getLengthSampleCount('TORSK') &gt; 1</parameter>
+      <parameter name="CatchExpr">species == '164712'</parameter>
+      <output>BioticData</output>
+    </process>
+    <process name="StationLengthDist">
+      <function>StationLengthDist</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <parameter name="LengthDistType">NormLengthDist</parameter>
+      <output>LengthDist</output>
+    </process>
+    <process name="RegroupLengthDist">
+      <function>RegroupLengthDist</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="LengthDist">Process(StationLengthDist)</parameter>
+      <parameter name="LengthInterval">1.0</parameter>
+      <output>LengthDist</output>
+    </process>
+    <process name="Catchability">
+      <function>Catchability</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="CatchabilityMethod">LengthDependentSweepWidth</parameter>
+      <parameter name="LengthDist">Process(RegroupLengthDist)</parameter>
+      <parameter name="ParLengthDependentSweepWidth">SpecCat=;Alpha=5.9;Beta=0.43;LMin=15.0;LMax=62</parameter>
+      <output>LengthDist</output>
+    </process>
+    <process name="RelLengthDist">
+      <function>RelLengthDist</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="LengthDist">Process(Catchability)</parameter>
+      <output>LengthDist</output>
+    </process>
+    <process name="DefineStrata">
+      <function>DefineStrata</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="UseProcessData">true</parameter>
+      <parameter name="FileName">${STOX}/reference/stratum/Kysttorsk strata_20190926.txt</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="StratumArea">
+      <function>StratumArea</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="AreaMethod">Accurate</parameter>
+      <output>PolygonArea</output>
+    </process>
+    <process name="DefineAcousticTransect">
+      <function>DefineAcousticPSU</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="AcousticData">Process(FilterAcoustic)</parameter>
+      <parameter name="DefinitionMethod">UseProcessData</parameter>
+      <parameter name="UseProcessData">true</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="MeanNASC">
+      <function>MeanNASC</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="NASC">Process(NASC)</parameter>
+      <parameter name="SampleUnitType">PSU</parameter>
+      <output>NASC</output>
+    </process>
+    <process name="MeanNASC_stratum">
+      <function>MeanNASC</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="NASC">Process(MeanNASC)</parameter>
+      <parameter name="SampleUnitType">Stratum</parameter>
+      <output>NASC</output>
+    </process>
+    <process name="BioStationAssignment">
+      <function>BioStationAssignment</function>
+      <enabled>true</enabled>
+      <respondingui>true</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <parameter name="AssignmentMethod">UseProcessData</parameter>
+      <parameter name="AcousticData">Process(FilterAcoustic)</parameter>
+      <parameter name="Radius">15.0</parameter>
+      <parameter name="EstLayers">1~PELBOT</parameter>
+      <parameter name="MinNumStations"></parameter>
+      <parameter name="RefGCDistance"></parameter>
+      <parameter name="RefTime"></parameter>
+      <parameter name="RefBotDepth"></parameter>
+      <parameter name="RefLatitude"></parameter>
+      <parameter name="RefLongitude"></parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="BioStationWeighting">
+      <function>BioStationWeighting</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="WeightingMethod">SumWeightedCount</parameter>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <parameter name="NASC">Process(NASC)</parameter>
+      <parameter name="AcousticData">Process(FilterAcoustic)</parameter>
+      <parameter name="LengthDist">Process(RegroupLengthDist)</parameter>
+      <parameter name="Radius"></parameter>
+      <parameter name="m">20</parameter>
+      <parameter name="a"></parameter>
+      <parameter name="MaxNumLengthSamples">100</parameter>
+      <output>ProcessData</output>
+    </process>
+    <process name="TotalLengthDist">
+      <function>TotalLengthDist</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="LengthDist">Process(RelLengthDist)</parameter>
+      <output>LengthDist</output>
+    </process>
+    <process name="AcousticDensity">
+      <function>AcousticDensity</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="LengthDist">Process(TotalLengthDist)</parameter>
+      <parameter name="NASC">Process(MeanNASC)</parameter>
+      <parameter name="m">20</parameter>
+      <parameter name="a">-68</parameter>
+      <parameter name="d"></parameter>
+      <output>Density</output>
+    </process>
+    <process name="MeanDensity_Stratum">
+      <function>MeanDensity</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="Density">Process(AcousticDensity)</parameter>
+      <parameter name="SampleUnitType">Stratum</parameter>
+      <output>Density</output>
+    </process>
+    <process name="SumDensity_Stratum">
+      <function>SumDensity</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="Density">Process(MeanDensity_Stratum)</parameter>
+      <output>Density</output>
+    </process>
+    <process name="Abundance">
+      <function>Abundance</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="Density">Process(SumDensity_Stratum)</parameter>
+      <parameter name="PolygonArea">Process(StratumArea)</parameter>
+      <output>Abundance</output>
+    </process>
+    <process name="IndividualDataStations">
+      <function>IndividualDataStations</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="Abundance">Process(Abundance)</parameter>
+      <output>IndividualDataStations</output>
+    </process>
+    <process name="IndividualData">
+      <function>IndividualData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="BioticData">Process(FilterBiotic)</parameter>
+      <parameter name="IndividualDataStations">Process(IndividualDataStations)</parameter>
+      <output>IndividualData</output>
+    </process>
+    <process name="SuperIndAbundance">
+      <function>SuperIndAbundance</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="Abundance">Process(Abundance)</parameter>
+      <parameter name="IndividualData">Process(IndividualData)</parameter>
+      <parameter name="ProcessData">Process(ReadProcessData)</parameter>
+      <parameter name="AbundWeightMethod">StationDensity</parameter>
+      <parameter name="LengthDist">Process(RegroupLengthDist)</parameter>
+      <output>SuperIndividuals</output>
+    </process>
+    <process name="WriteProcessData">
+      <function>WriteProcessData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <output>ProcessData</output>
+    </process>
+  </model>
+  <model name="r">
+    <process name="runBootstrap">
+      <function>runBootstrap</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="bootstrapMethod">AcousticTrawl</parameter>
+      <parameter name="acousticMethod">PSU~Stratum</parameter>
+      <parameter name="bioticMethod">PSU~Stratum</parameter>
+      <parameter name="startProcess">Process(TotalLengthDist)</parameter>
+      <parameter name="endProcess">Process(SuperIndAbundance)</parameter>
+      <parameter name="nboot">500</parameter>
+      <parameter name="seed">1</parameter>
+      <parameter name="cores">8</parameter>
+      <output>RObject</output>
+    </process>
+    <process name="imputeByAge">
+      <function>imputeByAge</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="seed">1</parameter>
+      <parameter name="cores">4</parameter>
+    </process>
+    <process name="saveProjectData">
+      <function>saveProjectData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+    </process>
+  </model>
+  <model name="baseline-report">
+    <process name="FillMissingData">
+      <function>FillMissingData</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="SuperIndividuals">Process(SuperIndAbundance)</parameter>
+      <parameter name="FillVariables">ImputeByAge</parameter>
+      <parameter name="Seed">1</parameter>
+      <parameter name="FillWeight">Mean</parameter>
+      <parameter name="a">0.01</parameter>
+      <parameter name="b">3.0</parameter>
+      <output>SuperIndividuals</output>
+    </process>
+    <process name="EstimateByPopulationCategory">
+      <function>EstimateByPopulationCategory</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <fileoutput>true</fileoutput>
+      <parameter name="SuperIndividuals">Process(FillMissingData)</parameter>
+      <parameter name="LengthInterval">5.0</parameter>
+      <parameter name="Scale">1000</parameter>
+      <parameter name="Dim1">LenGrp</parameter>
+      <parameter name="Dim2">age</parameter>
+      <parameter name="Dim3">otolithtype</parameter>
+      <parameter name="Dim4">none</parameter>
+      <parameter name="Dim5">none</parameter>
+      <output>Reports</output>
+    </process>
+  </model>
+  <model name="r-report">
+    <process name="getReports">
+      <function>getReports</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+      <parameter name="options">grp1="age", grp2="otolithtype"</parameter>
+    </process>
+    <process name="getPlots">
+      <function>getPlots</function>
+      <enabled>true</enabled>
+      <respondingui>false</respondingui>
+      <breakingui>false</breakingui>
+      <parameter name="out">all</parameter>
+      <parameter name="options">grp1="age", grp2="otolithtype"</parameter>
+    </process>
+  </model>
+  <processdata>
+    <bioticassignment>
+      <stationweight assignmentid="1" station="2020620/55273">6.9930069930074215</stationweight>
+      <stationweight assignmentid="1" station="2020620/55275">2.186588921283048</stationweight>
+      <stationweight assignmentid="1" station="2020620/55276">38.28197945845316</stationweight>
+      <stationweight assignmentid="1" station="2020620/55278">9.219858156027833</stationweight>
+      <stationweight assignmentid="1" station="2020620/55280">1.7226528854434968</stationweight>
+      <stationweight assignmentid="2" station="2020620/55271">68.5249709640052</stationweight>
+      <stationweight assignmentid="3" station="2020620/55271">68.5249709640052</stationweight>
+      <stationweight assignmentid="3" station="2020620/55273">6.9930069930074215</stationweight>
+      <stationweight assignmentid="4" station="2020620/55275">2.186588921283048</stationweight>
+      <stationweight assignmentid="4" station="2020620/55276">38.28197945845316</stationweight>
+      <stationweight assignmentid="5" station="2020620/55276">38.28197945845316</stationweight>
+      <stationweight assignmentid="5" station="2020620/55278">9.219858156027833</stationweight>
+      <stationweight assignmentid="6" station="2020620/55278">9.219858156027833</stationweight>
+      <stationweight assignmentid="6" station="2020620/55280">1.7226528854434968</stationweight>
+    </bioticassignment>
+    <suassignment>
+      <assignmentid sampleunit="T474" estlayer="1">2</assignmentid>
+      <assignmentid sampleunit="T475" estlayer="1">3</assignmentid>
+    </suassignment>
+    <assignmentresolution>
+      <value variable="LayerType">WaterColumn</value>
+      <value variable="SampleUnitType">PSU</value>
+    </assignmentresolution>
+    <edsupsu>
+      <psu edsu="2020620/1618.0/2020-10-18/21:31:01">T474</psu>
+      <psu edsu="2020620/1619.0/2020-10-18/21:39:28">T474</psu>
+      <psu edsu="2020620/1620.0/2020-10-18/21:44:53">T474</psu>
+      <psu edsu="2020620/1621.0/2020-10-18/21:50:20">T474</psu>
+      <psu edsu="2020620/1622.0/2020-10-18/21:55:58">T474</psu>
+      <psu edsu="2020620/1623.0/2020-10-18/22:01:31">T474</psu>
+      <psu edsu="2020620/1624.0/2020-10-18/22:07:04">T474</psu>
+      <psu edsu="2020620/1625.0/2020-10-18/22:12:38">T474</psu>
+      <psu edsu="2020620/1626.0/2020-10-18/22:18:11">T474</psu>
+      <psu edsu="2020620/1627.0/2020-10-18/22:23:46">T474</psu>
+      <psu edsu="2020620/1628.0/2020-10-18/22:29:22">T474</psu>
+      <psu edsu="2020620/1629.0/2020-10-18/22:34:58">T474</psu>
+      <psu edsu="2020620/1630.0/2020-10-18/22:40:35">T474</psu>
+      <psu edsu="2020620/1631.0/2020-10-18/22:46:14">T474</psu>
+      <psu edsu="2020620/1632.0/2020-10-18/22:51:58">T474</psu>
+      <psu edsu="2020620/1633.0/2020-10-18/22:57:41">T474</psu>
+      <psu edsu="2020620/1636.0/2020-10-18/23:16:26">T475</psu>
+      <psu edsu="2020620/1637.0/2020-10-18/23:22:17">T475</psu>
+      <psu edsu="2020620/1638.0/2020-10-18/23:28:10">T475</psu>
+      <psu edsu="2020620/1639.0/2020-10-18/23:34:04">T475</psu>
+      <psu edsu="2020620/1640.0/2020-10-18/23:39:52">T475</psu>
+      <psu edsu="2020620/1641.0/2020-10-18/23:45:38">T475</psu>
+      <psu edsu="2020620/1642.0/2020-10-18/23:51:22">T475</psu>
+      <psu edsu="2020620/1643.0/2020-10-18/23:57:08">T475</psu>
+      <psu edsu="2020620/1644.0/2020-10-19/00:03:01">T475</psu>
+    </edsupsu>
+    <psustratum>
+      <stratum psu="T474">Vestfjord indre</stratum>
+      <stratum psu="T475">Vestfjord indre</stratum>
+    </psustratum>
+    <stratumpolygon>
+      <value polygonkey="Vestfjord indre" polygonvariable="includeintotal">true</value>
+      <value polygonkey="Vestfjord indre" polygonvariable="polygon">MULTIPOLYGON (((15.8638 68.22833667, 15.73288 68.21202667, 16.0272216700001 68.33826167, 15.9878533300001 68.27735, 15.95352167 68.27209833, 15.914155 68.262605, 15.8638 68.22833667)))</value>
+      <value polygonkey="Vestfjord ost" polygonvariable="includeintotal">false</value>
+      <value polygonkey="Vestfjord ost" polygonvariable="polygon">MULTIPOLYGON (((14.70691667 67.29462333, 14.71263833 67.29767667, 14.71023667 67.29612667, 15.3824616700001 67.86381667, 15.3907016700001 67.848115, 14.70691667 67.29462333)), ((17.4634376839828 68.4697078240273, 17.4759769046993 68.4636147431633, 16.03157 68.33488167, 16.02790833 68.33192333, 16.0272216700001 68.328795, 16.03134167 68.32719, 17.4634376839828 68.4697078240273)))</value>
+      <value polygonkey="Vestfjord vest" polygonvariable="includeintotal">true</value>
+      <value polygonkey="Vestfjord vest" polygonvariable="polygon">MULTIPOLYGON (((12.861785 67.823375, 13.363495 67.67792, 13.3557133300001 67.66426, 13.322755 67.63710333, 13.2495116700001 67.59526833, 12.87712167 67.80980333, 12.861785 67.823375)))</value>
+    </stratumpolygon>
+    <temporal>
+    </temporal>
+    <gearfactor>
+    </gearfactor>
+    <spatial>
+    </spatial>
+    <platformfactor>
+    </platformfactor>
+    <covparam>
+    </covparam>
+    <ageerror>
+    </ageerror>
+    <stratumneighbour>
+    </stratumneighbour>
+  </processdata>
+</project>
+    

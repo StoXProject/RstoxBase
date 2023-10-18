@@ -1204,11 +1204,12 @@ readStox2.7ProcessDataTableOne <- function(processDataName, projectList) {
 #' 
 #' @param projectXMLFilePath The path to the project.xml file.
 #' @param remove_includeintotal Logical: If TRUE, remove the column includeintotal column.
+#' @param StratumNameLabel The label of the column giving the stratum names.
 #' @param stratumPolygonFilePath The path to the file to write the StratumPolygon to (geojson file).
 #' 
 #' @export
 #' 
-readStratumPolygonFrom2.7 <- function(projectXMLFilePath, remove_includeintotal = TRUE) {
+readStratumPolygonFrom2.7 <- function(projectXMLFilePath, remove_includeintotal = TRUE, StratumNameLabel = "StratumName") {
     
     # Cannot use this as the stratum polygon is stored differently from a table in the project.xml, with two lines per polygon:
     ### # Read the data from the StoX 2.7 project.xml file.
@@ -1225,7 +1226,7 @@ readStratumPolygonFrom2.7 <- function(projectXMLFilePath, remove_includeintotal 
     # Convert the stratumpolygon to a table:
     StratumPolygon <- stratumpolygon2.7ToTable(projectList$processdata$stratumpolygon)
     # Rename the columns:
-    data.table::setnames(StratumPolygon, old = c("polygonkey", "polygon"), new = c("Stratum", "Polygon"), skip_absent = TRUE)
+    data.table::setnames(StratumPolygon, old = c("polygonkey", "polygon"), new = c(StratumNameLabel, "geometry"), skip_absent = TRUE)
     
     # Remove the unused includeintotal column:
     if(remove_includeintotal) {

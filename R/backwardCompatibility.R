@@ -275,6 +275,13 @@ backwardCompatibility <- list(
             modelName = "baseline", 
             parameterName = "RegressionDefinition", 
             parameterValue = "FunctionInput"
+        ), 
+        list(
+            changeVersion = "1.11.4-9002", 
+            functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "ImputationLevels", 
+            parameterValue = c("Haul", "Stratum", "Survey")
         )
     ),  
     

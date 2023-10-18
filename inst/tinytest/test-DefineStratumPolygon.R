@@ -1,8 +1,7 @@
 stratumFile_wkt <- system.file("testresources", "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase")
 stratumPolygon_wkt <- RstoxBase::DefineStratumPolygon(
     DefinitionMethod = "ResourceFile", 
-    FileName = stratumFile_wkt, 
-    StratumNameLabel = "Stratum"
+    FileName = stratumFile_wkt
 )
 
 stratumFile_GeoJSON <- system.file("testresources", "strata_sandeel_2020_firstCoverage.geojson", package = "RstoxBase")
@@ -19,9 +18,19 @@ stratumPolygon_shape <- RstoxBase::DefineStratumPolygon(
     StratumNameLabel = "StratumNam"
 )
 
+stratumFile_projectxml <- system.file("testresources", "project.xml", package = "RstoxBase")
+stratumPolygon_projectxml <- RstoxBase::DefineStratumPolygon(
+    DefinitionMethod = "ResourceFile", 
+    FileName = stratumFile_projectxml
+)
+
+
+
+
 expect_equal(stratumPolygon_wkt, stratumPolygon_GeoJSON, check.attributes = F)
 stratumPolygon_shape$StratumNam  <-   NULL
 expect_equal(stratumPolygon_wkt, stratumPolygon_shape, check.attributes = F)
+expect_equal(nrow(stratumPolygon_projectxml), 3)
 
 
 stratumNames <- RstoxBase::getStratumNames(stratumPolygon_wkt)
