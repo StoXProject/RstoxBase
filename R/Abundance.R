@@ -598,6 +598,7 @@ addLengthGroup <- function(
 #' @param ImputeAtMissing A single string naming the variable which when missing identifies target individuals to input data \bold{to}. I.e., if \code{ImputeAtMissing} is missing for an individual, perform the imputation. In StoX 3.0.0 and older, \code{ImputeAtMissing} was hard coded to IndividualAge.
 #' @param ImputeByEqual A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data \bold{from}. The source individuals need also to have non-missing \code{ImputeAtMissing}. In StoX 3.0.0 and older, \code{ImputeByEqual} was hard coded to c("SpeciesCategory","IndividualTotalLength").
 #' @param ToImpute A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when \code{ImputeAtMissing} is missing, so including many variables in \code{ToImpute} is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}. 
+#' @param ImputationLevels A vector of strings  naming the levels at which to input, defaulted to c("Haul", "Stratum", "Survey"). To prevent imputation at the Survey level, use c("Haul", "Stratum")
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
 #' @param RegressionDefinition Character: A string naming the method to use, one of \code{FunctionParameter} to define the Regression on the fly in this function (using \code{GroupingVariables}, \code{RegressionModel} and \code{RegressionTable}), or \code{FunctionInput} to import Regression process data from a previously run process using the function
 #' 
@@ -617,6 +618,7 @@ ImputeSuperIndividuals <- function(
     ImputeAtMissing = character(), 
     ImputeByEqual = character(), 
     ToImpute = character(), 
+    ImputationLevels = c("Haul", "Stratum", "Survey"), 
     Seed = 1, 
     RegressionDefinition = c("FunctionParameter", "FunctionInput"), 
     GroupingVariables = character(), 
@@ -655,7 +657,8 @@ ImputeSuperIndividuals <- function(
             imputeAtMissing = ImputeAtMissing, 
             imputeByEqual = ImputeByEqual, 
             seed = Seed, 
-            columnNames = ToImpute#, 
+            columnNames = ToImpute, 
+            levels = ImputationLevels#, 
             #lengthInterval  = if(RegroupIndividualTotalLength) LengthInterval else numeric()
         )
     }
@@ -672,12 +675,15 @@ ImputeSuperIndividuals <- function(
             )
         }
         
+        # Initiate the output:
+        ImputeSuperIndividualsData <- data.table::copy(SuperIndividualsData)
+        
         for(rowInd in seq_len(NROW(Regression$RegressionTable))) {
             thisRegression <- Regression
             thisRegression$RegressionTable <- Regression$RegressionTable[rowInd, ]
             
             ImputeSuperIndividualsData <- ImputeDataByRegressionOneRow(
-                data = SuperIndividualsData, 
+                data = ImputeSuperIndividualsData, 
                 Regression = thisRegression
             )
         }
@@ -715,7 +721,7 @@ ImputeDataByRandomSampling <- function(
     seed = 1, 
     columnNames = NULL, 
     lengthInterval = numeric(), 
-    levels = list(
+    levels = c(
         "Haul", 
         "Stratum", 
         "Survey"
@@ -798,6 +804,9 @@ ImputeDataByRandomSampling <- function(
     
     # Get the ReplaceIndividual:
     dataCopy[, ReplaceIndividual := Individual[match(ReplaceIndividualIndex, IndividualIndex)]]
+    
+    # Add a column ImputationMethod:
+    dataCopy[!is.na(ReplaceIndividual), ImputationMethod := "RandomSampling"]
     
     # Delete the IndividualIndex and ReplaceIndividualIndex:
     removeColumnsByReference(
@@ -991,6 +1000,10 @@ ImputeDataByRegressionOneRow <- function(
     # Run the regression:
     dataCopy[atImpute, eval(DependentVariable) := regressionFunction(get(eval(IndependentVariable)), .SD), .SDcols = modelParameters]
     
+    # Add a column ImputationMethod:
+    dataCopy[atImpute, ImputationMethod := "Regression"]
+    
+    # Remove columns:
     dataCopy[, (removeAfterwards) := NULL]
     
     

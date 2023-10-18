@@ -17,18 +17,18 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
         stop("The StoX multipolygon WKT file ", FilePath, " does not exist or is a directory.")
     }
     tab <- data.table::fread(FilePath, sep = "\t", header = FALSE, colClasses = list(character=1:2), encoding = "UTF-8")
-    names(tab) <- c("Stratum", "geometry")
+    names(tab) <- c("StratumName", "geometry")
     
     ### # Do a check for scandinavian letters given as hex code, and issue an error stating that the file needs to be converted to UTF-8:
     ### scandinavianLettersAsHex <- c("\xe6", "\xf8", "\xe5", "\xc6", "\xd8", "\xc5")
-    invalidUTF8 <- detectInvalidUTF8(tab$Stratum)
+    invalidUTF8 <- detectInvalidUTF8(tab$StratumName)
     if(any(invalidUTF8)) {
         stop("The file ", FilePath, " contains characters indicating that the file was saved with an encoding different from the required UTF-8 (scandinavian letters, possibly saved as Latin 1). Please open the file in a text editor, verify that all characters appear as exptected, and save the file with encodnig UTF-8.")
     }
     
     # Stop also if stratum names are duplicated:
-    if(any(duplicated(tab$Stratum))) {
-        stop("The file ", FilePath, " contains duplicated polygon names (column 1). Please open the file in a text editor and rename or delete the duplicated strata: ", paste(paste0("\"", unique(tab$Stratum[duplicated(tab$Stratum)]), "\""), collapse = ", "), ".")
+    if(any(duplicated(tab$StratumName))) {
+        stop("The file ", FilePath, " contains duplicated polygon names (column 1). Please open the file in a text editor and rename or delete the duplicated strata: ", paste(paste0("\"", unique(tab$StratumName[duplicated(tab$StratumName)]), "\""), collapse = ", "), ".")
     }
     
     return(tab)
@@ -135,22 +135,13 @@ DefineStratumPolygon <- function(
     
     # Read the file:
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
-        StratumPolygon <- readStratumPolygonFromFile(FileName)
+        StratumPolygon <- readStratumPolygonFromFile(FileName, StratumNameLabel = StratumNameLabel)
     }
     else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
     }
     else {
         stop("Inavlid DefinitionMethod")
-    }
-    
-    
-    # Add an attribute named StratumName:
-    if(NROW(StratumPolygon)) {
-        StratumPolygon <- addStratumNames(
-            StratumPolygon, 
-            StratumNameLabel = StratumNameLabel
-        )
     }
     
     if(isTRUE(SimplifyStratumPolygon)) {
@@ -171,7 +162,7 @@ DefineStratumPolygon <- function(
 
 
 
-readStratumPolygonFromFile <- function(FileName) {
+readStratumPolygonFromFile <- function(FileName, StratumNameLabel = character()) {
     
     if(length(unlist(strsplit(FileName, "\\."))) < 2) {
         stop("FileName must include file extension.")
@@ -186,21 +177,39 @@ readStratumPolygonFromFile <- function(FileName) {
         dataTable <- readStoxMultipolygonWKTFromFile(FileName)
         # Convert to sf (POLYGON or MULTIPOLYGON):
         StratumPolygon <- sf::st_as_sf(dataTable, wkt = 2)
+        
+        # Hard coded to "StratumName", as column names are not in the StoX wkt files:
+        StratumPolygon <- addStratumNames(
+            StratumPolygon, 
+            StratumNameLabel = "StratumName"
+        )
     }
     # If the FileName is a shapefile, or a directory with a shapefile:
     else if(tolower(FileExt) == "shp" || (isTRUE(file.info(FileName)$isdir) && any(tools::file_ext(list.files(FileName)) == "shp"))) {
         # Read the shape files:
         StratumPolygon <- sf::st_read(FileName, quiet = TRUE)
+        
+        # Set stratum names:
+        StratumPolygon <- addStratumNames(
+            StratumPolygon, 
+            StratumNameLabel = StratumNameLabel
+        )
     }
     else if(tolower(FileExt) %in% c("json", "geojson")) {
         # Read the geojson:
         StratumPolygon <-  geojsonsf::geojson_sf(FileName)
+        
+        # Set stratum names:
+        StratumPolygon <- addStratumNames(
+            StratumPolygon, 
+            StratumNameLabel = StratumNameLabel
+        )
     }
     else if(tolower(FileExt) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
-        # Read the table of wkt strings:
+        # Read the table of wkt strings (stratum name column is set to "StratumName" in this function):
         StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = TRUE)
         # Convert to sf (POLYGON or MULTIPOLYGON):
-        StratumPolygon <- sf::st_as_sf(dataTable, wkt = 2)
+        StratumPolygon <- sf::st_as_sf(StratumPolygon, wkt = 2)
     }
     else {
         stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
@@ -230,6 +239,10 @@ simplifyStratumPolygon <- function(
     preserveTopology = FALSE
 ) {
     
+    # Do nothing to empty:
+    if(!NROW(StratumPolygon)) {
+        return(StratumPolygon)
+    }
     
     if(SimplificationFactor <= 0 || SimplificationFactor >= 1) {
         stop("SimplificationFactor must be between 0 and 1.")
@@ -352,6 +365,7 @@ simplifyStratumPolygon <- function(
 #' 
 getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
     
+    
     #if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
         
         # No names for empty polygons:
@@ -395,6 +409,10 @@ getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
 #' @export
 #' 
 addStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
+    
+    if(!NROW(stratum)) {
+        return(stratum)
+    }
     
     stratumNames <- getStratumNames(
         stratum, 

@@ -10,6 +10,7 @@ ImputeSuperIndividuals(
   ImputeAtMissing = character(),
   ImputeByEqual = character(),
   ToImpute = character(),
+  ImputationLevels = c("Haul", "Stratum", "Survey"),
   Seed = 1,
   RegressionDefinition = c("FunctionParameter", "FunctionInput"),
   GroupingVariables = character(),
@@ -28,6 +29,8 @@ ImputeSuperIndividuals(
 \item{ImputeByEqual}{A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data \bold{from}. The source individuals need also to have non-missing \code{ImputeAtMissing}. In StoX 3.0.0 and older, \code{ImputeByEqual} was hard coded to c("SpeciesCategory","IndividualTotalLength").}
 
 \item{ToImpute}{A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when \code{ImputeAtMissing} is missing, so including many variables in \code{ToImpute} is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}.}
+
+\item{ImputationLevels}{A vector of strings  naming the levels at which to input, defaulted to c("Haul", "Stratum", "Survey"). To prevent imputation at the Survey level, use c("Haul", "Stratum")}
 
 \item{Seed}{An integer giving the seed to use for the random sampling used to obtain the imputed data.}
 

@@ -1137,7 +1137,8 @@ stoxFunctionAttributes <- list(
             ImputeByEqual = "getImputeByEqual", 
             ToImpute = "getToImpute", 
             GroupingVariables = "groupingVariables_ImputeSuperIndividuals",
-            RegressionTable = "regressionTable"
+            RegressionTable = "regressionTable", 
+            ImputationLevels = "imputationLevels"
         ),
         functionArgumentHierarchy = list(
             RegressionDefinition = list(
@@ -1168,9 +1169,15 @@ stoxFunctionAttributes <- list(
             ToImpute = list(
                 ImputationMethod = "RandomSampling"
             ), 
+            ImputationLevels = list(
+                ImputationMethod = "RandomSampling"
+            ), 
             Seed = list(
                 ImputationMethod = "RandomSampling"
             )
+        ), 
+        functionParameterDefaults = list(
+            ImputationLevels = c("Haul", "Stratum", "Survey")
         )
     ),
     ##########
@@ -1799,7 +1806,7 @@ processPropertyFormats <- list(
             
             return(variableTypes)
         }, 
-        possibleValues = function(RegressionModel, GroupingVariables = character()) {
+        possibleValues = function(RegressionModel, SuperIndividualsData, GroupingVariables = character()) {
             
             # Get all unique combinations:
             if(RegressionModel == "SimpleLinear") {
@@ -1813,8 +1820,17 @@ processPropertyFormats <- list(
             }
             
             # Output must be an unnamed list:
+            #c(
+            #    rep(list(list()), 7 + as.numeric(length(GroupingVariables[nchar(GroupingVariables) > 0]))), 
+            #    list(EstimationMethod)
+            #)
             c(
-                rep(list(list()), 7 + as.numeric(length(GroupingVariables[nchar(GroupingVariables) > 0]))), 
+                # Unique values of the grouping variables:
+                if(missing(SuperIndividualsData)) rep(list(list()), length(GroupingVariables)) else lapply(GroupingVariables, function(x) sort(unique(SuperIndividualsData[[x]]))), 
+                # All columnn names:
+                if(missing(SuperIndividualsData)) rep(list(list()), 4) else rep(list(names(SuperIndividualsData)), 4), 
+                # Empty for numeric fields:
+                rep(list(list()), 3), 
                 list(EstimationMethod)
             )
         }
@@ -2095,5 +2111,18 @@ processPropertyFormats <- list(
                 RstoxData::getUnitOptions(quantity)
             }
         }
+    ), 
+    
+    
+    imputationLevels = list(
+        class = "vector", 
+        title = "Select ImputationLevels", 
+        possibleValues = 
+            c(
+                "Haul", 
+                "Stratum", 
+                "Survey"
+            )
+        
     )
 )

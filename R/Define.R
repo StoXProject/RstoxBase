@@ -2062,12 +2062,10 @@ DefineModel <- function(
 getModel <- function(modelClass, ModelName, DefinitionMethod, ParameterTable, FileName) {
     
     # Read the table if requested, or issue an error if not given:
-    if(DefinitionMethod == "Table") {
-        if(length(ParameterTable) == 0) {
-            stop(ParameterTable, "TableName must be given if DefinitionMethod = \"", TableName, "\".")
+    if(DefinitionMethod == "ResourceFile") {
+        if(!length(FileName) || !file.exists(FileName)) {
+            stop("FileName must be the path to an existing file.")
         }
-    }
-    else if(DefinitionMethod == "ResourceFile") {
         ParameterTable <- data.table::fread(FileName, encoding = "UTF-8")
     }
     
@@ -2468,8 +2466,8 @@ DefineSurvey <- function(
         
         # Define all strata that have includeintotal = TRUE as a survey named "Survey", and all others as individual surveys:
         SurveyTable <- data.table::data.table(
-            Stratum = StratumPolygon$Stratum, 
-            Survey = StratumPolygon$Stratum
+            Stratum = StratumPolygon$StratumaName, 
+            Survey = StratumPolygon$StratumaName
         )
         indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
         SurveyTable[indcludedInTotal, Survey := "Survey"]

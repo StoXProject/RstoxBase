@@ -5,7 +5,11 @@
 \alias{writeStratumPolygonFrom2.7}
 \title{Read a the StratumPolygon from a project.xml file from StoX <= 2.7}
 \usage{
-readStratumPolygonFrom2.7(projectXMLFilePath, remove_includeintotal = TRUE)
+readStratumPolygonFrom2.7(
+  projectXMLFilePath,
+  remove_includeintotal = TRUE,
+  StratumNameLabel = "StratumName"
+)
 
 writeStratumPolygonFrom2.7(
   projectXMLFilePath,
@@ -17,6 +21,8 @@ writeStratumPolygonFrom2.7(
 \item{projectXMLFilePath}{The path to the project.xml file.}
 
 \item{remove_includeintotal}{Logical: If TRUE, remove the column includeintotal column.}
+
+\item{StratumNameLabel}{The label of the column giving the stratum names.}
 
 \item{stratumPolygonFilePath}{The path to the file to write the StratumPolygon to (geojson file).}
 }
