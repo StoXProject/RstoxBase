@@ -17,18 +17,18 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
         stop("The StoX multipolygon WKT file ", FilePath, " does not exist or is a directory.")
     }
     tab <- data.table::fread(FilePath, sep = "\t", header = FALSE, colClasses = list(character=1:2), encoding = "UTF-8")
-    names(tab) <- c("Stratum", "geometry")
+    names(tab) <- c("StratumName", "geometry")
     
     ### # Do a check for scandinavian letters given as hex code, and issue an error stating that the file needs to be converted to UTF-8:
     ### scandinavianLettersAsHex <- c("\xe6", "\xf8", "\xe5", "\xc6", "\xd8", "\xc5")
-    invalidUTF8 <- detectInvalidUTF8(tab$Stratum)
+    invalidUTF8 <- detectInvalidUTF8(tab$StratumName)
     if(any(invalidUTF8)) {
         stop("The file ", FilePath, " contains characters indicating that the file was saved with an encoding different from the required UTF-8 (scandinavian letters, possibly saved as Latin 1). Please open the file in a text editor, verify that all characters appear as exptected, and save the file with encodnig UTF-8.")
     }
     
     # Stop also if stratum names are duplicated:
-    if(any(duplicated(tab$Stratum))) {
-        stop("The file ", FilePath, " contains duplicated polygon names (column 1). Please open the file in a text editor and rename or delete the duplicated strata: ", paste(paste0("\"", unique(tab$Stratum[duplicated(tab$Stratum)]), "\""), collapse = ", "), ".")
+    if(any(duplicated(tab$StratumName))) {
+        stop("The file ", FilePath, " contains duplicated polygon names (column 1). Please open the file in a text editor and rename or delete the duplicated strata: ", paste(paste0("\"", unique(tab$StratumName[duplicated(tab$StratumName)]), "\""), collapse = ", "), ".")
     }
     
     return(tab)
@@ -136,6 +136,7 @@ DefineStratumPolygon <- function(
     # Read the file:
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- readStratumPolygonFromFile(FileName)
+        StratumNameLabel <- "StratumName"
     }
     else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
@@ -143,8 +144,7 @@ DefineStratumPolygon <- function(
     else {
         stop("Inavlid DefinitionMethod")
     }
-    
-    
+
     # Add an attribute named StratumName:
     if(NROW(StratumPolygon)) {
         StratumPolygon <- addStratumNames(
@@ -351,6 +351,7 @@ simplifyStratumPolygon <- function(
 #' @export
 #' 
 getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
+    
     
     #if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
         

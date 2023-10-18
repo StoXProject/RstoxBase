@@ -21,6 +21,13 @@ jobs:
       fail-fast: false
       matrix:
         config:
+          # arm64:
+          - {os: macos-latest-xlarge,   r: 'release', pkgext: '.tgz'}
+          - {os: macos-latest-xlarge,   r: '4.3',     pkgext: '.tgz'}
+          - {os: macos-latest-xlarge,   r: '4.2',     pkgext: '.tgz'}
+          - {os: macos-latest-xlarge,   r: '4.1',     pkgext: '.tgz'}
+          - {os: macos-latest-xlarge,   r: '4.0',     pkgext: '.tgz'}
+          # x86_64:
           - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.3',     pkgext: '.tgz'}
           - {os: macOS-latest,   r: '4.2',     pkgext: '.tgz'}

@@ -2062,12 +2062,10 @@ DefineModel <- function(
 getModel <- function(modelClass, ModelName, DefinitionMethod, ParameterTable, FileName) {
     
     # Read the table if requested, or issue an error if not given:
-    if(DefinitionMethod == "Table") {
-        if(length(ParameterTable) == 0) {
-            stop(ParameterTable, "TableName must be given if DefinitionMethod = \"", TableName, "\".")
+    if(DefinitionMethod == "ResourceFile") {
+        if(!length(FileName) || !file.exists(FileName)) {
+            stop("FileName must be the path to an existing file.")
         }
-    }
-    else if(DefinitionMethod == "ResourceFile") {
         ParameterTable <- data.table::fread(FileName, encoding = "UTF-8")
     }
     

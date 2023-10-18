@@ -1,3 +1,9 @@
+# RstoxBase v1.11.4-9002  (2023-10-18)
+* Added the option ImputationLevels to ImputeSuperIndividuals(), which allows for restricting imputation by random sampling to e.g. only the same haul and stratum (and not survey). 
+* Fixed bug in ImputeSuperIndividuals() where more than one row resulted in only the last row being used.
+* Fixed bug in readStoxMultipolygonWKTFromFile(), where the columns of data read from wkt files were named Stratum instead of StratumName, causing an error when reading wkt files.
+
+
 # RstoxBase v1.11.4-9001  (2023-08-30)
 * Removed dependency on the retiring package sp.
 * Changed GearDependentCatchCompensation() to keep all variables from the input SpeciesCategoryCatchData.
