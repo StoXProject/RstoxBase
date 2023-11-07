@@ -90,10 +90,29 @@ DefinePSU <- function(
     else {
         # If DefinitionMethod is "ResourceFile", read from a project.xml file:
         if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
-            
             if(PSUType == "Acoustic") {
-                # Read from the project.xml:
-                AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+                ## Read from the project.xml:
+                #AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+                #
+                ## Add the PSUByTime:
+                #if(SavePSUByTime) {
+                #    AcousticPSU$PSUByTime <- getPSUByTime(
+                #        AcousticPSU, 
+                #        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                #        PSUType = PSUType
+                #    )
+                #}
+                #return(AcousticPSU)
+                
+                if(basename(FileName) == "project.json") {
+                    AcousticPSU <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineAcousticPSU")
+                }
+                else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+                    AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+                }
+                else {
+                    stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+                }
                 
                 # Add the PSUByTime:
                 if(SavePSUByTime) {
@@ -107,16 +126,24 @@ DefinePSU <- function(
             }
             else if(PSUType == "Biotic") {
                 
-                # Read from the project.xml:
-                MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
-                    StoxData, 
-                    tableNames = c("Cruise", "Station", "Haul"), 
-                    output.only.last = TRUE, 
-                    all = TRUE
-                )
+                if(basename(FileName) == "project.json") {
+                    BioticPSU <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineBioticPSU")
+                }
+                else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+                    # Read from the project.xml:
+                    MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
+                        StoxData, 
+                        tableNames = c("Cruise", "Station", "Haul"), 
+                        output.only.last = TRUE, 
+                        all = TRUE
+                    )
+                    
+                    BioticPSU <- readBioticPSUFrom2.7(FileName, MergedStoxDataHaulLevel = MergedStoxDataHaulLevel)
+                }
+                else {
+                    stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+                }
                 
-                
-                BioticPSU <- readBioticPSUFrom2.7(FileName, MergedStoxDataHaulLevel = MergedStoxDataHaulLevel)
                 return(BioticPSU)
             }
             else {
@@ -338,6 +365,18 @@ DefinePSU <- function(
     return(processData)
 }
 
+# Function to get the file extension (used to get the ext of a project description file in particular):
+getResourceFileExt <- function(FileName) {
+    if(length(unlist(strsplit(FileName, "\\."))) < 2) {
+        stop("StoX: FileName must include file extension.")
+    }
+    else {
+        fileParts <- unlist(strsplit(FileName, "\\."))
+        FileExt <- utils::tail(fileParts, 1)
+    }
+    
+    return(FileExt)
+}
 
 onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
     PSUType <- RstoxData::match_arg_informative(PSUType)
@@ -443,6 +482,16 @@ removeEmptyPSUs <- function(PSUProcessData) {
     return(PSUProcessData)
 }
 
+
+
+#' Rename SSU to either EDSU or Station
+#' 
+#' @inheritParams general_arguments
+#' @param PSUProcessData A table to rename in.
+#' @param reverse Logical: If TRUE rename to SSU.
+#' 
+#' @export
+#' 
 renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
     PSUType <- RstoxData::match_arg_informative(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
@@ -461,6 +510,7 @@ renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic
     
     return(PSUProcessData)
 }
+
 
 
 renameSSUToSSULabelInTable <- function(table, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
@@ -1329,18 +1379,26 @@ DefineBioticAssignment <- function(
         BioticAssignment <- data.table::data.table()
     }
     else if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
-        BioticAssignment <- readBioticAssignmentFrom2.7(FileName)
         
-        # Translate to the Haul defined by StoX >=3:
-        HaulsAsIn2.7 <- sub("/.*&*-", "/", HaulData$Haul)
-        
-        BioticAssignment$Haul <- HaulData$Haul[
-            match(
-                BioticAssignment$Haul, 
-                HaulsAsIn2.7
-            )
-        ]
-        
+        if(basename(FileName) == "project.json") {
+            BioticAssignment <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineBioticAssignment")$BioticAssignment
+        }
+        else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+            BioticAssignment <- readBioticAssignmentFrom2.7(FileName)
+            
+            # Translate to the Haul defined by StoX >=3:
+            HaulsAsIn2.7 <- sub("/.*&*-", "/", HaulData$Haul)
+            
+            BioticAssignment$Haul <- HaulData$Haul[
+                match(
+                    BioticAssignment$Haul, 
+                    HaulsAsIn2.7
+                )
+            ]
+        }
+        else {
+            stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+        }
     }
     # Is this for backward campatibility??????????????
     else if(isEmptyString(DefinitionMethod)){
@@ -1370,7 +1428,6 @@ DefineBioticAssignment <- function(
     ## Add the layers:
     #Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
     #BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
-    
     
     BioticAssignment <- addLayerToBioticAssignmentAndFormat(
         BioticAssignment = BioticAssignment, 
@@ -2460,17 +2517,27 @@ DefineSurvey <- function(
     DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Read from a stoX 2.7 project.xml:
-    if(DefinitionMethod == "ResourceFile" && tolower(tools::file_ext(FileName)) == "xml") {
-        # Read the StratumPolygon from the project.xml file:
-        StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = FALSE)
+    if(DefinitionMethod == "ResourceFile") {
         
-        # Define all strata that have includeintotal = TRUE as a survey named "Survey", and all others as individual surveys:
-        SurveyTable <- data.table::data.table(
-            Stratum = StratumPolygon$StratumaName, 
-            Survey = StratumPolygon$StratumaName
-        )
-        indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
-        SurveyTable[indcludedInTotal, Survey := "Survey"]
+        if(basename(FileName) == "project.json") {
+            SurveyTable <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineSurvey")
+        }
+        else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+            
+            # Read the StratumPolygon from the project.xml file:
+            StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = FALSE)
+            
+            # Define all strata that have includeintotal = TRUE as a survey named "Survey", and all others as individual surveys:
+            SurveyTable <- data.table::data.table(
+                Stratum = StratumPolygon$StratumName, 
+                Survey = StratumPolygon$StratumName
+            )
+            indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
+            SurveyTable[indcludedInTotal, Survey := "Survey"]
+        }
+        else {
+            stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+        }
     }
     else {
         # Get the survey table using the stratum names:
@@ -2556,4 +2623,198 @@ getSurveyTable <- function(
 
 
 
+
+#' Format process data
+#' 
+#' @param processData A StoX process data (list of sf or data.table)
+#' @param columnClasses A list of lists of classes of the columns of process data tables, as read from process data schemas. Used only in RstoxFramework.
+#' 
+#' @export
+#'
+formatProcessData <-  function(processData, columnClasses = NULL) {
+    if(!is.list(processData)) {
+        stop("StoX: ProcessData must be a list consisting of objects of classes data.table or sf.")
+    }
+    
+    if(length(processData)) {
+        processData <- mapply(formatProcessDataOne, processDataName = names(processData), processDataOne = processData, MoreArgs = list(columnClasses = columnClasses), SIMPLIFY = FALSE)
+    }
+    
+    return(processData)
+}
+
+
+formatProcessDataOne <-  function(processDataName, processDataOne, columnClasses = NULL) {
+    
+    if(!length(processDataOne)) {
+        processDataOne <- data.table::data.table()
+    }
+    # Convert to sp:
+    else if("features" %in% tolower(names(processDataOne))) {
+        # Using geojsonsf instead of geojsonio to reduce the number of dependencies:
+        #processDataOne <- geojsonio::geojson_sp(toJSON_Rstox(processDataOne, pretty = TRUE))
+        # Check for empty multipolygon, which is not well treated by sf:
+        StratumPolygon <- geojsonsf::geojson_sf(toJSON_Rstox(processDataOne, pretty = TRUE))
+        
+        if(length(StratumPolygon$geometry)) {
+            
+            # Set the assumed pojection:
+            suppressWarnings(sf::st_crs(StratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat"))
+            # Make sure that the StratumPolygon is a MULTIPOLYGON object:
+            StratumPolygon <- sf::st_cast(StratumPolygon, "MULTIPOLYGON")
+            
+            # Add names:
+            processDataOne <- addStratumNames(StratumPolygon, accept.wrong.name.if.only.one = TRUE)
+        }
+        else {
+            processDataOne <- getRstoxBaseDefinitions("emptyStratumPolygon")
+        }
+    }
+    # If a data.table:
+    else if(length(processDataOne) && data.table::is.data.table(processDataOne)) {
+        
+        convertStringToNA(processDataOne)
+        ## Set numeric NAs:
+        #jsonNA <- getRstoxFrameworkDefinitions("jsonNA")
+        #decodeNumericNAOneProcessData(processDataOne, na = jsonNA)
+        
+        if(length(columnClasses)) {
+            convertClassOfDataTable(processDataOne, columnClasses = columnClasses[[processDataName]])
+        }
+        
+        
+        convertToPosixInDataTable(processDataOne)
+    }
+    # Otherwise try to convert to data.table:
+    else if(length(processDataOne) && is.convertableToTable(processDataOne)) {
+        # Why was this extremely slow method used, where converting to and then from JSON slows things down imensely?:
+        # processDataOne <- simplifyListReadFromJSON(processDataOne)
+        # processDataOne <- data.table::as.data.table(processDataOne)
+        
+        # Convert to data.table:
+        processDataOne <- data.table::rbindlist(processDataOne)
+        
+        convertStringToNA(processDataOne)
+        ## Set numeric NAs:
+        #jsonNA <- getRstoxFrameworkDefinitions("jsonNA")
+        #decodeNumericNAOneProcessData(processDataOne, na = jsonNA)
+        
+        if(length(columnClasses)) {
+            convertClassOfDataTable(processDataOne, columnClasses = columnClasses[[processDataName]])
+        }
+        
+        convertToPosixInDataTable(processDataOne)
+    }
+    else {
+        stop("StoX: ProcessData must be a list consisting of objects of classes data.table or sf.")
+    }
+    
+    return(processDataOne)
+}
+
+
+
+convertStringToNA <- function(x) {
+    chcols = names(x)[sapply(x, is.character)]
+    #x[, (chcols) := lapply(.SD, replace, as.is=TRUE), .SDcols=chcols] # Changed to numeric when not intended
+    x[, (chcols) := lapply(.SD, function(x) ifelse(x == "NA", NA, x)), .SDcols = chcols]
+}
+
+# Function to convert column classes of a data.table given a list of variablename-class pairs:
+convertClassOfDataTable <- function(x, columnClasses) {
+    for(col in intersect(names(x), names(columnClasses))) {
+        fun <- paste("as", columnClasses[[col]], sep = ".")
+        x[, eval(col) := do.call(fun, list(get(col)))]
+    }
+}
+
+
+convertToPosixInDataTable <- function(x) {
+    convertableToPOSIX <- unlist(x[, lapply(.SD, is.ConvertableToPOSIX)])
+    if(any(convertableToPOSIX)) {
+        DateTimeColumns <- names(x)[convertableToPOSIX]
+        x[, (DateTimeColumns) := lapply(.SD, convertToPOSIX), .SDcols = DateTimeColumns]
+    }
+}
+
+
+is.convertableToTable <- function(x, minLength = 1) {
+    # If all elements of the list x are lists with equal length, x is convertable to data.table:
+    length(x) && 
+        is.list(x) && # The input must be a list
+        all(sapply(x, is.list)) && # ... and a list of lists
+        RstoxBase::allEqual(lengths(x)) && # ... and all must be of equal length
+        all(lengths(x) >= minLength) && # ... and longer than 1
+        !is.list(x[[1]][[1]]) # ... and finally, each list must not contain lists. We only check the first element here
+}
+
+#' Convert to JSON
+#' 
+#' This function takes care of the defaults preferred by the Rstox packages
+#' 
+#' @param x An object to convert to JSON.
+#' @param ... Parameters overriding the defaults digits = NA, auto_unbox = TRUE, na = "null", null = "null".
+#' 
+#' @export
+#' 
+toJSON_Rstox <- function(x, ...) {
+    # Define defaults:
+    digits <- NA
+    auto_unbox <- TRUE
+    # Changed on 2021-04-21 to supports NA strings:
+    #na <- "null"
+    na <- "string"
+    na <- "null"
+    null <- "null"
+    
+    # Override by ...:
+    lll <- list(...)
+    
+    if(!"digits" %in% names(lll)) {
+        lll$digits <- digits
+    }
+    if(!"auto_unbox" %in% names(lll)) {
+        lll$auto_unbox <- auto_unbox
+    }
+    if(!"na" %in% names(lll)) {
+        lll$na <- na
+    }
+    if(!"null" %in% names(lll)) {
+        lll$null <- null
+    }
+    
+    #lll$x <- x
+    lll <- c(list(x = x), lll
+    )
+    
+    # Use ISO8601 for time:
+    lll$POSIXt ="ISO8601"
+    
+    do.call(jsonlite::toJSON, lll)
+}
+
+
+
+is.ConvertableToPOSIX <- function(x) {
+    if(is.character(x)) {
+        # Convert to POSIX:
+        POSIX <- convertToPOSIX(x)
+        any(!is.na(POSIX))
+    }
+    else {
+        FALSE
+    }
+}
+
+
+convertToPOSIX <- function(x) {
+    # Get the DateTime format used by StoX:
+    StoxDateTimeFormat <- RstoxData::getRstoxDataDefinitions("StoxDateTimeFormat")
+    StoxTimeZone <- RstoxData::getRstoxDataDefinitions("StoxTimeZone")
+    
+    # Convert to POSIX:
+    POSIX <- as.POSIXct(x, format = StoxDateTimeFormat, tz = StoxTimeZone)
+    
+    return(POSIX)    
+}
 

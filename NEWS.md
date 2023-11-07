@@ -1,3 +1,9 @@
+# RstoxBase v1.11.4-9003  (2023-11-07)
+* Added support for reading a project.json in DefineSurvey(), DefineAcousticPSU(), DefineBioticPSU(), DefineBioticAssignment() and DefineStratumPolygon.
+* Restricted warning for missing or 0 EffectiveTowDistance to only activate when there are there are more than 0 individuals in the Haul. 
+* Fixed bug in DefineSurvey with DefinitionMethod = "ResourceFile", where the FileName was the path to a project.xml file.
+
+
 # RstoxBase v1.11.4-9002  (2023-10-18)
 * Added the option ImputationLevels to ImputeSuperIndividuals(), which allows for restricting imputation by random sampling to e.g. only the same haul and stratum (and not survey). 
 * Fixed bug in ImputeSuperIndividuals() where more than one row resulted in only the last row being used.

@@ -641,15 +641,15 @@ ImputeSuperIndividuals <- function(
             warning("StoX: Empty ToImpute is deprecated. Please select the variables to impute explicitely.")
             ToImpute <- getIndividualNames(SuperIndividualsData, ImputeByEqual,  tables = "Individual")
         }
-        if(!ImputeAtMissing %in% ToImpute) {
+        if(length(ImputeAtMissing) != 1) {
+            stop("ImputeAtMissing must have length 1.")
+        }
+        else if(!ImputeAtMissing %in% ToImpute) {
             stop("Please specify the variable given by ImputeAtMissing (", ImputeAtMissing, ") in ToImpute. ")
         }
         # For safety uniquify:
         ToImpute <- unique(ToImpute)
         
-        if(length(ImputeAtMissing) != 1) {
-            stop("ImputeAtMissing must have length 1.")
-        }
         
         # Impute the SuperIndividualsData:
         ImputeSuperIndividualsData <- ImputeDataByRandomSampling(

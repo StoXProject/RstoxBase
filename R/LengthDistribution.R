@@ -208,11 +208,11 @@ LengthDistribution <- function(
     ##### 6. Divide by the effective towed distance for normalized length distribution: #####
     #########################################################################################
     if(LengthDistributionType == "Normalized") {
-        atEffectiveTowDistance0 <- which(LengthDistributionData[, !is.na(Haul) & EffectiveTowDistance == 0])
+        atEffectiveTowDistance0 <- which(LengthDistributionData[, !is.na(Haul) & EffectiveTowDistance == 0 & numberOfIndividuals > 0])
         if(length(atEffectiveTowDistance0)) {
             stop("Invalid Haul error: The following Hauls have EffectiveTowDistance = 0, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistance0]), collapse = ", "))
         }
-        atEffectiveTowDistanceNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(EffectiveTowDistance)])
+        atEffectiveTowDistanceNA <- which(LengthDistributionData[, !is.na(Haul) & is.na(EffectiveTowDistance) & numberOfIndividuals > 0])
         if(length(atEffectiveTowDistanceNA)) {
             stop("Invalid Haul error: The following Hauls have EffectiveTowDistance = NA, which is not allowed when LengthDistributionType == \"Normalized\":\n", paste("\t", unique(LengthDistributionData$Haul[atEffectiveTowDistanceNA]), collapse = ", "))
         }
