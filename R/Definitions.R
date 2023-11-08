@@ -462,6 +462,7 @@ initiateRstoxBase <- function(){
     # # This failed due to the above note:
     # #suppressWarnings(sp::proj4string(emptyStratumPolygon) <- proj4string)
     emptyStratumPolygon <- sf::st_sf(sf::st_sfc())
+    emptyStratumPolygonGeojson <- "{\n\t\"type\": \"FeatureCollection\",\n\t\"features\": []\n}\n"
     
     
     ##### Definitions of implemented model classes, such as target strength and regression: #####

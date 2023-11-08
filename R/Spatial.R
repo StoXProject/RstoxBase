@@ -197,13 +197,19 @@ readStratumPolygonFromFile <- function(FileName, StratumNameLabel = character())
     }
     else if(tolower(FileExt) %in% c("json", "geojson")) {
         # Read the geojson:
-        StratumPolygon <-  geojsonsf::geojson_sf(FileName)
-        
-        # Set stratum names:
-        StratumPolygon <- addStratumNames(
-            StratumPolygon, 
-            StratumNameLabel = StratumNameLabel
-        )
+        if(basename(FileName) == "project.json") {
+            StratumPolygon <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineStratumPolygon")
+        }
+        else {
+            # Read the geojson:
+            StratumPolygon <-  geojsonsf::geojson_sf(FileName)
+            
+            # Set stratum names:
+            StratumPolygon <- addStratumNames(
+                StratumPolygon, 
+                StratumNameLabel = StratumNameLabel
+            )
+        }
     }
     else if(tolower(FileExt) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
         # Read the table of wkt strings (stratum name column is set to "StratumName" in this function):
@@ -215,12 +221,39 @@ readStratumPolygonFromFile <- function(FileName, StratumNameLabel = character())
         stop(paste("File extension", FileExt, "not supported yet. Contact the StoX developers."))
     }
     
-    # Set the assumed pojection:
+    # Set the assumed projection:
     suppressWarnings(sf::st_crs(StratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat"))
     # Make sure that the StratumPolygon is a MULTIPOLYGON object:
     StratumPolygon <- sf::st_cast(StratumPolygon, "MULTIPOLYGON")
     
     return(StratumPolygon)
+}
+
+
+# Function to get the process data from a project.json:
+readOneProcessDataByFunctionNameFromProjectJSON <- function(FileName, functionName) {
+    projectDescriptionList <- tryCatch(
+        jsonlite::read_json(FileName, simplifyVector = FALSE), 
+        error = function(err) {
+            stop("Unable to parse the StoX description file ", FileName, ", as jsonlite::read_json reported the error \n\n", err)
+        }
+    )
+    # Find the requested processes:
+    functionNames <- sapply(projectDescriptionList$project$models$baseline, "[[", "functionName")
+    atFunction <- which(grepl(functionName, functionNames))
+    nFunction <- length(atFunction)
+    if(nFunction != 1) {
+        stop("The StoX project description file ", FileName, " must contain exactly 1 process in Baseline using the function ", functionName, " (", nFunction, " such processes found).")
+    }
+    
+    # Format the process data:
+    output <- projectDescriptionList$project$models$baseline[[atFunction]]$processData
+    if(!length(output)) {
+        warning("PSU process data is empty for the process ", projectDescriptionList$project$models$baseline[[atFunction]]$processName)
+    }
+    output <- formatProcessData(output)
+    
+    return(output)
 }
 
 #setDefaultProjectionAndMULTIPOLYGON <- function(StratumPolygon) {
