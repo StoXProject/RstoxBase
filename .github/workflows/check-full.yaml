@@ -77,6 +77,9 @@ jobs:
           echo "PKG_FILE=${PKG_FILE_PREFIX}${{ matrix.config.pkgext }}" >> $GITHUB_ENV
           echo "PKG_FREL=${PKG_FILE_PREFIX}-R.${{ matrix.config.r }}-${{ runner.os }}${{ matrix.config.pkgext }}" >> $GITHUB_ENV
           echo "PKG_REPO=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+          echo "The github.event_name is ${{ github.event_name }}."
+          echo "The github.ref_name is ${{ github.ref_name }}."
+          echo "The github.head_ref is ${{ github.head_ref }}."
         shell: bash
 
       - uses: r-lib/actions/setup-r@v2
