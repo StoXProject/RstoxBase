@@ -518,12 +518,14 @@ renameSSUToSSULabelInTable <- function(table, PSUType = c("Acoustic", "Biotic"),
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
     # Make a copy, since we are using setnames:
-    table <- data.table::copy(table)
-    if(reverse) {
-        data.table::setnames(table, SSULabel, "SSU")
-    }
-    else {
-        data.table::setnames(table, "SSU", SSULabel)
+    if(is.data.table(table)) {
+        table <- data.table::copy(table)
+        if(reverse) {
+            data.table::setnames(table, SSULabel, "SSU")
+        }
+        else {
+            data.table::setnames(table, "SSU", SSULabel)
+        }
     }
     
     return(table)
