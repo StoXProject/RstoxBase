@@ -92,18 +92,6 @@ DefinePSU <- function(
         if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
             if(PSUType == "Acoustic") {
                 ## Read from the project.xml:
-                #AcousticPSU <- readAcousticPSUFrom2.7(FileName)
-                #
-                ## Add the PSUByTime:
-                #if(SavePSUByTime) {
-                #    AcousticPSU$PSUByTime <- getPSUByTime(
-                #        AcousticPSU, 
-                #        MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-                #        PSUType = PSUType
-                #    )
-                #}
-                #return(AcousticPSU)
-                
                 if(basename(FileName) == "project.json") {
                     AcousticPSU <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineAcousticPSU")
                 }
@@ -173,41 +161,13 @@ DefinePSU <- function(
         # If DefinitionMethod = "PreDefined" use times to interpret the PSUs (only used for acoustic PSUs):
         else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
             
-            # Interpret middle times:
-            MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
+            processData <- getPSUProcessDataFromPSUByTime(
+                PSUByTime, 
+                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                PSUType = PSUType
+            )
             
-            # Rename the SSULabel to "SSU":
-            MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
             
-            # Get the SSU indices for each PSU:
-            Stratum_PSU_SSU <- PSUProcessData$PSUByTime[, data.table::data.table(
-                Stratum, 
-                PSU, 
-                Cruise, 
-                # Use closed interval on both sides here to allow for time points and not only time interavls:
-                SSUIndex = which(
-                    MergedStoxDataStationLevel$MiddleDateTime >= StartDateTime & 
-                        MergedStoxDataStationLevel$MiddleDateTime <= StopDateTime &
-                        MergedStoxDataStationLevel$Cruise == Cruise
-                )
-            ), 
-            by = seq_len(nrow(PSUProcessData$PSUByTime))]
-            
-            # Remove PSUs with no SSUs:
-            Stratum_PSU_SSU <- Stratum_PSU_SSU[!is.na(SSUIndex), ]
-            
-            # Add the SSUs:
-            Stratum_PSU_SSU[, SSU := MergedStoxDataStationLevel$SSU[SSUIndex]]
-            
-            # Split into Stratum_PSU and SSU_PSU:
-            Stratum_PSU <- unique(Stratum_PSU_SSU[, c("Stratum", "PSU")])
-            SSU_PSU <- unique(Stratum_PSU_SSU[, c("SSU", "PSU")])
-            
-            # Add all SSUs:
-            SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
-            
-            # Restore SSULabel:
-            MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType)
         }
         
         #else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
@@ -364,6 +324,50 @@ DefinePSU <- function(
     
     return(processData)
 }
+
+
+getPSUProcessDataFromPSUByTime <- function(PSUByTime, MergedStoxDataStationLevel, PSUType = c("Acoustic", "Biotic")) {
+    # Interpret middle times:
+    MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
+    
+    # Rename the SSULabel to "SSU":
+    MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
+    
+    # Get the SSU indices for each PSU:
+    Stratum_PSU_SSU <- PSUByTime[, data.table::data.table(
+        Stratum, 
+        PSU, 
+        Cruise, 
+        # Use closed interval on both sides here to allow for time points and not only time interavls:
+        SSUIndex = which(
+            MergedStoxDataStationLevel$MiddleDateTime >= StartDateTime & 
+                MergedStoxDataStationLevel$MiddleDateTime <= StopDateTime &
+                MergedStoxDataStationLevel$Cruise == Cruise
+        )
+    ), 
+    by = seq_len(nrow(PSUByTime))]
+    
+    # Remove PSUs with no SSUs:
+    Stratum_PSU_SSU <- Stratum_PSU_SSU[!is.na(SSUIndex), ]
+    
+    # Add the SSUs:
+    Stratum_PSU_SSU[, SSU := MergedStoxDataStationLevel$SSU[SSUIndex]]
+    
+    # Split into Stratum_PSU and SSU_PSU:
+    Stratum_PSU <- unique(Stratum_PSU_SSU[, c("Stratum", "PSU")])
+    SSU_PSU <- unique(Stratum_PSU_SSU[, c("SSU", "PSU")])
+    
+    # Add all SSUs:
+    SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
+    
+    return(
+        list(
+            Stratum_PSU = Stratum_PSU, 
+            SSU_PSU = SSU_PSU 
+        )
+    )
+}
+
 
 # Function to get the file extension (used to get the ext of a project description file in particular):
 getResourceFileExt <- function(FileName) {
