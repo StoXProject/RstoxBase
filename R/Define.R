@@ -74,6 +74,7 @@ DefinePSU <- function(
     # If UseProcessData = TRUE, from "EDSU"/"Station" to "SSU": 
     if(UseProcessData) {
         if(!length(processData)) {
+            # Create and return empty PSU process data:
             processData <- list(
                 SSU_PSU = data.table::data.table(
                     SSU = SSUs, 
@@ -84,8 +85,10 @@ DefinePSU <- function(
             processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
             return(processData)
         }
-        
-        processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+        # Otherwise rename to SSU:
+        else {
+            processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+        }
     }
     else {
         # If DefinitionMethod is "ResourceFile", read from a project.xml file:
@@ -682,13 +685,14 @@ getPSUByTime <- function(
 # Function to get the start and stop time:
 getPSUStartStopDateTime <- function(PSUProcessData, MergedStoxDataStationLevel, PSUType) {
     
+    # Rename to the general SSU label:
+    PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData, PSUType = PSUType, reverse = TRUE)
+    
+    # If empty process data:
     if(!NROW(PSUProcessData$SSU_PSU)) {
         PSUStartStopDateTime <- data.table(1)[,`:=`(unlist(getRstoxBaseDefinitions("PSUByTime")), NA)][, V1 := NULL][.0]
         return(PSUStartStopDateTime)
     }
-    
-    # Rename to the general SSU label:
-    PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData, PSUType = PSUType, reverse = TRUE)
     
     # Interpret start and end times:
     StationLevel <- getRstoxBaseDefinitions("getStationLevel")(PSUType)
