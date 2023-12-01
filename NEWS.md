@@ -1,3 +1,8 @@
+# RstoxBase v1.11.4-9004  (2023-12-01)
+* Fixed bug in ImputeSuperIndividuals() when ImputationMethod = "RandomSampling", where individuals used in multiple strata vere not uniquely represented by the Individual column. The consequence was that data were imputed from he first of the rows with identical Individual, resulting in possible loss of imputation, e.g. if imputing IndividualAge and only one of the identical individuals had IndividualAge but not the first of them, in which case that age would never be imputed. This was fixed by introducing a new unique ID StratumLayerIndividual, which is a concatenation of Stratum, Layer and Individual, and using this to idenify row o impue from.
+* Implemented the "single" format class of parameters like DensityType and TargetVariableUnit.
+
+
 # RstoxBase v1.11.4-9003  (2023-11-07)
 * Added support for reading a project.json in DefineSurvey(), DefineAcousticPSU(), DefineBioticPSU(), DefineBioticAssignment() and DefineStratumPolygon.
 * Restricted warning for missing or 0 EffectiveTowDistance to only activate when there are there are more than 0 individuals in the Haul. 
