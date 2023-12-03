@@ -1,3 +1,7 @@
+# RstoxBase v1.11.4-9005  (2023-12-03)
+* Added a test with waring for non-backwarad compatibilitty for duplicated Individual in SuperIndividualsData.
+* Changed sorting of StratumLayerIndividual when creating the StratumLayerIndividualIndex to platform independent  locale = "en_US_POSIX". This is actually a bug, but has not been discovered since all known StoX projects have been using input data with Cruise as numbers of only upper case letters (sorting by locale = "en_US_POSIX" arranges capital letters first (India before england)).
+
 # RstoxBase v1.11.4-9004  (2023-12-01)
 * Fixed bug in ImputeSuperIndividuals() when ImputationMethod = "RandomSampling", where individuals used in multiple strata vere not uniquely represented by the Individual column. The consequence was that data were imputed from he first of the rows with identical Individual, resulting in possible loss of imputation, e.g. if imputing IndividualAge and only one of the identical individuals had IndividualAge but not the first of them, in which case that age would never be imputed. This was fixed by introducing a new unique ID StratumLayerIndividual, which is a concatenation of Stratum, Layer and Individual, and using this to idenify row o impue from.
 * Implemented the "single" format class of parameters like DensityType and TargetVariableUnit.

@@ -746,9 +746,15 @@ ImputeDataByRandomSampling <- function(
         )
     }
     
+    # A test for duplicated Individual ID for the rows to be imputed. If there are duplicates, the new method of using StratumLayerIndividual to identify rows to impute from may differ from the old method using Individual:
+    duplicatedIndividual <- dataCopy[is.na(get(imputeAtMissing)), duplicated(Individual)]
+    if(any(duplicatedIndividual)) {
+        warning("StoX: There are duplicated entries in the Individual column which imples that individuals were used in multiple Strata. A bug in StoX <= 3.6.2 resulted in non-imputed rows in this case, as the Individual is not unique. When you see this warning, the results of the imputation may have changed from StoX <= 3.6.2 to StoX >= 4.0.0.")
+    }
     
-    # Introduce an Individual index for use in the sorted sampling:
-    dataCopy[, StratumLayerIndividualIndex := as.numeric(as.factor(StratumLayerIndividual))]
+    
+    # Introduce an Individual index for use in the sorted sampling, as a factor sorted as "en_US_POSIX":
+    dataCopy[, StratumLayerIndividualIndex := as.numeric(factor(StratumLayerIndividual, levels = stringi::stri_sort(StratumLayerIndividual, locale = "en_US_POSIX")))]
     
     
     # Get a vector with the seed of each level:
@@ -809,7 +815,7 @@ ImputeDataByRandomSampling <- function(
 # Function to get the imputation row indices of one level ("Haul", "Stratum", NULL). This function is applied using for loop over the levels:
 getImputeRowIndicesOneLevel <- function(
     dataCopy, 
-    imputeAtMissing = "Age", 
+    imputeAtMissing, 
     level = "Haul", 
     by
 ) {
@@ -906,7 +912,7 @@ replaceMissingData <- function(x, columnNames) {
     
     for(columnName in columnNames) {
         if(columnName %in% namesx) {
-            # Locate the inidices at which the data in the column given by columnName is NA in the rows to impute and not NA in the rows to impute from:
+            # Locate the indices at which the data in the column given by columnName is NA in the rows to impute and not NA in the rows to impute from:
             atReplacement <- x[rowsToImpute, is.na(get(columnName))] & x[rowsToImputeFrom, !is.na(get(columnName))]
             if(any(atReplacement)) {
                 atMissing <- rowsToImpute[atReplacement]
