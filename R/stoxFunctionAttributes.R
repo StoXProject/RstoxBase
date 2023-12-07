@@ -1127,7 +1127,63 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
+    
     ImputeSuperIndividuals = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SuperIndividualsData", 
+        functionParameterFormat = list(
+            #ImputeAtMissing = "getIndividualVaiableNamesSingle", 
+            ImputeAtMissing = "getImputeAtMissing", 
+            ImputeByEqual = "getImputeByEqual", 
+            ToImpute = "getToImpute", 
+            GroupingVariables = "groupingVariables_ImputeSuperIndividuals",
+            RegressionTable = "regressionTable", 
+            ImputationLevels = "imputationLevels"
+        ),
+        functionArgumentHierarchy = list(
+            RegressionDefinition = list(
+                ImputationMethod = "Regression"
+            ), 
+            GroupingVariables = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            RegressionModel = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            RegressionTable = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            Regression = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionInput"
+            ), 
+            ImputeAtMissing = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ImputeByEqual = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ToImpute = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ImputationLevels = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            Seed = list(
+                ImputationMethod = "RandomSampling"
+            )
+        ), 
+        functionParameterDefaults = list(
+            ImputationLevels = c("Haul", "Stratum", "Survey")
+        )
+    ),
+    
+    
+    ImputeSuperIndividuals_StoX3 = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SuperIndividualsData", 

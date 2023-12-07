@@ -1678,7 +1678,7 @@ factorNAfirst <- function(x){
             levels <- r[1]
         }
         else{
-            levels <- seq(r[1], r[2], by = median(diff(sort(unique(x))), na.rm = TRUE))
+            levels <- seq(r[1], r[2], by = stats::median(diff(sort(unique(x))), na.rm = TRUE))
         }
         
         # Add NAs first:

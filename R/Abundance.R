@@ -746,12 +746,6 @@ ImputeDataByRandomSampling <- function(
         )
     }
     
-    # A test for duplicated Individual ID for the rows to be imputed. If there are duplicates, the new method of using StratumLayerIndividual to identify rows to impute from may differ from the old method using Individual:
-    duplicatedIndividual <- dataCopy[is.na(get(imputeAtMissing)), duplicated(Individual)]
-    if(any(duplicatedIndividual)) {
-        warning("StoX: There are duplicated entries in the Individual column which imples that individuals were used in multiple Strata. A bug in StoX <= 3.6.2 resulted in non-imputed rows in this case, as the Individual is not unique. When you see this warning, the results of the imputation may have changed from StoX <= 3.6.2 to StoX >= 4.0.0.")
-    }
-    
     
     # Introduce an Individual index for use in the sorted sampling, as a factor sorted as "en_US_POSIX":
     dataCopy[, StratumLayerIndividualIndex := as.numeric(factor(StratumLayerIndividual, levels = stringi::stri_sort(StratumLayerIndividual, locale = "en_US_POSIX")))]
@@ -1029,3 +1023,106 @@ addHalfResolution <- function(data, variable, resolutionVariable, reverse = FALS
         }
     }
 }
+
+
+
+
+
+##################################################
+##################################################
+#' Add haul density to SuperIndividualsData
+#' 
+#' This function calculates the swept-area density of each Haul given in the input SuperIndividualsData.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams SweptAreaDensity
+#' 
+#' @details The density is calculated either by multiplying by a constant sweep width, or by using LengthDistributionData which are sweep width compensated.
+#' 
+#' @seealso \code{\link{SuperIndividualsData}} and \code{\link{LengthDistribution}} for generating the input to this function.
+#' 
+#' @export
+#' 
+AddHaulDensityToSuperIndividuals <- function(
+    SuperIndividualsData, 
+    LengthDistributionData, 
+    SweepWidthMethod = c("Constant", "PreDefined"), 
+    SweepWidth = double()
+) {
+    
+    # Store the stoxDataVariableNames
+    stoxDataVariableNames <- attr(SuperIndividualsData, "stoxDataVariableNames")
+    
+    
+    # Make a copy of the IndividualsData:
+    SuperIndividualsData <- data.table::copy(SuperIndividualsData)
+    # Make sure the QuantityData is proper data.table. Comment on 2021-03-18: Why is this needed????:
+    LengthDistributionData <- data.table::setDT(LengthDistributionData)
+    
+    # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
+    addLengthGroup(data = SuperIndividualsData, master = SuperIndividualsData, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
+    # Add length groups also to the QuantityData:
+    addLengthGroup(data = LengthDistributionData, master = SuperIndividualsData, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
+    
+       
+    # Give an error if the LengthDistributionType does not end with "Normalized":
+    if(!endsWith(LengthDistributionData$LengthDistributionType[1], "Normalized")) {
+        stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
+    }
+    
+    # Add length group IDs also in in LengthDistributionData:
+    # Make sure the LengthDistributionData is proper data.table. Comment on 2021-03-18: Why is this needed????:
+    LengthDistributionData <- data.table::setDT(LengthDistributionData)
+    
+    # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
+    LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
+    
+    # We need to unique since there may have been multiple lines in the same length group:
+    LengthDistributionData <- unique(LengthDistributionData)
+    
+    # Sum in each length group (in case lengths are grouped coarser than the original groups):
+    haulGrouping <- c(
+        "Haul", 
+        getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
+        "TempLengthGroupUsedInSuperIndividuals"
+    )
+    # Add the haul density as the WeightedNumber to the SuperIndividualsData (requiring Normalized LengthDistributionType):
+    # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl:
+    SuperIndividualsData <- merge(
+        SuperIndividualsData, 
+        LengthDistributionData[, c(..haulGrouping, "WeightedNumber", "LengthDistributionType")], 
+        by = haulGrouping, 
+        allow.cartesian = TRUE, 
+        # Changed this onn 2021-02-14 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedNumber from hauls with no individuals present in the estimation:
+        # all.y = TRUE
+        all.x = TRUE
+    )
+    
+    # 
+    
+    dataVariableToDensity(
+        SuperIndividualsData, 
+        dataVariable = "WeightedNumber", 
+        typeVariableName = "LengthDistributionType", 
+        InputDataType = "LengthDistributionData", 
+        SweepWidthMethod = SweepWidthMethod, 
+        SweepWidth = SweepWidth
+    ) 
+    
+    # Rename to HaulDensity and remove the WeightedNumber:
+    data.table::setnames(SuperIndividualsData, "Density", "HaulDensity")
+    SuperIndividualsData[, WeightedNumber := NULL]
+    
+    
+    # Add the attribute 'variableNames':
+    setattr(
+        SuperIndividualsData, 
+        "stoxDataVariableNames",
+        stoxDataVariableNames
+    )
+    
+    return(SuperIndividualsData)
+}
+
+
+
