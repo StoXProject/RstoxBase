@@ -31,6 +31,12 @@ backwardCompatibility <- list(
             functionName = "ReportAbundance", 
             modelName = "baseline", 
             newFunctionName = "RstoxBase::ReportQuantity"
+        ), 
+        list(
+            changeVersion = "1.11.4-9004", 
+            functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            newFunctionName = "RstoxBase::ImputeSuperIndividuals_StoX3"
         )
     ), 
     
@@ -279,6 +285,13 @@ backwardCompatibility <- list(
         list(
             changeVersion = "1.11.4-9002", 
             functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "ImputationLevels", 
+            parameterValue = c("Haul", "Stratum", "Survey")
+        ), 
+        list(
+            changeVersion = "1.11.4-9004", 
+            functionName = "ImputeSuperIndividuals_StoX3", 
             modelName = "baseline", 
             parameterName = "ImputationLevels", 
             parameterValue = c("Haul", "Stratum", "Survey")
