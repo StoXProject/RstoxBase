@@ -1127,7 +1127,63 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
+    
     ImputeSuperIndividuals = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SuperIndividualsData", 
+        functionParameterFormat = list(
+            #ImputeAtMissing = "getIndividualVaiableNamesSingle", 
+            ImputeAtMissing = "getImputeAtMissing", 
+            ImputeByEqual = "getImputeByEqual", 
+            ToImpute = "getToImpute", 
+            GroupingVariables = "groupingVariables_ImputeSuperIndividuals",
+            RegressionTable = "regressionTable", 
+            ImputationLevels = "imputationLevels"
+        ),
+        functionArgumentHierarchy = list(
+            RegressionDefinition = list(
+                ImputationMethod = "Regression"
+            ), 
+            GroupingVariables = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            RegressionModel = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            RegressionTable = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionParameter"
+            ), 
+            Regression = list(
+                ImputationMethod = "Regression", 
+                RegressionDefinition = "FunctionInput"
+            ), 
+            ImputeAtMissing = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ImputeByEqual = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ToImpute = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            ImputationLevels = list(
+                ImputationMethod = "RandomSampling"
+            ), 
+            Seed = list(
+                ImputationMethod = "RandomSampling"
+            )
+        ), 
+        functionParameterDefaults = list(
+            ImputationLevels = c("Haul", "Stratum", "Survey")
+        )
+    ),
+    
+    
+    ImputeSuperIndividuals_StoX3 = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
         functionOutputDataType = "SuperIndividualsData", 
@@ -1296,7 +1352,7 @@ processPropertyFormats <- list(
     ), 
     
     dependentVariable_EstimateBioticRegression = list(
-        class = "vector", 
+        class = "single", 
         title = "Select DependentVariable for regression", 
         variableTypes = "character", 
         possibleValues = function(InputDataType, IndividualsData, SuperIndividualsData) {
@@ -1306,7 +1362,7 @@ processPropertyFormats <- list(
     ), 
     
     dependentResolutionVariable_EstimateBioticRegression = list(
-        class = "vector", 
+        class = "single", 
         title = "Select DependentResolutionVariable for regression", 
         variableTypes = "character", 
         possibleValues = function(DependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
@@ -1316,7 +1372,7 @@ processPropertyFormats <- list(
     ), 
     
     independentVariable_EstimateBioticRegression = list(
-        class = "vector", 
+        class = "single", 
         title = "Select IndependentVariable for regression", 
         variableTypes = "character", 
         possibleValues = function(DependentVariable, DependentResolutionVariable, InputDataType, IndividualsData, SuperIndividualsData) {
@@ -1326,7 +1382,7 @@ processPropertyFormats <- list(
     ), 
     
     independentResolutionVariable_EstimateBioticRegression = list(
-        class = "vector", 
+        class = "single", 
         title = "Select IndependentResolutionVariable for regression", 
         variableTypes = "character", 
         possibleValues = function(DependentVariable, DependentResolutionVariable, IndependentVariable, InputDataType, IndividualsData, SuperIndividualsData) {
@@ -1837,7 +1893,7 @@ processPropertyFormats <- list(
     ), 
     
     densityType_SweptAreaDensity = list(
-        class = "vector", # Should be changed to single when this is implemented in the GUI.
+        class = "single",
         title = "Select the type of swept area density.", 
         possibleValues = function(SweptAreaDensityMethod) {
             if(SweptAreaDensityMethod == "LengthDistributed") {
@@ -1851,7 +1907,7 @@ processPropertyFormats <- list(
     
     # ReportSuperIndividuals: 
     targetVariable_ReportSuperIndividuals = list(
-        class = "vector", 
+        class = "single", 
         title = "One variable to group report from SuperIndividualsData", 
         possibleValues = function(SuperIndividualsData) {
             sort(subset(names(SuperIndividualsData), sapply(SuperIndividualsData, class) == "numeric"))
@@ -1875,7 +1931,7 @@ processPropertyFormats <- list(
         variableTypes <- "character"
     ), 
     targetVariableUnit_ReportSuperIndividuals = list(
-        class = "vector", 
+        class = "single", 
         title = "Select Unit for the TargetVariable", 
         possibleValues = function(TargetVariable) {
             dataType <- "SuperIndividualsData"
@@ -1890,7 +1946,7 @@ processPropertyFormats <- list(
         }
     ), 
     weightingVariable_ReportSuperIndividuals = list(
-        class = "vector", 
+        class = "single", 
         title = "Select weighting variable", 
         possibleValues = function(SuperIndividualsData, TargetVariable, GroupingVariables, InformationVariables) {
             sort(setdiff(names(SuperIndividualsData), c(TargetVariable, GroupingVariables, InformationVariables)))
@@ -1916,7 +1972,7 @@ processPropertyFormats <- list(
         variableTypes <- "character"
     ), 
     targetVariableUnit_ReportQuantity = list(
-        class = "vector", 
+        class = "single", 
         title = "Select Unit for the TargetVariable", 
         possibleValues = function(TargetVariable) {
             dataType <- "QuantityData"
@@ -1931,7 +1987,7 @@ processPropertyFormats <- list(
         }
     ), 
     weightingVariable_ReportQuantity = list(
-        class = "vector", 
+        class = "single", 
         title = "Select weighting variable", 
         possibleValues = function(QuantityData, GroupingVariables, InformationVariables) {
             sort(setdiff(names(QuantityData), c(GroupingVariables, InformationVariables)))
@@ -1957,7 +2013,7 @@ processPropertyFormats <- list(
         variableTypes <- "character"
     ), 
     densityUnit = list(
-        class = "vector", 
+        class = "single", 
         title = "Select unit for the Density", 
         possibleValues = function() {
             dataType <- "DensityData"
@@ -1972,7 +2028,7 @@ processPropertyFormats <- list(
         }
     ), 
     weightingVariable_ReportDensity = list(
-        class = "vector", 
+        class = "single", 
         title = "Select weighting variable", 
         possibleValues = function(DensityData, GroupingVariables, InformationVariables) {
             sort(setdiff(names(DensityData), c(GroupingVariables, InformationVariables)))
@@ -2030,7 +2086,7 @@ processPropertyFormats <- list(
     #), 
     
     getImputeAtMissing = list(
-        class = "vector", 
+        class = "single", 
         title = "Select a variable to impute", 
         possibleValues = function(SuperIndividualsData) {
             getIndividualNames(SuperIndividualsData, tables = "Individual", removeKeys = TRUE) 
@@ -2039,7 +2095,7 @@ processPropertyFormats <- list(
     
     getImputeByEqual = list(
         class = "vector", 
-        title = "Select a variable to impute", 
+        title = "Select variables which when equal to the those of the individual defines the individuals to impute from", 
         possibleValues = function(SuperIndividualsData, ImputeAtMissing) {
             getIndividualNames(SuperIndividualsData, remove = ImputeAtMissing, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) 
         }
@@ -2073,8 +2129,8 @@ processPropertyFormats <- list(
     
     
     pointColor = list(
-        class = "vector", 
-        title = "Select color/oclor scale for the points", 
+        class = "single", 
+        title = "Select color/color scale for the points", 
         possibleValues = function(NASCData, SumNASCData, ColorVariable) {
             if(missing(SumNASCData)) {
                 var <- NASCData[[ColorVariable]]
@@ -2098,7 +2154,7 @@ processPropertyFormats <- list(
     
     
     reportVariableUnit_ReportSpeciesCategoryCatch = list(
-        class = "vector", 
+        class = "single", 
         title = "Select unit for the ReportVariable", 
         possibleValues = function(ReportVariable) {
             dataType <- "SpeciesCategoryCatchData"
