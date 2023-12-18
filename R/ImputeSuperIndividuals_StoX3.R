@@ -167,9 +167,9 @@ ImputeDataByRandomSampling_StoX3 <- function(
     }
     
     # A test for duplicated Individual ID for the rows to be imputed. If there are duplicates, the new method of using Individual to identify rows to impute from may differ from the old method using Individual:
-    duplicatedIndividual <- dataCopy[is.na(get(imputeAtMissing)), duplicated(Individual)]
+    duplicatedIndividual <- dataCopy[is.na(get(imputeAtMissing)) & !is.na(Individual), duplicated(Individual)]
     if(any(duplicatedIndividual)) {
-        warning("StoX: There are duplicated entries in the Individual column which imples that individuals were used in multiple Strata. Due to a bug in the deprecated ImputeSuperIndividuals_StoX3() this may result in non-imputed rows. When you see this warning it is advised to use ImputeDataByRandomSampling() instead.")
+        warning("StoX: There are duplicated entries in the Individual column which imples that individuals were used in multiple Strata. Due to a bug in the function ImputeSuperIndividuals() in StoX <= 3.6.2, which has been renamed to the deprecated ImputeSuperIndividuals_StoX3(), this may result in non-imputed rows. When you see this warning it is advised to use the new ImputeSuperIndividuals() instead.")
     }
     
     
