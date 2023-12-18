@@ -982,22 +982,6 @@ AssignmentLengthDistribution <- function(LengthDistributionData, BioticAssignmen
     AssignmentLengthDistributionData[, LengthDistributionType := "Percent"]
     
     
-    # Identify the hauls that does not have all species categories and those that does not have all species categories. Then find which strata for which not all of the hauls are ok:
-    # Merge the BioticAssignment with a list of the species categories for each haul:
-    SpeciesCategoryPerHaul <- LengthDistributionData[, .(SpeciesCategory = unique(SpeciesCategory)), by = "Haul"]
-    SpeciesCategoryPerAssignment <- merge(BioticAssignment, SpeciesCategoryPerHaul, by = "Haul", allow.cartesian = T)
-    # Identify hauls where all or any species categories are present:
-    allSpeciesCategory <- SpeciesCategoryPerAssignment[, unique(SpeciesCategory)]
-    SpeciesCategoryPerAssignment[, ContainsAllSpeciesCategory := all(allSpeciesCategory %in% SpeciesCategory), by = c("Stratum", "Haul")]
-    SpeciesCategoryPerAssignment[, ContainsAnySpeciesCategory := any(allSpeciesCategory %in% SpeciesCategory), by = c("Stratum", "Haul")]
-    # Further condense down to the strata where all hauls have all species categories (used in AcousticDensity()) or any species categories (used in SplitNASC()):
-    SpeciesCategoryPerAssignment[, AllHaulsHaveAllSpeciesCategory := all(ContainsAllSpeciesCategory), by = "Stratum"]
-    SpeciesCategoryPerAssignment[, AllHaulsHaveAnySpeciesCategory := all(ContainsAnySpeciesCategory), by = "Stratum"]
-    SpeciesCategoryPerAssignment <- SpeciesCategoryPerAssignment[, c("Stratum", "AllHaulsHaveAllSpeciesCategory", "AllHaulsHaveAnySpeciesCategory")]
-    SpeciesCategoryPerAssignment <- unique(SpeciesCategoryPerAssignment, by = "Stratum")
-    # Merge into the AssignmentLengthDistributionData:
-    AssignmentLengthDistributionData <- merge(AssignmentLengthDistributionData, SpeciesCategoryPerAssignment, by = "Stratum", all.x = TRUE)
-    
     # Format the output:
     formatOutput(AssignmentLengthDistributionData, dataType = "AssignmentLengthDistributionData", keep.all = FALSE)
     

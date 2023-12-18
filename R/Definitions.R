@@ -208,7 +208,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
             weighting = NULL, 
             type = "LengthDistributionType", 
-            other = c("NumberOfAssignedHauls", "AllHaulsHaveAllSpeciesCategory", "AllHaulsHaveAnySpeciesCategory")
+            other = c("NumberOfAssignedHauls")
         ), 
         
         # Density:

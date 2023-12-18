@@ -1,3 +1,8 @@
+# RstoxBase v1.11.4-9005  (2023-12-18)
+* Removed the columns AllHaulsHaveAllSpeciesCategory and AllHaulsHaveAnySpeciesCategory from AssignmentLengthDistribution(), which were only used to produce a warning about missing length distribution in AcousticDensity and SplitNASC. This warning has been changed.
+* Fixed the warning of duplicated entries in the Individual column in ImputeSuperIndividuals_StoX3().
+
+
 # RstoxBase v1.11.4-9004  (2023-12-08)
 * Added the new function AddHaulDensityToSuperIndividuals() for adding density of the haul of each super-individual.
 * Changed sorting of StratumLayerIndividual when creating the StratumLayerIndividualIndex to platform independent locale = "en_US_POSIX". This is actually a bug, but has not been discovered since all known StoX projects have been using input data with Cruise as numbers of only upper case letters (sorting by locale = "en_US_POSIX" arranges capital letters first (India before england)).

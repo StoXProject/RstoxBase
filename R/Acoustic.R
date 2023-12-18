@@ -270,12 +270,12 @@ SplitMeanNASC <- function(
     resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     # Split the NASC by the AssignmentLengthDistributionData:
     MeanNASCDataSplit <- DistributeNASC(
-        NASCData = MeanNASCDataToSplit, 
+        MeanNASCData = MeanNASCDataToSplit, 
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
         SpeciesLink = SpeciesLink, 
         sumBy = resolution, 
-        emptyHaulWarning = "WarnIfNotAnySpeciesPresent"
+        distributionType = "SplitNASC"
     )
     
     # Then add to the MeanNASCDataNotToSplit and sum for each species of each Stratum, PSU and Layer:
@@ -337,15 +337,14 @@ SplitNASC <- function(
 ) {
     
     # Add PSUs. This makes a copy, also:
-    NASCData <- merge(NASCData, merge(AcousticPSU$Stratum_PSU, AcousticPSU$EDSU_PSU, all = TRUE), by = "EDSU", )
+    MeanNASCData <- merge(NASCData, merge(AcousticPSU$Stratum_PSU, AcousticPSU$EDSU_PSU, all = TRUE), by = "EDSU", )
     
     # Only split rows with non-missing PSU and positive NASC (this also discards splitting of NA NASC):
     # # First consider only the rows with non-missing PSU, which are those that will be split:
-    # rowToBeSplit <- !is.na(NASCData$PSU)
-    rowToBeSplit <- !is.na(NASCData$PSU) & (NASCData$NASC > 0) %in% TRUE
+    rowToBeSplit <- !is.na(MeanNASCData$PSU) & (MeanNASCData$NASC > 0) %in% TRUE
     
-    # Then find the mix categories in the NASCData.
-    allAcousticCategory <- unique(NASCData$AcousticCategory[rowToBeSplit])
+    # Then find the mix categories in the MeanNASCData.
+    allAcousticCategory <- unique(MeanNASCData$AcousticCategory[rowToBeSplit])
     missingMixAcousticCategory <- setdiff(AcousticCategoryLink$AcousticCategory, allAcousticCategory)
     if(length(missingMixAcousticCategory)) {
         warning("StoX: The following mix AcousticCategory are not present in the NASCData, and will not be split: ", paste(missingMixAcousticCategory, collapse = ", "))
@@ -359,15 +358,15 @@ SplitNASC <- function(
     }
     
     
-    # Fake a MeanNASCData table:
-    data.table::setnames(NASCData, c("MinChannelDepth", "MaxChannelDepth"), c("MinLayerDepth", "MaxLayerDepth"))
+    # Fake a complete MeanNASCData table:
+    data.table::setnames(MeanNASCData, c("MinChannelDepth", "MaxChannelDepth"), c("MinLayerDepth", "MaxLayerDepth"))
     # ... and fake Layers by simply copying Channel to Layer:
-    NASCData[, Layer := Channel]
+    MeanNASCData[, Layer := Channel]
     
     
     # Set aside the rows that will not be split:
-    rowToBeSplit <- rowToBeSplit & NASCData$AcousticCategory %in% AcousticCategoryLink$AcousticCategory
-    NASCDataNotSplit <- subset(NASCData, !rowToBeSplit)
+    rowToBeSplit <- rowToBeSplit & MeanNASCData$AcousticCategory %in% AcousticCategoryLink$AcousticCategory
+    MeanNASCDataNotSplit <- subset(MeanNASCData, !rowToBeSplit)
     
     # Define the resolution on which to distribute the NASC. This is not including AcousticCategory, so that DistributeNASC() distributes among all acoustic categories as the NASC is repeated to all acoustic categories in splitOneAcousticCategory():
     resolution <- getDataTypeDefinition(dataType = "NASCData", elements = c("horizontalResolution", "verticalResolution", "groupingVariables"), unlist = TRUE) # "EDSU", "Channel", "Beam", "Frequency"
@@ -379,10 +378,10 @@ SplitNASC <- function(
     AssignmentLengthDistributionData[, Layer := NULL]
     
     # Split one mix acoustic category at the time:
-    NASCDataSplit <- lapply(
+    MeanNASCDataSplit <- lapply(
         unique(AcousticCategoryLink$AcousticCategory), 
         splitOneAcousticCategory, 
-        NASCData = NASCData, 
+        MeanNASCData = MeanNASCData, 
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
         AcousticCategoryLink = AcousticCategoryLink, 
@@ -390,74 +389,73 @@ SplitNASC <- function(
         rowToBeSplit = rowToBeSplit, 
         splitResolution = resolution
     )
-    NASCDataSplit <- data.table::rbindlist(NASCDataSplit)
+    MeanNASCDataSplit <- data.table::rbindlist(MeanNASCDataSplit)
     
-    # Then add to the NASCDataNotToSplit:
-    columnsToKeep <- names(NASCDataNotSplit)
-    NASCData <- rbind(
-        NASCDataNotSplit, 
-        NASCDataSplit[, ..columnsToKeep]
+    # Then add to the MeanNASCDataNotToSplit:
+    columnsToKeep <- names(MeanNASCDataNotSplit)
+    MeanNASCData <- rbind(
+        MeanNASCDataNotSplit, 
+        MeanNASCDataSplit[, ..columnsToKeep]
     )
     
     # Sum the NASC over length groups:
     sumBy <- c(resolution, "AcousticCategory")
-    #NASCData <- NASCData[, NASC := sum(NASC, na.rm = TRUE), by = sumBy]
-    NASCData <- NASCData[, NASC := sum(NASC, na.rm = FALSE), by = sumBy]
+    MeanNASCData <- MeanNASCData[, NASC := sum(NASC, na.rm = FALSE), by = sumBy]
     # Uniquify:
-    NASCData <- unique(NASCData, by = sumBy)
+    MeanNASCData <- unique(MeanNASCData, by = sumBy)
     
     # Revert to channels:
-    data.table::setnames(NASCData, c("MinLayerDepth", "MaxLayerDepth"), c("MinChannelDepth", "MaxChannelDepth"))
+    data.table::setnames(MeanNASCData, c("MinLayerDepth", "MaxLayerDepth"), c("MinChannelDepth", "MaxChannelDepth"))
     
-    # Format the output:
-    formatOutput(NASCData, dataType = "NASCData", keep.all = FALSE)
+    # Format the output to a NASCData (not MeanNASCData as is used in the splitting):
+    formatOutput(MeanNASCData, dataType = "NASCData", keep.all = FALSE)
     
     
-    return(NASCData)
+    return(MeanNASCData)
 }
 
-splitOneAcousticCategory <- function(mixAcousticCategory, NASCData, AssignmentLengthDistributionData, AcousticTargetStrength, AcousticCategoryLink, SpeciesLink, rowToBeSplit, splitResolution) {
+splitOneAcousticCategory <- function(mixAcousticCategory, MeanNASCData, AssignmentLengthDistributionData, AcousticTargetStrength, AcousticCategoryLink, SpeciesLink, rowToBeSplit, splitResolution) {
     
     # Extract the mix acoustic category :
     AcousticCategoryLink <- subset(AcousticCategoryLink, AcousticCategory == mixAcousticCategory)
-    # Extract the NASCData for the AcousticCategory to be split:
-    doSplit <- rowToBeSplit & NASCData$AcousticCategory %in% AcousticCategoryLink$AcousticCategory
-    NASCDataToBeSplit <- subset(NASCData, doSplit)
+    # Extract the MeanNASCData for the AcousticCategory to be split:
+    doSplit <- rowToBeSplit & MeanNASCData$AcousticCategory %in% AcousticCategoryLink$AcousticCategory
+    MeanNASCDataToBeSplit <- subset(MeanNASCData, doSplit)
     
     # Add the SplitAcousticCategory. This repeats the NASC to each of the split categories:
-    NASCDataToBeSplit <- RstoxData::mergeByIntersect(NASCDataToBeSplit, AcousticCategoryLink, all = TRUE, allow.cartesian = TRUE, sort = FALSE)
+    MeanNASCDataToBeSplit <- RstoxData::mergeByIntersect(MeanNASCDataToBeSplit, AcousticCategoryLink, all = TRUE, allow.cartesian = TRUE, sort = FALSE)
     # Replace the AcousticCategory column by the SplitAcousticCategory column:
-    NASCDataToBeSplit[, AcousticCategory := SplitAcousticCategory][, SplitAcousticCategory := NULL]
+    MeanNASCDataToBeSplit[, AcousticCategory := SplitAcousticCategory][, SplitAcousticCategory := NULL]
     #  Remove the mixAcousticCategory, so that we properly REPLACE the mixAcousticCategory by the SplitAcousticCategory.:
-    NASCDataToBeSplit <- subset(NASCDataToBeSplit, ! AcousticCategory %in% mixAcousticCategory)
+    MeanNASCDataToBeSplit <- subset(MeanNASCDataToBeSplit, ! AcousticCategory %in% mixAcousticCategory)
     
     #  Split the NASC:
-    NASCDataSplit <- DistributeNASC(
-        NASCData = NASCDataToBeSplit, 
+    MeanNASCDataSplit <- DistributeNASC(
+        MeanNASCData = MeanNASCDataToBeSplit, 
         AssignmentLengthDistributionData = AssignmentLengthDistributionData, 
         AcousticTargetStrength = AcousticTargetStrength, 
         SpeciesLink = SpeciesLink, 
         sumBy = splitResolution, 
-        emptyHaulWarning = "WarnIfNotAnySpeciesPresent"
+        distributionType = "SplitNASC"
     )
     
     # Check whether there are cells of the splitResolution ("EDSU", "Channel", "Beam", "Frequency") that are all NA in NASC (all length groups have missing NASC), and then add the MixAcousticCategory for these cells, so that the NASC is restored:
-    allNA <- NASCDataSplit[, .(allNA = all(is.na(NASC))), by = splitResolution]
+    allNA <- MeanNASCDataSplit[, .(allNA = all(is.na(NASC))), by = splitResolution]
     if(allNA[, any(allNA)]) {
         # Keep only the rows with all NAs in NASC:
         allNA <- subset(allNA, allNA == TRUE)
-        # Merge with the NASCData, to create a table to add to the NASCDataSplit:
-        NASCDataToAddForAllNA <- merge(allNA, NASCData, by = splitResolution, all.x = TRUE)
+        # Merge with the MeanNASCData, to create a table to add to the MeanNASCDataSplit:
+        MeanNASCDataToAddForAllNA <- merge(allNA, MeanNASCData, by = splitResolution, all.x = TRUE)
         
-        # Add the restored NASC to the NASCDataSplit (splitted NASCData), but only keeping the rows with non-NA NASC in NASCDataSplit. This is to prevent rows which are generated from missing AssignmentLengthDistribution (e.g., PSUs with no assigned hauls):
-        NASCDataSplit <- rbind(
-            subset(NASCDataSplit, !is.na(NASC)), 
-            NASCDataToAddForAllNA[, intersect(names(NASCDataSplit), names(NASCDataToAddForAllNA)), with = FALSE], 
+        # Add the restored NASC to the MeanNASCDataSplit (splitted MeanNASCData), but only keeping the rows with non-NA NASC in MeanNASCDataSplit. This is to prevent rows which are generated from missing AssignmentLengthDistribution (e.g., PSUs with no assigned hauls):
+        MeanNASCDataSplit <- rbind(
+            subset(MeanNASCDataSplit, !is.na(NASC)), 
+            MeanNASCDataToAddForAllNA[, intersect(names(MeanNASCDataSplit), names(MeanNASCDataToAddForAllNA)), with = FALSE], 
             fill = TRUE
         )
     }
     
-    return(NASCDataSplit)
+    return(MeanNASCDataSplit)
 }
 
 ##################################################
