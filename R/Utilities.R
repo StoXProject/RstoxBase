@@ -1648,7 +1648,7 @@ setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
     this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName)
     
     if(length(unit) && this_hasBaseUnit) {
-        # Set the base unit if the objectt does not have a unit:
+        # Set the base unit if the object does not have a unit:
         x <- setBaseUnit(x, dataType, variableName)
         
         # Get the quantity:
