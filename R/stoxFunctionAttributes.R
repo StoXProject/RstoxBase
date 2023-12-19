@@ -1128,6 +1128,17 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
+    AddHaulDensityToSuperIndividuals = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SuperIndividualsData", 
+        functionArgumentHierarchy = list(
+            SweepWidth = list(
+                SweepWidthMethod = "Constant"
+            )
+        )
+    ), 
+    
     ImputeSuperIndividuals = list(
         functionType = "modelData", 
         functionCategory = "baseline", 
