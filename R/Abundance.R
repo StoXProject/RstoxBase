@@ -1050,6 +1050,9 @@ AddHaulDensityToSuperIndividuals <- function(
     SweepWidth = double()
 ) {
     
+    # Get the SweepWidthMethod:
+    SweepWidthMethod <- RstoxData::match_arg_informative(SweepWidthMethod)
+    
     # Store the stoxDataVariableNames
     stoxDataVariableNames <- attr(SuperIndividualsData, "stoxDataVariableNames")
     
