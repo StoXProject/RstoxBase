@@ -7,12 +7,14 @@
 ReportDensity(
   DensityData,
   DensityUnit = character(),
-  ReportFunction = getReportFunctions(getMultiple = FALSE),
+  ReportFunction = getReportFunctions(use = "Baseline"),
   GroupingVariables = character(),
   InformationVariables = character(),
   Filter = character(),
   RemoveMissingValues = FALSE,
-  WeightingVariable = character()
+  WeightingVariable = character(),
+  Condition = character(),
+  FractionOverVariable = character()
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ ReportDensity(
 \item{RemoveMissingValues}{Logical: If TRUE, remove missing values (NAs) from the \code{TargetVariable}. The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA. Use \code{RemoveMissingValues} = TRUE with extreme caution, as it may lead to under-estimation. E.g., if \code{RemoveMissingValues} = TRUE and a super-individual lacks \code{IndividualRoundWeight}, \code{Biomass} will be NA, and the portion of \code{Abundance} distributed to that super-individual will be excluded when summing \code{Biomass} (but included when summing \code{Abundance}). It is advised to always run with \code{RemoveMissingValues} = FALSE first, and make a thorough investigation to identify the source of any missing values. The function \code{link{ImputeSuperIndividuals}} can be used to impute the missing information from other super-individuals.}
 
 \item{WeightingVariable}{The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".}
+
+\item{Condition}{An expression (string) giving the condition for the \code{ReportFunction} \code{number}. This must be formatted as operator + value, e.g., "> 0" or "\%notin\% NA".}
+
+\item{FractionOverVariable}{When \code{ReportFunction} is a fraction ("fractionOfOccurrence" or "fractionOfSum") \code{FractionOverVariable} is a string naming the variable (one of the \code{GroupingVariables}) to sum over in the denominator of the fraction.}
 }
 \value{
 A \code{\link{ReportDensityData}} object.

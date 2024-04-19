@@ -1,6 +1,6 @@
 Package: RstoxBase
-Version: 1.11.4-9006
-Date: 2023-12-19
+Version: 1.11.4-9007
+Date: 2024-04-19
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", 
@@ -47,7 +47,6 @@ Imports:
     jsonlite (>= 1.6),
     lwgeom (>= 0.2-0),
     maps (>= 0.2-0),
-    methods (>= 3.6.0),
     RstoxData (>= 1.10.2-9005),
     sf (>= 0.9.0),
     stringi (>= 1.4.0),

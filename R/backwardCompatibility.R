@@ -295,6 +295,43 @@ backwardCompatibility <- list(
             modelName = "baseline", 
             parameterName = "ImputationLevels", 
             parameterValue = c("Haul", "Stratum", "Survey")
+        ), 
+        # Condition and FractionOverVariable:
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "Condition"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportSuperIndividuals", 
+            modelName = "baseline", 
+            parameterName = "FractionOverVariable"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportDensity", 
+            modelName = "baseline", 
+            parameterName = "Condition"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportDensity", 
+            modelName = "baseline", 
+            parameterName = "FractionOverVariable"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportQuantity", 
+            modelName = "baseline", 
+            parameterName = "Condition"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportQuantity", 
+            modelName = "baseline", 
+            parameterName = "FractionOverVariable"
         )
     ),  
     

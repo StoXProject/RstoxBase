@@ -44,7 +44,8 @@ utils::globalVariables(c(
 	 "missingAssignment", "missingSpecies", "numberOfIndividuals", "numberOfSubSamples",
 	 "polygonAreaSP_simple", "raisingFactor", "representativeBackscatteringCrossSection",
 	 "representativeBackscatteringCrossSectionNormalized", "setUnit", "sumArea",
-	 "sumIndividualWeightFactor", "sumWeightedNumber", "x", "y"))
+	 "sumIndividualWeightFactor", "sumWeightedNumber", "temporary_denominator_column_name",
+	 "temporary_numerator_column_name", "x", "y"))
 
 .onLoad <- function(libname, pkgname) {
 	# Initiate the RstoxBase environment:

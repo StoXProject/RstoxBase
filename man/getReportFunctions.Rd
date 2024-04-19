@@ -4,10 +4,12 @@
 \alias{getReportFunctions}
 \title{Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.}
 \usage{
-getReportFunctions(getMultiple = NULL)
+getReportFunctions(multiple = NULL, use = c("Baseline", "Bootstrap"))
 }
 \arguments{
-\item{getMultiple}{If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.}
+\item{multiple}{If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.}
+
+\item{use}{The model the report function will be used in.}
 }
 \description{
 Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.
