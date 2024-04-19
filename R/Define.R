@@ -312,10 +312,6 @@ DefinePSU <- function(
     # Rename back from "SSU" to "EDSU"/"Station": 
     processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
     
-    # Warn if there are strata with only one PSU, which may result in missing variance:
-    onlyOnePSU_Warning(processData$Stratum_PSU, PSUType = PSUType)
-    
-    
     # Add the PSU time information:
     if(!UseProcessData && SavePSUByTime) {
         processData$PSUByTime <- getPSUByTime(
@@ -385,25 +381,7 @@ getResourceFileExt <- function(FileName) {
     return(FileExt)
 }
 
-onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
-    PSUType <- RstoxData::match_arg_informative(PSUType)
-    
-    if(NROW(Stratum_PSU)) {
-        numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
-        stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
-        # This was a bug, where the warning was triggered when the Stratum name was "1". Changed this on 2022-08-15:
-        #if(any(numberOfPSUsInStratum == 1, na.rm = TRUE)) {
-        if(numberOfPSUsInStratum[, any(N == 1, na.rm = TRUE)]) {
-            # This warning adresses the problem of only one biotic PSU (often the same as one station) in a stratum, which implies identical SuperIndividualsData for all bootstrap runs in that stratum. When bootstrapping an acoustic-trawl project the biotic PSUs are not relevant, as Hauls are resampled in each Stratum. A warning for only one Haul in a Stratum is issued in BioticAssignment:
-            if(PSUType == "Biotic") {
-                warning("StoX: The following strata have only one BioticPSU, which is in conflict with the principle of bootstrapping as it causes identical SuperIndividualsData for all bootstrap runs in that stratum. When running ReportBootstrap for a swept-area estimate (bootstrapping a MeanLengthDistribution process) with \"Stratum\" included in GroupingVariables, the variance from this stratum will be NA. When  \"Stratum\" is NOT included in GroupingVariables, the stratum with only one PSU will not contibute to the variance, as all bootstrap runs will be identical from that stratum. This implies UNDER ESTIMATION of the variance! Please consider merging strata to avoid this problem:", RstoxData::printErrorIDs(stratumWithOnlyOnePSU))
-            }
-            else {
-                warning("StoX: The following strata have only one AcousticPSU, which is in conflict with the principle of bootstrapping. When running ReportBootstrap for an acoustic-trawl estimate (bootstrapping a Biotic process) with \"Stratum\" included in GroupingVariables, the stratum with only one PSU will not contibute to the variance from resampling AcousticPSUs. This implies UNDER ESTIMATION of the variance! Please consider re-defining the AcousticPSUs or merging strata to avoid this problem:", RstoxData::printErrorIDs(stratumWithOnlyOnePSU))
-            }
-        }
-    }
-}
+
 
 
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU i loacted geographically:
@@ -570,11 +548,11 @@ DefineBioticPSU <- function(
     FileName = character()
 ) {
     
-    if(!UseProcessData) {
-        if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
-            warning("StoX: Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
-        }
-    }
+    #if(!UseProcessData) {
+    #    if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+    #        warning("StoX: Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
+    #    }
+    #}
     
     # Get the DefinitionMethod:
     #DefinitionMethod <- match.arg(DefinitionMethod)
@@ -1244,7 +1222,7 @@ DefineBioticAssignment <- function(
         attr(HaulData, "Station") <- HaulData$Station
         
         turn_off_s2(
-            locatedStratum <- locateInStratum(HaulData, StratumPolygon, SSULabel = SSULabel), 
+            locatedStratum <- locateInStratum(HaulData, StratumPolygon, SSULabel = "Station"), 
             msg = FALSE
         )
         
