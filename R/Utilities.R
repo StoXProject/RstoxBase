@@ -165,6 +165,8 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
             
             by <- by[!onlyNAs]
         }
+        
+        # Merge in the PSUs:
         data <- merge(PSUProcessData, data, by = by, ...)
     }
     else if(! "PSU" %in% names(data)) {
@@ -842,6 +844,25 @@ summaryStox <- function(x, percentages = c(5, 50, 95), na.rm = FALSE) {
 cv <- function(x, na.rm = FALSE) {
     stats::sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
 }
+
+#cv_string <- function(x, na.rm = FALSE) {
+#    paste0("cv(", x,  ", na.rm = ", na.rm, ")")
+#}
+
+
+
+#' Number of TRUE
+#' 
+#' @param x An R object
+#' @param condition A logical expression (string) which when evaluated to TRUE counts as numeric 1
+#' @param na.rm All functions used as \code{aggregationFunction} in \code{\link{aggregateBaselineDataOneTable}} must have an na.rm agument. This is however not used in this function.
+#' 
+#' @export
+#' 
+number <- function(x, condition = NULL, na.rm = FALSE) {
+    paste0("sum(", deparse(substitute(x)), if(length(condition)) paste0(" ", condition), ")")
+}
+
 
 
 

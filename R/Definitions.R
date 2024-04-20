@@ -656,7 +656,7 @@ initiateRstoxBase <- function(){
     
     nauticalMileInMeters <- 1852
     
-    # List of functions avilable for report functions:
+    # List of functions available for report functions (use a list here instead of a data.frame to save time):
     reportFunctions <- list(
         functionName = c(
             "summaryStox", 
@@ -668,115 +668,130 @@ initiateRstoxBase <- function(){
             "max", 
             "sd", 
             "var", 
-            "cv"#, 
-            #"summary", 
-            #"quantile", 
-            #"percentile_5_95"
+            "cv", 
+            "number", 
+            "fractionOfOccurrence", 
+            "fractionOfSum"
+        ), 
+        functionAlias = c(
+            NA, 
+            NA, 
+            NA, 
+            NA, 
+            NA, 
+            NA, 
+            NA, 
+            NA, 
+            NA, 
+            NA, 
+            "sum", 
+            "number", 
+            "sum"
         ), 
         packageName = c(
-            "RstoxBase", 
-            "base", 
-            "base", 
-            "stats", 
-            "stats", 
-            "base", 
-            "base", 
-            "stats", 
-            "stats", 
-            "RstoxBase"#, 
-            #"base", 
-            #"stats", 
-            #"RstoxBase"
+            "RstoxBase", # "summaryStox"
+            "base", # "sum"
+            "base", # "mean"
+            "stats", # "weighted.mean"
+            "stats", # "median"
+            "base", # "min"
+            "base", # "max"
+            "stats", # "sd"
+            "stats", # "var"
+            "RstoxBase", # "cv"
+            "RstoxBase", # "number"
+            "RstoxBase", # "fractionOfOccurrence"
+            "RstoxBase" # "fractionOfSum"
         ), 
-        weighted = c(
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            TRUE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE#, 
-            #FALSE, 
-            #FALSE, 
-            #FALSE
-        ), 
-        weightingParameter = c(
-            "", 
-            "", 
-            "", 
-            "w", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            ""#, 
-            #"", 
-            #"", 
-            #""
+        hasX = c(
+            TRUE, # "summaryStox" 
+            TRUE, # "sum" 
+            TRUE, # "mean" 
+            TRUE, # "weighted.mean 
+            TRUE, # "median" 
+            TRUE, # "min" 
+            TRUE, # "max" 
+            TRUE, # "sd" 
+            TRUE, # "var" 
+            TRUE, # "cv" 
+            FALSE, # "number"
+            NA, # "fractionOfOccurrence"
+            NA # "fractionOfSum"
         ), 
         specified = c(
-            TRUE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE#, 
-            #FALSE, 
-            #FALSE, 
-            #FALSE
+            TRUE, # "summaryStox" 
+            FALSE, # "sum" 
+            FALSE, # "mean" 
+            TRUE, # "weighted.mean 
+            FALSE, # "median" 
+            FALSE, # "min" 
+            FALSE, # "max" 
+            FALSE, # "sd" 
+            FALSE, # "var" 
+            FALSE, # "cv" 
+            TRUE, # "number"
+            TRUE, # "fractionOfOccurrence"
+            TRUE # "fractionOfSum"
         ), 
         specificationParameter = c(
-            "percentages", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            ""#, 
-            #"", 
-            #"", 
-            #""
+            "percentages", # "summaryStox"
+            "", # "sum"
+            "", # "mean"
+            "w", # "weighted.mean
+            "",# "median"
+            "", # "min"
+            "", # "max"
+            "", # "sd"
+            "", # "var"
+            "", # "cv"
+            "condition", # "number"
+            "FractionOverVariable", # "fractionOfOccurrence"
+            "FractionOverVariable" # "fractionOfSum"
         ), 
         specificationParameterDisplayName = c(
-            "Percentages", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            "", 
-            ""#, 
-            #"", 
-            #"", 
-            #""
+            "Percentages", # "summaryStox"
+            "", # "sum"
+            "", # "mean"
+            "WeightingVariable", # "weighted.mean
+            "", # "median"
+            "", # "min"
+            "", # "max"
+            "", # "sd"
+            "", # "var"
+            "", # "cv"
+            "Condition", # "number"
+            "FractionOverVariable", # "fractionOfOccurrence"
+            "FractionOverVariable" # "fractionOfSum"
         ), 
         multiple = c(
-            TRUE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE, 
-            FALSE#, 
-            #TRUE, 
-            #TRUE, 
-            #TRUE
+            TRUE,  # "summaryStox"
+            FALSE, # "sum"
+            FALSE, # "mean"
+            FALSE, # "weighted.mean
+            FALSE, # "median"
+            FALSE, # "min"
+            FALSE, # "max"
+            FALSE, # "sd"
+            FALSE, # "var"
+            FALSE, # "cv"
+            FALSE, # "number"
+            FALSE, # "fractionOfOccurrence"
+            FALSE # "fractionOfSum"
+        ), 
+        use = c(
+            c("Bootstrap"), # "summaryStox"
+            c("Baseline"), # "sum"
+            c("Baseline"), # "mean"
+            c("Baseline"), # "weighted.mean
+            c("Baseline"), # "median"
+            c("Baseline"), # "min"
+            c("Baseline"), # "max"
+            c("Baseline"), # "sd"
+            c("Baseline"), # "var"
+            c("Baseline"), # "cv"
+            c("Baseline"), # "number"
+            c("Baseline"), # "fractionOfOccurrence"
+            c("Baseline") # "fractionOfSum"
         )
     )
     
@@ -1126,19 +1141,72 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
 
 #' Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.
 #' 
-#' @param getMultiple If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.
+#' @param multiple If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.
+#' @param use The model the report function will be used in.
 #' 
 #' @export
 #' 
-getReportFunctions <- function(getMultiple = NULL) {
+getReportFunctions <- function(multiple = NULL, use = c("Baseline", "Bootstrap")) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
-    if(length(getMultiple)) {
-        reportFunctions$functionName[reportFunctions$multiple == getMultiple]
+    
+    select <- TRUE
+    
+    if(length(use)) {
+        select <- select & lengths(sapply(reportFunctions$use, intersect, use)) > 0
     }
-    else {
-        reportFunctions$functionName
+    if(length(multiple)) {
+        select <- select & reportFunctions$multiple == multiple
     }
     
+    output <- reportFunctions$functionName[select]
+    return(output)
 }
+
+
+
+#' Function returning report functions with specification parameter
+#' 
+#' @param use A string vector of uses. Currently supported are "Baseline" and "Bootstrap".
+#' 
+#' @export
+#' 
+getSpecificationFunctionsByUse <- function(use = c("Baseline", "Bootstrap")) {
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    
+    select <- reportFunctions$specified
+    
+    if(length(use)) {
+        select <- select & lengths(sapply(reportFunctions$use, intersect, use)) > 0
+    }
+    
+    
+    output <- reportFunctions$functionName[select]
+    return(output)
+}
+
+
+
+#' Function returning the specification parameter display name for report functions with specification parameter
+#' 
+#' @inheritParams getSpecificationFunctionsByUse
+#' 
+#' @export
+#' 
+getSpecificationParameterDisplayNameByUse <- function(use = c("Baseline", "Bootstrap")) {
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    
+    select <- reportFunctions$specified
+    
+    if(length(use)) {
+        select <- select & lengths(sapply(reportFunctions$use, intersect, use)) > 0
+    }
+    
+    output <- reportFunctions$specificationParameterDisplayName[select]
+    return(output)
+}
+
+
+
+
 
 

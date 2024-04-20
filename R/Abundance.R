@@ -230,7 +230,6 @@ SuperIndividuals <- function(
         all = TRUE
     )
     
-    
     # Append an individualNumber to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     distributeQuantityBy <- c(
         getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
@@ -1073,10 +1072,6 @@ AddHaulDensityToSuperIndividuals <- function(
         stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
     }
     
-    # Add length group IDs also in in LengthDistributionData:
-    # Make sure the LengthDistributionData is proper data.table. Comment on 2021-03-18: Why is this needed????:
-    LengthDistributionData <- data.table::setDT(LengthDistributionData)
-    
     # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
     LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
     
@@ -1090,13 +1085,13 @@ AddHaulDensityToSuperIndividuals <- function(
         "TempLengthGroupUsedInSuperIndividuals"
     )
     # Add the haul density as the WeightedNumber to the SuperIndividualsData (requiring Normalized LengthDistributionType):
-    # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl:
+    # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl where the same Haul may have been assignned multiple strata:
     SuperIndividualsData <- merge(
         SuperIndividualsData, 
         LengthDistributionData[, c(..haulGrouping, "WeightedNumber", "LengthDistributionType")], 
         by = haulGrouping, 
         allow.cartesian = TRUE, 
-        # Changed this onn 2021-02-14 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedNumber from hauls with no individuals present in the estimation:
+        # Changed this on 2021-02-14 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedNumber from hauls with no individuals present in the estimation:
         # all.y = TRUE
         all.x = TRUE
     )
@@ -1110,11 +1105,14 @@ AddHaulDensityToSuperIndividuals <- function(
         InputDataType = "LengthDistributionData", 
         SweepWidthMethod = SweepWidthMethod, 
         SweepWidth = SweepWidth
-    ) 
+    )
+    
     
     # Rename to HaulDensity and remove the WeightedNumber:
     data.table::setnames(SuperIndividualsData, "Density", "HaulDensity")
     SuperIndividualsData[, WeightedNumber := NULL]
+    
+    # Calculate also the distributed density (for each Haul and):
     
     
     # Add the attribute 'variableNames':

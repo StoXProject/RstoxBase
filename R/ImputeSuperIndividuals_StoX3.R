@@ -48,7 +48,7 @@ ImputeSuperIndividuals_StoX3 <- function(
         #LengthInterval = numeric()
 ) {
     
-    warning("The function ImputeSuperIndividuals_StoX3 is deprecated. It will be kept for backward compatibility until further notice.")
+    warning("The function ImputeSuperIndividuals_StoX3 is deprecated in StoX >= 4.0.0. See https://github.com/StoXProject/StoX/issues/283. The function will be kept for backward compatibility until further notice.")
     
     ImputationMethod <- RstoxData::match_arg_informative(ImputationMethod)
     

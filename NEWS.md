@@ -1,7 +1,12 @@
+# RstoxBase v1.11.4-9007  (2024-04-19)
+* Fixed bug in DefineBioticAssignment() when DefinitionMethod = "Stratum".
+* Moved warnings for only one PSU to Bootstrap in RstoxFramework.
+* Added report fuctions number(), fractionOfOccurrence() and xfractionOfSum().
+* Refactored report functions to use a general Specification list for arguments like WeightingVariable.
+
+
 # RstoxBase v1.11.4-9006  (2023-12-19)
 * Added the new function AddHaulDensityToSuperIndividuals() which adds the density of each Haul estimated from the LengthDistribution input.
-
-
 * Removed the columns AllHaulsHaveAllSpeciesCategory and AllHaulsHaveAnySpeciesCategory from AssignmentLengthDistribution(), which were only used to produce a warning about missing length distribution in AcousticDensity and SplitNASC. This warning has been changed.
 * Fixed the warning of duplicated entries in the Individual column in ImputeSuperIndividuals_StoX3().
 
