@@ -6,11 +6,6 @@
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).
-#' @param ReportFunction The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.
-#' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean".
-#' @param Condition An expression (string) giving the condition for the \code{ReportFunction} \code{number}. This must be formatted as operator + value, e.g., "> 0" or "\%notin\% NA". 
-#' @param FractionOverVariable When \code{ReportFunction} is a fraction ("fractionOfOccurrence" or "fractionOfSum") \code{FractionOverVariable} is a string naming the variable (one of the \code{GroupingVariables}) to sum over in the denominator of the fraction.
 #'
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLength, or average IndividualTotalLength for each IndividualAge and Stratum.
 #' 
@@ -29,7 +24,8 @@ ReportSuperIndividuals <- function(
     Filter = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character(), 
-    Condition = character(), 
+    ConditionOperator = character(), 
+    ConditionValue = character(), 
     FractionOverVariable = character()
 ) 
 {
@@ -48,13 +44,14 @@ ReportSuperIndividuals <- function(
     output <- aggregateBaselineDataOneTable(
         stoxData = SuperIndividualsData, 
         TargetVariable = TargetVariable, 
-        aggregationFunction = ReportFunction, 
+        ReportFunction = ReportFunction, 
         GroupingVariables = GroupingVariables, 
         InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         Specification = list(
             WeightingVariable = WeightingVariable,
-            Condition = Condition, 
+            ConditionOperator = ConditionOperator, 
+            ConditionValue = ConditionValue, 
             FractionOverVariable = FractionOverVariable
         )
     )
@@ -79,7 +76,6 @@ ReportSuperIndividuals <- function(
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
 #' @param DensityUnit The unit to use for the \code{Density}. See subset(RstoxData::StoxUnits, quantity == "area_number_density") for possible units (use the shortname in the \code{DensityUnit}).
-#' @inheritParams ReportSuperIndividuals
 #' 
 #' @return
 #' A \code{\link{ReportDensityData}} object.
@@ -96,7 +92,8 @@ ReportDensity <- function(
     Filter = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character(), 
-    Condition = character(), 
+    ConditionOperator = character(), 
+    ConditionValue = character(), 
     FractionOverVariable = character()
 ) 
 {
@@ -118,13 +115,14 @@ ReportDensity <- function(
     output <- aggregateBaselineDataOneTable(
         stoxData = DensityData$Data, 
         TargetVariable = TargetVariable, 
-        aggregationFunction = ReportFunction, 
+        ReportFunction = ReportFunction, 
         GroupingVariables = GroupingVariables, 
         InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         Specification = list(
             WeightingVariable = WeightingVariable,
-            Condition = Condition, 
+            ConditionOperator = ConditionOperator, 
+            ConditionValue = ConditionValue, 
             FractionOverVariable = FractionOverVariable
         )
     )
@@ -148,8 +146,6 @@ ReportDensity <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. For possible units, see subset(RstoxData::StoxUnits, quantity == "cardinality") for TargetVariable = "Abundance" and subset(RstoxData::StoxUnits, quantity == "mass") for TargetVariable = "Biomass".
-#' @inheritParams ReportSuperIndividuals
 #' 
 #' @return
 #' A \code{\link{ReportQuantityData}} object.
@@ -166,7 +162,8 @@ ReportQuantity <- function(
     Filter = character(), 
     RemoveMissingValues = FALSE, 
     WeightingVariable = character(), 
-    Condition = character(), 
+    ConditionOperator = character(), 
+    ConditionValue = character(), 
     FractionOverVariable = character()
 ) 
 {
@@ -185,13 +182,14 @@ ReportQuantity <- function(
     output <- aggregateBaselineDataOneTable(
         stoxData = QuantityData$Data, 
         TargetVariable = TargetVariable, 
-        aggregationFunction = ReportFunction, 
+        ReportFunction = ReportFunction, 
         GroupingVariables = GroupingVariables, 
         InformationVariables = InformationVariables, 
         na.rm = RemoveMissingValues, 
         Specification = list(
             WeightingVariable = WeightingVariable,
-            Condition = Condition, 
+            ConditionOperator = ConditionOperator, 
+            ConditionValue = ConditionValue, 
             FractionOverVariable = FractionOverVariable
         )
     )
@@ -213,10 +211,9 @@ ReportQuantity <- function(
 #' @param stoxData Output from any StoX function.
 #' @param subTable The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.
 #' @inheritParams general_report_arguments
-#' @param aggregationFunction The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.
-#' @param na.rm Used in the function specified by \code{aggregationFunction}.
+#' @param na.rm Used in the function specified by \code{ReportFunction}.
 #' @param padWithZerosOn Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}. 
-#' @param Specification A named list of specification parameters used in the \code{aggregationFunction}.
+#' @param Specification A named list of specification parameters used in the \code{ReportFunction}.
 #' @param uniqueGroupingVariablesToKeep A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.
 #'
 #' @return
@@ -231,7 +228,7 @@ aggregateBaselineDataOneTable <- function(
     stoxData, 
     subTable = character(), 
     TargetVariable, 
-    aggregationFunction = getReportFunctions(), 
+    ReportFunction = getReportFunctions(), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
     na.rm = FALSE, 
@@ -244,7 +241,7 @@ aggregateBaselineDataOneTable <- function(
         return(stoxData)
     }
     
-    if(startsWith(aggregationFunction, "fraction")) {
+    if(startsWith(ReportFunction, "fraction")) {
         # Get the FractionOverVariable:
         if(! "FractionOverVariable"  %in% names(Specification)) {
             stop("The parameter FractionOverVariable must be given.")
@@ -253,19 +250,11 @@ aggregateBaselineDataOneTable <- function(
             stop("FractionOverVariable must be one of the GroupingVariables.")
         }
         
-        # Set the grouping variables to use in the denominator:
+        # Set the grouping variables to use in the denominator and remove the FractionOverVariable so that only the conditions are left:
         denominatorGroupingVariables <- setdiff(GroupingVariables, Specification$FractionOverVariable)
+        Specification$FractionOverVariable <- NULL
         
-        fun <- getReportFunctionAlias(aggregationFunction)
-        if(endsWith(aggregationFunction, "Occurrence")) {
-            Specification <- list(
-                Condition = paste0(TargetVariable, " > 0")
-            )
-        }
-        else if(endsWith(aggregationFunction, "Sum")) {
-            Specification <- list()
-        }
-        
+        fun <- getReportFunctionAlias(ReportFunction)
         
         
         
@@ -273,7 +262,7 @@ aggregateBaselineDataOneTable <- function(
             stoxData = stoxData, 
             subTable = subTable, 
             TargetVariable = TargetVariable, 
-            aggregationFunction = fun, 
+            ReportFunction = fun, 
             GroupingVariables = GroupingVariables, 
             InformationVariables = InformationVariables, 
             na.rm = na.rm, 
@@ -287,7 +276,7 @@ aggregateBaselineDataOneTable <- function(
             stoxData = stoxData, 
             subTable = subTable, 
             TargetVariable = TargetVariable, 
-            aggregationFunction = fun, 
+            ReportFunction = fun, 
             GroupingVariables = denominatorGroupingVariables, 
             InformationVariables = InformationVariables, 
             na.rm = na.rm, 
@@ -302,7 +291,7 @@ aggregateBaselineDataOneTable <- function(
         
         outputData <- RstoxData::mergeByIntersect(numerator, denominator, all = TRUE)
         
-        var <- paste(TargetVariable, aggregationFunction,  sep = "_")
+        var <- paste(TargetVariable, ReportFunction,  sep = "_")
         outputData[, eval(var) := temporary_numerator_column_name / temporary_denominator_column_name]
         
         # Remove the temporary columns:
@@ -318,7 +307,7 @@ aggregateBaselineDataOneTable <- function(
             stoxData = stoxData, 
             subTable = subTable, 
             TargetVariable = TargetVariable, 
-            aggregationFunction = aggregationFunction, 
+            ReportFunction = ReportFunction, 
             GroupingVariables = GroupingVariables, 
             InformationVariables = InformationVariables, 
             na.rm = na.rm, 
@@ -349,7 +338,7 @@ aggregateBaselineDataOneTableSingleFunction <- function(
     stoxData, 
     subTable = character(), 
     TargetVariable, 
-    aggregationFunction = getReportFunctions(), 
+    ReportFunction = getReportFunctions(), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
     na.rm = FALSE, 
@@ -363,7 +352,7 @@ aggregateBaselineDataOneTableSingleFunction <- function(
     }
     
     # Get the aggregation function:
-    aggregationFunction <- RstoxData::match_arg_informative(aggregationFunction)
+    ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
     
     # Extract the sub table:
     if(length(subTable)) {
@@ -375,29 +364,6 @@ aggregateBaselineDataOneTableSingleFunction <- function(
             
         }
     }
-    
-    # Define constants outside of the fun to save time:
-    
-    ## Whether we are using a function with weighting:
-    #weighted <- hasWeightingParameter(aggregationFunction)
-    #if(weighted && !length(WeightingVariable)) {
-    #    stop("WeightingVariable must be given.")
-    #}
-    #weightingParameter <- getWeightingParameter(aggregationFunction)
-    
-    
-    #browser()
-    ## Whether we are using a function with a specification parameter:
-    #specified <- hasSpecificationParameter(aggregationFunction)
-    #specificationParameter <- getSpecificationParameterByFunctionName(aggregationFunction)
-    #specificationParameterDisplayName <- getSpecificationParameterDisplayNameByFunctionName(aggregationFunction)
-    #if(specified && !length(Specification)) {
-    #    stop("The parameter '", specificationParameterDisplayName, "' must be given.")
-    #}
-    
-    # Define the environment to run the function in:
-    funEnvir <- as.environment(paste("package", getReportFunctionPackage(aggregationFunction), sep = ":"))
-    # Get the reportFunctionVariableName
     
     
     # Add a CJ operation here like in StoX 2.7 (function reportQuantityAtLevel). This needs an option, so that it is only used across bootstrap iterations:
@@ -449,42 +415,7 @@ aggregateBaselineDataOneTableSingleFunction <- function(
     #stoxData0 <- data.table::copy(stoxData) #  This made a copy and took up too much memory
     toAdd <- unique(stoxData[, c(GroupingVariables, InformationVariables), with = FALSE])
     
-    ## Get the function to use:
-    #fun <- function(x) {
-    #    # Create the list of inputs to the function:
-    #    args <- list(
-    #        x[[TargetVariable]], 
-    #        na.rm = na.rm
-    #    )
-    #    
-    #    # Add specification to the list of inputs to the function:
-    #    if(specified) {
-    #        args[[specificationParameter]] <- Specification[[specificationParameterDisplayName]]
-    #    }
-    #    
-    #    # Call the function in the appropriate environment:
-    #    out <- RstoxData::do.call_robust(
-    #        aggregationFunction, 
-    #        args, 
-    #        envir = funEnvir, 
-    #        keep.unnamed = TRUE
-    #    )
-    #    
-    #    # Add the target variable as prefix in the column names of the output:
-    #    if(length(names(out))) {
-    #        names(out) <- paste(TargetVariable, names(out), sep = "_")
-    #    }
-    #    # Use the aggregationFunction if no names are present in the output:
-    #    else {
-    #        names(out) <- paste(TargetVariable, aggregationFunction, sep = "_")
-    #    }
-    #    
-    #    # Convert to list to insert each element to a named column of the data table:
-    #    out <- as.list(out)
-    #    
-    #    return(out)
-    #}
-    
+    # Function to build an expression stringg for use in data.table:
     fun2funString <- function(
         fun, 
         var, 
@@ -494,25 +425,49 @@ aggregateBaselineDataOneTableSingleFunction <- function(
         
         # Whether we are using a function with a specification parameter:
         specified <- hasSpecificationParameter(fun)
-        specificationParameter <- getSpecificationParameterByFunctionName(fun)
-        specificationParameterDisplayName <- getSpecificationParameterDisplayNameByFunctionName(fun)
+        #specificationParameter <- getReportFunctionElementByFunctionName(fun, "specificationParameter")
+        specificationParameterDisplayName <- getReportFunctionElementByFunctionName(fun, "specificationParameterDisplayName")
         if(specified && !length(Specification)) {
             stop("The parameter '", specificationParameterDisplayName, "' must be given.")
         }
         
         # Check whether the specification parameter is given:
-        if(specified && !length(Specification[[specificationParameterDisplayName]])) {
-            stop("The function ", fun, " needs the argument ",  specificationParameterDisplayName, "!")
+        if(specified && any(lengths(Specification[specificationParameterDisplayName]) == 0)) {
+            stop("The function ", fun, " needs the arguments ",  specificationParameterDisplayName, "!")
         }
         
+        par <- unname(unlist(Specification[specificationParameterDisplayName]))
+        
         # Paste the function alias (used for the number function exposed to the user), the first argument (x if specified that the function has one, which currently only the number does not), the specification argument if present, and the mandatory na.rm:
-        paste0("as.list(", getReportFunctionAlias(fun), "(", if(hasX(fun)) paste0(var, ", "), if(specified && length(Specification[[specificationParameterDisplayName]])) paste0(if(length(Specification[[specificationParameterDisplayName]]) > 1) deparse(Specification[[specificationParameterDisplayName]]) else Specification[[specificationParameterDisplayName]], ", "), "na.rm = ", na.rm, ")", ")")
+        paste0(
+            "as.list(", 
+            getReportFunctionAlias(fun), 
+            "(", 
+            if(hasX(fun)) 
+                paste0(var, ", "), 
+            if(specified && length(par)) 
+                paste(
+                    if(!hasX(fun)) var,
+                    if(!hasX(fun)) {
+                        paste(par, collapse = " ") # This means that if there are more than one specification parameter, these will be pasted. This is only the case for number and fractionOfOccurrence which use a conndition string  
+                    }
+                    else {
+                        deparse(par) 
+                    },
+                    ", " # Used to separate the following na.rm
+                    #if(length(par) > 1) 
+                    #    deparse(par) 
+                    #else 
+                    #    par, 
+                ), 
+            "na.rm = ", na.rm, ")", 
+            ")"
+        )
     }
     
-    #callString <- paste0(aggregationFunction, "(", TargetVariable, ", ", if(specified && length(Specification[[specificationParameterDisplayName]])) paste0(specificationParameter, "= ", Specification[[specificationParameterDisplayName]]), ")")
     
     callString <- fun2funString(
-        fun = aggregationFunction, 
+        fun = ReportFunction, 
         var = TargetVariable, 
         Specification,
         na.rm = na.rm
@@ -525,9 +480,9 @@ aggregateBaselineDataOneTableSingleFunction <- function(
     #rm(stoxData)
     #gc()
     
-    # If the aggregationFunction did not produce any names for the output (last column named V1, (or possibly V2, V3, ..., V9 in case some column is temporaarily named V1 in future code)), use the aggregationFunction in the names:
+    # If the ReportFunction did not produce any names for the output (last column named V1, (or possibly V2, V3, ..., V9 in case some column is temporaarily named V1 in future code)), use the ReportFunction in the names:
     if(ncol(outputData) == length(GroupingVariables) + 1  &&  grepl("^V\\d$", names(outputData)[ncol(outputData)])) {
-        data.table::setnames(outputData, ncol(outputData), paste(TargetVariable, aggregationFunction, sep = "_"))
+        data.table::setnames(outputData, ncol(outputData), paste(TargetVariable, ReportFunction, sep = "_"))
     }
     # Add the target variable as prefix in the column names of the output:
     else {
@@ -618,7 +573,7 @@ getReportFunctionOutputNames <- function(functionName, packageName, args = list(
 getReportFunctionVariableName <- function(functionName, TargetVariable, args = list()) {
     suffix <- getReportFunctionOutputNames(
         functionName = functionName, 
-        packageName = getReportFunctionPackage(functionName), 
+        packageName = getReportFunctionElementByFunctionName(functionName, "packageName"), 
         args = args
     )
     paste(TargetVariable, suffix, sep = "_")
@@ -649,34 +604,12 @@ hasX <- function(x) {
     reportFunctions$hasX[reportFunctions$functionName == x]
 }
 
-getSpecificationParameterDisplayNameByFunctionName <- function(x) {
+
+
+# Get an element of the report function definitions:
+getReportFunctionElementByFunctionName <- function(x, element) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
-    reportFunctions$specificationParameterDisplayName[reportFunctions$functionName == x]
-}
-
-
-
-
-#' List specification parameters
-#' 
-#' @param x The name of the report function for which to list parameters.
-#' 
-#' @export
-#' 
-getSpecificationParameterByFunctionName <- function(x) {
-    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
-    reportFunctions$specificationParameter[reportFunctions$functionName == x]
-}
-
-#' List report function packages
-#' 
-#' @param x The name of the report function for which to return package name.
-#' 
-#' @export
-#' 
-getReportFunctionPackage <- function(x) {
-    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
-    reportFunctions$packageName[reportFunctions$functionName == x]
+    reportFunctions[[element]][[which(reportFunctions$functionName == x)]]
 }
 
 

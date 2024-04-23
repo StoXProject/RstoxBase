@@ -4,15 +4,13 @@
 \alias{number}
 \title{Number of TRUE}
 \usage{
-number(x, condition = NULL, na.rm = FALSE)
+number(..., na.rm = FALSE)
 }
 \arguments{
-\item{x}{An R object}
+\item{...}{One or more expressions to be pasted with collapse = " ".}
 
-\item{condition}{A logical expression (string) which when evaluated to TRUE counts as numeric 1}
-
-\item{na.rm}{All functions used as \code{aggregationFunction} in \code{\link{aggregateBaselineDataOneTable}} must have an na.rm agument. This is however not used in this function.}
+\item{na.rm}{All functions used as \code{ReportFunction} in must have an na.rm argument. This is however not used in this function.}
 }
 \description{
-Number of TRUE
+Warning! This function is used only to construct an expression to be evaluated in a data.table. Do not use this in R as a regular function like the other \code{\link{ReportFunctions}}.
 }

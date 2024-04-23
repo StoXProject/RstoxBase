@@ -8,7 +8,7 @@ aggregateBaselineDataOneTable(
   stoxData,
   subTable = character(),
   TargetVariable,
-  aggregationFunction = getReportFunctions(),
+  ReportFunction = getReportFunctions(),
   GroupingVariables = character(),
   InformationVariables = character(),
   na.rm = FALSE,
@@ -24,17 +24,17 @@ aggregateBaselineDataOneTable(
 
 \item{TargetVariable}{The variable to report.}
 
-\item{aggregationFunction}{The function to apply, see RstoxBase::getRstoxBaseDefinitions("reportFunctions")$functionName.}
+\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. \code{\link{ReportFunctions}}}
 
 \item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.}
 
 \item{InformationVariables}{Variables to include as columns to the end of the report table. These cannot have more unique combinations than the \code{GroupingVariables}.}
 
-\item{na.rm}{Used in the function specified by \code{aggregationFunction}.}
+\item{na.rm}{Used in the function specified by \code{ReportFunction}.}
 
 \item{padWithZerosOn}{Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}.}
 
-\item{Specification}{A named list of specification parameters used in the \code{aggregationFunction}.}
+\item{Specification}{A named list of specification parameters used in the \code{ReportFunction}.}
 
 \item{uniqueGroupingVariablesToKeep}{A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.}
 }
