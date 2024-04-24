@@ -1,3 +1,8 @@
+# RstoxBase v1.11.4-9009  (2024-04-25)
+* Removed warning "There are Stratum,PSU that have assigned ONLY ONE haul." as this is now covered in Bootstrap.
+* Fixed bug with report functions with a single second argument, which was deparsed but should not be.
+
+
 # RstoxBase v1.11.4-9008  (2024-04-23)
 * Added documentation of ReportFunctions.
 * Added the exported getFunctionArgumentHierarchyForSpcificationParameters() used in stoxFunctionAttributes.
