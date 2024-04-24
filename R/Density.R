@@ -274,16 +274,15 @@ DistributeNASC <- function(
     
     
     # And check whether there are PSU/Layer win only one non-empty assigned haul:
-    resolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
     # This was a bug, as it failed to detect NumberOfAssignedHauls = 1 when NumberOfAssignedHauls was NA in the first row of a resolution:
     #withOnlyOneHaul <- subset(unique(MeanNASCData, by = resolution), NumberOfAssignedHauls == 1)
-    withOnlyOneHaul <- unique(subset(MeanNASCData, NumberOfAssignedHauls == 1), by = resolution)
+    #withOnlyOneHaul <- unique(subset(MeanNASCData, NumberOfAssignedHauls == 1), by = resolution)
     
-    if(NROW(withOnlyOneHaul)) {
-        # Get the unique invalid hauls:
-        withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = ", "), .SD), .SDcols = resolution]
-        warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", RstoxData::printErrorIDs(withOnlyOneHaul)))
-    }
+    #if(NROW(withOnlyOneHaul)) {
+    #    # Get the unique invalid hauls:
+    #    withOnlyOneHaul <- withOnlyOneHaul[, Reduce(function(...) paste(..., sep = ", "), .SD), .SDcols = resolution]
+    #    warning(paste("StoX: There are Stratum,PSU that have assigned ONLY ONE haul. This is in conflict with the principle of bootstrapping, and can lead to underestimation of variance in reports from bootstrap. The following Stratum,PSU have only one assigned haul:", RstoxData::printErrorIDs(withOnlyOneHaul)))
+    #}
     
     # Add a warning if any WeightedNumber are NA while NASC > 0:
     MeanNASCData[, missingAssignment := all(is.na(WeightedNumber) & NASC > 0), by = sumBy]
@@ -296,6 +295,7 @@ DistributeNASC <- function(
             warning("StoX: SEVERE WARNING: There are positive NASC values with no assignment length distribution! \n If this warning occurs in Baseline, it can lead to missing (NA) acoustic density! Please make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this (e.g. using FilterSttoxBiotic with FilterUpwards to remove Hauls without the target species). \nIf this warning occurs in a Bootstrap process, it implies that there are AcousticPSUs where none of the assigned hauls were resampled in one or more bootstrap replicates. This causes missing values in the AcousticDensityData, QuantityData and SuperIndividualsData, with the result that the only way to get non-missing values in ReportBootstrap is to use RemoveMissingValues = TRUE, which directly leads to under-estimation!!!! This can occur if ResampleBioticAssignmentByStratum is used in the BootstrapMethodTable when there are Hauls assigned differently for the different AcousticPSUs in a Stratum (e.g., using DefinitionMethod = \"Radius\"). In this case it is adviced to use ResampleBioticAssignmentByPSU instead, which resamples only the Hauls assigned to each individual AccousticPSU.")
         }
         else if(distributionType == "SplitNASC") {
+            resolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
             unassignedStratumPSUs <- unique(subset(MeanNASCData, PSU %in% unassignedPSUs, select = c("Stratum", "PSU")))
             unassignedStratumPSUs <- unassignedStratumPSUs[, Reduce(function(...) paste(..., sep = ", "), .SD), .SDcols = resolution]
             warning("StoX: There are positive NASC values with no assignment length distribution!. This can lead to un-split acoustic categories in SplitNASC(). Please make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this. \nMissing length distribution was found for the following PSUs:\n", RstoxData::printErrorIDs(unassignedStratumPSUs))

@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-13,   r: 'release', pkgext: '.tgz'}
+          - {os: macOS-13,   r: 'release', pkgext: '.tgz'} # Changed se per https://github.blog/changelog/2024-01-30-github-actions-macos-14-sonoma-is-now-available/
           - {os: macOS-13,   r: '4.3',     pkgext: '.tgz'}
           - {os: macOS-13,   r: '4.2',     pkgext: '.tgz'}
           - {os: macOS-13,   r: '4.1',     pkgext: '.tgz'} # Temporarily disabling this due to new sf release not ready for R 4.2
