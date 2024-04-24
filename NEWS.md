@@ -1,7 +1,14 @@
+# RstoxBase v1.11.4-9008  (2024-04-23)
+* Added documentation of ReportFunctions.
+* Added the exported getFunctionArgumentHierarchyForSpcificationParameters() used in stoxFunctionAttributes.
+* Fixed report functions number(), fractionOfOccurrence() and fractionOfSum().
+* Fixed bug where IndividualAge was not avaiable as TargetVariable in reports (due to class integer, which was not accounted for).
+
+
 # RstoxBase v1.11.4-9007  (2024-04-19)
 * Fixed bug in DefineBioticAssignment() when DefinitionMethod = "Stratum".
 * Moved warnings for only one PSU to Bootstrap in RstoxFramework.
-* Added report fuctions number(), fractionOfOccurrence() and xfractionOfSum().
+* Added report functions number(), fractionOfOccurrence() and fractionOfSum().
 * Refactored report functions to use a general Specification list for arguments like WeightingVariable.
 
 

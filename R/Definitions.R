@@ -715,8 +715,8 @@ initiateRstoxBase <- function(){
             TRUE, # "var" 
             TRUE, # "cv" 
             FALSE, # "number"
-            NA, # "fractionOfOccurrence"
-            NA # "fractionOfSum"
+            FALSE, # "fractionOfOccurrence"
+            FALSE # "fractionOfSum"
         ), 
         specified = c(
             TRUE, # "summaryStox" 
@@ -733,22 +733,22 @@ initiateRstoxBase <- function(){
             TRUE, # "fractionOfOccurrence"
             TRUE # "fractionOfSum"
         ), 
-        specificationParameter = c(
-            "percentages", # "summaryStox"
-            "", # "sum"
-            "", # "mean"
-            "w", # "weighted.mean
-            "",# "median"
-            "", # "min"
-            "", # "max"
-            "", # "sd"
-            "", # "var"
-            "", # "cv"
-            "condition", # "number"
-            "FractionOverVariable", # "fractionOfOccurrence"
-            "FractionOverVariable" # "fractionOfSum"
-        ), 
-        specificationParameterDisplayName = c(
+        #specificationParameter = list(
+        #    "percentages", # "summaryStox"
+        #    "", # "sum"
+        #    "", # "mean"
+        #    "w", # "weighted.mean
+        #    "",# "median"
+        #    "", # "min"
+        #    "", # "max"
+        #    "", # "sd"
+        #    "", # "var"
+        #    "", # "cv"
+        #    c("conditionOperator", "conditionValue"), # "number"
+        #    c("conditionOperator", "conditionValue", "FractionOverVariable"), # "fractionOfOccurrence"
+        #    "FractionOverVariable" # "fractionOfSum"
+        #), 
+        specificationParameterDisplayName = list(
             "Percentages", # "summaryStox"
             "", # "sum"
             "", # "mean"
@@ -759,8 +759,8 @@ initiateRstoxBase <- function(){
             "", # "sd"
             "", # "var"
             "", # "cv"
-            "Condition", # "number"
-            "FractionOverVariable", # "fractionOfOccurrence"
+            c("ConditionOperator", "ConditionValue"), # "number"
+            c("ConditionOperator", "ConditionValue", "FractionOverVariable"), # "fractionOfOccurrence"
             "FractionOverVariable" # "fractionOfSum"
         ), 
         multiple = c(
@@ -1164,12 +1164,39 @@ getReportFunctions <- function(multiple = NULL, use = c("Baseline", "Bootstrap")
 
 
 
-#' Function returning report functions with specification parameter
+
+
+
+
+
+#' Return a list of specification parameters with conditions for use in stoxFunctionAttributes
+#' 
+#' This function is exported for use in stoxFunctionAttributes in RstoxBase, as this is used onLoad, and is also used in stoxFunctionAttributes in RstoxFramework.
 #' 
 #' @param use A string vector of uses. Currently supported are "Baseline" and "Bootstrap".
+#' @param functionName The name of the report function.
 #' 
 #' @export
 #' 
+getFunctionArgumentHierarchyForSpcificationParameters <- function(use, functionName) {
+    
+    # Get the specification information from RstoxBase (this is stored in that package):
+    functionsWithSpecificationParameter <- getSpecificationFunctionsByUse(use)
+    specificationParameters <- getSpecificationParameterDisplayNameByUse(use)
+    
+    # Each function with specification parameters can have more than one of these, so we need to repeat the function name:
+    functionsWithSpecificationParameter <- rep(functionsWithSpecificationParameter, lengths(specificationParameters))
+    specificationParameters <- unlist(specificationParameters)
+    
+    # Then split the functionsWithSpecificationParameter by the specificationParameters, since we can only have one set of values for each specification parameter for RstoxFramework::applyBackwardCompatibility() to  not only consider the first value:
+    functionsWithSpecificationParameter <- split(functionsWithSpecificationParameter, specificationParameters)
+    specificationParameters <- names(functionsWithSpecificationParameter)
+    
+    structure(lapply(functionsWithSpecificationParameter, function(fun) structure(list(fun), names = functionName)), names = specificationParameters)
+}
+
+
+
 getSpecificationFunctionsByUse <- function(use = c("Baseline", "Bootstrap")) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
     
@@ -1186,12 +1213,7 @@ getSpecificationFunctionsByUse <- function(use = c("Baseline", "Bootstrap")) {
 
 
 
-#' Function returning the specification parameter display name for report functions with specification parameter
-#' 
-#' @inheritParams getSpecificationFunctionsByUse
-#' 
-#' @export
-#' 
+
 getSpecificationParameterDisplayNameByUse <- function(use = c("Baseline", "Bootstrap")) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
     
@@ -1204,9 +1226,4 @@ getSpecificationParameterDisplayNameByUse <- function(use = c("Baseline", "Boots
     output <- reportFunctions$specificationParameterDisplayName[select]
     return(output)
 }
-
-
-
-
-
 

@@ -853,14 +853,18 @@ cv <- function(x, na.rm = FALSE) {
 
 #' Number of TRUE
 #' 
-#' @param x An R object
-#' @param condition A logical expression (string) which when evaluated to TRUE counts as numeric 1
-#' @param na.rm All functions used as \code{aggregationFunction} in \code{\link{aggregateBaselineDataOneTable}} must have an na.rm agument. This is however not used in this function.
+#' Warning! This function is used only to construct an expression to be evaluated in a data.table. Do not use this in R as a regular function like the other \code{\link{ReportFunctions}}.
+#' 
+#' @param ... One or more expressions to be pasted with collapse = " ".
+#' @param na.rm All functions used as \code{ReportFunction} in must have an na.rm argument. This is however not used in this function.
 #' 
 #' @export
 #' 
-number <- function(x, condition = NULL, na.rm = FALSE) {
-    paste0("sum(", deparse(substitute(x)), if(length(condition)) paste0(" ", condition), ")")
+#number <- function(x, condition = NULL, na.rm = FALSE) {
+#    paste0("sum(", deparse(substitute(x)), if(length(condition)) paste0(" ", condition), ")")
+#}
+number <- function(..., na.rm = FALSE) {
+    paste0("sum(", paste0(..., collapse = " "), ")")
 }
 
 
