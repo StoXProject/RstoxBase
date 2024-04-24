@@ -452,7 +452,12 @@ aggregateBaselineDataOneTableSingleFunction <- function(
                         paste(par, collapse = " ") # This means that if there are more than one specification parameter, these will be pasted. This is only the case for number and fractionOfOccurrence which use a conndition string  
                     }
                     else {
-                        deparse(par) 
+                        if(length(par) == 1) {
+                            par
+                        }
+                        else {
+                            deparse(par) 
+                        }
                     },
                     ", " # Used to separate the following na.rm
                     #if(length(par) > 1) 
@@ -472,6 +477,8 @@ aggregateBaselineDataOneTableSingleFunction <- function(
         Specification,
         na.rm = na.rm
     )
+    
+    message("Evaluating callString: ", callString)
     
     # Run the function:
     #outputData <- stoxData[, fun(.SD), by = GroupingVariables]
