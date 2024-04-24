@@ -24,10 +24,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.3',     pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.2',     pkgext: '.tgz'}
-          - {os: macOS-latest,   r: '4.1',     pkgext: '.tgz'} # Temporarily disabling this due to new sf release not ready for R 4.2
+          - {os: macOS-13,   r: 'release', pkgext: '.tgz'}
+          - {os: macOS-13,   r: '4.3',     pkgext: '.tgz'}
+          - {os: macOS-13,   r: '4.2',     pkgext: '.tgz'}
+          - {os: macOS-13,   r: '4.1',     pkgext: '.tgz'} # Temporarily disabling this due to new sf release not ready for R 4.2
           # - {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'} # Returs error  callr not found
           # - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'} # Not used in RstoxFramework
           - {os: windows-latest, r: 'release', pkgext: '.zip'}

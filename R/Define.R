@@ -2679,8 +2679,8 @@ formatProcessDataOne <-  function(processDataName, processDataOne, columnClasses
         # processDataOne <- simplifyListReadFromJSON(processDataOne)
         # processDataOne <- data.table::as.data.table(processDataOne)
         
-        # Convert to data.table:
-        processDataOne <- data.table::rbindlist(processDataOne)
+        # Convert to data.table (suppress warnings like "Column 3 [''] of item 1 is length 0. This (and 0 others like it) has been filled with NA (NULL for list columns) to make each item uniform."):
+        suppressWarnings(processDataOne <- data.table::rbindlist(processDataOne))
         
         convertStringToNA(processDataOne)
         ## Set numeric NAs:

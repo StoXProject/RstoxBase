@@ -1290,9 +1290,17 @@ stoxFunctionAttributes <- list(
             InformationVariables = "informationVariables_ReportSuperIndividuals", 
             TargetVariableUnit = "targetVariableUnit_ReportSuperIndividuals", 
             WeightingVariable = "weightingVariable_ReportSuperIndividuals", 
-            FractionOverVariable = "fractionOverVariable"
+            FractionOverVariable = "fractionOverVariable", 
+            ConditionOperator = "conditionOperator"
         ), 
-        functionArgumentHierarchy = expression(c(structure(lapply(RstoxBase::getSpecificationFunctionsByUse("Baseline"), function(fun) list(ReportFunction = fun)), names = RstoxBase::getSpecificationParameterDisplayNameByUse("Baseline"))))
+        functionArgumentHierarchy = expression(
+            c(
+                getFunctionArgumentHierarchyForSpcificationParameters(
+                    use = "Baseline", 
+                    functionName = "ReportFunction"
+                )
+            )
+        )
     ), 
     
     ReportQuantity = list(
@@ -1305,9 +1313,17 @@ stoxFunctionAttributes <- list(
             InformationVariables = "informationVariables_ReportQuantity", 
             TargetVariableUnit = "targetVariableUnit_ReportQuantity", 
             WeightingVariable = "weightingVariable_ReportQuantity", 
-            FractionOverVariable = "fractionOverVariable"
+            FractionOverVariable = "fractionOverVariable", 
+            ConditionOperator = "conditionOperator"
         ), 
-        functionArgumentHierarchy = expression(c(structure(lapply(RstoxBase::getSpecificationFunctionsByUse("Baseline"), function(fun) list(ReportFunction = fun)), names = RstoxBase::getSpecificationParameterDisplayNameByUse("Baseline"))))
+        functionArgumentHierarchy = expression(
+            c(
+                getFunctionArgumentHierarchyForSpcificationParameters(
+                    use = "Baseline", 
+                    functionName = "ReportFunction"
+                )
+            )
+        )
     ), 
     
     ReportDensity = list(
@@ -1320,9 +1336,17 @@ stoxFunctionAttributes <- list(
             InformationVariables = "informationVariables_ReportDensity", 
             DensityUnit = "densityUnit", 
             WeightingVariable = "weightingVariable_ReportDensity", 
-            FractionOverVariable = "fractionOverVariable"
+            FractionOverVariable = "fractionOverVariable", 
+            ConditionOperator = "conditionOperator"
         ), 
-        functionArgumentHierarchy = expression(c(structure(lapply(RstoxBase::getSpecificationFunctionsByUse("Baseline"), function(fun) list(ReportFunction = fun)), names = RstoxBase::getSpecificationParameterDisplayNameByUse("Baseline"))))
+        functionArgumentHierarchy = expression(
+            c(
+                getFunctionArgumentHierarchyForSpcificationParameters(
+                    use = "Baseline", 
+                    functionName = "ReportFunction"
+                )
+            )
+        )
     ), 
     
     ReportSpeciesCategoryCatch = list(
@@ -1912,7 +1936,7 @@ processPropertyFormats <- list(
         class = "single", 
         title = "One variable to group report from SuperIndividualsData", 
         possibleValues = function(SuperIndividualsData) {
-            sort(subset(names(SuperIndividualsData), sapply(SuperIndividualsData, class) == "numeric"))
+            sort(subset(names(SuperIndividualsData), sapply(SuperIndividualsData, class) %in% c("numeric", "integer")))
         }, 
         variableTypes = "character"
     ), 
@@ -1935,10 +1959,7 @@ processPropertyFormats <- list(
     targetVariableUnit_ReportSuperIndividuals = list(
         class = "single", 
         title = "Select Unit for the TargetVariable", 
-        possibleValues = function(TargetVariable, ReportFunction) {
-            if(startsWith(ReportFunction, "fraction")) {
-                return(NULL)
-            }
+        possibleValues = function(TargetVariable) {
             dataType <- "SuperIndividualsData"
             quantity <- getBaseUnit(dataType = dataType, variableName = TargetVariable, element = "quantity")
             if(!length(quantity) || is.na(quantity)) {
@@ -1955,7 +1976,7 @@ processPropertyFormats <- list(
         title = "Select weighting variable", 
         possibleValues = function(SuperIndividualsData, TargetVariable, GroupingVariables, InformationVariables) {
             # Keep only the numeric:
-            possibleVariables <- names(SuperIndividualsData)[sapply(SuperIndividualsData, inherits, "numeric")]
+            possibleVariables <- names(SuperIndividualsData)[sapply(SuperIndividualsData, inherits, c("numeric", "integer"))]
             
             # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
             possibleVariables <- 
@@ -1995,10 +2016,7 @@ processPropertyFormats <- list(
     targetVariableUnit_ReportQuantity = list(
         class = "single", 
         title = "Select Unit for the TargetVariable", 
-        possibleValues = function(TargetVariable, ReportFunction) {
-            if(startsWith(ReportFunction, "fraction")) {
-                return(NULL)
-            }
+        possibleValues = function(TargetVariable) {
             dataType <- "QuantityData"
             quantity <- getBaseUnit(dataType = dataType, variableName = TargetVariable, element = "quantity")
             if(!length(quantity) || is.na(quantity)) {
@@ -2015,7 +2033,7 @@ processPropertyFormats <- list(
         title = "Select weighting variable", 
         possibleValues = function(QuantityData, GroupingVariables, InformationVariables) {
             # Keep only the numeric:
-            possibleVariables <- names(QuantityData)[sapply(QuantityData, inherits, "numeric")]
+            possibleVariables <- names(QuantityData)[sapply(QuantityData, inherits, c("numeric", "integer"))]
             
             # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
             possibleVariables <- 
@@ -2064,7 +2082,7 @@ processPropertyFormats <- list(
         title = "Select weighting variable", 
         possibleValues = function(DensityData, GroupingVariables, InformationVariables) {
             # Keep only the numeric:
-            possibleVariables <- names(DensityData)[sapply(DensityData, inherits, "numeric")]
+            possibleVariables <- names(DensityData)[sapply(DensityData, inherits, c("numeric", "integer"))]
             
             # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
             possibleVariables <- 
@@ -2218,7 +2236,12 @@ processPropertyFormats <- list(
                 "Haul", 
                 "Stratum", 
                 "Survey"
-            )
-        
+        )
+    ), 
+    
+    conditionOperator = list(
+        class = "single", 
+        title = "Select ConditionOperator", 
+        possibleValues = c("%in%", "%notin%", "==", "!=", "%notequal%", "<", "<=", ">=", ">")
     )
 )

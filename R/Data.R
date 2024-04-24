@@ -50,14 +50,77 @@ NULL
 ##################################################
 #' General report parameters of RstoxBase
 #' 
+#' @param ReportFunction The name of a function to report the Baseline process output by. This must be a function returning a single value. \code{\link{ReportFunctions}}
 #' @param TargetVariable The variable to report.
-#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}.
+#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).
 #' @param GroupingVariables The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.
 #' @param InformationVariables Variables to include as columns to the end of the report table. These cannot have more unique combinations than the \code{GroupingVariables}.
 #' @param RemoveMissingValues Logical: If TRUE, remove missing values (NAs) from the \code{TargetVariable}. The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA. Use \code{RemoveMissingValues} = TRUE with extreme caution, as it may lead to under-estimation. E.g., if \code{RemoveMissingValues} = TRUE and a super-individual lacks \code{IndividualRoundWeight}, \code{Biomass} will be NA, and the portion of \code{Abundance} distributed to that super-individual will be excluded when summing \code{Biomass} (but included when summing \code{Abundance}). It is advised to always run with \code{RemoveMissingValues} = FALSE first, and make a thorough investigation to identify the source of any missing values. The function \code{link{ImputeSuperIndividuals}} can be used to impute the missing information from other super-individuals.
 #' @param Filter A string with an R expression to filter out unwanted rows of the report, e.g. "IndividualAge \%notin\% NA" or "Survey \%notin\% NA & SpeciesCategory \%notin\% NA".
+#' @param WeightingVariable The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean". Note that missing values in the \code{WeightingVariable} results in missing value from the \code{weighted.mean} function as per the documentation of this function, regardles of any \code{RemoveMissingValues}. 
+#' @param ConditionOperator,ConditionValue Expressions (strings) giving the condition for the \code{ReportFunction} \code{number} and \code{fractionOfOccurrence}. Supported values for \code{ConditionOperator} are "\%in\%", "\%notin\%", "==", "!=", "\%notequal\%", "<", "<=", ">=", ">". The \code{ConditionOperator} and \code{ConditionValue} are pasted for use in data.table.
+#' 
+#' @param FractionOverVariable When \code{ReportFunction} is a fraction ("fractionOfOccurrence" or "fractionOfSum") \code{FractionOverVariable} is a string naming the variable (one of the \code{GroupingVariables}) to sum over in the denominator of the fraction.
 #' 
 #' @name general_report_arguments
+#' 
+NULL
+
+
+
+##################################################
+##################################################
+#' The fraction of occurrence function
+#' 
+#' The \code{ReportFunction} \code{fractionOfOccurrence} represents the fraction of occurrence for two different grouping variables, where the \code{GroupingVariables} is used in the numerator and the \code{GroupingVariables} except the \code{FractionOverVariable} is used in the denominator. The occurrence is defined as 1 if the \code{TargetVariable} meets the condition defined by \code{ConditionOperator} and \code{ConditionValue}. 
+#' 
+#' E.g., if \code{GroupingVariables} is c("Survey", "SpeciesCategory", "Stratum"), \code{ractionOverVariable} is "Stratum", \code{TargetVariable} is "IndividualAge", \code{ConditionOperator} is ">" and \code{ConditionValue} is 0, the number of individuals with age larger than 0 for each stratum is divided by the total number of individuals of age large than 0 of the survey (for each SpeciesCategory).
+#' 
+#' Warning! This function is used only to construct an expression to be evaluated in a data.table. Do not use this in R as a regular function like the other \code{\link{ReportFunctions}}.
+#' 
+#' @name fractionOfOccurrence
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' The fraction of occurrence function
+#' 
+#' The \code{ReportFunction} \code{fractionOfSum} represents the fraction of the sum of the \code{TargetVariable} for two different grouping variables, where the \code{GroupingVariables} is used in the numerator and the \code{GroupingVariables} except the \code{FractionOverVariable} is used in the denominator. 
+#' 
+#' E.g., if \code{GroupingVariables} is c("Survey", "SpeciesCategory", "Stratum"), \code{FractionOverVariable} is "Stratum", \code{TargetVariable} is "CatchFractionWeight", the total catch fraction weight for each stratum is divided by the total catch fraction weight of the survey (for each SpeciesCategory).
+#' 
+#' Warning! This function is used only to construct an expression to be evaluated in a data.table. Do not use this in R as a regular function like the other \code{\link{ReportFunctions}}.
+#' 
+#' @name fractionOfSum
+#' 
+NULL
+
+
+
+
+##################################################
+##################################################
+#' Report functions for baseline process output
+#' 
+#' The following functions are used by StoX to report from a Baseline process output:
+#'  \itemize{
+#'    \item{\code{\link[base]{sum}}}
+#'    \item{\code{\link[base]{mean}}}
+#'    \item{\code{\link[stats]{weighted.mean}}}
+#'    \item{\code{\link[stats]{median}}}
+#'    \item{\code{\link[base]{min}}}
+#'    \item{\code{\link[base]{max}}}
+#'    \item{\code{\link[stats]{sd}}}
+#'    \item{\code{\link[stats]{var}}}
+#'    \item{\code{\link{cv}}}
+#'    \item{\code{\link{number}}}
+#'    \item{\code{\link{fractionOfOccurrence}}}
+#'    \item{\code{\link{fractionOfSum}}}
+#'  }
+#' 
+#' @name ReportFunctions
 #' 
 NULL
 

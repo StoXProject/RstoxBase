@@ -296,41 +296,59 @@ backwardCompatibility <- list(
             parameterName = "ImputationLevels", 
             parameterValue = c("Haul", "Stratum", "Survey")
         ), 
-        # Condition and FractionOverVariable:
+        # ConditionOperator, ConditionValue and FractionOverVariable:
         list(
             changeVersion = "1.11.4-9007", 
             functionName = "ReportSuperIndividuals", 
-            modelName = "baseline", 
-            parameterName = "Condition"
+            modelName = "report", 
+            parameterName = "ConditionOperator"
         ), 
         list(
             changeVersion = "1.11.4-9007", 
             functionName = "ReportSuperIndividuals", 
-            modelName = "baseline", 
+            modelName = "report", 
+            parameterName = "ConditionValue"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportSuperIndividuals", 
+            modelName = "report", 
             parameterName = "FractionOverVariable"
         ), 
         list(
             changeVersion = "1.11.4-9007", 
             functionName = "ReportDensity", 
-            modelName = "baseline", 
-            parameterName = "Condition"
+            modelName = "report", 
+            parameterName = "ConditionOperator"
         ), 
         list(
             changeVersion = "1.11.4-9007", 
             functionName = "ReportDensity", 
-            modelName = "baseline", 
+            modelName = "report", 
+            parameterName = "ConditionValue"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportDensity", 
+            modelName = "report", 
             parameterName = "FractionOverVariable"
         ), 
         list(
             changeVersion = "1.11.4-9007", 
             functionName = "ReportQuantity", 
-            modelName = "baseline", 
-            parameterName = "Condition"
+            modelName = "report", 
+            parameterName = "ConditionOperator"
         ), 
         list(
             changeVersion = "1.11.4-9007", 
             functionName = "ReportQuantity", 
-            modelName = "baseline", 
+            modelName = "report", 
+            parameterName = "ConditionValue"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportQuantity", 
+            modelName = "report", 
             parameterName = "FractionOverVariable"
         )
     ),  
