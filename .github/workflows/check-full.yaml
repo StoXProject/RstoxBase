@@ -99,20 +99,20 @@ jobs:
       #############################################################################
       
       ## 2a. Cache R packages:
-      - name: Query R package dependencies
-        run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
+      #- name: Query R package dependencies
+      #  run: |
+      #    install.packages('remotes')
+      #    saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)
+      #    writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+      #  shell: Rscript {0}
 
-      - name: Cache R packages
-        if: runner.os != 'Windows'
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ env.cache-version }}-${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-r-${{ matrix.config.r }}-
+      #- name: Cache R packages
+      #  if: runner.os != 'Windows'
+      #  uses: actions/cache@v3
+      #  with:
+      #    path: ${{ env.R_LIBS_USER }}
+      #    key: ${{ env.cache-version }}-${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
+      #    restore-keys: ${{ env.cache-version }}-${{ runner.os }}-r-${{ matrix.config.r }}-
 
       
       ## 2b. System dependencies:
@@ -160,7 +160,7 @@ jobs:
       ## 2c. R packages needed for this yaml script (not related to the Rstox package itself):
       - name: Install CRANdependencies
         run: |
-          install.packages(c("rcmdcheck", "git2r", "sessioninfo", "knitr"))
+          install.packages(c("rcmdcheck", "git2r", "sessioninfo", "knitr", "remotes"))
           
           # Using the latest drat that supports big sur (after inputs from us). 
           # When the next drat appears on CRAN this can be changed to install from CRAN:

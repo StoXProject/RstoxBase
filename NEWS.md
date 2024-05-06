@@ -1,3 +1,7 @@
+# RstoxBase v1.11.4-9010  (2024-05-06)
+* Fixed bug when ReportVariableUnit is first inserted and then cleared, which resulted in error in the form "... is not a valid name for quantity ...".
+
+
 # RstoxBase v1.11.4-9009  (2024-04-25)
 * Removed warning "There are Stratum,PSU that have assigned ONLY ONE haul." as this is now covered in Bootstrap.
 * Fixed bug with report functions with a single second argument, which was deparsed but should not be.
