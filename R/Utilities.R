@@ -1670,19 +1670,22 @@ setBaseUnit <- function(x, dataType, variableName) {
 #' @export
 #' 
 setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
-    this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName)
     
-    if(length(unit) && this_hasBaseUnit) {
-        # Set the base unit if the object does not have a unit:
-        x <- setBaseUnit(x, dataType, variableName)
+    if(length(unit) && nchar(unit)) {
+        this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName)
         
-        # Get the quantity:
-        quantity <- getBaseUnit(dataType = dataType, variableName = variableName, element = "quantity")
-        id <- RstoxData::findUnit(quantity = quantity, shortname = unit)
-        x <- setUnit(x, id)
-    }
-    else if(length(unit) && !this_hasBaseUnit) {
-        warning("StoX: Units not defined for variable ", variableName, " of dataType ", dataType, ". The unit (", unit, ") was ignored.")
+        if(this_hasBaseUnit) {
+            # Set the base unit if the object does not have a unit:
+            x <- setBaseUnit(x, dataType, variableName)
+            
+            # Get the quantity:
+            quantity <- getBaseUnit(dataType = dataType, variableName = variableName, element = "quantity")
+            id <- RstoxData::findUnit(quantity = quantity, shortname = unit)
+            x <- setUnit(x, id)
+        }
+        else {
+            warning("StoX: Units not defined for variable ", variableName, " of dataType ", dataType, ". The unit (", unit, ") was ignored.")
+        }
     }
     
     return(x)
