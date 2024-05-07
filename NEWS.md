@@ -1,3 +1,7 @@
+# RstoxBase v1.11.4-9011  (2024-05-08)
+* Fixed bug in EstimateBioticRegression(), where failed estimate (e.g. due to sigularity) resulted in two insteda of 1 row in the output RegressionTable.
+
+
 # RstoxBase v1.11.4-9010  (2024-05-06)
 * Fixed bug when ReportVariableUnit is first inserted and then cleared, which resulted in error in the form "... is not a valid name for quantity ...".
 
