@@ -2329,6 +2329,8 @@ EstimateBioticRegression <- function(
         data <- data.table::copy(SuperIndividualsData)
     }
     
+    # Add support for accidental empty string for the GroupingVariables (must be entered maually in the GUI):
+    GroupingVariables <- GroupingVariables[nchar(GroupingVariables) > 0]
     # Check that the GroupingVariables are present in the data:
     if(length(GroupingVariables) && nchar(GroupingVariables) && !all(GroupingVariables %in% names(data))) {
         stop("All of the GroupingVariables must be present in the data (", paste(setdiff(GroupingVariables, names(data)), collapse = ", "), " not present)")
@@ -2418,30 +2420,32 @@ getRegressionTable <- function(
             
             # Return NAs:
             list(
+                # Dims here are (number of parameters, 1) to fit the coeffisients table from lm() which has one row per parameter:
                 coefficients = array(NA_real_, dim = c(length(getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]), 1)), 
                 sigma = NA_real_
             )
         }
     )
     
+    
     # Get the model parameter names:
     modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
     
-    # Create a table with the parameters and residual stndard error:
+    # Create a table with the parameters and residual standard error:
     sumNonMissing <- sum(!is.na(data[[DependentVariable]]) & !is.na(data[[IndependentVariable]]))
+    # This test of NROW is due to lm skipping rows in the coefficients when failing to estimate (even though a row with NaN is displayed when printing the output):
     if(NROW(regressionSummary$coefficients) < length(modelParameters)) {
         if(length(GroupingVariables)) {
             warning("StoX: Insufficient data to estimate regression for ", paste(GroupingVariables, sapply(GroupingVariables, function(x) unique(data[[x]])), sep = " = " ), " (Number of non-missing values: ", sumNonMissing, ").")
         }
         else {
-            warning("StoX: Insufficient data to estimate regression (Number of non-missing values: ", sumNonMissing, ").")
+            warning("StoX: Insufficient data to estimate regression. NAs returned which may propagate to reports. (Number of non-missing values: ", sumNonMissing, ").")
         }
-        
         
         RegressionTable <- data.table::as.data.table(
             c(
                 structure(as.list(rep(NA_real_, length(modelParameters))), names = modelParameters), 
-                list(ResidualStandardError = rep(NA_real_, length(modelParameters)))
+                list(ResidualStandardError = NA_real_)
             )
         )
     }

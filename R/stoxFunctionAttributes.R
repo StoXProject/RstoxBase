@@ -1936,7 +1936,8 @@ processPropertyFormats <- list(
         class = "single", 
         title = "One variable to group report from SuperIndividualsData", 
         possibleValues = function(SuperIndividualsData) {
-            sort(subset(names(SuperIndividualsData), sapply(SuperIndividualsData, class) %in% c("numeric", "integer")))
+            #sort(subset(names(SuperIndividualsData), sapply(SuperIndividualsData, class) %in% c("numeric", "integer")))
+            sort(names(SuperIndividualsData))
         }, 
         variableTypes = "character"
     ), 
