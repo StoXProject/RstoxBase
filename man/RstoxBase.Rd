@@ -2,8 +2,8 @@
 % Please edit documentation in R/RstoxBase-package.R
 \docType{package}
 \name{RstoxBase}
-\alias{RstoxBase}
 \alias{RstoxBase-package}
+\alias{RstoxBase}
 \title{Base StoX Functions}
 \description{
 Base StoX functions used for survey estimation.

@@ -190,8 +190,8 @@ SuperIndividuals <- function(
     #### This is a potentially backward reproducibility breaking change, scheduled for 4.0.0: ####
     # Subset to the positive data, as this can discard length groups that have been filtered out in Indivduals when computing the PSUs:
     # In Individuals() only Hauls with BioticAssignment$WeightingFactor > 0 for QuantityType "Acoustic" and only Abundance > 0 for "SweptArea":
-    #QuantityData$Data <- subset(QuantityData$Data, Abundance > 0 | is.na(Abundance))
-    # Rather we should maybe change bootstrapping to exclude PSUs that are not resampled, instead of including them with 0 in the datavariable.
+    QuantityData$Data <- subset(QuantityData$Data, Abundance > 0 | is.na(Abundance))
+    
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
     addLengthGroup(data = SuperIndividualsData, master = QuantityData$Data, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
@@ -1058,7 +1058,9 @@ AddHaulDensityToSuperIndividuals <- function(
     
     # Make a copy of the IndividualsData:
     SuperIndividualsData <- data.table::copy(SuperIndividualsData)
-    # Make sure the QuantityData is proper data.table. Comment on 2021-03-18: Why is this needed????:
+    # data.table::copy() is needed here to avoid changes to SuperIndividualsData by reference to also change the colOrderSuperIndividualsData:
+    colOrderSuperIndividualsData <- data.table::copy(names(SuperIndividualsData))
+    # Make sure the LengthDistributionData is proper data.table:
     LengthDistributionData <- data.table::setDT(LengthDistributionData)
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
@@ -1091,13 +1093,11 @@ AddHaulDensityToSuperIndividuals <- function(
         LengthDistributionData[, c(..haulGrouping, "WeightedNumber", "LengthDistributionType")], 
         by = haulGrouping, 
         allow.cartesian = TRUE, 
-        # Changed this on 2021-02-14 to all.x = TRUE, as we only want to keep the individuals, and not add WeightedNumber from hauls with no individuals present in the estimation:
-        # all.y = TRUE
-        all.x = TRUE
+        all.x = TRUE, 
+        sort = TRUE # Keep the order of the input SuperIndividualsData
     )
     
-    # 
-    
+    # Get the HaulDesity as a swept-area density: 
     dataVariableToDensity(
         SuperIndividualsData, 
         dataVariable = "WeightedNumber", 
@@ -1112,8 +1112,14 @@ AddHaulDensityToSuperIndividuals <- function(
     data.table::setnames(SuperIndividualsData, "Density", "HaulDensity")
     SuperIndividualsData[, WeightedNumber := NULL]
     
-    # Calculate also the distributed density (for each Haul and):
+    # Remove the columns "individualNumber" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
+    removeColumnsByReference(
+        data = SuperIndividualsData, 
+        toRemove = "TempLengthGroupUsedInSuperIndividuals"
+    )
     
+    # Reset the column order of the input SuperIndividualsData:
+    data.table::setcolorder(SuperIndividualsData, colOrderSuperIndividualsData)
     
     # Add the attribute 'variableNames':
     setattr(
