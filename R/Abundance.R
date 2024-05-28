@@ -189,8 +189,10 @@ SuperIndividuals <- function(
     
     #### This is a potentially backward reproducibility breaking change, scheduled for 4.0.0: ####
     # Subset to the positive data, as this can discard length groups that have been filtered out in Indivduals when computing the PSUs:
+    # IMPORTANT: PLEASE DO NOT ATTEMPT THE FOLLOWING SUBSET OF ABUNDANCE > 0 AGAIN, AS IT ACTS AS A SEED EFFECT TO ALMOST EVERY STOX PROJECT AND DOES NOT SEEM TO BE NEEDED, as the cases where resampling in a bootstrap run results in 0 WeightedNumber for a specific rare length group, leading to a row with Survey and SpeciesCaategory that is not present in the IndividualsData and thus leads to NA IndividualTotalLength and IndividualRoundWeight, the calculation of Biomass sets Biomass to 0 if Abundance is 0. See the following line below towares the end of the function:
+    #SuperIndividualsData[, Biomass := ifelse(Abundance %in% 0, 0, Abundance * IndividualRoundWeight)]
     # In Individuals() only Hauls with BioticAssignment$WeightingFactor > 0 for QuantityType "Acoustic" and only Abundance > 0 for "SweptArea":
-    QuantityData$Data <- subset(QuantityData$Data, Abundance > 0 | is.na(Abundance))
+    #QuantityData$Data <- subset(QuantityData$Data, Abundance > 0 | is.na(Abundance))
     
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
