@@ -1300,6 +1300,9 @@ stoxFunctionAttributes <- list(
                     functionName = "ReportFunction"
                 )
             )
+        ), 
+        functionParameterDefaults = list(
+            GroupingVariables = c("Survey", "SpeciesCategory")
         )
     ), 
     
@@ -1323,6 +1326,9 @@ stoxFunctionAttributes <- list(
                     functionName = "ReportFunction"
                 )
             )
+        ), 
+        functionParameterDefaults = list(
+            GroupingVariables = c("Survey", "SpeciesCategory")
         )
     ), 
     
@@ -1346,6 +1352,9 @@ stoxFunctionAttributes <- list(
                     functionName = "ReportFunction"
                 )
             )
+        ), 
+        functionParameterDefaults = list(
+            GroupingVariables = c("Survey", "SpeciesCategory")
         )
     ), 
     

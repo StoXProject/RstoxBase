@@ -1,7 +1,7 @@
-# RstoxBase v1.11.4-9011  (2024-05-08)
-* Breaking change: Rows with 0 Abundance are now deleted from the QuantityData before merging with the IndividualsData in SuperIndividuals(). This removes unwanted rows with present SpeciesCategory and IndividualTotalLength, but missing Abundance when Biotic PSUs with rare IndividualTotalLength are not re-sampled in a bootstrap run.
+# RstoxBase v1.11.4-9013  (2024-05-08)
+* Added "Survey" and "SpeciesCategory" as default Groupingvariables.
 * Fixed bug in EstimateBioticRegression(), where failed estimate (e.g. due to singularity) resulted in two instead of 1 row in the output RegressionTable.
-* Removing the temporary column "TempLengthGroupUsedInSuperIndividuals" from AddHaulDensityToSuperIndividuals(), aand fixed the order of rows and columns to match the input SuperIndividualsData.
+* Removing the temporary column "TempLengthGroupUsedInSuperIndividuals" from AddHaulDensityToSuperIndividuals(), and fixed the order of rows and columns to match the input SuperIndividualsData.
 
 
 # RstoxBase v1.11.4-9010  (2024-05-06)
