@@ -50,7 +50,7 @@ NULL
 ##################################################
 #' General report parameters of RstoxBase
 #' 
-#' @param ReportFunction The name of a function to report the Baseline process output by. This must be a function returning a single value. \code{\link{ReportFunctions}}
+#' @param ReportFunction The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.
 #' @param TargetVariable The variable to report.
 #' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).
 #' @param GroupingVariables The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.
@@ -115,9 +115,9 @@ NULL
 #'    \item{\code{\link[stats]{sd}}}
 #'    \item{\code{\link[stats]{var}}}
 #'    \item{\code{\link{cv}}}
-#'    \item{\code{\link{number}}}
-#'    \item{\code{\link{fractionOfOccurrence}}}
-#'    \item{\code{\link{fractionOfSum}}}
+## #'    \item{\code{\link{number}}}
+## #'    \item{\code{\link{fractionOfOccurrence}}}
+## #'    \item{\code{\link{fractionOfSum}}}
 #'  }
 #' 
 #' @name ReportFunctions

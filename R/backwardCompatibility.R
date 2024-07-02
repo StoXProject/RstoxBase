@@ -1,6 +1,6 @@
 #' Backward compabitibility actions:
 #' @export
-backwardCompatibility <- list(
+backwardCompatibility_RstoxBase <- list(
     renameFunction = list(
         list(
             changeVersion = "1.2.36", 

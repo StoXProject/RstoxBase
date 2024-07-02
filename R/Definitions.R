@@ -207,8 +207,8 @@ initiateRstoxBase <- function(){
             data = "WeightedNumber",
             verticalLayerDimension = NULL, # Not needed, as this datatype is only used in AcousticDensity.
             weighting = NULL, 
-            type = "LengthDistributionType", 
-            other = c("NumberOfAssignedHauls")
+            type = "LengthDistributionType"#, 
+            #other = c("NumberOfAssignedHauls")
         ), 
         
         # Density:
@@ -792,6 +792,22 @@ initiateRstoxBase <- function(){
             c("Baseline"), # "number"
             c("Baseline"), # "fractionOfOccurrence"
             c("Baseline") # "fractionOfSum"
+        ), 
+        enabled = c(
+            TRUE,  # "summaryStox"
+            TRUE, # "sum"
+            TRUE, # "mean"
+            TRUE, # "weighted.mean
+            TRUE, # "median"
+            TRUE, # "min"
+            TRUE, # "max"
+            TRUE, # "sd"
+            TRUE, # "var"
+            TRUE, # "cv"
+            # These are not activated yet, so we hide them:
+            FALSE, # "number"
+            FALSE, # "fractionOfOccurrence"
+            FALSE # "fractionOfSum"
         )
     )
     
@@ -1143,10 +1159,11 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
 #' 
 #' @param multiple If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.
 #' @param use The model the report function will be used in.
+#' @param useOnlyEnabled Logical: If TRUE keep only enabled report functions. Non-enabled report functions are typically not yet exposed to the user.
 #' 
 #' @export
 #' 
-getReportFunctions <- function(multiple = NULL, use = c("Baseline", "Bootstrap")) {
+getReportFunctions <- function(multiple = NULL, use = c("Baseline", "Bootstrap"), useOnlyEnabled = TRUE) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
     
     select <- TRUE
@@ -1156,6 +1173,10 @@ getReportFunctions <- function(multiple = NULL, use = c("Baseline", "Bootstrap")
     }
     if(length(multiple)) {
         select <- select & reportFunctions$multiple == multiple
+    }
+    
+    if(useOnlyEnabled) {
+        select <- select & reportFunctions$enabled
     }
     
     output <- reportFunctions$functionName[select]

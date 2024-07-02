@@ -15,8 +15,5 @@ The following functions are used by StoX to report from a Baseline process outpu
    \item{\code{\link[stats]{sd}}}
    \item{\code{\link[stats]{var}}}
    \item{\code{\link{cv}}}
-   \item{\code{\link{number}}}
-   \item{\code{\link{fractionOfOccurrence}}}
-   \item{\code{\link{fractionOfSum}}}
  }
 }

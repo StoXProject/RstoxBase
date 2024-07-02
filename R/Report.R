@@ -630,7 +630,7 @@ getReportFunctionElementByFunctionName <- function(x, element) {
 #' @param ReportVariable The column to report.
 #' @param ReportVariableUnit The unit to use for the \code{ReportVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{ReportVariableUnit}).
 #' 
-#' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
+#' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLength for each IndiivdualAge and Stratum.
 #' 
 #' @return
 #' A \code{\link{ReportSpeciesCategoryCatchData}} object.

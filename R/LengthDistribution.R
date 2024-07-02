@@ -812,7 +812,7 @@ SumLengthDistribution <- function(
 ##################################################
 #' Mean length distribution over Stations in each AcousticPSU
 #' 
-#' This function averages \code{link{LengthDistributionData}} data horizontally, weighted by the effective towed distance.
+#' This function averages \code{link{LengthDistributionData}} data horizontally.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
@@ -825,6 +825,8 @@ SumLengthDistribution <- function(
 #' @param PSUDefinition The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{BioticPSU}.
 #' @param PSUDefinitionMethod See \code{\link{DefineBioticPSU}}
 #' @inheritParams DefineBioticPSU
+#' 
+#' Note that the length distributions of a PSU are averaged with no effective weighting, since the weights are all 1 in the input \code{\link{LengthDistributionData}} or \code{\link{SumLengthDistributionData}}. The weights are summed in the output and will be effective in \code{\link{MeanDensiy}}.
 #' 
 #' @return
 #' An \code{\link{MeanLengthDistributionData}} object.
@@ -900,49 +902,17 @@ MeanLengthDistribution <- function(
 
 ##################################################
 ##################################################
-#' Length distribution assigned to each cell of acoustic PSU and Layer
+#' Assignment length distribution per acoustic PSU
 #' 
-#' This funciton calculates weighted average of the length distribution of hauls assigned to each acoustic PSU and Layer. The weights are set by \code{\link{BioticAssignmentWeighting}}.
+#' The function \code{AssignmentLengthDistribution} calculates the average length distribution of the hauls assigned to each AcousticPSU defined by \code{\link{DefineBioticAssignment}}, and weighted by \code{\link{BioticAssignmentWeighting}}. The weights are scaled in bootstrapping by the number of times each haul is resampled. See Details. 
+#' 
+#' The length distribution is normalized to percentage per AcousticPSU by dividing by the summed length distribution and scaling by 100.
 #' 
 #' @inheritParams ProcessData
 #' @inheritParams ModelData
 #' 
 #' @details
-#' The purpose of the \emph{AssignmentLengthDistribution} function is to produces one total length distribution for each combination of assigned biotic stations with corresponding weighting variables. 
-#'
-#'If the biotic station length distributions which shall make up the total length distribution is of type \emph{Standard} (length distribution as if the complete catch on deck was measured), this will give an \emph{implicit weighting by catch as well as towing distance}.
-#'
-#'If the biotic station length distributions which shall make up the total length distribution is of type \emph{Normalized} (length distribution as if the complete catch on deck was measured and as if the towing distance had been 1 nautical mile), this will give an \emph{implicit weighting by catch}.
-#'
-#'If the biotic station length distributions which shall make up the total length distribution is of type \emph{Percent} (sum of percentages for all length groups in the distribution is 100 and the shape of the distribution is the aim), this will give \emph{NO implicit weighting}.
-#'
-#'One total length distribution is calculated as follows:
-#'
-#'1)	For each biotic station a weighting factor for each station is calculated from the weight variables of the assigned stations:
-#'
-#'\deqn{W_s = \frac{w_s}{\sum_{y=1}^{n} w_y}}
-#'
-#'where
-#'
-#'\eqn{W_s} 		= weighting factor for station \eqn{s}
-#'
-#'\eqn{n}		    = number of trawl stations to be combined
-#'
-#'\eqn{w_s}  		= the value of the weight variable for station \eqn{s}
-#'
-#'\eqn{w_y} 		= the value of the weight variable for station \eqn{y}
-#'
-#'
-#'2)	For each length distribution by biotic station (\eqn{d_s}), the number or percentage value in each length group is multiplied by \eqn{W_s}:
-#'
-#'\deqn{dw_s = W_s \times d_s}
-#'
-#'3)	The total length distribution \eqn{d_t} is finally calculated by adding the numbers in each length interval for all stations where \eqn{n} is the number of stations to be combined:
-#'
-#'\deqn{d_t = \displaystyle\sum_{y=1}^{n} dw_y}
-#'
-#'\eqn{d_t} is the total length distribution for one assignment.
-#'
+#' Bootstrapping of acoustic-trawl models involve resampling the hauls assigned to the AcousticPSUs. For StoX <= 3.6.2 this resampling (with replacement) was from all hauls assigned to at least one AcousticPSU associated to each stratum (using \code{ResampleBioticAssignmentByStratum}). If different hauls were assigned to different AcousticPSUs this resampling included the risk that none of the assigned hauls of a particular AcousticPSU are resampled in a bootstrap replicate. This will result in all zeros in the weights (column \code{WeightingFactor}) of the BioticAssignment input to the \code{AssignmentLengthDistribution} function. When the length distributions are normalized, this involves dividing 0 by sum of 0, which results in NaN. This is intended, as it reflects that there does not exist a length distribution for that AcousticPSU. This will result in missing Abundance for the required species, but for missing \code{IndividualTotalLength}. To avoid this problem it is adviced to use the resampling function \code{ResampleBioticAssignmentByAcousticPSU} instead of \code{ResampleBioticAssignmentByStratum}, which resamples for each AcousticPSU and will never result in missing assignment length distribution.
 #' 
 #' @return
 #' An object of StoX datatype \code{\link{AssignmentLengthDistributionData}}.
@@ -1002,12 +972,12 @@ getAssignmentLengthDistributionDataOne <- function(assignmentPasted, LengthDistr
     thisLengthDistributionData <- subset(LengthDistributionData, Haul %in% Hauls)
     
     ### # Add the number of assigned hauls per Stratum/PSU and Layer, and the number of assigned hauls with length distribution for each species
-    thisLengthDistributionData[, NumberOfAssignedHauls := length(unique(Haul))]
+    #thisLengthDistributionData[, NumberOfAssignedHauls := length(unique(Haul))]
     ### thisLengthDistributionData[, HasAnyPositiveWeightedNumber := any(!is.na(get(dataVariable)) & (get(dataVariable) > 0) %in% TRUE), by = c("Haul", "SpeciesCategory")]
     ### thisLengthDistributionData[, ValidHaul := ifelse(HasAnyPositiveWeightedNumber, Haul, NA)]
     ### thisLengthDistributionData[, NumberOfAssignedHaulsWithCatch := length(unique(stats::na.omit(ValidHaul))), by = "SpeciesCategory"]
     
-    # Overwrite the weights by those defined in the BioticAssignment object:
+    # Overwrite the weights by those defined in the BioticAssignment object, since the weighting from the assigment (product of weights from BioticAssignmentWeighting() and resampling frequency from bootstrapping):
     weightingVariable <- getDataTypeDefinition(dataType = "LengthDistributionData", elements = "weighting", unlist = TRUE)
     thisLengthDistributionData[, c(weightingVariable) := ..WeightingFactors[match(Haul, ..Hauls)]]
     

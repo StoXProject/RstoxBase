@@ -4,12 +4,18 @@
 \alias{getReportFunctions}
 \title{Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.}
 \usage{
-getReportFunctions(multiple = NULL, use = c("Baseline", "Bootstrap"))
+getReportFunctions(
+  multiple = NULL,
+  use = c("Baseline", "Bootstrap"),
+  useOnlyEnabled = TRUE
+)
 }
 \arguments{
 \item{multiple}{If given as FALSE or TRUE, select only function names used for baseline or bootstrap, respectively.}
 
 \item{use}{The model the report function will be used in.}
+
+\item{useOnlyEnabled}{Logical: If TRUE keep only enabled report functions. Non-enabled report functions are typically not yet exposed to the user.}
 }
 \description{
 Function returning the report functions defined for reporting in StoX, such as sum, summaryStox, etc.

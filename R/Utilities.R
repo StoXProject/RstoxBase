@@ -462,7 +462,7 @@ applySumToData <- function(data, dataType) {
     }
     
     
-    # Add the weighting variable:
+    # Add the weighting variable, identical to the input weighing variable. The weighting is only used when averaging:
     weightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
     targetWeightingVariable <- getDataTypeDefinition(targetDataType, elements = "weighting", unlist = TRUE)
     data[, c(targetWeightingVariable) := get(weightingVariable)]
@@ -922,8 +922,8 @@ StoxDataStartMiddleStopDateTime <- function(
 #' Replace all NAs in a data.table by reference
 #' 
 #' @param DT A data.table.
-#' @param cols A vector of column names in which to replace the NAs. 
-#' @param replacement the object to replace by.
+#' @param cols A vector of column names in which to replace the NAs. Use NA to replace in all columns.
+#' @param replacement A single value or a list of values for each primitive type to replace by. The default list(numeric = 0, integer = 0L) replaces NAs by 0 for all nnumeric and integer columns listed in \code{cols}.
 #' 
 #' @export
 #' 
@@ -935,8 +935,8 @@ StoxDataStartMiddleStopDateTime <- function(
 #        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
 #    }
 #}
-replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
-    if(!length(cols)) {
+replaceNAByReference <- function(DT, cols = NULL, replacement = list(numeric = 0, integer = 0L)) {
+    if(length(cols) == 1 && is.na(cols)) {
         cols <- names(DT)
     }
     if(length(replacement)) {
