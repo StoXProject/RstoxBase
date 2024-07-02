@@ -23,7 +23,7 @@ ReportDensity(
 
 \item{DensityUnit}{The unit to use for the \code{Density}. See subset(RstoxData::StoxUnits, quantity == "area_number_density") for possible units (use the shortname in the \code{DensityUnit}).}
 
-\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. \code{\link{ReportFunctions}}}
+\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
 
 \item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.}
 

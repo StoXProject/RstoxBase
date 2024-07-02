@@ -24,7 +24,7 @@ aggregateBaselineDataOneTableSingleFunction(
 
 \item{TargetVariable}{The variable to report.}
 
-\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. \code{\link{ReportFunctions}}}
+\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
 
 \item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.}
 

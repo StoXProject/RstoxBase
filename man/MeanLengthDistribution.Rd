@@ -57,5 +57,5 @@ MeanLengthDistribution(
 An \code{\link{MeanLengthDistributionData}} object.
 }
 \description{
-This function averages \code{link{LengthDistributionData}} data horizontally, weighted by the effective towed distance.
+This function averages \code{link{LengthDistributionData}} data horizontally.
 }

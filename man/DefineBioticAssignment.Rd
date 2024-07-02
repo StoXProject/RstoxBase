@@ -107,7 +107,7 @@ All biotic stations within the given radius (function parameter \emph{Radius} (n
 
 \strong{EllipsoidalDistance}
 
-This assignment method uses the ellipsoidal distance \doi{10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
+This assignment method uses the ellipsoidal distance \doi{10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}. All biotic stations that fulfills the selection criteria (scalar product f <= 1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
 
 \deqn{f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
 \left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
