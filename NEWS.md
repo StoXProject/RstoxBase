@@ -1,3 +1,9 @@
+# RstoxBase v1.11.4-9014  (2024-07-02)
+* Corrected and simplified documentation of AssignmentLengthDistribution.
+* Removed stray NumberOfAssignedHauls.
+* Disabled ReportFunction "number", "fractionOfOccurrence" and "fractionOfSum".
+
+
 # RstoxBase v1.11.4-9013  (2024-05-08)
 * Added "Survey" and "SpeciesCategory" as default Groupingvariables.
 * Fixed bug in EstimateBioticRegression(), where failed estimate (e.g. due to singularity) resulted in two instead of 1 row in the output RegressionTable.

@@ -4,7 +4,7 @@
 \alias{general_report_arguments}
 \title{General report parameters of RstoxBase}
 \arguments{
-\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. \code{\link{ReportFunctions}}}
+\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
 
 \item{TargetVariable}{The variable to report.}
 

@@ -26,7 +26,7 @@ ReportSuperIndividuals(
 
 \item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).}
 
-\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. \code{\link{ReportFunctions}}}
+\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
 
 \item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.}
 

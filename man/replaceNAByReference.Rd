@@ -4,14 +4,18 @@
 \alias{replaceNAByReference}
 \title{Replace all NAs in a data.table by reference}
 \usage{
-replaceNAByReference(DT, cols = NULL, replacement = 0)
+replaceNAByReference(
+  DT,
+  cols = NULL,
+  replacement = list(numeric = 0, integer = 0L)
+)
 }
 \arguments{
 \item{DT}{A data.table.}
 
-\item{cols}{A vector of column names in which to replace the NAs.}
+\item{cols}{A vector of column names in which to replace the NAs. Use NA to replace in all columns.}
 
-\item{replacement}{the object to replace by.}
+\item{replacement}{A single value or a list of values for each primitive type to replace by. The default list(numeric = 0, integer = 0L) replaces NAs by 0 for all nnumeric and integer columns listed in \code{cols}.}
 }
 \description{
 Replace all NAs in a data.table by reference
