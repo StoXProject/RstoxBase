@@ -1,3 +1,7 @@
+# RstoxBase v1.11.4-9015  (2024-07-08)
+* Added value for backwards compatibility for old pre StoX 3.3.0 SpeciesCategoryCatch projects.
+
+
 # RstoxBase v1.11.4-9014  (2024-07-02)
 * Corrected and simplified documentation of AssignmentLengthDistribution.
 * Removed stray NumberOfAssignedHauls.
