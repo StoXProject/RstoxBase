@@ -1,435 +1,153 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AcousticDensity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AcousticLayer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AcousticPSU.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AcousticTargetStrength.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AppendNASC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AssignmentLengthDistribution.html</loc>
-  </url>
-  <url>
-    <loc>/reference/AssignmentLengthDistributionData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/BioticAssignment.html</loc>
-  </url>
-  <url>
-    <loc>/reference/BioticAssignmentWeighting.html</loc>
-  </url>
-  <url>
-    <loc>/reference/BioticLayer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/BioticPSU.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Channel.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DataTypes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineAcousticLayer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineAcousticPSU.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineAcousticTargetStrength.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineBioticAssignment.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineBioticLayer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineBioticPSU.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineLayer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineModel.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefinePSU.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineRegression.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineStratumPolygon.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DefineSurvey.html</loc>
-  </url>
-  <url>
-    <loc>/reference/DensityData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/EDSU.html</loc>
-  </url>
-  <url>
-    <loc>/reference/EstimateBioticRegression.html</loc>
-  </url>
-  <url>
-    <loc>/reference/GearDependentCatchCompensation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/GearDependentLengthDistributionCompensation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/GearDependentSpeciesCategoryCatchCompensation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Haul.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ImputeSuperIndividuals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Individuals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/IndividualsData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Layer.html</loc>
-  </url>
-  <url>
-    <loc>/reference/LengthDependentLengthDistributionCompensation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/LengthDistribution.html</loc>
-  </url>
-  <url>
-    <loc>/reference/LengthDistributionData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanDensity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanDensityData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanLengthDistribution.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanLengthDistributionData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanNASC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanNASCData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanSpeciesCategoryCatch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MeanSpeciesCategoryCatchData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NASC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NASCData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/NASCToStoxAcoustic.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PSU.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PlotAcousticTrawlSurvey.html</loc>
-  </url>
-  <url>
-    <loc>/reference/PlotAcousticTrawlSurveyData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ProcessData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Quantity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/QuantityData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Regression.html</loc>
-  </url>
-  <url>
-    <loc>/reference/RegroupLengthDistribution.html</loc>
-  </url>
-  <url>
-    <loc>/reference/RelativeLengthDistribution.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportDensity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportDensityData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportQuantity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportQuantityData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportSpeciesCategoryCatch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportSpeciesCategoryCatchData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportSuperIndividuals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ReportSuperIndividualsData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Resolution.html</loc>
-  </url>
-  <url>
-    <loc>/reference/RstoxBase.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SpeciesCategoryCatch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SpeciesCategoryCatchData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SplitMeanNASC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SplitNASC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Station.html</loc>
-  </url>
-  <url>
-    <loc>/reference/StoX_multipolygon_WKT.html</loc>
-  </url>
-  <url>
-    <loc>/reference/StoxDataStartMiddleStopDateTime.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Stratum.html</loc>
-  </url>
-  <url>
-    <loc>/reference/StratumArea.html</loc>
-  </url>
-  <url>
-    <loc>/reference/StratumAreaData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/StratumPolygon.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SumLengthDistribution.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SumLengthDistributionData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SumNASC.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SumNASCData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SumSpeciesCategoryCatch.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SumSpeciesCategoryCatchData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SuperIndividuals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SuperIndividualsData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/Survey.html</loc>
-  </url>
-  <url>
-    <loc>/reference/SweptAreaDensity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/WriteStratumPolygon.html</loc>
-  </url>
-  <url>
-    <loc>/reference/WriteStratumPolygonData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/aggregateBaselineDataOneTable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/allEqual.html</loc>
-  </url>
-  <url>
-    <loc>/reference/allargs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/backwardCompatibility.html</loc>
-  </url>
-  <url>
-    <loc>/reference/combined.color.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cv.html</loc>
-  </url>
-  <url>
-    <loc>/reference/factorNAfirst.html</loc>
-  </url>
-  <url>
-    <loc>/reference/filterTable.html</loc>
-  </url>
-  <url>
-    <loc>/reference/formatOutput.html</loc>
-  </url>
-  <url>
-    <loc>/reference/general_arguments.html</loc>
-  </url>
-  <url>
-    <loc>/reference/general_arguments2.7.html</loc>
-  </url>
-  <url>
-    <loc>/reference/general_map_plot_arguments.html</loc>
-  </url>
-  <url>
-    <loc>/reference/general_plot_arguments.html</loc>
-  </url>
-  <url>
-    <loc>/reference/general_report_arguments.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getBaseUnit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getCommonIntervals.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getDataTypeDefinition.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getProjectXMLFilePath.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getReportFunctionPackage.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getReportFunctionVariableName.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getReportFunctions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getRstoxBaseDefinitions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getSeedVector.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getSpecificationFunctions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getSpecificationParameter.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getStratumNames.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getWeightingFunctions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getWeightingParameter.html</loc>
-  </url>
-  <url>
-    <loc>/reference/hasBaseUnit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/modifyParameter_ProjectXMLList.html</loc>
-  </url>
-  <url>
-    <loc>/reference/modifyProj4String.html</loc>
-  </url>
-  <url>
-    <loc>/reference/processPropertyFormats.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readAcousticPSUFrom2.7.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readBioticAssignmentFrom2.7.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readBioticPSUFrom2.7.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readProjectXMLToList.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readStratumPolygonFrom2.7.html</loc>
-  </url>
-  <url>
-    <loc>/reference/replaceNAByReference.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sampleSorted.html</loc>
-  </url>
-  <url>
-    <loc>/reference/setBaseUnit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/setDefaultsInStoxFunction.html</loc>
-  </url>
-  <url>
-    <loc>/reference/setPlotAttributes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/setUnitRstoxBase.html</loc>
-  </url>
-  <url>
-    <loc>/reference/stoxFunctionAttributes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/summaryStox.html</loc>
-  </url>
-  <url>
-    <loc>/reference/writeProjectXMLToList.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/AcousticDensity.html</loc></url>
+<url><loc>/reference/AcousticLayer.html</loc></url>
+<url><loc>/reference/AcousticPSU.html</loc></url>
+<url><loc>/reference/AcousticTargetStrength.html</loc></url>
+<url><loc>/reference/AddHaulDensityToSuperIndividuals.html</loc></url>
+<url><loc>/reference/AppendNASC.html</loc></url>
+<url><loc>/reference/AssignmentLengthDistribution.html</loc></url>
+<url><loc>/reference/AssignmentLengthDistributionData.html</loc></url>
+<url><loc>/reference/BioticAssignment.html</loc></url>
+<url><loc>/reference/BioticAssignmentWeighting.html</loc></url>
+<url><loc>/reference/BioticLayer.html</loc></url>
+<url><loc>/reference/BioticPSU.html</loc></url>
+<url><loc>/reference/Channel.html</loc></url>
+<url><loc>/reference/DataTypes.html</loc></url>
+<url><loc>/reference/DefineAcousticLayer.html</loc></url>
+<url><loc>/reference/DefineAcousticPSU.html</loc></url>
+<url><loc>/reference/DefineAcousticTargetStrength.html</loc></url>
+<url><loc>/reference/DefineBioticAssignment.html</loc></url>
+<url><loc>/reference/DefineBioticLayer.html</loc></url>
+<url><loc>/reference/DefineBioticPSU.html</loc></url>
+<url><loc>/reference/DefineLayer.html</loc></url>
+<url><loc>/reference/DefineModel.html</loc></url>
+<url><loc>/reference/DefinePSU.html</loc></url>
+<url><loc>/reference/DefineRegression.html</loc></url>
+<url><loc>/reference/DefineStratumPolygon.html</loc></url>
+<url><loc>/reference/DefineSurvey.html</loc></url>
+<url><loc>/reference/DensityData.html</loc></url>
+<url><loc>/reference/EDSU.html</loc></url>
+<url><loc>/reference/EstimateBioticRegression.html</loc></url>
+<url><loc>/reference/GearDependentCatchCompensation.html</loc></url>
+<url><loc>/reference/GearDependentLengthDistributionCompensation.html</loc></url>
+<url><loc>/reference/GearDependentSpeciesCategoryCatchCompensation.html</loc></url>
+<url><loc>/reference/Haul.html</loc></url>
+<url><loc>/reference/ImputeSuperIndividuals.html</loc></url>
+<url><loc>/reference/ImputeSuperIndividuals_StoX3.html</loc></url>
+<url><loc>/reference/Individuals.html</loc></url>
+<url><loc>/reference/IndividualsData.html</loc></url>
+<url><loc>/reference/Layer.html</loc></url>
+<url><loc>/reference/LengthDependentLengthDistributionCompensation.html</loc></url>
+<url><loc>/reference/LengthDistribution.html</loc></url>
+<url><loc>/reference/LengthDistributionData.html</loc></url>
+<url><loc>/reference/MeanDensity.html</loc></url>
+<url><loc>/reference/MeanDensityData.html</loc></url>
+<url><loc>/reference/MeanLengthDistribution.html</loc></url>
+<url><loc>/reference/MeanLengthDistributionData.html</loc></url>
+<url><loc>/reference/MeanNASC.html</loc></url>
+<url><loc>/reference/MeanNASCData.html</loc></url>
+<url><loc>/reference/MeanSpeciesCategoryCatch.html</loc></url>
+<url><loc>/reference/MeanSpeciesCategoryCatchData.html</loc></url>
+<url><loc>/reference/ModelData.html</loc></url>
+<url><loc>/reference/NASC.html</loc></url>
+<url><loc>/reference/NASCData.html</loc></url>
+<url><loc>/reference/NASCToStoxAcoustic.html</loc></url>
+<url><loc>/reference/PSU.html</loc></url>
+<url><loc>/reference/PlotAcousticTrawlSurvey.html</loc></url>
+<url><loc>/reference/PlotAcousticTrawlSurveyData.html</loc></url>
+<url><loc>/reference/ProcessData.html</loc></url>
+<url><loc>/reference/Quantity.html</loc></url>
+<url><loc>/reference/QuantityData.html</loc></url>
+<url><loc>/reference/Regression.html</loc></url>
+<url><loc>/reference/RegroupLengthDistribution.html</loc></url>
+<url><loc>/reference/RelativeLengthDistribution.html</loc></url>
+<url><loc>/reference/ReportDensity.html</loc></url>
+<url><loc>/reference/ReportDensityData.html</loc></url>
+<url><loc>/reference/ReportFunctions.html</loc></url>
+<url><loc>/reference/ReportQuantity.html</loc></url>
+<url><loc>/reference/ReportQuantityData.html</loc></url>
+<url><loc>/reference/ReportSpeciesCategoryCatch.html</loc></url>
+<url><loc>/reference/ReportSpeciesCategoryCatchData.html</loc></url>
+<url><loc>/reference/ReportSuperIndividuals.html</loc></url>
+<url><loc>/reference/ReportSuperIndividualsData.html</loc></url>
+<url><loc>/reference/Resolution.html</loc></url>
+<url><loc>/reference/RstoxBase.html</loc></url>
+<url><loc>/reference/SpeciesCategoryCatch.html</loc></url>
+<url><loc>/reference/SpeciesCategoryCatchData.html</loc></url>
+<url><loc>/reference/SplitMeanNASC.html</loc></url>
+<url><loc>/reference/SplitNASC.html</loc></url>
+<url><loc>/reference/Station.html</loc></url>
+<url><loc>/reference/StoX_multipolygon_WKT.html</loc></url>
+<url><loc>/reference/StoxDataStartMiddleStopDateTime.html</loc></url>
+<url><loc>/reference/Stratum.html</loc></url>
+<url><loc>/reference/StratumArea.html</loc></url>
+<url><loc>/reference/StratumAreaData.html</loc></url>
+<url><loc>/reference/StratumPolygon.html</loc></url>
+<url><loc>/reference/SumLengthDistribution.html</loc></url>
+<url><loc>/reference/SumLengthDistributionData.html</loc></url>
+<url><loc>/reference/SumNASC.html</loc></url>
+<url><loc>/reference/SumNASCData.html</loc></url>
+<url><loc>/reference/SumSpeciesCategoryCatch.html</loc></url>
+<url><loc>/reference/SumSpeciesCategoryCatchData.html</loc></url>
+<url><loc>/reference/SuperIndividuals.html</loc></url>
+<url><loc>/reference/SuperIndividualsData.html</loc></url>
+<url><loc>/reference/Survey.html</loc></url>
+<url><loc>/reference/SweptAreaDensity.html</loc></url>
+<url><loc>/reference/WriteStratumPolygon.html</loc></url>
+<url><loc>/reference/WriteStratumPolygonData.html</loc></url>
+<url><loc>/reference/aggregateBaselineDataOneTable.html</loc></url>
+<url><loc>/reference/aggregateBaselineDataOneTableSingleFunction.html</loc></url>
+<url><loc>/reference/allEqual.html</loc></url>
+<url><loc>/reference/allargs.html</loc></url>
+<url><loc>/reference/backwardCompatibility_RstoxBase.html</loc></url>
+<url><loc>/reference/combined.color.html</loc></url>
+<url><loc>/reference/cv.html</loc></url>
+<url><loc>/reference/factorNAfirst.html</loc></url>
+<url><loc>/reference/filterTable.html</loc></url>
+<url><loc>/reference/formatOutput.html</loc></url>
+<url><loc>/reference/formatProcessData.html</loc></url>
+<url><loc>/reference/fractionOfOccurrence.html</loc></url>
+<url><loc>/reference/fractionOfSum.html</loc></url>
+<url><loc>/reference/general_arguments.html</loc></url>
+<url><loc>/reference/general_arguments2.7.html</loc></url>
+<url><loc>/reference/general_map_plot_arguments.html</loc></url>
+<url><loc>/reference/general_plot_arguments.html</loc></url>
+<url><loc>/reference/general_report_arguments.html</loc></url>
+<url><loc>/reference/getBaseUnit.html</loc></url>
+<url><loc>/reference/getCommonIntervals.html</loc></url>
+<url><loc>/reference/getDataTypeDefinition.html</loc></url>
+<url><loc>/reference/getFunctionArgumentHierarchyForSpcificationParameters.html</loc></url>
+<url><loc>/reference/getProjectXMLFilePath.html</loc></url>
+<url><loc>/reference/getReportFunctionVariableName.html</loc></url>
+<url><loc>/reference/getReportFunctions.html</loc></url>
+<url><loc>/reference/getRstoxBaseDefinitions.html</loc></url>
+<url><loc>/reference/getSeedVector.html</loc></url>
+<url><loc>/reference/getStratumNames.html</loc></url>
+<url><loc>/reference/hasBaseUnit.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/modifyParameter_ProjectXMLList.html</loc></url>
+<url><loc>/reference/modifyProj4String.html</loc></url>
+<url><loc>/reference/number.html</loc></url>
+<url><loc>/reference/processPropertyFormats.html</loc></url>
+<url><loc>/reference/readAcousticPSUFrom2.7.html</loc></url>
+<url><loc>/reference/readBioticAssignmentFrom2.7.html</loc></url>
+<url><loc>/reference/readBioticPSUFrom2.7.html</loc></url>
+<url><loc>/reference/readProjectXMLToList.html</loc></url>
+<url><loc>/reference/readStratumPolygonFrom2.7.html</loc></url>
+<url><loc>/reference/renameSSULabelInPSUProcessData.html</loc></url>
+<url><loc>/reference/replaceNAByReference.html</loc></url>
+<url><loc>/reference/sampleSorted.html</loc></url>
+<url><loc>/reference/setBaseUnit.html</loc></url>
+<url><loc>/reference/setDefaultsInStoxFunction.html</loc></url>
+<url><loc>/reference/setPlotAttributes.html</loc></url>
+<url><loc>/reference/setUnitRstoxBase.html</loc></url>
+<url><loc>/reference/stoxFunctionAttributes.html</loc></url>
+<url><loc>/reference/summaryStox.html</loc></url>
+<url><loc>/reference/toJSON_Rstox.html</loc></url>
+<url><loc>/reference/writeProjectXMLToList.html</loc></url>
 </urlset>
+
