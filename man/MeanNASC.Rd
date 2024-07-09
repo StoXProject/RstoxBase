@@ -54,7 +54,7 @@ MeanNASC(
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 }
 \description{
-This function averages \code{\link{SumNASCData}} horizontally to the acoustic PSU resolution. Optionally, \code{\link{NASCData}} can be used as input, in which case \code{\link{SumNASC}} is run first.
+This function averages \code{\link{SumNASCData}} horizontally to the acoustic PSU resolution, weighted by the log distance. Optionally, \code{\link{NASCData}} can be used as input, in which case \code{\link{SumNASC}} is run first.
 }
 \seealso{
 \code{\link{NASC}} and \code{\link{MeanNASC}}.

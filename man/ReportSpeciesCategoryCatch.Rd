@@ -24,5 +24,5 @@ A \code{\link{ReportSpeciesCategoryCatchData}} object.
 Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 }
 \details{
-This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLenght for each IndiivdualAge and Stratum.
+This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLength for each IndiivdualAge and Stratum.
 }

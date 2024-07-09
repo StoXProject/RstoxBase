@@ -1,6 +1,6 @@
 #' Backward compabitibility actions:
 #' @export
-backwardCompatibility <- list(
+backwardCompatibility_RstoxBase <- list(
     renameFunction = list(
         list(
             changeVersion = "1.2.36", 
@@ -31,6 +31,12 @@ backwardCompatibility <- list(
             functionName = "ReportAbundance", 
             modelName = "baseline", 
             newFunctionName = "RstoxBase::ReportQuantity"
+        ), 
+        list(
+            changeVersion = "1.11.4-9004", 
+            functionName = "ImputeSuperIndividuals", 
+            modelName = "baseline", 
+            newFunctionName = "RstoxBase::ImputeSuperIndividuals_StoX3"
         )
     ), 
     
@@ -150,7 +156,21 @@ backwardCompatibility <- list(
             changeVersion = "1.5.2", 
             functionName = "ReportSpeciesCategoryCatch", 
             modelName = "report", 
-            parameterName = "ReportVariable"
+            parameterName = "ReportVariable", 
+            parameterValue = function(projectDescription, modelName, processIndex) {
+                # Get the function input:
+                thisProcess <- projectDescription[[modelName]][[processIndex]]
+                functionInput <- thisProcess$functionInputs$SpeciesCategoryCatchData
+                
+                # Find the process that the function input points to:
+                atThatProcess <- which(sapply(projectDescription[["baseline"]], "[[", "processName") == functionInput)
+                thatProcess <- projectDescription[["baseline"]][[atThatProcess]]
+                
+                # Get the CatchVariable from the function input and use as ReportVariable:
+                ReportVariable <- paste0("TotalCatch", thatProcess$functionParameters$CatchVariable)
+                
+                return(ReportVariable)
+            }
         ), 
         list(
             changeVersion = "1.5.2", 
@@ -282,6 +302,68 @@ backwardCompatibility <- list(
             modelName = "baseline", 
             parameterName = "ImputationLevels", 
             parameterValue = c("Haul", "Stratum", "Survey")
+        ), 
+        list(
+            changeVersion = "1.11.4-9004", 
+            functionName = "ImputeSuperIndividuals_StoX3", 
+            modelName = "baseline", 
+            parameterName = "ImputationLevels", 
+            parameterValue = c("Haul", "Stratum", "Survey")
+        ), 
+        # ConditionOperator, ConditionValue and FractionOverVariable:
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportSuperIndividuals", 
+            modelName = "report", 
+            parameterName = "ConditionOperator"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportSuperIndividuals", 
+            modelName = "report", 
+            parameterName = "ConditionValue"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportSuperIndividuals", 
+            modelName = "report", 
+            parameterName = "FractionOverVariable"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportDensity", 
+            modelName = "report", 
+            parameterName = "ConditionOperator"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportDensity", 
+            modelName = "report", 
+            parameterName = "ConditionValue"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportDensity", 
+            modelName = "report", 
+            parameterName = "FractionOverVariable"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportQuantity", 
+            modelName = "report", 
+            parameterName = "ConditionOperator"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportQuantity", 
+            modelName = "report", 
+            parameterName = "ConditionValue"
+        ), 
+        list(
+            changeVersion = "1.11.4-9007", 
+            functionName = "ReportQuantity", 
+            modelName = "report", 
+            parameterName = "FractionOverVariable"
         )
     ),  
     

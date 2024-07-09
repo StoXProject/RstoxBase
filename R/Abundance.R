@@ -133,6 +133,10 @@ Individuals <- function(
     # Remove rows with missing IndividualKey, indicating they are not individuals but merely rows for Hauls included in the PSU/Layer:
     IndividualsData <- IndividualsData[!is.na(IndividualKey), ]
     
+    # Add unique ID of the rows:
+    IndividualsData <- IndividualsData[!is.na(Stratum) & !is.na(Layer) & !is.na(Individual), StratumLayerIndividual := paste(Stratum, Layer, Individual, sep = "-")]
+    
+    
     # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
     areKeys <- endsWith(names(MergeStoxBioticData), "Key")
     keys <- names(MergeStoxBioticData)[areKeys]
@@ -185,14 +189,16 @@ SuperIndividuals <- function(
     
     #### This is a potentially backward reproducibility breaking change, scheduled for 4.0.0: ####
     # Subset to the positive data, as this can discard length groups that have been filtered out in Indivduals when computing the PSUs:
+    # IMPORTANT: PLEASE DO NOT ATTEMPT THE FOLLOWING SUBSET OF ABUNDANCE > 0 AGAIN, AS IT ACTS AS A SEED EFFECT TO ALMOST EVERY STOX PROJECT AND DOES NOT SEEM TO BE NEEDED, as the cases where resampling in a bootstrap run results in 0 WeightedNumber for a specific rare length group, leading to a row with Survey and SpeciesCaategory that is not present in the IndividualsData and thus leads to NA IndividualTotalLength and IndividualRoundWeight, the calculation of Biomass sets Biomass to 0 if Abundance is 0. See the following line below towares the end of the function:
+    #SuperIndividualsData[, Biomass := ifelse(Abundance %in% 0, 0, Abundance * IndividualRoundWeight)]
     # In Individuals() only Hauls with BioticAssignment$WeightingFactor > 0 for QuantityType "Acoustic" and only Abundance > 0 for "SweptArea":
     #QuantityData$Data <- subset(QuantityData$Data, Abundance > 0 | is.na(Abundance))
-    # Rather we should maybe change bootstrapping to exclude PSUs that are not resampled, instead of including them with 0 in the datavariable.
+    
     
     # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
-    addLengthGroup(data = SuperIndividualsData, master = QuantityData$Data, warn = FALSE)
+    addLengthGroup(data = SuperIndividualsData, master = QuantityData$Data, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
     # Add length groups also to the QuantityData:
-    addLengthGroup(data = QuantityData$Data, master = QuantityData$Data, warn = FALSE)
+    addLengthGroup(data = QuantityData$Data, master = QuantityData$Data, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
     
     # Merge the QuantityData into the SuperIndividualsData, by the resolution and category variables of the QuantityData and the TempLengthGroupUsedInSuperIndividuals introduced in addLengthGroups().
     # Stratum/Layer/SpeciesCategory/TempLengthGroupUsedInSuperIndividuals
@@ -225,7 +231,6 @@ SuperIndividuals <- function(
         #all.x = TRUE
         all = TRUE
     )
-    
     
     # Append an individualNumber to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     distributeQuantityBy <- c(
@@ -269,7 +274,7 @@ SuperIndividuals <- function(
         # }
         
         # Add the TempLengthGroupUsedInSuperIndividuals variable:
-        addLengthGroup(data = LengthDistributionData, master = QuantityData$Data, warn = FALSE)
+        addLengthGroup(data = LengthDistributionData, master = QuantityData$Data, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
         
         # We need to unique since there may have been multiple lines in the same length group:
         LengthDistributionData <- unique(LengthDistributionData)
@@ -542,6 +547,7 @@ addLengthGroup <- function(
     master, 
     lengthVar = "IndividualTotalLength", 
     resolutionVar = "LengthResolution", 
+    lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals",
     warn = TRUE
 ) {
     
@@ -565,7 +571,7 @@ addLengthGroup <- function(
     species <- intersect(speciesInData, speciesInMaster)
     
     if(!length(species)) {
-        data[, TempLengthGroupUsedInSuperIndividuals := NA_integer_]
+        data[, eval(lengthGroupVar) := NA_integer_]
     }
     else {
         for(thisspecies in species) {
@@ -598,7 +604,7 @@ addLengthGroup <- function(
 #' @param ImputeAtMissing A single string naming the variable which when missing identifies target individuals to input data \bold{to}. I.e., if \code{ImputeAtMissing} is missing for an individual, perform the imputation. In StoX 3.0.0 and older, \code{ImputeAtMissing} was hard coded to IndividualAge.
 #' @param ImputeByEqual A vector of strings naming the variable(s) which, when identical to the target individual, identifies the source individuals to impute data \bold{from}. The source individuals need also to have non-missing \code{ImputeAtMissing}. In StoX 3.0.0 and older, \code{ImputeByEqual} was hard coded to c("SpeciesCategory","IndividualTotalLength").
 #' @param ToImpute A vector of strings naming the variable(s) to impute (copy to the target individual). Values that are not missing are not imputed. Note that values are only imputed when \code{ImputeAtMissing} is missing, so including many variables in \code{ToImpute} is only recommended if all these are present for the individuals (see Details). In StoX 3.0.0 and older, \code{ToImpute} was hard coded to all available variables of the BioticData contained in the \code{\link{SuperIndividualsData}}. 
-#' @param ImputationLevels A vector of strings  naming the levels at which to input, defaulted to c("Haul", "Stratum", "Survey"). To prevent imputation at the Survey level, use c("Haul", "Stratum")
+#' @param ImputationLevels A vector of strings  naming the levels at which to input, defaulted to c("Haul", "Stratum", "Survey"). To prevent imputation at the Survey level, use c("Haul", "Stratum").
 #' @param Seed An integer giving the seed to use for the random sampling used to obtain the imputed data.
 #' @param RegressionDefinition Character: A string naming the method to use, one of \code{FunctionParameter} to define the Regression on the fly in this function (using \code{GroupingVariables}, \code{RegressionModel} and \code{RegressionTable}), or \code{FunctionInput} to import Regression process data from a previously run process using the function
 #' 
@@ -641,15 +647,15 @@ ImputeSuperIndividuals <- function(
             warning("StoX: Empty ToImpute is deprecated. Please select the variables to impute explicitely.")
             ToImpute <- getIndividualNames(SuperIndividualsData, ImputeByEqual,  tables = "Individual")
         }
-        if(!ImputeAtMissing %in% ToImpute) {
+        if(length(ImputeAtMissing) != 1) {
+            stop("ImputeAtMissing must have length 1.")
+        }
+        else if(!ImputeAtMissing %in% ToImpute) {
             stop("Please specify the variable given by ImputeAtMissing (", ImputeAtMissing, ") in ToImpute. ")
         }
         # For safety uniquify:
         ToImpute <- unique(ToImpute)
         
-        if(length(ImputeAtMissing) != 1) {
-            stop("ImputeAtMissing must have length 1.")
-        }
         
         # Impute the SuperIndividualsData:
         ImputeSuperIndividualsData <- ImputeDataByRandomSampling(
@@ -742,30 +748,14 @@ ImputeDataByRandomSampling <- function(
     }
     
     
-    # Introduce an Individual index for use in the sorted sampling:
-    dataCopy[, IndividualIndex := as.numeric(as.factor(Individual))]
-    #dataCopy[, IndividualIndex := seq_along(Individual)]
-    # Use the semi-numeric sorting proivded by RstoxData:
-    #dataCopy[, IndividualIndex := as.numeric(factor(RstoxData::createOrderKey(Individual)))]
+    # Introduce an Individual index for use in the sorted sampling, as a factor sorted as "en_US_POSIX":
+    dataCopy[, StratumLayerIndividualIndex := as.numeric(factor(StratumLayerIndividual, levels = stringi::stri_sort(StratumLayerIndividual, locale = "en_US_POSIX")))]
     
-    # Missed attempt:
-    #RstoxData::setorderv_numeric(dataCopy, by = getDataTypeDefinition("SuperIndividualsData", unlist = TRUE))
-    #dataCopy[, IndividualIndex := seq_along(Individual)]
-    
-    # Missed attempt:
-    #dataCopy[, IndividualExpanded := paste(Survey, Stratum, Layer, SpeciesCategory, Individual, sep = "-")]
-    #dataCopy[, IndividualIndex := as.numeric(factor(RstoxData::createOrderKey(IndividualExpanded, split = c("/", "-"))))]
-    
-    
-    
-    ## Add an AllStrata column to the data to facilitate the AllStrata level: 
-    #dataCopy[, AllStrata := "AllStrata"]
-    ##setcolorder(dataCopy, neworder = "AllStrata")
     
     # Get a vector with the seed of each level:
     seedVector <- structure(as.list(getSeedVector(size = length(levels), seed = seed)), names = levels)
     
-    dataCopy[, ReplaceIndividualIndex := NA_integer_]
+    dataCopy[, ReplaceStratumLayerIndividualIndex := NA_integer_]
     dataCopy[, ReplaceLevel := NA_character_]
     
     for(level in levels) {
@@ -800,18 +790,18 @@ ImputeDataByRandomSampling <- function(
     dataCopy <- replaceMissingData(dataCopy, columnNames = columnNames)
     
     # Reset to original order:
-    data.table::setorderv(dataCopy, "IndividualIndex")
+    data.table::setorderv(dataCopy, "StratumLayerIndividualIndex")
     
-    # Get the ReplaceIndividual:
-    dataCopy[, ReplaceIndividual := Individual[match(ReplaceIndividualIndex, IndividualIndex)]]
+    # Get the ReplaceStratumLayerIndividual:
+    dataCopy[, ReplaceStratumLayerIndividual := StratumLayerIndividual[match(ReplaceStratumLayerIndividualIndex, StratumLayerIndividualIndex)]]
     
     # Add a column ImputationMethod:
-    dataCopy[!is.na(ReplaceIndividual), ImputationMethod := "RandomSampling"]
+    dataCopy[!is.na(ReplaceStratumLayerIndividual), ImputationMethod := "RandomSampling"]
     
-    # Delete the IndividualIndex and ReplaceIndividualIndex:
+    # Delete the StratumLayerIndividualIndex and ReplaceStratumLayerIndividualIndex:
     removeColumnsByReference(
         data = dataCopy, 
-        toRemove = c("IndividualIndex", "ReplaceIndividualIndex")
+        toRemove = c("StratumLayerIndividualIndex", "ReplaceStratumLayerIndividualIndex")
     )
 
     return(dataCopy)
@@ -820,16 +810,16 @@ ImputeDataByRandomSampling <- function(
 # Function to get the imputation row indices of one level ("Haul", "Stratum", NULL). This function is applied using for loop over the levels:
 getImputeRowIndicesOneLevel <- function(
     dataCopy, 
-    imputeAtMissing = "Age", 
+    imputeAtMissing, 
     level = "Haul", 
     by
 ) {
     
     # Get the row indices to replace data from by applying the function getImputeRowIndicesOneGroup by the level (one of Haul, Stratum, NULL) and the imputeByEqual input. 
-    .SDcols <- c(imputeAtMissing, "ReplaceIndividualIndex", "ReplaceLevel", "IndividualIndex", "imputeSeed")
+    .SDcols <- c(imputeAtMissing, "ReplaceStratumLayerIndividualIndex", "ReplaceLevel", "StratumLayerIndividualIndex", "imputeSeed")
     
     dataCopy[, 
-             c("ReplaceIndividualIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
+             c("ReplaceStratumLayerIndividualIndex", "ReplaceLevel") := getImputeRowIndicesOneGroup(
                  .SD, 
                  imputeAtMissing = imputeAtMissing, 
                  level = level
@@ -844,8 +834,8 @@ getImputeRowIndicesOneGroup <- function(
     imputeAtMissing, 
     level
 ) {
-    # Get the super individuals with missing data (and which have not been given ReplaceIndividualIndex):
-    missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceIndividualIndex)]
+    # Get the super individuals with missing data (and which have not been given ReplaceStratumLayerIndividualIndex):
+    missingData <- dataCopyOneGroup[, is.na(get(imputeAtMissing)) & is.na(ReplaceStratumLayerIndividualIndex)]
     # This is assuming unique individuals for each Stratum, Layer, SpeciesCategory and length group:
     presentData <- dataCopyOneGroup[, !is.na(get(imputeAtMissing))]
     
@@ -854,15 +844,15 @@ getImputeRowIndicesOneGroup <- function(
     NPresentRows <- sum(presentData)
     
     # We choose (as it may be cleaner) to create the output row indices as a vector of NAs, instead of using data.table:
-    ReplaceIndividualIndex <- dataCopyOneGroup$ReplaceIndividualIndex
+    ReplaceStratumLayerIndividualIndex <- dataCopyOneGroup$ReplaceStratumLayerIndividualIndex
     ReplaceLevel <- dataCopyOneGroup$ReplaceLevel
     
     if(NMissingRows > 0 && NPresentRows > 0) {
         # Sample the rows with present data:
         #sampleIndexInPresent <- sample.int(NPresentRows, NMissingRows, replace = TRUE)
         ### sampleIndexInPresent <- sampleSorted(
-        ###     #dataCopyOneGroup[!missingData, IndividualIndex], 
-        ###     dataCopyOneGroup[presentData, IndividualIndex], 
+        ###     #dataCopyOneGroup[!missingData, StratumLayerIndividualIndex], 
+        ###     dataCopyOneGroup[presentData, StratumLayerIndividualIndex], 
         ###     size = NMissingRows, 
         ###     seed = dataCopyOneGroup$imputeSeed[1], 
         ###     replace = TRUE, 
@@ -872,9 +862,9 @@ getImputeRowIndicesOneGroup <- function(
         ### ReplaceRowIndex[missingData] <- dataCopyOneGroup[presentData, RowIndex][sampleIndexInPresent]
         
         # Using the new sampleSorted() which is identical to sort() for non-character such as these integers to be sampled:
-        ReplaceIndividualIndex[missingData] <- sampleSorted(
-            #dataCopyOneGroup[!missingData, IndividualIndex], 
-            dataCopyOneGroup[presentData, IndividualIndex], 
+        ReplaceStratumLayerIndividualIndex[missingData] <- sampleSorted(
+            #dataCopyOneGroup[!missingData, StratumLayerIndividualIndex], 
+            dataCopyOneGroup[presentData, StratumLayerIndividualIndex], 
             size = NMissingRows, 
             seed = dataCopyOneGroup$imputeSeed[1], 
             replace = TRUE, 
@@ -888,7 +878,7 @@ getImputeRowIndicesOneGroup <- function(
     
     return(
         list(
-            ReplaceIndividualIndex = ReplaceIndividualIndex, 
+            ReplaceStratumLayerIndividualIndex = ReplaceStratumLayerIndividualIndex, 
             ReplaceLevel = ReplaceLevel
         )
     )
@@ -901,12 +891,12 @@ replaceMissingData <- function(x, columnNames) {
     # Get the matrix indices of data to replace, which are those that are missing in the rows impute:
     #rowsToImpute <- x[!is.na(ReplaceRowIndex), RowIndex]
     #rowsToImputeFrom <- x[!is.na(ReplaceRowIndex), ReplaceRowIndex]
-    # Changed on 2021-02-09 to match the IndividualIndex and ReplaceIndividualIndex:
+    # Changed on 2021-02-09 to match the StratumLayerIndividualIndex and ReplaceStratumLayerIndividualIndex:
     
-    # Get the rows to impute, i.e., those with non-missing ReplaceIndividualIndex:
-    rowsToImpute <- x[, which(!is.na(ReplaceIndividualIndex))]
-    # Get the rows to replace from, by matching the ReplaceIndividualIndex with the IndividualIndex, and keep only those to impute:
-    rowsToImputeFrom <- match(x$ReplaceIndividualIndex, x$IndividualIndex)
+    # Get the rows to impute, i.e., those with non-missing ReplaceStratumLayerIndividualIndex:
+    rowsToImpute <- x[, which(!is.na(ReplaceStratumLayerIndividualIndex))]
+    # Get the rows to replace from, by matching the ReplaceStratumLayerIndividualIndex with the StratumLayerIndividualIndex, and keep only those to impute:
+    rowsToImputeFrom <- match(x$ReplaceStratumLayerIndividualIndex, x$StratumLayerIndividualIndex)
     rowsToImputeFrom <- rowsToImputeFrom[rowsToImpute]
     
     # Loop through the columns and replace missing data:
@@ -917,7 +907,7 @@ replaceMissingData <- function(x, columnNames) {
     
     for(columnName in columnNames) {
         if(columnName %in% namesx) {
-            # Locate the inidices at which the data in the column given by columnName is NA in the rows to imput and not NA in the rows to impute from:
+            # Locate the indices at which the data in the column given by columnName is NA in the rows to impute and not NA in the rows to impute from:
             atReplacement <- x[rowsToImpute, is.na(get(columnName))] & x[rowsToImputeFrom, !is.na(get(columnName))]
             if(any(atReplacement)) {
                 atMissing <- rowsToImpute[atReplacement]
@@ -1034,3 +1024,114 @@ addHalfResolution <- function(data, variable, resolutionVariable, reverse = FALS
         }
     }
 }
+
+
+
+
+
+##################################################
+##################################################
+#' Add haul density to SuperIndividualsData
+#' 
+#' This function calculates the swept-area density of each Haul given in the input SuperIndividualsData.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams SweptAreaDensity
+#' 
+#' @details The density is calculated either by multiplying by a constant sweep width, or by using LengthDistributionData which are sweep width compensated.
+#' 
+#' @seealso \code{\link{SuperIndividualsData}} and \code{\link{LengthDistribution}} for generating the input to this function.
+#' 
+#' @export
+#' 
+AddHaulDensityToSuperIndividuals <- function(
+    SuperIndividualsData, 
+    LengthDistributionData, 
+    SweepWidthMethod = c("Constant", "PreDefined"), 
+    SweepWidth = double()
+) {
+    
+    # Get the SweepWidthMethod:
+    SweepWidthMethod <- RstoxData::match_arg_informative(SweepWidthMethod)
+    
+    # Store the stoxDataVariableNames
+    stoxDataVariableNames <- attr(SuperIndividualsData, "stoxDataVariableNames")
+    
+    
+    # Make a copy of the IndividualsData:
+    SuperIndividualsData <- data.table::copy(SuperIndividualsData)
+    # data.table::copy() is needed here to avoid changes to SuperIndividualsData by reference to also change the colOrderSuperIndividualsData:
+    colOrderSuperIndividualsData <- data.table::copy(names(SuperIndividualsData))
+    # Make sure the LengthDistributionData is proper data.table:
+    LengthDistributionData <- data.table::setDT(LengthDistributionData)
+    
+    # Add length groups to SuperIndividualsData, based on the lengths and resolutions of the QuantityData:
+    addLengthGroup(data = SuperIndividualsData, master = SuperIndividualsData, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
+    # Add length groups also to the QuantityData:
+    addLengthGroup(data = LengthDistributionData, master = SuperIndividualsData, warn = FALSE, lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals")
+    
+       
+    # Give an error if the LengthDistributionType does not end with "Normalized":
+    if(!endsWith(LengthDistributionData$LengthDistributionType[1], "Normalized")) {
+        stop("The LengthDistributionType must be \"Normalized\" (ending with \"Normalized\")")
+    }
+    
+    # Make sure to discard Hauls that are not present in the SuperIndividualsData (e.g. outside of any stratum). This is done in order to not try to fit lengths from Hauls that are not used, and that may not be present in the SuperIndividualsData, when creating length groups, as this may lead to errors when using findInterval() to get indices:
+    LengthDistributionData <- subset(LengthDistributionData, Haul %in% SuperIndividualsData$Haul)
+    
+    # We need to unique since there may have been multiple lines in the same length group:
+    LengthDistributionData <- unique(LengthDistributionData)
+    
+    # Sum in each length group (in case lengths are grouped coarser than the original groups):
+    haulGrouping <- c(
+        "Haul", 
+        getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
+        "TempLengthGroupUsedInSuperIndividuals"
+    )
+    # Add the haul density as the WeightedNumber to the SuperIndividualsData (requiring Normalized LengthDistributionType):
+    # Added allow.cartesian = TRUE on 2021-02-08 to make this work with acoustic trawl where the same Haul may have been assignned multiple strata:
+    SuperIndividualsData <- merge(
+        SuperIndividualsData, 
+        LengthDistributionData[, c(..haulGrouping, "WeightedNumber", "LengthDistributionType")], 
+        by = haulGrouping, 
+        allow.cartesian = TRUE, 
+        all.x = TRUE, 
+        sort = TRUE # Keep the order of the input SuperIndividualsData
+    )
+    
+    # Get the HaulDesity as a swept-area density: 
+    dataVariableToDensity(
+        SuperIndividualsData, 
+        dataVariable = "WeightedNumber", 
+        typeVariableName = "LengthDistributionType", 
+        InputDataType = "LengthDistributionData", 
+        SweepWidthMethod = SweepWidthMethod, 
+        SweepWidth = SweepWidth
+    )
+    
+    
+    # Rename to HaulDensity and remove the WeightedNumber:
+    data.table::setnames(SuperIndividualsData, "Density", "HaulDensity")
+    SuperIndividualsData[, WeightedNumber := NULL]
+    
+    # Remove the columns "individualNumber" and "abundanceWeightFactor", manually since the data type SuperIndividualsData is not uniquely defined (contains all columns of StoxBiotic):
+    removeColumnsByReference(
+        data = SuperIndividualsData, 
+        toRemove = "TempLengthGroupUsedInSuperIndividuals"
+    )
+    
+    # Reset the column order of the input SuperIndividualsData:
+    data.table::setcolorder(SuperIndividualsData, colOrderSuperIndividualsData)
+    
+    # Add the attribute 'variableNames':
+    setattr(
+        SuperIndividualsData, 
+        "stoxDataVariableNames",
+        stoxDataVariableNames
+    )
+    
+    return(SuperIndividualsData)
+}
+
+
+

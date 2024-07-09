@@ -1,3 +1,66 @@
+# RstoxBase v1.11.4-9015  (2024-07-09)
+* Final release for StoX 4.0.0.
+
+
+# RstoxBase v1.11.4-9015  (2024-07-08)
+* Added value for backwards compatibility for old pre StoX 3.3.0 SpeciesCategoryCatch projects.
+
+
+# RstoxBase v1.11.4-9014  (2024-07-02)
+* Corrected and simplified documentation of AssignmentLengthDistribution.
+* Removed stray NumberOfAssignedHauls.
+* Disabled ReportFunction "number", "fractionOfOccurrence" and "fractionOfSum".
+
+
+# RstoxBase v1.11.4-9013  (2024-05-08)
+* Added "Survey" and "SpeciesCategory" as default Groupingvariables.
+* Fixed bug in EstimateBioticRegression(), where failed estimate (e.g. due to singularity) resulted in two instead of 1 row in the output RegressionTable.
+* Removing the temporary column "TempLengthGroupUsedInSuperIndividuals" from AddHaulDensityToSuperIndividuals(), and fixed the order of rows and columns to match the input SuperIndividualsData.
+
+
+# RstoxBase v1.11.4-9010  (2024-05-06)
+* Fixed bug when ReportVariableUnit is first inserted and then cleared, which resulted in error in the form "... is not a valid name for quantity ...".
+
+
+# RstoxBase v1.11.4-9009  (2024-04-25)
+* Removed warning "There are Stratum,PSU that have assigned ONLY ONE haul." as this is now covered in Bootstrap.
+* Fixed bug with report functions with a single second argument, which was deparsed but should not be.
+
+
+# RstoxBase v1.11.4-9008  (2024-04-23)
+* Added documentation of ReportFunctions.
+* Added the exported getFunctionArgumentHierarchyForSpcificationParameters() used in stoxFunctionAttributes.
+* Fixed report functions number(), fractionOfOccurrence() and fractionOfSum().
+* Fixed bug where IndividualAge was not avaiable as TargetVariable in reports (due to class integer, which was not accounted for).
+
+
+# RstoxBase v1.11.4-9007  (2024-04-19)
+* Fixed bug in DefineBioticAssignment() when DefinitionMethod = "Stratum".
+* Moved warnings for only one PSU to Bootstrap in RstoxFramework.
+* Added report functions number(), fractionOfOccurrence() and fractionOfSum().
+* Refactored report functions to use a general Specification list for arguments like WeightingVariable.
+
+
+# RstoxBase v1.11.4-9006  (2023-12-19)
+* Added the new function AddHaulDensityToSuperIndividuals() which adds the density of each Haul estimated from the LengthDistribution input.
+* Removed the columns AllHaulsHaveAllSpeciesCategory and AllHaulsHaveAnySpeciesCategory from AssignmentLengthDistribution(), which were only used to produce a warning about missing length distribution in AcousticDensity and SplitNASC. This warning has been changed.
+* Fixed the warning of duplicated entries in the Individual column in ImputeSuperIndividuals_StoX3().
+
+
+# RstoxBase v1.11.4-9004  (2023-12-08)
+* Added the new function AddHaulDensityToSuperIndividuals() for adding density of the haul of each super-individual.
+* Changed sorting of StratumLayerIndividual when creating the StratumLayerIndividualIndex to platform independent locale = "en_US_POSIX". This is actually a bug, but has not been discovered since all known StoX projects have been using input data with Cruise as numbers of only upper case letters (sorting by locale = "en_US_POSIX" arranges capital letters first (India before england)).
+* Fixed bug in ImputeSuperIndividuals() when ImputationMethod = "RandomSampling", where individuals used in multiple strata were not uniquely represented by the Individual column. The consequence was that data were imputed from he first of the rows with identical Individual, resulting in possible loss of imputation, e.g. if imputing IndividualAge and only one of the identical individuals had IndividualAge but not the first of them, in which case that age would never be imputed. This was fixed by introducing a new unique ID StratumLayerIndividual, which is a concatenation of Stratum, Layer and Individual, and using this to idenify row o impue from.
+* Renamed ImputeSuperIndividuals() to ImputeSuperIndividuals_StoX3() and kept this for backward compatibility.
+* Implemented the "single" format class of parameters like DensityType and TargetVariableUnit.
+
+
+# RstoxBase v1.11.4-9003  (2023-11-07)
+* Added support for reading a project.json in DefineSurvey(), DefineAcousticPSU(), DefineBioticPSU(), DefineBioticAssignment() and DefineStratumPolygon.
+* Restricted warning for missing or 0 EffectiveTowDistance to only activate when there are there are more than 0 individuals in the Haul. 
+* Fixed bug in DefineSurvey with DefinitionMethod = "ResourceFile", where the FileName was the path to a project.xml file.
+
+
 # RstoxBase v1.11.4-9002  (2023-10-18)
 * Added the option ImputationLevels to ImputeSuperIndividuals(), which allows for restricting imputation by random sampling to e.g. only the same haul and stratum (and not survey). 
 * Fixed bug in ImputeSuperIndividuals() where more than one row resulted in only the last row being used.

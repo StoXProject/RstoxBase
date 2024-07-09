@@ -165,6 +165,8 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
             
             by <- by[!onlyNAs]
         }
+        
+        # Merge in the PSUs:
         data <- merge(PSUProcessData, data, by = by, ...)
     }
     else if(! "PSU" %in% names(data)) {
@@ -460,7 +462,7 @@ applySumToData <- function(data, dataType) {
     }
     
     
-    # Add the weighting variable:
+    # Add the weighting variable, identical to the input weighing variable. The weighting is only used when averaging:
     weightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
     targetWeightingVariable <- getDataTypeDefinition(targetDataType, elements = "weighting", unlist = TRUE)
     data[, c(targetWeightingVariable) := get(weightingVariable)]
@@ -843,6 +845,29 @@ cv <- function(x, na.rm = FALSE) {
     stats::sd(x, na.rm = na.rm) / mean(x, na.rm = na.rm)
 }
 
+#cv_string <- function(x, na.rm = FALSE) {
+#    paste0("cv(", x,  ", na.rm = ", na.rm, ")")
+#}
+
+
+
+#' Number of TRUE
+#' 
+#' Warning! This function is used only to construct an expression to be evaluated in a data.table. Do not use this in R as a regular function like the other \code{\link{ReportFunctions}}.
+#' 
+#' @param ... One or more expressions to be pasted with collapse = " ".
+#' @param na.rm All functions used as \code{ReportFunction} in must have an na.rm argument. This is however not used in this function.
+#' 
+#' @export
+#' 
+#number <- function(x, condition = NULL, na.rm = FALSE) {
+#    paste0("sum(", deparse(substitute(x)), if(length(condition)) paste0(" ", condition), ")")
+#}
+number <- function(..., na.rm = FALSE) {
+    paste0("sum(", paste0(..., collapse = " "), ")")
+}
+
+
 
 
 isEmptyString <- function(x) {
@@ -897,8 +922,8 @@ StoxDataStartMiddleStopDateTime <- function(
 #' Replace all NAs in a data.table by reference
 #' 
 #' @param DT A data.table.
-#' @param cols A vector of column names in which to replace the NAs. 
-#' @param replacement the object to replace by.
+#' @param cols A vector of column names in which to replace the NAs. Use NA to replace in all columns.
+#' @param replacement A single value or a list of values for each primitive type to replace by. The default list(numeric = 0, integer = 0L) replaces NAs by 0 for all nnumeric and integer columns listed in \code{cols}.
 #' 
 #' @export
 #' 
@@ -910,8 +935,8 @@ StoxDataStartMiddleStopDateTime <- function(
 #        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
 #    }
 #}
-replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
-    if(!length(cols)) {
+replaceNAByReference <- function(DT, cols = NULL, replacement = list(numeric = 0, integer = 0L)) {
+    if(length(cols) == 1 && is.na(cols)) {
         cols <- names(DT)
     }
     if(length(replacement)) {
@@ -1645,19 +1670,22 @@ setBaseUnit <- function(x, dataType, variableName) {
 #' @export
 #' 
 setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
-    this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName)
     
-    if(length(unit) && this_hasBaseUnit) {
-        # Set the base unit if the objectt does not have a unit:
-        x <- setBaseUnit(x, dataType, variableName)
+    if(length(unit) && nchar(unit)) {
+        this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName)
         
-        # Get the quantity:
-        quantity <- getBaseUnit(dataType = dataType, variableName = variableName, element = "quantity")
-        id <- RstoxData::findUnit(quantity = quantity, shortname = unit)
-        x <- setUnit(x, id)
-    }
-    else if(length(unit) && !this_hasBaseUnit) {
-        warning("StoX: Units not defined for variable ", variableName, " of dataType ", dataType, ". The unit (", unit, ") was ignored.")
+        if(this_hasBaseUnit) {
+            # Set the base unit if the object does not have a unit:
+            x <- setBaseUnit(x, dataType, variableName)
+            
+            # Get the quantity:
+            quantity <- getBaseUnit(dataType = dataType, variableName = variableName, element = "quantity")
+            id <- RstoxData::findUnit(quantity = quantity, shortname = unit)
+            x <- setUnit(x, id)
+        }
+        else {
+            warning("StoX: Units not defined for variable ", variableName, " of dataType ", dataType, ". The unit (", unit, ") was ignored.")
+        }
     }
     
     return(x)
@@ -1678,7 +1706,7 @@ factorNAfirst <- function(x){
             levels <- r[1]
         }
         else{
-            levels <- seq(r[1], r[2], by = median(diff(sort(unique(x))), na.rm = TRUE))
+            levels <- seq(r[1], r[2], by = stats::median(diff(sort(unique(x))), na.rm = TRUE))
         }
         
         # Add NAs first:

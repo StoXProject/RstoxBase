@@ -74,6 +74,7 @@ DefinePSU <- function(
     # If UseProcessData = TRUE, from "EDSU"/"Station" to "SSU": 
     if(UseProcessData) {
         if(!length(processData)) {
+            # Create and return empty PSU process data:
             processData <- list(
                 SSU_PSU = data.table::data.table(
                     SSU = SSUs, 
@@ -84,16 +85,25 @@ DefinePSU <- function(
             processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
             return(processData)
         }
-        
-        processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+        # Otherwise rename to SSU:
+        else {
+            processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = TRUE)
+        }
     }
     else {
         # If DefinitionMethod is "ResourceFile", read from a project.xml file:
         if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
-            
             if(PSUType == "Acoustic") {
-                # Read from the project.xml:
-                AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+                ## Read from the project.xml:
+                if(basename(FileName) == "project.json") {
+                    AcousticPSU <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineAcousticPSU")
+                }
+                else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+                    AcousticPSU <- readAcousticPSUFrom2.7(FileName)
+                }
+                else {
+                    stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+                }
                 
                 # Add the PSUByTime:
                 if(SavePSUByTime) {
@@ -107,16 +117,24 @@ DefinePSU <- function(
             }
             else if(PSUType == "Biotic") {
                 
-                # Read from the project.xml:
-                MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
-                    StoxData, 
-                    tableNames = c("Cruise", "Station", "Haul"), 
-                    output.only.last = TRUE, 
-                    all = TRUE
-                )
+                if(basename(FileName) == "project.json") {
+                    BioticPSU <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineBioticPSU")
+                }
+                else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+                    # Read from the project.xml:
+                    MergedStoxDataHaulLevel <- RstoxData::mergeDataTables(
+                        StoxData, 
+                        tableNames = c("Cruise", "Station", "Haul"), 
+                        output.only.last = TRUE, 
+                        all = TRUE
+                    )
+                    
+                    BioticPSU <- readBioticPSUFrom2.7(FileName, MergedStoxDataHaulLevel = MergedStoxDataHaulLevel)
+                }
+                else {
+                    stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+                }
                 
-                
-                BioticPSU <- readBioticPSUFrom2.7(FileName, MergedStoxDataHaulLevel = MergedStoxDataHaulLevel)
                 return(BioticPSU)
             }
             else {
@@ -146,41 +164,13 @@ DefinePSU <- function(
         # If DefinitionMethod = "PreDefined" use times to interpret the PSUs (only used for acoustic PSUs):
         else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
             
-            # Interpret middle times:
-            MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
+            processData <- getPSUProcessDataFromPSUByTime(
+                PSUByTime, 
+                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                PSUType = PSUType
+            )
             
-            # Rename the SSULabel to "SSU":
-            MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
             
-            # Get the SSU indices for each PSU:
-            Stratum_PSU_SSU <- PSUProcessData$PSUByTime[, data.table::data.table(
-                Stratum, 
-                PSU, 
-                Cruise, 
-                # Use closed interval on both sides here to allow for time points and not only time interavls:
-                SSUIndex = which(
-                    MergedStoxDataStationLevel$MiddleDateTime >= StartDateTime & 
-                        MergedStoxDataStationLevel$MiddleDateTime <= StopDateTime &
-                        MergedStoxDataStationLevel$Cruise == Cruise
-                )
-            ), 
-            by = seq_len(nrow(PSUProcessData$PSUByTime))]
-            
-            # Remove PSUs with no SSUs:
-            Stratum_PSU_SSU <- Stratum_PSU_SSU[!is.na(SSUIndex), ]
-            
-            # Add the SSUs:
-            Stratum_PSU_SSU[, SSU := MergedStoxDataStationLevel$SSU[SSUIndex]]
-            
-            # Split into Stratum_PSU and SSU_PSU:
-            Stratum_PSU <- unique(Stratum_PSU_SSU[, c("Stratum", "PSU")])
-            SSU_PSU <- unique(Stratum_PSU_SSU[, c("SSU", "PSU")])
-            
-            # Add all SSUs:
-            SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
-            
-            # Restore SSULabel:
-            MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType)
         }
         
         #else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
@@ -322,10 +312,6 @@ DefinePSU <- function(
     # Rename back from "SSU" to "EDSU"/"Station": 
     processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
     
-    # Warn if there are strata with only one PSU, which may result in missing variance:
-    onlyOnePSU_Warning(processData$Stratum_PSU, PSUType = PSUType)
-    
-    
     # Add the PSU time information:
     if(!UseProcessData && SavePSUByTime) {
         processData$PSUByTime <- getPSUByTime(
@@ -339,25 +325,63 @@ DefinePSU <- function(
 }
 
 
-onlyOnePSU_Warning <- function(Stratum_PSU, PSUType = c("Acoustic", "Biotic")) {
-    PSUType <- RstoxData::match_arg_informative(PSUType)
+getPSUProcessDataFromPSUByTime <- function(PSUByTime, MergedStoxDataStationLevel, PSUType = c("Acoustic", "Biotic")) {
+    # Interpret middle times:
+    MergedStoxDataStationLevel <- StoxDataStartMiddleStopDateTime(MergedStoxDataStationLevel)
     
-    if(NROW(Stratum_PSU)) {
-        numberOfPSUsInStratum <- Stratum_PSU[, .N, by = "Stratum"]
-        stratumWithOnlyOnePSU <- subset(numberOfPSUsInStratum, N == 1)$Stratum
-        # This was a bug, where the warning was triggered when the Stratum name was "1". Changed this on 2022-08-15:
-        #if(any(numberOfPSUsInStratum == 1, na.rm = TRUE)) {
-        if(numberOfPSUsInStratum[, any(N == 1, na.rm = TRUE)]) {
-            # This warning adresses the problem of only one biotic PSU (often the same as one station) in a stratum, which implies identical SuperIndividualsData for all bootstrap runs in that stratum. When bootstrapping an acoustic-trawl project the biotic PSUs are not relevant, as Hauls are resampled in each Stratum. A warning for only one Haul in a Stratum is issued in BioticAssignment:
-            if(PSUType == "Biotic") {
-                warning("StoX: The following strata have only one BioticPSU, which is in conflict with the principle of bootstrapping as it causes identical SuperIndividualsData for all bootstrap runs in that stratum. When running ReportBootstrap for a swept-area estimate (bootstrapping a MeanLengthDistribution process) with \"Stratum\" included in GroupingVariables, the variance from this stratum will be NA. When  \"Stratum\" is NOT included in GroupingVariables, the stratum with only one PSU will not contibute to the variance, as all bootstrap runs will be identical from that stratum. This implies UNDER ESTIMATION of the variance! Please consider merging strata to avoid this problem:", RstoxData::printErrorIDs(stratumWithOnlyOnePSU))
-            }
-            else {
-                warning("StoX: The following strata have only one AcousticPSU, which is in conflict with the principle of bootstrapping. When running ReportBootstrap for an acoustic-trawl estimate (bootstrapping a Biotic process) with \"Stratum\" included in GroupingVariables, the stratum with only one PSU will not contibute to the variance from resampling AcousticPSUs. This implies UNDER ESTIMATION of the variance! Please consider re-defining the AcousticPSUs or merging strata to avoid this problem:", RstoxData::printErrorIDs(stratumWithOnlyOnePSU))
-            }
-        }
-    }
+    # Rename the SSULabel to "SSU":
+    MergedStoxDataStationLevel <- renameSSUToSSULabelInTable(MergedStoxDataStationLevel, PSUType = PSUType, reverse = TRUE)
+    
+    # Get the SSU indices for each PSU:
+    Stratum_PSU_SSU <- PSUByTime[, data.table::data.table(
+        Stratum, 
+        PSU, 
+        Cruise, 
+        # Use closed interval on both sides here to allow for time points and not only time interavls:
+        SSUIndex = which(
+            MergedStoxDataStationLevel$MiddleDateTime >= StartDateTime & 
+                MergedStoxDataStationLevel$MiddleDateTime <= StopDateTime &
+                MergedStoxDataStationLevel$Cruise == Cruise
+        )
+    ), 
+    by = seq_len(nrow(PSUByTime))]
+    
+    # Remove PSUs with no SSUs:
+    Stratum_PSU_SSU <- Stratum_PSU_SSU[!is.na(SSUIndex), ]
+    
+    # Add the SSUs:
+    Stratum_PSU_SSU[, SSU := MergedStoxDataStationLevel$SSU[SSUIndex]]
+    
+    # Split into Stratum_PSU and SSU_PSU:
+    Stratum_PSU <- unique(Stratum_PSU_SSU[, c("Stratum", "PSU")])
+    SSU_PSU <- unique(Stratum_PSU_SSU[, c("SSU", "PSU")])
+    
+    # Add all SSUs:
+    SSU_PSU <- merge(MergedStoxDataStationLevel[, "SSU"], SSU_PSU, all = TRUE)
+    
+    return(
+        list(
+            Stratum_PSU = Stratum_PSU, 
+            SSU_PSU = SSU_PSU 
+        )
+    )
 }
+
+
+# Function to get the file extension (used to get the ext of a project description file in particular):
+getResourceFileExt <- function(FileName) {
+    if(length(unlist(strsplit(FileName, "\\."))) < 2) {
+        stop("StoX: FileName must include file extension.")
+    }
+    else {
+        fileParts <- unlist(strsplit(FileName, "\\."))
+        FileExt <- utils::tail(fileParts, 1)
+    }
+    
+    return(FileExt)
+}
+
+
 
 
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU i loacted geographically:
@@ -443,6 +467,16 @@ removeEmptyPSUs <- function(PSUProcessData) {
     return(PSUProcessData)
 }
 
+
+
+#' Rename SSU to either EDSU or Station
+#' 
+#' @inheritParams general_arguments
+#' @param PSUProcessData A table to rename in.
+#' @param reverse Logical: If TRUE rename to SSU.
+#' 
+#' @export
+#' 
 renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
     PSUType <- RstoxData::match_arg_informative(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
@@ -463,17 +497,20 @@ renameSSULabelInPSUProcessData <- function(PSUProcessData, PSUType = c("Acoustic
 }
 
 
+
 renameSSUToSSULabelInTable <- function(table, PSUType = c("Acoustic", "Biotic"), reverse = FALSE) {
     PSUType <- RstoxData::match_arg_informative(PSUType)
     SSULabel <- getRstoxBaseDefinitions("getSSULabel")(PSUType)
     
     # Make a copy, since we are using setnames:
-    table <- data.table::copy(table)
-    if(reverse) {
-        data.table::setnames(table, SSULabel, "SSU")
-    }
-    else {
-        data.table::setnames(table, "SSU", SSULabel)
+    if(is.data.table(table)) {
+        table <- data.table::copy(table)
+        if(reverse) {
+            data.table::setnames(table, SSULabel, "SSU")
+        }
+        else {
+            data.table::setnames(table, "SSU", SSULabel)
+        }
     }
     
     return(table)
@@ -511,11 +548,11 @@ DefineBioticPSU <- function(
     FileName = character()
 ) {
     
-    if(!UseProcessData) {
-        if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
-            warning("StoX: Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
-        }
-    }
+    #if(!UseProcessData) {
+    #    if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+    #        warning("StoX: Manual tagging of stations as biotic PSUs is not yet supported in the StoX GUI")
+    #    }
+    #}
     
     # Get the DefinitionMethod:
     #DefinitionMethod <- match.arg(DefinitionMethod)
@@ -626,13 +663,14 @@ getPSUByTime <- function(
 # Function to get the start and stop time:
 getPSUStartStopDateTime <- function(PSUProcessData, MergedStoxDataStationLevel, PSUType) {
     
+    # Rename to the general SSU label:
+    PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData, PSUType = PSUType, reverse = TRUE)
+    
+    # If empty process data:
     if(!NROW(PSUProcessData$SSU_PSU)) {
         PSUStartStopDateTime <- data.table(1)[,`:=`(unlist(getRstoxBaseDefinitions("PSUByTime")), NA)][, V1 := NULL][.0]
         return(PSUStartStopDateTime)
     }
-    
-    # Rename to the general SSU label:
-    PSUProcessData <- renameSSULabelInPSUProcessData(PSUProcessData, PSUType = PSUType, reverse = TRUE)
     
     # Interpret start and end times:
     StationLevel <- getRstoxBaseDefinitions("getStationLevel")(PSUType)
@@ -1051,7 +1089,7 @@ DefineBioticLayer <- function(
 #'
 #'\strong{EllipsoidalDistance}
 #'
-#'This assignment method uses the ellipsoidal distance \doi{10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}.  All biotic stations that fulfills the selection criteria (scalar product f <=1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
+#'This assignment method uses the ellipsoidal distance \doi{10.1016/j.fishres.2007.07.013}{(Johnsen and Iilende, 2007, equation 8)}. All biotic stations that fulfills the selection criteria (scalar product f <= 1) on one or more EDSUs of a PSU, will be assigned to the PSU. The scalar product of the method is calculated as:
 #'
 #' \deqn{f(d,t,b,l,o)=\left(\frac{\Delta d}{r_d}\right)^2 + \left(\frac{\Delta t}{r_t}\right)^2 +
 #' \left(\frac{\Delta b}{r_b}\right)^2 + \left(\frac{\Delta l}{r_l}\right)^2 +
@@ -1184,7 +1222,7 @@ DefineBioticAssignment <- function(
         attr(HaulData, "Station") <- HaulData$Station
         
         turn_off_s2(
-            locatedStratum <- locateInStratum(HaulData, StratumPolygon, SSULabel = SSULabel), 
+            locatedStratum <- locateInStratum(HaulData, StratumPolygon, SSULabel = "Station"), 
             msg = FALSE
         )
         
@@ -1329,18 +1367,26 @@ DefineBioticAssignment <- function(
         BioticAssignment <- data.table::data.table()
     }
     else if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
-        BioticAssignment <- readBioticAssignmentFrom2.7(FileName)
         
-        # Translate to the Haul defined by StoX >=3:
-        HaulsAsIn2.7 <- sub("/.*&*-", "/", HaulData$Haul)
-        
-        BioticAssignment$Haul <- HaulData$Haul[
-            match(
-                BioticAssignment$Haul, 
-                HaulsAsIn2.7
-            )
-        ]
-        
+        if(basename(FileName) == "project.json") {
+            BioticAssignment <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineBioticAssignment")$BioticAssignment
+        }
+        else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+            BioticAssignment <- readBioticAssignmentFrom2.7(FileName)
+            
+            # Translate to the Haul defined by StoX >=3:
+            HaulsAsIn2.7 <- sub("/.*&*-", "/", HaulData$Haul)
+            
+            BioticAssignment$Haul <- HaulData$Haul[
+                match(
+                    BioticAssignment$Haul, 
+                    HaulsAsIn2.7
+                )
+            ]
+        }
+        else {
+            stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+        }
     }
     # Is this for backward campatibility??????????????
     else if(isEmptyString(DefinitionMethod)){
@@ -1370,7 +1416,6 @@ DefineBioticAssignment <- function(
     ## Add the layers:
     #Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
     #BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
-    
     
     BioticAssignment <- addLayerToBioticAssignmentAndFormat(
         BioticAssignment = BioticAssignment, 
@@ -1449,7 +1494,7 @@ getEDSUToHaulDistance <- function(LogData, HaulData, nautical_mile = FALSE) {
     HaulPositions <- sf::st_as_sf(HaulData[, c("Longitude", "Latitude")], coords = c("Longitude", "Latitude"), crs = sf::st_crs("WGS84"))
     EDSUPositions <- sf::st_as_sf(LogData[, c("Longitude", "Latitude")], coords = c("Longitude", "Latitude"), crs = sf::st_crs("WGS84"))
     
-    # Get the distances between EDUSs and Hauls returns km:
+    # Get the distances between EDUSs and Hauls in m:
     turn_off_s2(
         EDSUToHaulDistance <- sf::st_distance(HaulPositions, EDSUPositions), 
         msg = FALSE
@@ -2284,6 +2329,8 @@ EstimateBioticRegression <- function(
         data <- data.table::copy(SuperIndividualsData)
     }
     
+    # Add support for accidental empty string for the GroupingVariables (must be entered maually in the GUI):
+    GroupingVariables <- GroupingVariables[nchar(GroupingVariables) > 0]
     # Check that the GroupingVariables are present in the data:
     if(length(GroupingVariables) && nchar(GroupingVariables) && !all(GroupingVariables %in% names(data))) {
         stop("All of the GroupingVariables must be present in the data (", paste(setdiff(GroupingVariables, names(data)), collapse = ", "), " not present)")
@@ -2373,30 +2420,32 @@ getRegressionTable <- function(
             
             # Return NAs:
             list(
+                # Dims here are (number of parameters, 1) to fit the coeffisients table from lm() which has one row per parameter:
                 coefficients = array(NA_real_, dim = c(length(getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]), 1)), 
                 sigma = NA_real_
             )
         }
     )
     
+    
     # Get the model parameter names:
     modelParameters <- getRstoxBaseDefinitions("modelParameters")$Regression[[RegressionModel]]
     
-    # Create a table with the parameters and residual stndard error:
+    # Create a table with the parameters and residual standard error:
     sumNonMissing <- sum(!is.na(data[[DependentVariable]]) & !is.na(data[[IndependentVariable]]))
+    # This test of NROW is due to lm skipping rows in the coefficients when failing to estimate (even though a row with NaN is displayed when printing the output):
     if(NROW(regressionSummary$coefficients) < length(modelParameters)) {
         if(length(GroupingVariables)) {
             warning("StoX: Insufficient data to estimate regression for ", paste(GroupingVariables, sapply(GroupingVariables, function(x) unique(data[[x]])), sep = " = " ), " (Number of non-missing values: ", sumNonMissing, ").")
         }
         else {
-            warning("StoX: Insufficient data to estimate regression (Number of non-missing values: ", sumNonMissing, ").")
+            warning("StoX: Insufficient data to estimate regression. NAs returned which may propagate to reports. (Number of non-missing values: ", sumNonMissing, ").")
         }
-        
         
         RegressionTable <- data.table::as.data.table(
             c(
                 structure(as.list(rep(NA_real_, length(modelParameters))), names = modelParameters), 
-                list(ResidualStandardError = rep(NA_real_, length(modelParameters)))
+                list(ResidualStandardError = NA_real_)
             )
         )
     }
@@ -2460,17 +2509,27 @@ DefineSurvey <- function(
     DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     # Read from a stoX 2.7 project.xml:
-    if(DefinitionMethod == "ResourceFile" && tolower(tools::file_ext(FileName)) == "xml") {
-        # Read the StratumPolygon from the project.xml file:
-        StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = FALSE)
+    if(DefinitionMethod == "ResourceFile") {
         
-        # Define all strata that have includeintotal = TRUE as a survey named "Survey", and all others as individual surveys:
-        SurveyTable <- data.table::data.table(
-            Stratum = StratumPolygon$StratumaName, 
-            Survey = StratumPolygon$StratumaName
-        )
-        indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
-        SurveyTable[indcludedInTotal, Survey := "Survey"]
+        if(basename(FileName) == "project.json") {
+            SurveyTable <- readOneProcessDataByFunctionNameFromProjectJSON(FileName, functionName = "DefineSurvey")
+        }
+        else if(tolower(getResourceFileExt(FileName)) == "xml" && any(grepl("http://www.imr.no/formats/stox/v1", readLines(FileName, 5)))) {
+            
+            # Read the StratumPolygon from the project.xml file:
+            StratumPolygon <- readStratumPolygonFrom2.7(FileName, remove_includeintotal = FALSE)
+            
+            # Define all strata that have includeintotal = TRUE as a survey named "Survey", and all others as individual surveys:
+            SurveyTable <- data.table::data.table(
+                Stratum = StratumPolygon$StratumName, 
+                Survey = StratumPolygon$StratumName
+            )
+            indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
+            SurveyTable[indcludedInTotal, Survey := "Survey"]
+        }
+        else {
+            stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+        }
     }
     else {
         # Get the survey table using the stratum names:
@@ -2556,4 +2615,198 @@ getSurveyTable <- function(
 
 
 
+
+#' Format process data
+#' 
+#' @param processData A StoX process data (list of sf or data.table)
+#' @param columnClasses A list of lists of classes of the columns of process data tables, as read from process data schemas. Used only in RstoxFramework.
+#' 
+#' @export
+#'
+formatProcessData <-  function(processData, columnClasses = NULL) {
+    if(!is.list(processData)) {
+        stop("StoX: ProcessData must be a list consisting of objects of classes data.table or sf.")
+    }
+    
+    if(length(processData)) {
+        processData <- mapply(formatProcessDataOne, processDataName = names(processData), processDataOne = processData, MoreArgs = list(columnClasses = columnClasses), SIMPLIFY = FALSE)
+    }
+    
+    return(processData)
+}
+
+
+formatProcessDataOne <-  function(processDataName, processDataOne, columnClasses = NULL) {
+    
+    if(!length(processDataOne)) {
+        processDataOne <- data.table::data.table()
+    }
+    # Convert to sf:
+    else if("features" %in% tolower(names(processDataOne))) {
+        # Using geojsonsf instead of geojsonio to reduce the number of dependencies:
+        #processDataOne <- geojsonio::geojson_sp(toJSON_Rstox(processDataOne, pretty = TRUE))
+        # Check for empty multipolygon, which is not well treated by sf:
+        StratumPolygon <- geojsonsf::geojson_sf(toJSON_Rstox(processDataOne, pretty = TRUE))
+        
+        if(length(StratumPolygon$geometry)) {
+            
+            # Set the assumed pojection:
+            suppressWarnings(sf::st_crs(StratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat"))
+            # Make sure that the StratumPolygon is a MULTIPOLYGON object:
+            StratumPolygon <- sf::st_cast(StratumPolygon, "MULTIPOLYGON")
+            
+            # Add names:
+            processDataOne <- addStratumNames(StratumPolygon, accept.wrong.name.if.only.one = TRUE)
+        }
+        else {
+            processDataOne <- getRstoxBaseDefinitions("emptyStratumPolygon")
+        }
+    }
+    # If a data.table:
+    else if(length(processDataOne) && data.table::is.data.table(processDataOne)) {
+        
+        convertStringToNA(processDataOne)
+        ## Set numeric NAs:
+        #jsonNA <- getRstoxFrameworkDefinitions("jsonNA")
+        #decodeNumericNAOneProcessData(processDataOne, na = jsonNA)
+        
+        if(length(columnClasses)) {
+            convertClassOfDataTable(processDataOne, columnClasses = columnClasses[[processDataName]])
+        }
+        
+        
+        convertToPosixInDataTable(processDataOne)
+    }
+    # Otherwise try to convert to data.table:
+    else if(length(processDataOne) && is.convertableToTable(processDataOne)) {
+        # Why was this extremely slow method used, where converting to and then from JSON slows things down imensely?:
+        # processDataOne <- simplifyListReadFromJSON(processDataOne)
+        # processDataOne <- data.table::as.data.table(processDataOne)
+        
+        # Convert to data.table (suppress warnings like "Column 3 [''] of item 1 is length 0. This (and 0 others like it) has been filled with NA (NULL for list columns) to make each item uniform."):
+        suppressWarnings(processDataOne <- data.table::rbindlist(processDataOne))
+        
+        convertStringToNA(processDataOne)
+        ## Set numeric NAs:
+        #jsonNA <- getRstoxFrameworkDefinitions("jsonNA")
+        #decodeNumericNAOneProcessData(processDataOne, na = jsonNA)
+        
+        if(length(columnClasses)) {
+            convertClassOfDataTable(processDataOne, columnClasses = columnClasses[[processDataName]])
+        }
+        
+        convertToPosixInDataTable(processDataOne)
+    }
+    else {
+        stop("StoX: ProcessData must be a list consisting of objects of classes data.table or sf.")
+    }
+    
+    return(processDataOne)
+}
+
+
+
+convertStringToNA <- function(x) {
+    chcols = names(x)[sapply(x, is.character)]
+    #x[, (chcols) := lapply(.SD, replace, as.is=TRUE), .SDcols=chcols] # Changed to numeric when not intended
+    x[, (chcols) := lapply(.SD, function(x) ifelse(x == "NA", NA, x)), .SDcols = chcols]
+}
+
+# Function to convert column classes of a data.table given a list of variablename-class pairs:
+convertClassOfDataTable <- function(x, columnClasses) {
+    for(col in intersect(names(x), names(columnClasses))) {
+        fun <- paste("as", columnClasses[[col]], sep = ".")
+        x[, eval(col) := do.call(fun, list(get(col)))]
+    }
+}
+
+
+convertToPosixInDataTable <- function(x) {
+    convertableToPOSIX <- unlist(x[, lapply(.SD, is.ConvertableToPOSIX)])
+    if(any(convertableToPOSIX)) {
+        DateTimeColumns <- names(x)[convertableToPOSIX]
+        x[, (DateTimeColumns) := lapply(.SD, convertToPOSIX), .SDcols = DateTimeColumns]
+    }
+}
+
+
+is.convertableToTable <- function(x, minLength = 1) {
+    # If all elements of the list x are lists with equal length, x is convertable to data.table:
+    length(x) && 
+        is.list(x) && # The input must be a list
+        all(sapply(x, is.list)) && # ... and a list of lists
+        RstoxBase::allEqual(lengths(x)) && # ... and all must be of equal length
+        all(lengths(x) >= minLength) && # ... and longer than 1
+        !is.list(x[[1]][[1]]) # ... and finally, each list must not contain lists. We only check the first element here
+}
+
+#' Convert to JSON
+#' 
+#' This function takes care of the defaults preferred by the Rstox packages
+#' 
+#' @param x An object to convert to JSON.
+#' @param ... Parameters overriding the defaults digits = NA, auto_unbox = TRUE, na = "null", null = "null".
+#' 
+#' @export
+#' 
+toJSON_Rstox <- function(x, ...) {
+    # Define defaults:
+    digits <- NA
+    auto_unbox <- TRUE
+    # Changed on 2021-04-21 to supports NA strings:
+    #na <- "null"
+    na <- "string"
+    na <- "null"
+    null <- "null"
+    
+    # Override by ...:
+    lll <- list(...)
+    
+    if(!"digits" %in% names(lll)) {
+        lll$digits <- digits
+    }
+    if(!"auto_unbox" %in% names(lll)) {
+        lll$auto_unbox <- auto_unbox
+    }
+    if(!"na" %in% names(lll)) {
+        lll$na <- na
+    }
+    if(!"null" %in% names(lll)) {
+        lll$null <- null
+    }
+    
+    #lll$x <- x
+    lll <- c(list(x = x), lll
+    )
+    
+    # Use ISO8601 for time:
+    lll$POSIXt ="ISO8601"
+    
+    do.call(jsonlite::toJSON, lll)
+}
+
+
+
+is.ConvertableToPOSIX <- function(x) {
+    if(is.character(x)) {
+        # Convert to POSIX:
+        POSIX <- convertToPOSIX(x)
+        any(!is.na(POSIX))
+    }
+    else {
+        FALSE
+    }
+}
+
+
+convertToPOSIX <- function(x) {
+    # Get the DateTime format used by StoX:
+    StoxDateTimeFormat <- RstoxData::getRstoxDataDefinitions("StoxDateTimeFormat")
+    StoxTimeZone <- RstoxData::getRstoxDataDefinitions("StoxTimeZone")
+    
+    # Convert to POSIX:
+    POSIX <- as.POSIXct(x, format = StoxDateTimeFormat, tz = StoxTimeZone)
+    
+    return(POSIX)    
+}
 

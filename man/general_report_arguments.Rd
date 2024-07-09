@@ -4,9 +4,11 @@
 \alias{general_report_arguments}
 \title{General report parameters of RstoxBase}
 \arguments{
+\item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
+
 \item{TargetVariable}{The variable to report.}
 
-\item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}.}
+\item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).}
 
 \item{GroupingVariables}{The variables to report by. For most applications \code{GroupingVariables} should include "Survey" and "SpeciesCategory", unless the user needs to sum over all Survey or SpeciesCategory.}
 
@@ -15,6 +17,12 @@
 \item{RemoveMissingValues}{Logical: If TRUE, remove missing values (NAs) from the \code{TargetVariable}. The default (FALSE) implies to report NA if at least one of the values used in the \code{ReportFunction} is NA. Use \code{RemoveMissingValues} = TRUE with extreme caution, as it may lead to under-estimation. E.g., if \code{RemoveMissingValues} = TRUE and a super-individual lacks \code{IndividualRoundWeight}, \code{Biomass} will be NA, and the portion of \code{Abundance} distributed to that super-individual will be excluded when summing \code{Biomass} (but included when summing \code{Abundance}). It is advised to always run with \code{RemoveMissingValues} = FALSE first, and make a thorough investigation to identify the source of any missing values. The function \code{link{ImputeSuperIndividuals}} can be used to impute the missing information from other super-individuals.}
 
 \item{Filter}{A string with an R expression to filter out unwanted rows of the report, e.g. "IndividualAge \%notin\% NA" or "Survey \%notin\% NA & SpeciesCategory \%notin\% NA".}
+
+\item{WeightingVariable}{The variable to weight by. Only relevant for \code{ReportFunction} "weighted.mean". Note that missing values in the \code{WeightingVariable} results in missing value from the \code{weighted.mean} function as per the documentation of this function, regardles of any \code{RemoveMissingValues}.}
+
+\item{ConditionOperator, ConditionValue}{Expressions (strings) giving the condition for the \code{ReportFunction} \code{number} and \code{fractionOfOccurrence}. Supported values for \code{ConditionOperator} are "\%in\%", "\%notin\%", "==", "!=", "\%notequal\%", "<", "<=", ">=", ">". The \code{ConditionOperator} and \code{ConditionValue} are pasted for use in data.table.}
+
+\item{FractionOverVariable}{When \code{ReportFunction} is a fraction ("fractionOfOccurrence" or "fractionOfSum") \code{FractionOverVariable} is a string naming the variable (one of the \code{GroupingVariables}) to sum over in the denominator of the fraction.}
 }
 \description{
 General report parameters of RstoxBase
