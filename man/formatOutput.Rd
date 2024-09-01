@@ -9,8 +9,10 @@ formatOutput(
   dataType,
   keep.all = TRUE,
   allow.missing = FALSE,
+  primaryColumnOrder = NULL,
   secondaryColumnOrder = NULL,
-  secondaryRowOrder = NULL
+  secondaryRowOrder = NULL,
+  removeStoXKeys = FALSE
 )
 }
 \arguments{
@@ -22,7 +24,11 @@ formatOutput(
 
 \item{allow.missing}{Logical: If TRUE allow for unrelevant column names defined in \code{secondaryColumnOrder}.}
 
-\item{secondaryColumnOrder, secondaryRowOrder}{A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to proiritize when ordering columns and rows, respectively.}
+\item{primaryColumnOrder}{Character: A vector of names of columns that should be placed first regardless of the definition of columns specified in the dataTypeDefinition.}
+
+\item{secondaryColumnOrder, secondaryRowOrder}{A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to prioritize when ordering columns and rows, respectively.}
+
+\item{removeStoXKeys}{Logical: If TRUE remove the key columns, which are those ending with "Key".}
 }
 \description{
 The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables.

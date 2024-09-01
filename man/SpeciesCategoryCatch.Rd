@@ -14,6 +14,9 @@ SpeciesCategoryCatch(
 
 \item{SpeciesCategoryCatchType}{The type of the total catch variables, either "Standard" for the raw total catch and "Normalized" for normalizing by tow distance by dividing by the EffectiveTowDistance in nautical miles.}
 }
+\value{
+An object of StoX data type \code{\link{SpeciesCategoryCatchData}}.
+}
 \description{
 This function sums the catch fraction weight and number per Haul and SpeciesCategory.
 }

@@ -22,15 +22,25 @@
 
 \item{DensityData}{The \code{\link{DensityData}} data.}
 
+\item{ReportDensityData}{The \code{\link{ReportDensityData}} data.}
+
 \item{MeanDensityData}{The \code{\link{MeanDensityData}} data.}
 
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
+
+\item{ReportSpeciesCategoryCatchData}{The \code{\link{ReportSpeciesCategoryCatchData}} data.}
 
 \item{SumSpeciesCategoryCatchData}{The \code{\link{SumSpeciesCategoryCatchData}} data.}
 
 \item{MeanSpeciesCategoryCatchData}{The \code{\link{MeanSpeciesCategoryCatchData}} data.}
 
+\item{PreySpeciesCategoryCatchData}{The \code{\link{PreySpeciesCategoryCatchData}} data.}
+
+\item{ReportPreySpeciesCategoryCatchData}{The \code{\link{ReportPreySpeciesCategoryCatchData}} data.}
+
 \item{QuantityData}{The \code{\link{QuantityData}} data.}
+
+\item{ReportQuantityData}{The \code{\link{ReportQuantityData}} data.}
 
 \item{IndividualsData}{The \code{\link{IndividualsData}} data.}
 
