@@ -542,7 +542,12 @@ StratumArea <- function(
     if(AreaMethod == "Accurate") {
         # StoX 2.7 calculated the area for each stratum separately, thus using an origin from each stratum. This requires subsetting the StratumPolygon and calculating the areas in a loop:
         turn_off_s2(
-            areaDT <- data.table::rbindlist(lapply(seq_len(nrow(StratumPolygon)), function(ind) polygonArea_accurate(StratumPolygon[ind, ], useLonLatCentroid = TRUE))), 
+            areaDT <- data.table::rbindlist(
+                lapply(
+                    seq_len(nrow(StratumPolygon)), 
+                    function(ind) polygonArea_accurate(StratumPolygon[ind, ], useLonLatCentroid = TRUE)
+                    )
+            ), 
             msg = FALSE
         )
     }
