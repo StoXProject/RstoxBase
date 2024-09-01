@@ -6,6 +6,11 @@
 * Added option of defining primaryColumnOrder and whether to removeStoXKeys in formatOutput().
 
 
+# RstoxBase v1.11.4-9015  (2024-07-09)
+* Final release for StoX 4.0.0.
+* Added value for backwards compatibility for old pre StoX 3.3.0 SpeciesCategoryCatch projects.
+
+
 # RstoxBase v1.11.4-9014  (2024-07-02)
 * Corrected and simplified documentation of AssignmentLengthDistribution.
 * Removed stray NumberOfAssignedHauls.
