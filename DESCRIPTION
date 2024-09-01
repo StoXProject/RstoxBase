@@ -1,6 +1,6 @@
 Package: RstoxBase
-Version: 1.11.4-9015
-Date: 2024-07-05
+Version: 2.0.1-9001
+Date: 2024-09-01
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", 
@@ -33,7 +33,7 @@ Authors@R: c(
     role = "aut"), 
   person(given = "Norwegian Institute of Marine Research", 
     role = c("cph", "fnd")))
-Depends: R (>= 3.6)
+Depends: R (>= 4.0)
 Description: Base StoX functions used for survey estimation.
 URL: https://github.com/StoXProject/RstoxBase
 BugReports: https://github.com/StoXProject/RstoxBase/issues
@@ -47,7 +47,7 @@ Imports:
     jsonlite (>= 1.6),
     lwgeom (>= 0.2-0),
     maps (>= 0.2-0),
-    RstoxData (>= 1.10.2-9010),
+    RstoxData (>= 2.0.1-9001),
     sf (>= 0.9.0),
     stringi (>= 1.4.0),
     units (>= 0.7),
@@ -56,4 +56,4 @@ Suggests:
     tinytest (>= 1.2.0)
 Additional_repositories: 
     https://stoxproject.github.io/repo
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2

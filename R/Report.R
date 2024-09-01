@@ -29,6 +29,14 @@ ReportSuperIndividuals <- function(
     FractionOverVariable = character()
 ) 
 {
+    # Error if TargetVariable is not given:
+    if(!length(TargetVariable)) {
+        stop("TargetVariable must be given!")
+    }
+    
+    # Get the ReportFunction:
+    ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
+    
     # Issue a warning if RemoveMissingValues = TRUE:
     if(isTRUE(RemoveMissingValues) && any(is.na(SuperIndividualsData[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
@@ -75,7 +83,7 @@ ReportSuperIndividuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param DensityUnit The unit to use for the \code{Density}. See subset(RstoxData::StoxUnits, quantity == "area_number_density") for possible units (use the shortname in the \code{DensityUnit}).
+#' @param DensityUnit The unit to use for the \code{Density}. Run the following in R for possible units: subset(RstoxData::StoxUnits, quantity == "area_number_density", select = "shortname").
 #' 
 #' @return
 #' A \code{\link{ReportDensityData}} object.
@@ -100,8 +108,11 @@ ReportDensity <- function(
     # Only Density is relevant here:
     TargetVariable <- "Density"
     
+    # Get the ReportFunction:
+    ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
+    
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(DensityData[[TargetVariable]]))) {
+    if(isTRUE(RemoveMissingValues) && any(is.na(DensityData$Data[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
@@ -168,9 +179,12 @@ ReportQuantity <- function(
 ) 
 {
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(QuantityData[[TargetVariable]]))) {
+    if(isTRUE(RemoveMissingValues) && any(is.na(QuantityData$Data[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
+    
+    # Get the ReportFunction:
+    ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
     
     QuantityData$Data[[TargetVariable]] <- setUnitRstoxBase(
         QuantityData$Data[[TargetVariable]], 
@@ -279,7 +293,9 @@ aggregateBaselineDataOneTable <- function(
             ReportFunction = fun, 
             GroupingVariables = denominatorGroupingVariables, 
             InformationVariables = InformationVariables, 
-            na.rm = na.rm, 
+            # Changed this to TRUE, since we may get all NAs unless, and the important thing is to keep NAs in the numerator:
+            #na.rm = na.rm, 
+            na.rm = TRUE, 
             padWithZerosOn = padWithZerosOn, 
             Specification = Specification, 
             uniqueGroupingVariablesToKeep = uniqueGroupingVariablesToKeep
@@ -779,5 +795,92 @@ filterTable <- function(table, filter = character()) {
     
     return(table)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##################################################
+##################################################
+#' Report PreySpeciesCategoryCatchData
+#' 
+#' Reports the sum, mean or other functions on a variable of the \code{\link{PreySpeciesCategoryCatchData}}.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams general_report_arguments
+#' @param TotalPreyCatchWeightUnit The unit to use for the \code{TotalPreyCatchWeight}. Run the following in R for possible units: subset(RstoxData::StoxUnits, quantity == "mass", select = "shortname").
+#' 
+#' @return
+#' A \code{\link{ReportPreySpeciesCategoryCatchData}} object.
+#' 
+#' @export
+#' 
+ReportPreySpeciesCategoryCatch <- function(
+    PreySpeciesCategoryCatchData, 
+    TotalPreyCatchWeightUnit = character(), 
+    #TargetVariable = character(), 
+    ReportFunction = getReportFunctions(use = "Baseline"), 
+    GroupingVariables = character(), 
+    InformationVariables = character(), 
+    Filter = character(), 
+    RemoveMissingValues = FALSE, 
+    WeightingVariable = character(), 
+    ConditionOperator = character(), 
+    ConditionValue = character(), 
+    FractionOverVariable = character()
+) 
+{
+    # Only Density is relevant here:
+    TargetVariable <- "TotalPreyCatchWeight"
+    
+    # Issue a warning if RemoveMissingValues = TRUE:
+    if(isTRUE(RemoveMissingValues) && any(is.na(PreySpeciesCategoryCatchData[[TargetVariable]]))) {
+        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
+    }
+    
+    PreySpeciesCategoryCatchData[[TargetVariable]] <- setUnitRstoxBase(
+        PreySpeciesCategoryCatchData[[TargetVariable]], 
+        dataType =  "PreySpeciesCategoryCatchData", 
+        variableName = TargetVariable, 
+        unit = TotalPreyCatchWeightUnit
+    )
+    
+    output <- aggregateBaselineDataOneTable(
+        stoxData = PreySpeciesCategoryCatchData, 
+        TargetVariable = TargetVariable, 
+        ReportFunction = ReportFunction, 
+        GroupingVariables = GroupingVariables, 
+        InformationVariables = InformationVariables, 
+        na.rm = RemoveMissingValues, 
+        Specification = list(
+            WeightingVariable = WeightingVariable,
+            ConditionOperator = ConditionOperator, 
+            ConditionValue = ConditionValue, 
+            FractionOverVariable = FractionOverVariable
+        )
+    )
+    
+    if(RstoxData::hasUnit(PreySpeciesCategoryCatchData[[TargetVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(PreySpeciesCategoryCatchData[[TargetVariable]], property = "shortname")
+        output <- cbind(output, Unit = unit)
+    }
+    
+    output <- filterTable(output, filter = Filter)
+    
+    return(output)
+}
+
+
+
+
 
 

@@ -90,7 +90,7 @@ Individuals <- function(
     QuantityType <- RstoxData::match_arg_informative(QuantityType)
     
     # Merge StoxBtiotic:
-    MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData)
+    MergeStoxBioticData <- RstoxData::MergeStoxBiotic(StoxBioticData, TargetTable = "Individual")
     
     # Get the resolution variables of QuantityData:
     abundanceResolutionVariables <- getResolutionVariables("QuantityData")

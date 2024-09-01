@@ -1,3 +1,11 @@
+# RstoxData v2.0.1-9001  (2024-09-01)
+* Added functions PreySpeciesCategoryCatch and ReportPreySpeciesCategoryCatch.
+* Added the ReportFunction "number", "fractionOfOccurrence" and "fractionOfSum".
+* Fixed bug where possible values where not available for DensityUnit in ReportDensity().
+* Changed error to something sensible when ReportFunction or TargetVariable are empty in ReportDensity().
+* Added option of defining primaryColumnOrder and whether to removeStoXKeys in formatOutput().
+
+
 # RstoxBase v1.11.4-9014  (2024-07-02)
 * Corrected and simplified documentation of AssignmentLengthDistribution.
 * Removed stray NumberOfAssignedHauls.
