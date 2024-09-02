@@ -35,8 +35,8 @@ PreySpeciesCategoryCatch <- function(StoxBioticData) {
     PreySpeciesCategoryCatchData <- unique(PreySpeciesCategoryCatchData, by = sumBy)
     
     
-    # Add PreySpeciesCategoryCatchWeight:
-    PreySpeciesCategoryCatchData[, PreySpeciesCategoryCatchWeight := 1]
+    # Add PreySpeciesCategoryCatchWeightingFactor:
+    PreySpeciesCategoryCatchData[, PreySpeciesCategoryCatchWeightingFactor := 1]
     
     # Discard the variables in the Sample table, since we have summed over samples:
     PreySpeciesCategoryCatchData[, (preySampleNamesToRemove) := NULL]

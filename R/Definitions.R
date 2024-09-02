@@ -213,7 +213,7 @@ initiateRstoxBase <- function(){
             ),
             verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
             verticalLayerDimension = NULL, 
-            weighting = "PreySpeciesCategoryCatchWeight", 
+            weighting = "PreySpeciesCategoryCatchWeightingFactor", 
             other = NULL
         ), 
         
