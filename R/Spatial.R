@@ -806,7 +806,7 @@ polygonArea_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
     # Re-project for equal area projection, using the centroid of the multipolygon:
     
     # rgeos is retiring, so we use sf instead to get the centroid:
-    centroid <- getCentroid(stratumPolygon, iterativeCentroidCalculation = !useLonLatCentroid) 
+    centroid <- getCentroid(stratumPolygon, iterativeCentroidCalculation = !useLonLatCentroid)
     
     #centroid <- rgeos::gCentroid(stratumPolygon)@coords
     laea.CRS <- paste0(

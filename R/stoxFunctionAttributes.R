@@ -1343,6 +1343,13 @@ stoxFunctionAttributes <- list(
                 getFunctionArgumentHierarchyForSpcificationParameters(
                     use = "Baseline", 
                     functionName = "ReportFunction"
+                ), 
+                list(
+                    TargetVariableUnit = list(
+                        ReportFunction = function(functionArguments) {
+                            !startsWith(functionArguments$ReportFunction, "fractionOf")
+                        }
+                    )
                 )
             )
         ), 
@@ -1369,6 +1376,13 @@ stoxFunctionAttributes <- list(
                 getFunctionArgumentHierarchyForSpcificationParameters(
                     use = "Baseline", 
                     functionName = "ReportFunction"
+                ), 
+                list(
+                    TargetVariableUnit = list(
+                        ReportFunction = function(functionArguments) {
+                            !startsWith(functionArguments$ReportFunction, "fractionOf")
+                        }
+                    )
                 )
             )
         ), 
@@ -1395,6 +1409,13 @@ stoxFunctionAttributes <- list(
                 getFunctionArgumentHierarchyForSpcificationParameters(
                     use = "Baseline", 
                     functionName = "ReportFunction"
+                ), 
+                list(
+                    DensityUnit = list(
+                        ReportFunction = function(functionArguments) {
+                            !startsWith(functionArguments$ReportFunction, "fractionOf")
+                        }
+                    )
                 )
             )
         ), 
@@ -1408,7 +1429,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "ReportSpeciesCategoryCatchData", 
         functionParameterFormat = list(
-            ReportVariableUnit = "reportVariableUnit_ReportSpeciesCategoryCatch"
+            TargetVariableUnit = "targetVariableUnit_ReportSpeciesCategoryCatch"
         )
     ), 
     
@@ -1431,6 +1452,13 @@ stoxFunctionAttributes <- list(
                 getFunctionArgumentHierarchyForSpcificationParameters(
                     use = "Baseline", 
                     functionName = "ReportFunction"
+                ), 
+                list(
+                    TargetVariableUnit = list(
+                        ReportFunction = function(functionArguments) {
+                            !startsWith(functionArguments$ReportFunction, "fractionOf")
+                        }
+                    )
                 )
             )
         ), 
@@ -2344,14 +2372,14 @@ processPropertyFormats <- list(
     
     
     
-    reportVariableUnit_ReportSpeciesCategoryCatch = list(
+    targetVariableUnit_ReportSpeciesCategoryCatch = list(
         class = "single", 
-        title = "Select unit for the ReportVariable", 
-        possibleValues = function(ReportVariable) {
+        title = "Select unit for the TargetVariable", 
+        possibleValues = function(TargetVariable) {
             dataType <- "SpeciesCategoryCatchData"
-            quantity <- getBaseUnit(dataType = dataType, variableName = ReportVariable, element = "quantity")
+            quantity <- getBaseUnit(dataType = dataType, variableName = TargetVariable, element = "quantity")
             if(!length(quantity) || is.na(quantity)) {
-                warning("StoX: No units defined for the variable ", ReportVariable, " of datatype ", dataType)
+                warning("StoX: No units defined for the variable ", TargetVariable, " of datatype ", dataType)
                 list()
             }
             else {

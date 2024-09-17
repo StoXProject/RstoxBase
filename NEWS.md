@@ -1,3 +1,8 @@
+# RstoxData v2.0.1-9002  (2024-09-17)
+* Renamed ReportVariable to TargetVariable and ReportVariableUnit to TargetVariableUnit in ReportSpeciesCategoryCatch() for consistency with other report functions.
+* Added TargetVariable and TargetVariableUnit in ReportPreySpeciesCategoryCatch().
+
+
 # RstoxData v2.0.1-9001  (2024-09-01)
 * Added functions PreySpeciesCategoryCatch and ReportPreySpeciesCategoryCatch.
 * Added the ReportFunction "number", "fractionOfOccurrence" and "fractionOfSum".
@@ -36,7 +41,7 @@
 * Added documentation of ReportFunctions.
 * Added the exported getFunctionArgumentHierarchyForSpcificationParameters() used in stoxFunctionAttributes.
 * Fixed report functions number(), fractionOfOccurrence() and fractionOfSum().
-* Fixed bug where IndividualAge was not avaiable as TargetVariable in reports (due to class integer, which was not accounted for).
+* Fixed bug where IndividualAge was not available as TargetVariable in reports (due to class integer, which was not accounted for).
 
 
 # RstoxBase v1.11.4-9007  (2024-04-19)
@@ -167,7 +172,7 @@
 
 
 # RstoxBase v1.10.3 (2022-11-21)
-* Added the parameter TargetVariableUnit in ReportSuperIndividuals() and ReportQuantity(), DensityUnit in ReportDensity(), and ReportVariableUnit in ReportSpeciesCategoryCatch(), which all acn be used to set the units for the report.
+* Added the parameter TargetVariableUnit in ReportSuperIndividuals() and ReportQuantity(), DensityUnit in ReportDensity(), and ReportVariableUnit in ReportSpeciesCategoryCatch(), which all can be used to set the units for the report.
 
 
 # RstoxBase v1.10.2 (2022-10-31)

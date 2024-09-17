@@ -364,6 +364,13 @@ backwardCompatibility_RstoxBase <- list(
             functionName = "ReportQuantity", 
             modelName = "report", 
             parameterName = "FractionOverVariable"
+        ), 
+        list(
+            changeVersion = "2.0.1-9002", 
+            functionName = "ReportPreySpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "TargetVariable", 
+            parameterValue = "TotalPreyCatchWeight"
         )
     ),  
     
@@ -416,6 +423,27 @@ backwardCompatibility_RstoxBase <- list(
             modelName = "baseline", 
             parameterName = "AbundanceData",
             newParameterName = "QuantityData"
+        ), 
+        list(
+            changeVersion = "2.0.1-9002", 
+            functionName = "ReportSpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "ReportVariable",
+            newParameterName = "TargetVariable"
+        ), 
+        list(
+            changeVersion = "2.0.1-9002", 
+            functionName = "ReportSpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "ReportVariableUnit",
+            newParameterName = "TargetVariableUnit"
+        ), 
+        list(
+            changeVersion = "2.0.1-9002", 
+            functionName = "ReportPreySpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "TotalPreyCatchWeightUnit",
+            newParameterName = "TargetVariableUnit"
         )
     ),  
     
