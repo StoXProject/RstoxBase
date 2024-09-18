@@ -6,7 +6,8 @@
 \usage{
 ReportPreySpeciesCategoryCatch(
   PreySpeciesCategoryCatchData,
-  TotalPreyCatchWeightUnit = character(),
+  TargetVariable = c("TotalPreyCatchWeight", "TotalPreyCatchNumber"),
+  TargetVariableUnit = character(),
   ReportFunction = getReportFunctions(use = "Baseline"),
   GroupingVariables = character(),
   InformationVariables = character(),
@@ -21,7 +22,9 @@ ReportPreySpeciesCategoryCatch(
 \arguments{
 \item{PreySpeciesCategoryCatchData}{The \code{\link{PreySpeciesCategoryCatchData}} data.}
 
-\item{TotalPreyCatchWeightUnit}{The unit to use for the \code{TotalPreyCatchWeight}. Run the following in R for possible units: subset(RstoxData::StoxUnits, quantity == "mass", select = "shortname").}
+\item{TargetVariable}{The variable to report.}
+
+\item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).}
 
 \item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
 

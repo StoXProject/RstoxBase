@@ -643,8 +643,8 @@ getReportFunctionElementByFunctionName <- function(x, element) {
 #' Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 #' 
 #' @inheritParams ModelData
-#' @param ReportVariable The column to report.
-#' @param ReportVariableUnit The unit to use for the \code{ReportVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{ReportVariableUnit}).
+#' @param TargetVariable The column to report.
+#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).
 #' 
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLength for each IndiivdualAge and Stratum.
 #' 
@@ -655,12 +655,12 @@ getReportFunctionElementByFunctionName <- function(x, element) {
 #' 
 ReportSpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData, 
-    ReportVariable = c("TotalCatchNumber", "TotalCatchWeight"), 
-    ReportVariableUnit = character()
+    TargetVariable = c("TotalCatchWeight", "TotalCatchNumber"), 
+    TargetVariableUnit = character()
 ){
     
-    # Get the ReportVariable:
-    ReportVariable <- RstoxData::match_arg_informative(ReportVariable)
+    # Get the TargetVariable:
+    TargetVariable <- RstoxData::match_arg_informative(TargetVariable)
     
     # Warning if there are species categories which are empty string:
     categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
@@ -669,18 +669,18 @@ ReportSpeciesCategoryCatch <- function(
         warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")
     }
     
-    SpeciesCategoryCatchData[[ReportVariable]] <- setUnitRstoxBase(
-        SpeciesCategoryCatchData[[ReportVariable]], 
+    SpeciesCategoryCatchData[[TargetVariable]] <- setUnitRstoxBase(
+        SpeciesCategoryCatchData[[TargetVariable]], 
         dataType =  "SpeciesCategoryCatchData", 
-        variableName = ReportVariable, 
-        unit = ReportVariableUnit
+        variableName = TargetVariable, 
+        unit = TargetVariableUnit
     )
     
     # Create the table with species categories in the columns:
     ReportSpeciesCategoryCatchData <- data.table::dcast(
         SpeciesCategoryCatchData, 
         formula = Haul ~ get(categoryVariable), 
-        value.var = ReportVariable, 
+        value.var = TargetVariable, 
         fun.aggregate = sum
     )
     
@@ -699,8 +699,8 @@ ReportSpeciesCategoryCatch <- function(
         by = "Haul"
     )
     
-    if(RstoxData::hasUnit(SpeciesCategoryCatchData[[ReportVariable]], property = "shortname")) {
-        unit <- RstoxData::getUnit(SpeciesCategoryCatchData[[ReportVariable]], property = "shortname")
+    if(RstoxData::hasUnit(SpeciesCategoryCatchData[[TargetVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(SpeciesCategoryCatchData[[TargetVariable]], property = "shortname")
         ReportSpeciesCategoryCatchData <- cbind(ReportSpeciesCategoryCatchData, Unit = unit)
     }
     
@@ -817,7 +817,6 @@ filterTable <- function(table, filter = character()) {
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param TotalPreyCatchWeightUnit The unit to use for the \code{TotalPreyCatchWeight}. Run the following in R for possible units: subset(RstoxData::StoxUnits, quantity == "mass", select = "shortname").
 #' 
 #' @return
 #' A \code{\link{ReportPreySpeciesCategoryCatchData}} object.
@@ -826,8 +825,10 @@ filterTable <- function(table, filter = character()) {
 #' 
 ReportPreySpeciesCategoryCatch <- function(
     PreySpeciesCategoryCatchData, 
-    TotalPreyCatchWeightUnit = character(), 
-    #TargetVariable = character(), 
+    # No longer hard coding this to weight:
+    #TotalPreyCatchWeightUnit = character(), 
+    TargetVariable = c("TotalPreyCatchWeight", "TotalPreyCatchNumber"), 
+    TargetVariableUnit = character(),
     ReportFunction = getReportFunctions(use = "Baseline"), 
     GroupingVariables = character(), 
     InformationVariables = character(), 
@@ -839,8 +840,9 @@ ReportPreySpeciesCategoryCatch <- function(
     FractionOverVariable = character()
 ) 
 {
-    # Only Density is relevant here:
-    TargetVariable <- "TotalPreyCatchWeight"
+    # No longer hard coding this to weight:
+    ## Only Density is relevant here:
+    #TargetVariable <- "TotalPreyCatchWeight"
     
     # Issue a warning if RemoveMissingValues = TRUE:
     if(isTRUE(RemoveMissingValues) && any(is.na(PreySpeciesCategoryCatchData[[TargetVariable]]))) {
@@ -851,7 +853,7 @@ ReportPreySpeciesCategoryCatch <- function(
         PreySpeciesCategoryCatchData[[TargetVariable]], 
         dataType =  "PreySpeciesCategoryCatchData", 
         variableName = TargetVariable, 
-        unit = TotalPreyCatchWeightUnit
+        unit = TargetVariableUnit
     )
     
     output <- aggregateBaselineDataOneTable(
