@@ -29,7 +29,7 @@ NASC <- function(
     # Check that the input StoxAcousticData has the same ChannelReferenceType throughout:
     type <- getDataTypeDefinition(dataType = "NASCData", elements = "type", unlist = TRUE)
     ChannelReferenceType <- NASCData[[type]]
-    if(!allEqual(ChannelReferenceType, na.rm = TRUE) && NROW(ChannelReferenceType)) {
+    if(!allEqual(ChannelReferenceType, na.rm = TRUE) && NROW(NASCData)) {
         stop("The StoxAcousticData must have only one ", type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
     }
     

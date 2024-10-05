@@ -1,3 +1,10 @@
+# RstoxData v2.0.1-9003  (2024-10-17)
+* Added warning if there are duplicated StratumLayerIndividual in Individuals(). There may however be duplicated StratumLayerIndividual in SuperIndividuals(), e.g. when multiple Beam are used. Added support in imputation to tackle this.
+* Fixed bug when using DefinitionMethod = "PreDefined" in DefineAcousticPSU().
+* Added support for numeric sorting of plus groups in plots, so that 9 comes before 10+.
+* Fixed problem with selecting PointColor in PlotAcousticTrawlSurvey() in the GUI.
+
+
 # RstoxData v2.0.1-9002  (2024-09-17)
 * Renamed ReportVariable to TargetVariable and ReportVariableUnit to TargetVariableUnit in ReportSpeciesCategoryCatch() for consistency with other report functions.
 * Added TargetVariable and TargetVariableUnit in ReportPreySpeciesCategoryCatch().

@@ -136,6 +136,12 @@ Individuals <- function(
     # Add unique ID of the rows:
     IndividualsData <- IndividualsData[!is.na(Stratum) & !is.na(Layer) & !is.na(Individual), StratumLayerIndividual := paste(Stratum, Layer, Individual, sep = "-")]
     
+    # Give a warning if the StratumLayerIndividual is not unique, which must be a data error:
+    dupStratumLayerIndividual <- IndividualsData[, duplicated(StratumLayerIndividual)]
+    if(any(dupStratumLayerIndividual)) {
+        warning("There are duplicated combinations of Stratum, Layer and Individual, which is an indication of data errors.")
+    }
+    
     
     # Order the columns, but keep all columns. Also add the names of the MergeStoxBioticData as secondaryColumnOrder to tidy up by moving the Haul column (used as by in the merging) back into its original position:
     areKeys <- endsWith(names(MergeStoxBioticData), "Key")
@@ -721,6 +727,63 @@ ImputeSuperIndividuals <- function(
 
 
 ImputeDataByRandomSampling <- function(
+        data, 
+        imputeAtMissing = "IndividualAge", 
+        imputeByEqual = c("IndividualTotalLength", "SpeciesCategory"), 
+        seed = 1, 
+        columnNames = NULL, 
+        lengthInterval = numeric(), 
+        levels = c(
+            "Haul", 
+            "Stratum", 
+            "Survey"
+        )
+) {
+    
+    # Get the data and add the RowIndex for use when identifying which rows to impute from:
+    dataCopy <- data.table::copy(data)
+    
+    
+    # If there are duplicated StratumLayerIndividual we need to impute in a non-duplicated subset of the data, and then merge the imputed values into the full table:
+    if(dataCopy[, any(duplicated(stats::na.omit(StratumLayerIndividual)))]) {
+        dataCopy_nonDuplicatedStratumLayerIndividual <- subset(dataCopy, !duplicated(StratumLayerIndividual))
+        
+        dataCopy_nonDuplicatedStratumLayerIndividual <- ImputeDataByRandomSampling_nonDuplicatedStratumLayerIndividual(
+            dataCopy_nonDuplicatedStratumLayerIndividual, 
+            imputeAtMissing = imputeAtMissing, 
+            imputeByEqual = imputeByEqual, 
+            seed = seed, 
+            columnNames = columnNames, 
+            lengthInterval = lengthInterval, 
+            levels = levels
+        )
+        
+        dataCopy <- merge(dataCopy[, !..columnNames], subset(dataCopy_nonDuplicatedStratumLayerIndividual, select = c(
+            "StratumLayerIndividual", 
+            "ReplaceLevel", 
+            "ReplaceStratumLayerIndividual", 
+            columnNames
+        )))
+    }
+    else {
+        dataCopy <- ImputeDataByRandomSampling_nonDuplicatedStratumLayerIndividual(
+        dataCopy, 
+        imputeAtMissing = imputeAtMissing, 
+        imputeByEqual = imputeByEqual, 
+        seed = seed, 
+        columnNames = columnNames, 
+        lengthInterval = lengthInterval, 
+        levels = levels
+        )
+    }
+    
+    
+    return(dataCopy)
+}
+
+
+
+ImputeDataByRandomSampling_nonDuplicatedStratumLayerIndividual <- function(
     data, 
     imputeAtMissing = "IndividualAge", 
     imputeByEqual = c("IndividualTotalLength", "SpeciesCategory"), 
@@ -739,14 +802,14 @@ ImputeDataByRandomSampling <- function(
     #RowIndex <- seq_len(nrow(dataCopy))
     #dataCopy[, RowIndex := ..RowIndex]
     
-    # If specified, regroup the length intervals:
-    if(length(lengthInterval) == 1L) {
-        dataCopy <- RegroupLengthData(
-            dataCopy, 
-            lengthInterval = lengthInterval
-        )
-    }
-    
+    # This was an arrempt to regroup the length intervals so that the imputation can be done on coarser intervals to avoid too much imputation over long distances (Stratum and Survey levels). However the implementation is not finished:
+    ## If specified, regroup the length intervals:
+    #if(length(lengthInterval) == 1L) {
+    #    dataCopy <- RegroupLengthData(
+    #        dataCopy, 
+    #        lengthInterval = lengthInterval
+    #    )
+    #}
     
     # Introduce an Individual index for use in the sorted sampling, as a factor sorted as "en_US_POSIX":
     dataCopy[, StratumLayerIndividualIndex := as.numeric(factor(StratumLayerIndividual, levels = stringi::stri_sort(StratumLayerIndividual, locale = "en_US_POSIX")))]

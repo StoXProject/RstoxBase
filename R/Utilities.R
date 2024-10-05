@@ -1759,9 +1759,30 @@ factorNAfirst <- function(x){
         x <- rep("NA", length(x))
     }
     
-    levels <- sort(levels, na.last = FALSE)
+    # If there are levels ending with "+", this is an indication that a plus group (e.g. age) is given, so we remove the "+" and try as numeric:
+    if(any(endsWith(levels, "+"))) {
+        levels_sans_plus <- convertToNumericIfPossible(sub("+", "", levels, fixed = TRUE))
+        levels = levels[order(levels_sans_plus)]
+    }
+    else {
+        levels <- sort(levels, na.last = FALSE)
+    }
+    
     
     factor(x, levels = levels, exclude = NULL)
+}
+
+
+
+convertToNumericIfPossible <- function(x) {
+    numberOfNAs <- sum(is.na(x))
+    xnumeric <- suppressWarnings(as.numeric(x))
+    if(sum(is.na(xnumeric)) > numberOfNAs) {
+        return(x)
+    }
+    else {
+        return(xnumeric)
+    }
 }
 
 
