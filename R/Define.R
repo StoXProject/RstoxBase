@@ -160,17 +160,21 @@ DefinePSU <- function(
                 Stratum_PSU <- getStratumOfSSUs_SF(SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel)#, 
             #    msg = FALSE
             #)
+                
+            # Define the processData:
+            processData <- list(
+                Stratum_PSU = Stratum_PSU, 
+                SSU_PSU = SSU_PSU
+            )
         }
         # If DefinitionMethod = "PreDefined" use times to interpret the PSUs (only used for acoustic PSUs):
         else if(grepl("PreDefined", DefinitionMethod, ignore.case = TRUE)) {
             
             processData <- getPSUProcessDataFromPSUByTime(
-                PSUByTime, 
+                PSUProcessData$PSUByTime, 
                 MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
                 PSUType = PSUType
             )
-            
-            
         }
         
         #else if(grepl("Interval", DefinitionMethod, ignore.case = TRUE)) {
@@ -209,6 +213,12 @@ DefinePSU <- function(
                 PSU = NA_character_
             )
             Stratum_PSU <- data.table::data.table()
+            
+            # Define the processData:
+            processData <- list(
+                Stratum_PSU = Stratum_PSU, 
+                SSU_PSU = SSU_PSU
+            )
         }
         # Manual implies to use the existing process data, or create an empty set if not present:
         else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
@@ -225,16 +235,16 @@ DefinePSU <- function(
                 )
                 Stratum_PSU <- data.table::data.table()
             }
+            
+            # Define the processData:
+            processData <- list(
+                Stratum_PSU = Stratum_PSU, 
+                SSU_PSU = SSU_PSU
+            )
         }
         else {
             stop("Inavlid DefinitionMethod")
         }
-        
-        # Define the processData:
-        processData <- list(
-            Stratum_PSU = Stratum_PSU, 
-            SSU_PSU = SSU_PSU
-        )
     }
     
     
@@ -1175,17 +1185,8 @@ DefineBioticAssignment <- function(
             return(processData$BioticAssignment)
         }
         
-        # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
-        newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, subset(processData$BioticAssignment, !is.na(Haul))$PSU)
-        if(length(newPSUs)) {
-            warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls. This may not be a problem if there is no NASC in those PSUs. Otherwise, please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
-        }
-        
-        # Also issue a warning for assignment to non-existing acoustic PSUs:
-        nonExistingPSUs <- setdiff(processData$BioticAssignment$PSU, AcousticPSU$Stratum_PSU$PSU)
-        if(length(nonExistingPSUs)) {
-            warning("StoX: There are assignments to the following non-existing acoustic PSUs. Please remove these assignments, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", nonExistingPSUs, collapse = "\n"))
-        }
+        # Check the BioticAssignment:
+        processData$BioticAssignment <- DefineBioticAssignment_Warnings(processData$BioticAssignment, AcousticPSU) 
         
         # Special action since we have included Layer in the BioticAssignment but have not yet opened for the possibility to assign differently to different layers. Re-add the Layer column:
         BioticAssignment <- addLayerToBioticAssignmentAndFormat(
@@ -1417,6 +1418,9 @@ DefineBioticAssignment <- function(
     #Layer_PSU <- data.table::CJ(Layer = AcousticLayer$Layer, PSU = unique(BioticAssignment$PSU))
     #BioticAssignment <- merge(BioticAssignment, Layer_PSU, all = TRUE, by = "PSU", allow.cartesian = TRUE)
     
+    # Check the BioticAssignment:
+    BioticAssignment <- DefineBioticAssignment_Warnings(BioticAssignment, AcousticPSU) 
+    
     BioticAssignment <- addLayerToBioticAssignmentAndFormat(
         BioticAssignment = BioticAssignment, 
         LayerDefinition = LayerDefinition, 
@@ -1429,6 +1433,33 @@ DefineBioticAssignment <- function(
     
     return(BioticAssignment)
 }
+
+
+
+DefineBioticAssignment_Warnings <- function(BioticAssignment, AcousticPSU) {
+    # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
+    newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, subset(BioticAssignment, !is.na(Haul))$PSU)
+    if(length(newPSUs)) {
+        warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls. This may not be a problem if there is no NASC in those PSUs. Otherwise, please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
+    }
+    
+    # Also issue a warning for assignment to non-existing acoustic PSUs:
+    nonExistingPSUs <- setdiff(BioticAssignment$PSU, AcousticPSU$Stratum_PSU$PSU)
+    if(length(nonExistingPSUs)) {
+        warning("StoX: There are assignments to the following non-existing acoustic PSUs. Please remove these assignments, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", nonExistingPSUs, collapse = "\n"))
+    }
+    
+    # Give a warning for and remove missing Haul:
+    missingHaul <- BioticAssignment[, is.na(Haul)]
+    if(any(missingHaul)) {
+        warning("StoX: There are assignments to missing Hauls. These were removed.")
+        BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
+    }
+    
+    return(BioticAssignment)
+}
+
+
 
 
 notAllStationsInStratum_Warning <- function(BioticAssignment, StoxBioticData) {

@@ -892,8 +892,8 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "PlotAcousticTrawlSurveyData", 
         functionParameterFormat = list(
-            LayerTable = "layerTable"#, 
-            #PointColor = "pointColor"
+            LayerTable = "layerTable", 
+            PointColor = "pointColor"
         ),
         functionArgumentHierarchy = list(
             # Options for the colors:
@@ -2348,24 +2348,24 @@ processPropertyFormats <- list(
     
     
     pointColor = list(
-        class = "single", 
-        title = "Select color/color scale for the points", 
-        possibleValues = function(NASCData, SumNASCData, ColorVariable) {
-            if(missing(SumNASCData)) {
-                var <- NASCData[[ColorVariable]]
-            }
-            else {
-                var <- SumNASCData$Data[[ColorVariable]]
-            }
-            if(isCategorical(var)) {
-                PointColor <- list()
-            }
-            else {
-                PointColor <- "combined.color"
-            }
-            
-            return(PointColor)
-        }
+        class = "vector", 
+        title = "Select color/vector of colors/color scale function for the points"#    , 
+        #possibleValues = function(NASCData, SumNASCData, ColorVariable) {
+        #    if(missing(SumNASCData)) {
+        #        var <- NASCData[[ColorVariable]]
+        #    }
+        #    else {
+        #        var <- SumNASCData$Data[[ColorVariable]]
+        #    }
+        #    if(isCategorical(var)) {
+        #        PointColor <- list()
+        #    }
+        #    else {
+        #        PointColor <- "combined.color"
+        #    }
+        #    
+        #    return(PointColor)
+        #}
     ), 
     
     
