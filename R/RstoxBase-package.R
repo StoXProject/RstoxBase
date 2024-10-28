@@ -39,8 +39,9 @@ utils::globalVariables(c(
 	 "backscatteringCrossSection", "crossSection", "distance", "ggtitle", "haulWeightFactor",
 	 "imputeSeed", "includeintotal", "individualNumber", "individualWeightFactor", "inside",
 	 "insideRadius", "intervalIndex", "midIndividualTotalLength", "minDistance",
-	 "missingAssignment", "missingSpecies", "numberOfIndividuals", "numberOfSubSamples",
-	 "polygonAreaSP_simple", "raisingFactor", "representativeBackscatteringCrossSection",
+	 "missingAssignment", "missingSpecies", "numberOfBeams", "numberOfIndividuals",
+	 "numberOfSubSamples", "polygonAreaSP_simple", "raisingFactor",
+	 "representativeBackscatteringCrossSection",
 	 "representativeBackscatteringCrossSectionNormalized", "setUnit", "sumArea",
 	 "sumIndividualWeightFactor", "sumWeightedNumber", "temporary_denominator_column_name",
 	 "temporary_numerator_column_name", "x", "y"))
