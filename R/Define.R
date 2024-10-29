@@ -1669,6 +1669,7 @@ getSquaredRelativeDiff <- function(LogData, HaulData, variableName, axisLength) 
 #'
 #'\emph{MinNumberOfEDSUs} The minimum number of EDSUs to use, effectively expanding the radius to cover this number of EDSUs if an insufficient number of EDSUs is found using the specified radius
 #'  
+#' Note that the AcousticDensity WeightingMethod is time consuming, as distances are calculated to all EDSUs and the acoustic density is calculated for each assigned Haul.
 #' 
 #' @return
 #' An object of StoX data type \code{\link{BioticAssignment}}.

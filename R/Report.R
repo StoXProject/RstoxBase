@@ -411,15 +411,16 @@ aggregateBaselineDataOneTableSingleFunction <- function(
         #gc()
         
         # Convert the NAs to 0 for the abundance and biomass columns:
-        abudanceVariables <- setdiff(names(stoxData), paddingVariables)
+        possibleAbudanceVariables <- setdiff(names(stoxData), paddingVariables)
         # Convert NA to 0 only for Biomass or Abundance:
-        abudanceVariableKeys <- getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
-        isAbudanceVariable <- rowSums(outer(abudanceVariables, abudanceVariableKeys, startsWith)) > 0
-        abudanceVariables <- abudanceVariables[isAbudanceVariable]
+        abudanceVariableKeys <- getRstoxBaseDefinitions("dataVariables")
+            
+        isAbudanceVariable <- rowSums(outer(possibleAbudanceVariables, abudanceVariableKeys, startsWith)) > 0
+        abudanceVariables <- possibleAbudanceVariables[isAbudanceVariable]
         
         if(length(abudanceVariables)) {
             # Set all NA to 0, both those from the original stoxData and those introduced by the grid:
-            replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
+            replaceNAByReference(stoxData, cols = abudanceVariables, replacement = list(numeric = 0, integer = 0L))
             # Restore the NAs from the original stoxData:
             stoxData[areNA, eval(TargetVariable) := NA]
         }
@@ -821,8 +822,6 @@ filterTable <- function(table, filter = character()) {
 #' @return
 #' A \code{\link{ReportPreySpeciesCategoryCatchData}} object.
 #' 
-#' @export
-#' 
 ReportPreySpeciesCategoryCatch <- function(
     PreySpeciesCategoryCatchData, 
     # No longer hard coding this to weight:
@@ -840,9 +839,7 @@ ReportPreySpeciesCategoryCatch <- function(
     FractionOverVariable = character()
 ) 
 {
-    # No longer hard coding this to weight:
-    ## Only Density is relevant here:
-    #TargetVariable <- "TotalPreyCatchWeight"
+    # Export this function when prey is official
     
     # Issue a warning if RemoveMissingValues = TRUE:
     if(isTRUE(RemoveMissingValues) && any(is.na(PreySpeciesCategoryCatchData[[TargetVariable]]))) {

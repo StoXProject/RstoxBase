@@ -14,8 +14,6 @@
 #' @inheritParams MeanLengthDistribution
 #' @inheritParams DefineBioticPSU
 #' 
-#' @export
-#' 
 AddPSUToPreySpeciesCategoryCatch <- function(
         PreySpeciesCategoryCatchData,
         # PSU: 
@@ -30,6 +28,8 @@ AddPSUToPreySpeciesCategoryCatch <- function(
         # General:
         StratumPolygon = NULL
 ) {
+    
+    # Export this function when prey is official
     
     # Convert the PSUDefinitionMethod to "Identity" if "EDSUToPSU":
     PSUDefinitionMethod <- RstoxData::match_arg_informative(PSUDefinitionMethod)

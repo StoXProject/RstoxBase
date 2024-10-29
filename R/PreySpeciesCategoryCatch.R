@@ -6,9 +6,9 @@
 #' 
 #' @inheritParams ModelData
 #' 
-#' @export
-#' 
 PreySpeciesCategoryCatch <- function(StoxBioticData) {
+    
+    # Export this function when prey is official
     
     # Store the sample names to remove them as columns in the end of the function:
     preySampleNames <- names(StoxBioticData$PreySample)
