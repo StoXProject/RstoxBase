@@ -964,14 +964,6 @@ StoxDataStartMiddleStopDateTime <- function(
 #' 
 #' @export
 #' 
-#replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
-#    if(!length(cols)) {
-#        cols <- names(DT)
-#    }
-#    for (j in cols) {
-#        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
-#    }
-#}
 replaceNAByReference <- function(DT, cols = NULL, replacement = list(numeric = 0, integer = 0L)) {
     if(length(cols) == 1 && is.na(cols)) {
         cols <- names(DT)
@@ -1760,7 +1752,7 @@ factorNAfirst <- function(x){
     }
     
     # If there are levels ending with "+", this is an indication that a plus group (e.g. age) is given, so we remove the "+" and try as numeric:
-    if(any(endsWith(levels, "+"))) {
+    if(any(endsWith(levels, "+"), na.rm = TRUE)) {
         levels_sans_plus <- convertToNumericIfPossible(sub("+", "", levels, fixed = TRUE))
         levels = levels[order(levels_sans_plus)]
     }

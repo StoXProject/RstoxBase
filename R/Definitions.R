@@ -198,24 +198,24 @@ initiateRstoxBase <- function(){
             )
         ), 
         
-        # PreySpeciesCategoryIndividualCatchData:
-        PreySpeciesCategoryCatchData = list(
-            horizontalResolution = "Station", 
-            verticalResolution = "Individual", 
-            obserationVariable = NULL,
-            categoryVariable = "PreySpeciesCategory", 
-            groupingVariables = "PreyCatchFractionWeightResolution", 
-            data = c(
-                Weight = c(
-                    "TotalPreyCatchWeight", 
-                    "TotalPreyCatchNumber"
-                )
-            ),
-            verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
-            verticalLayerDimension = NULL, 
-            weighting = "PreySpeciesCategoryCatchWeightingFactor", 
-            other = NULL
-        ), 
+        ## PreySpeciesCategoryIndividualCatchData:
+        #PreySpeciesCategoryCatchData = list(
+        #    horizontalResolution = "Station", 
+        #    verticalResolution = "Individual", 
+        #    obserationVariable = NULL,
+        #    categoryVariable = "PreySpeciesCategory", 
+        #    groupingVariables = "PreyCatchFractionWeightResolution", 
+        #    data = c(
+        #        Weight = c(
+        #            "TotalPreyCatchWeight", 
+        #            "TotalPreyCatchNumber"
+        #        )
+        #    ),
+        #    verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
+        #    verticalLayerDimension = NULL, 
+        #    weighting = "PreySpeciesCategoryCatchWeightingFactor", 
+        #    other = NULL
+        #), 
         
         
         AssignmentLengthDistributionData = list(
@@ -381,6 +381,14 @@ initiateRstoxBase <- function(){
         #)
     )
     ####
+    
+    # Get the list of data variables, which are those that are stored as a vector of variable names in the "data" element of a table defined in dataTypeDefinition:
+    dataVariables <- unique(
+        c(
+            unlist(lapply(dataTypeDefinition, "[", "data")), 
+            unlist(lapply(dataTypeDefinition, function(x) x[["Data"]][["data"]]))
+        )
+    )
     
     #### Data type units: ####
     dataTypeUnits <- list(
@@ -1027,7 +1035,7 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
     
     # Order the rows:
     #data.table::setorder(table, na.last = TRUE)
-    RstoxData::setorderv_numeric(table, by = rowOrder, na.last = TRUE)
+    RstoxData::setorderv_numeric(table, by = rowOrder, split = c("-", "/"))
     
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
     data.table::setkey(table, NULL)

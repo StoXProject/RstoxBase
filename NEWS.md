@@ -1,16 +1,24 @@
-# RstoxData v2.0.1-9003  (2024-10-17)
-* Added warning if there are duplicated StratumLayerIndividual in Individuals(). There may however be duplicated StratumLayerIndividual in SuperIndividuals(), e.g. when multiple Beam are used. Added support in imputation to tackle this.
+# RstoxBase v2.0.1-9004  (2024-10-28)
+* Added a warning in NASC() for multiple Beam with the same frequency, which may lead to over-estimation.
+* Changed aggregateBaselineDataOneTableSingleFunction() used by aggregateBaselineDataOneTable() to pad with zeros for all "data" variables, as specified in the dataTypeDefinition.
+* Fixed bug in factorNAfirst() which failed when age plus group was not used.
+* Fixed bug in ReportBootstrap when an integer variables with missing values are reported (in which case replacing NA by 0 did not work).
+* Added splitting by both "-" and "/" in formatOutput to ensure correct sorting. This change should not affect any results through imputation as all known StoX project use only one SpeciesCategory in SuperIndividuals.
+* Temporarily hiding Prey functions.
+
+# RstoxBase v2.0.1-9003  (2024-10-17)
+* Added warning if there are duplicated StratumLayerIndividual in Individuals(). There may however be duplicated StratumLayerIndividual in SuperIndividuals(), e.g. when multiple Beam are used. Added support in imputation to tackle this and avoid errors such as "factor level [2316] is duplicated".
 * Fixed bug when using DefinitionMethod = "PreDefined" in DefineAcousticPSU().
 * Added support for numeric sorting of plus groups in plots, so that 9 comes before 10+.
 * Fixed problem with selecting PointColor in PlotAcousticTrawlSurvey() in the GUI.
 
 
-# RstoxData v2.0.1-9002  (2024-09-17)
+# RstoxBase v2.0.1-9002  (2024-09-17)
 * Renamed ReportVariable to TargetVariable and ReportVariableUnit to TargetVariableUnit in ReportSpeciesCategoryCatch() for consistency with other report functions.
 * Added TargetVariable and TargetVariableUnit in ReportPreySpeciesCategoryCatch().
 
 
-# RstoxData v2.0.1-9001  (2024-09-01)
+# RstoxBase v2.0.1-9001  (2024-09-01)
 * Added functions PreySpeciesCategoryCatch and ReportPreySpeciesCategoryCatch.
 * Added the ReportFunction "number", "fractionOfOccurrence" and "fractionOfSum".
 * Fixed bug where possible values where not available for DensityUnit in ReportDensity().
