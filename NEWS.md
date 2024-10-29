@@ -4,6 +4,7 @@
 * Fixed bug in factorNAfirst() which failed when age plus group was not used.
 * Fixed bug in ReportBootstrap when an integer variables with missing values are reported (in which case replacing NA by 0 did not work).
 * Added splitting by both "-" and "/" in formatOutput to ensure correct sorting. This change should not affect any results through imputation as all known StoX project use only one SpeciesCategory in SuperIndividuals.
+* Temporarily hiding Prey functions.
 
 # RstoxBase v2.0.1-9003  (2024-10-17)
 * Added warning if there are duplicated StratumLayerIndividual in Individuals(). There may however be duplicated StratumLayerIndividual in SuperIndividuals(), e.g. when multiple Beam are used. Added support in imputation to tackle this and avoid errors such as "factor level [2316] is duplicated".

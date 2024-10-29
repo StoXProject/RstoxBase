@@ -722,46 +722,46 @@ stoxFunctionAttributes <- list(
     
     
     #### Prey ####
-    PreySpeciesCategoryCatch = list(
-        functionType = "modelData", 
-        functionCategory = "baseline", 
-        functionOutputDataType = "PreySpeciesCategoryCatchData"
-    ), 
-    
-    AddPSUToPreySpeciesCategoryCatch = list(
-        functionType = "modelData", 
-        functionCategory = "baseline", 
-        functionOutputDataType = "PreySpeciesCategoryCatchData", 
-        functionParameterFormat = list(
-            SurveyTable = "surveyTable"
-        ), 
-        functionArgumentHierarchy = list(
-            # PSU: 
-            BioticPSU = list(
-                PSUDefinition = "FunctionInput"
-            ), 
-            PSUDefinitionMethod = list(
-                PSUDefinition = "FunctionParameter"
-            ), 
-            StratumPolygon = list(
-                PSUDefinitionMethod = "StationToPSU"
-            ), 
-            StratumPolygon = list(
-                SurveyDefinitionMethod = "Table"
-            ), 
-            # Survey:
-            Survey = list(
-                SurveyDefinition = "FunctionInput"
-            ), 
-            SurveyDefinitionMethod = list(
-                SurveyDefinition = "FunctionParameter"
-            ), 
-            SurveyTable = list(
-                SurveyDefinition = "FunctionParameter", 
-                SurveyDefinitionMethod = "Table"
-            )
-        )
-    ), 
+    #PreySpeciesCategoryCatch = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "PreySpeciesCategoryCatchData"
+    #), 
+    #
+    #AddPSUToPreySpeciesCategoryCatch = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "PreySpeciesCategoryCatchData", 
+    #    functionParameterFormat = list(
+    #        SurveyTable = "surveyTable"
+    #    ), 
+    #    functionArgumentHierarchy = list(
+    #        # PSU: 
+    #        BioticPSU = list(
+    #            PSUDefinition = "FunctionInput"
+    #        ), 
+    #        PSUDefinitionMethod = list(
+    #            PSUDefinition = "FunctionParameter"
+    #        ), 
+    #        StratumPolygon = list(
+    #            PSUDefinitionMethod = "StationToPSU"
+    #        ), 
+    #        StratumPolygon = list(
+    #            SurveyDefinitionMethod = "Table"
+    #        ), 
+    #        # Survey:
+    #        Survey = list(
+    #            SurveyDefinition = "FunctionInput"
+    #        ), 
+    #        SurveyDefinitionMethod = list(
+    #            SurveyDefinition = "FunctionParameter"
+    #        ), 
+    #        SurveyTable = list(
+    #            SurveyDefinition = "FunctionParameter", 
+    #            SurveyDefinitionMethod = "Table"
+    #        )
+    #    )
+    #), 
     ########
     
     
@@ -1431,41 +1431,41 @@ stoxFunctionAttributes <- list(
         functionParameterFormat = list(
             TargetVariableUnit = "targetVariableUnit_ReportSpeciesCategoryCatch"
         )
-    ), 
+    )#, 
     
     
-    ReportPreySpeciesCategoryCatch = list(
-        functionType = "modelData", 
-        functionCategory = "report", 
-        functionOutputDataType = "ReportPreySpeciesCategoryCatchData", 
-        # This is an example of using an expression to determine when to show a parameter:
-        functionParameterFormat = list(
-            GroupingVariables = "groupingVariables_ReportPreySpeciesCategoryCatch", 
-            InformationVariables = "informationVariables_ReportPreySpeciesCategoryCatch", 
-            TotalPreyCatchWeightUnit = "totalPreyCatchWeightUnit", 
-            WeightingVariable = "weightingVariable_ReportPreySpeciesCategoryCatch", 
-            FractionOverVariable = "fractionOverVariable", 
-            ConditionOperator = "conditionOperator"
-        ), 
-        functionArgumentHierarchy = expression(
-            c(
-                getFunctionArgumentHierarchyForSpcificationParameters(
-                    use = "Baseline", 
-                    functionName = "ReportFunction"
-                ), 
-                list(
-                    TargetVariableUnit = list(
-                        ReportFunction = function(functionArguments) {
-                            !startsWith(functionArguments$ReportFunction, "fractionOf")
-                        }
-                    )
-                )
-            )
-        ), 
-        functionParameterDefaults = list(
-            GroupingVariables = c("Survey", "PreySpeciesCategory")
-        )
-    )
+    #ReportPreySpeciesCategoryCatch = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "report", 
+    #    functionOutputDataType = "ReportPreySpeciesCategoryCatchData", 
+    #    # This is an example of using an expression to determine when to show a parameter:
+    #    functionParameterFormat = list(
+    #        GroupingVariables = "groupingVariables_ReportPreySpeciesCategoryCatch", 
+    #        InformationVariables = "informationVariables_ReportPreySpeciesCategoryCatch", 
+    #        TotalPreyCatchWeightUnit = "totalPreyCatchWeightUnit", 
+    #        WeightingVariable = "weightingVariable_ReportPreySpeciesCategoryCatch", 
+    #        FractionOverVariable = "fractionOverVariable", 
+    #        ConditionOperator = "conditionOperator"
+    #    ), 
+    #    functionArgumentHierarchy = expression(
+    #        c(
+    #            getFunctionArgumentHierarchyForSpcificationParameters(
+    #                use = "Baseline", 
+    #                functionName = "ReportFunction"
+    #            ), 
+    #            list(
+    #                TargetVariableUnit = list(
+    #                    ReportFunction = function(functionArguments) {
+    #                        !startsWith(functionArguments$ReportFunction, "fractionOf")
+    #                    }
+    #                )
+    #            )
+    #        )
+    #    ), 
+    #    functionParameterDefaults = list(
+    #        GroupingVariables = c("Survey", "PreySpeciesCategory")
+    #    )
+    #)
     
     
     #WriteStratumPolygon = list(
@@ -2208,53 +2208,53 @@ processPropertyFormats <- list(
     
     
     # ReportDensity: 
-    groupingVariables_ReportPreySpeciesCategoryCatch = list(
-        class = "vector", 
-        title = "One or more variables to group by when reporting PreySpeciesCategoryCatchData", 
-        possibleValues = function(PreySpeciesCategoryCatchData) {
-            sort(names(PreySpeciesCategoryCatchData))
-        }, 
-        variableTypes = "character"
-    ), 
-    informationVariables_ReportPreySpeciesCategoryCatch = list(
-        class = "vector", 
-        title = "One or more columns to inlcude as information in ReportPreySpeciesCategoryCatchData", 
-        possibleValues = function(PreySpeciesCategoryCatchData, GroupingVariables) {
-            sort(setdiff(names(PreySpeciesCategoryCatchData), GroupingVariables))
-        }, 
-        variableTypes = "character"
-    ), 
-    totalPreyCatchWeightUnit = list(
-        class = "single", 
-        title = "Select unit for the TotalPreyCatchWeight", 
-        possibleValues = function(...) {
-            dataType <- "PreySpeciesCategoryCatchData"
-            quantity <- getBaseUnit(dataType = dataType, variableName = "TotalPreyCatchWeight", element = "quantity")
-            if(!length(quantity) || is.na(quantity)) {
-                warning("StoX: No units defined for the variable TotalPreyCatchWeight of datatype ", dataType)
-                list()
-            }
-            else {
-                RstoxData::getUnitOptions(quantity)
-            }
-        }
-    ), 
-    weightingVariable_ReportPreySpeciesCategoryCatch = list(
-        class = "single", 
-        title = "Select weighting variable", 
-        possibleValues = function(PreySpeciesCategoryCatchData, GroupingVariables, InformationVariables) {
-            # Keep only the numeric:
-            possibleVariables <- names(PreySpeciesCategoryCatchData)[sapply(PreySpeciesCategoryCatchData, inherits, c("numeric", "integer"))]
-            
-            # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
-            possibleVariables <- 
-                sort(setdiff(possibleVariables, c(GroupingVariables, InformationVariables)))
-            
-            return(possibleVariables)
-            #sort(setdiff(names(DensityData), c(GroupingVariables, InformationVariables)))
-        }, 
-        variableTypes = "character"
-    ), 
+    #groupingVariables_ReportPreySpeciesCategoryCatch = list(
+    #    class = "vector", 
+    #    title = "One or more variables to group by when reporting PreySpeciesCategoryCatchData", 
+    #    possibleValues = function(PreySpeciesCategoryCatchData) {
+    #        sort(names(PreySpeciesCategoryCatchData))
+    #    }, 
+    #    variableTypes = "character"
+    #), 
+    #informationVariables_ReportPreySpeciesCategoryCatch = list(
+    #    class = "vector", 
+    #    title = "One or more columns to inlcude as information in ReportPreySpeciesCategoryCatchData", 
+    #    possibleValues = function(PreySpeciesCategoryCatchData, GroupingVariables) {
+    #        sort(setdiff(names(PreySpeciesCategoryCatchData), GroupingVariables))
+    #    }, 
+    #    variableTypes = "character"
+    #), 
+    #totalPreyCatchWeightUnit = list(
+    #    class = "single", 
+    #    title = "Select unit for the TotalPreyCatchWeight", 
+    #    possibleValues = function(...) {
+    #        dataType <- "PreySpeciesCategoryCatchData"
+    #        quantity <- getBaseUnit(dataType = dataType, variableName = "TotalPreyCatchWeight", element = "quantity")
+    #        if(!length(quantity) || is.na(quantity)) {
+    #            warning("StoX: No units defined for the variable TotalPreyCatchWeight of datatype ", dataType)
+    #            list()
+    #        }
+    #        else {
+    #            RstoxData::getUnitOptions(quantity)
+    #        }
+    #    }
+    #), 
+    #weightingVariable_ReportPreySpeciesCategoryCatch = list(
+    #    class = "single", 
+    #    title = "Select weighting variable", 
+    #    possibleValues = function(PreySpeciesCategoryCatchData, GroupingVariables, InformationVariables) {
+    #        # Keep only the numeric:
+    #        possibleVariables <- names(PreySpeciesCategoryCatchData)[sapply(PreySpeciesCategoryCatchData, inherits, c("numeric", "integer"))]
+    #        
+    #        # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
+    #        possibleVariables <- 
+    #            sort(setdiff(possibleVariables, c(GroupingVariables, InformationVariables)))
+    #        
+    #        return(possibleVariables)
+    #        #sort(setdiff(names(DensityData), c(GroupingVariables, InformationVariables)))
+    #    }, 
+    #    variableTypes = "character"
+    #), 
     
     
     

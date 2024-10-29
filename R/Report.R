@@ -822,8 +822,6 @@ filterTable <- function(table, filter = character()) {
 #' @return
 #' A \code{\link{ReportPreySpeciesCategoryCatchData}} object.
 #' 
-#' @export
-#' 
 ReportPreySpeciesCategoryCatch <- function(
     PreySpeciesCategoryCatchData, 
     # No longer hard coding this to weight:
@@ -841,9 +839,7 @@ ReportPreySpeciesCategoryCatch <- function(
     FractionOverVariable = character()
 ) 
 {
-    # No longer hard coding this to weight:
-    ## Only Density is relevant here:
-    #TargetVariable <- "TotalPreyCatchWeight"
+    # Export this function when prey is official
     
     # Issue a warning if RemoveMissingValues = TRUE:
     if(isTRUE(RemoveMissingValues) && any(is.na(PreySpeciesCategoryCatchData[[TargetVariable]]))) {

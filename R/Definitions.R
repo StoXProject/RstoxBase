@@ -198,24 +198,24 @@ initiateRstoxBase <- function(){
             )
         ), 
         
-        # PreySpeciesCategoryIndividualCatchData:
-        PreySpeciesCategoryCatchData = list(
-            horizontalResolution = "Station", 
-            verticalResolution = "Individual", 
-            obserationVariable = NULL,
-            categoryVariable = "PreySpeciesCategory", 
-            groupingVariables = "PreyCatchFractionWeightResolution", 
-            data = c(
-                Weight = c(
-                    "TotalPreyCatchWeight", 
-                    "TotalPreyCatchNumber"
-                )
-            ),
-            verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
-            verticalLayerDimension = NULL, 
-            weighting = "PreySpeciesCategoryCatchWeightingFactor", 
-            other = NULL
-        ), 
+        ## PreySpeciesCategoryIndividualCatchData:
+        #PreySpeciesCategoryCatchData = list(
+        #    horizontalResolution = "Station", 
+        #    verticalResolution = "Individual", 
+        #    obserationVariable = NULL,
+        #    categoryVariable = "PreySpeciesCategory", 
+        #    groupingVariables = "PreyCatchFractionWeightResolution", 
+        #    data = c(
+        #        Weight = c(
+        #            "TotalPreyCatchWeight", 
+        #            "TotalPreyCatchNumber"
+        #        )
+        #    ),
+        #    verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
+        #    verticalLayerDimension = NULL, 
+        #    weighting = "PreySpeciesCategoryCatchWeightingFactor", 
+        #    other = NULL
+        #), 
         
         
         AssignmentLengthDistributionData = list(
