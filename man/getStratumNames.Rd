@@ -22,7 +22,7 @@ addStratumNames(
 \arguments{
 \item{stratum}{A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.}
 
-\item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
+\item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile. When reading WKT or txt files the StratumNameLabel is ignored, as those formats does not support column names.}
 
 \item{check.unique}{Logical: If TRUE, an error is given if stratum names are not unique.}
 
