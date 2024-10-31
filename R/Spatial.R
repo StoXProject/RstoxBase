@@ -390,7 +390,7 @@ simplifyStratumPolygon <- function(
 #' The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' 
 #' @param stratum A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
-#' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile.
+#' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile. When reading WKT or txt files the StratumNameLabel is ignored, as those formats does not support column names.
 #' @param check.unique Logical: If TRUE, an error is given if stratum names are not unique.
 #' @param accept.wrong.name.if.only.one Logical: If TRUE, interpret stratum names if only one column in the SpatialPolygonsDataFrame.
 #' 

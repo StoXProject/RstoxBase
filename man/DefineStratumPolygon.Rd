@@ -23,7 +23,7 @@ DefineStratumPolygon(
 
 \item{FileName}{The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles); a \code{\link{StoX_multipolygon_WKT}} file; or a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineStrata(). Must include file extension.}
 
-\item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile.}
+\item{StratumNameLabel}{The name of the attribute representing the stratum names in the GeoJSON file or shapefile. When reading WKT or txt files the StratumNameLabel is ignored, as those formats does not support column names.}
 
 \item{SimplifyStratumPolygon}{Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://geocompr.robinlovelace.net/geometric-operations.html#simplification}{Geocomputation with R}). This option is useful for very complex stratum polygon files to reduce time for opening, running and saving a project.}
 
