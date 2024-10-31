@@ -1,5 +1,6 @@
 # RstoxBase v2.0.1-9005  (2024-10-30)
 * Applied 'release' and 'oldrel' in the check-full.yaml, securing that binaries are built for the current and previous R minor versjon.
+* Fixed bug with numeric vectors with NAs in factorNAfirst().
 
 
 # RstoxBase v2.0.1-9004  (2024-10-28)
