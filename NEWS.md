@@ -1,3 +1,9 @@
+# RstoxBase v2.0.1-9005  (2024-10-30)
+* Applied 'release' and 'oldrel' in the check-full.yaml, securing that binaries are built for the current and previous R minor versjon.
+* Fixed bug with numeric vectors with NAs in factorNAfirst().
+* Updated the documentation of StratumNameLabel.
+
+
 # RstoxBase v2.0.1-9004  (2024-10-28)
 * Added a warning in NASC() for multiple Beam with the same frequency, which may lead to over-estimation.
 * Changed aggregateBaselineDataOneTableSingleFunction() used by aggregateBaselineDataOneTable() to pad with zeros for all "data" variables, as specified in the dataTypeDefinition.
@@ -6,7 +12,7 @@
 * Added splitting by both "-" and "/" in formatOutput to ensure correct sorting. This change should not affect any results through imputation as all known StoX project use only one SpeciesCategory in SuperIndividuals.
 * Temporarily hiding Prey functions.
 
-# RstoxBase v2.0.1-9003  (2024-10-17)
+# RstoxBase v2.0.1-9003  (2024-10-10)
 * Added warning if there are duplicated StratumLayerIndividual in Individuals(). There may however be duplicated StratumLayerIndividual in SuperIndividuals(), e.g. when multiple Beam are used. Added support in imputation to tackle this and avoid errors such as "factor level [2316] is duplicated".
 * Fixed bug when using DefinitionMethod = "PreDefined" in DefineAcousticPSU().
 * Added support for numeric sorting of plus groups in plots, so that 9 comes before 10+.
