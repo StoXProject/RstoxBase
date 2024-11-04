@@ -1,3 +1,7 @@
+# RstoxBase v2.1.0  (2024-11-04)
+* Final release for StoX 4.1.0.
+
+
 # RstoxBase v2.0.1-9005  (2024-10-30)
 * Applied 'release' and 'oldrel' in the check-full.yaml, securing that binaries are built for the current and previous R minor versjon.
 * Fixed bug with numeric vectors with NAs in factorNAfirst().
