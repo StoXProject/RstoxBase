@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
       </span>
     </div>
 
@@ -48,12 +48,48 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.11.4-9015" id="rstoxbase-v1114-9015-2024-07-09">RstoxBase v1.11.4-9015 (2024-07-09)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1114-9015-2024-07-09"></a></h2>
-<ul><li>Final release for StoX 4.0.0.</li>
+<h2 class="page-header" data-toc-text="2.1.0" id="rstoxbase-v210-2024-11-04">RstoxBase v2.1.0 (2024-11-04)<a class="anchor" aria-label="anchor" href="#rstoxbase-v210-2024-11-04"></a></h2>
+<ul><li>Final release for StoX 4.1.0.</li>
 </ul></div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.11.4-9015" id="rstoxbase-v1114-9015-2024-07-08">RstoxBase v1.11.4-9015 (2024-07-08)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1114-9015-2024-07-08"></a></h2>
-<ul><li>Added value for backwards compatibility for old pre StoX 3.3.0 SpeciesCategoryCatch projects.</li>
+<h2 class="page-header" data-toc-text="2.0.1-9005" id="rstoxbase-v201-9005-2024-10-30">RstoxBase v2.0.1-9005 (2024-10-30)<a class="anchor" aria-label="anchor" href="#rstoxbase-v201-9005-2024-10-30"></a></h2>
+<ul><li>Applied ‘release’ and ‘oldrel’ in the check-full.yaml, securing that binaries are built for the current and previous R minor versjon.</li>
+<li>Fixed bug with numeric vectors with NAs in factorNAfirst().</li>
+<li>Updated the documentation of StratumNameLabel.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.1-9004" id="rstoxbase-v201-9004-2024-10-28">RstoxBase v2.0.1-9004 (2024-10-28)<a class="anchor" aria-label="anchor" href="#rstoxbase-v201-9004-2024-10-28"></a></h2>
+<ul><li>Added a warning in NASC() for multiple Beam with the same frequency, which may lead to over-estimation.</li>
+<li>Changed aggregateBaselineDataOneTableSingleFunction() used by aggregateBaselineDataOneTable() to pad with zeros for all “data” variables, as specified in the dataTypeDefinition.</li>
+<li>Fixed bug in factorNAfirst() which failed when age plus group was not used.</li>
+<li>Fixed bug in ReportBootstrap when an integer variables with missing values are reported (in which case replacing NA by 0 did not work).</li>
+<li>Added splitting by both “-” and “/” in formatOutput to ensure correct sorting. This change should not affect any results through imputation as all known StoX project use only one SpeciesCategory in SuperIndividuals.</li>
+<li>Temporarily hiding Prey functions.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.1-9003" id="rstoxbase-v201-9003-2024-10-10">RstoxBase v2.0.1-9003 (2024-10-10)<a class="anchor" aria-label="anchor" href="#rstoxbase-v201-9003-2024-10-10"></a></h2>
+<ul><li>Added warning if there are duplicated StratumLayerIndividual in Individuals(). There may however be duplicated StratumLayerIndividual in SuperIndividuals(), e.g. when multiple Beam are used. Added support in imputation to tackle this and avoid errors such as “factor level [2316] is duplicated”.</li>
+<li>Fixed bug when using DefinitionMethod = “PreDefined” in DefineAcousticPSU().</li>
+<li>Added support for numeric sorting of plus groups in plots, so that 9 comes before 10+.</li>
+<li>Fixed problem with selecting PointColor in PlotAcousticTrawlSurvey() in the GUI.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.1-9002" id="rstoxbase-v201-9002-2024-09-17">RstoxBase v2.0.1-9002 (2024-09-17)<a class="anchor" aria-label="anchor" href="#rstoxbase-v201-9002-2024-09-17"></a></h2>
+<ul><li>Renamed ReportVariable to TargetVariable and ReportVariableUnit to TargetVariableUnit in ReportSpeciesCategoryCatch() for consistency with other report functions.</li>
+<li>Added TargetVariable and TargetVariableUnit in ReportPreySpeciesCategoryCatch().</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.1-9001" id="rstoxbase-v201-9001-2024-09-01">RstoxBase v2.0.1-9001 (2024-09-01)<a class="anchor" aria-label="anchor" href="#rstoxbase-v201-9001-2024-09-01"></a></h2>
+<ul><li>Added functions PreySpeciesCategoryCatch and ReportPreySpeciesCategoryCatch.</li>
+<li>Added the ReportFunction “number”, “fractionOfOccurrence” and “fractionOfSum”.</li>
+<li>Fixed bug where possible values where not available for DensityUnit in ReportDensity().</li>
+<li>Changed error to something sensible when ReportFunction or TargetVariable are empty in ReportDensity().</li>
+<li>Added option of defining primaryColumnOrder and whether to removeStoXKeys in formatOutput().</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.11.4-9015" id="rstoxbase-v1114-9015-2024-07-09">RstoxBase v1.11.4-9015 (2024-07-09)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1114-9015-2024-07-09"></a></h2>
+<ul><li>Final release for StoX 4.0.0.</li>
+<li>Added value for backwards compatibility for old pre StoX 3.3.0 SpeciesCategoryCatch projects.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.11.4-9014" id="rstoxbase-v1114-9014-2024-07-02">RstoxBase v1.11.4-9014 (2024-07-02)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1114-9014-2024-07-02"></a></h2>
@@ -81,7 +117,7 @@
 <ul><li>Added documentation of ReportFunctions.</li>
 <li>Added the exported getFunctionArgumentHierarchyForSpcificationParameters() used in stoxFunctionAttributes.</li>
 <li>Fixed report functions number(), fractionOfOccurrence() and fractionOfSum().</li>
-<li>Fixed bug where IndividualAge was not avaiable as TargetVariable in reports (due to class integer, which was not accounted for).</li>
+<li>Fixed bug where IndividualAge was not available as TargetVariable in reports (due to class integer, which was not accounted for).</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.11.4-9007" id="rstoxbase-v1114-9007-2024-04-19">RstoxBase v1.11.4-9007 (2024-04-19)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1114-9007-2024-04-19"></a></h2>
@@ -212,7 +248,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.10.3" id="rstoxbase-v1103-2022-11-21">RstoxBase v1.10.3 (2022-11-21)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1103-2022-11-21"></a></h2>
-<ul><li>Added the parameter TargetVariableUnit in ReportSuperIndividuals() and ReportQuantity(), DensityUnit in ReportDensity(), and ReportVariableUnit in ReportSpeciesCategoryCatch(), which all acn be used to set the units for the report.</li>
+<ul><li>Added the parameter TargetVariableUnit in ReportSuperIndividuals() and ReportQuantity(), DensityUnit in ReportDensity(), and ReportVariableUnit in ReportSpeciesCategoryCatch(), which all can be used to set the units for the report.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.10.2" id="rstoxbase-v1102-2022-10-31">RstoxBase v1.10.2 (2022-10-31)<a class="anchor" aria-label="anchor" href="#rstoxbase-v1102-2022-10-31"></a></h2>
@@ -541,7 +577,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

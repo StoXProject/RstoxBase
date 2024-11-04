@@ -8,6 +8,7 @@
 <url><loc>/reference/AcousticPSU.html</loc></url>
 <url><loc>/reference/AcousticTargetStrength.html</loc></url>
 <url><loc>/reference/AddHaulDensityToSuperIndividuals.html</loc></url>
+<url><loc>/reference/AddPSUToPreySpeciesCategoryCatch.html</loc></url>
 <url><loc>/reference/AppendNASC.html</loc></url>
 <url><loc>/reference/AssignmentLengthDistribution.html</loc></url>
 <url><loc>/reference/AssignmentLengthDistributionData.html</loc></url>
@@ -59,6 +60,8 @@
 <url><loc>/reference/PSU.html</loc></url>
 <url><loc>/reference/PlotAcousticTrawlSurvey.html</loc></url>
 <url><loc>/reference/PlotAcousticTrawlSurveyData.html</loc></url>
+<url><loc>/reference/PreySpeciesCategoryCatch.html</loc></url>
+<url><loc>/reference/PreySpeciesCategoryCatchData.html</loc></url>
 <url><loc>/reference/ProcessData.html</loc></url>
 <url><loc>/reference/Quantity.html</loc></url>
 <url><loc>/reference/QuantityData.html</loc></url>
@@ -68,6 +71,8 @@
 <url><loc>/reference/ReportDensity.html</loc></url>
 <url><loc>/reference/ReportDensityData.html</loc></url>
 <url><loc>/reference/ReportFunctions.html</loc></url>
+<url><loc>/reference/ReportPreySpeciesCategoryCatch.html</loc></url>
+<url><loc>/reference/ReportPreySpeciesCategoryCatchData.html</loc></url>
 <url><loc>/reference/ReportQuantity.html</loc></url>
 <url><loc>/reference/ReportQuantityData.html</loc></url>
 <url><loc>/reference/ReportSpeciesCategoryCatch.html</loc></url>
