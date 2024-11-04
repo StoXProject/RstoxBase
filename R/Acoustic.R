@@ -29,8 +29,14 @@ NASC <- function(
     # Check that the input StoxAcousticData has the same ChannelReferenceType throughout:
     type <- getDataTypeDefinition(dataType = "NASCData", elements = "type", unlist = TRUE)
     ChannelReferenceType <- NASCData[[type]]
-    if(!allEqual(ChannelReferenceType, na.rm = TRUE) && NROW(ChannelReferenceType)) {
+    if(!allEqual(ChannelReferenceType, na.rm = TRUE) && NROW(NASCData)) {
         stop("The StoxAcousticData must have only one ", type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
+    }
+    # Added a warning for multiple Beam with the same frequency, which may lead to over-estimation:
+    numberOfBeamsPerFrequency <- NASCData[, .(numberOfBeams  = length(unique(Beam))), by = "Frequency"]
+    numberOfBeamsPerFrequency <- subset(numberOfBeamsPerFrequency, numberOfBeams > 1)
+    if(NROW(numberOfBeamsPerFrequency)) {
+        warning("StoX: SEVERE WARNING: There are multiple Beams for the same frequency, which can lead to over-estimation, as AcousticDensity considers Frequency only and not Beam. If NMDEchosounder data were used to produce the NASCData, this can be an indication that different 'transceiver' ID is used for the same frequency, which can occur if two platforms have different frequency as its lowest frequency (e.g. that one of the platforms lack 18 kHz). Please translate the Beam to a common value to avoid this:\n", "Frequency: ", paste(numberOfBeamsPerFrequency$Frequency, collapse = ","), ". Number of Beams: ", paste(numberOfBeamsPerFrequency$numberOfBeams, collapse = ","))
     }
     
     # Interpret the ChannelDepths:

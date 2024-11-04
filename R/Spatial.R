@@ -390,7 +390,7 @@ simplifyStratumPolygon <- function(
 #' The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
 #' 
 #' @param stratum A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
-#' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile.
+#' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile. When reading WKT or txt files the StratumNameLabel is ignored, as those formats does not support column names.
 #' @param check.unique Logical: If TRUE, an error is given if stratum names are not unique.
 #' @param accept.wrong.name.if.only.one Logical: If TRUE, interpret stratum names if only one column in the SpatialPolygonsDataFrame.
 #' 
@@ -542,7 +542,12 @@ StratumArea <- function(
     if(AreaMethod == "Accurate") {
         # StoX 2.7 calculated the area for each stratum separately, thus using an origin from each stratum. This requires subsetting the StratumPolygon and calculating the areas in a loop:
         turn_off_s2(
-            areaDT <- data.table::rbindlist(lapply(seq_len(nrow(StratumPolygon)), function(ind) polygonArea_accurate(StratumPolygon[ind, ], useLonLatCentroid = TRUE))), 
+            areaDT <- data.table::rbindlist(
+                lapply(
+                    seq_len(nrow(StratumPolygon)), 
+                    function(ind) polygonArea_accurate(StratumPolygon[ind, ], useLonLatCentroid = TRUE)
+                    )
+            ), 
             msg = FALSE
         )
     }
@@ -801,7 +806,7 @@ polygonArea_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
     # Re-project for equal area projection, using the centroid of the multipolygon:
     
     # rgeos is retiring, so we use sf instead to get the centroid:
-    centroid <- getCentroid(stratumPolygon, iterativeCentroidCalculation = !useLonLatCentroid) 
+    centroid <- getCentroid(stratumPolygon, iterativeCentroidCalculation = !useLonLatCentroid)
     
     #centroid <- rgeos::gCentroid(stratumPolygon)@coords
     laea.CRS <- paste0(

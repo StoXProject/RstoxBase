@@ -7,6 +7,8 @@
 #' @inheritParams ModelData
 #' @param SpeciesCategoryCatchType The type of the total catch variables, either "Standard" for the raw total catch and "Normalized" for normalizing by tow distance by dividing by the EffectiveTowDistance in nautical miles.
 #' 
+#' @return An object of StoX data type \code{\link{SpeciesCategoryCatchData}}.
+#' 
 #' @export
 #' 
 SpeciesCategoryCatch <- function(
@@ -56,7 +58,8 @@ SpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData[, (sampleNamesToRemove) := NULL]
 
     # Format the output:
-    formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = TRUE)
+    # 2024-08-20: We keep all possible variables from StoxBiotic here excluding the keys:
+    formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = TRUE, removeStoXKeys = TRUE)
     
     return (SpeciesCategoryCatchData)
 }

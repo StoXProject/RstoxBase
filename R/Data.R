@@ -185,11 +185,16 @@ NULL
 #' @param MeanLengthDistributionData The \code{\link{MeanLengthDistributionData}} data.
 #' @param AssignmentLengthDistributionData The \code{\link{AssignmentLengthDistributionData}} data.
 #' @param DensityData The \code{\link{DensityData}} data.
+#' @param ReportDensityData  The \code{\link{ReportDensityData}} data.
 #' @param MeanDensityData The \code{\link{MeanDensityData}} data.
 #' @param SpeciesCategoryCatchData The \code{\link{SpeciesCategoryCatchData}} data.
+#' @param ReportSpeciesCategoryCatchData The \code{\link{ReportSpeciesCategoryCatchData}} data.
 #' @param SumSpeciesCategoryCatchData The \code{\link{SumSpeciesCategoryCatchData}} data.
 #' @param MeanSpeciesCategoryCatchData The \code{\link{MeanSpeciesCategoryCatchData}} data.
+#' @param PreySpeciesCategoryCatchData The \code{\link{PreySpeciesCategoryCatchData}} data.
+#' @param ReportPreySpeciesCategoryCatchData The \code{\link{ReportPreySpeciesCategoryCatchData}} data.
 #' @param QuantityData The \code{\link{QuantityData}} data.
+#' @param ReportQuantityData The \code{\link{ReportQuantityData}} data.
 #' @param IndividualsData The \code{\link{IndividualsData}} data.
 #' @param SuperIndividualsData The \code{\link{SuperIndividualsData}} data.
 #' @param ReportSuperIndividualsData The \code{\link{ReportSuperIndividualsData}} data.
@@ -458,7 +463,7 @@ NULL
 ##################################################
 #' Total catch per SpeciesCategory and Haul
 #' 
-#' The SpeciesCategoryCatchData contains the columns Station, Haul, SpeciesCategory, TotalCatchWeigth, TotalCatchNumber, MinHaulDepth, MaxHaulDepth, MinLayerDepth, MaxLayerDepth, LengthDistributionWeight, Cruise, EffectiveTowDistance, VerticalNetOpening, HorizontalNetOpening, TrawlDoorSpread and SpeciesCategoryCatchType.
+#' The SpeciesCategoryCatchData model data is a table with one row per Haul and SpeciesCategory holding the TotalCatchWeigth and TotalCatchNumber which are summed CatchFractionWeight and CatchFractionNumber over all samples of the Haul for each SpeciesCategory. All variables of the input StoxBioticData are kept except keys (variables with name ending with "Key").
 #' 
 #' @seealso This data type is produced by \code{\link{SpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -471,7 +476,7 @@ NULL
 ##################################################
 #' Total catch per SpeciesCategory and Station
 #' 
-#' The SumSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns Station, Layer and Haul containing the link between the vertical resolution variables before summing.
+#' The SumSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns Station, Layer and Haul containing the link between the vertical resolution variables before summing. Specifically, the Data table holds the following variables: "Station",, "Layer", "SpeciesCategory", "TotalCatchWeight", "TotalCatchNumber", "MinLayerDepth", "MaxLayerDepth", "SumSpeciesCategoryCatchWeight", "SpeciesCategoryCatchType", "Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude".
 #' 
 #' @seealso This data type is produced by \code{\link{SumSpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
@@ -484,11 +489,24 @@ NULL
 ##################################################
 #' Total catch per SpeciesCategory and biotic PSU
 #' 
-#' The MeanSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, Station, Layer and Haul containing the link between the horizontal and vertical resolution variables before summing and averaging.
+#' The MeanSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer vertical resolution column and the Stratum and PSU horizontal resolution columns, and summed vertically and averaged horizontally; and the Resolution, which is a table of the five columns Stratum, PSU, Station, Layer and Haul containing the link between the horizontal and vertical resolution variables before summing and averaging. Specifically, the Data table holds the following variables: "Survey", "Stratum", "PSU", "Layer", "SpeciesCategory", "TotalCatchWeight", "TotalCatchNumber", "MinLayerDepth", "MaxLayerDepth", "MeanSpeciesCategoryCatchWeight", "SpeciesCategoryCatchType".
 #' 
 #' @seealso This data type is produced by \code{\link{MeanSpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name MeanSpeciesCategoryCatchData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Total prey catch per PreySpeciesCategory and Individual
+#' 
+#' The PreySpeciesCategoryCatchData model data is a table with one row per Individual and PreySpeciesCategory holding the TotalPreyCatchWeigth which is summed PreyCatchWeight over all PreySamples of the Individual for each PreySpeciesCategory. All variables of the input StoxBioticData are kept except keys (variables with name ending with "Key").
+#' 
+#' @seealso This data type is produced by \code{\link{PreySpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name PreySpeciesCategoryCatchData
 #' 
 NULL
 
@@ -1017,6 +1035,19 @@ NULL
 #' @seealso This data type is produced by \code{\link{ReportSpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name ReportSpeciesCategoryCatchData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Reported PreySpeciesCategoryCatch data
+#' 
+#' The ReportPreySpeciesCategoryCatchData model data is a report of the \code{\link{PreySpeciesCategoryCatchData}}.
+#' 
+#' @seealso This data type is produced by \code{\link{ReportPreySpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ReportPreySpeciesCategoryCatchData
 #' 
 NULL
 

@@ -4,7 +4,7 @@
 \alias{SumSpeciesCategoryCatchData}
 \title{Total catch per SpeciesCategory and Station}
 \description{
-The SumSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns Station, Layer and Haul containing the link between the vertical resolution variables before summing.
+The SumSpeciesCategoryCatchData model data is a list of two elements; the Data, which are similar to \code{\link{SpeciesCategoryCatch}} but added the Layer resolution column and summed vertically; and the Resolution, which is a table of the three columns Station, Layer and Haul containing the link between the vertical resolution variables before summing. Specifically, the Data table holds the following variables: "Station",, "Layer", "SpeciesCategory", "TotalCatchWeight", "TotalCatchNumber", "MinLayerDepth", "MaxLayerDepth", "SumSpeciesCategoryCatchWeight", "SpeciesCategoryCatchType", "Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude".
 }
 \seealso{
 This data type is produced by \code{\link{SumSpeciesCategoryCatch}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}

@@ -96,6 +96,7 @@ PlotAcousticTrawlSurvey <- function(
     BorderColor = character(), 
     OceanColor = character(), 
     GridColor = character(), 
+    #PointTransparency = 1, 
     
     # Options for the point sizes and shapes:
     UseDefaultSizeSettings = TRUE, 
@@ -194,6 +195,7 @@ PlotAcousticTrawlSurvey <- function(
             type = "lp", 
             size = "NASC", 
             shape = 1, 
+            #alpha.point = if(length(PointTransparency)) PointTransparency else 1, 
             alpha.point = 1, 
             alpha.track = 1
         )
@@ -511,7 +513,7 @@ plot_lon_lat <- function(
     # Plot the points:
     if(grepl("p", type)) {
         
-        # If the color variable is column in the data, but the user has specified a single color, use this color instead:
+        # If the color variable is a column in the data, but the user has specified a single color, use this color instead:
         if(!isCategorical(x[[color]]) && length(color.scale) == 1 && !is.function(try(get(color.scale), silent = TRUE))) {
             color <- color.scale
         }

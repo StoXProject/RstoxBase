@@ -176,11 +176,6 @@ addPSUProcessData <- function(data, PSUProcessData = NULL, ...) {
         data.table::set(data, j = toAdd, value = NA_character_)
     }
     
-    
-    ## Set the order of the columns:
-    ##dataType <- detectDataType(data)
-    #data <- setColumnOrder(data, dataType = dataType, keep.all = TRUE)
-    
     return(data)
 }
 
@@ -356,49 +351,22 @@ meanRawResolutionData <- function(
     PSUType = c("Acoustic", "Biotic")
 ) {
     
-    # Make a copy of the input, since we are averaging and setting values by reference:
-    dataCopy = data.table::copy(data$Data)
-    
-    # Add the PSUs either from function input or by automatic method using function parameter:
-    # Define the PSUs:
-    PSUDefinition <- RstoxData::match_arg_informative(PSUDefinition)
-    if(identical(PSUDefinition, "FunctionParameter")) {
-        PSUProcessData <- DefinePSU(
-            StratumPolygon = StratumPolygon, 
-            MergedStoxDataStationLevel = dataCopy, 
-            DefinitionMethod = PSUDefinitionMethod, 
-            PSUType = PSUType
-        )
-    }
-    # Add the PSUs:
-    if(length(PSUProcessData)) {
-        dataCopy <- addPSUProcessData(dataCopy, PSUProcessData = PSUProcessData, all = TRUE)
-    }
-    else {
-        stop("PSUProcessData must be given if PSUDefinition = \"FunctionInput\"")
-    }
-    
-    # Get the Surveys:
-    SurveyDefinition <- RstoxData::match_arg_informative(SurveyDefinition)
-    if(identical(SurveyDefinition, "FunctionParameter")) {
-        # Get the stratum names and the SurveyTable:
-        stratumNames <- unique(dataCopy$Stratum)
-        # Remove missing Stratum names:
-        stratumNames <- stratumNames[!is.na(stratumNames)]
-        # Get the SurveyTable
-        SurveyProcessData <- getSurveyTable(
-            DefinitionMethod = SurveyDefinitionMethod, 
-            stratumNames = stratumNames, 
-            SurveyTable = SurveyTable
-        )
-    }
-    # Add the Survey:
-    if(length(SurveyProcessData)) {
-        dataCopy <- addSurveyProcessData(dataCopy, SurveyProcessData = SurveyProcessData, all = TRUE)
-    }
-    else {
-        stop("SurveyProcessData must be given if SurveyDefinition = \"FunctionInput\"")
-    }
+    # Add the PSU and Survey resolution:
+    dataCopy <- addPSUResolution(
+        data$Data, dataType = dataType, 
+        # PSU: 
+        PSUDefinition = PSUDefinition,
+        PSUProcessData = PSUProcessData,
+        PSUDefinitionMethod = PSUDefinitionMethod,
+        # Survey:
+        SurveyDefinition = SurveyDefinition,
+        SurveyProcessData = SurveyProcessData,
+        SurveyDefinitionMethod = SurveyDefinitionMethod,
+        SurveyTable = SurveyTable,
+        # General:
+        StratumPolygon = StratumPolygon, 
+        PSUType = PSUType
+    )
     
     ### # Get the resolution table, holding the Station/EDSU and all vertical resolution variables:
     ### resolutionVariables <- getAllResolutionVariables(
@@ -430,6 +398,75 @@ meanRawResolutionData <- function(
             Resolution = Resolution
         )
     )
+}
+
+
+
+
+addPSUResolution <- function(
+        table, dataType, 
+        # PSU: 
+        PSUDefinition = c("FunctionParameter", "FunctionInput"), 
+        PSUProcessData = NULL, 
+        PSUDefinitionMethod = c("Identity", "None"), 
+        # Survey:
+        SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
+        SurveyProcessData = NULL, 
+        SurveyDefinitionMethod = c("AllStrata", "Table"), 
+        SurveyTable = data.table::data.table(), 
+        # General:
+        StratumPolygon = NULL, 
+        PSUType = c("Acoustic", "Biotic")
+) {
+    
+    # Make a copy of the input, since we are averaging and setting values by reference:
+    tableCopy = data.table::copy(table)
+    
+    # Add the PSUs either from function input or by automatic method using function parameter:
+    # Define the PSUs:
+    PSUDefinition <- RstoxData::match_arg_informative(PSUDefinition)
+    if(identical(PSUDefinition, "FunctionParameter")) {
+        PSUProcessData <- DefinePSU(
+            StratumPolygon = StratumPolygon, 
+            MergedStoxDataStationLevel = tableCopy, 
+            DefinitionMethod = PSUDefinitionMethod, 
+            PSUType = PSUType
+        )
+    }
+    # Add the PSUs:
+    if(length(PSUProcessData)) {
+        tableCopy <- addPSUProcessData(tableCopy, PSUProcessData = PSUProcessData, all = TRUE)
+    }
+    else {
+        stop("PSUProcessData must be given if PSUDefinition = \"FunctionInput\"")
+    }
+    
+    # Get the Surveys:
+    SurveyDefinition <- RstoxData::match_arg_informative(SurveyDefinition)
+    if(identical(SurveyDefinition, "FunctionParameter")) {
+        # Get the stratum names and the SurveyTable:
+        stratumNames <- unique(tableCopy$Stratum)
+        # Remove missing Stratum names:
+        stratumNames <- stratumNames[!is.na(stratumNames)]
+        # Get the SurveyTable
+        SurveyProcessData <- getSurveyTable(
+            DefinitionMethod = SurveyDefinitionMethod, 
+            stratumNames = stratumNames, 
+            SurveyTable = SurveyTable
+        )
+    }
+    # Add the Survey:
+    if(length(SurveyProcessData)) {
+        tableCopy <- addSurveyProcessData(tableCopy, SurveyProcessData = SurveyProcessData, all = TRUE)
+    }
+    else {
+        stop("SurveyProcessData must be given if SurveyDefinition = \"FunctionInput\"")
+    }
+    
+    # Set the order of the columns:
+    data.table::setcolorder(tableCopy, c("Survey", "Stratum", "PSU"))
+    
+    return(tableCopy)
 }
 
 
@@ -927,14 +964,6 @@ StoxDataStartMiddleStopDateTime <- function(
 #' 
 #' @export
 #' 
-#replaceNAByReference <- function(DT, cols = NULL, replacement = 0) {
-#    if(!length(cols)) {
-#        cols <- names(DT)
-#    }
-#    for (j in cols) {
-#        data.table::set(DT, which(is.na(DT[[j]]) & is.numeric(DT[[j]])), j, replacement)
-#    }
-#}
 replaceNAByReference <- function(DT, cols = NULL, replacement = list(numeric = 0, integer = 0L)) {
     if(length(cols) == 1 && is.na(cols)) {
         cols <- names(DT)
@@ -1603,7 +1632,6 @@ renameListByNames <- function(list, old, new) {
 #' 
 getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"), list.out = FALSE) {
     
-    
     emptyOutput <- output <- list(
         unit = NA, 
         quantity = NA
@@ -1693,9 +1721,13 @@ setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
 
 
 
+
+# The factorNAfirst() is placed in RstoxBase since we may need it in plots later:
+
 #' Convert to factor and put NAs first
 #' 
 #' @param x A vector.
+#' 
 #' @export
 #' 
 factorNAfirst <- function(x){
@@ -1723,9 +1755,31 @@ factorNAfirst <- function(x){
         x <- rep("NA", length(x))
     }
     
-    levels <- sort(levels, na.last = FALSE)
+    # If there are levels ending with "+", this is an indication that a plus group (e.g. age) is given, so we remove the "+" and try as numeric:
+    if(any(endsWith(as.character(levels), "+"), na.rm = TRUE)) {
+        levels_sans_plus <- convertToNumericIfPossible(sub("+", "", levels, fixed = TRUE))
+        levels = levels[order(levels_sans_plus)]
+    }
+    else {
+        levels <- sort(levels, na.last = FALSE)
+    }
+    
     
     factor(x, levels = levels, exclude = NULL)
 }
+
+
+
+convertToNumericIfPossible <- function(x) {
+    numberOfNAs <- sum(is.na(x))
+    xnumeric <- suppressWarnings(as.numeric(x))
+    if(sum(is.na(xnumeric)) > numberOfNAs) {
+        return(x)
+    }
+    else {
+        return(xnumeric)
+    }
+}
+
 
 

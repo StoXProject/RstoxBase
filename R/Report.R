@@ -29,6 +29,14 @@ ReportSuperIndividuals <- function(
     FractionOverVariable = character()
 ) 
 {
+    # Error if TargetVariable is not given:
+    if(!length(TargetVariable)) {
+        stop("TargetVariable must be given!")
+    }
+    
+    # Get the ReportFunction:
+    ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
+    
     # Issue a warning if RemoveMissingValues = TRUE:
     if(isTRUE(RemoveMissingValues) && any(is.na(SuperIndividualsData[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
@@ -75,7 +83,7 @@ ReportSuperIndividuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param DensityUnit The unit to use for the \code{Density}. See subset(RstoxData::StoxUnits, quantity == "area_number_density") for possible units (use the shortname in the \code{DensityUnit}).
+#' @param DensityUnit The unit to use for the \code{Density}. Run the following in R for possible units: subset(RstoxData::StoxUnits, quantity == "area_number_density", select = "shortname").
 #' 
 #' @return
 #' A \code{\link{ReportDensityData}} object.
@@ -100,8 +108,11 @@ ReportDensity <- function(
     # Only Density is relevant here:
     TargetVariable <- "Density"
     
+    # Get the ReportFunction:
+    ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
+    
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(DensityData[[TargetVariable]]))) {
+    if(isTRUE(RemoveMissingValues) && any(is.na(DensityData$Data[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
     
@@ -168,9 +179,12 @@ ReportQuantity <- function(
 ) 
 {
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(QuantityData[[TargetVariable]]))) {
+    if(isTRUE(RemoveMissingValues) && any(is.na(QuantityData$Data[[TargetVariable]]))) {
         warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
     }
+    
+    # Get the ReportFunction:
+    ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
     
     QuantityData$Data[[TargetVariable]] <- setUnitRstoxBase(
         QuantityData$Data[[TargetVariable]], 
@@ -279,7 +293,9 @@ aggregateBaselineDataOneTable <- function(
             ReportFunction = fun, 
             GroupingVariables = denominatorGroupingVariables, 
             InformationVariables = InformationVariables, 
-            na.rm = na.rm, 
+            # Changed this to TRUE, since we may get all NAs unless, and the important thing is to keep NAs in the numerator:
+            #na.rm = na.rm, 
+            na.rm = TRUE, 
             padWithZerosOn = padWithZerosOn, 
             Specification = Specification, 
             uniqueGroupingVariablesToKeep = uniqueGroupingVariablesToKeep
@@ -395,15 +411,16 @@ aggregateBaselineDataOneTableSingleFunction <- function(
         #gc()
         
         # Convert the NAs to 0 for the abundance and biomass columns:
-        abudanceVariables <- setdiff(names(stoxData), paddingVariables)
+        possibleAbudanceVariables <- setdiff(names(stoxData), paddingVariables)
         # Convert NA to 0 only for Biomass or Abundance:
-        abudanceVariableKeys <- getDataTypeDefinition("SuperIndividualsData", subTable = "Data", elements = "data", unlist = TRUE)
-        isAbudanceVariable <- rowSums(outer(abudanceVariables, abudanceVariableKeys, startsWith)) > 0
-        abudanceVariables <- abudanceVariables[isAbudanceVariable]
+        abudanceVariableKeys <- getRstoxBaseDefinitions("dataVariables")
+            
+        isAbudanceVariable <- rowSums(outer(possibleAbudanceVariables, abudanceVariableKeys, startsWith)) > 0
+        abudanceVariables <- possibleAbudanceVariables[isAbudanceVariable]
         
         if(length(abudanceVariables)) {
             # Set all NA to 0, both those from the original stoxData and those introduced by the grid:
-            replaceNAByReference(stoxData, cols = abudanceVariables, replacement = 0)
+            replaceNAByReference(stoxData, cols = abudanceVariables, replacement = list(numeric = 0, integer = 0L))
             # Restore the NAs from the original stoxData:
             stoxData[areNA, eval(TargetVariable) := NA]
         }
@@ -627,8 +644,8 @@ getReportFunctionElementByFunctionName <- function(x, element) {
 #' Reports the sum, mean or other functions on a variable of the \code{\link{SpeciesCategoryCatch}}.
 #' 
 #' @inheritParams ModelData
-#' @param ReportVariable The column to report.
-#' @param ReportVariableUnit The unit to use for the \code{ReportVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{ReportVariableUnit}).
+#' @param TargetVariable The column to report.
+#' @param TargetVariableUnit The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).
 #' 
 #' @details This function is useful to, e.g, sum Biomass for each SpeciesCategory and IndividualTotalLenght, or average IndividualTotalLength for each IndiivdualAge and Stratum.
 #' 
@@ -639,12 +656,12 @@ getReportFunctionElementByFunctionName <- function(x, element) {
 #' 
 ReportSpeciesCategoryCatch <- function(
     SpeciesCategoryCatchData, 
-    ReportVariable = c("TotalCatchNumber", "TotalCatchWeight"), 
-    ReportVariableUnit = character()
+    TargetVariable = c("TotalCatchWeight", "TotalCatchNumber"), 
+    TargetVariableUnit = character()
 ){
     
-    # Get the ReportVariable:
-    ReportVariable <- RstoxData::match_arg_informative(ReportVariable)
+    # Get the TargetVariable:
+    TargetVariable <- RstoxData::match_arg_informative(TargetVariable)
     
     # Warning if there are species categories which are empty string:
     categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
@@ -653,18 +670,18 @@ ReportSpeciesCategoryCatch <- function(
         warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")
     }
     
-    SpeciesCategoryCatchData[[ReportVariable]] <- setUnitRstoxBase(
-        SpeciesCategoryCatchData[[ReportVariable]], 
+    SpeciesCategoryCatchData[[TargetVariable]] <- setUnitRstoxBase(
+        SpeciesCategoryCatchData[[TargetVariable]], 
         dataType =  "SpeciesCategoryCatchData", 
-        variableName = ReportVariable, 
-        unit = ReportVariableUnit
+        variableName = TargetVariable, 
+        unit = TargetVariableUnit
     )
     
     # Create the table with species categories in the columns:
     ReportSpeciesCategoryCatchData <- data.table::dcast(
         SpeciesCategoryCatchData, 
         formula = Haul ~ get(categoryVariable), 
-        value.var = ReportVariable, 
+        value.var = TargetVariable, 
         fun.aggregate = sum
     )
     
@@ -683,8 +700,8 @@ ReportSpeciesCategoryCatch <- function(
         by = "Haul"
     )
     
-    if(RstoxData::hasUnit(SpeciesCategoryCatchData[[ReportVariable]], property = "shortname")) {
-        unit <- RstoxData::getUnit(SpeciesCategoryCatchData[[ReportVariable]], property = "shortname")
+    if(RstoxData::hasUnit(SpeciesCategoryCatchData[[TargetVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(SpeciesCategoryCatchData[[TargetVariable]], property = "shortname")
         ReportSpeciesCategoryCatchData <- cbind(ReportSpeciesCategoryCatchData, Unit = unit)
     }
     
@@ -779,5 +796,90 @@ filterTable <- function(table, filter = character()) {
     
     return(table)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##################################################
+##################################################
+#' Report PreySpeciesCategoryCatchData
+#' 
+#' Reports the sum, mean or other functions on a variable of the \code{\link{PreySpeciesCategoryCatchData}}.
+#' 
+#' @inheritParams ModelData
+#' @inheritParams general_report_arguments
+#' 
+#' @return
+#' A \code{\link{ReportPreySpeciesCategoryCatchData}} object.
+#' 
+ReportPreySpeciesCategoryCatch <- function(
+    PreySpeciesCategoryCatchData, 
+    # No longer hard coding this to weight:
+    #TotalPreyCatchWeightUnit = character(), 
+    TargetVariable = c("TotalPreyCatchWeight", "TotalPreyCatchNumber"), 
+    TargetVariableUnit = character(),
+    ReportFunction = getReportFunctions(use = "Baseline"), 
+    GroupingVariables = character(), 
+    InformationVariables = character(), 
+    Filter = character(), 
+    RemoveMissingValues = FALSE, 
+    WeightingVariable = character(), 
+    ConditionOperator = character(), 
+    ConditionValue = character(), 
+    FractionOverVariable = character()
+) 
+{
+    # Export this function when prey is official
+    
+    # Issue a warning if RemoveMissingValues = TRUE:
+    if(isTRUE(RemoveMissingValues) && any(is.na(PreySpeciesCategoryCatchData[[TargetVariable]]))) {
+        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
+    }
+    
+    PreySpeciesCategoryCatchData[[TargetVariable]] <- setUnitRstoxBase(
+        PreySpeciesCategoryCatchData[[TargetVariable]], 
+        dataType =  "PreySpeciesCategoryCatchData", 
+        variableName = TargetVariable, 
+        unit = TargetVariableUnit
+    )
+    
+    output <- aggregateBaselineDataOneTable(
+        stoxData = PreySpeciesCategoryCatchData, 
+        TargetVariable = TargetVariable, 
+        ReportFunction = ReportFunction, 
+        GroupingVariables = GroupingVariables, 
+        InformationVariables = InformationVariables, 
+        na.rm = RemoveMissingValues, 
+        Specification = list(
+            WeightingVariable = WeightingVariable,
+            ConditionOperator = ConditionOperator, 
+            ConditionValue = ConditionValue, 
+            FractionOverVariable = FractionOverVariable
+        )
+    )
+    
+    if(RstoxData::hasUnit(PreySpeciesCategoryCatchData[[TargetVariable]], property = "shortname")) {
+        unit <- RstoxData::getUnit(PreySpeciesCategoryCatchData[[TargetVariable]], property = "shortname")
+        output <- cbind(output, Unit = unit)
+    }
+    
+    output <- filterTable(output, filter = Filter)
+    
+    return(output)
+}
+
+
+
+
 
 

@@ -720,6 +720,51 @@ stoxFunctionAttributes <- list(
     ), 
     #########
     
+    
+    #### Prey ####
+    #PreySpeciesCategoryCatch = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "PreySpeciesCategoryCatchData"
+    #), 
+    #
+    #AddPSUToPreySpeciesCategoryCatch = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "baseline", 
+    #    functionOutputDataType = "PreySpeciesCategoryCatchData", 
+    #    functionParameterFormat = list(
+    #        SurveyTable = "surveyTable"
+    #    ), 
+    #    functionArgumentHierarchy = list(
+    #        # PSU: 
+    #        BioticPSU = list(
+    #            PSUDefinition = "FunctionInput"
+    #        ), 
+    #        PSUDefinitionMethod = list(
+    #            PSUDefinition = "FunctionParameter"
+    #        ), 
+    #        StratumPolygon = list(
+    #            PSUDefinitionMethod = "StationToPSU"
+    #        ), 
+    #        StratumPolygon = list(
+    #            SurveyDefinitionMethod = "Table"
+    #        ), 
+    #        # Survey:
+    #        Survey = list(
+    #            SurveyDefinition = "FunctionInput"
+    #        ), 
+    #        SurveyDefinitionMethod = list(
+    #            SurveyDefinition = "FunctionParameter"
+    #        ), 
+    #        SurveyTable = list(
+    #            SurveyDefinition = "FunctionParameter", 
+    #            SurveyDefinitionMethod = "Table"
+    #        )
+    #    )
+    #), 
+    ########
+    
+    
     ##### NASC: #####
     NASC = list(
         functionType = "modelData", 
@@ -847,8 +892,8 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "PlotAcousticTrawlSurveyData", 
         functionParameterFormat = list(
-            LayerTable = "layerTable"#, 
-            #PointColor = "pointColor"
+            LayerTable = "layerTable", 
+            PointColor = "pointColor"
         ),
         functionArgumentHierarchy = list(
             # Options for the colors:
@@ -1298,6 +1343,13 @@ stoxFunctionAttributes <- list(
                 getFunctionArgumentHierarchyForSpcificationParameters(
                     use = "Baseline", 
                     functionName = "ReportFunction"
+                ), 
+                list(
+                    TargetVariableUnit = list(
+                        ReportFunction = function(functionArguments) {
+                            !startsWith(functionArguments$ReportFunction, "fractionOf")
+                        }
+                    )
                 )
             )
         ), 
@@ -1324,6 +1376,13 @@ stoxFunctionAttributes <- list(
                 getFunctionArgumentHierarchyForSpcificationParameters(
                     use = "Baseline", 
                     functionName = "ReportFunction"
+                ), 
+                list(
+                    TargetVariableUnit = list(
+                        ReportFunction = function(functionArguments) {
+                            !startsWith(functionArguments$ReportFunction, "fractionOf")
+                        }
+                    )
                 )
             )
         ), 
@@ -1350,6 +1409,13 @@ stoxFunctionAttributes <- list(
                 getFunctionArgumentHierarchyForSpcificationParameters(
                     use = "Baseline", 
                     functionName = "ReportFunction"
+                ), 
+                list(
+                    DensityUnit = list(
+                        ReportFunction = function(functionArguments) {
+                            !startsWith(functionArguments$ReportFunction, "fractionOf")
+                        }
+                    )
                 )
             )
         ), 
@@ -1363,9 +1429,43 @@ stoxFunctionAttributes <- list(
         functionCategory = "report", 
         functionOutputDataType = "ReportSpeciesCategoryCatchData", 
         functionParameterFormat = list(
-            ReportVariableUnit = "reportVariableUnit_ReportSpeciesCategoryCatch"
+            TargetVariableUnit = "targetVariableUnit_ReportSpeciesCategoryCatch"
         )
-    )
+    )#, 
+    
+    
+    #ReportPreySpeciesCategoryCatch = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "report", 
+    #    functionOutputDataType = "ReportPreySpeciesCategoryCatchData", 
+    #    # This is an example of using an expression to determine when to show a parameter:
+    #    functionParameterFormat = list(
+    #        GroupingVariables = "groupingVariables_ReportPreySpeciesCategoryCatch", 
+    #        InformationVariables = "informationVariables_ReportPreySpeciesCategoryCatch", 
+    #        TotalPreyCatchWeightUnit = "totalPreyCatchWeightUnit", 
+    #        WeightingVariable = "weightingVariable_ReportPreySpeciesCategoryCatch", 
+    #        FractionOverVariable = "fractionOverVariable", 
+    #        ConditionOperator = "conditionOperator"
+    #    ), 
+    #    functionArgumentHierarchy = expression(
+    #        c(
+    #            getFunctionArgumentHierarchyForSpcificationParameters(
+    #                use = "Baseline", 
+    #                functionName = "ReportFunction"
+    #            ), 
+    #            list(
+    #                TargetVariableUnit = list(
+    #                    ReportFunction = function(functionArguments) {
+    #                        !startsWith(functionArguments$ReportFunction, "fractionOf")
+    #                    }
+    #                )
+    #            )
+    #        )
+    #    ), 
+    #    functionParameterDefaults = list(
+    #        GroupingVariables = c("Survey", "PreySpeciesCategory")
+    #    )
+    #)
     
     
     #WriteStratumPolygon = list(
@@ -2075,7 +2175,7 @@ processPropertyFormats <- list(
     densityUnit = list(
         class = "single", 
         title = "Select unit for the Density", 
-        possibleValues = function() {
+        possibleValues = function(...) {
             dataType <- "DensityData"
             quantity <- getBaseUnit(dataType = dataType, variableName = "Density", element = "quantity")
             if(!length(quantity) || is.na(quantity)) {
@@ -2092,7 +2192,7 @@ processPropertyFormats <- list(
         title = "Select weighting variable", 
         possibleValues = function(DensityData, GroupingVariables, InformationVariables) {
             # Keep only the numeric:
-            possibleVariables <- names(DensityData)[sapply(DensityData, inherits, c("numeric", "integer"))]
+            possibleVariables <- names(DensityData$Data)[sapply(DensityData$Data, inherits, c("numeric", "integer"))]
             
             # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
             possibleVariables <- 
@@ -2104,6 +2204,57 @@ processPropertyFormats <- list(
         variableTypes = "character"
     ), 
     
+    
+    
+    
+    # ReportDensity: 
+    #groupingVariables_ReportPreySpeciesCategoryCatch = list(
+    #    class = "vector", 
+    #    title = "One or more variables to group by when reporting PreySpeciesCategoryCatchData", 
+    #    possibleValues = function(PreySpeciesCategoryCatchData) {
+    #        sort(names(PreySpeciesCategoryCatchData))
+    #    }, 
+    #    variableTypes = "character"
+    #), 
+    #informationVariables_ReportPreySpeciesCategoryCatch = list(
+    #    class = "vector", 
+    #    title = "One or more columns to inlcude as information in ReportPreySpeciesCategoryCatchData", 
+    #    possibleValues = function(PreySpeciesCategoryCatchData, GroupingVariables) {
+    #        sort(setdiff(names(PreySpeciesCategoryCatchData), GroupingVariables))
+    #    }, 
+    #    variableTypes = "character"
+    #), 
+    #totalPreyCatchWeightUnit = list(
+    #    class = "single", 
+    #    title = "Select unit for the TotalPreyCatchWeight", 
+    #    possibleValues = function(...) {
+    #        dataType <- "PreySpeciesCategoryCatchData"
+    #        quantity <- getBaseUnit(dataType = dataType, variableName = "TotalPreyCatchWeight", element = "quantity")
+    #        if(!length(quantity) || is.na(quantity)) {
+    #            warning("StoX: No units defined for the variable TotalPreyCatchWeight of datatype ", dataType)
+    #            list()
+    #        }
+    #        else {
+    #            RstoxData::getUnitOptions(quantity)
+    #        }
+    #    }
+    #), 
+    #weightingVariable_ReportPreySpeciesCategoryCatch = list(
+    #    class = "single", 
+    #    title = "Select weighting variable", 
+    #    possibleValues = function(PreySpeciesCategoryCatchData, GroupingVariables, InformationVariables) {
+    #        # Keep only the numeric:
+    #        possibleVariables <- names(PreySpeciesCategoryCatchData)[sapply(PreySpeciesCategoryCatchData, inherits, c("numeric", "integer"))]
+    #        
+    #        # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
+    #        possibleVariables <- 
+    #            sort(setdiff(possibleVariables, c(GroupingVariables, InformationVariables)))
+    #        
+    #        return(possibleVariables)
+    #        #sort(setdiff(names(DensityData), c(GroupingVariables, InformationVariables)))
+    #    }, 
+    #    variableTypes = "character"
+    #), 
     
     
     
@@ -2197,38 +2348,38 @@ processPropertyFormats <- list(
     
     
     pointColor = list(
-        class = "single", 
-        title = "Select color/color scale for the points", 
-        possibleValues = function(NASCData, SumNASCData, ColorVariable) {
-            if(missing(SumNASCData)) {
-                var <- NASCData[[ColorVariable]]
-            }
-            else {
-                var <- SumNASCData$Data[[ColorVariable]]
-            }
-            if(isCategorical(var)) {
-                PointColor <- list()
-            }
-            else {
-                PointColor <- "combined.color"
-            }
-            
-            return(PointColor)
-        }
+        class = "vector", 
+        title = "Select color/vector of colors/color scale function for the points"#    , 
+        #possibleValues = function(NASCData, SumNASCData, ColorVariable) {
+        #    if(missing(SumNASCData)) {
+        #        var <- NASCData[[ColorVariable]]
+        #    }
+        #    else {
+        #        var <- SumNASCData$Data[[ColorVariable]]
+        #    }
+        #    if(isCategorical(var)) {
+        #        PointColor <- list()
+        #    }
+        #    else {
+        #        PointColor <- "combined.color"
+        #    }
+        #    
+        #    return(PointColor)
+        #}
     ), 
     
     
     
     
     
-    reportVariableUnit_ReportSpeciesCategoryCatch = list(
+    targetVariableUnit_ReportSpeciesCategoryCatch = list(
         class = "single", 
-        title = "Select unit for the ReportVariable", 
-        possibleValues = function(ReportVariable) {
+        title = "Select unit for the TargetVariable", 
+        possibleValues = function(TargetVariable) {
             dataType <- "SpeciesCategoryCatchData"
-            quantity <- getBaseUnit(dataType = dataType, variableName = ReportVariable, element = "quantity")
+            quantity <- getBaseUnit(dataType = dataType, variableName = TargetVariable, element = "quantity")
             if(!length(quantity) || is.na(quantity)) {
-                warning("StoX: No units defined for the variable ", ReportVariable, " of datatype ", dataType)
+                warning("StoX: No units defined for the variable ", TargetVariable, " of datatype ", dataType)
                 list()
             }
             else {

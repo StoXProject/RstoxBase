@@ -416,6 +416,20 @@ backwardCompatibility_RstoxBase <- list(
             modelName = "baseline", 
             parameterName = "AbundanceData",
             newParameterName = "QuantityData"
+        ), 
+        list(
+            changeVersion = "2.0.1-9002", 
+            functionName = "ReportSpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "ReportVariable",
+            newParameterName = "TargetVariable"
+        ), 
+        list(
+            changeVersion = "2.0.1-9002", 
+            functionName = "ReportSpeciesCategoryCatch", 
+            modelName = "report", 
+            parameterName = "ReportVariableUnit",
+            newParameterName = "TargetVariableUnit"
         )
     ),  
     

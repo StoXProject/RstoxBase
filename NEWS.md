@@ -1,8 +1,43 @@
+# RstoxBase v2.1.0  (2024-11-04)
+* Final release for StoX 4.1.0.
+
+
+# RstoxBase v2.0.1-9005  (2024-10-30)
+* Applied 'release' and 'oldrel' in the check-full.yaml, securing that binaries are built for the current and previous R minor versjon.
+* Fixed bug with numeric vectors with NAs in factorNAfirst().
+* Updated the documentation of StratumNameLabel.
+
+
+# RstoxBase v2.0.1-9004  (2024-10-28)
+* Added a warning in NASC() for multiple Beam with the same frequency, which may lead to over-estimation.
+* Changed aggregateBaselineDataOneTableSingleFunction() used by aggregateBaselineDataOneTable() to pad with zeros for all "data" variables, as specified in the dataTypeDefinition.
+* Fixed bug in factorNAfirst() which failed when age plus group was not used.
+* Fixed bug in ReportBootstrap when an integer variables with missing values are reported (in which case replacing NA by 0 did not work).
+* Added splitting by both "-" and "/" in formatOutput to ensure correct sorting. This change should not affect any results through imputation as all known StoX project use only one SpeciesCategory in SuperIndividuals.
+* Temporarily hiding Prey functions.
+
+# RstoxBase v2.0.1-9003  (2024-10-10)
+* Added warning if there are duplicated StratumLayerIndividual in Individuals(). There may however be duplicated StratumLayerIndividual in SuperIndividuals(), e.g. when multiple Beam are used. Added support in imputation to tackle this and avoid errors such as "factor level [2316] is duplicated".
+* Fixed bug when using DefinitionMethod = "PreDefined" in DefineAcousticPSU().
+* Added support for numeric sorting of plus groups in plots, so that 9 comes before 10+.
+* Fixed problem with selecting PointColor in PlotAcousticTrawlSurvey() in the GUI.
+
+
+# RstoxBase v2.0.1-9002  (2024-09-17)
+* Renamed ReportVariable to TargetVariable and ReportVariableUnit to TargetVariableUnit in ReportSpeciesCategoryCatch() for consistency with other report functions.
+* Added TargetVariable and TargetVariableUnit in ReportPreySpeciesCategoryCatch().
+
+
+# RstoxBase v2.0.1-9001  (2024-09-01)
+* Added functions PreySpeciesCategoryCatch and ReportPreySpeciesCategoryCatch.
+* Added the ReportFunction "number", "fractionOfOccurrence" and "fractionOfSum".
+* Fixed bug where possible values where not available for DensityUnit in ReportDensity().
+* Changed error to something sensible when ReportFunction or TargetVariable are empty in ReportDensity().
+* Added option of defining primaryColumnOrder and whether to removeStoXKeys in formatOutput().
+
+
 # RstoxBase v1.11.4-9015  (2024-07-09)
 * Final release for StoX 4.0.0.
-
-
-# RstoxBase v1.11.4-9015  (2024-07-08)
 * Added value for backwards compatibility for old pre StoX 3.3.0 SpeciesCategoryCatch projects.
 
 
@@ -31,7 +66,7 @@
 * Added documentation of ReportFunctions.
 * Added the exported getFunctionArgumentHierarchyForSpcificationParameters() used in stoxFunctionAttributes.
 * Fixed report functions number(), fractionOfOccurrence() and fractionOfSum().
-* Fixed bug where IndividualAge was not avaiable as TargetVariable in reports (due to class integer, which was not accounted for).
+* Fixed bug where IndividualAge was not available as TargetVariable in reports (due to class integer, which was not accounted for).
 
 
 # RstoxBase v1.11.4-9007  (2024-04-19)
@@ -162,7 +197,7 @@
 
 
 # RstoxBase v1.10.3 (2022-11-21)
-* Added the parameter TargetVariableUnit in ReportSuperIndividuals() and ReportQuantity(), DensityUnit in ReportDensity(), and ReportVariableUnit in ReportSpeciesCategoryCatch(), which all acn be used to set the units for the report.
+* Added the parameter TargetVariableUnit in ReportSuperIndividuals() and ReportQuantity(), DensityUnit in ReportDensity(), and ReportVariableUnit in ReportSpeciesCategoryCatch(), which all can be used to set the units for the report.
 
 
 # RstoxBase v1.10.2 (2022-10-31)

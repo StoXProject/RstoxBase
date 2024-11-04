@@ -148,7 +148,7 @@ initiateRstoxBase <- function(){
             verticalLayerDimension = NULL, 
             weighting = "SpeciesCategoryCatchWeight", 
             type = "SpeciesCategoryCatchType", 
-            other = c("Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "Gear", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+            other = NULL
         ), 
         SumSpeciesCategoryCatchData = list(
             Data = list(
@@ -170,7 +170,7 @@ initiateRstoxBase <- function(){
             Resolution = list(
                 horizontalResolution = "Station", 
                 verticalResolution = c("Layer", "Haul"), 
-                other = c("Gear", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
+                other = c("Gear", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread") 
             )
         ), 
         MeanSpeciesCategoryCatchData = list(
@@ -197,6 +197,26 @@ initiateRstoxBase <- function(){
                 other = c("Cruise", "EffectiveTowDistance", "DateTime", "Longitude", "Latitude", "Gear", "VerticalNetOpening", "HorizontalNetOpening", "TrawlDoorSpread")
             )
         ), 
+        
+        ## PreySpeciesCategoryIndividualCatchData:
+        #PreySpeciesCategoryCatchData = list(
+        #    horizontalResolution = "Station", 
+        #    verticalResolution = "Individual", 
+        #    obserationVariable = NULL,
+        #    categoryVariable = "PreySpeciesCategory", 
+        #    groupingVariables = "PreyCatchFractionWeightResolution", 
+        #    data = c(
+        #        Weight = c(
+        #            "TotalPreyCatchWeight", 
+        #            "TotalPreyCatchNumber"
+        #        )
+        #    ),
+        #    verticalRawDimension = c("MinHaulDepth", "MaxHaulDepth"), 
+        #    verticalLayerDimension = NULL, 
+        #    weighting = "PreySpeciesCategoryCatchWeightingFactor", 
+        #    other = NULL
+        #), 
+        
         
         AssignmentLengthDistributionData = list(
             horizontalResolution = c("Stratum", "PSU"), 
@@ -362,6 +382,14 @@ initiateRstoxBase <- function(){
     )
     ####
     
+    # Get the list of data variables, which are those that are stored as a vector of variable names in the "data" element of a table defined in dataTypeDefinition:
+    dataVariables <- unique(
+        c(
+            unlist(lapply(dataTypeDefinition, "[", "data")), 
+            unlist(lapply(dataTypeDefinition, function(x) x[["Data"]][["data"]]))
+        )
+    )
+    
     #### Data type units: ####
     dataTypeUnits <- list(
         # DensityData
@@ -372,6 +400,8 @@ initiateRstoxBase <- function(){
         # SpeciesCategoryCatchData
         list(dataType = "SpeciesCategoryCatchData", variableName = "TotalCatchNumber", quantity = "cardinality", unit = "individuals"), 
         list(dataType = "SpeciesCategoryCatchData", variableName = "TotalCatchWeight", quantity = "mass", unit = "kg"),
+        # PreySpeciesCategoryCatchData
+        list(dataType = "PreySpeciesCategoryCatchData", variableName = "TotalPreyCatchWeight", quantity = "mass", unit = "mg"),
         # SuperIndividualsData
         list(dataType = "SuperIndividualsData", variableName = "IndividualTotalLength", quantity = "length", unit = "cm"), 
         list(dataType = "SuperIndividualsData", variableName = "IndividualRoundWeight", quantity = "mass", unit = "g"), 
@@ -670,6 +700,7 @@ initiateRstoxBase <- function(){
             "var", 
             "cv", 
             "number", 
+            # Note that the fraction* functions are not ordinary R functions, but are built in aggregateBaselineDataOneTable. The actual functions used are given by the functionAlias below:
             "fractionOfOccurrence", 
             "fractionOfSum"
         ), 
@@ -805,9 +836,9 @@ initiateRstoxBase <- function(){
             TRUE, # "var"
             TRUE, # "cv"
             # These are not activated yet, so we hide them:
-            FALSE, # "number"
-            FALSE, # "fractionOfOccurrence"
-            FALSE # "fractionOfSum"
+            TRUE, # "number"
+            TRUE, # "fractionOfOccurrence"
+            TRUE # "fractionOfSum"
         )
     )
     
@@ -902,11 +933,13 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 #' @param dataType The data type to format against.
 #' @param keep.all Logical: If TRUE keep all columns, and if FALSE delete undefined columns.
 #' @param allow.missing Logical: If TRUE allow for unrelevant column names defined in \code{secondaryColumnOrder}.
-#' @param secondaryColumnOrder,secondaryRowOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to proiritize when ordering columns and rows, respectively.
+#' @param primaryColumnOrder Character: A vector of names of columns that should be placed first regardless of the definition of columns specified in the dataTypeDefinition.
+#' @param secondaryColumnOrder,secondaryRowOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to prioritize when ordering columns and rows, respectively.
+#' @param removeStoXKeys Logical: If TRUE remove the key columns, which are those ending with "Key".
 #' 
 #' @export
 #' 
-formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL, secondaryRowOrder = NULL) {
+formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE) {
     
     # If data is only one table:
     if(data.table::is.data.table(data)) {
@@ -916,8 +949,10 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
             tableDefinition = dataTypeDefinition, 
             keep.all = keep.all, 
             allow.missing = allow.missing, 
+            primaryColumnOrder = primaryColumnOrder, 
             secondaryColumnOrder = secondaryColumnOrder, 
-            secondaryRowOrder = secondaryRowOrder
+            secondaryRowOrder = secondaryRowOrder, 
+            removeStoXKeys = removeStoXKeys
         ) 
     }
     # ... or a list of tables:
@@ -930,17 +965,17 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
             MoreArgs = list(
                 keep.all = keep.all, 
                 allow.missing = allow.missing, 
+                primaryColumnOrder = primaryColumnOrder, 
                 secondaryColumnOrder = secondaryColumnOrder, 
-                secondaryRowOrder = secondaryRowOrder
+                secondaryRowOrder = secondaryRowOrder, 
+                removeStoXKeys = removeStoXKeys
             )
         )
     }
 }
 
 
-formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, secondaryColumnOrder = NULL, secondaryRowOrder = NULL) {
-    
-    
+formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE) {
     
     # Get the column order:
     columnOrder <- unique(
@@ -986,14 +1021,21 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
             toRemove =  setdiff(names(table), columnOrder)
         )
     }
+    # Delete StoX keys:
+    if(removeStoXKeys) {
+        removeColumnsByReference(
+            data = table, 
+            toRemove =  names(table)[endsWith(names(table), "Key")]
+        )
+    }
     
     
     # Order the columns:
-    data.table::setcolorder(table, columnOrder)
+    data.table::setcolorder(table, intersect(unique(c(primaryColumnOrder, columnOrder)), names(table)))
     
     # Order the rows:
     #data.table::setorder(table, na.last = TRUE)
-    RstoxData::setorderv_numeric(table, by = rowOrder, na.last = TRUE)
+    RstoxData::setorderv_numeric(table, by = rowOrder, split = c("-", "/"))
     
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
     data.table::setkey(table, NULL)

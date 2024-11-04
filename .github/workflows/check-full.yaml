@@ -24,25 +24,22 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macOS-13,   r: 'release', pkgext: '.tgz'} # Changed se per https://github.blog/changelog/2024-01-30-github-actions-macos-14-sonoma-is-now-available/
-          - {os: macOS-13,   r: '4.3',     pkgext: '.tgz'}
-          - {os: macOS-13,   r: '4.2',     pkgext: '.tgz'}
-          - {os: macOS-13,   r: '4.1',     pkgext: '.tgz'} # Temporarily disabling this due to new sf release not ready for R 4.2
-          # - {os: macOS-latest,   r: '4.0',     pkgext: '.tgz'} # Returs error  callr not found
-          # - {os: macOS-latest,   r: '3.6',     pkgext: '.tgz'} # Not used in RstoxFramework
+          # Latest macOS will use the big-sur-arm64 folder when deploying to the drat repo:
+          - {os: macOS-latest,   r: 'release', pkgext: '.tgz'}
+          - {os: macOS-latest,   r: 'oldrel',  pkgext: '.tgz'}
+          
+          # macOS-13 will use the big-sur-x86_64 folder when deploying to the drat repo:
+          - {os: macOS-13,   r: 'release', pkgext: '.tgz'}
+          - {os: macOS-13,   r: 'oldrel',  pkgext: '.tgz'}
+          
           - {os: windows-latest, r: 'release', pkgext: '.zip'}
-          - {os: windows-latest, r: '4.3',     pkgext: '.zip'}
-          - {os: windows-latest, r: '4.2',     pkgext: '.zip'} # Temporarily disabling this due to new sf release not ready for R 4.2
-          # - {os: windows-latest, r: '4.1',     pkgext: '.zip'} # Disabled due to stringi failure
-          #- {os: windows-latest, r: '4.0',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
-          #- {os: windows-latest, r: '3.6',     pkgext: '.zip',    rspm: "https://cloud.r-project.org"} # Too slow
-          - {os: ubuntu-latest,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-22.04,   r: '4.3',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-22.04,   r: '4.2',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-20.04,   r: '4.1',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          - {os: ubuntu-20.04,   r: '4.0',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-          #- {os: ubuntu-20.04,   r: '3.6',     pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
-
+          - {os: windows-latest, r: 'oldrel',  pkgext: '.zip'}
+          
+          # ubuntu-latest is 24 as of 2024-10-31. Should we use it?
+          - {os: ubuntu-22.04,  r: 'release', pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-22.04,   r: 'oldrel',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+          - {os: ubuntu-22.04,   r: 'oldrel-1',  pkgext: '.tar.gz', rspm: "https://cloud.r-project.org"}
+    
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -54,7 +51,7 @@ jobs:
       #### 1. Setup: ####
       ###################
       
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Prepare for deployment at push
         if: github.event_name == 'push'
@@ -138,14 +135,6 @@ jobs:
           brew install gdal udunits
         shell: bash
       
-      - name: Install system dependencies on Linux
-        if: runner.os == 'Linux'
-        run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
-
       - name: Prepare for CRANdependencies on Linux
         if: runner.os == 'Linux'
         run: |
@@ -153,21 +142,17 @@ jobs:
           #sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
           #sudo apt-get update
           # We needed to add libxslt1-dev as RstoxData <= RstoxData-v1.8.0-9006 was using it (we should try to skip this after StoX 3.6.0):
-          sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev libxslt1-dev
+          sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev libxslt1-dev libgit2-dev
         shell: bash
       
       
       ## 2c. R packages needed for this yaml script (not related to the Rstox package itself):
       - name: Install CRANdependencies
         run: |
-          install.packages(c("rcmdcheck", "git2r", "sessioninfo", "knitr", "remotes"))
+          install.packages(c("rcmdcheck", "git2r", "sessioninfo", "knitr", "remotes", "drat"))
           
-          # Using the latest drat that supports big sur (after inputs from us). 
-          # When the next drat appears on CRAN this can be changed to install from CRAN:
-          remotes::install_github(repo = 'eddelbuettel/drat', dependencies = FALSE)
-          
-          # Additional installs to secure specific versions:
-          
+          # Temporarily install Rcpp from GitHub until the CRAN version is fixed:
+          remotes::install_github("RcppCore/Rcpp")
         shell: Rscript {0}
         
       
@@ -223,7 +208,7 @@ jobs:
       #### 4. Build the package source and binary files: ####
       #######################################################
       
-      - name: Build package source archive from branches develop, testing and master
+      - name: Build package source archive from branches develop, testing and master (on Linux for some reason
         if: runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'testing' || github.ref_name == 'develop')
         run: |
           pkgbuild::build(".", dest_path = ".", binary = FALSE)
@@ -247,9 +232,9 @@ jobs:
       #### 5. Deploy to the drat repos: ####
       ######################################
       
-      ## 5a. Upload to the official (DRAT) repo, but only from the master branch. Here we skip the matrix.config.r = release, as a new StoX release should be ready shortly after each R minor release and listed specifically in the matrix.config:
+      ## 5a. Upload to the official (DRAT) repo, but only from the master branch:
       - name: Upload to the official (DRAT) repo
-        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'master'
+        if: ( (runner.os == 'Windows') || (runner.os == 'macOS') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'master'
         env:
           BUILD_NUMBER: ${{ github.sha  }}
           DRAT_DEPLOY_TOKEN: ${{ secrets.DRAT_DEPLOY_TOKEN }}
@@ -257,9 +242,9 @@ jobs:
         shell: bash
 
 
-      ## 5b. Upload to the (DRAT) testingRepo, but only from the testing branch. Here we skip the matrix.config.r = release, as a new StoX release should be ready shortly after each R minor release and listed specifically in the matrix.config:
+      ## 5b. Upload to the (DRAT) testingRepo, but only from the testing branch:
       - name: Upload to the testing (DRAT) repo
-        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'testing'
+        if: ( (runner.os == 'Windows') || (runner.os == 'macOS') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'testing'
         env:
           BUILD_NUMBER: ${{ github.sha  }}
           DRAT_DEPLOY_TOKEN: ${{ secrets.DRAT_DEPLOY_TOKEN }}
@@ -267,9 +252,9 @@ jobs:
         shell: bash
 
 
-      ## 5c. Upload to the (DRAT) unstableRepo, but only from the develop branch. Here we skip the matrix.config.r = release, as a new StoX release should be ready shortly after each R minor release and listed specifically in the matrix.config:
+      ## 5c. Upload to the (DRAT) unstableRepo, but only from the develop branch:
       - name: Upload to the unstable (DRAT) repo
-        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'develop'
+        if: ( (runner.os == 'Windows') || (runner.os == 'macOS') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'develop'
         env:
           BUILD_NUMBER: ${{ github.sha  }}
           DRAT_DEPLOY_TOKEN: ${{ secrets.DRAT_DEPLOY_TOKEN }}
@@ -283,7 +268,7 @@ jobs:
       ###############################
       
       - name: Create release on GitHub and upload files for testing branch
-        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'testing'
+        if: ( (runner.os == 'Windows') || (runner.os == 'macOS') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'testing'
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -294,7 +279,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create release on GitHub and upload files for master branch
-        if: ( (runner.os == 'Windows' && matrix.config.r != 'release') || (runner.os == 'macOS' && matrix.config.r != 'release') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'master'
+        if: ( (runner.os == 'Windows') || (runner.os == 'macOS') || (runner.os == 'Linux' && matrix.config.r == 'release') ) && github.event_name == 'push' && github.ref_name == 'master'
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true

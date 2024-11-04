@@ -89,7 +89,7 @@ LengthDistribution <- function(
     ############################
     ##### 1. Merge levels: #####
     ############################
-    StoxBioticDataMerged <- RstoxData::MergeStoxBiotic(StoxBioticData)
+    StoxBioticDataMerged <- RstoxData::MergeStoxBiotic(StoxBioticData, TargetTable = "Individual")
     
     # Check for missing individuals due to positive sample number but no individuals of that sample:
     atMissingIndividual <- StoxBioticDataMerged[,  which(is.na(IndividualKey) & (SampleWeight > 0 | SampleNumber > 0))]
