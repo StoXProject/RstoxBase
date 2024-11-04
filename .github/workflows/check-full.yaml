@@ -135,14 +135,6 @@ jobs:
           brew install gdal udunits
         shell: bash
       
-      - name: Install system dependencies on Linux
-        if: runner.os == 'Linux'
-        run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
-
       - name: Prepare for CRANdependencies on Linux
         if: runner.os == 'Linux'
         run: |
