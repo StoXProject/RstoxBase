@@ -1169,7 +1169,6 @@ DefineBioticAssignment <- function(
     LatitudeDifference = double()
 )
 {
-    
     # Get the DefinitionMethod:
     LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
     
@@ -1182,7 +1181,7 @@ DefineBioticAssignment <- function(
         
         # If emtpy BioticAssignment, return immediately:
         if(!NROW(processData$BioticAssignment)) {
-            return(processData$BioticAssignment)
+            return(data.table::data.table())
         }
         
         # Check the BioticAssignment:
@@ -1437,24 +1436,29 @@ DefineBioticAssignment <- function(
 
 
 DefineBioticAssignment_Warnings <- function(BioticAssignment, AcousticPSU) {
-    # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
-    newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, subset(BioticAssignment, !is.na(Haul))$PSU)
-    if(length(newPSUs)) {
-        warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls. This may not be a problem if there is no NASC in those PSUs. Otherwise, please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
+    
+    # These warnings can only be given if there is non-empty BioticAssignment:
+    if(NROW(BioticAssignment)) {
+        # Check whether all PSUs are present in the processData, and issue a warning if there are new PSUs to be included:
+        newPSUs <- setdiff(AcousticPSU$Stratum_PSU$PSU, subset(BioticAssignment, !is.na(Haul))$PSU)
+        if(length(newPSUs)) {
+            warning("StoX: The following acoustic PSUs are not present in the BioticAssignment processData or have no assigned biotic Hauls. This may not be a problem if there is no NASC in those PSUs. Otherwise, please add assignment to these acoustic PSUs, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", newPSUs, collapse = "\n"))
+        }
+        
+        # Also issue a warning for assignment to non-existing acoustic PSUs:
+        nonExistingPSUs <- setdiff(BioticAssignment$PSU, AcousticPSU$Stratum_PSU$PSU)
+        if(length(nonExistingPSUs)) {
+            warning("StoX: There are assignments to the following non-existing acoustic PSUs. Please remove these assignments, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", nonExistingPSUs, collapse = "\n"))
+        }
+        
+        # Give a warning for and remove missing Haul:
+        missingHaul <- BioticAssignment[, is.na(Haul)]
+        if(any(missingHaul)) {
+            warning("StoX: There are assignments to missing Hauls. These were removed.")
+            BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
+        }
     }
     
-    # Also issue a warning for assignment to non-existing acoustic PSUs:
-    nonExistingPSUs <- setdiff(BioticAssignment$PSU, AcousticPSU$Stratum_PSU$PSU)
-    if(length(nonExistingPSUs)) {
-        warning("StoX: There are assignments to the following non-existing acoustic PSUs. Please remove these assignments, or if an automatic method was used in DefineBioticAssignment, rerun that process with UseProcecssData set to FALSE (unchecked):\n", paste("\t", nonExistingPSUs, collapse = "\n"))
-    }
-    
-    # Give a warning for and remove missing Haul:
-    missingHaul <- BioticAssignment[, is.na(Haul)]
-    if(any(missingHaul)) {
-        warning("StoX: There are assignments to missing Hauls. These were removed.")
-        BioticAssignment <- subset(BioticAssignment, !is.na(Haul))
-    }
     
     return(BioticAssignment)
 }
@@ -1707,6 +1711,17 @@ BioticAssignmentWeighting <- function(
     
     # Make a copy of the BioticAssignment to enable safe modification by reference:
     BioticAssignmentCopy <- data.table::copy(BioticAssignment)
+    
+    
+    WeightingMethodsRequiringLengthDistributionData <- c(
+        "AcousticDensity", 
+        "SumWeightedNumber", 
+        "InverseSumWeightedNumber"
+    )
+    if(WeightingMethod %in% WeightingMethodsRequiringLengthDistributionData && !NROW(LengthDistributionData)) {
+        stop("StoX: Non-empty LengthDistributionData is required when WeightingMethod is one of ", paste(WeightingMethodsRequiringLengthDistributionData, collapse = ", "), ".")
+    }
+    
     
     # Put equal weight (1) to each haul:
     #if(WeightingMethod == "Equal") {
@@ -2024,6 +2039,10 @@ getMeanAcousticDensityAroundOneStation <- function(
 
 # Function to sum up the WeightedNumber
 addSumWeightedNumber <- function(BioticAssignment, LengthDistributionData, weightingVariable, inverse = FALSE) {
+    
+    if(!NROW(LengthDistributionData)) {
+        stop("StoX: Non-empty LengthDistributionData is required to add SumWeightedNumber.")
+    }
     
     # Make a copy of the LengthDistributionData to enable safe modification by reference:
     LengthDistributionDataCopy <- data.table::copy(LengthDistributionData)
