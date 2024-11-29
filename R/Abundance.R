@@ -311,7 +311,10 @@ SuperIndividuals <- function(
                 !is.na(SpeciesCategory)
             )]
         if(length(atMissisngLengthButPresentAbundance)) {
-            warning("StoX: There are rows of the QuantityData with positive Abundance for a species that cannot be matched to any individuals of the IndividualsData. The reason for this may be that there are samples in the StoxBioticData used as input to the LengthDistribution process earlier in the Baseline model that have positive SampleNumber but no individuals. The consequence is that Abundance is set to NA in SuperIndividualsData for the following Stratum Layer and SpeciesCategory, resulting in loss of Abundance: ", paste(SuperIndividualsData[atMissisngLengthButPresentAbundance, paste0("Stratum: ", Stratum, ", Layer: ", Layer, ", SpeciesCategory: ", SpeciesCategory)], collapse = "\n"))
+            # Report unique combinations of Stratum, Layer and SpeciesCategory with a problem:
+            badStratumLayerSpeciesCategory <- unique(SuperIndividualsData[atMissisngLengthButPresentAbundance, paste0("Stratum: ", Stratum, ", Layer: ", Layer, ", SpeciesCategory: ", SpeciesCategory)])
+            
+            warning("StoX: There are rows of the QuantityData with positive Abundance for a species that cannot be matched to any individuals of the IndividualsData.\nDetails: One reason may be different length resolutions in the LengthDistributionData, which causes problems for the SuperIndividuals function when trying to distribute Abundance into length intervals. A different reason may be that there are samples in the StoxBioticData used as input to the LengthDistribution process positive SampleNumber but no individuals. The consequence is that Abundance is set to NA in SuperIndividualsData for the following Stratum Layer and SpeciesCategory, resulting in loss of Abundance: ", paste(badStratumLayerSpeciesCategory, collapse = "\n"))
         }
         
         # Sum the haul densities (stored as WeightedNumber) over all hauls of each Stratum/Layer/SpeciesCategory/TempLengthGroupUsedInSuperIndividuals/Frequency/Beam:

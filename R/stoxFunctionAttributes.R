@@ -835,9 +835,11 @@ stoxFunctionAttributes <- list(
                 PSUDefinition = "FunctionParameter"
             ), 
             StratumPolygon = list(
+                PSUDefinition = "FunctionParameter", 
                 PSUDefinitionMethod = "EDSUToPSU"
             ), 
             StratumPolygon = list(
+                SurveyDefinition = "FunctionParameter",
                 SurveyDefinitionMethod = "Table"
             ), 
             # Survey:

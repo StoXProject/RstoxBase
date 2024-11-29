@@ -537,7 +537,8 @@ initiateRstoxBase <- function(){
             LengthDependent = c("TargetStrength0", "LengthExponent"), 
             LengthAndDepthDependent = c("TargetStrength0", "LengthExponent", "DepthExponent"), 
             LengthExponent = "LengthExponent", 
-            TargetStrengthByLength = c("TargetStrength", "TotalLength")
+            #TargetStrengthByLength = c("TargetStrength", "TotalLength")
+            TargetStrengthByLength = c("TargetStrength")
         ), 
         Regression = list(
             SimpleLinear = c("Intercept", "Slope"), 
