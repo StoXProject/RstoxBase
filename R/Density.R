@@ -360,9 +360,9 @@ getTargetStrengthByLengthFunction <- function(AcousticTargetStrengthTable, metho
     
     # Define the columns to modify:
     functionColumns <- c("TotalLength", "TargetStrength")
-    by <- setdiff(names(AcousticTargetStrength), functionColumns)
+    by <- setdiff(names(AcousticTargetStrengthTable), functionColumns)
     
-    # Add mid points to the AcousticTargetStrength to facilitate use of approxfun with method = "constant":
+    # Add mid points to the AcousticTargetStrengthTable to facilitate use of approxfun with method = "constant":
     AcousticTargetStrengthTable  <- expandTargetStrengthTable(AcousticTargetStrengthTable, by = by)
     
     # Get one function for each combination of the columns given by 'by':
