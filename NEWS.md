@@ -1,6 +1,11 @@
+# RstoxBase v2.1.1  (2024-12-19)
+* Final release for StoX 4.1.1.
+* Updated documentation of the AcousticPSU process data.
+
+
 # RstoxBase v2.1.1-9001  (2024-11-13)
 * Fixed bug in MeanNASC() causing StratumPolygon to show in the Function inputs if the user first selects PSUDefinition = "FunctionParameter" and PSUDefinitionMethod = "EDSUToPSU" and then changing to PSUDefinition = "FunctionInput".
-* Fixed bug in DefineAcousticTargetStrength() where when specifying a table with the columns AcousticCategory, Frequency, TotalLength and TargetStrength in the case of AcousticTargetStrengthModel = "TargetStrengthByLength" resulted in the error message "The output from DefineAcousticTargetStrength() contains duplicated keys (AcousticCategory, Frequency) in rows 1, 2.". The reason was that only the first two columns were considered as grouping variables, whereas all three first columns should (specifying different lengths, and a target strength per length).
+* Fixed bug in DefineAcousticTargetStrength() where specifying a table with the columns AcousticCategory, Frequency, TotalLength and TargetStrength in the case of AcousticTargetStrengthModel = "TargetStrengthByLength" resulted in the error message "The output from DefineAcousticTargetStrength() contains duplicated keys (AcousticCategory, Frequency) in rows 1, 2.". The reason was that only the first two columns were considered as grouping variables, whereas all three first columns should (specifying different lengths, and a target strength per length).
 
 
 # RstoxBase v2.1.0  (2024-11-04)

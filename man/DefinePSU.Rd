@@ -40,7 +40,7 @@ DefinePSU(
 \item{PSUProcessData}{Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.}
 }
 \value{
-An list of two objects, Stratum_PSU and SSU_PSU.
+A list of three objects, Stratum_PSU, SSU_PSU and PSUByTime in the case that SavePSUByTime is TRUE.
 }
 \description{
 Underlying function for \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
