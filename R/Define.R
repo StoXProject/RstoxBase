@@ -14,7 +14,7 @@
 #' @param PSUProcessData Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.
 #' 
 #' @return
-#' An list of two objects, Stratum_PSU and SSU_PSU.
+#' A list of three objects, Stratum_PSU, SSU_PSU and PSUByTime in the case that SavePSUByTime is TRUE.
 #' 
 #' @seealso \code{\link{DefineAcousticPSU}} and \code{\link{DefineBioticPSU}}..
 #' 
