@@ -1,3 +1,6 @@
+# RstoxBase v2.1.2-9001  (2025-01-10)
+* Changed the behavior of DefinitionMethod = "Manual" from deleting all strata, to passing the StratumPolygon as output unchanged. In addition, a new option is added, "DeleteAllStrata", which replaces the old behavior of DefinitionMethod = "Manual".
+
 # RstoxBase v2.1.1  (2024-12-19)
 * Final release for StoX 4.1.1.
 * Updated documentation of the AcousticPSU process data.

@@ -7,7 +7,7 @@
 DefineStratumPolygon(
   processData,
   UseProcessData = FALSE,
-  DefinitionMethod = c("Manual", "ResourceFile"),
+  DefinitionMethod = c("Manual", "DeleteAllStrata", "ResourceFile"),
   FileName = character(),
   StratumNameLabel = character(),
   SimplifyStratumPolygon = FALSE,
