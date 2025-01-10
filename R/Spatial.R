@@ -118,7 +118,7 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
 #'
 DefineStratumPolygon <- function(
     processData, UseProcessData = FALSE, 
-    DefinitionMethod = c("Manual", "ResourceFile"), 
+    DefinitionMethod = c("Manual", "DeleteAllStrata", "ResourceFile"), 
     FileName = character(), 
     StratumNameLabel = character(), 
     SimplifyStratumPolygon = FALSE, 
@@ -137,8 +137,17 @@ DefineStratumPolygon <- function(
     if(grepl("ResourceFile", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- readStratumPolygonFromFile(FileName, StratumNameLabel = StratumNameLabel)
     }
-    else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+    else if(grepl("DeleteAllStrata", DefinitionMethod, ignore.case = TRUE)) {
         StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
+    }
+    # Manual implies to use the existing process data, or create an empty set if not present:
+    else if(grepl("Manual", DefinitionMethod, ignore.case = TRUE)) {
+        if(length(processData)) {
+            StratumPolygon <- processData
+        }
+        else {
+            StratumPolygon <- getRstoxBaseDefinitions("emptyStratumPolygon")
+        }
     }
     else {
         stop("Inavlid DefinitionMethod")
