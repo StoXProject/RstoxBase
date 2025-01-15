@@ -14,15 +14,22 @@ LengthDependentLengthDistributionCompensation(
 \arguments{
 \item{LengthDistributionData}{The \code{\link{LengthDistributionData}} data.}
 
-\item{CompensationMethod}{The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).}
+\item{CompensationMethod}{The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect and "LengthDependentSelectivity" for compensating for mash size selectivity (not yet implemented).}
 
 \item{LengthDependentSweepWidthParameters}{A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).}
 
-\item{LengthDependentSelectivityParameters}{A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).}
+\item{LengthDependentSelectivityParameters}{A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details). Currently not supported.}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.
 }
 \description{
 This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.
+}
+\details{
+When \code{CompensationMethod} = "LengthDependentSweepWidth" the length frequencies (WeightedNumber in the LengthDistributionData) are divided by the effective sweep width estimated by the following expression
+
+\deqn{Alpha * IndividualTotalLength^{Beta}}
+
+In this expression \code{IndividualTotalLength} is truncated to the range \eqn{[LMin, LMin]}.
 }
