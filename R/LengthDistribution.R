@@ -537,9 +537,16 @@ GearDependentLengthDistributionCompensation <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param CompensationMethod The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).
+#' @param CompensationMethod The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect and "LengthDependentSelectivity" for compensating for mash size selectivity (not yet implemented).
 #' @param LengthDependentSweepWidthParameters A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
-#' @param LengthDependentSelectivityParameters A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).
+#' @param LengthDependentSelectivityParameters A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details). Currently not supported.
+#' 
+#' @details
+#' When \code{CompensationMethod} = "LengthDependentSweepWidth" the length frequencies (WeightedNumber in the LengthDistributionData) are divided by the effective sweep width estimated by the following expression
+#' 
+#' \deqn{Alpha * IndividualTotalLength^{Beta}}
+#' 
+#' In this expression \code{IndividualTotalLength} is truncated to the range \eqn{[LMin, LMin]}.
 #' 
 #' @return
 #' A \code{\link{LengthDistributionData}} object.
