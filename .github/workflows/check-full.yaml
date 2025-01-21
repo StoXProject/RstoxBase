@@ -138,11 +138,12 @@ jobs:
       - name: Prepare for CRANdependencies on Linux
         if: runner.os == 'Linux'
         run: |
-          # The following two lines caused trouble for sf on the new R 4.2 on Ubuntu in May 2022:
-          #sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-          #sudo apt-get update
-          # We needed to add libxslt1-dev as RstoxData <= RstoxData-v1.8.0-9006 was using it (we should try to skip this after StoX 3.6.0):
-          sudo apt-get install libgdal-dev libproj-dev libgeos-dev libudunits2-dev libxslt1-dev libgit2-dev
+          sudo apt-get install libgdal-dev
+          sudo apt-get install libproj-dev
+          sudo apt-get install libgeos-dev
+          sudo apt-get install libudunits2-dev
+          sudo apt-get install libxslt1-dev
+          sudo apt-get install libgit2-dev
         shell: bash
       
       
@@ -150,13 +151,10 @@ jobs:
       - name: Install CRANdependencies
         run: |
           install.packages(c("rcmdcheck", "git2r", "sessioninfo", "knitr", "remotes", "drat"))
-          
-          # Temporarily install Rcpp from GitHub until the CRAN version is fixed:
-          remotes::install_github("RcppCore/Rcpp")
         shell: Rscript {0}
         
       
-      ## 2d. Rstox packages and dependencies (the complicated if condition is needed since the reference to branch name is not  consistent across event names):
+      ## 2d. Rstox packages and dependencies (the complicated if condition is needed since the reference to branch name is not consistent across event names):
       - name: Install R package dependencies from the unstableRepo
         if: (github.event_name == 'push' && github.ref_name == 'develop') || (github.event_name == 'pull_request' && github.base_ref == 'develop')
         run: |
@@ -208,7 +206,7 @@ jobs:
       #### 4. Build the package source and binary files: ####
       #######################################################
       
-      - name: Build package source archive from branches develop, testing and master (on Linux for some reason
+      - name: Build package source archive from branches develop, testing and master (on Linux for some reason)
         if: runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'testing' || github.ref_name == 'develop')
         run: |
           pkgbuild::build(".", dest_path = ".", binary = FALSE)
