@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2-9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
       </span>
     </div>
 
@@ -70,7 +70,7 @@
 
 
 <dt id="arg-compensationmethod">CompensationMethod<a class="anchor" aria-label="anchor" href="#arg-compensationmethod"></a></dt>
-<dd><p>The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect quantified through the function alpha * length ^ beta; and "LengthDependentSelectivity" for compensating for mash size selectivity through the net using the function Alpha * e ^ (length * Beta).</p></dd>
+<dd><p>The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect and "LengthDependentSelectivity" for compensating for mash size selectivity (not yet implemented).</p></dd>
 
 
 <dt id="arg-lengthdependentsweepwidthparameters">LengthDependentSweepWidthParameters<a class="anchor" aria-label="anchor" href="#arg-lengthdependentsweepwidthparameters"></a></dt>
@@ -78,12 +78,18 @@
 
 
 <dt id="arg-lengthdependentselectivityparameters">LengthDependentSelectivityParameters<a class="anchor" aria-label="anchor" href="#arg-lengthdependentselectivityparameters"></a></dt>
-<dd><p>A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details).</p></dd>
+<dd><p>A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details). Currently not supported.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A <code><a href="LengthDistributionData.html">LengthDistributionData</a></code> object.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>When <code>CompensationMethod</code> = "LengthDependentSweepWidth" the length frequencies (WeightedNumber in the LengthDistributionData) are divided by the effective sweep width estimated by the following expression</p>
+<p>$$Alpha * IndividualTotalLength^{Beta}$$</p>
+<p>In this expression <code>IndividualTotalLength</code> is truncated to the range \([LMin, LMin]\).</p>
     </div>
 
   </div>
