@@ -10,7 +10,7 @@ RstoxBase is a package that defines the core functions used in the survey estima
 
 1. Install the latest release:
     ```r
-    install.packages("RstoxBase", repos = c("https://stoxproject.github.io/repo", "https://cloud.r-project.org"))
+    install.packages("RstoxBase", repos = c("https://stoxproject.github.io/repo", getOption("repos")))
     ```
 
 2. Install the latest version from GitHub:
