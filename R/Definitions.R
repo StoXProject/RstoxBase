@@ -392,8 +392,9 @@ initiateRstoxBase <- function(){
     
     #### Data type units: ####
     dataTypeUnits <- list(
-        # DensityData
+        # (Mean)DensityData
         list(dataType = "DensityData", variableName = "Density", quantity = "area_number_density", unit = "individuals/nmi^2"), 
+        list(dataType = "MeanDensityData", variableName = "Density", quantity = "area_number_density", unit = "individuals/nmi^2"), 
         # QuantityData
         list(dataType = "QuantityData", variableName = "Abundance", quantity = "cardinality", unit = "individuals"), 
         list(dataType = "QuantityData", variableName = "Biomass", quantity = "mass", unit = "kg"),

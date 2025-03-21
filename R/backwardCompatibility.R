@@ -430,7 +430,14 @@ backwardCompatibility_RstoxBase <- list(
             modelName = "report", 
             parameterName = "ReportVariableUnit",
             newParameterName = "TargetVariableUnit"
-        )
+        )#, 
+        #list(
+        #    changeVersion = "2.1.3-9001", 
+        #    functionName = "LengthDependentLengthDistributionCompensation", 
+        #    modelName = "baseline", 
+        #    parameterName = "LengthDependentSweepWidthParameters",
+        #    newParameterName = "LengthDependentHerdingParameters"
+        #)
     ),  
     
     translateParameter = list(
@@ -585,7 +592,15 @@ backwardCompatibility_RstoxBase <- list(
 	        parameterName = "WeightingMethod", 
 	        value = "NASC", 
 	        newValue = "AcousticDensity"
-	    )
+	    )#,
+	    #list(
+	    #    changeVersion = "2.1.3-9001", 
+	    #    functionName = "LengthDependentLengthDistributionCompensation", 
+	    #    modelName = "baseline", 
+	    #    parameterName = "CompensationMethod", 
+	    #    value = "LengthDependentSweepWidth", 
+	    #    newValue = "LengthDependentHerding"
+	    #)
 	), 
     
     renameProcessData = list(
