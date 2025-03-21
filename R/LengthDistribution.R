@@ -539,14 +539,18 @@ GearDependentLengthDistributionCompensation <- function(
 #' @inheritParams ProcessData
 #' @param CompensationMethod The method to use for the length dependent catch compensation, one of "LengthDependentSweepWidth" for adjusting the sweep width according to the fish length dependent herding effect and "LengthDependentSelectivity" for compensating for mash size selectivity (not yet implemented).
 #' @param LengthDependentSweepWidthParameters A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).
-#' @param LengthDependentSelectivityParameters A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details). Currently not supported.
+#' @param LengthDependentSelectivityParameters A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory,  LMin, LMax, Alpha and Beta (see details). Currently not supported.
 #' 
 #' @details
-#' When \code{CompensationMethod} = "LengthDependentSweepWidth" the length frequencies (WeightedNumber in the LengthDistributionData) are divided by the effective sweep width estimated by the following expression
+#' This function estimates the effective sweep width and divides the length frequencies (WeightedNumber in the \code{\link{LengthDistributionData}}) by this effective sweep width (in nautical miles). The result is a \code{LengthDistributionData} object with LengthDistributionType starting with "SweepWidthCompensated". In the case that the input \code{LengthDistributionData} is normalized (LengthDistributionType = "Normalized") the output will hare LengthDistributionType = "SweepWidthCompensatedNormalized", which is equivalent to area number density.
 #' 
+#' The IndividualTotalLength is truncated to the interval \eqn{[LMin, LMin]}, i.e., \code{IndividualTotalLength} < \code{LMin} is set to \code{LMin} and \code{IndividualTotalLength} < \code{LMax} is set to \code{LMax}
+#' 
+#' When \code{CompensationMethod} = "LengthDependentSweepWidth" the sweep width is modeled as
 #' \deqn{Alpha * IndividualTotalLength^{Beta}}
 #' 
-#' In this expression \code{IndividualTotalLength} is truncated to the range \eqn{[LMin, LMin]}.
+#' When \code{CompensationMethod} = "LengthDependentSelectivity" the sweep width is modeled as
+#' \deqn{Alpha * exp(Beta * IndividualTotalLength)}.
 #' 
 #' @return
 #' A \code{\link{LengthDistributionData}} object.
@@ -594,6 +598,8 @@ LengthDependentLengthDistributionCompensation <- function(
     }
     else if(CompensationMethod == "LengthDependentSelectivity") {
         
+        stop("LengthDependentSelectivity is not yet implemented.")
+        
         # Check that all combinations in the LengthDistributionData of the variablas specified by CompensationMethod are present in LengthDependentSweepWidthParameters:
         checkAllCombinations(
             data = LengthDistributionData, 
@@ -606,9 +612,12 @@ LengthDependentLengthDistributionCompensation <- function(
             compensationMethod = CompensationMethod, 
             compensationFunction = applyLengthDependentSelectivity, 
             parametertable = LengthDependentSelectivityParameters, 
-            requiredParameters = c("LMax", "Alpha", "Beta"), 
+            requiredParameters = c("LMin", "LMax", "Alpha", "Beta"), 
             groupingVariable = "SpeciesCategory"
         )
+        
+        # Finally, set the LengthDistributionType:
+        LengthDistributionDataCopy[, LengthDistributionType := paste0("SweepWidthCompensated", LengthDistributionType)]
         
         # Change added on 2021-04-09:
         # Do not add SelectivityCompensated to LengthDistributionType:
@@ -629,24 +638,17 @@ LengthDependentLengthDistributionCompensation <- function(
 # and 
 #   L = LMax if L > LMax:
 applyLengthDependentSweepWidth <- function(WeightedNumber, IndividualTotalLengthMiddle, LMin, LMax, Alpha, Beta) {
-    # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
-    if(any(is.na(LMin))) {
-        stop("The function applyLengthDependentSweepWidth() cannot be applied on rows with missing LMin. Subset the rows before applying the function.")
-    }
     
-    # Set the lengths lower than LMin to LMin: 
-    IndividualTotalLengthMiddle <- pmax(IndividualTotalLengthMiddle, LMin)
+    applyLengthDependentSweepWidthCompensation(
+        sweepWidthFunction = sweepWidthFunctionForSweepWidth, 
+        WeightedNumber = WeightedNumber, 
+        IndividualTotalLengthMiddle = IndividualTotalLengthMiddle, 
+        LMin = LMin, 
+        LMax = LMax, 
+        Alpha = Alpha, 
+        Beta = Beta
+    )
     
-    # And the lengths larger than LMax to LMax: 
-    IndividualTotalLengthMiddle <- pmin(IndividualTotalLengthMiddle, LMax)
-    
-    # Calculate the factor to multiply the WeightedNumber by:
-    sweepWidth <- Alpha * IndividualTotalLengthMiddle^Beta
-    sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
-    
-    WeightedNumber <- WeightedNumber / sweepWidthInNauticalMiles
-    
-    return(WeightedNumber)
 }
 
 # Function to apply the length dependent selectivity function.
@@ -655,20 +657,50 @@ applyLengthDependentSweepWidth <- function(WeightedNumber, IndividualTotalLength
 #   fact = Alpha * exp(L * Beta)
 # and 
 #   fact = 1 if L > LMax:
-applyLengthDependentSelectivity <- function(WeightedNumber, IndividualTotalLengthMiddle, LMax, Alpha, Beta) {
-    # Condition to ensure that the function is applied only on the appropriate rows, to avid coding error:
-    if(any(is.na(LMax))) {
-        stop("The function applyLengthDependentSelectivity() cannot be applied on rows with missing LMax. Subset the rows before applying the function.")
-    }
+applyLengthDependentSelectivity <- function(WeightedNumber, IndividualTotalLengthMiddle, LMin, LMax, Alpha, Beta) {
+    
+    applyLengthDependentSweepWidthCompensation(
+        sweepWidthFunction = sweepWidthFunctionForSelectivity, 
+        WeightedNumber = WeightedNumber, 
+        IndividualTotalLengthMiddle = IndividualTotalLengthMiddle, 
+        LMin = LMin, 
+        LMax = LMax, 
+        Alpha = Alpha, 
+        Beta = Beta
+    )
+    
+}
+
+
+
+applyLengthDependentSweepWidthCompensation <- function(sweepWidthFunction, WeightedNumber, IndividualTotalLengthMiddle, LMin, LMax, Alpha, Beta) {
+    # Set the lengths lower than LMin to LMin: 
+    IndividualTotalLengthMiddle <- pmax(IndividualTotalLengthMiddle, LMin)
+    # And the lengths larger than LMax to LMax: 
+    IndividualTotalLengthMiddle <- pmin(IndividualTotalLengthMiddle, LMax)
     
     # Calculate the factor to multiply the WeightedNumber:
-    fact <- Alpha * exp(IndividualTotalLengthMiddle * Beta)
-    # Set the factor to 1 outside of the range LMin to LMax. This is  questionable, and we do not turn on this functionality before this method is approved:
-    stop("CatchabilityMethod = \"LengthDependentSelectivity\" is not yet supported.")
-    fact[IndividualTotalLengthMiddle > LMax] <- 1
-    WeightedNumber <- WeightedNumber * fact
+    sweepWidth <- do.call(
+        sweepWidthFunction, list(
+            Alpha = Alpha,
+            Beta = Beta, 
+            IndividualTotalLengthMiddle = IndividualTotalLengthMiddle
+        )
+    )
+    sweepWidthInNauticalMiles <- sweepWidth / getRstoxBaseDefinitions("nauticalMileInMeters")
+    # Divide by the sweep width:
+    WeightedNumber <- WeightedNumber / sweepWidthInNauticalMiles
     
     return(WeightedNumber)
+}
+
+
+sweepWidthFunctionForSweepWidth <- function(Alpha, Beta, IndividualTotalLengthMiddle) {
+    Alpha * IndividualTotalLengthMiddle^Beta
+}
+
+sweepWidthFunctionForSelectivity <- function(Alpha, Beta, IndividualTotalLengthMiddle) {
+    Alpha * exp(IndividualTotalLengthMiddle * Beta)
 }
 
 
