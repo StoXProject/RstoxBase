@@ -1,3 +1,12 @@
+# RstoxBase v2.1.3  (2025-04-01)
+* Final release for StoX 4.1.3.
+
+
+# RstoxBase v2.1.3-9001  (2025-03-21)
+* Added unit for Density in MeanDensityData.
+* Refactored LengthDependentLengthDistributionCompensation(), preparing for the selectivity method.
+
+
 # RstoxBase v2.1.2-9002  (2025-01-15)
 * Updated documentation on LengthDependentLengthDistributionCompensation with equations.
 

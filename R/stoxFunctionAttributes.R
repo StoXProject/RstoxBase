@@ -1592,17 +1592,19 @@ processPropertyFormats <- list(
             "SpeciesCategory", 
             "Alpha", 
             "Beta", 
+            "LMin", 
             "LMax"
         ), 
         variableTypes = c(
             "character", 
             "double", 
             "double", 
+            "double", 
             "double"
         ), 
         possibleValues = function(LengthDistributionData) {
             if(!length(LengthDistributionData)) {
-                return(vector("list", 4))
+                return(vector("list", 5))
             }
             
             # Get all unique combinations:
@@ -1611,7 +1613,7 @@ processPropertyFormats <- list(
             # Output must be an unnamed list:
             c(
                 list(unname(listOfUniqueCombinations)), 
-                rep(list(list()), 3)
+                rep(list(list()), 4)
             )
         }
     ), 

@@ -18,7 +18,7 @@ LengthDependentLengthDistributionCompensation(
 
 \item{LengthDependentSweepWidthParameters}{A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).}
 
-\item{LengthDependentSelectivityParameters}{A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details). Currently not supported.}
+\item{LengthDependentSelectivityParameters}{A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory,  LMin, LMax, Alpha and Beta (see details). Currently not supported.}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.
@@ -27,9 +27,13 @@ A \code{\link{LengthDistributionData}} object.
 This function compensates for length dependent herding by the trawl doors into the net, or length dependent selectivity by the mesh size.
 }
 \details{
-When \code{CompensationMethod} = "LengthDependentSweepWidth" the length frequencies (WeightedNumber in the LengthDistributionData) are divided by the effective sweep width estimated by the following expression
+This function estimates the effective sweep width and divides the length frequencies (WeightedNumber in the \code{\link{LengthDistributionData}}) by this effective sweep width (in nautical miles). The result is a \code{LengthDistributionData} object with LengthDistributionType starting with "SweepWidthCompensated". In the case that the input \code{LengthDistributionData} is normalized (LengthDistributionType = "Normalized") the output will hare LengthDistributionType = "SweepWidthCompensatedNormalized", which is equivalent to area number density.
 
+The IndividualTotalLength is truncated to the interval \eqn{[LMin, LMin]}, i.e., \code{IndividualTotalLength} < \code{LMin} is set to \code{LMin} and \code{IndividualTotalLength} < \code{LMax} is set to \code{LMax}
+
+When \code{CompensationMethod} = "LengthDependentSweepWidth" the sweep width is modeled as
 \deqn{Alpha * IndividualTotalLength^{Beta}}
 
-In this expression \code{IndividualTotalLength} is truncated to the range \eqn{[LMin, LMin]}.
+When \code{CompensationMethod} = "LengthDependentSelectivity" the sweep width is modeled as
+\deqn{Alpha * exp(Beta * IndividualTotalLength)}.
 }
