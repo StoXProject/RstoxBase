@@ -18,7 +18,7 @@ LengthDependentLengthDistributionCompensation(
 
 \item{LengthDependentSweepWidthParameters}{A table of parameters of the LengthDependentSweepWidth method, containing the columns SpeciesCategory, LMin, LMax, Alpha and Beta (see details).}
 
-\item{LengthDependentSelectivityParameters}{A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory,  LMin, LMax, Alpha and Beta (see details).}
+\item{LengthDependentSelectivityParameters}{A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory,  LMin, LMax, Alpha and Beta (see details). Currently not supported.}
 }
 \value{
 A \code{\link{LengthDistributionData}} object.

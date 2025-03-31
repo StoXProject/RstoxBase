@@ -150,27 +150,90 @@ jobs:
       ## 2c. R packages needed for this yaml script (not related to the Rstox package itself):
       - name: Install CRANdependencies
         run: |
-          install.packages(c("rcmdcheck", "git2r", "sessioninfo", "knitr", "remotes", "drat"))
+          install.packages(c("rcmdcheck", "git2r", "sessioninfo", "knitr", "drat"))
         shell: Rscript {0}
         
       
-      ## 2d. Rstox packages and dependencies (the complicated if condition is needed since the reference to branch name is not consistent across event names):
+      ## 2d. Rstox packages and dependencies (the complicated if condition is needed since the reference to branch name is not consistent across event names). There is the issue that R sorts packge versions alphabetically, while StoX uses semantic versioning. Consequently a pre-release such as 1.2.3-9001 will be considered as newer than the official release 1.2.3 by R. We have solved this by separating the pre-releases and official releases into different repos "unstableRepo" and "testingRepo" for pre-releases and "repo" of official releases). This potentially breaks with remotes::install_deps() as it silently appends the Additional_repositories from the DESCRIPTION file to the repos, but since this would only be a problem if a pre-release is ranked as newer than the official release it will not be a problem when installing dependencies from the "repo" since the Additional_repositories points to that same repo:
       - name: Install R package dependencies from the unstableRepo
         if: (github.event_name == 'push' && github.ref_name == 'develop') || (github.event_name == 'pull_request' && github.base_ref == 'develop')
         run: |
-          remotes::install_deps(dependencies = TRUE, repos = c("https://stoxproject.github.io/unstableRepo/", "https://cloud.r-project.org/"))
+          # We hard code the list of top level dependencies, since the behavior of remotes::install_deps() that we used before is very unclear (e.g. how is the Additional_repositories included in the list of repos?):
+          topLevelDeps <- c(
+            # Imports: 
+            "data.table",
+            "geojsonsf",
+            "ggplot2",
+            "jsonlite",
+            "lwgeom",
+            "maps",
+            "RstoxData",
+            "sf",
+            "stringi",
+            "units",
+            "xml2",
+            # Suggests: 
+            "tinytest"
+          )
+          install.packages(
+            topLevelDeps, 
+            dependencies = TRUE, 
+            repos = c("https://stoxproject.github.io/unstableRepo/", "https://cloud.r-project.org/")
+          )
         shell: Rscript {0}
 
       - name: Install R package dependencies from the testingRepo
         if: (github.event_name == 'push' && github.ref_name == 'testing') || (github.event_name == 'pull_request' && github.base_ref == 'testing')
         run: |
-          remotes::install_deps(dependencies = TRUE, repos = c("https://stoxproject.github.io/testingRepo/", "https://cloud.r-project.org/"))
+          # We hard code the list of top level dependencies, since the behavior of remotes::install_deps() that we used before is very unclear (e.g. how is the Additional_repositories included in the list of repos?):
+          topLevelDeps <- c(
+            # Imports: 
+            "data.table",
+            "geojsonsf",
+            "ggplot2",
+            "jsonlite",
+            "lwgeom",
+            "maps",
+            "RstoxData",
+            "sf",
+            "stringi",
+            "units",
+            "xml2",
+            # Suggests: 
+            "tinytest"
+          )
+          install.packages(
+            topLevelDeps, 
+            dependencies = TRUE, 
+            repos = c("https://stoxproject.github.io/unstableRepo/", "https://cloud.r-project.org/")
+          )
         shell: Rscript {0}
 
       - name: Install R package dependencies from the official repo
         if: (github.event_name == 'push' && github.ref_name == 'master') || (github.event_name == 'pull_request' && github.base_ref == 'master')
         run: |
-          remotes::install_deps(dependencies = TRUE, repos = c("https://stoxproject.github.io/repo/", "https://cloud.r-project.org/"))
+          # We hard code the list of top level dependencies, since the behavior of remotes::install_deps() that we used before is very unclear (e.g. how is the Additional_repositories included in the list of repos?):
+          topLevelDeps <- c(
+            # Imports: 
+            "data.table",
+            "geojsonsf",
+            "ggplot2",
+            "jsonlite",
+            "lwgeom",
+            "maps",
+            "RstoxData",
+            "sf",
+            "stringi",
+            "units",
+            "xml2",
+            # Suggests: 
+            "tinytest"
+          )
+          install.packages(
+            topLevelDeps, 
+            dependencies = TRUE, 
+            repos = c("https://stoxproject.github.io/unstableRepo/", "https://cloud.r-project.org/")
+          )
         shell: Rscript {0}
 
 
