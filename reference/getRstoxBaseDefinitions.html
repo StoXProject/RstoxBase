@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
       </span>
     </div>
 
@@ -839,58 +839,60 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         dataType          variableName            quantity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                           &lt;char&gt;                &lt;char&gt;              &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:                  DensityData               Density area_number_density</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                 QuantityData             Abundance         cardinality</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                 QuantityData               Biomass                mass</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     SpeciesCategoryCatchData      TotalCatchNumber         cardinality</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     SpeciesCategoryCatchData      TotalCatchWeight                mass</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6: PreySpeciesCategoryCatchData  TotalPreyCatchWeight                mass</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:         SuperIndividualsData IndividualTotalLength              length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:         SuperIndividualsData IndividualRoundWeight                mass</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:         SuperIndividualsData             Abundance         cardinality</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:         SuperIndividualsData               Biomass                mass</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:         SuperIndividualsData           TowDistance              length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12:         SuperIndividualsData  EffectiveTowDistance              length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:         SuperIndividualsData   CatchFractionWeight                mass</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:         SuperIndividualsData   CatchFractionNumber         cardinality</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:         SuperIndividualsData          SampleWeight                mass</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:         SuperIndividualsData          SampleNumber         cardinality</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:         SuperIndividualsData         IndividualAge                 age</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:         SuperIndividualsData             Longitude               angle</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:         SuperIndividualsData              Latitude               angle</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:         SuperIndividualsData           BottomDepth              length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21:         SuperIndividualsData          MinHaulDepth              length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22:         SuperIndividualsData          MaxHaulDepth              length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23:         SuperIndividualsData    VerticalNetOpening              length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24:         SuperIndividualsData  HorizontalNetOpening        lengthlength</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25:         SuperIndividualsData       TrawlDoorSpread              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:              MeanDensityData               Density area_number_density</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                 QuantityData             Abundance         cardinality</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                 QuantityData               Biomass                mass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     SpeciesCategoryCatchData      TotalCatchNumber         cardinality</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     SpeciesCategoryCatchData      TotalCatchWeight                mass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: PreySpeciesCategoryCatchData  TotalPreyCatchWeight                mass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:         SuperIndividualsData IndividualTotalLength              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:         SuperIndividualsData IndividualRoundWeight                mass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:         SuperIndividualsData             Abundance         cardinality</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:         SuperIndividualsData               Biomass                mass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:         SuperIndividualsData           TowDistance              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:         SuperIndividualsData  EffectiveTowDistance              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:         SuperIndividualsData   CatchFractionWeight                mass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:         SuperIndividualsData   CatchFractionNumber         cardinality</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:         SuperIndividualsData          SampleWeight                mass</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:         SuperIndividualsData          SampleNumber         cardinality</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:         SuperIndividualsData         IndividualAge                 age</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:         SuperIndividualsData             Longitude               angle</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:         SuperIndividualsData              Latitude               angle</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:         SuperIndividualsData           BottomDepth              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:         SuperIndividualsData          MinHaulDepth              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:         SuperIndividualsData          MaxHaulDepth              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24:         SuperIndividualsData    VerticalNetOpening              length</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25:         SuperIndividualsData  HorizontalNetOpening        lengthlength</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:         SuperIndividualsData       TrawlDoorSpread              length</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         dataType          variableName            quantity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  unit</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                &lt;char&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1: individuals/nmi^2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:       individuals</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                kg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  4:       individuals</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                kg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                mg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                cm</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                 g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:       individuals</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                 g</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11:               nmi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: individuals/nmi^2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:       individuals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                kg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:       individuals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                kg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                mg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                cm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                 g</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:       individuals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:                 g</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12:               nmi</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                kg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14:       individuals</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                kg</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16:       individuals</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17:              year</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18:       degree east</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19:      degree north</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20:                 m</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:               nmi</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                kg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:       individuals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:                kg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:       individuals</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:              year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:       degree east</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:      degree north</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21:                 m</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22:                 m</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23:                 m</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24:                 m</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25:                 m</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26:                 m</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  unit</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dataVariables</span>
@@ -1015,8 +1017,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>         data = data, na.action = stats::na.exclude)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(fit)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f425b8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0aecc0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $estimationFunctions$Regression$Power</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (dependentVariable, independentVariable, data) </span>
@@ -1031,8 +1033,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     fit$coefficients[1] &lt;- exp(fit$coefficients[1])</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(fit)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f45c78&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0ae438&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1050,8 +1052,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(prefix)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f49738&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0b5f90&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $getSSULabel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (PSUType) </span>
@@ -1067,8 +1069,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(SSULabel)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f48ee8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0b5778&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $getStationLevel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (PSUType) </span>
@@ -1084,8 +1086,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     return(SSULabel)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f517c0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0b4f60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $implementedModelClasses</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "AcousticTargetStrength" "Regression"            </span>
@@ -1098,8 +1100,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f43ab8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0ac278&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength$LengthAndDepthDependent</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, TargetStrength0, LengthExponent, </span>
@@ -1108,16 +1110,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>     TargetStrength0 + LengthExponent * log10(midIndividualTotalLength) + </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         DepthExponent * log10(1 + Depth/10)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f436c8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0afdd0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength$LengthExponent</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (midIndividualTotalLength, LengthExponent) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     LengthExponent * log10(midIndividualTotalLength)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f430a8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0af7b0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$AcousticTargetStrength$TargetStrengthByLength</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
@@ -1129,16 +1131,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     parameters$Intercept + parameters$Slope * independentVariable</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f42e08&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0af548&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $modelFunctions$Regression$Power</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (independentVariable, parameters) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     parameters$Factor * independentVariable^parameters$Exponent</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f42a18&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0af120&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -1229,8 +1231,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! Instead, GroupingVariables can be used to isolate missing values in the TargetVariable. E.g., using SpeciesCategory and Survey often suffices to isolate missing values to missing SpeciesCategory and missing Survey. In addition, the Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x131f56da0&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x131f56668&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x12b0b4710&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x12b0b7ee8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $reportFunctions</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $reportFunctions$functionName</span>

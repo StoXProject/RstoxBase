@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
       </span>
     </div>
 
@@ -56,8 +56,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">LengthDependentLengthDistributionCompensation</span><span class="op">(</span></span>
 <span>  <span class="va">LengthDistributionData</span>,</span>
 <span>  CompensationMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LengthDependentSweepWidth"</span>, <span class="st">"LengthDependentSelectivity"</span><span class="op">)</span>,</span>
-<span>  LengthDependentSweepWidthParameters <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  LengthDependentSelectivityParameters <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  LengthDependentSweepWidthParameters <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LengthDependentSelectivityParameters <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,7 +78,7 @@
 
 
 <dt id="arg-lengthdependentselectivityparameters">LengthDependentSelectivityParameters<a class="anchor" aria-label="anchor" href="#arg-lengthdependentselectivityparameters"></a></dt>
-<dd><p>A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory, LMax, Alpha and Beta (see details). Currently not supported.</p></dd>
+<dd><p>A table of parameters of the LengthDependentSelectivity method, containing the columns SpeciesCategory,  LMin, LMax, Alpha and Beta (see details). Currently not supported.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -87,9 +87,12 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>When <code>CompensationMethod</code> = "LengthDependentSweepWidth" the length frequencies (WeightedNumber in the LengthDistributionData) are divided by the effective sweep width estimated by the following expression</p>
-<p>$$Alpha * IndividualTotalLength^{Beta}$$</p>
-<p>In this expression <code>IndividualTotalLength</code> is truncated to the range \([LMin, LMin]\).</p>
+    <p>This function estimates the effective sweep width and divides the length frequencies (WeightedNumber in the <code><a href="LengthDistributionData.html">LengthDistributionData</a></code>) by this effective sweep width (in nautical miles). The result is a <code>LengthDistributionData</code> object with LengthDistributionType starting with "SweepWidthCompensated". In the case that the input <code>LengthDistributionData</code> is normalized (LengthDistributionType = "Normalized") the output will hare LengthDistributionType = "SweepWidthCompensatedNormalized", which is equivalent to area number density.</p>
+<p>The IndividualTotalLength is truncated to the interval \([LMin, LMin]\), i.e., <code>IndividualTotalLength</code> &lt; <code>LMin</code> is set to <code>LMin</code> and <code>IndividualTotalLength</code> &lt; <code>LMax</code> is set to <code>LMax</code></p>
+<p>When <code>CompensationMethod</code> = "LengthDependentSweepWidth" the sweep width is modeled as
+$$Alpha * IndividualTotalLength^{Beta}$$</p>
+<p>When <code>CompensationMethod</code> = "LengthDependentSelectivity" the sweep width is modeled as
+$$Alpha * exp(Beta * IndividualTotalLength)$$.</p>
     </div>
 
   </div>
