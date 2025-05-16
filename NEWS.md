@@ -1,3 +1,7 @@
+# RstoxBase v2.1.4-9001  (2025-05-16)
+* Added prototype for DefineSurveyPlan.
+
+
 # RstoxBase v2.1.3  (2025-04-01)
 * Final release for StoX 4.1.3.
 

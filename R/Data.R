@@ -115,9 +115,9 @@ NULL
 #'    \item{\code{\link[stats]{sd}}}
 #'    \item{\code{\link[stats]{var}}}
 #'    \item{\code{\link{cv}}}
-## #'    \item{\code{\link{number}}}
-## #'    \item{\code{\link{fractionOfOccurrence}}}
-## #'    \item{\code{\link{fractionOfSum}}}
+#'    \item{\code{\link{number}}}
+#'    \item{\code{\link{fractionOfOccurrence}}}
+#'    \item{\code{\link{fractionOfSum}}}
 #'  }
 #' 
 #' @name ReportFunctions
