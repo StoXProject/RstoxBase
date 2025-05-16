@@ -54,8 +54,6 @@ DefineSurveyPlan(
 \item{Seed}{Numeric: The seed to use when drawing the random starting point.}
 
 \item{Margin}{Character: A string naming the method to use. See Details for options.}
-
-\item{SurveyDesignType}{Character: A string naming the type of design to use. see}
 }
 \description{
 Plan an acoustic-trawl survey.

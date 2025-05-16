@@ -7,8 +7,6 @@
 #' @param StratumNames  Character: The names of the strata to include in the survey plan. Defaults to all strata.
 #' @param OrderAllToursFirst  Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).
 #' @param EqualEffort  Character: A string naming the method to use. See Details for options.
-
-#' @param SurveyDesignType Character: A string naming the type of design to use. see 
 #' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
 #' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
 #' @param Retour  Logical: If TRUE the survey plan will be doubled by a retour.
