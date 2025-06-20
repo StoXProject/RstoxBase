@@ -158,6 +158,34 @@
 		]
 	}, 
 	
+    "SurveyPlan": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": [
+			{
+				"type": "object",
+				"properties": {
+					"Stratum": { "type": [ "string", "null" ] },
+					"Segment": { "type": [ "string", "null" ] },
+					"LongitudeStart": { "type": [ "number", "null" ] },
+					"LatitudeStart": { "type": [ "number", "null" ] },
+					"LongitudeEnd": { "type": [ "number", "null" ] },
+					"LatitudeEnd": { "type": [ "number", "null" ] },
+					"Speed": { "type": [ "number", "null" ] }
+				},
+				"required": [
+					"Stratum",
+					"Segment",
+					"LongitudeStart",
+					"LatitudeStart",
+					"LongitudeEnd",
+					"LatitudeEnd",
+					"Speed"
+				]
+			}
+		]
+    }, 
+	
     "AcousticTargetStrengthModel": {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "array",

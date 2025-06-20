@@ -1,3 +1,7 @@
+# RstoxBase v2.2.0-9001  (2025-06-20)
+* Added the functions DefineSurveyPlan(), PlotSurveyPlan(), ReportSurveyPlan(), WriteSurveyPlan().
+
+
 # RstoxBase v2.1.4-9001  (2025-05-16)
 * Added prototype for DefineSurveyPlan.
 

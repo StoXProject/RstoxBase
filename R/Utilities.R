@@ -916,10 +916,10 @@ isEmptyString <- function(x) {
 
 #' Generate Start, Middle and Stop DateTime variables
 #'
-#' @param StoxDataStationLevel Either \code{\link{StoxAcousticData}} or \code{\link{StoxBioticData}}, depending on \code{type}.
+#' @param StoxDataStationLevel Either \code{\link[RstoxData]{StoxAcousticData}} or \code{\link[RstoxData]{StoxBioticData}}, depending on \code{type}.
 #' @param type A string naming the type of StoX data, one of "Acoustic" and "Biotic".
 #' 
-#' @return An object of StoX data type \code{\link{MergeStoxAcousticData}}.
+#' @return An object of StoX data type \code{\link[RstoxData]{MergeStoxAcousticData}}.
 #'
 StoxDataStartMiddleStopDateTime <- function(
     StoxDataStationLevel, 

@@ -12,14 +12,14 @@ DefineSurveyPlan(
   FileName = character(),
   StratumPolygon,
   StratumNames = character(),
-  OrderAllToursFirst = FALSE,
-  EqualEffort = TRUE,
   Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"),
   BearingAngle = numeric(),
   Retour = FALSE,
   SurveyTime = numeric(),
   SurveyDistance = numeric(),
   SurveySpeed = numeric(),
+  EqualEffort = TRUE,
+  OrderAllToursFirst = FALSE,
   Seed = numeric(),
   Margin = 0.1
 )
@@ -37,23 +37,26 @@ DefineSurveyPlan(
 
 \item{StratumNames}{Character: The names of the strata to include in the survey plan. Defaults to all strata.}
 
-\item{OrderAllToursFirst}{Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).}
-
-\item{EqualEffort}{Character: A string naming the method to use. See Details for options.}
-
 \item{Bearing}{Character: A string indicating the survey bearing (direction) of each . See Details for options.}
 
 \item{BearingAngle}{Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.}
 
 \item{Retour}{Logical: If TRUE the survey plan will be doubled by a retour.}
 
-\item{SurveyTime, SurveyDistance}{The time/traveled distance to spend in each stratum, given in hours/nautical miles, where \code{SurveyDistance} has precedence over \code{SurveyTime}. The vector is repeated to have length equal to the number of strata specified in \code{strata}, so that only one value is given, this is the hours/nmi in all strata. Optionally, if a single value is enclosed in a list, it is regarded as the total hours/nmi for the entire survey. In this case selecting only a subset of the strata using \code{strata} will increase the effort in the selected strata.}
+\item{SurveyTime, SurveyDistance}{The time/traveled distance to spend in each stratum including transport between segments, given in hours/nautical miles, where \code{SurveyDistance} has precedence over \code{SurveyTime}. The vector is repeated to have length equal to the number of strata specified in \code{strata}, so that only one value is given, this is the hours/nmi in all strata. Optionally, if a single value is enclosed in a list, it is regarded as the total hours/nmi for the entire survey. In this case selecting only a subset of the strata using \code{strata} will increase the effort in the selected strata.}
 
 \item{SurveySpeed}{Numeric: The time to be used for each stratum. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.}
 
+\item{EqualEffort}{Character: A string naming the method to use. See Details for options.}
+
+\item{OrderAllToursFirst}{Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).}
+
 \item{Seed}{Numeric: The seed to use when drawing the random starting point.}
 
-\item{Margin}{Character: A string naming the method to use. See Details for options.}
+\item{Margin}{Numeric: The margin to use when iterating to fit the survey plan to the desired survey distance (including transport between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.}
+}
+\value{
+An object of StoX data type \code{\link{SurveyPlan}}.
 }
 \description{
 Plan an acoustic-trawl survey.

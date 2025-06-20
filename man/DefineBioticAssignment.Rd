@@ -89,7 +89,7 @@ The available parameters are:
 
 alternatively,
 
-\emph{FunctionParameter} which use function input data type \code{\link{AcousticData}} and function parameter \emph{LayerDefinitionMethod}. The available methods are:
+\emph{FunctionParameter} which use function input data type \code{\link[RstoxData]{AcousticData}} and function parameter \emph{LayerDefinitionMethod}. The available methods are:
 
 \emph{Watercolomn} method which defines one layer for the entire watercolumn
 \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.

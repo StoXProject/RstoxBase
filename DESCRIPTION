@@ -1,6 +1,6 @@
 Package: RstoxBase
-Version: 2.1.4-9001
-Date: 2025-05-16
+Version: 2.2.0-9001
+Date: 2025-06-20
 Title: Base StoX Functions
 Authors@R: c(
   person(given = "Arne Johannes", 
@@ -33,7 +33,7 @@ Authors@R: c(
     role = "aut"), 
   person(given = "Norwegian Institute of Marine Research", 
     role = c("cph", "fnd")))
-Depends: R (>= 4.3)
+Depends: R (>= 4.4)
 Description: Base StoX functions used for survey estimation.
 URL: https://github.com/StoXProject/RstoxBase
 BugReports: https://github.com/StoXProject/RstoxBase/issues

@@ -29,7 +29,7 @@ This function defines and returns the individuals used in the estimation model, 
 \details{
 Individuals are retrieved from only Hauls that contribute to the Abundance. For QuantityType = "Acoustic" these are the Hauls that have positive WeightingFactor in the BioticAssignment input, and for QuantityType = "SweptArea" the Hauls that have positive WeightedNumber.
 
-The \code{\link{IndividualsData}} contains variables from \code{\link{StoxBioticData}} in addition to the columns Stratum and Layer. The Stratum column is not necessarily the actual stratum containing the Haul in which an individual was sampled, but rather the stratum linked to the haul via \code{\link{DefineBioticAssignment}} for acoustic-trawl models and \code{\link{MeanLengthDistribution}} for swept-area models. In detail:
+The \code{\link{IndividualsData}} contains variables from \code{\link[RstoxData]{StoxBioticData}} in addition to the columns Stratum and Layer. The Stratum column is not necessarily the actual stratum containing the Haul in which an individual was sampled, but rather the stratum linked to the haul via \code{\link{DefineBioticAssignment}} for acoustic-trawl models and \code{\link{MeanLengthDistribution}} for swept-area models. In detail:
 \itemize{
 \item DefineAcousticPSU(): Defines acoustic PSUs, which are assigned to a stratum, and that containns EDSUs, possibly from other strata than the assigned stratum.
 \item DefineBioticPSU(): Defines biotic PSUs, which are assigned to a stratum, and that conntainns Stations, possibly from other strata than the assigned stratum.
