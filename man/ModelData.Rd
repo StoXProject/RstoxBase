@@ -6,6 +6,12 @@
 \arguments{
 \item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
 
+\item{ReportSurveyPlanData}{The \code{\link{ReportSurveyPlanData}} data.}
+
+\item{WriteSurveyPlanData}{The \code{\link{WriteSurveyPlanData}} data.}
+
+\item{PlotSurveyPlanData}{The \code{\link{PlotSurveyPlanData}} data.}
+
 \item{NASCData}{The \code{\link{NASCData}} data.}
 
 \item{SumNASCData}{The \code{\link{SumNASCData}} data.}

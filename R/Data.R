@@ -177,6 +177,9 @@ NULL
 #' The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.
 #' 
 #' @param StratumAreaData The \code{\link{StratumAreaData}} data.
+#' @param ReportSurveyPlanData The \code{\link{ReportSurveyPlanData}} data.
+#' @param WriteSurveyPlanData The \code{\link{WriteSurveyPlanData}} data.
+#' @param PlotSurveyPlanData The \code{\link{PlotSurveyPlanData}} data.
 #' @param NASCData The \code{\link{NASCData}} data.
 #' @param SumNASCData The \code{\link{SumNASCData}} data.
 #' @param MeanNASCData The \code{\link{MeanNASCData}} data.
@@ -227,6 +230,7 @@ NULL
 #' The process data of a StoX model are data that are saved to the project description (project.json file), typically manual settings (tagging of \code{\link{EDSU}}s to \code{\link{PSU}}s) or data read from resource files other than acoustic, biotic and landing input data files stored in the input folder. #' 
 #' @param StratumPolygon The \code{\link{StratumPolygon}} process data.
 #' @param Survey The \code{\link{Survey}} process data.
+#' @param SurveyPlan The \code{\link{SurveyPlan}} process data.
 #' @param AcousticLayer The \code{\link{AcousticLayer}} process data.
 #' @param AcousticPSU The \code{\link{AcousticPSU}} process data.
 #' @param BioticLayer The \code{\link{BioticLayer}} process data.
@@ -455,6 +459,64 @@ NULL
 #' @seealso This data type is produced by \code{\link{StratumArea}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 
 #' @name StratumAreaData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Survey plan
+#' 
+#' The SurveyPlan process data is a table of the columns Stratum (character), Segment (character), LongitudeStart (decimal degrees), LatitudeStart (decimal degrees), LongitudeEnd (decimal degrees), LatitudeEnd (decimal degrees) and Speed (knots), where each row represents one segment of a survey plan (e.g. a transect). The segments do not need to be connected, so there may be transport between the segments. Use \code{\link{ReportSurveyPlan}} to add rows with transport between segments.
+#' 
+#' @seealso This data type is produced by \code{\link{DefineSurveyPlan}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name SurveyPlan
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Report survey plan
+#' 
+#' The ReportSurveyPlanData model data is a list of three tables Segment, SegmentWithTransport and Stratum. 
+#' 
+#' The table Segment stores the segments from the input SurveyPlan process data and contains the columns Stratum (character), Segment (character), LongitudeStart (decimal degrees), LatitudeStart (decimal degrees), LongitudeEnd (decimal degrees), LatitudeEnd (decimal degrees), Speed (knots) and Distance (nautical mile), 
+#' 
+#' The table SegmentWithTransport contains the segments from the table Segment but adds the transport between each segment. This table contains the additional column SegmentType with values "Segment" and "Transport".
+#' 
+#' The table Stratum stores one row per stratum with the columns Stratum (character), DistanceSegment (nautical mile), DistanceTransport (nautical mile), Distance (nautical mile), Speed (knots), Area (square nautical mile) and Coverage (DistanceSegment / square root of Area).
+#' 
+#' @seealso This data type is produced by \code{\link{ReportSurveyPlan}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name ReportSurveyPlanData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Survey plan as GPX 
+#' 
+#' The WriteSurveyPlanData model data is an sf object which can be written as GPX tracks (one segment with waypoints. 
+#' 
+#' @seealso This data type is produced by \code{\link{WriteSurveyPlan}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name WriteSurveyPlanData
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' Survey plan plot
+#' 
+#' The PlotSurveyPlanData model data is a ggplot2 object which can be plotted at a later stage.
+#' 
+#' @seealso This data type is produced by \code{\link{PlotSurveyPlan}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+#' 
+#' @name PlotSurveyPlanData
 #' 
 NULL
 
@@ -783,7 +845,7 @@ NULL
 
 ##################################################
 ##################################################
-#' Plot Acoustic-Trawl Survey data
+#' Acoustic-Trawl Survey plot
 #' 
 #' The PlotAcousticTrawlSurveyData model data is a ggplot2 object which can be plotted at a later stage.
 #' 
@@ -991,7 +1053,7 @@ NULL
 ##################################################
 #' Individuals data
 #' 
-#' The IndividualsData model data are the individuals from \code{\link{StoxBioticData}} used in the estimate. In Individuals() the \code{\link{StoxBioticData}} is merged with \code{\link{BioticAssignment}} in the case of acoustic-trawl models and with \code{\link{MeanLengthDistributionData}} in the case of swept-area models, by the Haul identifier stored in the \code{\link{StoxBioticData}}, the \code{\link{BioticAssignment}}, and in the Resolution table of the \code{\link{MeanLengthDistributionData}}. As the hauls may be linked to a different stratum than the one containing the haul, the Stratum column of the \code{\link{IndividualsData}} may not correspond to the actual stratum of the haul.
+#' The IndividualsData model data are the individuals from \code{\link[RstoxData]{StoxBioticData}} used in the estimate. In Individuals() the \code{\link[RstoxData]{StoxBioticData}} is merged with \code{\link{BioticAssignment}} in the case of acoustic-trawl models and with \code{\link{MeanLengthDistributionData}} in the case of swept-area models, by the Haul identifier stored in the \code{\link[RstoxData]{StoxBioticData}}, the \code{\link{BioticAssignment}}, and in the Resolution table of the \code{\link{MeanLengthDistributionData}}. As the hauls may be linked to a different stratum than the one containing the haul, the Stratum column of the \code{\link{IndividualsData}} may not correspond to the actual stratum of the haul.
 #' 
 #' @seealso This data type is produced by \code{\link{Individuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
 #' 

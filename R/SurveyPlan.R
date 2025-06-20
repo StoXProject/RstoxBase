@@ -10,10 +10,10 @@
 #' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
 #' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
 #' @param Retour  Logical: If TRUE the survey plan will be doubled by a retour.
-#' @param SurveyTime,SurveyDistance  The time/traveled distance to spend in each stratum, given in hours/nautical miles, where \code{SurveyDistance} has precedence over \code{SurveyTime}. The vector is repeated to have length equal to the number of strata specified in \code{strata}, so that only one value is given, this is the hours/nmi in all strata. Optionally, if a single value is enclosed in a list, it is regarded as the total hours/nmi for the entire survey. In this case selecting only a subset of the strata using \code{strata} will increase the effort in the selected strata.
+#' @param SurveyTime,SurveyDistance  The time/traveled distance to spend in each stratum including transport between segments, given in hours/nautical miles, where \code{SurveyDistance} has precedence over \code{SurveyTime}. The vector is repeated to have length equal to the number of strata specified in \code{strata}, so that only one value is given, this is the hours/nmi in all strata. Optionally, if a single value is enclosed in a list, it is regarded as the total hours/nmi for the entire survey. In this case selecting only a subset of the strata using \code{strata} will increase the effort in the selected strata.
 #' @param SurveySpeed  Numeric: The time to be used for each stratum. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
 #' @param Seed Numeric: The seed to use when drawing the random starting point. 
-#' @param Margin  Character: A string naming the method to use. See Details for options.
+#' @param Margin Numeric: The margin to use when iterating to fit the survey plan to the desired survey distance (including transport between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.
 #' 
 #' @details 
 #' The \code{DefineSurveyPlan} function generates the survey plan (transect lines) in a Cartesian coordinate system, and transforms the positions to the geographical coordinate system (longitude, latitude) using the azimuthal equal distance projection, which ensures that distances are preserved in the transformation. 
@@ -31,6 +31,7 @@
 #' Harbitz, A. (2019). A zigzag survey design for continuous transect sampling with guaranteed equal coverage probability. Fisheries Research, 213, 151-159.
 #' 
 #' @return
+#' An object of StoX data type \code{\link{SurveyPlan}}.
 #'
 #' @examples
 #' library(ggplot2)
@@ -104,16 +105,15 @@ DefineSurveyPlan <- function(
     FileName = character(), 
     StratumPolygon, 
     StratumNames = character(), 
-    OrderAllToursFirst = FALSE, 
-    EqualEffort = TRUE, 
-    
     Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), 
-    # , "AlongAll", "AcrossAll", "AlongAllReversed", "AcrossAllReversed"
     BearingAngle = numeric(), 
     Retour = FALSE, 
     SurveyTime = numeric(), 
     SurveyDistance = numeric(),
     SurveySpeed = numeric(), 
+    EqualEffort = TRUE, 
+    OrderAllToursFirst = FALSE, 
+    # , "AlongAll", "AcrossAll", "AlongAllReversed", "AcrossAllReversed"
     Seed = numeric(), 
     Margin = 0.1
 ){
@@ -202,7 +202,7 @@ DefineSurveyPlan <- function(
         msg = FALSE
     )
     # Transform to Cartesian coordinates:
-    laea.CRS <- paste0(
+    aeqd.CRS <- paste0(
         "+proj=aeqd +lon_0=", 
         commonCentroid[1], 
         " +lat_0=", 
@@ -235,7 +235,7 @@ DefineSurveyPlan <- function(
             StratumPolygonOneStratum = StratumPolygon[ind, ], 
             stratumName = stratumNames[ind], 
             stratumArea = stratumArea[ind], 
-            laea.CRS = laea.CRS, 
+            aeqd.CRS = aeqd.CRS, 
             longlat.CRS = longlat.CRS, 
             DefinitionMethod = DefinitionMethod[ind], 
             Bearing = Bearing[ind], 
@@ -249,11 +249,19 @@ DefineSurveyPlan <- function(
     }
     names(SurveyPlanList) <- stratumNames
     
-    
+    # Convert to start and end position (latitude and longitude):
     SurveyPlan <- lapply(SurveyPlanList, function(x) lapply(x, XY2startEnd))
-    SurveyPlan <- data.table::rbindlist(lapply(SurveyPlan, data.table::rbindlist, idcol = "Segment"), idcol = "Stratum")
-    SurveyPlan[, Segment := as.numeric(factor(paste(Stratum, sprintf("%06d", Segment))))]
     
+    # Rbind the segments per stratum:
+    SurveyPlan <- lapply(SurveyPlan, data.table::rbindlist, idcol = "Transect")
+    # Add input survey speed:
+    SurveyPlan <- mapply(cbind, SurveyPlan, lapply(SurveySpeed, function(x) data.table::setnames(data.table::data.table(x), "Speed")), SIMPLIFY = FALSE)
+    # Rbind strata:
+    SurveyPlan <- data.table::rbindlist(SurveyPlan, idcol = "Stratum")
+    # Insert a sequence of segment indices:
+    #SurveyPlan[, Segment := paste("S", factor(paste(Stratum, sprintf("%06d", Segment))))]
+    
+    SurveyPlan <- formatOutput(SurveyPlan, dataType = "SurveyPlan", keep.all = FALSE)
     
     return(SurveyPlan[])
 }
@@ -265,6 +273,10 @@ XY2startEnd <- function(x) {
     even <- seq_len(nrowx) %% 2 == 0
     out <- data.table::data.table(x[odd, ], x[even, ])
     data.table::setnames(out, c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd"))
+    
+    numberOfSegments <- nrow(out)
+    out$Segment <- paste0("Segment_", sprintf(paste0("%0", nchar(numberOfSegments), "d"), seq_len(numberOfSegments)))
+    
     return(out)
 }
 
@@ -637,15 +649,15 @@ parallel2zigzag <- function(x){
 ############ and the x,y positions 'xy': ############
 ############################################################
 getTransectsByArea <- function(
-        freeSurveyDistance, 
-        stratumArea, 
-        startPositionFactor, 
-        corners, 
-        StratumPolygonOneStratumXY, 
-        DefinitionMethod = "Parallel", 
-        BearingAngle = 0, 
-        Seed = 0, 
-        Retour = FALSE
+    freeSurveyDistance, 
+    stratumArea, 
+    startPositionFactor, 
+    corners, 
+    StratumPolygonOneStratumXY, 
+    DefinitionMethod = "Parallel", 
+    BearingAngle = 0, 
+    Seed = 0, 
+    Retour = FALSE
 ){
     
     # Get the transectSpacing:
@@ -702,7 +714,7 @@ transectsOneStratum <- function(
         StratumPolygonOneStratum, 
         stratumName, 
         stratumArea, 
-        laea.CRS, 
+        aeqd.CRS, 
         longlat.CRS, 
         DefinitionMethod = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing"), 
         Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), 
@@ -715,7 +727,7 @@ transectsOneStratum <- function(
 ){
     
     # Transform to Cartesian coordinates:
-    StratumPolygonOneStratumXY <- sf::st_transform(StratumPolygonOneStratum, laea.CRS)
+    StratumPolygonOneStratumXY <- sf::st_transform(StratumPolygonOneStratum, aeqd.CRS)
     
     # 2. Get the bearing angle:
     if(!length(BearingAngle) || is.na(BearingAngle)) {
@@ -781,7 +793,7 @@ transectsOneStratum <- function(
     if(length(Margin) && is.numeric(Margin) && Margin > 0){
         # Set the totalSailedDist, margin to use, and the last value for 'rest' and 'freeSurveyDistance':
         #totalSailedDist <- 0
-        totalSailedDist <- getTotalSailedDist(intersectsCoordsList)
+        totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransport = TRUE)
         Margin_SurveyDistance <- SurveyDistance * Margin
         last_rest <- Inf
         last_nmi_rest <- Inf
@@ -810,7 +822,7 @@ transectsOneStratum <- function(
             
             
             # Here we need the totalSailedDist:
-            totalSailedDist <- getTotalSailedDist(intersectsCoordsList)
+            totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransport = TRUE)
             rest <- SurveyDistance - totalSailedDist
             
             
@@ -845,7 +857,7 @@ transectsOneStratum <- function(
     
     
     # Transform back to geographical coordinates:
-    sf::st_crs(lines) <- laea.CRS
+    sf::st_crs(lines) <- aeqd.CRS
     lines <- sf::st_transform(lines, longlat.CRS)
     
     
@@ -856,6 +868,11 @@ transectsOneStratum <- function(
     lines <- lapply(lines, data.table::as.data.table)
     lines <- lapply(lines, subset, select = c("X", "Y"))
     lines <- lapply(lines, unique)
+    
+    
+    # Add transect IDs as names of the list of lines:
+    numberOfTransects <- length(lines)
+    names(lines) <- paste0("Transect_", sprintf(paste0("%0", nchar(numberOfTransects), "d"), seq_len(numberOfTransects)))
     
     
     
@@ -871,13 +888,19 @@ transectsOneStratum <- function(
 
 
 
-getTotalSailedDist <- function(list) {
+getTotalSailedDist <- function(list, includeTransport = TRUE) {
     
     # We require even number of rows (accepting 1 row):
     nrows <- sapply(list, nrow)
     if(!all(nrows == 1 | nrows %% 2 == 0)) {
         stop("All elements of the list must have even number of rows.")
     }
+    
+    # Add all transport segments to the end of the list of segments, by extracting the last node of one segment and the first of the next (in total n - 1 transports, where n is the number of segments (elements in 'list')):
+    if(includeTransport) {
+        list <- addTransportToList(list)
+    }
+    
     
     # Create a table of start and end values for convenience:
     listStartEnd <- lapply(list, nodes2segments)
@@ -889,6 +912,7 @@ getTotalSailedDist <- function(list) {
     
     return(sumDists)
 }
+
 
 
 
@@ -906,12 +930,358 @@ nodes2segments <- function(x) {
 
 
 
+
+addTransportToList <- function(list) {
+    transportList <- lapply(seq_len(length(list) - 1), function(ind) rbind(list[[ind]][2, ], list[[ind + 1]][1, ]))
+    list <- c(list, transportList)
+    return(list)
+}
+
+
+
+addTransportToSegments <- function(
+    segments, 
+    startNames = c("LongitudeStart", "LatitudeStart"), 
+    endNames = c("LongitudeEnd", "LatitudeEnd"), 
+    ordered = TRUE
+) {
+    
+    # Store the column order:
+    colnames_segments <- names(segments)
+    otherNames <- setdiff(colnames_segments, c(startNames, endNames))
+    
+    # Create transports:
+    transports <- lapply(seq_len(nrow(segments) - 1), function(ind) cbind(segments[ind, ..endNames], segments[ind + 1, ..startNames]))
+    transports <- data.table::rbindlist(transports)
+    data.table::setnames(transports, c(startNames, endNames))
+    # Add the other column, where if different between segments (the Segment column) the two values are pasted:
+    for(name in otherNames) {
+        transports <- addTransportOtherColumn(transports, segments, name)
+    }
+    data.table::setcolorder(transports, colnames_segments)
+    
+    # Add the transports to a table of positions
+    output <- list(segments, transports)
+    names(output) <- c("Segment", "Transport")
+    output <- data.table::rbindlist(output, idcol = "SegmentType")
+    data.table::setcolorder(output, c(setdiff(names(output), "SegmentType"), "SegmentType"))
+    
+    # Reorder the rows:
+    if(ordered) {
+        newOrder <- head(rep(seq_len(nrow(segments)), each = 2) + rep(c(0, nrow(segments)), nrow(segments)), -1)
+        output <- output[newOrder, ]
+        #output[seq(1, nrow(output), 2), ] <- segments
+        #output[seq(2, nrow(output), 2), ] <- transports
+    }
+    
+    return(output)
+}
+
+addTransportOtherColumn <- function(transports, segments, name, sep = " - ") {
+    first <- utils::head(segments[[name]], -1)
+    #last <- utils::tail(segments[[name]], -1)
+    #if(any(first == last)) {
+    #    transports[[name]] <- first
+    #}
+    #else {
+    #    transports[[name]] <-paste(
+    #        first, 
+    #        last, 
+    #        sep = sep
+    #    )
+    #}
+    transports[[name]] <- first
+    
+    return(transports)
+}
+
+
 sampleStartPositionFactor <- function(seed) {
     set.seed(seed)
     startPositionFactor <- runif(1)
     set.seed(NULL)
     return(startPositionFactor)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' Report a survey plan with additional information
+#'
+#' @inheritParams ModelData
+#' @inheritParams ProcessData
+#' 
+#' @examples
+#' 
+#' # Read the stratum system:
+#' stratumFile <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+#'  )
+#' stratumPolygon<- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile
+#' )
+#' # Get the area of the strata for use in ReportSurveyPlan():
+#' stratumAreaData <- StratumArea(stratumPolygon)
+#' 
+#' # Harbitz zigzag survey design along each stratum:
+#' surveyPlanZZ_Along <- DefineSurveyPlan(
+#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' 	StratumPolygon = stratumPolygon, 
+#' 	SurveyTime = 200, 
+#' 	SurveySpeed = 10, 
+#' 	Seed = 1, 
+#' 	Bearing = "Along"
+#' )
+#' 
+#' # Report the SurveyPlan:
+#' ReportSurveyPlan(surveyPlanZZ_Along, stratumAreaData)
+#' 
+#' @return
+#' An object of StoX data type \code{\link{ReportSurveyPlanData}}.
+#' 
+#' @export
+#' 
+ReportSurveyPlan <- function(
+    SurveyPlan, 
+    StratumAreaData
+){
+    if(!length(SurveyPlan)) {
+        stop("The input SurveyPlan must be given")
+    }
+    if(!length(StratumAreaData)) {
+        stop("The input StratumAreaData must be given")
+    }
+    
+    # Create a list of the tables Segment and Stratum:
+    Segment <- data.table::copy(SurveyPlan)
+    SegmentWithTransport <- addTransportToSegments(Segment)
+    
+    # Add distances
+    Segment[, Distance := distanceStartToEnd(.SD)]
+    SegmentWithTransport[, Distance := distanceStartToEnd(.SD)]
+    
+    
+    Stratum <- SegmentWithTransport[, .(
+        DistanceSegment = sum(Distance * as.numeric(SegmentType == "Segment")), 
+        DistanceTransport = sum(Distance * as.numeric(SegmentType == "Transport")), 
+        Distance = sum(Distance), 
+        Speed = Speed[1]), 
+        by = "Stratum"
+    ]
+    Stratum <- merge(Stratum, StratumAreaData, all.x = TRUE)
+    Stratum[, Coverage := DistanceSegment / sqrt(Area)]
+    
+    output <- list(
+        Segment = Segment, 
+        SegmentWithTransport = SegmentWithTransport, 
+        Stratum = Stratum
+    )
+    
+    return(output)
+}
+
+
+
+
+
+distanceStartToEnd <- function(segment) {
+    
+    # Define start and end positions as sf objects:
+    start <- data.frame(
+        lon = segment$LongitudeStart, 
+        lat = segment$LatitudeStart
+    ) 
+    end <- data.frame(
+        lon = segment$LongitudeEnd, 
+        lat = segment$LatitudeEnd
+    )
+    
+    # With geographical projection:
+    start <- sf::st_as_sf(start, coords = c("lon", "lat"), crs = 4326)
+    end <- sf::st_as_sf(end, coords = c("lon", "lat"), crs = 4326)
+    
+    # Get the great circle distances of the segments in nautical miles:
+    distance <- sf::st_distance(start, end, by_element = TRUE)
+    distance <- units::set_units(distance, "nmile")
+    distance <- units::drop_units(distance)
+    
+    
+    return(distance)
+}
+
+
+
+
+
+
+#' Write a survey plan to a GPX file.
+#'
+#' @inheritParams ProcessData
+#' 
+#' @examples
+#' 
+#' library(sf)
+#' 
+#' stratumFile <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+#'  )
+#' stratumPolygon<- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile
+#' )
+#' 
+#' # Harbitz zigzag survey design along each stratum:
+#' surveyPlanZZ_Along <- DefineSurveyPlan(
+#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' 	StratumPolygon = stratumPolygon, 
+#' 	SurveyTime = 200, 
+#' 	SurveySpeed = 10, 
+#' 	Seed = 1, 
+#' 	Bearing = "Along"
+#' )
+#' 
+#' # Convert the survey plan to an sf object and write this as a gpx file 
+#' # (this is done automatically by RstoxFramework in StoX):
+#' gpxData <- WriteSurveyPlan(surveyPlanZZ_Along)
+#' filePath <- tempfile(fileext = "gpx")
+#' st_write(
+#'      gpxData,
+#'      dsn = filePath,
+#'      layer = "track_points",
+#'      driver = "GPX"
+#'  )
+#'  
+#'  # Read the data back in:
+#'  gpxData_backin <- st_read(filePath)
+#'  identical(gpxData, gpxData_backin)
+#' 
+#' @return
+#' An object of StoX data type \code{\link{WriteSurveyPlanData}}.
+#' 
+#' @export
+#' 
+WriteSurveyPlan <- function(
+    SurveyPlan
+){
+    
+    # Create a list of the tables Segment and Stratum:
+    SegmentWithTransport <- addTransportToSegments(SurveyPlan)
+    
+    output <- sf::st_as_sf(
+        subset(SegmentWithTransport, select = c("LongitudeStart", "LatitudeStart")), 
+        coords = c("LongitudeStart", "LatitudeStart")
+    )
+    
+    # Add tracks, segments and waypoints:
+    output$track_fid <- SegmentWithTransport$Stratum
+    output$track_seg_id <- SegmentWithTransport$Transect
+    output$track_seg_point_id <- SegmentWithTransport$Segment
+    
+    # # Add routes, one for each Stratum:
+    # output$route_fid <- SegmentWithTransport$Stratum
+    # output$route_point_id <- SegmentWithTransport$Segment
+    
+    
+    return(output)
+}
+
+
+
+#walk  Simple feature collection with 2095 features and 3 fields Geometry 
+#type: POINT Dimension: XY Bounding box: xmin: 5.951268 ymin: 47.29238 
+#xmax: 5.974512 ymax: 47.3015 Geodetic CRS: WGS 84 First 10 features: 
+#    track_fid ele geometry track_seg_id 1 1 243 POINT (5.95348 47.29709) 1 2 
+#1 243 POINT (5.953438 47.29704) 1 3 1 244 POINT (5.953219 47.29702) 1 4 
+#1 243 POINT (5.952884 47.29713) 1 5 1 243 POINT (5.952492 47.2972) 1 6 1 
+#243 POINT (5.952335 47.29743) 1 7 1 242 POINT (5.951881 47.29732) 1 8 1 
+#242 POINT (5.951495 47.29724) 1 9 1 293 POINT (5.951333 47.29719) 1 10 1 
+#294 POINT (5.951388 47.29706) 1
+#
+#
+#Then,
+#
+#st_write(walk,dsn="walk.gpx",layer="track_points",driver="GPX")
+
+
+
+#' Plot a survey plan.
+#'
+#' @inheritParams ProcessData
+#' 
+#' @examples
+#' 
+#' stratumFile <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+#'  )
+#' stratumPolygon<- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile
+#' )
+#' 
+#' # Harbitz zigzag survey design along each stratum:
+#' surveyPlanZZ_Along <- DefineSurveyPlan(
+#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' 	StratumPolygon = stratumPolygon, 
+#' 	SurveyTime = 200, 
+#' 	SurveySpeed = 10, 
+#' 	Seed = 1, 
+#' 	Bearing = "Along"
+#' )
+#' 
+#' WriteSurveyPlan(surveyPlanZZ_Along)
+#' 
+#' @return
+#' An object of StoX data type \code{\link{WriteSurveyPlanData}}.
+#' 
+#' @export
+#' 
+PlotSurveyPlan <- function(
+    SurveyPlan,
+    StratumPolygon
+){
+    
+    # Plot the stratumPolygon with the segments
+    output <- ggplot2::ggplot() +
+        ggplot2::geom_sf(data = StratumPolygon, ggplot2::aes(fill = StratumName), color = 'blue') +
+        ggplot2::geom_segment(
+            data = SurveyPlan, 
+            ggplot2::aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
+        )
+    
+    return(output)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -169,6 +169,79 @@ stoxFunctionAttributes <- list(
     ##########
     
     
+    ##### SurveyPlan: #####
+    DefineSurveyPlan = list(
+        functionType = "processData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "SurveyPlan",
+        functionParameterFormat = list(
+            FileName = "filePath", 
+            StratumNames = "stratumNames"
+        ), 
+        functionArgumentHierarchy = list(
+            DefinitionMethod = list(
+                UseProcessData = FALSE
+            ), 
+            FileName = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ResourceFile"
+            ), 
+            StratumNames = list(
+                UseProcessData = FALSE
+            ), 
+            Bearing = list(
+                UseProcessData = FALSE
+            ), 
+            BearingAngle = list(
+                UseProcessData = FALSE
+            ), 
+            Retour = list(
+                UseProcessData = FALSE
+            ), 
+            SurveyTime = list(
+                UseProcessData = FALSE
+            ), 
+            SurveyDistance = list(
+                UseProcessData = FALSE
+            ), 
+            SurveySpeed = list(
+                UseProcessData = FALSE
+            ), 
+            EqualEffort = list(
+                UseProcessData = FALSE
+            ), 
+            OrderAllToursFirst = list(
+                UseProcessData = FALSE
+            ), 
+            Seed = list(
+                UseProcessData = FALSE
+            ), 
+            Margin = list(
+                UseProcessData = FALSE
+            )
+        ), 
+        functionParameterDefaults = list(
+            Margin = 0.1
+        )
+    ), 
+    ReportSurveyPlan = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "ReportSurveyPlanData"
+    ), 
+    WriteSurveyPlan = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "WriteSurveyPlanData"
+    ), 
+    PlotSurveyPlan = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "PlotSurveyPlanData"
+    ), 
+    ##########
+    
+    
     ##### PSUs: #####
     DefineAcousticPSU = list(
         functionType = "processData", 
@@ -2284,6 +2357,14 @@ processPropertyFormats <- list(
                 # This results in the JSON string "[]" as is expected by the GUI:
                 list() # Survey
             )
+        }
+    ), 
+    
+    stratumNames = list(
+        class = "vector", 
+        title = "Select strata to define surtvey for", 
+        possibleValues = function(StratumPolygon) {
+            StratumPolygon$Stratum
         }
     ), 
     

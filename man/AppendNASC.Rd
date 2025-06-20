@@ -15,5 +15,5 @@ AppendNASC(NASCData, StoxAcousticData)
 This function converts a StoxAcousticData to NASCData and appends to another NASCData.
 }
 \seealso{
-\code{\link{NASC}} and \code{\link{StoxAcousticData}}.
+\code{\link{NASC}} and \code{\link[RstoxData]{StoxAcousticData}}.
 }
