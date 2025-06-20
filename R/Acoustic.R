@@ -30,7 +30,7 @@ NASC <- function(
     type <- getDataTypeDefinition(dataType = "NASCData", elements = "type", unlist = TRUE)
     ChannelReferenceType <- NASCData[[type]]
     if(!allEqual(ChannelReferenceType, na.rm = TRUE) && NROW(NASCData)) {
-        stop("The StoxAcousticData must have only one ", type, " in the NASC function. This can be obtained in FilterStoxAcoustic.")
+        stop("The StoxAcousticData must have only one ", type, " in the NASC function. This can be obtained in the function FilterStoxAcoustic (in RstoxData).")
     }
     # Added a warning for multiple Beam with the same frequency, which may lead to over-estimation:
     numberOfBeamsPerFrequency <- NASCData[, .(numberOfBeams  = length(unique(Beam))), by = "Frequency"]
@@ -218,7 +218,7 @@ MeanNASC <- function(
 #' @inheritParams AcousticDensity
 #' @param AcousticCategoryLink A table linking the acoustic categories to split and those to split into.
 #' 
-#' @seealso This functions uses similar methods as \code{\link{AcousticDensity}}. Convert back to \code{\link{StoxAcousticData}} with \code{\link{NASCToStoxAcoustic}}.
+#' @seealso This functions uses similar methods as \code{\link{AcousticDensity}}. Convert back to \code{\link[RstoxData]{StoxAcousticData}} with \code{\link{NASCToStoxAcoustic}}.
 #' 
 #' @export
 #'
@@ -329,7 +329,7 @@ SplitMeanNASC <- function(
 #' @inheritParams AcousticDensity
 #' @param AcousticCategoryLink A table linking the acoustic categories to split and those to split into.
 #' 
-#' @seealso This functions uses similar methods as \code{\link{AcousticDensity}}. Convert back to \code{\link{StoxAcousticData}} with \code{\link{NASCToStoxAcoustic}}.
+#' @seealso This functions uses similar methods as \code{\link{AcousticDensity}}. Convert back to \code{\link[RstoxData]{StoxAcousticData}} with \code{\link{NASCToStoxAcoustic}}.
 #' 
 #' @export
 #'
@@ -469,7 +469,7 @@ splitOneAcousticCategory <- function(mixAcousticCategory, MeanNASCData, Assignme
 #' 
 #' @inheritParams ModelData
 #' 
-#' @seealso \code{\link{NASCData}} and \code{\link{StoxAcousticData}}.
+#' @seealso \code{\link{NASCData}} and \code{\link[RstoxData]{StoxAcousticData}}.
 #'  
 #' @return A \code{\link{NASCData}} object.
 #' 
@@ -529,7 +529,7 @@ extractColumnsOfDataTableAndUniquify <- function(x, cols) {
 #' 
 #' @inheritParams ModelData
 #' 
-#' @seealso \code{\link{NASC}} and \code{\link{StoxAcousticData}}.
+#' @seealso \code{\link{NASC}} and \code{\link[RstoxData]{StoxAcousticData}}.
 #'  
 #' @export
 #'

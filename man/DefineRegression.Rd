@@ -43,5 +43,5 @@ The currently implemented models are listed below:
 }
 }
 \seealso{
-\code{\link{EstimateBioticRegression}} for estimating regression parameters from a \code{\link{StoxBioticData}}, \code{\link{IndividualsData}} or \code{\link{SuperIndividualsData}} object, and  \code{\link{ImputeSuperIndividuals}} for applying the regression to \code{\link{SuperIndividualsData}}.
+\code{\link{EstimateBioticRegression}} for estimating regression parameters from a \code{\link[RstoxData]{StoxBioticData}}, \code{\link{IndividualsData}} or \code{\link{SuperIndividualsData}} object, and  \code{\link{ImputeSuperIndividuals}} for applying the regression to \code{\link{SuperIndividualsData}}.
 }

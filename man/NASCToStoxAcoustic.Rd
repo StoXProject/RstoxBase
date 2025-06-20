@@ -18,5 +18,5 @@ A \code{\link{NASCData}} object.
 Convert NASCData to StoxAcousticData
 }
 \seealso{
-\code{\link{NASCData}} and \code{\link{StoxAcousticData}}.
+\code{\link{NASCData}} and \code{\link[RstoxData]{StoxAcousticData}}.
 }

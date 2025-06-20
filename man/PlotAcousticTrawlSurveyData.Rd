@@ -2,7 +2,7 @@
 % Please edit documentation in R/Data.R
 \name{PlotAcousticTrawlSurveyData}
 \alias{PlotAcousticTrawlSurveyData}
-\title{Plot Acoustic-Trawl Survey data}
+\title{Acoustic-Trawl Survey plot}
 \description{
 The PlotAcousticTrawlSurveyData model data is a ggplot2 object which can be plotted at a later stage.
 }
