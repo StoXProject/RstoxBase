@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9001</span>
       </span>
     </div>
 
@@ -140,7 +140,7 @@
 
 
 <dt id="arg-minnumberofedsus">MinNumberOfEDSUs<a class="anchor" aria-label="anchor" href="#arg-minnumberofedsus"></a></dt>
-<dd><p>For <code>WeightingMethod</code> = "AcousticDensity": The minimum number of EDSUs to link to each Haul, applied if there are less than <code>MinNumberOfEDSUs</code> EDSUs inside the <code>Radius</code>. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. <code>FilterStoxAcoustic</code> can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.</p></dd>
+<dd><p>For <code>WeightingMethod</code> = "AcousticDensity": The minimum number of EDSUs to link to each Haul, applied if there are less than <code>MinNumberOfEDSUs</code> EDSUs inside the <code>Radius</code>. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. <code><a href="https://rdrr.io/pkg/RstoxData/man/FilterStoxAcoustic.html" class="external-link">FilterStoxAcoustic</a></code> can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -200,7 +200,7 @@ The assigned biotic hauls are given a weighting value according to the number of
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>
