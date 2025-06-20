@@ -373,7 +373,12 @@ initiateRstoxBase <- function(){
                 horizontalResolution = c("EDSU", "PSU")
             ), 
             PSUByTime = PSUByTime
+        ), 
+        SurveyPlan = list(
+            horizontalResolution = c("Stratum", "Transect", "Segment"), 
+            other = c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd", "Speed")
         )#, 
+        #, 
         #AcousticPSUByTime = list(
         #    horizontalResolution = c("Stratum", "PSU"), 
         #    categoryVariable = "Cruise", 

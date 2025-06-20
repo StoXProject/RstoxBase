@@ -8,6 +8,8 @@
 
 \item{Survey}{The \code{\link{Survey}} process data.}
 
+\item{SurveyPlan}{The \code{\link{SurveyPlan}} process data.}
+
 \item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}

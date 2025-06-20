@@ -1081,7 +1081,7 @@ DefineBioticLayer <- function(
 #' 
 #' alternatively,
 #' 
-#' \emph{FunctionParameter} which use function input data type \code{\link{AcousticData}} and function parameter \emph{LayerDefinitionMethod}. The available methods are:
+#' \emph{FunctionParameter} which use function input data type \code{\link[RstoxData]{AcousticData}} and function parameter \emph{LayerDefinitionMethod}. The available methods are:
 #' 
 #' \emph{Watercolomn} method which defines one layer for the entire watercolumn
 #' \emph{HighestResolution} method which makes the highest possible number of layers based on the resolution in the input AcousticData.
@@ -1607,7 +1607,7 @@ getSquaredRelativeDiff <- function(LogData, HaulData, variableName, axisLength) 
 #' @param LengthDistributionData The LengthDistributionData of LengthDistributionType "Standard" or "Normalized", used for WeightingMethod = "SumWeightedNumber" or "InverseSumWeightedNumber", in which case the column WeightedNumber is summed in each Haul (summed over all length groups, which implies that the resolution of length intervals does not matter).
 #' @param MaxNumberOfLengthSamples For \code{WeightingMethod} = "NumberOfLengthSamples": Values of the number of length samples that exceed \code{MaxNumberOfLengthSamples} are set to \code{MaxNumberOfLengthSamples}. This avoids giving too high weight to e.g. experimental hauls with particularly large length samples.
 #' @param Radius For \code{WeightingMethod} = "AcousticDensity": The radius (nautical miles) inside which the average AcousticDensity is calculated. 
-#' @param MinNumberOfEDSUs For \code{WeightingMethod} = "AcousticDensity": The minimum number of EDSUs to link to each Haul, applied if there are less than \code{MinNumberOfEDSUs} EDSUs inside the \code{Radius}. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. \code{\link{FilterStoxAcoustic}} can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.
+#' @param MinNumberOfEDSUs For \code{WeightingMethod} = "AcousticDensity": The minimum number of EDSUs to link to each Haul, applied if there are less than \code{MinNumberOfEDSUs} EDSUs inside the \code{Radius}. This can be used to avoid the warning for "no positive NASC inside the specified radius", but only if the NASCData input does not contain EDSUs with no positive NASC for the target species. \code{\link[RstoxData]{FilterStoxAcoustic}} can be used to filter out EDSUs with no positive NASC. It can also happen that the LengthDistributionData contains Hauls with no length distribution for the target species, also resulting in the warning. This can also be solved by filtering. It is in fact recommended to only keep Hauls with the target species in acoustic-trawl models.
 #' 
 #' @details
 #' The \emph{BioStationWeighting} function is used to update the weighting variables of the biotic stations that are associated in \code{\link{BioticAssignment}}. The list of assigned biotic hauls and weighting variables of an assignment, will in another function be used to make a total combined length frequency distribution from all the individual haul distributions.
@@ -2293,7 +2293,7 @@ DefineAcousticTargetStrength <- function(
 #' @return
 #' An object of StoX data type \code{\link{Regression}}.
 #' 
-#' @seealso \code{\link{EstimateBioticRegression}} for estimating regression parameters from a \code{\link{StoxBioticData}}, \code{\link{IndividualsData}} or \code{\link{SuperIndividualsData}} object, and  \code{\link{ImputeSuperIndividuals}} for applying the regression to \code{\link{SuperIndividualsData}}.
+#' @seealso \code{\link{EstimateBioticRegression}} for estimating regression parameters from a \code{\link[RstoxData]{StoxBioticData}}, \code{\link{IndividualsData}} or \code{\link{SuperIndividualsData}} object, and  \code{\link{ImputeSuperIndividuals}} for applying the regression to \code{\link{SuperIndividualsData}}.
 #' 
 #' @export
 #' 
