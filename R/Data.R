@@ -129,43 +129,111 @@ NULL
 ##################################################
 #' General ploting parameters of RstoxBase
 #' 
-#' @param UseDefaultColorSettings Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.
-#' @param UseDefaultSizeSettings Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.
-#' @param UseDefaultAspectSettings Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.
-#' @param UseDefaultTextSettings Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.
-#' @param UseDefaultFileSettings Logical: If TRUE (default) use the default file settings of the plotting function. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.
-#' @param Zoom The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.
-#' @param Title The title of the plot, defaulted to no title.
-#' @param AxisTitleSize The size of the axis titles, defaulted to 20.
-#' @param AxisTickSize The size of the axis tick marks, defaulted to 20.
-#' @param LegendTitleSize The size of the legend title, defaulted to 20.
-#' @param LegendTextSize The size of the legend text, defaulted to 20.
-#' @param Format The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".
-#' @param Width The width of the plot in centimeters, defaulted to 17, as per the \href{https://academic.oup.com/icesjms/pages/General_Instructions}{ICES Journal og Marine Science author recommendations}.
-#' @param Height The height of the plot in centimeters, defaulted to 17.
-#' @param DotsPerInch The number of dots per inch (DPI), defaulted to 1200.
+#' @param UseDefaultMapSettings Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.
+#' @param UseDefaultPointSettings Logical: If TRUE (default) use the default point settings of the plot, specifically PointColor, MaxPointSize and MinPointSize. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.
+#' @param UseDefaultTrackSettings Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.
+#' @param UseDefaultAspectSettings Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.
+#' @param UseDefaultLabelSettings Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.
+#' @param UseDefaultFileSettings Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.
+#' @param UseDefaultAcousticPSULabelSettings Logical: If TRUE (default) use the default settings for acoustic PSU labels in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.
+#' @param UseDefaultStratumPolygonSettings Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.
+#' @param Title Character: The title of the plot, defaulted to no title.
+#' @param AxisTitleSize Numeric: The size of the axis titles, defaulted to 20.
+#' @param AxisTickSize Numeric: The size of the axis tick marks, defaulted to 20.
+#' @param LegendTitleSize Numeric: The size of the legend title, defaulted to 20.
+#' @param LegendTextSize Numeric: The size of the legend text, defaulted to 20.
 #' 
 #' @name general_plot_arguments
+#' 
+NULL
+
+##################################################
+##################################################
+#' General file writing parameters for plots in RstoxBase
+#' 
+#' @param Format Character: The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".
+#' @param Width Numeric: The width of the plot in centimeters, defaulted to 17, as per the instructions to authors for submission to the ICES Journal og Marine Science.
+#' @param Height Numeric: The height of the plot in centimeters, defaulted to 17.
+#' @param DotsPerInch Numeric: The number of dots per inch (DPI), defaulted to 1200.
+#' 
+#' @name general_file_plot_arguments
 #' 
 NULL
 
 
 ##################################################
 ##################################################
-#' General map plot parameters of RstoxBase
+#' General map plot parameters of RstoxBase (mostly colors)
 #' 
-#' @param LongitudeLimits The longitude limits of the map plot, defaulted to the range of the longitude of the data.
-#' @param LatitudeLimits The latitude limits of the map plot, defaulted to the range of the latitude of the data.
-#' @param LandColor The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).
-#' @param BorderColor The color to use for the borders on land, defaulted to "grey50".
-#' @param OceanColor The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.
-#' @param GridColor The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).
-#' @param MaxPointSize The maximum size of the points, defaulted to 10.
-#' @param MinPointSize The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.
-#' @param TrackColor The color to use for the vessel track, defaulted to "black".
-#' @param TrackSize The size of the track points, defaulted to 1.
+#' @param ShowMap Logical: If TRUE include the map in the plot.
+#' @param LandColor Character: The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).
+#' @param BorderColor Character: The color to use for the borders on land, defaulted to "grey50".
+#' @param OceanColor Character: The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.
+#' @param GridColor Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).
 #' 
 #' @name general_map_plot_arguments
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' General track plotting parameters of RstoxBase
+#' 
+#' @param TrackPointColor Character: The colors to use when plotting the data points. The colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".
+#' @param MaxTrackPointSize Numeric: The maximum size of the points..
+#' @param TrackPointSize Numeric: The size of the points.
+#' @param TrackPointShape The shape of the points, as defined for the argument \code{pch} in \code{\link{points}}.
+#' @param TrackColor Character: The color to use for the vessel track, defaulted to "black".
+#' @param TrackLineWidth Numeric: The width of the track, defaulted to 1.
+#' 
+#' @name general_track_plot_arguments
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' General stratum plotting parameters of RstoxBase
+#' 
+#' @param ShowStratumPolygon Logical: If TRUE include the stratumPolygon. in the plot.
+#' @param StratumPolygonColor Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).
+#' @param StratumPolygonBorderColor Character: The single color to use for the polygon borders.
+#' @param StratumPolygonBorderLineWidth Numeric: The line width of the polygon borders.
+#' 
+#' @name general_stratum_plot_arguments
+#' 
+NULL
+
+
+##################################################
+##################################################
+#' General map plot aspect parameters of RstoxBase
+#' 
+#' @param Zoom Numeric: The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.
+#' @param LongitudeMin Numeric: The minimum longitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LongitudeMax Numeric: The maximum longitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LatitudeMin Numeric: The minimum latitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LatitudeMax Numeric: The maximum latitude limit of the plot, overriding the value derived from \code{Zoom}.
+#' @param LongitudeCenter Numeric: The longitude of the point around which the plot is zoomed usinng \code{Zoom}.
+#' @param LatitudeCenter Numeric: The latitude of the point around which the plot is zoomed usinng \code{Zoom}.
+#' 
+#' @name general_map_aspect_plot_arguments
+#' 
+NULL
+
+
+##################################################
+#' General map plot parameters of RstoxBase
+#' 
+#' @param AcousticPSULabelSize Numeric: The size of the AcousticPSU label.
+#' @param AcousticPSULabelColor Character: The color of the AcousticPSU label.
+#' @param AcousticPSULabelPosition Character: A string determinig where to place the AcousticPSU label, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".
+#' @param AcousticPSULabelHjust,AcousticPSULabelVjust Numeric: The hjust and vjust of the AcousticPSU label for more detailed positioning in addition to the \code{AcousticPSULabelPosition}.
+#' @param ShowOnlyAcousticPSU Logical: If TRUE plot only EDSUs tagged to acoustic PSUs.
+#' @param ShowAcousticPSULabel Logical: If TRUE show the labels of the acoustic PSUs in the plot.
+#' 
+#' @name general_AcousticPSU_plot_arguments
 #' 
 NULL
 

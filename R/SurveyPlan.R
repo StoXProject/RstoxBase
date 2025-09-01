@@ -1,6 +1,8 @@
 #' Plan an acoustic-trawl survey.
 #'
 #' @inheritParams general_arguments
+#' @inheritParams general_map_plot_arguments
+#' @inheritParams general_track_plot_arguments
 #' @inheritParams ProcessData
 #' @param DefinitionMethod  Character: A string naming the method to use, either "ResourceFile" for reading the survey plan from a file, or a string naming the type of survey design to create (see details).
 #' @param FileName The path to a resource file from which to read the SurveyPlan process data, in the case that \code{DefinitionMethod} is "ResourceFile".
@@ -101,10 +103,13 @@
 #' 
 DefineSurveyPlan <- function(
     processData, UseProcessData = FALSE, 
+    StratumPolygon, 
+    
     DefinitionMethod = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing", "ResourceFile"), 
     FileName = character(), 
-    StratumPolygon, 
+    
     StratumNames = character(), 
+    
     Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), 
     BearingAngle = numeric(), 
     Retour = FALSE, 
@@ -145,7 +150,16 @@ DefineSurveyPlan <- function(
     
     
     # Subset the strata:
-    StratumPolygon <- subsetStratumPolygon(StratumPolygon, if(length(StratumNames)) StratumNames else NA) 
+    if(length(StratumNames)) {
+        validStratumNames <- getStratumNames(StratumPolygon)
+        if(!any(StratumNames %in% validStratumNames)) {
+            stop("StratumNames can only contain valid stratum names. Possible names are: ", paste(validStratumNames, collapse = ", "))
+        }
+        
+        StratumPolygon <- subsetStratumPolygon(StratumPolygon, StratumNames) 
+    }
+    
+    # Get the number of strata and the names:
     numberOfStrata <- nrow(StratumPolygon)
     stratumNames <- getStratumNames(StratumPolygon)
     # Get the stratum areas:
@@ -172,7 +186,7 @@ DefineSurveyPlan <- function(
     }
     
     # Repeat the angle if given:
-    if(length(Bearing) && length(BearingAngle)) {
+    if(length(Bearing) && length(BearingAngle) && all(!is.na(BearingAngle))) {
         warning("StoX: When both Bearing and BearingAngle are given, the Bearing is ignored.")
     }
     
@@ -249,8 +263,11 @@ DefineSurveyPlan <- function(
     }
     names(SurveyPlanList) <- stratumNames
     
+    
     # Convert to start and end position (latitude and longitude):
     SurveyPlan <- lapply(SurveyPlanList, function(x) lapply(x, XY2startEnd))
+    
+    
     
     # Rbind the segments per stratum:
     SurveyPlan <- lapply(SurveyPlan, data.table::rbindlist, idcol = "Transect")
@@ -268,14 +285,27 @@ DefineSurveyPlan <- function(
 
 
 XY2startEnd <- function(x) {
-    nrowx <- nrow(x)
+    # Assume that all other columns than X and Y are contant and can be added afterwards:
+    XY <- subset(x, select = c("X", "Y"))
+    otherCols <- x[1, ! c("X", "Y")]
+    
+    # Convert from 2 to 4 columns:
+    nrowx <- nrow(XY)
     odd <- seq_len(nrowx) %% 2 == 1
     even <- seq_len(nrowx) %% 2 == 0
-    out <- data.table::data.table(x[odd, ], x[even, ])
+    out <- data.table::data.table(XY[odd, ], XY[even, ])
     data.table::setnames(out, c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd"))
     
+    # Add segment names:
     numberOfSegments <- nrow(out)
     out$Segment <- paste0("Segment_", sprintf(paste0("%0", nchar(numberOfSegments), "d"), seq_len(numberOfSegments)))
+    
+    # Add the otherCols
+    out <- cbind(out, otherCols)
+    
+    # Remove entries with duplicated positions:
+    dup <- out[, LongitudeStart == LongitudeEnd & LatitudeStart == LatitudeEnd]
+    out <- subset(out, !dup)
     
     return(out)
 }
@@ -455,14 +485,15 @@ getTransectsOneDirection <- function(
     )
     # Split into individual lines:
     gridList <- split(grid, rep(seq_along(xGrid), each = 2))
-    # Convert to a multilinestring object (matrix is needed by sf):
+    # For converting to a multilinestring object, matrix is needed by sf:
     gridList <- lapply(gridList, as.matrix)
     
     # For Harbitz zigzag transects with equal coverage, convert the grid to zigzag lines, by selecting every other point:
     if(tolower(DefinitionMethod) == tolower("ZigZagRectangularEnclosure")){
         # Apply the ordering of the grid prior to linking consecutive high-high and low-low points:
-        gridList <- orderTransectsByXY(gridList, down = downRandom)
-        gridList <- linkClosest(gridList)
+        #gridList <- linkClosestByDistance(gridList, down = downRandom)
+        gridList <- alternateTransectDirections(gridList, down = downRandom)
+        
         # Select the first end point of each grid line, and generate zigzag grid by merging consecutive points:
         gridList <- parallel2zigzag(gridList)
     }
@@ -471,13 +502,33 @@ getTransectsOneDirection <- function(
     # Get the intersections between the grid list and the polygon:
     intersectsCoordsList <- getSegmentsFromLinesAndPolygon(gridList, StratumPolygonOneStratumXY, downRandom = downRandom)
     
+    # Then alternate the intersections. This is required for Parallel and for ZigZagRectangularEnclosure, which both are now finished and simply need to return the points in the correct order; and it is also required for the ZigZagEqualSpacing, as we will create a zig zag grid from the end point of each transect of intersection points:
+    ###if(linkByDistance) {
+    ###    intersectsCoordsList <- linkClosestByDistance(linesSplitList, down = downRandom)
+    ###}
+    ###else {
+    ###    intersectsCoordsList <- alternateTransectDirections(linesSplitList, down = downRandom)
+    ###}
+    intersectsCoordsList <- alternateTransectDirections(intersectsCoordsList, down = downRandom)
+    
     
     # For ZigZagEqualSpacing transects, set the end point of each transect to the start point of the next:
     if(tolower(DefinitionMethod) == tolower("ZigZagEqualSpacing")){
         
+        if(length(intersectsCoordsList) == 1) {
+            stop("Isufficient effort to produce one zig zag transect in the stratum ", StratumPolygonOneStratumXY$StratumName, ". Please increase effort or choose a different DefinitionMethod (e.g. \"Parallel\").")
+        }
+        
+        ### # The ZigZagEqualSpacing method requires at least 2 grid lines to intersect with the polygon:
+        ### if(length(intersectsCoordsList) < 2) {
+        ###     stop("The DefinitionMethod \"ZigZagEqualSpacing\" requires at least two grid lines intersecting with the polygon. Increase the effort or choose an different DefinitionMethod.")
+        ### }
+        
+        # Convert to zigzag by selecting the last point in each transect, requiring that the transects are in alternate order, as obtained by alternateTransectDirections() above:
         intersectsCoordsListZigZag <- parallel2zigzag(intersectsCoordsList)
         
-        # The first points is the same y value but on the previous xGrid from the tail point (as the function parallel2zigzag uses the head point)
+        # Set the first point as the same y value as the tail point of the first segment in intersectsCoordsList but on the previous xGrid (as the function parallel2zigzag uses the head point). See Strindberg, S., & Buckland, S. T. (2004), Figure 4. Do the same for the end point:
+        
         startPoint <- utils::tail(intersectsCoordsList[[1]], 1)
         startPoint[, 1] <- startPoint[, 1] - diff(xGrid[1:2])
         startSegment <- rbind(startPoint, intersectsCoordsListZigZag[[1]][1, ])
@@ -496,20 +547,26 @@ getTransectsOneDirection <- function(
         
         # Re-intersect with the polygon:
         intersectsCoordsList <- getSegmentsFromLinesAndPolygon(intersectsCoordsList, StratumPolygonOneStratumXY, downRandom = downRandom)
+        # Link the points by disance, as the direction of segments can be irregular at the start and end of a stratum:
+        intersectsCoordsList <- linkClosestByDistance(intersectsCoordsList, down = downRandom)
     }
     
     
     # If on a retour, reverse order of the transects and within all transects:
     if(Retour){
         intersectsCoordsList <- rev(intersectsCoordsList)
-        #if(type != "ZigZagRectangularEnclosure"){
-        intersectsCoordsList <- lapply(intersectsCoordsList, function(x) x[seq(nrow(x), 1), ])
-        #}
+        
+        # 
+        if(! DefinitionMethod %in% c("ZigZagEqualSpacing", "ZigZagRectangularEnclosure")){
+            intersectsCoordsList <- lapply(intersectsCoordsList, function(x) x[seq(nrow(x), 1), , drop = FALSE])
+        }
     }
+    
     # Add a column denoting tour or retour:
     intersectsCoordsList <- lapply(intersectsCoordsList, cbind, Retour = Retour)
     
-    intersectsCoordsList
+    
+    return(intersectsCoordsList)
 }
 ############################################################
 ############################################################
@@ -517,7 +574,6 @@ getTransectsOneDirection <- function(
 
 
 getSegmentsFromLinesAndPolygon <- function(list, pol, downRandom, digits = 5) {
-    
     
     # Create a collection of linestrings:
     lines = lapply(list, sf::st_linestring)
@@ -534,8 +590,16 @@ getSegmentsFromLinesAndPolygon <- function(list, pol, downRandom, digits = 5) {
     linesSplitList <- lapply(linesSplit, sf::st_coordinates)
     linesSplitList <- lapply(linesSplitList, "[", , 1:2)
     # Reduce precision to 5 digits (corresponding to 1852 * 1e-5 = 0.01852 m, as the positions are in nautical miles) to avoid duplicated points created in the intersection process. we may even use 3 or 4 digits here:
+    
     linesSplitList <- lapply(linesSplitList, round, digits = digits)
-    linesSplitList <- lapply(linesSplitList, unique)
+    #linesSplitList <- lapply(linesSplitList, unique)
+    
+    # IT may happen that the linesSplitList is empty due to too low effort:
+    if(!length(linesSplitList)) {
+        stop("There were no intersections between the lines and polygons for Stratum ", pol$StratumName, ". Please increase effort.")
+    }
+    
+    
     
     # ... and extract the actual intersection points as the first point of each segment, excluding the last segment, since the last point on one segment is identical to the first point of the next:
     #linesSplitList <- lapply(linesSplitList, function(x) unique(do.call(rbind, x)[, 1:2]))
@@ -543,14 +607,13 @@ getSegmentsFromLinesAndPolygon <- function(list, pol, downRandom, digits = 5) {
     # The lwgeom::st_split keeps the original points 
     
     #linesSplitList <- lapply(linesSplitList, function(x) unique(do.call(rbind, lapply(y) if(NROW(y) >= 2) y[-c(1, nrow(y)), ] else y)[, 1:2]))
-    # Then order and link the points:
-    linesSplitList <- orderTransectsByXY(linesSplitList, down = downRandom)
-    intersectsCoordsList <- linkClosest(linesSplitList)
+    
+    
     
     # Remove elements with only 0 or 1 row:
     #intersectsCoordsList <- intersectsCoordsList[sapply(intersectsCoordsList, NROW) > 1]
     
-    return(intersectsCoordsList)
+    return(linesSplitList)
 }
 
 
@@ -579,7 +642,9 @@ orderTransectsByXYOne <- function(x, down = FALSE){
 
 
 # Function for linking consecutive transects stored in a list of data frames, in a way so that if the previous transect is uppwards in y, the next will be downwards, and vice versa:
-linkClosest <- function(x){
+alternateTransectDirections <- function(x, down = FALSE){
+    
+    x <- orderTransectsByXY(x, down = down)
     
     # Remove the empty elements, which are from grid lines outside of the polygons, which happens due to the flexibility related to the start position:
     x <- x[lengths(x) > 0]
@@ -612,16 +677,77 @@ linkClosest <- function(x){
 }
 
 
+
+# Function for linking consecutive transects stored in a list of data frames, such that the distance between transects is minimized:
+linkClosestByDistance <- function(x, down = FALSE){
+    
+    # Remove the empty elements, which are from grid lines outside of the polygons, which happens due to the flexibility related to the start position:
+    x <- x[lengths(x) > 0]
+    
+    # Order the first point by x and then y:
+    x[[1]] <- orderTransectsByXYOne(x[[1]], down = down)
+    
+    # Get distance between transect start and end points:
+    for(ind in seq_len(length(x)- 1)) {
+        
+        # In the case that down it TRUE, implying Retour, compare the first point of each segment to the first and last point of the next:
+        if(down) {
+            distToHead <- distXY(
+                utils::head(x[[ind]], 1), 
+                utils::head(x[[ind + 1]], 1)
+            )
+            distToTail <- distXY(
+                utils::head(x[[ind]], 1), 
+                utils::tail(x[[ind + 1]], 1)
+            )
+        }
+        # Otherwise, for Tour, compare the last point of each segment to the first and last point of the next:
+        else {
+            distToHead <- distXY(
+                utils::tail(x[[ind]], 1), 
+                utils::head(x[[ind + 1]], 1)
+            )
+            distToTail <- distXY(
+                utils::tail(x[[ind]], 1), 
+                utils::tail(x[[ind + 1]], 1)
+            )
+        }
+        
+        
+        if(down) {
+            if(distToTail >= distToHead) {
+                x[[ind + 1]] <- x[[ind + 1]][rev(seq_len(nrow(x[[ind + 1]]))), ]
+            }
+        }
+        else {
+            if(distToTail < distToHead) {
+                x[[ind + 1]] <- x[[ind + 1]][rev(seq_len(nrow(x[[ind + 1]]))), ]
+            }
+        }
+        
+    }
+
+    return(x)
+}
+
+
+distXY <- function(xy1, xy2) {
+    sqrt(sum((xy2 - xy1)^2))
+}
+
+
 # Function for selecting the first point of each list element, and generating zigzag grid by merging consecutive points:
 parallel2zigzag <- function(x){
-    # If only one segment, return unaltered:
+    
+    # If only one segment, return the first and last position:
     if(length(x) == 1) {
+        x[[1]] <- x[[1]][c(1, nrow(x[[1]])), ]
         return(x)
     }
     
     
-    oldNames <- names(x)
-    # Get the first element of each line, requiring that the data have been linked by alternate direction using linkClosest() first:
+    oldNames <- names(x[[1]])
+    # Get the first element of each line, requiring that the data have been linked by alternate direction using alternateTransectDirections() or linkClosestByDistance() first:
     start <- do.call(rbind, lapply(x, utils::head, 1))
     # Generate the indices used to split the data into line segments:
     tempSeq <- seq_len(nrow(start) - 1)
@@ -631,7 +757,7 @@ parallel2zigzag <- function(x){
     # Select the line segments and split to one list per segment:
     start <- start[ind,]
     start <- split(start, transecind)
-    start <- lapply(start, matrix, ncol = 2, nrow = 2)
+    start <- lapply(start, matrix, ncol = 2, nrow = 2, dimnames = list(NULL, c("X", "Y")))
     names(start) <- oldNames[-length(oldNames)]
     start
 }
@@ -660,7 +786,7 @@ getTransectsByArea <- function(
     Retour = FALSE
 ){
     
-    # Get the transectSpacing:
+    # Get the transectSpacing. This calculation assumes rectangular strata, and may lead to too small transectSpacing for e.g. L-shaped strata. This can lead to long survey tracks and in extreme cases longer than twice the freeSurveyDistance, in which case freeSurveyDistance will be negative in the next iteration (as we are adding the 'rest' which is then larger negative than freeSurveyDistance is positive). In those cases we simply try with half the freeSurveyDistance.:
     transectSpacing <- stratumArea$Area / freeSurveyDistance
     
     # If the transect sould go tour-retour, use half spacing for parallel andtransects, and for zigzag simply go back with opposite order:
@@ -671,7 +797,7 @@ getTransectsByArea <- function(
     # Set the leftmost position of the grid lines:
     firstTransectPos <- 2 * transectSpacing * startPositionFactor
     # Get x positions of the grid:
-    xGrid <- seq(corners$xmin - 2 * firstTransectPos, corners$xmax + 2 * transectSpacing, by=transectSpacing)
+    xGrid <- seq(corners$xmin - 2 * firstTransectPos, corners$xmax + 2 * transectSpacing, by = transectSpacing)
     
     
     # Generate the transects in one direction:
@@ -696,9 +822,6 @@ getTransectsByArea <- function(
             )
         )
     }
-    
-    
-    
     
     
     return(intersectsCoordsList)
@@ -771,6 +894,8 @@ transectsOneStratum <- function(
     
     # The is the distance that is available for the design, apart from the actual travel distance if crossing the stratum along the x-axis:
     freeSurveyDistance <- SurveyDistance - lengthOfStratum
+    message("StoX: SurveyPlan for Stratum ", stratumName, "...")
+    
     
     # Get the random seed point for the transects:
     startPositionFactor <- sampleStartPositionFactor(Seed)
@@ -791,9 +916,14 @@ transectsOneStratum <- function(
     # If we are iterating to get the best fit to the expected SurveyDistance:
     numIter <- 1
     if(length(Margin) && is.numeric(Margin) && Margin > 0){
+        
+        
+        
         # Set the totalSailedDist, margin to use, and the last value for 'rest' and 'freeSurveyDistance':
         #totalSailedDist <- 0
         totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransport = TRUE)
+        
+        
         Margin_SurveyDistance <- SurveyDistance * Margin
         last_rest <- Inf
         last_nmi_rest <- Inf
@@ -801,11 +931,14 @@ transectsOneStratum <- function(
         # Iterate to get a calculated tracklength within the margins
         while(abs(SurveyDistance - totalSailedDist) > Margin_SurveyDistance){
             
+            message("StoX: numIter: ", numIter)
+            
+            
+            
             if(numIter > 100) {
                 message("Reaching 100 iterations when searching for survey distance deviating less than the margin from the user specified distance.")
                 break
             }
-            
             
             intersectsCoordsList <- getTransectsByArea(
                 freeSurveyDistance = freeSurveyDistance, 
@@ -822,6 +955,8 @@ transectsOneStratum <- function(
             
             
             # Here we need the totalSailedDist:
+            
+            
             totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransport = TRUE)
             rest <- SurveyDistance - totalSailedDist
             
@@ -829,7 +964,7 @@ transectsOneStratum <- function(
             # If increasing in rest value, break the loop and rerun with the previous settings:
             if(abs(last_rest) < abs(rest)){
                 intersectsCoordsList <- lastIntersectsCoordsList
-                warning(paste0("Sailed distance in stratum ", stratumName, " did not converge to the desired sailed distance (",  SurveyDistance, " nmi). The closest used."))
+                warning(paste0("Sailed distance in stratum ", stratumName, " did not converge to the desired sailed distance (",  SurveyDistance, " nmi). The closest (", totalSailedDist, ") used."))
                 break
             }
             # Set the values of the last run:
@@ -838,12 +973,22 @@ transectsOneStratum <- function(
             last_rest <- rest
             lastIntersectsCoordsList <- intersectsCoordsList
             # Set new freeSurveyDistance to use:
-            freeSurveyDistance <- freeSurveyDistance + rest
             
+            # This can lead to long survey tracks and in extreme cases longer than twice the freeSurveyDistance, in which case freeSurveyDistance will be negative in the next iteration (as we are adding the 'rest' which is then larger negative than freeSurveyDistance is positive). In those cases we simply try with half the freeSurveyDistance.
+            if(rest < -freeSurveyDistance) {
+                freeSurveyDistance <- freeSurveyDistance / 2
+            }
+            else {
+                freeSurveyDistance <- freeSurveyDistance + rest
+            }
+            
+            # Increment numIter:
             numIter <- numIter + 1
         }
         #cat("Number of iterations to achieve total sailed distance within ", Margin, " of the requested nmi in stratum ", stratumName, " (", SurveyDistance, "): ", numIter, "\n", sep="")
     }
+    
+    
     
     # Get x,y coordinates of the transects:
     # Create a collection of linestrings:
@@ -867,8 +1012,14 @@ transectsOneStratum <- function(
     lines <- lapply(lines, sf::st_coordinates)
     lines <- lapply(lines, data.table::as.data.table)
     lines <- lapply(lines, subset, select = c("X", "Y"))
-    lines <- lapply(lines, unique)
     
+    # Add the Retour:
+    lines <- mapply(cbind, lines, Retour = lapply(intersectsCoordsList, "[", , "Retour"), SIMPLIFY = FALSE)
+    
+    # Remove duplicates. This may be risky, but duplicates points are confusing:
+    #print(lines)
+    #lines <- lapply(lines, unique)
+    #print(lines)
     
     # Add transect IDs as names of the list of lines:
     numberOfTransects <- length(lines)
@@ -892,6 +1043,7 @@ getTotalSailedDist <- function(list, includeTransport = TRUE) {
     
     # We require even number of rows (accepting 1 row):
     nrows <- sapply(list, nrow)
+    
     if(!all(nrows == 1 | nrows %% 2 == 0)) {
         stop("All elements of the list must have even number of rows.")
     }
@@ -932,7 +1084,7 @@ nodes2segments <- function(x) {
 
 
 addTransportToList <- function(list) {
-    transportList <- lapply(seq_len(length(list) - 1), function(ind) rbind(list[[ind]][2, ], list[[ind + 1]][1, ]))
+    transportList <- lapply(seq_len(length(list) - 1), function(ind) rbind(utils::tail(list[[ind]], 1), utils::head(list[[ind + 1]], 1)))
     list <- c(list, transportList)
     return(list)
 }
@@ -943,20 +1095,28 @@ addTransportToSegments <- function(
     segments, 
     startNames = c("LongitudeStart", "LatitudeStart"), 
     endNames = c("LongitudeEnd", "LatitudeEnd"), 
-    ordered = TRUE
+    ordered = TRUE, 
+    addLast0Transport = FALSE
 ) {
     
     # Store the column order:
     colnames_segments <- names(segments)
     otherNames <- setdiff(colnames_segments, c(startNames, endNames))
     
+    
     # Create transports:
     transports <- lapply(seq_len(nrow(segments) - 1), function(ind) cbind(segments[ind, ..endNames], segments[ind + 1, ..startNames]))
+    # Add the a final dummy transport from the last end point to itself, useful if we want to extract only start positions (used in WriteSurveyPlan()):
+    if(addLast0Transport) {
+        lastEndPoint <- segments[nrow(segments), ..endNames]
+        transports[[length(transports) + 1]] <- structure(cbind(lastEndPoint, lastEndPoint), names = c(endNames, startNames))
+    }
+    
     transports <- data.table::rbindlist(transports)
     data.table::setnames(transports, c(startNames, endNames))
     # Add the other column, where if different between segments (the Segment column) the two values are pasted:
     for(name in otherNames) {
-        transports <- addTransportOtherColumn(transports, segments, name)
+        transports <- addTransportOtherColumn(transports, segments, name, addLast0Transport = addLast0Transport)
     }
     data.table::setcolorder(transports, colnames_segments)
     
@@ -968,7 +1128,10 @@ addTransportToSegments <- function(
     
     # Reorder the rows:
     if(ordered) {
-        newOrder <- head(rep(seq_len(nrow(segments)), each = 2) + rep(c(0, nrow(segments)), nrow(segments)), -1)
+        newOrder <- rep(seq_len(nrow(segments)), each = 2) + rep(c(0, nrow(segments)), nrow(segments))
+        if(!addLast0Transport) {
+            newOrder <- head(newOrder, -1)
+        }
         output <- output[newOrder, ]
         #output[seq(1, nrow(output), 2), ] <- segments
         #output[seq(2, nrow(output), 2), ] <- transports
@@ -977,8 +1140,14 @@ addTransportToSegments <- function(
     return(output)
 }
 
-addTransportOtherColumn <- function(transports, segments, name, sep = " - ") {
-    first <- utils::head(segments[[name]], -1)
+addTransportOtherColumn <- function(transports, segments, name, sep = " - ", addLast0Transport = FALSE) {
+    if(addLast0Transport) {
+        first <- segments[[name]]
+    }
+    else {
+        first <- utils::head(segments[[name]], -1)
+    }
+    
     #last <- utils::tail(segments[[name]], -1)
     #if(any(first == last)) {
     #    transports[[name]] <- first
@@ -1087,6 +1256,7 @@ ReportSurveyPlan <- function(
     ]
     Stratum <- merge(Stratum, StratumAreaData, all.x = TRUE)
     Stratum[, Coverage := DistanceSegment / sqrt(Area)]
+    Stratum[, Time := Distance / Speed]
     
     output <- list(
         Segment = Segment, 
@@ -1134,6 +1304,7 @@ distanceStartToEnd <- function(segment) {
 #' Write a survey plan to a GPX file.
 #'
 #' @inheritParams ProcessData
+#' @inheritParams general_file_plot_arguments
 #' 
 #' @examples
 #' 
@@ -1161,7 +1332,7 @@ distanceStartToEnd <- function(segment) {
 #' # Convert the survey plan to an sf object and write this as a gpx file 
 #' # (this is done automatically by RstoxFramework in StoX):
 #' gpxData <- WriteSurveyPlan(surveyPlanZZ_Along)
-#' filePath <- tempfile(fileext = "gpx")
+#' filePath <- tempfile(fileext = ".gpx")
 #' st_write(
 #'      gpxData,
 #'      dsn = filePath,
@@ -1179,26 +1350,54 @@ distanceStartToEnd <- function(segment) {
 #' @export
 #' 
 WriteSurveyPlan <- function(
-    SurveyPlan
+    SurveyPlan, 
+    Format = c("GPX", "Ruter")#, 
+    #SplitByStratum or stratum and tourRetour??????
 ){
     
+    Format <- RstoxData::match_arg_informative(Format)
+    
     # Create a list of the tables Segment and Stratum:
-    SegmentWithTransport <- addTransportToSegments(SurveyPlan)
+    SegmentWithTransport <- addTransportToSegments(SurveyPlan, addLast0Transport = TRUE)
     
-    output <- sf::st_as_sf(
-        subset(SegmentWithTransport, select = c("LongitudeStart", "LatitudeStart")), 
-        coords = c("LongitudeStart", "LatitudeStart")
-    )
-    
-    # Add tracks, segments and waypoints:
-    output$track_fid <- SegmentWithTransport$Stratum
-    output$track_seg_id <- SegmentWithTransport$Transect
-    output$track_seg_point_id <- SegmentWithTransport$Segment
-    
-    # # Add routes, one for each Stratum:
-    # output$route_fid <- SegmentWithTransport$Stratum
-    # output$route_point_id <- SegmentWithTransport$Segment
-    
+    if(Format == "GPX") {
+        output <- sf::st_as_sf(
+            subset(SegmentWithTransport, select = c("LongitudeStart", "LatitudeStart")), 
+            coords = c("LongitudeStart", "LatitudeStart")
+        )
+        
+        # Add tracks, segments and waypoints:
+        #output$track_fid <- SegmentWithTransport$Stratum
+        #output$track_seg_id <- SegmentWithTransport$Transect
+        #output$track_seg_point_id <- SegmentWithTransport$Segment
+        
+        output$track_name <- SegmentWithTransport$Stratum
+        
+        # The driver translates to integers starting from 0, so we do this here explicitely to avoid confusion:
+        output$track_fid <- as.integer(factor(SegmentWithTransport$Stratum)) - 1L
+        output$track_seg_id <- as.integer(sub(".*_", "", SegmentWithTransport$Transect)) - 1L
+        #output$track_seg_point_id <- as.integer(sub(".*_", "", SegmentWithTransport$Segment)) - 1L
+        output$track_seg_point_id <- unlist(by(output, paste(output$track_fid, output$track_seg_id), FUN = function(x) seq_len(nrow(x)))) - 1L
+    }
+    else if(Format == "Ruter") {
+        
+        warning("StoX: Using Format = \"Ruter\" is experimental.")
+        
+        symbol <- "Brunsirkel"
+        
+        # Convert the positions to arc-minutes
+        SegmentWithTransport[, LongitudeStart := LongitudeStart * 60]
+        SegmentWithTransport[, LatitudeStart := LatitudeStart * 60]
+        
+        # Create individual points:
+        output <- SegmentWithTransport[, .(Ruter = paste(LatitudeStart, LongitudeStart, 0, symbol, collapse = "\n")), by = "Stratum"]
+        
+        # Add one blank line between strata:
+        output <- unlist(lapply(output$Ruter, function(x) c("Rute uten navn", x, "")))
+        
+        # Set the class, which will be used in RstoxFramework when writing the output file:
+        class(output) <- "Ruter"
+    }
     
     return(output)
 }
@@ -1221,10 +1420,17 @@ WriteSurveyPlan <- function(
 #st_write(walk,dsn="walk.gpx",layer="track_points",driver="GPX")
 
 
-
+############################
 #' Plot a survey plan.
 #'
 #' @inheritParams ProcessData
+#' @inheritParams PlotAcousticTrawlSurvey
+#' @inheritParams general_plot_arguments
+#' @inheritParams general_file_plot_arguments
+#' @inheritParams general_map_plot_arguments
+#' @inheritParams general_track_plot_arguments
+#' @inheritParams general_stratum_plot_arguments
+#' @inheritParams general_map_aspect_plot_arguments
 #' 
 #' @examples
 #' 
@@ -1256,16 +1462,204 @@ WriteSurveyPlan <- function(
 #' 
 PlotSurveyPlan <- function(
     SurveyPlan,
-    StratumPolygon
+    
+    # Options for the track line and points:
+    UseDefaultTrackSettings = TRUE, 
+    TrackColor = character(), 
+    TrackLineWidth = numeric(),  
+    TrackPointColor = character(), 
+    TrackPointSize = numeric(), 
+    TrackPointShape = numeric(), 
+    
+    
+    # Options for the stratum polygons:
+    ShowStratumPolygon = FALSE, 
+    StratumPolygon, 
+    UseDefaultStratumPolygonSettings = TRUE, 
+    StratumPolygonColor = character(), 
+    StratumPolygonBorderColor = character(), 
+    StratumPolygonBorderLineWidth = numeric(), 
+    
+    # Options for the map:
+    ShowMap = TRUE, 
+    UseDefaultMapSettings = TRUE, 
+    LandColor = character(), 
+    BorderColor = character(), 
+    OceanColor = character(), 
+    GridColor = character(),
+    
+    # Options for the zoom and limits:
+    UseDefaultAspectSettings = TRUE, 
+    Zoom = numeric(), 
+    LongitudeMin = numeric(), 
+    LongitudeMax = numeric(), 
+    LatitudeMin = numeric(), 
+    LatitudeMax = numeric(), 
+    LongitudeCenter = numeric(), 
+    LatitudeCenter = numeric(), 
+    
+    # Options for the labels and other text:
+    UseDefaultLabelSettings = TRUE, 
+    Title = character(), 
+    AxisTitleSize = numeric(), 
+    AxisTickSize = numeric(), 
+    LegendTitleSize = numeric(), 
+    LegendTextSize = numeric(), 
+    
+    # Options for the output file:
+    #Format = c("png", "tiff", "jpeg", "pdf"), 
+    UseDefaultFileSettings = TRUE, 
+    Format = character(), 
+    Width = numeric(), 
+    Height = numeric(), 
+    DotsPerInch = numeric()
 ){
     
-    # Plot the stratumPolygon with the segments
-    output <- ggplot2::ggplot() +
-        ggplot2::geom_sf(data = StratumPolygon, ggplot2::aes(fill = StratumName), color = 'blue') +
-        ggplot2::geom_segment(
-            data = SurveyPlan, 
-            ggplot2::aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
+    # Get the formals:
+    plotArguments <- allargs()
+    
+    # If the StratumPolygon is given, set ShowStratumPolygon to TRUE:
+    if(!missing(StratumPolygon)) {
+        ShowStratumPolygon <- TRUE
+    }
+    
+    # Set the default of the StoX function. These are defaults defined in the stoxFunctionAttributes.
+    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotSurveyPlan", stoxFunctionAttributes = stoxFunctionAttributes)
+
+    
+    # Split axis titles into x and y:
+    plotArguments <- splitAxisTitleSize(plotArguments)
+    
+    # Set hard coded values used in plot_lon_lat():
+    plotArguments <- c(
+        plotArguments, 
+        list(
+            # Add Stratum as a grouping variable:
+            trackLinesBy <- "Stratum", 
+            # Solid line for tour and dashed for retour:
+            linetype.track <- "Retour", 
+            lon_name = "LongitudeStart", 
+            lat_name = "LatitudeStart", 
+            lon_name_end = "LongitudeEnd", 
+            lat_name_end = "LatitudeEnd", 
+            type = "sp"
         )
+    )
+    
+    # Special care to add the positions, as we need Retour to be factor when plotting:
+    SurveyPlan$Retour <- as.factor(SurveyPlan$Retour)
+    plotArguments$x <- SurveyPlan
+    
+    
+    # Define the translation from the inputs to this function to the inputs to plot_lon_lat:
+    translation <- c(
+        polygon = "StratumPolygon",
+        showMap = "ShowMap",
+        
+        linewidth.track = "TrackLineWidth", 
+        linewidth.polygon.border = "StratumPolygonBorderLineWidth", 
+        
+        size = "TrackPointSize", 
+        
+        color.track = "TrackColor", 
+        color.scale = "TrackPointColor",  
+        color.land = "LandColor", 
+        color.border = "BorderColor", 
+        color.ocean = "OceanColor", 
+        color.grid = "GridColor", 
+        color.polygon = "StratumPolygonColor", 
+        color.polygon.border = "StratumPolygonBorderColor", 
+        
+        shape = "TrackPointShape",
+        # Do not set any alphas (transparency): alpha.point, alpha.track, alpha.polygon
+        
+        zoom = "Zoom", 
+        # xlim, ylim and zoomCenter are set by set_xlim_ylim_zoomCenter()
+        
+        legend.text.size = "LegendTextSize", 
+        legend.title.size = "LegendTitleSize", 
+        main = "Title"
+    )
+    
+    # Add xlim and ylim and center for zooming:
+    plotArguments <- set_xlim_ylim_zoomCenter(plotArguments)
+    
+    
+    
+    
+    # Create a table with Longitude, Latitude and Stratum to plot:
+    #plotArguments$x <- data.table::data.table(
+    #    Longitude = c(t(subset(SurveyPlan, select = c("LongitudeStart", "LongitudeEnd")))), 
+    #    Latitude = c(t(subset(SurveyPlan, select = c("LatitudeStart", "LatitudeEnd")))), 
+    #    Stratum = c(t(subset(SurveyPlan, select = c("Stratum", "Stratum")))), 
+    #    Type = rep(c("Transect", "Transport"), length.out = 2 * nrow(SurveyPlan)), 
+    #    Retour = as.factor(rep(SurveyPlan$Retour, each = 2))
+    #)
+    
+    
+    # Add StratumPolygon:
+    if(!ShowStratumPolygon) {
+        plotArguments$StratumPolygon <- NULL
+    }
+    
+    # Rename to the argument names of the plot_lon_lat():
+    plotArguments <- renameListByNames(
+        plotArguments, 
+        old = translation,  
+        new = names(translation)
+    )
+    
+    
+    
+    
+    
+    output <- do.call(plot_lon_lat, plotArguments)
+    
+    
+    
+    ### # Plot the stratumPolygon with the segments
+    ### output <- ggplot2::ggplot() +
+    ###     ggplot2::geom_sf(data = StratumPolygon, ggplot2::aes(fill = StratumName), color = 'blue') +
+    ###     ggplot2::geom_segment(
+    ###         data = SurveyPlan, 
+    ###         ggplot2::aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
+    ###     )
+    ### 
+    ### 
+    ### lonlat <- SurveyPlan[, .(Longitude = c(LongitudeStart, LongitudeEnd), Latitude = c(LatitudeStart, LatitudeEnd))]
+    ### 
+    ### output <- zoom_lon_lat(
+    ###     x = lonlat, 
+    ###     lon = "Longitude", 
+    ###     lat = "Latitude", 
+    ###     xmin = LongitudeMin, 
+    ###     xmax = LongitudeMax, 
+    ###     ymin = LatitudeMin, 
+    ###     ymax = LatitudeMax, 
+    ###     zoom = Zoom, 
+    ###     zoomCenter = c(LongitudeCenter, LatitudeCenter)
+    ### ) + 
+    ### ggplot2::xlab("Longitude") + 
+    ### ggplot2::ylab("Latitude") + 
+    ### ggplot2::ggtitle(Title)
+    
+    
+    #output <- output + ggplot2::theme(
+    #    axis.title.x = ggplot2::element_text(size = if(length(lll$axis.title.size.x)) lll$axis.title.size.x else 10), 
+    #    axis.title.y = ggplot2::element_text(size = if(length(lll$axis.title.size.y)) lll$axis.title.size.y else 10), 
+    #    axis.text.x = ggplot2::element_text(size = if(length(lll$axis.text.size.x)) lll$axis.text.size.x else 10), 
+    #    axis.text.y = ggplot2::element_text(size = if(length(lll$axis.text.size.y)) lll$axis.text.size.y else 10), 
+    #    legend.text = ggplot2::element_text(size = if(length(lll$legend.text.size)) lll$legend.text.size else 10), 
+    #    legend.title = ggplot2::element_text(size = if(length(lll$legend.title.size)) lll$legend.title.size else 10),
+    #    panel.background = ggplot2::element_rect(fill = color.ocean, color = "grey80"),
+    #    panel.grid.major = ggplot2::element_line(color = color.grid), 
+    #    panel.grid.minor = ggplot2::element_line(color = color.grid)
+    #)
+    
+    output <- setPlotAttributes(
+        plotObject = output, 
+        plotArguments = plotArguments
+    )
     
     return(output)
 }
