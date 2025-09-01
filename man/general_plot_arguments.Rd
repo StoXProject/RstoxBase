@@ -4,35 +4,31 @@
 \alias{general_plot_arguments}
 \title{General ploting parameters of RstoxBase}
 \arguments{
-\item{UseDefaultColorSettings}{Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.}
+\item{UseDefaultMapSettings}{Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.}
 
-\item{UseDefaultSizeSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+\item{UseDefaultPointSettings}{Logical: If TRUE (default) use the default point settings of the plot, specifically PointColor, MaxPointSize and MinPointSize. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
 
-\item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
+\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
 
-\item{UseDefaultTextSettings}{Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
+\item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
 
-\item{UseDefaultFileSettings}{Logical: If TRUE (default) use the default file settings of the plotting function. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.}
+\item{UseDefaultLabelSettings}{Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
 
-\item{Zoom}{The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
+\item{UseDefaultFileSettings}{Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.}
 
-\item{Title}{The title of the plot, defaulted to no title.}
+\item{UseDefaultAcousticPSULabelSettings}{Logical: If TRUE (default) use the default settings for acoustic PSU labels in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.}
 
-\item{AxisTitleSize}{The size of the axis titles, defaulted to 20.}
+\item{UseDefaultStratumPolygonSettings}{Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.}
 
-\item{AxisTickSize}{The size of the axis tick marks, defaulted to 20.}
+\item{Title}{Character: The title of the plot, defaulted to no title.}
 
-\item{LegendTitleSize}{The size of the legend title, defaulted to 20.}
+\item{AxisTitleSize}{Numeric: The size of the axis titles, defaulted to 20.}
 
-\item{LegendTextSize}{The size of the legend text, defaulted to 20.}
+\item{AxisTickSize}{Numeric: The size of the axis tick marks, defaulted to 20.}
 
-\item{Format}{The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
+\item{LegendTitleSize}{Numeric: The size of the legend title, defaulted to 20.}
 
-\item{Width}{The width of the plot in centimeters, defaulted to 17, as per the \href{https://academic.oup.com/icesjms/pages/General_Instructions}{ICES Journal og Marine Science author recommendations}.}
-
-\item{Height}{The height of the plot in centimeters, defaulted to 17.}
-
-\item{DotsPerInch}{The number of dots per inch (DPI), defaulted to 1200.}
+\item{LegendTextSize}{Numeric: The size of the legend text, defaulted to 20.}
 }
 \description{
 General ploting parameters of RstoxBase

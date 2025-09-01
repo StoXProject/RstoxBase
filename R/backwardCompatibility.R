@@ -106,8 +106,22 @@ backwardCompatibility_RstoxBase <- list(
             functionName = "ReportDensity", 
             modelName = "baseline", 
             parameterName = "TargetVariable"
+        ),  
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "DataVariable"
+        ),  
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "MinPointSize"
         )
     ),  
+    
+    
     
     addParameter = list(
         list(
@@ -364,6 +378,27 @@ backwardCompatibility_RstoxBase <- list(
             functionName = "ReportQuantity", 
             modelName = "report", 
             parameterName = "FractionOverVariable"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "WriteSurveyPlan", 
+            modelName = "report", 
+            parameterName = "Format",
+            parameterValue = "GPX"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "StratumPolygonColor",
+            parameterValue = "hue"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "TrackPointShape",
+            parameterValue = "1"
         )
     ),  
     
@@ -430,7 +465,65 @@ backwardCompatibility_RstoxBase <- list(
             modelName = "report", 
             parameterName = "ReportVariableUnit",
             newParameterName = "TargetVariableUnit"
-        )#, 
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "UseAcousticPSU",
+            newParameterName = "ShowOnlyAcousticPSU"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "UseDefaultAcousticPSUSettings",
+            newParameterName = "ShowAcousticPSULabel"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "TrackSize",
+            newParameterName = "TrackLineWidth"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "UseDefaultTextSettings",
+            newParameterName = "UseDefaultLabelSettings"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "UseDefaultColorSettings",
+            newParameterName = "UseDefaultMapSettings"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "PointColor",
+            newParameterName = "TrackPointColor"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "MaxPointSize",
+            newParameterName = "MaxTrackPointSize"
+        ), 
+        list(
+            changeVersion = "2.2.0-9002", 
+            functionName = "PlotAcousticTrawlSurvey", 
+            modelName = "report", 
+            parameterName = "TrackSize",
+            newParameterName = "TrackLineWidth"
+        )
+        
+        #, 
         #list(
         #    changeVersion = "2.1.3-9001", 
         #    functionName = "LengthDependentLengthDistributionCompensation", 

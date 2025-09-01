@@ -1565,15 +1565,15 @@ setDefaults <- function(x, defaults) {
 
 #' Set default general options
 #' 
-#' @param x A list of arguments to the StoxFunction.
-#' @param StoxFunctionName The name of the StoxFunction.
+#' @param x A list of arguments to the StoX function.
+#' @param StoxFunctionName The name of the StoX function.
 #' @param stoxFunctionAttributes The stoxFunctionAttributes to use.
 #' 
 #' @export
 #' 
 setDefaultsInStoxFunction <- function(x, StoxFunctionName, stoxFunctionAttributes) {
     # The following line failed if the StoX function was run inside e.g. an mapply():
-    #StoxFunctionName <- tail(as.character(as.list(sys.call(-1))[[1]]), 1)
+    #StoxFunctionName <- utils::tail(as.character(as.list(sys.call(-1))[[1]]), 1)
     defaults <- stoxFunctionAttributes[[StoxFunctionName]]$functionParameterDefaults
     #if(length(condition) && is.character(condition) && nchar(condition)) {
     #    
@@ -1609,7 +1609,7 @@ renameListByNames <- function(list, old, new) {
     valid <- intersect(old, names(list))
     invalid <- setdiff(old, names(list))
     if(length(invalid)) {
-        warning("The following names are specified as 'old' but are not found in the list. These are ignored.")
+        warning("The following names are specified as 'old' but are not found in the list. These are ignored: ", paste(invalid, collapse = ", "))
         new <- new[old %in% names(list)]
     }
     atRename <- match(valid, names(list))

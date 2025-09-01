@@ -5,34 +5,41 @@
 \title{Plot NASCData}
 \usage{
 PlotAcousticTrawlSurvey(
+  NASCData,
+  SumNASCData,
+  AcousticPSU,
   LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"),
   LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"),
   Resolution = double(),
   LayerTable = data.table::data.table(),
   AcousticLayer = NULL,
-  NASCData,
-  SumNASCData,
-  AcousticPSU,
-  ColorVariable = character(),
-  UseAcousticPSU = FALSE,
-  UseDefaultAcousticPSUSettings = TRUE,
+  ShowOnlyAcousticPSU = FALSE,
+  ShowAcousticPSULabel = TRUE,
+  UseDefaultAcousticPSULabelSettings = TRUE,
   AcousticPSULabelSize = numeric(),
   AcousticPSULabelColor = character(),
   AcousticPSULabelPosition = c("mean", "atMinLongitude", "atMaxLongitude",
     "atMinLatitude", "atMaxLatitude"),
   AcousticPSULabelHjust = numeric(),
   AcousticPSULabelVjust = numeric(),
-  UseDefaultColorSettings = TRUE,
-  PointColor = character(),
+  UseDefaultTrackSettings = TRUE,
   TrackColor = character(),
+  TrackLineWidth = numeric(),
+  TrackPointColor = character(),
+  MaxTrackPointSize = numeric(),
+  TrackPointShape = numeric(),
+  ShowStratumPolygon = FALSE,
+  StratumPolygon,
+  UseDefaultStratumPolygonSettings = TRUE,
+  StratumPolygonColor = character(),
+  StratumPolygonBorderColor = character(),
+  StratumPolygonBorderLineWidth = 0.5,
+  ShowMap = TRUE,
+  UseDefaultMapSettings = TRUE,
   LandColor = character(),
   BorderColor = character(),
   OceanColor = character(),
   GridColor = character(),
-  UseDefaultSizeSettings = TRUE,
-  MaxPointSize = numeric(),
-  MinPointSize = numeric(),
-  TrackSize = numeric(),
   UseDefaultAspectSettings = TRUE,
   Zoom = numeric(),
   LongitudeMin = numeric(),
@@ -41,7 +48,7 @@ PlotAcousticTrawlSurvey(
   LatitudeMax = numeric(),
   LongitudeCenter = numeric(),
   LatitudeCenter = numeric(),
-  UseDefaultTextSettings = TRUE,
+  UseDefaultLabelSettings = TRUE,
   Title = character(),
   AxisTitleSize = numeric(),
   AxisTickSize = numeric(),
@@ -55,6 +62,12 @@ PlotAcousticTrawlSurvey(
 )
 }
 \arguments{
+\item{NASCData}{The \code{\link{NASCData}} data.}
+
+\item{SumNASCData}{The \code{\link{SumNASCData}} data.}
+
+\item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
+
 \item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.}
 
 \item{LayerDefinitionMethod}{See \code{\link{DefineAcousticLayer}}}
@@ -65,87 +78,93 @@ PlotAcousticTrawlSurvey(
 
 \item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
 
-\item{NASCData}{The \code{\link{NASCData}} data.}
+\item{ShowOnlyAcousticPSU}{Logical: If TRUE plot only EDSUs tagged to acoustic PSUs.}
 
-\item{SumNASCData}{The \code{\link{SumNASCData}} data.}
+\item{ShowAcousticPSULabel}{Logical: If TRUE show the labels of the acoustic PSUs in the plot.}
 
-\item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
+\item{UseDefaultAcousticPSULabelSettings}{Logical: If TRUE (default) use the default settings for acoustic PSU labels in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.}
 
-\item{ColorVariable}{The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.}
+\item{AcousticPSULabelSize}{Numeric: The size of the AcousticPSU label.}
 
-\item{UseAcousticPSU}{Logical: If TRUE plot only EDSUs tagged to acoustic PSUs.}
+\item{AcousticPSULabelColor}{Character: The color of the AcousticPSU label.}
 
-\item{UseDefaultAcousticPSUSettings}{Logical: If TRUE (default) use the default settings for indicating acoustic PSU in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.}
+\item{AcousticPSULabelPosition}{Character: A string determinig where to place the AcousticPSU label, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".}
 
-\item{AcousticPSULabelSize}{The text size of the plotted acoustic PSU labels.}
+\item{AcousticPSULabelHjust, AcousticPSULabelVjust}{Numeric: The hjust and vjust of the AcousticPSU label for more detailed positioning in addition to the \code{AcousticPSULabelPosition}.}
 
-\item{AcousticPSULabelColor}{The text color of the plotted acoustic PSU labels.}
+\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
 
-\item{AcousticPSULabelPosition}{The position of the text of the plotted acoustic PSU labels, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".}
+\item{TrackColor}{Character: The color to use for the vessel track, defaulted to "black".}
 
-\item{AcousticPSULabelHjust}{A value to displace the acoustic PSU label with, where 0 means left-justified and 1 means right-justified, and values outside of [0, 1] are valid.}
+\item{TrackLineWidth}{Numeric: The width of the track, defaulted to 1.}
 
-\item{AcousticPSULabelVjust}{value to displace the acoustic PSU label with, where 0 means bottom-justified and 1 means top-justified, and values outside of [0, 1] are valid.}
+\item{TrackPointColor}{Character: The colors to use when plotting the data points. The colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".}
 
-\item{UseDefaultColorSettings}{Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.}
+\item{MaxTrackPointSize}{Numeric: The maximum size of the points..}
 
-\item{PointColor}{The colors to use when plotting the data points. If the \code{ColorVariable} is a discrete variable, a vector of color of the same length as the number of discrete values should be given, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors). If a continuous variable the colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".}
+\item{TrackPointShape}{The shape of the points, as defined for the argument \code{pch} in \code{\link{points}}.}
 
-\item{TrackColor}{The color to use for the vessel track, defaulted to "black".}
+\item{ShowStratumPolygon}{Logical: If TRUE include the stratumPolygon. in the plot.}
 
-\item{LandColor}{The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
-\item{BorderColor}{The color to use for the borders on land, defaulted to "grey50".}
+\item{UseDefaultStratumPolygonSettings}{Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.}
 
-\item{OceanColor}{The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
+\item{StratumPolygonColor}{Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).}
 
-\item{GridColor}{The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
+\item{StratumPolygonBorderColor}{Character: The single color to use for the polygon borders.}
 
-\item{UseDefaultSizeSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+\item{StratumPolygonBorderLineWidth}{Numeric: The line width of the polygon borders.}
 
-\item{MaxPointSize}{The maximum size of the points, defaulted to 10.}
+\item{ShowMap}{Logical: If TRUE include the map in the plot.}
 
-\item{MinPointSize}{The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.}
+\item{UseDefaultMapSettings}{Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.}
 
-\item{TrackSize}{The size of the track points, defaulted to 1.}
+\item{LandColor}{Character: The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
 
-\item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
+\item{BorderColor}{Character: The color to use for the borders on land, defaulted to "grey50".}
 
-\item{Zoom}{The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
+\item{OceanColor}{Character: The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
 
-\item{LongitudeMin}{The minimum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
+\item{GridColor}{Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
 
-\item{LongitudeMax}{The maximum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
+\item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
 
-\item{LatitudeMin}{The minimum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
+\item{Zoom}{Numeric: The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
 
-\item{LatitudeMax}{The maximum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
+\item{LongitudeMin}{Numeric: The minimum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
 
-\item{LongitudeCenter}{The longitude of the point around which the plot is zoomed usinng \code{Zoom}.}
+\item{LongitudeMax}{Numeric: The maximum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
 
-\item{LatitudeCenter}{The latitude of the point around which the plot is zoomed usinng \code{Zoom}.}
+\item{LatitudeMin}{Numeric: The minimum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
 
-\item{UseDefaultTextSettings}{Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
+\item{LatitudeMax}{Numeric: The maximum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
 
-\item{Title}{The title of the plot, defaulted to no title.}
+\item{LongitudeCenter}{Numeric: The longitude of the point around which the plot is zoomed usinng \code{Zoom}.}
 
-\item{AxisTitleSize}{The size of the axis titles, defaulted to 20.}
+\item{LatitudeCenter}{Numeric: The latitude of the point around which the plot is zoomed usinng \code{Zoom}.}
 
-\item{AxisTickSize}{The size of the axis tick marks, defaulted to 20.}
+\item{UseDefaultLabelSettings}{Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
 
-\item{LegendTitleSize}{The size of the legend title, defaulted to 20.}
+\item{Title}{Character: The title of the plot, defaulted to no title.}
 
-\item{LegendTextSize}{The size of the legend text, defaulted to 20.}
+\item{AxisTitleSize}{Numeric: The size of the axis titles, defaulted to 20.}
 
-\item{UseDefaultFileSettings}{Logical: If TRUE (default) use the default file settings of the plotting function. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.}
+\item{AxisTickSize}{Numeric: The size of the axis tick marks, defaulted to 20.}
 
-\item{Format}{The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
+\item{LegendTitleSize}{Numeric: The size of the legend title, defaulted to 20.}
 
-\item{Width}{The width of the plot in centimeters, defaulted to 17, as per the \href{https://academic.oup.com/icesjms/pages/General_Instructions}{ICES Journal og Marine Science author recommendations}.}
+\item{LegendTextSize}{Numeric: The size of the legend text, defaulted to 20.}
 
-\item{Height}{The height of the plot in centimeters, defaulted to 17.}
+\item{UseDefaultFileSettings}{Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.}
 
-\item{DotsPerInch}{The number of dots per inch (DPI), defaulted to 1200.}
+\item{Format}{Character: The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
+
+\item{Width}{Numeric: The width of the plot in centimeters, defaulted to 17, as per the instructions to authors for submission to the ICES Journal og Marine Science.}
+
+\item{Height}{Numeric: The height of the plot in centimeters, defaulted to 17.}
+
+\item{DotsPerInch}{Numeric: The number of dots per inch (DPI), defaulted to 1200.}
 }
 \value{
 A \code{\link{PlotAcousticTrawlSurveyData}} object.

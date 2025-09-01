@@ -5,30 +5,21 @@
 # 5. plotMultipleSegments - for NASC with depth
 
 
+##########################
 #' Plot NASCData
 #' 
 #' Plots a map with cruise line and points with size and (optionally) color representing NASC.
 #' 
 #' @inheritParams ModelData
-#' @inheritParams general_plot_arguments
-#' @inheritParams general_map_plot_arguments
 #' @inheritParams MeanNASC
 #' @inheritParams DefineLayer
-#' @param UseAcousticPSU Logical: If TRUE plot only EDSUs tagged to acoustic PSUs.
-#' @param UseDefaultAcousticPSUSettings Logical: If TRUE (default) use the default settings for indicating acoustic PSU in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.
-#' @param AcousticPSULabelSize The text size of the plotted acoustic PSU labels.
-#' @param AcousticPSULabelColor The text color of the plotted acoustic PSU labels.
-#' @param AcousticPSULabelPosition The position of the text of the plotted acoustic PSU labels, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".
-#' @param AcousticPSULabelHjust A value to displace the acoustic PSU label with, where 0 means left-justified and 1 means right-justified, and values outside of [0, 1] are valid.
-#' @param AcousticPSULabelVjust  value to displace the acoustic PSU label with, where 0 means bottom-justified and 1 means top-justified, and values outside of [0, 1] are valid.
-#' @param LongitudeMin The minimum longitude limit of the plot, overriding the value derived from \code{Zoom}.
-#' @param LongitudeMax The maximum longitude limit of the plot, overriding the value derived from \code{Zoom}.
-#' @param LatitudeMin The minimum latitude limit of the plot, overriding the value derived from \code{Zoom}.
-#' @param LatitudeMax The maximum latitude limit of the plot, overriding the value derived from \code{Zoom}.
-#' @param LongitudeCenter The longitude of the point around which the plot is zoomed usinng \code{Zoom}.
-#' @param LatitudeCenter The latitude of the point around which the plot is zoomed usinng \code{Zoom}.
-#' @param ColorVariable The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the \code{PointColor} argument. If the variable is a continuous variable (numeric), the color scale can be set by the \code{PointColorScale} argument.
-#' @param PointColor The colors to use when plotting the data points. If the \code{ColorVariable} is a discrete variable, a vector of color of the same length as the number of discrete values should be given, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function \code{\link[scales]{hue_pal}} for how to generate these colors). If a continuous variable the colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".
+#' @inheritParams general_plot_arguments
+#' @inheritParams general_file_plot_arguments
+#' @inheritParams general_map_plot_arguments
+#' @inheritParams general_track_plot_arguments
+#' @inheritParams general_stratum_plot_arguments
+#' @inheritParams general_map_aspect_plot_arguments
+#' @inheritParams general_AcousticPSU_plot_arguments
 #' 
 #' @return
 #' A \code{\link{PlotAcousticTrawlSurveyData}} object.
@@ -36,43 +27,20 @@
 #' @export
 #' 
 PlotAcousticTrawlSurvey <- function(
-        #PlotMap
-    #PlotHistogram
-    #
-    #
-    #
-    #MapPlotNASC
-    #ScatterPlotNASC
-    #HistogramPlotNASC
-    #BoxPlotNASC
-    ##
-    #PlotNASC
-    #    PlotType = c("MapPlot", "ScatterPlot", "Histogram", "BoxPlot")
-    #    AddHauls = TRUE
-    #    StoxBioticData 
-    ##    
-    #    
-    #
-    #
-    #PlotAbundance
-    #PlotSuperIndividuals
-    #
+    
+    NASCData, 
+    SumNASCData, 
+    AcousticPSU, 
+    
     LayerDefinition = c("FunctionParameter", "FunctionInput", "PreDefined"), 
     LayerDefinitionMethod = c("WaterColumn", "HighestResolution", "Resolution", "Table"), 
     Resolution = double(), 
     LayerTable = data.table::data.table(), 
     AcousticLayer = NULL, 
     
-    NASCData, 
-    SumNASCData, 
-    AcousticPSU, 
-    
-    ColorVariable = character(), 
-    
-    
-    
-    UseAcousticPSU = FALSE, 
-    UseDefaultAcousticPSUSettings = TRUE, 
+    ShowOnlyAcousticPSU = FALSE, 
+    ShowAcousticPSULabel = TRUE, 
+    UseDefaultAcousticPSULabelSettings = TRUE,
     AcousticPSULabelSize = numeric(), 
     AcousticPSULabelColor = character(), 
     AcousticPSULabelPosition = c("mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude", "atMaxLatitude"), 
@@ -80,30 +48,37 @@ PlotAcousticTrawlSurvey <- function(
     AcousticPSULabelVjust = numeric(), 
     
     
-    #UseStratumPolygon = FALSE, 
-    #StratumPolygonColor = character(), 
-    #StratumPolygonLabelSize = numeric(), 
-    #StratumPolygonLabelColor = character(), 
     
+    #PointTransparency = 1, 
     
-    # Options for the colors:
-    UseDefaultColorSettings = TRUE, 
-    PointColor = character(), 
-    #PointColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"), 
-    #PointColorScale = character(),  
+    # Options for the track line and points:
+    UseDefaultTrackSettings = TRUE, 
+    #PointColorScale = c("combined.color", "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors", "cm.colors"),     #PointColorScale = character(),  
     TrackColor = character(), 
+    TrackLineWidth = numeric(), 
+    TrackPointColor = character(), 
+    MaxTrackPointSize = numeric(), 
+    #MinPointSize = numeric(), 
+    TrackPointShape = numeric(), 
+    
+    
+    
+    
+    # Options for the stratum polygons:
+    ShowStratumPolygon = FALSE, 
+    StratumPolygon, 
+    UseDefaultStratumPolygonSettings = TRUE, 
+    StratumPolygonColor = character(), 
+    StratumPolygonBorderColor = character(), 
+    StratumPolygonBorderLineWidth = 0.5, 
+    
+    # Options for the map:
+    ShowMap = TRUE, 
+    UseDefaultMapSettings = TRUE, 
     LandColor = character(), 
     BorderColor = character(), 
     OceanColor = character(), 
-    GridColor = character(), 
-    #PointTransparency = 1, 
-    
-    # Options for the point sizes and shapes:
-    UseDefaultSizeSettings = TRUE, 
-    MaxPointSize = numeric(), 
-    MinPointSize = numeric(), 
-    TrackSize = numeric(), 
-    #PointShape = integer(), 
+    GridColor = character(),
     
     # Options for the zoom and limits:
     UseDefaultAspectSettings = TRUE, 
@@ -116,7 +91,7 @@ PlotAcousticTrawlSurvey <- function(
     LatitudeCenter = numeric(), 
     
     # Options for the labels and other text:
-    UseDefaultTextSettings = TRUE, 
+    UseDefaultLabelSettings = TRUE, 
     Title = character(), 
     AxisTitleSize = numeric(), 
     AxisTickSize = numeric(), 
@@ -129,7 +104,7 @@ PlotAcousticTrawlSurvey <- function(
     Format = character(), 
     Width = numeric(), 
     Height = numeric(), 
-    DotsPerInch = numeric()	
+    DotsPerInch = numeric()
 ) {
     
     LayerDefinition <- RstoxData::match_arg_informative(LayerDefinition)
@@ -160,67 +135,64 @@ PlotAcousticTrawlSurvey <- function(
     #    stop("argument \"SumNASCData\" is missing, with no default")
     #}
     
-    
      
-    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey", stoxFunctionAttributes = stoxFunctionAttributes)
+    #plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey", stoxFunctionAttributes = stoxFunctionAttributes)
     
     # # Set default general options:
-    plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultPlotOptions"))
+    #plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultPlotOptions"))
     # 
-    # # Set default map plotting options:
-    plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotNASCOptions"))
-    # 
-    # # Set default NASC-plotting options:
-    plotArguments <- setDefaults(plotArguments, getRstoxBaseDefinitions("defaultMapPlotOptions"))
     
+    # Set the default of the StoX function. These are defaults defined in the stoxFunctionAttributes.
+    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey", stoxFunctionAttributes = stoxFunctionAttributes)
     
-    
-    # # Apply custom specifications:
-    # if(!length(plotArguments$ColorVariable)) {
-    #     plotArguments$ColorVariable <- "NASC"
-    # }
-    
-    # These must be split up:
-    plotArguments$axis.title.size.x <- plotArguments$AxisTitleSize
-    plotArguments$axis.title.size.y <- plotArguments$AxisTitleSize
-    plotArguments$axis.text.size.x <- plotArguments$AxisTickSize
-    plotArguments$axis.text.size.y <- plotArguments$AxisTickSize
+    # Split axis titles into x and y:
+    plotArguments <- splitAxisTitleSize(plotArguments)
     
     # Set hard coded values used in plot_lon_lat():
     plotArguments <- c(
         plotArguments, 
         list(
-            lon = "Longitude", 
-            lat = "Latitude", 
+            lon_name = "Longitude", 
+            lat_name = "Latitude", 
+            color.track.point = "NASC",
             type = "lp", 
-            size = "NASC", 
-            shape = 1, 
-            #alpha.point = if(length(PointTransparency)) PointTransparency else 1, 
-            alpha.point = 1, 
-            alpha.track = 1
+            size = "NASC"
         )
     )
     
-    # Rename to the argument names of the plot_lon_lat():
-    traslation <- c(
+    # Define the translation from the inputs to this function to the inputs to plot_lon_lat:
+    translation <- c(
         x = "SumNASCData", 
-        size.track = "TrackSize", 
-        size.min = "MinPointSize", 
-        size.max = "MaxPointSize", 
-        color = "ColorVariable",
+        polygon = "StratumPolygon", 
+        showMap = "ShowMap",
+        # Group by PSUs later if ShowOnlyAcousticPSU == TRUE.
+        linewidth.track = "TrackLineWidth", 
+        linewidth.polygon.border = "StratumPolygonBorderLineWidth", 
+        size.max = "MaxTrackPointSize", 
+        # Leave the strokeToPointFactor untouched:
+        # strokeToPointFactor
         color.track = "TrackColor", 
-        color.scale = "PointColor",  
+        color.scale = "TrackPointColor",  
         color.land = "LandColor", 
         color.border = "BorderColor", 
         color.ocean = "OceanColor", 
         color.grid = "GridColor", 
+        color.polygon = "StratumPolygonColor", 
+        color.polygon.border = "StratumPolygonBorderColor", 
+        shape = "TrackPointShape",
+        # Do not set any alphas (transparency): alpha.point, alpha.track, alpha.polygon
         zoom = "Zoom", 
-        #xlim = "LongitudeLimits", 
-        #ylim = "LatitudeLimits", 
+        # xlim, ylim and zoomCenter are set by set_xlim_ylim_zoomCenter()
+        
         legend.text.size = "LegendTextSize", 
         legend.title.size = "LegendTitleSize", 
         main = "Title"
     )
+
+    
+    
+    
+    
     
     # Use only the Data table of the SumNASCData:
     if("Data" %in% names(plotArguments$SumNASCData)) {
@@ -236,67 +208,81 @@ PlotAcousticTrawlSurvey <- function(
         #plotArguments$SumNASCData <- subset(plotArguments$SumNASCData, !is.na(Layer))
     }
     
-    # Discard the transports if UseAcousticPSU:
-    if(UseAcousticPSU) {
-        # Merge in the PSUs:
+    
+    # Discard the transports if ShowOnlyAcousticPSU:
+    if(ShowOnlyAcousticPSU) {
+        # Merge in the PSUs and subset to remove the transport::
         plotArguments$SumNASCData <- merge(plotArguments$SumNASCData, AcousticPSU$EDSU_PSU, by = "EDSU")
         plotArguments$SumNASCData <- subset(plotArguments$SumNASCData, !is.na(PSU))
+        # Add the PSU as a grouping variable:
+        plotArguments$trackLinesBy <- "PSU"
         
-        AcousticPSULabelPosition <- match.arg(AcousticPSULabelPosition)
-        AcousticPSULabelPositionFun <- switch (AcousticPSULabelPosition,
-            mean = function(Longitude, Latitude) {
-                list(
-                    mean(Longitude, na.rm = TRUE), 
-                    mean(Latitude, na.rm = TRUE)
-                )
-            }, 
-            atMinLongitude = function(Longitude, Latitude) {
-                atMinLongitude <- which.min(Longitude)
-                list(
-                    Longitude[atMinLongitude], 
-                    Latitude[atMinLongitude]
-                )
-            }, 
-            atMaxLongitude = function(Longitude, Latitude) {
-                atMaxLongitude <- which.max(Longitude)
-                list(
-                    Longitude[atMaxLongitude], 
-                    Latitude[atMaxLongitude]
-                )
-            }, 
-            atMinLatitude = function(Longitude, Latitude) {
-                atMinLatitude <- which.min(Latitude)
-                list(
-                    Longitude[atMinLatitude], 
-                    Latitude[atMinLatitude]
-                )
-            }, 
-            atMaxLatitude = function(Longitude, Latitude) {
-                atMaxLatitude <- which.max(Latitude)
-                list(
-                    Longitude[atMaxLatitude], 
-                    Latitude[atMaxLatitude]
-                )
-            }, 
-        )
-        
-        PSUText <- plotArguments$SumNASCData[, .(
-            label = PSU[1], 
-            size = plotArguments$AcousticPSULabelSize, 
-            hjust = AcousticPSULabelHjust,
-            vjust = AcousticPSULabelVjust, 
-            color = AcousticPSULabelColor
-        ), by = "PSU"]
-        
-        PSUPos <- plotArguments$SumNASCData[, AcousticPSULabelPositionFun(Longitude, Latitude), by = "PSU"]
-        names(PSUPos) <- c("PSU", "x", "y")
-        
-        PSUText <- cbind(
-            PSUText, 
-            subset(PSUPos, select = c("x", "y"))
-        )
-        
-        plotArguments$text <- as.list(PSUText)
+        # Add PSU labels if specified:
+        if(ShowAcousticPSULabel) {
+            AcousticPSULabelPosition <- match.arg(AcousticPSULabelPosition)
+            AcousticPSULabelPositionFun <- switch (
+                AcousticPSULabelPosition,
+                mean = function(Longitude, Latitude) {
+                    list(
+                        mean(Longitude, na.rm = TRUE), 
+                        mean(Latitude, na.rm = TRUE)
+                    )
+                }, 
+                atMinLongitude = function(Longitude, Latitude) {
+                    atMinLongitude <- which.min(Longitude)
+                    list(
+                        Longitude[atMinLongitude], 
+                        Latitude[atMinLongitude]
+                    )
+                }, 
+                atMaxLongitude = function(Longitude, Latitude) {
+                    atMaxLongitude <- which.max(Longitude)
+                    list(
+                        Longitude[atMaxLongitude], 
+                        Latitude[atMaxLongitude]
+                    )
+                }, 
+                atMinLatitude = function(Longitude, Latitude) {
+                    atMinLatitude <- which.min(Latitude)
+                    list(
+                        Longitude[atMinLatitude], 
+                        Latitude[atMinLatitude]
+                    )
+                }, 
+                atMaxLatitude = function(Longitude, Latitude) {
+                    atMaxLatitude <- which.max(Latitude)
+                    list(
+                        Longitude[atMaxLatitude], 
+                        Latitude[atMaxLatitude]
+                    )
+                }, 
+            )
+            
+            PSUText <- plotArguments$SumNASCData[, .(
+                label = PSU[1], 
+                size = plotArguments$AcousticPSULabelSize, 
+                hjust = plotArguments$AcousticPSULabelHjust,
+                vjust = plotArguments$AcousticPSULabelVjust, 
+                color = plotArguments$AcousticPSULabelColor
+            ), by = "PSU"]
+            
+            PSUPos <- plotArguments$SumNASCData[, AcousticPSULabelPositionFun(Longitude, Latitude), by = "PSU"]
+            names(PSUPos) <- c("PSU", "x", "y")
+            
+            PSUText <- cbind(
+                PSUText, 
+                subset(PSUPos, select = c("x", "y"))
+            )
+            
+            # Add the text to the plotArguments:
+            plotArguments$text <- PSUText$label
+            plotArguments$size.text <- PSUText$size
+            plotArguments$hjust.text <- PSUText$hjust
+            plotArguments$vjust.text <- PSUText$vjust
+            plotArguments$color.text <- PSUText$color
+            plotArguments$x.text <- PSUText$x
+            plotArguments$y.text <- PSUText$y
+        }
     }
     # If not PreDefined assume SumNASCData is given and remove the NASCData, since this will cause problems when calling plot_lon_lat
     else {
@@ -305,32 +291,20 @@ PlotAcousticTrawlSurvey <- function(
     
     
     # Add xlim and ylim and center for zooming:
-    plotArguments$xlim <- c(plotArguments$LongitudeMin, plotArguments$LongitudeMax)
-    plotArguments$ylim <- c(plotArguments$LatitudeMin, plotArguments$LatitudeMax)
-    
-    plotArguments$zoomCenter <- c(plotArguments$LongitudeCenter, plotArguments$LatitudeCenter)
+    plotArguments <- set_xlim_ylim_zoomCenter(plotArguments)
     
     
-    ### # Add StratumPolygon:
-    ### if(UseStratumPolygon) {
-    ###     # Create a data.table of longitude, latitude and Stratum name:
-    ###     polygon <- data.table::rbindlist(getStratumPolygonList(StratumPolygon), , idcol = "Stratum")
-    ###     polygon <- data.table::data.table(
-    ###         longitude = polygon, 
-    ###         latitude = , 
-    ###         longitude = , 
-    ###     )
-    ###     
-    ###     
-    ### }
+    # Add StratumPolygon:
+    if(!ShowStratumPolygon) {
+        plotArguments$StratumPolygon <- NULL
+    }
     
-    
+    # Rename to the argument names of the plot_lon_lat():
     plotArguments <- renameListByNames(
         plotArguments, 
-        old = traslation,  
-        new = names(traslation)
+        old = translation,  
+        new = names(translation)
     )
-    
     
     # Run the plot_lon_lat function:
     PlotAcousticTrawlSurveyData <- do.call(plot_lon_lat, plotArguments)
@@ -346,6 +320,24 @@ PlotAcousticTrawlSurvey <- function(
 }
 
 
+
+
+splitAxisTitleSize <- function(plotArguments) {
+    plotArguments$axis.title.size.x <- plotArguments$AxisTitleSize
+    plotArguments$axis.title.size.y <- plotArguments$AxisTitleSize
+    plotArguments$axis.text.size.x <- plotArguments$AxisTickSize
+    plotArguments$axis.text.size.y <- plotArguments$AxisTickSize
+    return(plotArguments)
+}
+
+
+
+set_xlim_ylim_zoomCenter <- function(plotArguments) {
+    plotArguments$xlim <- c(plotArguments$LongitudeMin, plotArguments$LongitudeMax)
+    plotArguments$ylim <- c(plotArguments$LatitudeMin, plotArguments$LatitudeMax)
+    plotArguments$zoomCenter <- c(plotArguments$LongitudeCenter, plotArguments$LatitudeCenter)
+    return(plotArguments)
+}
 
 
 
@@ -371,32 +363,41 @@ setPlotAttributes <- function(plotObject, plotArguments) {
 
 
 
-
+#' Apply zoom using ggplot2::coord_sf based on positions in the data and limiting parameters
+#' 
+#' This function is applied by plot_lon_lat() to set the zoom based on 0 or more arguments and the actual data to be plotted. Providing no arguments returns the full extent of the data.
+#' 
+#' @param x A data.table with data, including the longitude and latitude variables specified by the arguments \code{lon_name} and \code{lat_name}.
+#' @param lon_name,lat_name Character: The name of the longitude and latitude variable in the data \code{x}.
+#' @param xmin,xmax,ymin,ymax Numeric: The optional extremes of the plot, where x is longitude and y is latitude. Setting only xmin sets only the lower longitude limit, etc. 
+#' @param zoom Numeric: The zoom of the plot, where 1 is no zoom and 2 zooms out to double extent of the plot, etc. 
+#' @param zoomCenter Numeric: The center of the plot relative to the limits of the plot before zooming.
+#' 
 zoom_lon_lat <- function(
     x, 
-    lon = "lon", lat = "lat", 
+    lon_name = "lon", lat_name = "lat", 
     xmin = NA, xmax = NA, 
     ymin = NA, ymax = NA, 
     zoom = 1, zoomCenter = c(0.5, 0.5)
 ) {
     
     # Zooms first from the range of the values,:
-    temp <- zoom_data(x = x[[lon]], y = x[[lat]], zoom = zoom, zoomCenter = zoomCenter)
+    temp <- zoom_data(x = unlist(subset(x, select = lon_name)), y = unlist(subset(x, select = lat_name)), zoom = zoom, zoomCenter = zoomCenter)
     
     # If xmin is not present:
-    if(length(xmin) == 0 || is.na(xmin)){
+    if(isNotGiven(xmin)){
         xmin <- temp$xlim[1]
     }
     # If xmax is not present:
-    if(length(xmax) == 0 || is.na(xmax)){
+    if(isNotGiven(xmax)){
         xmax <- temp$xlim[2]
     }
     # If xmin is not present:
-    if(length(ymin) == 0 || is.na(ymin)){
+    if(isNotGiven(ymin)){
         ymin <- temp$ylim[1]
     }
     # If xmin is not present:
-    if(length(ymax) == 0 || is.na(ymax)){
+    if(isNotGiven(ymax)){
         ymax <- temp$ylim[2]
     }
     
@@ -408,32 +409,86 @@ zoom_lon_lat <- function(
     aspectratio <- 1 / cos(ymid * pi/180)
     
     # Return the coordinates as a ggplot object to add to a plot:
-    ggplot2::coord_fixed(aspectratio, xlim = xlim, ylim = ylim)
+    #ggplot2::coord_fixed(aspectratio, xlim = xlim, ylim = ylim)
+    
+    ggplot2::coord_sf(xlim = xlim, ylim = ylim)
+}
+
+
+
+isNotGiven <- function(x) {
+    length(x) == 0 || length(unlist(x)) == 0 || is.na(x)
 }
 
 
 
 
-
+#' Plot a map, an optional (multi)polygon, and points and a track given by the first argument.
+#' 
+#' @inheritParams zoom_lon_lat
+#' @param polygon An sf object with multipolygons.
+#' @param showMap Logical: If TRUE show the map.
+#' @param trackLinesBy Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a SurveyPlan so that the transport between strata is not shown.
+#' @param lon_name_end,lat_name_end Character: The name of the end point of the longitude and latitude variable in the data \code{x}, used in the case that \code{type} contains "s" (segments).
+#' @param type The type of plot. See Details.
+#' @param linetype.track The line type as described in \code{\link[ggplot2]{aes_linetype_size_shape}}.
+#' @param linewidth.track Numeric: The width of the track lines.
+#' @param linewidth.polygon.border Numeric: The width of the polygon borders.
+#' @param size Either a numeric value or the name of the variable to set the size by.
+#' @param size.max Numeric: The maximum size of the points (presumably ignored if \code{size} is numeric).
+#' @param strokeToPointFactor Numeric: A value between 0 and 1 setting the width of the point symbols relative to their size.
+#' @param color.track.point Character: The color of the track points
+#' @param color.track Character: The color of the track lines.
+#' @param color.scale Character: The name of the function defining the color scale in case \code{color} names a variable in the data \code{x}.
+#' @param color.land,color.border,color.ocean,color.grid Character: The colors to use for the land, the borders between countries, the ocean and the grid in the map.
+#' @param color.polygon The color to use for the polygons, given either as a single color equal for all strata or a color palette. The default, "hue", is the default color ggplot palette. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).
+#' @param color.polygon.border Character: The color of the borders between poygons.
+#' @param shape Numeric: The shape of the points as specified in \code{\link[graphics]{points}}. Could possibly also be a character.
+#' @param alpha.point,alpha.track,alpha.polygon Numeric: The alpha (transparency) values between 0 and 1 for the points, track lines and polygons.
+#' @param xlim,ylim The optional x and y limit of the plot. These are vectors of length 2. NA can be used to leave on of the values unset. The full extent of the data are used when these are not specified.
+#' @param main Character: The main title of the plot.
+#' @param text Character: Text to be added to the plot using \code{\link[ggplot2]{annotate}} at the positions specified by \code{x.text}, \code{y.text}, \code{hjust.text} and \code{vjust.text}.
+#' @param x.text,y.text Numeric: The positions of the text.
+#' @param color.text Character: The color of the text.
+#' @param hjust.text,vjust.text Adjustment of the text position. See \code{\link[ggplot2]{annotate}}.
+#' @param size.text Character: The size of the text.
+#' @param ... Optional arguments, specifically axis.title.size.x, axis.title.size.y, axis.text.size.x,axis.text.size.y, legend.text.size and legend.title.size.
+#' 
+#' @details
+#' The \code{type} can have the following values:
+#'  \describe{
+#'    \item{pl}{Track lines on top of points}
+#'    \item{lp}{Points on top of track lines}
+#'    \item{ps}{Segments on top of points}
+#'    \item{sp}{Points on top of segments}
+#'    \item{p}{Only points}
+#'    \item{s}{Only segments}
+#'    \item{l}{Olny lines}
+#'  }
+#' 
 plot_lon_lat <- function(
-        x, 
-        polygon, 
-        lon = "lon", lat = "lat", 
-        type = c("pl", "lp", "p", "l"), 
-        size = 1, size.track = 1, size.min = 0.1, size.max = 10, 
-        limitWidthFraction = 0.1, 
-        color = 1, 
-        color.track = 1, color.scale = combined.color(2), color.land = "grey50", color.border = "grey10", color.ocean = "grey90", color.grid = "white", color.polygon = "grey70", 
-        shape = 16, 
-        fill.polygon = "grey50", 
-        alpha.point = 1, alpha.track = 1, alpha.polygon = 1, 
-        zoom = 1, xlim = NA, ylim = NA, 
-        zoomCenter = c(0.5, 0.5), 
-        main = NULL, 
-        text = NULL, 
-        ...
+    x, 
+    polygon, 
+    showMap = TRUE, 
+    trackLinesBy = NULL, 
+    lon_name = "lon", lat_name = "lat", lon_name_end = NULL, lat_name_end = NULL, 
+    type = c("pl", "lp", "ps", "sp", "p", "s", "l"), 
+    linetype.track = 1, 
+    linewidth.track = 1, linewidth.polygon.border = 0.5, 
+    size = 1, size.max = 10, 
+    strokeToPointFactor = 0.1, 
+    color.track.point = 1, 
+    color.track = 1, color.scale = combined.color(2), color.land = "grey50", color.border = "grey10", color.ocean = "grey90", color.grid = "white", color.polygon = "hue", color.polygon.border = "blue", 
+    shape = 16, 
+    alpha.point = 1, alpha.track = 1, alpha.polygon = 1, 
+    zoom = 1, xlim = NA, ylim = NA, 
+    zoomCenter = c(0.5, 0.5), 
+    main = NULL, 
+    text = NULL, size.text = 4, color.text = "black", hjust.text = 0.5, vjust.text = 0.5, x.text = NULL, y.text = NULL, 
+    ...
 )
 {
+
     # Get the type:
     type <- RstoxData::match_arg_informative(type)
     
@@ -443,9 +498,12 @@ plot_lon_lat <- function(
     # Get the map:
     gmap <- ggplot2::map_data("world")
     
-    # Initiate the plot, with the map and zoom:
-    p <- ggplot2::ggplot(data = x, x = lon, y = lat) + 
-        ggplot2::geom_polygon(
+    # Initiate the plot:
+    p <- ggplot2::ggplot(data = x) 
+    
+    # Plot the map:
+    if(showMap) {
+        p <- p + ggplot2::geom_polygon(
             data = gmap, 
             ggplot2::aes_string(
                 x = "long", 
@@ -454,39 +512,48 @@ plot_lon_lat <- function(
             ), 
             fill = color.land, 
             color = color.border
-            #color = "red"
-        ) + 
-        zoom_lon_lat(
+        ) 
+    }
+    
+    # Add polygon:
+    if(!missing(polygon)) {
+        
+        if(length(color.polygon) > 1) {
+            stop("Only color/color scale of length 1 is allowed.")
+        }
+        
+        if(color.polygon %in% grDevices::colors()) {
+            # One single color for the polygon fill:
+            p <- p + ggplot2::geom_sf(data = polygon, fill = color.polygon, color = color.polygon.border, linewidth = linewidth.polygon.border)
+        }
+        else if(tolower(color.polygon) %in% grDevices::colors()) {
+            stop("The color must either be a valid color from colors() (all lower case) or a color palette as recognized by ggplot2. Otherwise the default applied by ggplot2::scale_fill_brewer, which currently seems to be \"Greens\"")
+        }
+        else {
+            p <- p + ggplot2::geom_sf(data = polygon, ggplot2::aes(fill = StratumName), color = color.polygon.border, linewidth = linewidth.polygon.border)
+        }
+        if(tolower(color.polygon) != "hue") {
+            p <- p + ggplot2::scale_fill_discrete(type = ggplot2::scale_fill_brewer , palette = color.polygon)
+        }
+    }
+    
+    
+    # Zoom the data:
+    p <- p + zoom_lon_lat(
             x = x, 
-            lon = lon, 
-            lat = lat, 
+            lon_name = c(lon_name, lon_name_end), 
+            lat_name = c(lat_name, lat_name_end), 
             xmin = xlim[1], 
             xmax = xlim[2], 
             ymin = ylim[1], 
             ymax = ylim[2], 
             zoom = zoom, 
             zoomCenter = zoomCenter
-        ) #+ 
+        ) + 
+    # Add the labels:
+    ggplot2::xlab(lon_name) + 
+    ggplot2::ylab(lat_name) #+ 
     #ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(size = 5)))
-    
-    ### # Add polygon:
-    ### if(length(polygon)) {
-    ###     p <- p + geom_polygon(data = polygon, 
-    ###         aes_string(
-    ###             x = "longitude", 
-    ###             y = "latitude", 
-    ###             fill = fill.polygon, 
-    ###             color = color.polygon
-    ###         ), 
-    ###         alpha = alpha.polygon #, 
-    ###         #inherit.aes = FALSE
-    ###     )
-    ###     
-    ###     polygonCentroid <- getCentroid(polygon)
-    ###     
-    ###     p <- p + geom_text(data = polygonCentroid, aes_string(group="stratum", x="lon_centroid", y="lat_centroid", label="stratum"), colour=strataNameCol)
-    ### }
-    
     
     
     # Plot the track:
@@ -494,83 +561,117 @@ plot_lon_lat <- function(
         plotspec <- list(
             data = x, 
             ggplot2::aes_string(
-                x = lon, 
-                y = lat
+                x = lon_name, 
+                y = lat_name, 
+                group = trackLinesBy
             ), 
             color = color.track, 
-            size = size.track, 
+            linewidth = linewidth.track, 
             alpha = alpha.track, 
             show.legend = FALSE
         )
         
-        path <- do.call(ggplot2::geom_point, plotspec)
+        path <- do.call(ggplot2::geom_path, plotspec)
+    }
+    else if(grepl("s", type)) {
+        
+        if(!length(lon_name_end) || !length(lat_name_end)) {
+            stop("When plotting segments ('s' in type) xend and yend must be given.")
+        }
+        
+        plotspec <- list(
+            data = x, 
+            ggplot2::aes_string(
+                x = lon_name, 
+                y = lat_name, 
+                xend = lon_name_end, 
+                yend = lat_name_end, 
+                linetype = linetype.track
+            ), 
+            color = color.track, 
+            linewidth = linewidth.track, 
+            alpha = alpha.track, 
+            show.legend = FALSE
+        )
+        
+        path <- do.call(ggplot2::geom_segment, plotspec)
     }
     else {
         path <- NULL
     }
     
-    
     # Plot the points:
     if(grepl("p", type)) {
         
-        # If the color variable is a column in the data, but the user has specified a single color, use this color instead:
-        if(!isCategorical(x[[color]]) && length(color.scale) == 1 && !is.function(try(get(color.scale), silent = TRUE))) {
-            color <- color.scale
+        # If the data variable is a column in the data, but the user has specified a single color, use this color instead:
+        if(!isCategorical(x[[color.track.point]]) && length(color.scale) == 1 && !isColorScaleFunction(color.scale)) {
+            color.track.point <- color.scale
         }
         
         plotspec <- list(
             alpha = alpha.point
         )
         
-        scaleStroke  <- function(size, maxWidth = 0.1) {
-            exp(-size) * (1 - maxWidth) + maxWidth
-        }
-        
-        applyScale <- function(scalefun, size, maxSize, maxWidth = 0.1, add = 0.5) {
-            size <- size/max(size, na.rm = TRUE) * maxSize
-            scale <- scalefun(size, maxWidth = maxWidth - add/2/maxSize) 
-            size * scale + add/2
-        }
-        
-        if(length(color) && color %in% names(x) && length(size) && size %in% names(x)) {
+        # If segments AND points are plotted, we need to plot both start and end points:
+        if(grepl("s", type)) {
             
+            tempDataPoints <- data.table::data.table(
+                c(t(subset(x, select = c(lon_name, lon_name_end)))), 
+                c(t(subset(x, select = c(lat_name, lat_name_end))))
+            )
+            names(tempDataPoints) <- c(lon_name, lat_name)
+            tempDataPoints <- cbind(
+                tempDataPoints, 
+                data.table::as.data.table(lapply(subset(x, select = ! names(x) %in% c(lon_name, lat_name)), function(y) rep(y, each = 2)))
+            )
+            
+            plotspec$data <- tempDataPoints
+        }
+        else {
+            plotspec$data <- x
+        }
+        
+        
+        
+        if(length(color.track.point) && color.track.point %in% names(x) && length(size) && size %in% names(x)) {
+            # Fix the stroke to the strokeToPointFactor times the size.max (multiply by 1.5 since this seems to be needed in ggplot2:
+            strokeWidth <- 1.5 * size.max * strokeToPointFactor
             mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat, 
-                color = color, 
+                x = lon_name, 
+                y = lat_name, 
+                color = color.track.point, 
                 size = size,
-                stroke = paste0( "applyScale(scaleStroke, ", size, ", maxSize = ", size.max, ", maxWidth = ", limitWidthFraction, ", add = ", size.min, ")" )
+                stroke = strokeWidth
             )
         }
-        else if(length(color) && color %in% names(x)) {
+        else if(length(color.track.point) && color.track.point %in% names(x)) {
             mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat, 
-                color = color
+                x = lon_name, 
+                y = lat_name, 
+                color = color.track.point
             )
             plotspec$size <- size
         }
         else if(length(size) && size %in% names(x)) {
-            
+            # Fix the stroke to the strokeToPointFactor times the size.max (multiply by 1.5 since this seems to be needed in ggplot2:
+            strokeWidth <- 1.5 * size.max * strokeToPointFactor
             mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat, 
+                x = lon_name, 
+                y = lat_name, 
                 size = size,
-                stroke = paste0( "applyScale(scaleStroke, ", size, ", maxSize = ", size.max, ", maxWidth = ", limitWidthFraction, ", add = ", size.min, ")" )
+                stroke = strokeWidth
             )
             
-            plotspec$color <- color
+            plotspec$color <- color.track.point
         }
         else {
             mapping <- ggplot2::aes_string(
-                x = lon, 
-                y = lat
+                x = lon_name, 
+                y = lat_name
             )
-            plotspec$color <- color
+            plotspec$color <- color.track.point
             plotspec$size <- size
         }
-        
-        plotspec$data <- x
         
         plotspec$mapping <- mapping
         
@@ -594,56 +695,44 @@ plot_lon_lat <- function(
         p <- p + this
     }
     
-    p <- p + 
-        ggplot2::scale_size_continuous(range = c(0, size.max)) + 
-        ggplot2::xlab(lon) + 
-        ggplot2::ylab(lat)
+    # Scale the points:
+    p <- p + ggplot2::scale_size_continuous(range = c(0, size.max))
     
     
     # Use scale_color_manual() for categorical variables and scale_color_gradientn() for numeric:
-    if(isCategorical(x[[color]])) {
+    if(is.character(color.track.point) && isCategorical(x[[color.track.point]])) {
         if(length(color.scale)) {
-            numberOfLevelsInTheColorVariable <- length(unique(x[[color]]))
+            numberOfLevelsInTheColorVariable <- length(unique(x[[color.track.point]]))
             
-            if(is.function(try(get(color.scale), silent = TRUE))) {
+            if(isColorScaleFunction(color.scale)) {
                 color.scale <- do.call(color.scale, list(numberOfLevelsInTheColorVariable))
             }
             else {
                 numberOfDescreteColors <- length(color.scale)
-                if(length(color.scale) != length(unique(x[[color]]))) {
-                    stop("The number of discrete colors (length of PointColor = ", numberOfDescreteColors, ") must match the number of levels of the categorical variable determining the colors of the points (", color, " has ", numberOfLevelsInTheColorVariable, " levels).")
+                if(length(color.scale) != length(unique(x[[color.track.point]]))) {
+                    stop("The number of discrete colors (length of TrackPointColor = ", numberOfDescreteColors, ") must match the number of levels of the categorical variable determining the colors of the points (", color.track.point, " has ", numberOfLevelsInTheColorVariable, " levels).")
                 }
             }
             
-            p <- p + ggplot2::scale_color_manual(values = color.scale)
-            
-            # User thicker lines in legend:
-            p <- p + ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(stroke = size.max * 0.1, size = size.max)))# + 
-            #ggplot2::guides(size = ggplot2::guide_legend(override.aes = list(stroke = 2)))
+            p <- p + ggplot2::scale_color_manual(values = color.scale, guide = "legend")
         }
     }
     else {
         # Hard code to use 10 color steps:
-        ncolors <- 10
-        if(is.function(try(get(color.scale), silent = TRUE))) {
+        if(isColorScaleFunction(color.scale)) {
+            ncolors <- 10
             color.scale <- do.call(color.scale, list(ncolors))
-            p <- p + ggplot2::scale_color_gradientn(colors = color.scale)
+            p <- p + ggplot2::scale_color_gradientn(colors = color.scale, guide = "legend")
         }
         else {
-            p <- p + ggplot2::scale_color_gradientn(colors = color.scale)
+            p <- p + ggplot2::scale_color_gradientn(colors = color.scale, guide = "legend")
         }
-        
-        
-        ## User thicker lines in legend:
-        #p <- p + ggplot2::guides(size = ggplot2::guide_legend(override.aes = list(stroke = size.max * 0.1)))
-        
-        
-        ## Bigger symbols in legend:
-        #p <- p + ggplot2::guides(
-        #    size = ggplot2::guide_legend(override.aes = list(stroke = 2)), 
-        #    color = ggplot2::guide_colorbar(barheight = ggplot2::unit(50, "cm"))
-        #)
     }
+    
+    ## User thicker lines in legend:
+    p <- p + ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(stroke = size.max * strokeToPointFactor * 1.5, linewidth = size.max * strokeToPointFactor * 1.5)))
+    
+    
     
     p <- p + ggplot2::theme(
         axis.title.x = ggplot2::element_text(size = if(length(lll$axis.title.size.x)) lll$axis.title.size.x else 10), 
@@ -651,28 +740,29 @@ plot_lon_lat <- function(
         axis.text.x = ggplot2::element_text(size = if(length(lll$axis.text.size.x)) lll$axis.text.size.x else 10), 
         axis.text.y = ggplot2::element_text(size = if(length(lll$axis.text.size.y)) lll$axis.text.size.y else 10), 
         legend.text = ggplot2::element_text(size = if(length(lll$legend.text.size)) lll$legend.text.size else 10), 
-        legend.title = ggplot2::element_text(size = if(length(lll$legend.title.size)) lll$legend.title.size else 10),
+        legend.title = ggplot2::element_text(size = if(length(lll$legend.title.size)) lll$legend.title.size else 10), 
+        #legend.box = "horizontal",
         panel.background = ggplot2::element_rect(fill = color.ocean, color = "grey80"),
         panel.grid.major = ggplot2::element_line(color = color.grid), 
         panel.grid.minor = ggplot2::element_line(color = color.grid)
     )
     
-    p <- p + ggplot2::labs(fill = expression(paste("NASC (", m^2, nmi^{-2}, ")")))
+    ###p <- p + ggplot2::labs(fill = expression(paste("NASC (", m^2, nmi^{-2}, ")")))
     
     if(length(main)) {
-        p <- p + ggtitle(main)
+        p <- p + ggplot2::ggtitle(main)
     }
     
-    if(length(text) && is.list(text)) {
+    if(length(text)) {
         p <- p + ggplot2::annotate(
             "text", 
-            x = text$x, 
-            y = text$y, 
-            label = text$label, 
-            hjust = text$hjust, 
-            vjust = text$vjust, 
-            size = text$size, 
-            color = text$color
+            x = x.text, 
+            y = y.text, 
+            label = text, 
+            hjust = hjust.text, 
+            vjust = vjust.text, 
+            size = size.text, 
+            color = color.text
         )
     }
     
@@ -685,6 +775,13 @@ plot_lon_lat <- function(
     
     return(p)
 }
+
+
+isColorScaleFunction <- function(x) {
+    fun <- try(get(x), silent = TRUE)
+    is.function(fun) && "n" %in% names(formals(fun))
+}
+
 
 
 

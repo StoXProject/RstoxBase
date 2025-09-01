@@ -376,7 +376,7 @@ initiateRstoxBase <- function(){
         ), 
         SurveyPlan = list(
             horizontalResolution = c("Stratum", "Transect", "Segment"), 
-            other = c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd", "Speed")
+            other = c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd", "Speed", "Retour")
         )#, 
         #, 
         #AcousticPSUByTime = list(
@@ -860,20 +860,27 @@ initiateRstoxBase <- function(){
     }
     
     
-    # Add the plot defaults for use by other packages:
+    # Add default plot options defined in the stoxFunctionAttributes.R. These are defined in the stoxFunctionAttributes.R in order to be used as default values in plot functions in the GUI. In addition the defaults are applied in the corresponding R functions:
+    default_general_plot_arguments = default_general_plot_arguments
+    default_general_file_plot_arguments = default_general_file_plot_arguments
+    default_general_map_plot_arguments = default_general_map_plot_arguments
+    default_NASC_track_plot_arguments = default_NASC_track_plot_arguments
+    default_survey_track_plot_arguments = default_survey_track_plot_arguments
+    default_stratum_plot_arguments = default_stratum_plot_arguments
+    default_general_map_aspect_plot_arguments = default_general_map_aspect_plot_arguments
+    default_AcousticPSU_plot_arguments = default_AcousticPSU_plot_arguments
+    
+    
+    # Collect the plot defaults for use by other packages, and in particular RstoxFramework, which sets file parameters such as size and file extension to default values in case not all of these are specified by the user in the plotting funciton:
     defaultPlotOptions <- list(
-        # Default general options:
-        defaultPlotGeneralOptions = defaultPlotGeneralOptions, 
-        # Default file options:
-        defaultPlotFileOptions = defaultPlotFileOptions, 
-        # Default map plotting options:
-        defaultMapPlotNASCOptions = defaultMapPlotNASCOptions, 
-        # Default NASC-plotting options:
-        defaultMapPlotOptions = defaultMapPlotOptions, 
-        # Defaults for the AcousticPSU (potting PSU names) text size and shift (from the mean EDSU position):
-        defaultAcousticPSUPlotOptions = defaultAcousticPSUPlotOptions, 
-        # Defaults color variable:
-        defaultColorVariableOptions = defaultColorVariableOptions
+        default_general_plot_arguments = default_general_plot_arguments, 
+        default_general_file_plot_arguments = default_general_file_plot_arguments, 
+        default_general_map_plot_arguments = default_general_map_plot_arguments, 
+        default_NASC_track_plot_arguments = default_NASC_track_plot_arguments, 
+        default_survey_track_plot_arguments = default_survey_track_plot_arguments, 
+        default_stratum_plot_arguments = default_stratum_plot_arguments, 
+        default_general_map_aspect_plot_arguments = default_general_map_aspect_plot_arguments, 
+        default_AcousticPSU_plot_arguments = default_AcousticPSU_plot_arguments
     )
     
     
