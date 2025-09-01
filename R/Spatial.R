@@ -95,7 +95,7 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
 #' @inheritParams getStratumNames
 #' @param DefinitionMethod A string naming the method to use, one of "Manual" to start off with no strata and create the strata manually in the map of the StoX GUI. Strata can be added, modified and removed in the StoX GUI; or "ResourceFile", to read the file \code{FileName} holding the stratum multipolygon.
 #' @param FileName The path to a \href{https://geojson.org/}{GeoJSON} file, \href{https://doc.arcgis.com/en/arcgis-online/reference/shapefiles.htm}{shapefile, use the file with extension "shp"} (may be a folder containing the shapefiles); a \code{\link{StoX_multipolygon_WKT}} file; or a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineStrata(). Must include file extension.
-#' @param SimplifyStratumPolygon Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://geocompr.robinlovelace.net/geometric-operations.html#simplification}{Geocomputation with R}). This option is useful for very complex stratum polygon files to reduce time for opening, running and saving a project.
+#' @param SimplifyStratumPolygon Logical: If TRUE a simplification algorithm is applied to the stratum polygons (sf::st_simplify(), which "uses the GEOS implementation of the Douglas-Peucker algorithm to reduce the vertex count" as per quote from \href{https://r.geocompx.org/geometric-operations.html#simplification}{Geocomputation with R}). This option is useful for very complex stratum polygon files to reduce time for opening, running and saving a project.
 #' @param SimplificationFactor A value between 0 and 1 specifying the desired object size of the stratum polygon after simplification. An iterative method is used to derive the to the desired object size. Strata that end up as empty strata after simplification are left un-simplified, and will contribute to a larger final object size than the desired object size. Note that larger values require more  time than smaller values. It is advisable to start with a low value (e.g. 0.01) and check the resolution of the strata borders in the map, and gradually increase \code{SimplificationFactor} until an acceptable resolution is obtained. Note that simplification of stratum polygons can lead to inaccuracies such as gaps between strata, which can lead to hauls falling outside of any stratum, causing under-estimation of survey indices, or failure to complete the model in the case of SplitNASC models which require all hauls to be located in a stratum. If such problems occur, the strata can be modified manually after simplification to include all hauls. Another problem is the change in stratum areas, which is reported to the console when running the simplification. A very rough rule of thumb is that \code{SimplificationFactor} = 0.1 seems to be a compromise between increased speed and reduction of stratum border resolution.
 #' 
 #' @details
@@ -481,35 +481,35 @@ addStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
 }
 
 
-# ##################################################
-# ##################################################
-# #' Convert StratumPolygon to list of polygon tables
-# #' 
-# #' This function extracts the polygons as a named list of tables of class \code{\link[data.table]{data.table}}
-# #' 
-# #' @inheritParams StratumArea
-# #' 
-# #' @return
-# #' A table of stratum name and area.
-# #' 
-# #' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
-# #' 
-# #' @export
-# #' 
-# getStratumPolygonList <- function(StratumPolygon) {
-#     # Accept StratumPolygon contained in a list:
-#     if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
-#         StratumPolygon <- StratumPolygon$StratumPolygon
-#     }
-#     # Get the names of the polygons:
-#     StratumNames <- names(StratumPolygon)
-#     # Get a list of the coordinates:
-#     stratumPolygonList <- lapply(StratumPolygon@polygons, function(x) data.table::as.data.table(x@Polygons[[1]]@coords))
-#     # Set the names of the list:
-#     names(stratumPolygonList) <- StratumNames
-#     
-#     stratumPolygonList
-# }
+##################################################
+##################################################
+#' Convert StratumPolygon to list of polygon tables
+#' 
+#' This function extracts the polygons as a named list of tables of class \code{\link[data.table]{data.table}}
+#' 
+#' @inheritParams StratumArea
+#' 
+#' @return
+#' A table of stratum name and area.
+#' 
+#' @seealso \code{\link{DefineStratumPolygon}} for the \code{StratumPolygon} input to the function.
+#' 
+#' @export
+#' 
+getStratumPolygonList <- function(StratumPolygon) {
+    # Accept StratumPolygon contained in a list:
+    if(is.list(StratumPolygon) && "StratumPolygon" %in% names(StratumPolygon)) {
+        StratumPolygon <- StratumPolygon$StratumPolygon
+    }
+    # Get the names of the polygons:
+    StratumNames <- names(StratumPolygon)
+    # Get a list of the coordinates:
+    stratumPolygonList <- lapply(StratumPolygon@polygons, function(x) data.table::as.data.table(x@Polygons[[1]]@coords))
+    # Set the names of the list:
+    names(stratumPolygonList) <- StratumNames
+    
+    stratumPolygonList
+}
 
 
 ##################################################

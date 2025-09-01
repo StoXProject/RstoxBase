@@ -22,6 +22,4 @@ RstoxBase is a package that defines the core functions used in the survey estima
 
 LGPL-3 © Norwegian Institute of Marine research (IMR) ([homepage](https://www.hi.no/en)).
 
-The development of RstoxBase package is mainly supported by IMR's [REDUS](http://www.redus.no) and SEA2DATA projects.
-
 RstoxBase is part of the bigger [StoX ecosystem](https://stoxproject.github.io).

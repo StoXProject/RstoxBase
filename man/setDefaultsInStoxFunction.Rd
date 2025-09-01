@@ -7,9 +7,9 @@
 setDefaultsInStoxFunction(x, StoxFunctionName, stoxFunctionAttributes)
 }
 \arguments{
-\item{x}{A list of arguments to the StoxFunction.}
+\item{x}{A list of arguments to the StoX function.}
 
-\item{StoxFunctionName}{The name of the StoxFunction.}
+\item{StoxFunctionName}{The name of the StoX function.}
 
 \item{stoxFunctionAttributes}{The stoxFunctionAttributes to use.}
 }

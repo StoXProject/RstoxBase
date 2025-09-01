@@ -4,10 +4,12 @@
 \alias{WriteSurveyPlan}
 \title{Write a survey plan to a GPX file.}
 \usage{
-WriteSurveyPlan(SurveyPlan)
+WriteSurveyPlan(SurveyPlan, Format = c("GPX", "Ruter"))
 }
 \arguments{
 \item{SurveyPlan}{The \code{\link{SurveyPlan}} process data.}
+
+\item{Format}{Character: The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
 }
 \value{
 An object of StoX data type \code{\link{WriteSurveyPlanData}}.
@@ -41,7 +43,7 @@ surveyPlanZZ_Along <- DefineSurveyPlan(
 # Convert the survey plan to an sf object and write this as a gpx file 
 # (this is done automatically by RstoxFramework in StoX):
 gpxData <- WriteSurveyPlan(surveyPlanZZ_Along)
-filePath <- tempfile(fileext = "gpx")
+filePath <- tempfile(fileext = ".gpx")
 st_write(
      gpxData,
      dsn = filePath,

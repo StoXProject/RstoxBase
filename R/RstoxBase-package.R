@@ -36,7 +36,7 @@ utils::globalVariables(c(
 	 "SplitAcousticCategory", "StartDateTime", "Station", "StationLevel", "StopDateTime", "Stratum",
 	 "StratumLayerIndividual", "StratumLayerIndividualIndex", "StratumName", "StratumPolygon",
 	 "SummedWeights", "Survey", "SweepWidth", "TargetStrength", "TargetStrength0",
-	 "TargetStrengthFunction", "TempLengthGroupUsedInSuperIndividuals", "TotalLength", "V1",
+	 "TargetStrengthFunction", "TempLengthGroupUsedInSuperIndividuals", "Time", "TotalLength", "V1",
 	 "WeightedNumber", "WeightingFactor", "X", "Y", "approx", "area", "area_hole", "assignmentID",
 	 "assignmentPasted", "backscatteringCrossSection", "cov", "crossSection", "distance", "ggtitle",
 	 "haulWeightFactor", "head", "imputeSeed", "includeintotal", "individualNumber",

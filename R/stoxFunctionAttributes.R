@@ -2,15 +2,18 @@ isCategorical <- function(x) {
     is.character(x) || is.integer(x)
 }
 
-defaultPlotGeneralOptions <- list(
+
+
+default_general_plot_arguments <- list(
     # Options for the labels and other text:
+    # Title # We do not default the title, since empty title is cleaner.
     AxisTitleSize = 12, 
     AxisTickSize = 10, 
     LegendTitleSize = 12, 
     LegendTextSize = 10
 )
 
-defaultPlotFileOptions <- list(
+default_general_file_plot_arguments <- list(
     # Options for the output file:
     Format = "png", 
     # Using the ICES Journal og Marine Science recommendations (https://academic.oup.com/icesjms/pages/General_Instructions):
@@ -19,38 +22,53 @@ defaultPlotFileOptions <- list(
     DotsPerInch = 500
 )
 
-
-defaultMapPlotOptions <- list(
-    # Options for the zoom and limits:
-    Zoom = 1, 
-    LongitudeCenter = 0.5, 
-    LatitudeCenter = 0.5, 
+default_general_map_plot_arguments <- list(
+    # Options map colors:
     LandColor = "#FDFECC", # rgb(253, 254, 204, maxColorValue = 255), as specified in the StoX GUI
     BorderColor = "grey50", 
     OceanColor = "white", 
-    GridColor = "#DFF2FF"# rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
+    GridColor = "#DFF2FF" # rgb(223, 242, 255, maxColorValue = 255), as specified in the StoX GUI
 )
 
-defaultMapPlotNASCOptions <- list(
+default_NASC_track_plot_arguments <- list(
     # Options for the colors:
-    #PointColor = function(x) {
-    #    if(isCategorical(x$SumNASCData$Data[[x$ColorVariable]])) {
-    #        PointColor <- character()
-    #    }
-    #    else {
-    #        PointColor <- "combined.color"
-    #    }
-    #    return(PointColor)
-    #},
+    TrackPointColor = "combined.color",
+    MaxTrackPointSize = 10, 
+    TrackPointShape = 1,
     # Use black vessel track:
     TrackColor = "black", 
-    # Options for the point sizes and shapes:
-    MaxPointSize = 10, 
-    MinPointSize = 0.5, 
-    TrackSize = 0.5
+    TrackLineWidth = 1
 )
 
-defaultAcousticPSUPlotOptions <- list(
+default_survey_track_plot_arguments <- list(
+    # Options for the colors:
+    TrackPointColor = "black",
+    TrackPointSize = 2, 
+    TrackPointShape = 1,
+    # Use black vessel track:
+    TrackColor = "black", 
+    TrackLineWidth = 1
+)
+
+default_stratum_plot_arguments <- list(
+    StratumPolygonColor = "hue",
+    StratumPolygonBorderColor = "blue", 
+    StratumPolygonBorderLineWidth = 0.5
+)
+
+default_general_map_aspect_plot_arguments <- list(
+    # Options for the zoom and limits:
+    Zoom = 1, 
+    # We do not default the min and max values, as the center and the zoom is sufficient:
+    #LongitudeMin
+    #LongitudeMax
+    #LatitudeMin
+    #LatitudeMax
+    LongitudeCenter = 0.5, 
+    LatitudeCenter = 0.5
+)
+
+default_AcousticPSU_plot_arguments <- list(
     # Options for AcousticPSU:
     AcousticPSULabelSize = 4, 
     AcousticPSULabelColor = "black", 
@@ -59,19 +77,8 @@ defaultAcousticPSUPlotOptions <- list(
     AcousticPSULabelVjust = 0.5
 )
 
-#defaultStratumPolygonPlotOptions <- list(
-#    StratumPolygonColor = character(), 
-#    StratumPolygonLabelSize = numeric(), 
-#    StratumPolygonLabelColor = character(), 
-#)
 
 
-
-
-
-defaultColorVariableOptions <- list(
-    ColorVariable = "NASC"
-)
 
 getIndividualNames <- function(SuperIndividualsData, remove = NULL, tables = c("Individual", "SpeciesCategory"), removeKeys = TRUE) {
     individualNames <- unlist(attr(SuperIndividualsData, "stoxDataVariableNames")[tables])
@@ -237,7 +244,105 @@ stoxFunctionAttributes <- list(
     PlotSurveyPlan = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "PlotSurveyPlanData"
+        functionOutputDataType = "PlotSurveyPlanData", 
+        functionArgumentHierarchy = list(
+            # Options for the colors:
+            TrackColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            LandColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            BorderColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            OceanColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            GridColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
+            TrackLineWidth = list(
+                UseDefaultPointSettings = FALSE
+            ), 
+            # Options for zoom and limits:
+            Zoom = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeMin = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeMax = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeMin = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeMax = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeCenter = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeCenter = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            # Options for the labels and other text:
+            Title = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            AxisTitleSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            AxisTickSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            LegendTitleSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            LegendTextSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            # Options for the output file:
+            Format = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            Width = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            Height = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            DotsPerInch = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            StratumPolygon = list(
+                ShowStratumPolygon = TRUE
+            ),
+            UseDefaultStratumPolygonSettings = list(
+                ShowStratumPolygon = TRUE
+            ),
+            StratumPolygonColor = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            ),
+            StratumPolygonBorderColor = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            ),
+            StratumPolygonBorderLineWidth = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            )
+        ), 
+        functionParameterDefaults = c(
+            default_general_plot_arguments, 
+            default_general_file_plot_arguments, 
+            default_general_map_plot_arguments, 
+            default_survey_track_plot_arguments, 
+            default_stratum_plot_arguments, 
+            default_general_map_aspect_plot_arguments
+        )
     ), 
     ##########
     
@@ -972,13 +1077,9 @@ stoxFunctionAttributes <- list(
         ),
         functionArgumentHierarchy = list(
             # Options for the colors:
-            #ColorVariable = list(
-            #    UseDefaultColorSettings = FALSE
-            #), 
-            # PointColor cannot have a default, as it depends on whether the ColorVariable is categorical of continuous:
-            #PointColor = list(
-            #    UseDefaultColorSettings = FALSE
-            #), 
+            PointColor = list(
+                UseDefaultColorSettings = FALSE
+            ), 
             TrackColor = list(
                 UseDefaultColorSettings = FALSE
             ), 
@@ -996,13 +1097,13 @@ stoxFunctionAttributes <- list(
             ), 
             # Options for the point sizes and shapes:
             MaxPointSize = list(
-                UseDefaultSizeSettings = FALSE
+                UseDefaultPointSettings = FALSE
             ), 
-            MinPointSize = list(
-                UseDefaultSizeSettings = FALSE
+            PointShape = list(
+                UseDefaultPointSettings = FALSE
             ), 
-            TrackSize = list(
-                UseDefaultSizeSettings = FALSE
+            TrackLineWidth = list(
+                UseDefaultPointSettings = FALSE
             ), 
             # Options for zoom and limits:
             Zoom = list(
@@ -1028,19 +1129,19 @@ stoxFunctionAttributes <- list(
             ), 
             # Options for the labels and other text:
             Title = list(
-                UseDefaultTextSettings = FALSE
+                UseDefaultLabelSettings = FALSE
             ), 
             AxisTitleSize = list(
-                UseDefaultTextSettings = FALSE
+                UseDefaultLabelSettings = FALSE
             ), 
             AxisTickSize = list(
-                UseDefaultTextSettings = FALSE
+                UseDefaultLabelSettings = FALSE
             ), 
             LegendTitleSize = list(
-                UseDefaultTextSettings = FALSE
+                UseDefaultLabelSettings = FALSE
             ), 
             LegendTextSize = list(
-                UseDefaultTextSettings = FALSE
+                UseDefaultLabelSettings = FALSE
             ), 
             # Options for the output file:
             Format = list(
@@ -1082,49 +1183,69 @@ stoxFunctionAttributes <- list(
             ), 
             # AcousticPSU:
             AcousticPSU = list(
-                UseAcousticPSU = TRUE
+                ShowOnlyAcousticPSU = TRUE
             ), 
-            UseDefaultAcousticPSUSettings <- list(
-                UseAcousticPSU = TRUE
+            ShowAcousticPSULabel = list(
+                ShowOnlyAcousticPSU = TRUE
+            ), 
+            UseDefaultAcousticPSULabelSettings = list(
+                ShowOnlyAcousticPSU = TRUE, 
+                ShowAcousticPSULabel = TRUE
             ), 
             AcousticPSULabelSize = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
+                ShowOnlyAcousticPSU = TRUE, 
+                ShowAcousticPSULabel = TRUE, 
+                UseDefaultAcousticPSULabelSettings = FALSE
             ), 
             AcousticPSULabelColor = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
+                ShowOnlyAcousticPSU = TRUE, 
+                ShowAcousticPSULabel = TRUE, 
+                UseDefaultAcousticPSULabelSettings = FALSE
             ), 
             AcousticPSULabelPosition = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
+                ShowOnlyAcousticPSU = TRUE, 
+                ShowAcousticPSULabel = TRUE, 
+                UseDefaultAcousticPSULabelSettings = FALSE
             ), 
             AcousticPSULabelHjust = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
+                ShowOnlyAcousticPSU = TRUE, 
+                ShowAcousticPSULabel = TRUE, 
+                UseDefaultAcousticPSULabelSettings = FALSE
             ), 
             AcousticPSULabelVjust = list(
-                UseAcousticPSU = TRUE, 
-                UseDefaultAcousticPSUSettings = FALSE
+                ShowOnlyAcousticPSU = TRUE, 
+                ShowAcousticPSULabel = TRUE, 
+                UseDefaultAcousticPSULabelSettings = FALSE
+            ), 
+            StratumPolygon = list(
+                ShowStratumPolygon = TRUE
+            ),
+            UseDefaultStratumPolygonSettings = list(
+                ShowStratumPolygon = TRUE
+            ),
+            StratumPolygonColor = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            ),
+            StratumPolygonBorderColor = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            ),
+            StratumPolygonBorderLineWidth = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
             )
         ), 
         functionParameterDefaults = c(
-            # Default general options:
-            defaultPlotGeneralOptions, 
-            # Default file options:
-            defaultPlotFileOptions, 
-            # Default map plotting options:
-            defaultMapPlotNASCOptions, 
-            # Default NASC-plotting options:
-            defaultMapPlotOptions, 
-            # Defaults for the AcousticPSU (potting PSU names) text size and shift (from the mean EDSU position):
-            defaultAcousticPSUPlotOptions, 
-            # Defaults color variable:
-            defaultColorVariableOptions
+            default_general_plot_arguments, 
+            default_general_file_plot_arguments, 
+            default_general_map_plot_arguments, 
+            default_NASC_track_plot_arguments, 
+            default_stratum_plot_arguments, 
+            default_general_map_aspect_plot_arguments, 
+            default_AcousticPSU_plot_arguments
         )
     ),
-    
-    ##########
     
     
     ##### Density: #####
@@ -2434,23 +2555,7 @@ processPropertyFormats <- list(
     
     pointColor = list(
         class = "vector", 
-        title = "Select color/vector of colors/color scale function for the points"#    , 
-        #possibleValues = function(NASCData, SumNASCData, ColorVariable) {
-        #    if(missing(SumNASCData)) {
-        #        var <- NASCData[[ColorVariable]]
-        #    }
-        #    else {
-        #        var <- SumNASCData$Data[[ColorVariable]]
-        #    }
-        #    if(isCategorical(var)) {
-        #        PointColor <- list()
-        #    }
-        #    else {
-        #        PointColor <- "combined.color"
-        #    }
-        #    
-        #    return(PointColor)
-        #}
+        title = "Select a single color, a vector of colors, or a color scale function for the points"
     ), 
     
     
