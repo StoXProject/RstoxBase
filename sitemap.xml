@@ -125,11 +125,16 @@
 <url><loc>/reference/formatProcessData.html</loc></url>
 <url><loc>/reference/fractionOfOccurrence.html</loc></url>
 <url><loc>/reference/fractionOfSum.html</loc></url>
+<url><loc>/reference/general_AcousticPSU_plot_arguments.html</loc></url>
 <url><loc>/reference/general_arguments.html</loc></url>
 <url><loc>/reference/general_arguments2.7.html</loc></url>
+<url><loc>/reference/general_file_plot_arguments.html</loc></url>
+<url><loc>/reference/general_map_aspect_plot_arguments.html</loc></url>
 <url><loc>/reference/general_map_plot_arguments.html</loc></url>
 <url><loc>/reference/general_plot_arguments.html</loc></url>
 <url><loc>/reference/general_report_arguments.html</loc></url>
+<url><loc>/reference/general_stratum_plot_arguments.html</loc></url>
+<url><loc>/reference/general_track_plot_arguments.html</loc></url>
 <url><loc>/reference/getBaseUnit.html</loc></url>
 <url><loc>/reference/getCommonIntervals.html</loc></url>
 <url><loc>/reference/getDataTypeDefinition.html</loc></url>
@@ -140,11 +145,13 @@
 <url><loc>/reference/getRstoxBaseDefinitions.html</loc></url>
 <url><loc>/reference/getSeedVector.html</loc></url>
 <url><loc>/reference/getStratumNames.html</loc></url>
+<url><loc>/reference/getStratumPolygonList.html</loc></url>
 <url><loc>/reference/hasBaseUnit.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/modifyParameter_ProjectXMLList.html</loc></url>
 <url><loc>/reference/modifyProj4String.html</loc></url>
 <url><loc>/reference/number.html</loc></url>
+<url><loc>/reference/plot_lon_lat.html</loc></url>
 <url><loc>/reference/processPropertyFormats.html</loc></url>
 <url><loc>/reference/readAcousticPSUFrom2.7.html</loc></url>
 <url><loc>/reference/readBioticAssignmentFrom2.7.html</loc></url>
@@ -162,5 +169,6 @@
 <url><loc>/reference/summaryStox.html</loc></url>
 <url><loc>/reference/toJSON_Rstox.html</loc></url>
 <url><loc>/reference/writeProjectXMLToList.html</loc></url>
+<url><loc>/reference/zoom_lon_lat.html</loc></url>
 </urlset>
 

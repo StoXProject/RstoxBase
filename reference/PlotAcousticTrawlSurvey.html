@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9002</span>
       </span>
     </div>
 
@@ -54,34 +54,41 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PlotAcousticTrawlSurvey</span><span class="op">(</span></span>
+<span>  <span class="va">NASCData</span>,</span>
+<span>  <span class="va">SumNASCData</span>,</span>
+<span>  <span class="va">AcousticPSU</span>,</span>
 <span>  LayerDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span>, <span class="st">"PreDefined"</span><span class="op">)</span>,</span>
 <span>  LayerDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WaterColumn"</span>, <span class="st">"HighestResolution"</span>, <span class="st">"Resolution"</span>, <span class="st">"Table"</span><span class="op">)</span>,</span>
 <span>  Resolution <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  LayerTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  AcousticLayer <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">NASCData</span>,</span>
-<span>  <span class="va">SumNASCData</span>,</span>
-<span>  <span class="va">AcousticPSU</span>,</span>
-<span>  ColorVariable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  UseAcousticPSU <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  UseDefaultAcousticPSUSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ShowOnlyAcousticPSU <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ShowAcousticPSULabel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  UseDefaultAcousticPSULabelSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  AcousticPSULabelSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  AcousticPSULabelColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  AcousticPSULabelPosition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"atMinLongitude"</span>, <span class="st">"atMaxLongitude"</span>,</span>
 <span>    <span class="st">"atMinLatitude"</span>, <span class="st">"atMaxLatitude"</span><span class="op">)</span>,</span>
 <span>  AcousticPSULabelHjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  AcousticPSULabelVjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  UseDefaultColorSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  PointColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  UseDefaultTrackSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  TrackColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  TrackLineWidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  TrackPointColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  MaxTrackPointSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  TrackPointShape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ShowStratumPolygon <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">StratumPolygon</span>,</span>
+<span>  UseDefaultStratumPolygonSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  StratumPolygonColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  StratumPolygonBorderColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  StratumPolygonBorderLineWidth <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  ShowMap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  UseDefaultMapSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  LandColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  BorderColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  OceanColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  GridColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  UseDefaultSizeSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  MaxPointSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  MinPointSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  TrackSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  UseDefaultAspectSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  Zoom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  LongitudeMin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -90,7 +97,7 @@
 <span>  LatitudeMax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  LongitudeCenter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  LatitudeCenter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  UseDefaultTextSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  UseDefaultLabelSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  Title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  AxisTitleSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  AxisTickSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -108,7 +115,19 @@
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-layerdefinition">LayerDefinition<a class="anchor" aria-label="anchor" href="#arg-layerdefinition"></a></dt>
+<dl><dt id="arg-nascdata">NASCData<a class="anchor" aria-label="anchor" href="#arg-nascdata"></a></dt>
+<dd><p>The <code><a href="NASCData.html">NASCData</a></code> data.</p></dd>
+
+
+<dt id="arg-sumnascdata">SumNASCData<a class="anchor" aria-label="anchor" href="#arg-sumnascdata"></a></dt>
+<dd><p>The <code><a href="SumNASCData.html">SumNASCData</a></code> data.</p></dd>
+
+
+<dt id="arg-acousticpsu">AcousticPSU<a class="anchor" aria-label="anchor" href="#arg-acousticpsu"></a></dt>
+<dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
+
+
+<dt id="arg-layerdefinition">LayerDefinition<a class="anchor" aria-label="anchor" href="#arg-layerdefinition"></a></dt>
 <dd><p>The method to use for defining the Layers, one of <code>FunctionParameter</code> to define the Layers on the fly in this function, <code>FunctionInput</code> to import Layer process data from a previously run process using the function <code>DefineAcousticLayer</code>, or <code>PreDefined</code> whihc requires <code>SumNASCData</code> as input.</p></dd>
 
 
@@ -128,168 +147,180 @@
 <dd><p>The <code><a href="AcousticLayer.html">AcousticLayer</a></code> process data.</p></dd>
 
 
-<dt id="arg-nascdata">NASCData<a class="anchor" aria-label="anchor" href="#arg-nascdata"></a></dt>
-<dd><p>The <code><a href="NASCData.html">NASCData</a></code> data.</p></dd>
-
-
-<dt id="arg-sumnascdata">SumNASCData<a class="anchor" aria-label="anchor" href="#arg-sumnascdata"></a></dt>
-<dd><p>The <code><a href="SumNASCData.html">SumNASCData</a></code> data.</p></dd>
-
-
-<dt id="arg-acousticpsu">AcousticPSU<a class="anchor" aria-label="anchor" href="#arg-acousticpsu"></a></dt>
-<dd><p>The <code><a href="AcousticPSU.html">AcousticPSU</a></code> process data.</p></dd>
-
-
-<dt id="arg-colorvariable">ColorVariable<a class="anchor" aria-label="anchor" href="#arg-colorvariable"></a></dt>
-<dd><p>The name of the variable determining the colors of the NASC data points, defaulted to "NASC" (both size AND color reflecting the NASC values). If the variable is a categorical variable (character or integer), the discrete colors can be set by the <code>PointColor</code> argument. If the variable is a continuous variable (numeric), the color scale can be set by the <code>PointColorScale</code> argument.</p></dd>
-
-
-<dt id="arg-useacousticpsu">UseAcousticPSU<a class="anchor" aria-label="anchor" href="#arg-useacousticpsu"></a></dt>
+<dt id="arg-showonlyacousticpsu">ShowOnlyAcousticPSU<a class="anchor" aria-label="anchor" href="#arg-showonlyacousticpsu"></a></dt>
 <dd><p>Logical: If TRUE plot only EDSUs tagged to acoustic PSUs.</p></dd>
 
 
-<dt id="arg-usedefaultacousticpsusettings">UseDefaultAcousticPSUSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultacousticpsusettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default settings for indicating acoustic PSU in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.</p></dd>
+<dt id="arg-showacousticpsulabel">ShowAcousticPSULabel<a class="anchor" aria-label="anchor" href="#arg-showacousticpsulabel"></a></dt>
+<dd><p>Logical: If TRUE show the labels of the acoustic PSUs in the plot.</p></dd>
+
+
+<dt id="arg-usedefaultacousticpsulabelsettings">UseDefaultAcousticPSULabelSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultacousticpsulabelsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings for acoustic PSU labels in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-acousticpsulabelsize">AcousticPSULabelSize<a class="anchor" aria-label="anchor" href="#arg-acousticpsulabelsize"></a></dt>
-<dd><p>The text size of the plotted acoustic PSU labels.</p></dd>
+<dd><p>Numeric: The size of the AcousticPSU label.</p></dd>
 
 
 <dt id="arg-acousticpsulabelcolor">AcousticPSULabelColor<a class="anchor" aria-label="anchor" href="#arg-acousticpsulabelcolor"></a></dt>
-<dd><p>The text color of the plotted acoustic PSU labels.</p></dd>
+<dd><p>Character: The color of the AcousticPSU label.</p></dd>
 
 
 <dt id="arg-acousticpsulabelposition">AcousticPSULabelPosition<a class="anchor" aria-label="anchor" href="#arg-acousticpsulabelposition"></a></dt>
-<dd><p>The position of the text of the plotted acoustic PSU labels, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".</p></dd>
+<dd><p>Character: A string determinig where to place the AcousticPSU label, one of "mean", "atMinLongitude", "atMaxLongitude", "atMinLatitude" or "atMaxLatitude".</p></dd>
 
 
-<dt id="arg-acousticpsulabelhjust">AcousticPSULabelHjust<a class="anchor" aria-label="anchor" href="#arg-acousticpsulabelhjust"></a></dt>
-<dd><p>A value to displace the acoustic PSU label with, where 0 means left-justified and 1 means right-justified, and values outside of [0, 1] are valid.</p></dd>
+<dt id="arg-acousticpsulabelhjust-acousticpsulabelvjust">AcousticPSULabelHjust, AcousticPSULabelVjust<a class="anchor" aria-label="anchor" href="#arg-acousticpsulabelhjust-acousticpsulabelvjust"></a></dt>
+<dd><p>Numeric: The hjust and vjust of the AcousticPSU label for more detailed positioning in addition to the <code>AcousticPSULabelPosition</code>.</p></dd>
 
 
-<dt id="arg-acousticpsulabelvjust">AcousticPSULabelVjust<a class="anchor" aria-label="anchor" href="#arg-acousticpsulabelvjust"></a></dt>
-<dd><p>value to displace the acoustic PSU label with, where 0 means bottom-justified and 1 means top-justified, and values outside of [0, 1] are valid.</p></dd>
-
-
-<dt id="arg-usedefaultcolorsettings">UseDefaultColorSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultcolorsettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.</p></dd>
-
-
-<dt id="arg-pointcolor">PointColor<a class="anchor" aria-label="anchor" href="#arg-pointcolor"></a></dt>
-<dd><p>The colors to use when plotting the data points. If the <code>ColorVariable</code> is a discrete variable, a vector of color of the same length as the number of discrete values should be given, defaulted to the default ggplot2 color palette (see the scales package, and specifically the function <code><a href="https://scales.r-lib.org/reference/pal_hue.html" class="external-link">hue_pal</a></code> for how to generate these colors). If a continuous variable the colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the <code><a href="combined.color.html">combined.color</a></code>. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".</p></dd>
-
-
-<dt id="arg-trackcolor">TrackColor<a class="anchor" aria-label="anchor" href="#arg-trackcolor"></a></dt>
-<dd><p>The color to use for the vessel track, defaulted to "black".</p></dd>
-
-
-<dt id="arg-landcolor">LandColor<a class="anchor" aria-label="anchor" href="#arg-landcolor"></a></dt>
-<dd><p>The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).</p></dd>
-
-
-<dt id="arg-bordercolor">BorderColor<a class="anchor" aria-label="anchor" href="#arg-bordercolor"></a></dt>
-<dd><p>The color to use for the borders on land, defaulted to "grey50".</p></dd>
-
-
-<dt id="arg-oceancolor">OceanColor<a class="anchor" aria-label="anchor" href="#arg-oceancolor"></a></dt>
-<dd><p>The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.</p></dd>
-
-
-<dt id="arg-gridcolor">GridColor<a class="anchor" aria-label="anchor" href="#arg-gridcolor"></a></dt>
-<dd><p>The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).</p></dd>
-
-
-<dt id="arg-usedefaultsizesettings">UseDefaultSizeSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultsizesettings"></a></dt>
+<dt id="arg-usedefaulttracksettings">UseDefaultTrackSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaulttracksettings"></a></dt>
 <dd><p>Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.</p></dd>
 
 
-<dt id="arg-maxpointsize">MaxPointSize<a class="anchor" aria-label="anchor" href="#arg-maxpointsize"></a></dt>
-<dd><p>The maximum size of the points, defaulted to 10.</p></dd>
+<dt id="arg-trackcolor">TrackColor<a class="anchor" aria-label="anchor" href="#arg-trackcolor"></a></dt>
+<dd><p>Character: The color to use for the vessel track, defaulted to "black".</p></dd>
 
 
-<dt id="arg-minpointsize">MinPointSize<a class="anchor" aria-label="anchor" href="#arg-minpointsize"></a></dt>
-<dd><p>The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.</p></dd>
+<dt id="arg-tracklinewidth">TrackLineWidth<a class="anchor" aria-label="anchor" href="#arg-tracklinewidth"></a></dt>
+<dd><p>Numeric: The width of the track, defaulted to 1.</p></dd>
 
 
-<dt id="arg-tracksize">TrackSize<a class="anchor" aria-label="anchor" href="#arg-tracksize"></a></dt>
-<dd><p>The size of the track points, defaulted to 1.</p></dd>
+<dt id="arg-trackpointcolor">TrackPointColor<a class="anchor" aria-label="anchor" href="#arg-trackpointcolor"></a></dt>
+<dd><p>Character: The colors to use when plotting the data points. The colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the <code><a href="combined.color.html">combined.color</a></code>. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".</p></dd>
+
+
+<dt id="arg-maxtrackpointsize">MaxTrackPointSize<a class="anchor" aria-label="anchor" href="#arg-maxtrackpointsize"></a></dt>
+<dd><p>Numeric: The maximum size of the points..</p></dd>
+
+
+<dt id="arg-trackpointshape">TrackPointShape<a class="anchor" aria-label="anchor" href="#arg-trackpointshape"></a></dt>
+<dd><p>The shape of the points, as defined for the argument <code>pch</code> in <code><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></code>.</p></dd>
+
+
+<dt id="arg-showstratumpolygon">ShowStratumPolygon<a class="anchor" aria-label="anchor" href="#arg-showstratumpolygon"></a></dt>
+<dd><p>Logical: If TRUE include the stratumPolygon. in the plot.</p></dd>
+
+
+<dt id="arg-stratumpolygon">StratumPolygon<a class="anchor" aria-label="anchor" href="#arg-stratumpolygon"></a></dt>
+<dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+
+
+<dt id="arg-usedefaultstratumpolygonsettings">UseDefaultStratumPolygonSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultstratumpolygonsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-stratumpolygoncolor">StratumPolygonColor<a class="anchor" aria-label="anchor" href="#arg-stratumpolygoncolor"></a></dt>
+<dd><p>Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the <code>Palettes</code> section in <code><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></code> for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).</p></dd>
+
+
+<dt id="arg-stratumpolygonbordercolor">StratumPolygonBorderColor<a class="anchor" aria-label="anchor" href="#arg-stratumpolygonbordercolor"></a></dt>
+<dd><p>Character: The single color to use for the polygon borders.</p></dd>
+
+
+<dt id="arg-stratumpolygonborderlinewidth">StratumPolygonBorderLineWidth<a class="anchor" aria-label="anchor" href="#arg-stratumpolygonborderlinewidth"></a></dt>
+<dd><p>Numeric: The line width of the polygon borders.</p></dd>
+
+
+<dt id="arg-showmap">ShowMap<a class="anchor" aria-label="anchor" href="#arg-showmap"></a></dt>
+<dd><p>Logical: If TRUE include the map in the plot.</p></dd>
+
+
+<dt id="arg-usedefaultmapsettings">UseDefaultMapSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultmapsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-landcolor">LandColor<a class="anchor" aria-label="anchor" href="#arg-landcolor"></a></dt>
+<dd><p>Character: The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).</p></dd>
+
+
+<dt id="arg-bordercolor">BorderColor<a class="anchor" aria-label="anchor" href="#arg-bordercolor"></a></dt>
+<dd><p>Character: The color to use for the borders on land, defaulted to "grey50".</p></dd>
+
+
+<dt id="arg-oceancolor">OceanColor<a class="anchor" aria-label="anchor" href="#arg-oceancolor"></a></dt>
+<dd><p>Character: The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.</p></dd>
+
+
+<dt id="arg-gridcolor">GridColor<a class="anchor" aria-label="anchor" href="#arg-gridcolor"></a></dt>
+<dd><p>Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).</p></dd>
 
 
 <dt id="arg-usedefaultaspectsettings">UseDefaultAspectSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultaspectsettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.</p></dd>
+<dd><p>Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-zoom">Zoom<a class="anchor" aria-label="anchor" href="#arg-zoom"></a></dt>
-<dd><p>The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.</p></dd>
+<dd><p>Numeric: The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.</p></dd>
 
 
 <dt id="arg-longitudemin">LongitudeMin<a class="anchor" aria-label="anchor" href="#arg-longitudemin"></a></dt>
-<dd><p>The minimum longitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+<dd><p>Numeric: The minimum longitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
 
 
 <dt id="arg-longitudemax">LongitudeMax<a class="anchor" aria-label="anchor" href="#arg-longitudemax"></a></dt>
-<dd><p>The maximum longitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+<dd><p>Numeric: The maximum longitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
 
 
 <dt id="arg-latitudemin">LatitudeMin<a class="anchor" aria-label="anchor" href="#arg-latitudemin"></a></dt>
-<dd><p>The minimum latitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+<dd><p>Numeric: The minimum latitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
 
 
 <dt id="arg-latitudemax">LatitudeMax<a class="anchor" aria-label="anchor" href="#arg-latitudemax"></a></dt>
-<dd><p>The maximum latitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+<dd><p>Numeric: The maximum latitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
 
 
 <dt id="arg-longitudecenter">LongitudeCenter<a class="anchor" aria-label="anchor" href="#arg-longitudecenter"></a></dt>
-<dd><p>The longitude of the point around which the plot is zoomed usinng <code>Zoom</code>.</p></dd>
+<dd><p>Numeric: The longitude of the point around which the plot is zoomed usinng <code>Zoom</code>.</p></dd>
 
 
 <dt id="arg-latitudecenter">LatitudeCenter<a class="anchor" aria-label="anchor" href="#arg-latitudecenter"></a></dt>
-<dd><p>The latitude of the point around which the plot is zoomed usinng <code>Zoom</code>.</p></dd>
+<dd><p>Numeric: The latitude of the point around which the plot is zoomed usinng <code>Zoom</code>.</p></dd>
 
 
-<dt id="arg-usedefaulttextsettings">UseDefaultTextSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaulttextsettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.</p></dd>
+<dt id="arg-usedefaultlabelsettings">UseDefaultLabelSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultlabelsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-title">Title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
-<dd><p>The title of the plot, defaulted to no title.</p></dd>
+<dd><p>Character: The title of the plot, defaulted to no title.</p></dd>
 
 
 <dt id="arg-axistitlesize">AxisTitleSize<a class="anchor" aria-label="anchor" href="#arg-axistitlesize"></a></dt>
-<dd><p>The size of the axis titles, defaulted to 20.</p></dd>
+<dd><p>Numeric: The size of the axis titles, defaulted to 20.</p></dd>
 
 
 <dt id="arg-axisticksize">AxisTickSize<a class="anchor" aria-label="anchor" href="#arg-axisticksize"></a></dt>
-<dd><p>The size of the axis tick marks, defaulted to 20.</p></dd>
+<dd><p>Numeric: The size of the axis tick marks, defaulted to 20.</p></dd>
 
 
 <dt id="arg-legendtitlesize">LegendTitleSize<a class="anchor" aria-label="anchor" href="#arg-legendtitlesize"></a></dt>
-<dd><p>The size of the legend title, defaulted to 20.</p></dd>
+<dd><p>Numeric: The size of the legend title, defaulted to 20.</p></dd>
 
 
 <dt id="arg-legendtextsize">LegendTextSize<a class="anchor" aria-label="anchor" href="#arg-legendtextsize"></a></dt>
-<dd><p>The size of the legend text, defaulted to 20.</p></dd>
+<dd><p>Numeric: The size of the legend text, defaulted to 20.</p></dd>
 
 
 <dt id="arg-usedefaultfilesettings">UseDefaultFileSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultfilesettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default file settings of the plotting function. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.</p></dd>
+<dd><p>Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-format">Format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
-<dd><p>The format of the output file from plotting functions, defaulted to "png". Other options are defined by <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></code>, including "tiff", "jpeg"  and "pdf".</p></dd>
+<dd><p>Character: The format of the output file from plotting functions, defaulted to "png". Other options are defined by <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></code>, including "tiff", "jpeg"  and "pdf".</p></dd>
 
 
 <dt id="arg-width">Width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
-<dd><p>The width of the plot in centimeters, defaulted to 17, as per the <a href="https://academic.oup.com/icesjms/pages/General_Instructions" class="external-link">ICES Journal og Marine Science author recommendations</a>.</p></dd>
+<dd><p>Numeric: The width of the plot in centimeters, defaulted to 17, as per the instructions to authors for submission to the ICES Journal og Marine Science.</p></dd>
 
 
 <dt id="arg-height">Height<a class="anchor" aria-label="anchor" href="#arg-height"></a></dt>
-<dd><p>The height of the plot in centimeters, defaulted to 17.</p></dd>
+<dd><p>Numeric: The height of the plot in centimeters, defaulted to 17.</p></dd>
 
 
 <dt id="arg-dotsperinch">DotsPerInch<a class="anchor" aria-label="anchor" href="#arg-dotsperinch"></a></dt>
-<dd><p>The number of dots per inch (DPI), defaulted to 1200.</p></dd>
+<dd><p>Numeric: The number of dots per inch (DPI), defaulted to 1200.</p></dd>
 
 </dl></div>
     <div id="value">

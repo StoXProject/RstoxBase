@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9002</span>
       </span>
     </div>
 
@@ -57,64 +57,56 @@
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-usedefaultcolorsettings">UseDefaultColorSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultcolorsettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default color settings of the plotting function. Setting this to FALSE will show all color options of the plotting function in the StoX GUI.</p></dd>
+<dl><dt id="arg-usedefaultmapsettings">UseDefaultMapSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultmapsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.</p></dd>
 
 
-<dt id="arg-usedefaultsizesettings">UseDefaultSizeSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultsizesettings"></a></dt>
+<dt id="arg-usedefaultpointsettings">UseDefaultPointSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultpointsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default point settings of the plot, specifically PointColor, MaxPointSize and MinPointSize. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-usedefaulttracksettings">UseDefaultTrackSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaulttracksettings"></a></dt>
 <dd><p>Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-usedefaultaspectsettings">UseDefaultAspectSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultaspectsettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default aspect settings of the plotting function (width, height, etc.). Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.</p></dd>
+<dd><p>Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.</p></dd>
 
 
-<dt id="arg-usedefaulttextsettings">UseDefaultTextSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaulttextsettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default text settings of the plotting function. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.</p></dd>
+<dt id="arg-usedefaultlabelsettings">UseDefaultLabelSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultlabelsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-usedefaultfilesettings">UseDefaultFileSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultfilesettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default file settings of the plotting function. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.</p></dd>
+<dd><p>Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.</p></dd>
 
 
-<dt id="arg-zoom">Zoom<a class="anchor" aria-label="anchor" href="#arg-zoom"></a></dt>
-<dd><p>The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.</p></dd>
+<dt id="arg-usedefaultacousticpsulabelsettings">UseDefaultAcousticPSULabelSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultacousticpsulabelsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings for acoustic PSU labels in the plots (text position, color and size). Setting this to FALSE will show all acoustic PSU options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-usedefaultstratumpolygonsettings">UseDefaultStratumPolygonSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultstratumpolygonsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-title">Title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
-<dd><p>The title of the plot, defaulted to no title.</p></dd>
+<dd><p>Character: The title of the plot, defaulted to no title.</p></dd>
 
 
 <dt id="arg-axistitlesize">AxisTitleSize<a class="anchor" aria-label="anchor" href="#arg-axistitlesize"></a></dt>
-<dd><p>The size of the axis titles, defaulted to 20.</p></dd>
+<dd><p>Numeric: The size of the axis titles, defaulted to 20.</p></dd>
 
 
 <dt id="arg-axisticksize">AxisTickSize<a class="anchor" aria-label="anchor" href="#arg-axisticksize"></a></dt>
-<dd><p>The size of the axis tick marks, defaulted to 20.</p></dd>
+<dd><p>Numeric: The size of the axis tick marks, defaulted to 20.</p></dd>
 
 
 <dt id="arg-legendtitlesize">LegendTitleSize<a class="anchor" aria-label="anchor" href="#arg-legendtitlesize"></a></dt>
-<dd><p>The size of the legend title, defaulted to 20.</p></dd>
+<dd><p>Numeric: The size of the legend title, defaulted to 20.</p></dd>
 
 
 <dt id="arg-legendtextsize">LegendTextSize<a class="anchor" aria-label="anchor" href="#arg-legendtextsize"></a></dt>
-<dd><p>The size of the legend text, defaulted to 20.</p></dd>
-
-
-<dt id="arg-format">Format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
-<dd><p>The format of the output file from plotting functions, defaulted to "png". Other options are defined by <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></code>, including "tiff", "jpeg"  and "pdf".</p></dd>
-
-
-<dt id="arg-width">Width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
-<dd><p>The width of the plot in centimeters, defaulted to 17, as per the <a href="https://academic.oup.com/icesjms/pages/General_Instructions" class="external-link">ICES Journal og Marine Science author recommendations</a>.</p></dd>
-
-
-<dt id="arg-height">Height<a class="anchor" aria-label="anchor" href="#arg-height"></a></dt>
-<dd><p>The height of the plot in centimeters, defaulted to 17.</p></dd>
-
-
-<dt id="arg-dotsperinch">DotsPerInch<a class="anchor" aria-label="anchor" href="#arg-dotsperinch"></a></dt>
-<dd><p>The number of dots per inch (DPI), defaulted to 1200.</p></dd>
+<dd><p>Numeric: The size of the legend text, defaulted to 20.</p></dd>
 
 </dl></div>
 

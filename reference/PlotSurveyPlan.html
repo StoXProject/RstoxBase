@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9002</span>
       </span>
     </div>
 
@@ -53,7 +53,46 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PlotSurveyPlan</span><span class="op">(</span><span class="va">SurveyPlan</span>, <span class="va">StratumPolygon</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PlotSurveyPlan</span><span class="op">(</span></span>
+<span>  <span class="va">SurveyPlan</span>,</span>
+<span>  UseDefaultTrackSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  TrackColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  TrackLineWidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  TrackPointColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  TrackPointSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  TrackPointShape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ShowStratumPolygon <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">StratumPolygon</span>,</span>
+<span>  UseDefaultStratumPolygonSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  StratumPolygonColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  StratumPolygonBorderColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  StratumPolygonBorderLineWidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ShowMap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  UseDefaultMapSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  LandColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  BorderColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  OceanColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  GridColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  UseDefaultAspectSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Zoom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LongitudeMin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LongitudeMax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LatitudeMin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LatitudeMax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LongitudeCenter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LatitudeCenter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  UseDefaultLabelSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  AxisTitleSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  AxisTickSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LegendTitleSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  LegendTextSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  UseDefaultFileSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  Width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  Height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  DotsPerInch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -64,8 +103,152 @@
 <dd><p>The <code><a href="SurveyPlan.html">SurveyPlan</a></code> process data.</p></dd>
 
 
+<dt id="arg-usedefaulttracksettings">UseDefaultTrackSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaulttracksettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-trackcolor">TrackColor<a class="anchor" aria-label="anchor" href="#arg-trackcolor"></a></dt>
+<dd><p>Character: The color to use for the vessel track, defaulted to "black".</p></dd>
+
+
+<dt id="arg-tracklinewidth">TrackLineWidth<a class="anchor" aria-label="anchor" href="#arg-tracklinewidth"></a></dt>
+<dd><p>Numeric: The width of the track, defaulted to 1.</p></dd>
+
+
+<dt id="arg-trackpointcolor">TrackPointColor<a class="anchor" aria-label="anchor" href="#arg-trackpointcolor"></a></dt>
+<dd><p>Character: The colors to use when plotting the data points. The colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the <code><a href="combined.color.html">combined.color</a></code>. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".</p></dd>
+
+
+<dt id="arg-trackpointsize">TrackPointSize<a class="anchor" aria-label="anchor" href="#arg-trackpointsize"></a></dt>
+<dd><p>Numeric: The size of the points.</p></dd>
+
+
+<dt id="arg-trackpointshape">TrackPointShape<a class="anchor" aria-label="anchor" href="#arg-trackpointshape"></a></dt>
+<dd><p>The shape of the points, as defined for the argument <code>pch</code> in <code><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></code>.</p></dd>
+
+
+<dt id="arg-showstratumpolygon">ShowStratumPolygon<a class="anchor" aria-label="anchor" href="#arg-showstratumpolygon"></a></dt>
+<dd><p>Logical: If TRUE include the stratumPolygon. in the plot.</p></dd>
+
+
 <dt id="arg-stratumpolygon">StratumPolygon<a class="anchor" aria-label="anchor" href="#arg-stratumpolygon"></a></dt>
 <dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+
+
+<dt id="arg-usedefaultstratumpolygonsettings">UseDefaultStratumPolygonSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultstratumpolygonsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-stratumpolygoncolor">StratumPolygonColor<a class="anchor" aria-label="anchor" href="#arg-stratumpolygoncolor"></a></dt>
+<dd><p>Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the <code>Palettes</code> section in <code><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></code> for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).</p></dd>
+
+
+<dt id="arg-stratumpolygonbordercolor">StratumPolygonBorderColor<a class="anchor" aria-label="anchor" href="#arg-stratumpolygonbordercolor"></a></dt>
+<dd><p>Character: The single color to use for the polygon borders.</p></dd>
+
+
+<dt id="arg-stratumpolygonborderlinewidth">StratumPolygonBorderLineWidth<a class="anchor" aria-label="anchor" href="#arg-stratumpolygonborderlinewidth"></a></dt>
+<dd><p>Numeric: The line width of the polygon borders.</p></dd>
+
+
+<dt id="arg-showmap">ShowMap<a class="anchor" aria-label="anchor" href="#arg-showmap"></a></dt>
+<dd><p>Logical: If TRUE include the map in the plot.</p></dd>
+
+
+<dt id="arg-usedefaultmapsettings">UseDefaultMapSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultmapsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-landcolor">LandColor<a class="anchor" aria-label="anchor" href="#arg-landcolor"></a></dt>
+<dd><p>Character: The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).</p></dd>
+
+
+<dt id="arg-bordercolor">BorderColor<a class="anchor" aria-label="anchor" href="#arg-bordercolor"></a></dt>
+<dd><p>Character: The color to use for the borders on land, defaulted to "grey50".</p></dd>
+
+
+<dt id="arg-oceancolor">OceanColor<a class="anchor" aria-label="anchor" href="#arg-oceancolor"></a></dt>
+<dd><p>Character: The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.</p></dd>
+
+
+<dt id="arg-gridcolor">GridColor<a class="anchor" aria-label="anchor" href="#arg-gridcolor"></a></dt>
+<dd><p>Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).</p></dd>
+
+
+<dt id="arg-usedefaultaspectsettings">UseDefaultAspectSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultaspectsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-zoom">Zoom<a class="anchor" aria-label="anchor" href="#arg-zoom"></a></dt>
+<dd><p>Numeric: The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.</p></dd>
+
+
+<dt id="arg-longitudemin">LongitudeMin<a class="anchor" aria-label="anchor" href="#arg-longitudemin"></a></dt>
+<dd><p>Numeric: The minimum longitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+
+
+<dt id="arg-longitudemax">LongitudeMax<a class="anchor" aria-label="anchor" href="#arg-longitudemax"></a></dt>
+<dd><p>Numeric: The maximum longitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+
+
+<dt id="arg-latitudemin">LatitudeMin<a class="anchor" aria-label="anchor" href="#arg-latitudemin"></a></dt>
+<dd><p>Numeric: The minimum latitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+
+
+<dt id="arg-latitudemax">LatitudeMax<a class="anchor" aria-label="anchor" href="#arg-latitudemax"></a></dt>
+<dd><p>Numeric: The maximum latitude limit of the plot, overriding the value derived from <code>Zoom</code>.</p></dd>
+
+
+<dt id="arg-longitudecenter">LongitudeCenter<a class="anchor" aria-label="anchor" href="#arg-longitudecenter"></a></dt>
+<dd><p>Numeric: The longitude of the point around which the plot is zoomed usinng <code>Zoom</code>.</p></dd>
+
+
+<dt id="arg-latitudecenter">LatitudeCenter<a class="anchor" aria-label="anchor" href="#arg-latitudecenter"></a></dt>
+<dd><p>Numeric: The latitude of the point around which the plot is zoomed usinng <code>Zoom</code>.</p></dd>
+
+
+<dt id="arg-usedefaultlabelsettings">UseDefaultLabelSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultlabelsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-title">Title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
+<dd><p>Character: The title of the plot, defaulted to no title.</p></dd>
+
+
+<dt id="arg-axistitlesize">AxisTitleSize<a class="anchor" aria-label="anchor" href="#arg-axistitlesize"></a></dt>
+<dd><p>Numeric: The size of the axis titles, defaulted to 20.</p></dd>
+
+
+<dt id="arg-axisticksize">AxisTickSize<a class="anchor" aria-label="anchor" href="#arg-axisticksize"></a></dt>
+<dd><p>Numeric: The size of the axis tick marks, defaulted to 20.</p></dd>
+
+
+<dt id="arg-legendtitlesize">LegendTitleSize<a class="anchor" aria-label="anchor" href="#arg-legendtitlesize"></a></dt>
+<dd><p>Numeric: The size of the legend title, defaulted to 20.</p></dd>
+
+
+<dt id="arg-legendtextsize">LegendTextSize<a class="anchor" aria-label="anchor" href="#arg-legendtextsize"></a></dt>
+<dd><p>Numeric: The size of the legend text, defaulted to 20.</p></dd>
+
+
+<dt id="arg-usedefaultfilesettings">UseDefaultFileSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultfilesettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-format">Format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
+<dd><p>Character: The format of the output file from plotting functions, defaulted to "png". Other options are defined by <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></code>, including "tiff", "jpeg"  and "pdf".</p></dd>
+
+
+<dt id="arg-width">Width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
+<dd><p>Numeric: The width of the plot in centimeters, defaulted to 17, as per the instructions to authors for submission to the ICES Journal og Marine Science.</p></dd>
+
+
+<dt id="arg-height">Height<a class="anchor" aria-label="anchor" href="#arg-height"></a></dt>
+<dd><p>Numeric: The height of the plot in centimeters, defaulted to 17.</p></dd>
+
+
+<dt id="arg-dotsperinch">DotsPerInch<a class="anchor" aria-label="anchor" href="#arg-dotsperinch"></a></dt>
+<dd><p>Numeric: The number of dots per inch (DPI), defaulted to 1200.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -94,25 +277,64 @@
 <span class="r-in"><span>  Seed <span class="op">=</span> <span class="fl">1</span>, </span></span>
 <span class="r-in"><span>  Bearing <span class="op">=</span> <span class="st">"Along"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum AlbjoernLing...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Engelsk_Klondyke_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_East_2016...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_West_2018...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Nordgyden...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Ostbanken_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Outer_Shoal_2020_1...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vestbanken_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthEast...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthWest...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vikingbanken...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="WriteSurveyPlan.html">WriteSurveyPlan</a></span><span class="op">(</span><span class="va">surveyPlanZZ_Along</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 353 features and 3 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 354 features and 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POINT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 2.491242 ymin: 56.5783 xmax: 6.632381 ymax: 60.66388</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     geometry    track_fid track_seg_id track_seg_point_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  POINT (2.770825 58.16913) AlbjoernLing  Transect_01          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   POINT (2.550207 58.0863) AlbjoernLing  Transect_01          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  POINT (2.540432 58.06167) AlbjoernLing  Transect_02          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   POINT (2.82823 58.11042) AlbjoernLing  Transect_02          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  POINT (2.829138 58.10948) AlbjoernLing  Transect_03          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  POINT (2.512165 57.99025) AlbjoernLing  Transect_03          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  POINT (2.510766 57.98671) AlbjoernLing  Transect_04          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  POINT (2.886115 58.05037) AlbjoernLing  Transect_04          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  POINT (2.886817 58.04964) AlbjoernLing  Transect_05          Segment_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  POINT (2.55821 57.92602) AlbjoernLing  Transect_05          Segment_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     geometry   track_name track_fid track_seg_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  POINT (2.770825 58.16913) AlbjoernLing         0            0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   POINT (2.550207 58.0863) AlbjoernLing         0            0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  POINT (2.540432 58.06167) AlbjoernLing         0            1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   POINT (2.82823 58.11042) AlbjoernLing         0            1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  POINT (2.829138 58.10948) AlbjoernLing         0            2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  POINT (2.512165 57.99025) AlbjoernLing         0            2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  POINT (2.510766 57.98671) AlbjoernLing         0            3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  POINT (2.886115 58.05037) AlbjoernLing         0            3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  POINT (2.886817 58.04964) AlbjoernLing         0            4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  POINT (2.55821 57.92602) AlbjoernLing         0            4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    track_seg_point_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                   0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                  1</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

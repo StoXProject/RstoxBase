@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9002</span>
       </span>
     </div>
 
@@ -56,10 +56,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">DefineSurveyPlan</span><span class="op">(</span></span>
 <span>  <span class="va">processData</span>,</span>
 <span>  UseProcessData <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">StratumPolygon</span>,</span>
 <span>  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Parallel"</span>, <span class="st">"ZigZagRectangularEnclosure"</span>, <span class="st">"ZigZagEqualSpacing"</span>,</span>
 <span>    <span class="st">"ResourceFile"</span><span class="op">)</span>,</span>
 <span>  FileName <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">StratumPolygon</span>,</span>
 <span>  StratumNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  Bearing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Along"</span>, <span class="st">"Across"</span>, <span class="st">"AlongReversed"</span>, <span class="st">"AcrossReversed"</span><span class="op">)</span>,</span>
 <span>  BearingAngle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -86,16 +86,16 @@
 <dd><p>Logical: If TRUE use the existing function output in the process.</p></dd>
 
 
+<dt id="arg-stratumpolygon">StratumPolygon<a class="anchor" aria-label="anchor" href="#arg-stratumpolygon"></a></dt>
+<dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
+
+
 <dt id="arg-definitionmethod">DefinitionMethod<a class="anchor" aria-label="anchor" href="#arg-definitionmethod"></a></dt>
 <dd><p>Character: A string naming the method to use, either "ResourceFile" for reading the survey plan from a file, or a string naming the type of survey design to create (see details).</p></dd>
 
 
 <dt id="arg-filename">FileName<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
 <dd><p>The path to a resource file from which to read the SurveyPlan process data, in the case that <code>DefinitionMethod</code> is "ResourceFile".</p></dd>
-
-
-<dt id="arg-stratumpolygon">StratumPolygon<a class="anchor" aria-label="anchor" href="#arg-stratumpolygon"></a></dt>
-<dd><p>The <code><a href="StratumPolygon.html">StratumPolygon</a></code> process data.</p></dd>
 
 
 <dt id="arg-stratumnames">StratumNames<a class="anchor" aria-label="anchor" href="#arg-stratumnames"></a></dt>
@@ -184,6 +184,34 @@
 <span class="r-in"><span>  Seed <span class="op">=</span> <span class="fl">1</span>, </span></span>
 <span class="r-in"><span>  Bearing <span class="op">=</span> <span class="st">"Along"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum AlbjoernLing...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Engelsk_Klondyke_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_East_2016...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_West_2018...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Nordgyden...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Ostbanken_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Outer_Shoal_2020_1...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vestbanken_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthEast...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthWest...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vikingbanken...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot the stratumPolygon with the segments</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
@@ -203,7 +231,23 @@
 <span class="r-in"><span>  Seed <span class="op">=</span> <span class="fl">1</span>, </span></span>
 <span class="r-in"><span>  Bearing <span class="op">=</span> <span class="st">"Across"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Sailed distance in stratum Vikingbanken did not converge to the desired sailed distance (101.366410666148 nmi). The closest used.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum AlbjoernLing...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Engelsk_Klondyke_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_East_2016...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_West_2018...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Nordgyden...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 3</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Ostbanken_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Outer_Shoal_2020_1...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vestbanken_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthEast...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthWest...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vikingbanken...</span>
 <span class="r-in"><span><span class="co"># Plot the stratumPolygon with the segments</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">stratumPolygon</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">StratumName</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">'blue'</span><span class="op">)</span> <span class="op">+</span></span></span>
@@ -222,6 +266,22 @@
 <span class="r-in"><span>  Seed <span class="op">=</span> <span class="fl">1</span>, </span></span>
 <span class="r-in"><span>  Bearing <span class="op">=</span> <span class="st">"Along"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum AlbjoernLing...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Engelsk_Klondyke_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_East_2016...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Inner_Shoal_West_2018...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Nordgyden...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Ostbanken_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Outer_Shoal_2020_1...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vestbanken_North_2020...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthEast...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum VestbankenSouthWest...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: SurveyPlan for Stratum Vikingbanken...</span>
 <span class="r-in"><span><span class="co"># Plot the stratumPolygon with the segments</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">stratumPolygon</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">StratumName</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">'blue'</span><span class="op">)</span> <span class="op">+</span></span></span>
