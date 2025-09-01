@@ -2,28 +2,18 @@
 % Please edit documentation in R/Data.R
 \name{general_map_plot_arguments}
 \alias{general_map_plot_arguments}
-\title{General map plot parameters of RstoxBase}
+\title{General map plot parameters of RstoxBase (mostly colors)}
 \arguments{
-\item{LongitudeLimits}{The longitude limits of the map plot, defaulted to the range of the longitude of the data.}
+\item{ShowMap}{Logical: If TRUE include the map in the plot.}
 
-\item{LatitudeLimits}{The latitude limits of the map plot, defaulted to the range of the latitude of the data.}
+\item{LandColor}{Character: The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
 
-\item{LandColor}{The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
+\item{BorderColor}{Character: The color to use for the borders on land, defaulted to "grey50".}
 
-\item{BorderColor}{The color to use for the borders on land, defaulted to "grey50".}
+\item{OceanColor}{Character: The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
 
-\item{OceanColor}{The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
-
-\item{GridColor}{The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
-
-\item{MaxPointSize}{The maximum size of the points, defaulted to 10.}
-
-\item{MinPointSize}{The minimum size of the points (the size of points of data with value 0), defaulted to 0.5.}
-
-\item{TrackColor}{The color to use for the vessel track, defaulted to "black".}
-
-\item{TrackSize}{The size of the track points, defaulted to 1.}
+\item{GridColor}{Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
 }
 \description{
-General map plot parameters of RstoxBase
+General map plot parameters of RstoxBase (mostly colors)
 }

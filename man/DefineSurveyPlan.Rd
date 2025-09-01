@@ -7,10 +7,10 @@
 DefineSurveyPlan(
   processData,
   UseProcessData = FALSE,
+  StratumPolygon,
   DefinitionMethod = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing",
     "ResourceFile"),
   FileName = character(),
-  StratumPolygon,
   StratumNames = character(),
   Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"),
   BearingAngle = numeric(),
@@ -29,11 +29,11 @@ DefineSurveyPlan(
 
 \item{UseProcessData}{Logical: If TRUE use the existing function output in the process.}
 
+\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+
 \item{DefinitionMethod}{Character: A string naming the method to use, either "ResourceFile" for reading the survey plan from a file, or a string naming the type of survey design to create (see details).}
 
 \item{FileName}{The path to a resource file from which to read the SurveyPlan process data, in the case that \code{DefinitionMethod} is "ResourceFile".}
-
-\item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
 \item{StratumNames}{Character: The names of the strata to include in the survey plan. Defaults to all strata.}
 

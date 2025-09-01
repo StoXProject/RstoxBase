@@ -1,3 +1,8 @@
+# RstoxBase v2.2.0-9002  (2025-09-01)
+* Fixed bugs in DefineSurveyPlan(), PlotSurveyPlan(), ReportSurveyPlan(), WriteSurveyPlan(). The DefineSurveyPlan() now works for complicated strata like the Hardangerfjorden and Sognefjorden for DefinitionMethod "ZigZagEqualSpacing".
+* Refactored PlotAcousticTrawlSurvey() and dependent functions to work consistently with the new PlotSurveyPlan().
+
+
 # RstoxBase v2.2.0-9001  (2025-06-20)
 * Added the functions DefineSurveyPlan(), PlotSurveyPlan(), ReportSurveyPlan(), WriteSurveyPlan().
 

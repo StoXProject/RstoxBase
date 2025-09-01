@@ -4,12 +4,123 @@
 \alias{PlotSurveyPlan}
 \title{Plot a survey plan.}
 \usage{
-PlotSurveyPlan(SurveyPlan, StratumPolygon)
+PlotSurveyPlan(
+  SurveyPlan,
+  UseDefaultTrackSettings = TRUE,
+  TrackColor = character(),
+  TrackLineWidth = numeric(),
+  TrackPointColor = character(),
+  TrackPointSize = numeric(),
+  TrackPointShape = numeric(),
+  ShowStratumPolygon = FALSE,
+  StratumPolygon,
+  UseDefaultStratumPolygonSettings = TRUE,
+  StratumPolygonColor = character(),
+  StratumPolygonBorderColor = character(),
+  StratumPolygonBorderLineWidth = numeric(),
+  ShowMap = TRUE,
+  UseDefaultMapSettings = TRUE,
+  LandColor = character(),
+  BorderColor = character(),
+  OceanColor = character(),
+  GridColor = character(),
+  UseDefaultAspectSettings = TRUE,
+  Zoom = numeric(),
+  LongitudeMin = numeric(),
+  LongitudeMax = numeric(),
+  LatitudeMin = numeric(),
+  LatitudeMax = numeric(),
+  LongitudeCenter = numeric(),
+  LatitudeCenter = numeric(),
+  UseDefaultLabelSettings = TRUE,
+  Title = character(),
+  AxisTitleSize = numeric(),
+  AxisTickSize = numeric(),
+  LegendTitleSize = numeric(),
+  LegendTextSize = numeric(),
+  UseDefaultFileSettings = TRUE,
+  Format = character(),
+  Width = numeric(),
+  Height = numeric(),
+  DotsPerInch = numeric()
+)
 }
 \arguments{
 \item{SurveyPlan}{The \code{\link{SurveyPlan}} process data.}
 
+\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+
+\item{TrackColor}{Character: The color to use for the vessel track, defaulted to "black".}
+
+\item{TrackLineWidth}{Numeric: The width of the track, defaulted to 1.}
+
+\item{TrackPointColor}{Character: The colors to use when plotting the data points. The colors scale can be given either as vector of colors comprising equally spaced colors of the color scale, or as the name of a color scale function with the first argument being the number of colors. The default is the \code{\link[RstoxBase]{combined.color}}. Other options for color scale function are "rainbow", "hcl.colors", "heat.colors", "terrain.colors", "topo.colors" or "cm.colors".}
+
+\item{TrackPointSize}{Numeric: The size of the points.}
+
+\item{TrackPointShape}{The shape of the points, as defined for the argument \code{pch} in \code{\link{points}}.}
+
+\item{ShowStratumPolygon}{Logical: If TRUE include the stratumPolygon. in the plot.}
+
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
+
+\item{UseDefaultStratumPolygonSettings}{Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.}
+
+\item{StratumPolygonColor}{Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).}
+
+\item{StratumPolygonBorderColor}{Character: The single color to use for the polygon borders.}
+
+\item{StratumPolygonBorderLineWidth}{Numeric: The line width of the polygon borders.}
+
+\item{ShowMap}{Logical: If TRUE include the map in the plot.}
+
+\item{UseDefaultMapSettings}{Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.}
+
+\item{LandColor}{Character: The color to use for the land, defaulted to the color used for land in the StoX GUI map (yellow color, rgb(253, 254, 204, maxColorValue = 255)).}
+
+\item{BorderColor}{Character: The color to use for the borders on land, defaulted to "grey50".}
+
+\item{OceanColor}{Character: The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
+
+\item{GridColor}{Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
+
+\item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
+
+\item{Zoom}{Numeric: The zoom of the plot, defaulted to 1, which uses the range of the data as the plot limits. Higher values zooms out and lower values zooms in.}
+
+\item{LongitudeMin}{Numeric: The minimum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LongitudeMax}{Numeric: The maximum longitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LatitudeMin}{Numeric: The minimum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LatitudeMax}{Numeric: The maximum latitude limit of the plot, overriding the value derived from \code{Zoom}.}
+
+\item{LongitudeCenter}{Numeric: The longitude of the point around which the plot is zoomed usinng \code{Zoom}.}
+
+\item{LatitudeCenter}{Numeric: The latitude of the point around which the plot is zoomed usinng \code{Zoom}.}
+
+\item{UseDefaultLabelSettings}{Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.}
+
+\item{Title}{Character: The title of the plot, defaulted to no title.}
+
+\item{AxisTitleSize}{Numeric: The size of the axis titles, defaulted to 20.}
+
+\item{AxisTickSize}{Numeric: The size of the axis tick marks, defaulted to 20.}
+
+\item{LegendTitleSize}{Numeric: The size of the legend title, defaulted to 20.}
+
+\item{LegendTextSize}{Numeric: The size of the legend text, defaulted to 20.}
+
+\item{UseDefaultFileSettings}{Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.}
+
+\item{Format}{Character: The format of the output file from plotting functions, defaulted to "png". Other options are defined by \code{\link[ggplot2]{ggsave}}, including "tiff", "jpeg"  and "pdf".}
+
+\item{Width}{Numeric: The width of the plot in centimeters, defaulted to 17, as per the instructions to authors for submission to the ICES Journal og Marine Science.}
+
+\item{Height}{Numeric: The height of the plot in centimeters, defaulted to 17.}
+
+\item{DotsPerInch}{Numeric: The number of dots per inch (DPI), defaulted to 1200.}
 }
 \value{
 An object of StoX data type \code{\link{WriteSurveyPlanData}}.
