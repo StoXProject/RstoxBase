@@ -17,7 +17,7 @@ MeanSpeciesCategoryCatch(
   SurveyTable = data.table::data.table(),
   Survey = NULL,
   PSUDefinition = c("FunctionParameter", "FunctionInput"),
-  PSUDefinitionMethod = c("StationToPSU", "None"),
+  PSUDefinitionMethod = c("StationToPSU"),
   StratumPolygon = NULL,
   BioticPSU = NULL
 )
@@ -27,9 +27,9 @@ MeanSpeciesCategoryCatch(
 
 \item{SumSpeciesCategoryCatchData}{The \code{\link{SumSpeciesCategoryCatchData}} data.}
 
-\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineBioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.}
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data generated using the function \code{DefineBioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.}
 
-\item{LayerDefinitionMethod}{See \code{\link{DefineBioticLayer}}}
+\item{LayerDefinitionMethod}{See the argument \code{DefinitionMethod} in \code{\link{DefineBioticLayer}}.}
 
 \item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
 
@@ -47,7 +47,7 @@ MeanSpeciesCategoryCatch(
 
 \item{PSUDefinition}{The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{BioticPSU}.}
 
-\item{PSUDefinitionMethod}{See \code{\link{DefineBioticPSU}}}
+\item{PSUDefinitionMethod}{Character: A string naming the automatic PSU definition method to use. Currently only the option "StationToPSU" is supported, which sets each Station as a PSU. See \code{\link{DefineBioticPSU}} for details.}
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 

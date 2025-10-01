@@ -176,14 +176,79 @@ stoxFunctionAttributes <- list(
     ##########
     
     
-    ##### SurveyPlan: #####
-    DefineSurveyPlan = list(
+    
+    TransectDesign = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "TransectDesignData",
+        functionParameterFormat = list(
+            StratumNames = "stratumNames", 
+            ParameterTable = "parameterTable_DefineTransectParameter"
+        ), 
+        functionArgumentHierarchy = list(
+            TransectParameterDefinitionMethod = list(
+                TransectParameterDefinition = "FunctionParameter"
+            ), 
+            StratumNames = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            TransectType = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ),
+            Bearing = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            BearingAngle = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            Retour = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            SurveyTime = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            SurveyDistance = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            SurveySpeed = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            Seed = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
+            ParameterTable = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "ParameterTable"
+            ), 
+            EqualEffort = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = c("Parameter")
+            ), 
+            TransectParameter = list(
+                TransectParameterDefinition = "FunctionInput"
+            )
+        ), 
+        functionParameterDefaults = list(
+            Margin = 0.1
+        )
+    ), 
+    DefineTransectParameter = list(
         functionType = "processData", 
         functionCategory = "baseline", 
-        functionOutputDataType = "SurveyPlan",
+        functionOutputDataType = "TransectParameter",
         functionParameterFormat = list(
             FileName = "filePath", 
-            StratumNames = "stratumNames"
+            StratumNames = "stratumNames", 
+            ParameterTable = "parameterTable_DefineTransectParameter"
         ), 
         functionArgumentHierarchy = list(
             DefinitionMethod = list(
@@ -191,80 +256,128 @@ stoxFunctionAttributes <- list(
             ), 
             FileName = list(
                 UseProcessData = FALSE, 
-                DefinitionMethod = "ResourceFile"
+                DefinitionMethod = c("ResourceFile")
             ), 
             StratumNames = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
+            TransectType = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
+            ),
             Bearing = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
             BearingAngle = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
             Retour = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
             SurveyTime = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
             SurveyDistance = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
             SurveySpeed = list(
-                UseProcessData = FALSE
-            ), 
-            EqualEffort = list(
-                UseProcessData = FALSE
-            ), 
-            OrderAllToursFirst = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
             Seed = list(
-                UseProcessData = FALSE
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
             ), 
-            Margin = list(
-                UseProcessData = FALSE
+            ParameterTable = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "ParameterTable"
             )
-        ), 
-        functionParameterDefaults = list(
-            Margin = 0.1
         )
     ), 
-    ReportSurveyPlan = list(
+    ReportTransectDesign = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "ReportSurveyPlanData"
+        functionOutputDataType = "ReportTransectDesignData"
     ), 
-    WriteSurveyPlan = list(
+    WriteTransectDesign = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "WriteSurveyPlanData"
+        functionOutputDataType = "WriteTransectDesignData", 
+        functionParameterFormat = list(
+            TrackGroupingVariables = "trackgroupingVariables_WriteTransectDesign",
+            FileGroupingVariables = "filegroupingVariables_WriteTransectDesign"
+        )
     ), 
-    PlotSurveyPlan = list(
+    PlotTransectDesign = list(
         functionType = "modelData", 
         functionCategory = "report", 
-        functionOutputDataType = "PlotSurveyPlanData", 
+        functionOutputDataType = "PlotTransectDesignData", 
         functionArgumentHierarchy = list(
-            # Options for the colors:
+            
+            # Options for the track:
             TrackColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            LandColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            BorderColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            OceanColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            GridColor = list(
-                UseDefaultColorSettings = FALSE
+                UseDefaultTrackSettings = FALSE
             ), 
             TrackLineWidth = list(
-                UseDefaultPointSettings = FALSE
+                UseDefaultTrackSettings = FALSE
             ), 
+            TrackPointColor = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            TrackPointSize = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            TrackPointShape = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            
+            # Options for the stratum polygons:
+            StratumPolygon = list(
+                ShowStratumPolygon = TRUE
+            ),
+            UseDefaultStratumPolygonSettings = list(
+                ShowStratumPolygon = TRUE
+            ),
+            StratumPolygonColor = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            ),
+            StratumPolygonBorderColor = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            ),
+            StratumPolygonBorderLineWidth = list(
+                ShowStratumPolygon = TRUE, 
+                UseDefaultStratumPolygonSettings = FALSE
+            ),
+            
+            # Options for the map:
+            UseDefaultMapSettings = list(
+                ShowMap = TRUE
+            ),
+            LandColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            BorderColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            OceanColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            GridColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            
             # Options for zoom and limits:
             Zoom = list(
                 UseDefaultAspectSettings = FALSE
@@ -287,6 +400,7 @@ stoxFunctionAttributes <- list(
             LatitudeCenter = list(
                 UseDefaultAspectSettings = FALSE
             ), 
+            
             # Options for the labels and other text:
             Title = list(
                 UseDefaultLabelSettings = FALSE
@@ -303,6 +417,7 @@ stoxFunctionAttributes <- list(
             LegendTextSize = list(
                 UseDefaultLabelSettings = FALSE
             ), 
+            
             # Options for the output file:
             Format = list(
                 UseDefaultFileSettings = FALSE
@@ -315,24 +430,6 @@ stoxFunctionAttributes <- list(
             ), 
             DotsPerInch = list(
                 UseDefaultFileSettings = FALSE
-            ), 
-            StratumPolygon = list(
-                ShowStratumPolygon = TRUE
-            ),
-            UseDefaultStratumPolygonSettings = list(
-                ShowStratumPolygon = TRUE
-            ),
-            StratumPolygonColor = list(
-                ShowStratumPolygon = TRUE, 
-                UseDefaultStratumPolygonSettings = FALSE
-            ),
-            StratumPolygonBorderColor = list(
-                ShowStratumPolygon = TRUE, 
-                UseDefaultStratumPolygonSettings = FALSE
-            ),
-            StratumPolygonBorderLineWidth = list(
-                ShowStratumPolygon = TRUE, 
-                UseDefaultStratumPolygonSettings = FALSE
             )
         ), 
         functionParameterDefaults = c(
@@ -2594,5 +2691,62 @@ processPropertyFormats <- list(
         class = "single", 
         title = "Select ConditionOperator", 
         possibleValues = c("%in%", "%notin%", "==", "!=", "%notequal%", "<", "<=", ">=", ">")
+    ),
+    
+    trackgroupingVariables_WriteTransectDesign = list(
+        class = "vector", 
+        title = "Select variables to group the tracks by. Leaving this empty results on one single route", 
+        possibleValues = c("Stratum", "Direction", "Transect")
+    ),
+    
+    filegroupingVariables_WriteTransectDesign = list(
+        class = "vector", 
+        title = "Select variables to group the tracks by. Leaving this empty results on one single file", 
+        possibleValues = c("Stratum", "Direction", "Transect")
+    ), 
+    
+    parameterTable_DefineTransectParameter = list(
+        class = "table", 
+        title = "Define transect design parameters for each stratum", 
+        columnNames = c(
+            "StratumName",
+            "TransectType", 
+            "Bearing",
+            "BearingAngle", 
+            "Retour",
+            "SurveyTime", 
+            "SurveyDistance",
+            "SurveySpeed", 
+            "Seed"
+        ), 
+        variableTypes = c(
+            "character", 
+            "character", 
+            "character", 
+            "double", 
+            "character", 
+            "double", 
+            "double", 
+            "double", 
+            "integer"
+        ), 
+        possibleValues = function(StratumPolygon) {
+            # Get the options of arguments of :
+            arguments <- formals("TransectDesign")
+            
+            # Must be an unnamed list:
+            list(
+                getStratumNames(StratumPolygon), 
+                eval(arguments$TransectType), 
+                eval(arguments$Bearing), 
+                NULL, 
+                c("FALSE", "TRUE"), 
+                NULL, 
+                NULL, 
+                NULL, 
+                NULL
+            )
+        }
     )
+
 )

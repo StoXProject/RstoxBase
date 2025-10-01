@@ -18,7 +18,7 @@ AddPSUToPreySpeciesCategoryCatch <- function(
         PreySpeciesCategoryCatchData,
         # PSU: 
         PSUDefinition = c("FunctionParameter", "FunctionInput"), 
-        PSUDefinitionMethod = c("StationToPSU", "None"), 
+        PSUDefinitionMethod = c("StationToPSU"), 
         BioticPSU = NULL, 
         # Survey:
         SurveyDefinition = c("FunctionParameter", "FunctionInput"), 

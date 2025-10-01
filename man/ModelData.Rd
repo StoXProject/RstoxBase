@@ -6,11 +6,13 @@
 \arguments{
 \item{StratumAreaData}{The \code{\link{StratumAreaData}} data.}
 
-\item{ReportSurveyPlanData}{The \code{\link{ReportSurveyPlanData}} data.}
+\item{TransectDesignData}{The \code{\link{TransectDesignData}} data.}
 
-\item{WriteSurveyPlanData}{The \code{\link{WriteSurveyPlanData}} data.}
+\item{ReportTransectDesignData}{The \code{\link{ReportTransectDesignData}} data.}
 
-\item{PlotSurveyPlanData}{The \code{\link{PlotSurveyPlanData}} data.}
+\item{WriteTransectDesignData}{The \code{\link{WriteTransectDesignData}} data.}
+
+\item{PlotTransectDesignData}{The \code{\link{PlotTransectDesignData}} data.}
 
 \item{NASCData}{The \code{\link{NASCData}} data.}
 
@@ -88,5 +90,5 @@
 The model data of a StoX model are the data generated during the model run based on input data and user settings and resources given in the project description (project.json file). Model data are transient and only exists from a process has been run until the project is closed.
 }
 \seealso{
-\code{\link{ProcessData}} for process data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}.
+\code{\link{ProcessData}} for process data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}..
 }

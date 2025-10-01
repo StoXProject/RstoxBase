@@ -6,9 +6,9 @@
 \arguments{
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
-\item{Survey}{The \code{\link{Survey}} process data.}
+\item{TransectParameter}{The \code{\link{TransectParameter}} process data.}
 
-\item{SurveyPlan}{The \code{\link{SurveyPlan}} process data.}
+\item{Survey}{The \code{\link{Survey}} process data.}
 
 \item{AcousticLayer}{The \code{\link{AcousticLayer}} process data.}
 
@@ -30,5 +30,5 @@
 The process data of a StoX model are data that are saved to the project description (project.json file), typically manual settings (tagging of \code{\link{EDSU}}s to \code{\link{PSU}}s) or data read from resource files other than acoustic, biotic and landing input data files stored in the input folder. #'
 }
 \seealso{
-\code{\link{ModelData}} for model data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}.
+\code{\link{ModelData}} for model data types and \code{\link{DataTypes}} for all data types produced by \code{\link{RstoxBase}}..
 }

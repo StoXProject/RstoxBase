@@ -55,7 +55,7 @@ plot_lon_lat(
 
 \item{showMap}{Logical: If TRUE show the map.}
 
-\item{trackLinesBy}{Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a SurveyPlan so that the transport between strata is not shown.}
+\item{trackLinesBy}{Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transport between strata is not shown.}
 
 \item{lon_name, lat_name}{Character: The name of the longitude and latitude variable in the data \code{x}.}
 
