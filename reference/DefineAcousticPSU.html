@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9003</span>
       </span>
     </div>
 
@@ -86,7 +86,7 @@
 
 
 <dt id="arg-definitionmethod">DefinitionMethod<a class="anchor" aria-label="anchor" href="#arg-definitionmethod"></a></dt>
-<dd><p>Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs; "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from a project.xml file from StoX &lt;= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX &lt;= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU().</p></dd>
+<dd><p>Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs (passes the process data through the function unchanged); "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from either a project.xml file from StoX &lt;= 2.7, a project.json file from StoX &gt;=3.0.0, or a file containing a PSUByTime table.</p></dd>
 
 
 <dt id="arg-filename">FileName<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
@@ -100,6 +100,11 @@
     <div id="value">
     <h2>Value</h2>
     <p>An object of StoX data type <code><a href="AcousticPSU.html">AcousticPSU</a></code>.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Note that if the <code>FileName</code> is a project.xml file, it is assumed that the contents of the file is actually used in the StoX &lt;= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU().</p>
+<p>If the the <code>FileName</code> comtains a table with PSUByTime info, the following columns are required: "Stratum", "PSU", "Cruise", "StartDateTime", "StopDateTime".</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>

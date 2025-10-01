@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9003</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">AddPSUToPreySpeciesCategoryCatch</span><span class="op">(</span></span>
 <span>  <span class="va">PreySpeciesCategoryCatchData</span>,</span>
 <span>  PSUDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,</span>
-<span>  PSUDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"StationToPSU"</span>, <span class="st">"None"</span><span class="op">)</span>,</span>
+<span>  PSUDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"StationToPSU"</span><span class="op">)</span>,</span>
 <span>  BioticPSU <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  SurveyDefinition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FunctionParameter"</span>, <span class="st">"FunctionInput"</span><span class="op">)</span>,</span>
 <span>  SurveyDefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AllStrata"</span>, <span class="st">"Table"</span><span class="op">)</span>,</span>
@@ -79,7 +79,7 @@
 
 
 <dt id="arg-psudefinitionmethod">PSUDefinitionMethod<a class="anchor" aria-label="anchor" href="#arg-psudefinitionmethod"></a></dt>
-<dd><p>See <code><a href="DefineBioticPSU.html">DefineBioticPSU</a></code></p></dd>
+<dd><p>Character: A string naming the automatic PSU definition method to use. Currently only the option "StationToPSU" is supported, which sets each Station as a PSU. See <code><a href="DefineBioticPSU.html">DefineBioticPSU</a></code> for details.</p></dd>
 
 
 <dt id="arg-bioticpsu">BioticPSU<a class="anchor" aria-label="anchor" href="#arg-bioticpsu"></a></dt>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9003</span>
       </span>
     </div>
 
@@ -47,6 +47,19 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.0-9003" id="rstoxbase-v220-9003-2025-10-01">RstoxBase v2.2.0-9003 (2025-10-01)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9003-2025-10-01"></a></h2>
+<ul><li>Renamed DefineSurveyPlan() to TransectDesign(), PlotSurveyPlan() to PlotTransectDesign(), ReportSurveyPlan() to ReportTransectDesign() and WriteSurveyPlan() to WriteTransectDesign(), and introduced the process data function DefineTransectParameter() for use in TransectDesign().</li>
+<li>Added option of reading a file with PSUByTime in DefineAcousticPSU().</li>
+<li>Added a check when UseProcessData = TRUE in DefineAcousticPSU() for whether recalculated PSUByTime differs from the existing in processData. If differing, a message is shown to the user that the process can be re-run with DefinitionMethod “Manual” in order to update the PSUByTime.</li>
+<li>Removed unused PSUDefinitionMethod in MeanLengthDistribution() and MeanSpeciesCategoryCatch().</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.0-9003" id="rstoxbase-v220-9003-2025-09-01">RstoxBase v2.2.0-9003 (2025-09-01)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9003-2025-09-01"></a></h2>
+<ul><li>Changed Retour to Direction and added Duration as columns in ReportSurveyPlan().</li>
+<li>Added the argument GroupingVariables in WriteSurveyPlan().</li>
+<li>Added the possibility to read a PSUByTime table from file in DefineAcousticPSU() using DefinitionMethod = “ResourceFile”.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.2.0-9002" id="rstoxbase-v220-9002-2025-09-01">RstoxBase v2.2.0-9002 (2025-09-01)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9002-2025-09-01"></a></h2>
 <ul><li>Fixed bugs in DefineSurveyPlan(), PlotSurveyPlan(), ReportSurveyPlan(), WriteSurveyPlan(). The DefineSurveyPlan() now works for complicated strata like the Hardangerfjorden and Sognefjorden for DefinitionMethod “ZigZagEqualSpacing”.</li>
