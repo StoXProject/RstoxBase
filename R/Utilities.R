@@ -340,7 +340,7 @@ meanRawResolutionData <- function(
     # PSU: 
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
     PSUProcessData = NULL, 
-    PSUDefinitionMethod = c("Identity", "None"), 
+    PSUDefinitionMethod = c("Identity"), 
     # Survey:
     SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
     SurveyProcessData = NULL, 
@@ -408,7 +408,7 @@ addPSUResolution <- function(
         # PSU: 
         PSUDefinition = c("FunctionParameter", "FunctionInput"), 
         PSUProcessData = NULL, 
-        PSUDefinitionMethod = c("Identity", "None"), 
+        PSUDefinitionMethod = c("Identity"), 
         # Survey:
         SurveyDefinition = c("FunctionParameter", "FunctionInput"), 
         SurveyProcessData = NULL, 
@@ -1641,7 +1641,7 @@ getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"),
         return(emptyOutput)
     }
     
-    element <- match.arg(element)
+    element <- RstoxData::match_arg_informative(element)
     dataTypeUnits <- getRstoxBaseDefinitions("dataTypeUnits")
     
     #output <- dataTypeUnits[[dataType]][[variableName]]

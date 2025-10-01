@@ -130,10 +130,10 @@ PlotAcousticTrawlSurvey <- function(
     }
     
     
-    ## Check function inputs specifically, as these have been included in plotArguments:
-    #if(missing(SumNASCData)) {
-    #    stop("argument \"SumNASCData\" is missing, with no default")
-    #}
+    # Check function inputs specifically, as these have been included in plotArguments:
+    if(!length(plotArguments$SumNASCData)) {
+        stop("argument \"SumNASCData\" must be given.")
+    }
     
      
     #plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotAcousticTrawlSurvey", stoxFunctionAttributes = stoxFunctionAttributes)
@@ -209,6 +209,7 @@ PlotAcousticTrawlSurvey <- function(
     }
     
     
+    
     # Discard the transports if ShowOnlyAcousticPSU:
     if(ShowOnlyAcousticPSU) {
         # Merge in the PSUs and subset to remove the transport::
@@ -219,7 +220,7 @@ PlotAcousticTrawlSurvey <- function(
         
         # Add PSU labels if specified:
         if(ShowAcousticPSULabel) {
-            AcousticPSULabelPosition <- match.arg(AcousticPSULabelPosition)
+            AcousticPSULabelPosition <- RstoxData::match_arg_informative(AcousticPSULabelPosition)
             AcousticPSULabelPositionFun <- switch (
                 AcousticPSULabelPosition,
                 mean = function(Longitude, Latitude) {
@@ -428,7 +429,7 @@ isNotGiven <- function(x) {
 #' @inheritParams zoom_lon_lat
 #' @param polygon An sf object with multipolygons.
 #' @param showMap Logical: If TRUE show the map.
-#' @param trackLinesBy Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a SurveyPlan so that the transport between strata is not shown.
+#' @param trackLinesBy Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transport between strata is not shown.
 #' @param lon_name_end,lat_name_end Character: The name of the end point of the longitude and latitude variable in the data \code{x}, used in the case that \code{type} contains "s" (segments).
 #' @param type The type of plot. See Details.
 #' @param linetype.track The line type as described in \code{\link[ggplot2]{aes_linetype_size_shape}}.
@@ -488,7 +489,7 @@ plot_lon_lat <- function(
     ...
 )
 {
-
+    
     # Get the type:
     type <- RstoxData::match_arg_informative(type)
     

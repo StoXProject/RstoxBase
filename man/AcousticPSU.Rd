@@ -7,5 +7,5 @@
 The AcousticPSU process data contains the following three tables: Stratum_PSU, EDSU_PSU and PSUByTime. The table Stratum_PSU contains two columns, Stratum and PSU, linking each acoustic PSUs with a Stratum. The table EDSU_PSU contains two columns, EDSU and PSU, linking each EDSU with and acoustic PSU (possibly missing PSU). The table PSUByTime is a representation the tables Stratum_PSU and EDSU_PSU as start and end time for each un-broken sequence of EDSUs, containing the columns Stratum, PSU, Cruise, StartDateTime and StopDateTime. Note that the table PSUByTime is not updated if UseProcessData is set to TRUE in \code{\link{DefineAcousticPSU}}. To update PSUByTime, set UseProcessData to FALSE and DefinitionMethod to "Manual", and re-run the process.
 }
 \seealso{
-This data type is produced by \code{\link{DefineAcousticPSU}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{DefineAcousticPSU}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 }

@@ -10,5 +10,5 @@ The Survey data is a table of the columns Stratum and Survey, defining which str
 This data type can be useful if there are particular strata that are e.g. experimental, and others that are to be included in the official estimate, and replaces the "include in total" concept of StoX 2.7.
 }
 \seealso{
-This data type is produced by \code{\link{DefineSurvey}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{DefineSurvey}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 }

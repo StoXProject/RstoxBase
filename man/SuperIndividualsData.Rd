@@ -7,5 +7,5 @@
 The SuperIndividualsData model data is the \code{\link{IndividualsData}} added Abundance and Biomass. Note that the Abundance is number of individuals and the Biomass is weight in g.
 }
 \seealso{
-This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{SuperIndividuals}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 }

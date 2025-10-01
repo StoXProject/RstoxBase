@@ -7,5 +7,5 @@
 The Regression process data is a list of two tables, the RegressionModel, holding only the string naming the model to use, the RegressionTable, holding the table of the parameters/values of the model. See \code{\link{DefineRegression}} for details of the different models. The function \code{\link{EstimateBioticRegression}} also outputs this datatype.
 }
 \seealso{
-This data type is produced by \code{\link{DefineRegression}} and \code{\link{EstimateBioticRegression}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{DefineRegression}} and \code{\link{EstimateBioticRegression}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 }

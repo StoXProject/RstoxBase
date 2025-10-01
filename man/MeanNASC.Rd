@@ -27,9 +27,9 @@ MeanNASC(
 
 \item{SumNASCData}{The \code{\link{SumNASCData}} data.}
 
-\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.}
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data generated using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.}
 
-\item{LayerDefinitionMethod}{See \code{\link{DefineAcousticLayer}}}
+\item{LayerDefinitionMethod}{See the argument \code{DefinitionMethod} in \code{\link{DefineBioticLayer}}.}
 
 \item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
 
@@ -47,7 +47,7 @@ MeanNASC(
 
 \item{PSUDefinition}{The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{AcousticPSU}.}
 
-\item{PSUDefinitionMethod}{See \code{\link{DefineAcousticPSU}}}
+\item{PSUDefinitionMethod}{Character: A string naming the automatic PSU definition method to use. Currently only the option "EDSUToPSU" is supported, which sets each EDSU as a PSU. See \code{\link{DefineAcousticPSU}} for details.}
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
