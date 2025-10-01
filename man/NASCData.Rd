@@ -29,5 +29,5 @@ Latitude \tab Latitude at start of the EDSU or Station \tab degree north \tab Nu
 }
 }
 \seealso{
-This data type is produced by \code{\link{NASC}}. NASCData is used in \code{\link{SumNASC}} with output \code{\link{SumNASCData}} and \code{\link{MeanNASC}} with output \code{\link{MeanNASCData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{NASC}}. NASCData is used in \code{\link{SumNASC}} with output \code{\link{SumNASCData}} and \code{\link{MeanNASC}} with output \code{\link{MeanNASCData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 }

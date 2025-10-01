@@ -102,8 +102,29 @@ DefinePSU <- function(
                     AcousticPSU <- readAcousticPSUFrom2.7(FileName)
                 }
                 else {
-                    stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
-                }
+                    # Read the file as a table:
+                    PSUByTimeFromFile <- tryCatch(
+                        data.table::fread(FileName), 
+                        error = function(err) {
+                            stop("StoX: Error in data.table::fread: ", err)
+                        }
+                    )
+                    
+                    # Check whether all required columns are present:
+                    requiredPSUByTimeColumns <- c("Stratum", "PSU", "Cruise", "StartDateTime", "StopDateTime")
+                    if(all(requiredPSUByTimeColumns %in% names(PSUByTimeFromFile))) {
+                        AcousticPSU <- getPSUProcessDataFromPSUByTime(
+                            PSUByTimeFromFile, 
+                            MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                            PSUType = "Acoustic"
+                        )
+                        # Rename form SSU to EDSU:
+                        AcousticPSU <- renameSSULabelInPSUProcessData(AcousticPSU, PSUType = PSUType, reverse = FALSE)
+                    }
+                    else {
+                        stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml, or a file with a PSUByTime table containing the columns \"Stratum\", \"PSU\", \"Cruise\", \"StartDateTime\", \"StopDateTime\".")
+                    }
+               }
                 
                 # Add the PSUByTime:
                 if(SavePSUByTime) {
@@ -323,12 +344,36 @@ DefinePSU <- function(
     processData <- renameSSULabelInPSUProcessData(processData, PSUType = PSUType, reverse = FALSE)
     
     # Add the PSU time information:
-    if(!UseProcessData && SavePSUByTime) {
-        processData$PSUByTime <- getPSUByTime(
-            processData, 
-            MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
-            PSUType = PSUType
-        )
+    if(SavePSUByTime) {
+        # If UseProcessData is TRUE check whether recalculated PSUByTime differs from the existing in processData. If differing, give a message to the user that the process can be re-run with DefinitionMethod "Manual" in order to update the PSUByTime:
+        if(UseProcessData) {
+            
+            # If the PSUByTime is missing altogether, warn the user specifically:
+            if(!NROW(processData$PSUByTime)) {
+                message("StoX: The table PSUByTime is empty. If you plan to use this process as input to another PSU process using the DefinitionMethod \"PreDefined\", please re-run the process with DefinitionMethod \"Manual\" to produce the PSUByTime table.")
+            }
+            
+            # Calculate the PSUByTime:
+            newPSUByTime <- getPSUByTime(
+                processData, 
+                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                PSUType = PSUType
+            )
+            # Compare to existing:
+            differs <- !isTRUE(all.equal(processData$PSUByTime, newPSUByTime))
+            if(differs) {
+                message("StoX: The table PSUByTime does not match the PSUs. If you plan to use this process as input to another PSU process using the DefinitionMethod \"PreDefined\", please re-run the process with DefinitionMethod \"Manual\" to produce the PSUByTime table.")
+            }
+        }
+        else {
+            processData$PSUByTime <- getPSUByTime(
+                processData, 
+                MergedStoxDataStationLevel = MergedStoxDataStationLevel, 
+                PSUType = PSUType
+            )
+        }
+        
+        
     }
     
     return(processData)
@@ -600,7 +645,12 @@ DefineBioticPSU <- function(
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
 #' @inheritParams DefinePSU
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs; "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU().
+#' @param DefinitionMethod Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs (passes the process data through the function unchanged); "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from either a project.xml file from StoX <= 2.7, a project.json file from StoX >=3.0.0, or a file containing a PSUByTime table. 
+#' 
+#' @details
+#'  Note that if the \code{FileName} is a project.xml file, it is assumed that the contents of the file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU(). 
+#'  
+#'  If the the \code{FileName} comtains a table with PSUByTime info, the following columns are required: "Stratum", "PSU", "Cruise", "StartDateTime", "StopDateTime".
 #' 
 #' @return
 #' An object of StoX data type \code{\link{AcousticPSU}}.
@@ -734,20 +784,9 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     # Order both since it may happen that the EDSUs of the StoxAcousticData are not ordered, e.g. if there are multiple instruments from the same cruise, and these instruments have both identical and differing times:
     atSSUInStoxData <- match(sort(thisSSU_PSU$SSU), sort(StationTable$SSU))
     if(any(is.na(atSSUInStoxData))) {
-        warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData. (Number of EDSUs not found in the StoxData: ", sum(is.na(atSSUInStoxData)))
-        atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
+        warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData. (Number of EDSUs not found in the StoxData: ", sum(is.na(atSSUInStoxData)), ". These are the following: ", paste(sort(thisSSU_PSU$SSU)[is.na(atSSUInStoxData)], collapse = ", "), ".")
         
-        # It may happen that an SSU of the SSU_PSU is not present in the station data (StoxAcoustic$Log or StoxBiotic$Station). In these cases return NAs for cruise and times: 
-        # ????????????????????????????? Why all() with no argument?
-        if(all()) {
-            #PSUStartStopDateTimeOneCruise <- data.table::data.table(
-            #    PSU = PSU, 
-            #    Cruise = NA_character_, 
-            #    StartDateTime = NA, # What should this be as POSIXct????
-            #    StopDateTime = NA # What should this be as POSIXct????
-            #)
-            return(NULL)
-        }
+        atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
     }
     
     # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data?????):
@@ -803,7 +842,7 @@ getPSUStartStopDateTimeOneCruise <- function(Cruise, atSSUInStoxDataByCruise, St
 #' 
 #' @inheritParams general_arguments
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
-#' @param DefinitionMethod  Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "Table" to provide the \code{LayerTable}.
+#' @param DefinitionMethod Character: A string naming the method to use, one of "WaterColumn", to define one single for the entire water column; "HighestResolution", to use the maximum possible vertical resolution without intersecting hauls; "Resolution", which can be used to set a fixed layer thickness; and "Table" to provide the \code{LayerTable}.
 #' @param Resolution  Numeric: A single numeric giving the thickness of the layers.
 #' @param LayerTable A table of Layer name, MinLayerDepth in meters and MaxLayerDepth in meters, defining the Layers.
 #' 
@@ -1216,6 +1255,11 @@ DefineBioticAssignment <- function(
         }
     }
     else if(grepl("Stratum", DefinitionMethod, ignore.case = TRUE)) {
+        
+        # Return empty table if AcousticPSU$Stratum_PSU is empty for some reason:
+        if(!NROW(AcousticPSU$Stratum_PSU)) {
+            return(data.table::data.table())
+        }
         
         # :
         attr(HaulData, "pointLabel") <- "Station"

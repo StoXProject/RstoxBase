@@ -79,8 +79,8 @@ getDepth <- function(depth0, range, angle) {
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}.
-#' @param LayerDefinitionMethod See \code{\link{DefineAcousticLayer}}
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data generated using the function \code{DefineAcousticLayer}.
+#' @param LayerDefinitionMethod See the argument \code{DefinitionMethod} in \code{\link{DefineBioticLayer}}.
 #' @inheritParams DefineAcousticLayer
 #' 
 #' @return
@@ -123,14 +123,14 @@ SumNASC <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.
-#' @param LayerDefinitionMethod See \code{\link{DefineAcousticLayer}}
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data generated using the function \code{DefineAcousticLayer}, or \code{PreDefined} whihc requires \code{SumNASCData} as input.
+#' @param LayerDefinitionMethod See the argument \code{DefinitionMethod} in \code{\link{DefineBioticLayer}}.
 #' @inheritParams DefineAcousticLayer
 #' @param SurveyDefinition The method to use for defining the Survey, one of \code{FunctionParameter} to define the Survey on the fly in this function, or \code{FunctionInput} to import Survey process data from a previously run process by the input \code{Survey}.
 #' @param SurveyDefinitionMethod See \code{\link{DefineSurvey}}
 #' @inheritParams DefineSurvey
 #' @param PSUDefinition The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{AcousticPSU}.
-#' @param PSUDefinitionMethod See \code{\link{DefineAcousticPSU}}
+#' @param PSUDefinitionMethod Character: A string naming the automatic PSU definition method to use. Currently only the option "EDSUToPSU" is supported, which sets each EDSU as a PSU. See \code{\link{DefineAcousticPSU}} for details.
 #' @inheritParams DefineAcousticPSU
 #' 
 #' @seealso \code{\link{NASC}} and \code{\link{MeanNASC}}.

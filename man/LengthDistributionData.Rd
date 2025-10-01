@@ -31,5 +31,5 @@ TrawlDoorSpread \tab Distance between the trawl doors. \tab m \tab Numeric \tab 
 }
 }
 \seealso{
-This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. LengthDistributionData is used in \code{\link{SumLengthDistribution}} with output \code{\link{SumLengthDistributionData}} and \code{\link{MeanLengthDistribution}} with output \code{\link{MeanLengthDistributionData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{LengthDistribution}}, \code{\link{RegroupLengthDistribution}}, \code{\link{LengthDependentLengthDistributionCompensation}} and \code{\link{RelativeLengthDistribution}}. LengthDistributionData is used in \code{\link{SumLengthDistribution}} with output \code{\link{SumLengthDistributionData}} and \code{\link{MeanLengthDistribution}} with output \code{\link{MeanLengthDistributionData}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 }

@@ -24,7 +24,7 @@ DefineAcousticPSU(
 
 \item{StoxAcousticData}{\code{\link[RstoxData]{StoxAcousticData}} (defined in RstoxData).}
 
-\item{DefinitionMethod}{Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs; "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from a project.xml file from StoX <= 2.7. Note that in the latter case it is assumed that the contents of the project.xml file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU().}
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs (passes the process data through the function unchanged); "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from either a project.xml file from StoX <= 2.7, a project.json file from StoX >=3.0.0, or a file containing a PSUByTime table.}
 
 \item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read. Must include file extension.}
 
@@ -35,6 +35,11 @@ An object of StoX data type \code{\link{AcousticPSU}}.
 }
 \description{
 Defines the \code{\link{AcousticPSU}} process data, linking strata, acoustic PSUs and EDSUs.
+}
+\details{
+Note that if the \code{FileName} is a project.xml file, it is assumed that the contents of the file is actually used in the StoX <= 2.7 project, i.e. that UseProcessData = TRUE in DefineAcousticPSU(). 
+ 
+ If the the \code{FileName} comtains a table with PSUByTime info, the following columns are required: "Stratum", "PSU", "Cruise", "StartDateTime", "StopDateTime".
 }
 \seealso{
 Biotic PSUs are generated using \code{\link{DefineBioticPSU}}. For the vertical resolution (Layer) see \code{\link{DefineBioticLayer}} and \code{\link{DefineAcousticLayer}}.

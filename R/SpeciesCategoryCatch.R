@@ -209,7 +209,7 @@ MeanSpeciesCategoryCatch <- function(
     # Parameters of the mean part:
     # PSU: 
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
-    PSUDefinitionMethod = c("StationToPSU", "None"), 
+    PSUDefinitionMethod = c("StationToPSU"), 
     StratumPolygon = NULL, 
     BioticPSU = NULL
 ) {

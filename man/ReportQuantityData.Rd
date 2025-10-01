@@ -7,5 +7,5 @@
 The ReportQuantityData model data is a report of the \code{\link{QuantityData}}.
 }
 \seealso{
-This data type is produced by \code{\link{ReportQuantity}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{ReportQuantity}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}.
 }

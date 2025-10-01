@@ -411,7 +411,7 @@ getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
     #if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
         
         # No names for empty polygons:
-        if(!nrow(stratum)) {
+        if(!length(stratum) || !nrow(stratum)) {
             return(character())
         }
         

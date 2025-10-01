@@ -37,6 +37,30 @@ backwardCompatibility_RstoxBase <- list(
             functionName = "ImputeSuperIndividuals", 
             modelName = "baseline", 
             newFunctionName = "RstoxBase::ImputeSuperIndividuals_StoX3"
+        ), 
+        list(
+            changeVersion = "2.2.0-9003", 
+            functionName = "DefineSurveyPlan", 
+            modelName = "baseline", 
+            newFunctionName = "RstoxBase::TransectDesign"
+        ), 
+        list(
+            changeVersion = "2.2.0-9003", 
+            functionName = "ReportSurveyPlan", 
+            modelName = "report", 
+            newFunctionName = "RstoxBase::ReportTransectDesign"
+        ), 
+        list(
+            changeVersion = "2.2.0-9003", 
+            functionName = "WriteSurveyPlan", 
+            modelName = "report", 
+            newFunctionName = "RstoxBase::WriteTransectDesign"
+        ), 
+        list(
+            changeVersion = "2.2.0-9003", 
+            functionName = "PlotSurveyPlan", 
+            modelName = "report", 
+            newFunctionName = "RstoxBase::PlotTransectDesign"
         )
     ), 
     
@@ -118,9 +142,26 @@ backwardCompatibility_RstoxBase <- list(
             functionName = "PlotAcousticTrawlSurvey", 
             modelName = "report", 
             parameterName = "MinPointSize"
+        ),  
+        list(
+            changeVersion =  "2.2.0-9003", 
+            functionName = "ReportTransectDesign", 
+            modelName = "report", 
+            parameterName = "SurveyPlan"
+        ),  
+        list(
+            changeVersion =  "2.2.0-9003", 
+            functionName = "WriteTransectDesign", 
+            modelName = "report", 
+            parameterName = "SurveyPlan"
+        ),  
+        list(
+            changeVersion =  "2.2.0-9003", 
+            functionName = "PlotTransectDesign", 
+            modelName = "report", 
+            parameterName = "SurveyPlan"
         )
     ),  
-    
     
     
     addParameter = list(
@@ -521,6 +562,13 @@ backwardCompatibility_RstoxBase <- list(
             modelName = "report", 
             parameterName = "TrackSize",
             newParameterName = "TrackLineWidth"
+        ), 
+        list(
+            changeVersion = "2.2.0-9003", 
+            functionName = "DefineSurveyPlan", 
+            modelName = "baseline", 
+            parameterName = "DefinitionMethod",
+            newParameterName = "TransectType"
         )
         
         #, 

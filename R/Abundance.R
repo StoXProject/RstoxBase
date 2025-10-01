@@ -521,7 +521,7 @@ addLengthGroupOneSpecies <- function(
 
 # Function to find intervals from start and end points:
 findInterval_disjoint <- function(x, start, end, out = c("index", "start", "end"), right.closed = FALSE) {
-    out <- match.arg(out)
+    out <- RstoxData::match_arg_informative(out)
     if(length(start) != length(end)) {
         stop("start and end must have the same length!")
     }
