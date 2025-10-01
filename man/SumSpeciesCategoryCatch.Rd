@@ -16,9 +16,9 @@ SumSpeciesCategoryCatch(
 \arguments{
 \item{SpeciesCategoryCatchData}{The \code{\link{SpeciesCategoryCatchData}} data.}
 
-\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineBioticLayer}.}
+\item{LayerDefinition}{The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data generated using the function \code{DefineBioticLayer}.}
 
-\item{LayerDefinitionMethod}{See \code{\link{DefineBioticLayer}}}
+\item{LayerDefinitionMethod}{See the argument \code{DefinitionMethod} in \code{\link{DefineBioticLayer}}.}
 
 \item{Resolution}{Numeric: A single numeric giving the thickness of the layers.}
 

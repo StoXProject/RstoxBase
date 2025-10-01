@@ -2,7 +2,7 @@
 % Please edit documentation in R/Definitions.R
 \name{formatOutput}
 \alias{formatOutput}
-\title{Function to format the output of a function returning StoX data (ModelData or ProcessData).}
+\title{Function to format the output (by reference) of a function returning StoX data (ModelData or ProcessData).}
 \usage{
 formatOutput(
   data,
@@ -31,5 +31,5 @@ formatOutput(
 \item{removeStoXKeys}{Logical: If TRUE remove the key columns, which are those ending with "Key".}
 }
 \description{
-The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables.
+The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables. The input is modified by reference using data.table.
 }

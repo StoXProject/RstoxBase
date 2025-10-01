@@ -1,30 +1,219 @@
-#' Plan an acoustic-trawl survey.
+
+#' Define transect design
+#'
+#' Defines transects through parameters that can be used to generate a transect design using the function \code{\link{TransectDesign}}.
 #'
 #' @inheritParams general_arguments
-#' @inheritParams general_map_plot_arguments
-#' @inheritParams general_track_plot_arguments
 #' @inheritParams ProcessData
-#' @param DefinitionMethod  Character: A string naming the method to use, either "ResourceFile" for reading the survey plan from a file, or a string naming the type of survey design to create (see details).
-#' @param FileName The path to a resource file from which to read the SurveyPlan process data, in the case that \code{DefinitionMethod} is "ResourceFile".
-#' @param StratumNames  Character: The names of the strata to include in the survey plan. Defaults to all strata.
-#' @param OrderAllToursFirst  Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).
-#' @param EqualEffort  Character: A string naming the method to use. See Details for options.
+#' @param DefinitionMethod  Character: A string naming the method to use, one of the three options "Parameter", for specifying common parameters for all strata given by \code{StratumNames}; "ParameterTable", for specifying individual parameters for each stratum in the table \code{ParameterTable}; and "ResourceFile", for reading the \code{ParameterTable} from a the file given by \code{FileName}.
+#' @param FileName The path to a resource file from which to read the TransectParameter process data, in the case that \code{DefinitionMethod} is "ResourceFile".
+#' @param StratumNames  Character: The names of the strata to include in the transect design. Defaults to all strata.
+#' @param TransectType Character: The name of the type of survey design to create, one of "Parallel", "ZigZagEqualSpacing" and "ZigZagRectangularEnclosure" (see details).
 #' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
 #' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
-#' @param Retour  Logical: If TRUE the survey plan will be doubled by a retour.
-#' @param SurveyTime,SurveyDistance  The time/traveled distance to spend in each stratum including transport between segments, given in hours/nautical miles, where \code{SurveyDistance} has precedence over \code{SurveyTime}. The vector is repeated to have length equal to the number of strata specified in \code{strata}, so that only one value is given, this is the hours/nmi in all strata. Optionally, if a single value is enclosed in a list, it is regarded as the total hours/nmi for the entire survey. In this case selecting only a subset of the strata using \code{strata} will increase the effort in the selected strata.
-#' @param SurveySpeed  Numeric: The time to be used for each stratum. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
+#' @param Retour  Logical: If TRUE the transect design will be doubled by a retour.
+#' @param SurveyTime  Numeric: The time to spend in the stratum including transport between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
+#' @param SurveyDistance Numeric: The distance to travel in the stratum including transport between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
+#' @param SurveySpeed Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.
 #' @param Seed Numeric: The seed to use when drawing the random starting point. 
-#' @param Margin Numeric: The margin to use when iterating to fit the survey plan to the desired survey distance (including transport between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.
+#' @param ParameterTable A table specifying the parameters for each stratum to create transect design for. See the Details for a list of required columns.
+#' 
+#' @details
+#' If the \code{ParameterTable} is given the table must contain the following columns:
+#' \describe{
+#'	\item{"StratumName"}{The name of the stratum, which will be matched against the names of the strata in the \code{StratumPolygon}}
+#'	\item{"TransectType"}{See the argument \code{TransectType}}
+#'	\item{"Bearing"}{See the argument \code{Bearing}}
+#'	\item{"BearingAngle"}{If given, this overrides \code{Bearing}. See the argument \code{BearingAngle}}
+#'	\item{"Retour"}{See the argument \code{Retour}}
+#'	\item{"SurveyTime"}{See the argument \code{SurveyTime}}
+#'	\item{"SurveyDistance"}{Overrides the \code{SurveyTime}. See the argument \code{SurveyDistance}}
+#'	\item{"SurveySpeed"}{See the argument \code{SurveySpeed}}
+#'	\item{"Seed"}{See the argument \code{Seed}}
+#' }
+#' 
+#' The following types are implemented through \code{TransectType}:
+#' \describe{
+#'	\item{"Parallel"}{Parallel transects}
+#'	\item{"ZigZagEqualSpacing"}{Equal space zigzag sampler, Strindberg and Buckland (2004). End transects are generated different from Strindberg and Buckland (2004), by mirroring the last transect around the line perpendicular to the survey direction passing through the last intersection point between the stratum border and the parallel lines used to generate the transects.}
+#'	\item{"ZigZagRectangularEnclosure"}{Rectangular enclosure zigzag sampler, Harbitz (2019)}
+#' }
+#' 
+#' @return
+#' An object of StoX data type \code{\link{TransectParameter}}.
+#'
+#' @examples
+#' 
+#' stratumFile <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+#'  )
+#' stratumPolygon <- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile
+#' )
+#' 
+#' parameterTable <- DefineTransectParameter(
+#'  DefinitionMethod = "Parameter", 
+#'  TransectType = "ZigZagRectangularEnclosure", 
+#' 	StratumPolygon = stratumPolygon, 
+#' 	SurveyTime = 200, 
+#' 	SurveySpeed = 10, 
+#' 	Seed = 1, 
+#' 	Bearing = "Along"
+#' )
+#' 
+#' print(parameterTable)
+#'
+#' @export
+#' 
+DefineTransectParameter <- function(
+    processData, UseProcessData = FALSE, 
+    DefinitionMethod = c("Parameter", "ParameterTable", "ResourceFile"), 
+    
+    StratumPolygon,
+    
+    # Arguments specific for DefinitionMethod "Parameter":
+    StratumNames = character(), 
+    TransectType = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing"), 
+    Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), 
+    BearingAngle = numeric(), 
+    Retour = FALSE, 
+    SurveyTime = numeric(), 
+    SurveyDistance = numeric(),
+    SurveySpeed = numeric(), 
+    Seed = numeric(), 
+    
+    # Arguments specific for DefinitionMethod "ParameterTable":
+    ParameterTable = data.table::data.table(),
+    
+    # Arguments specific for DefinitionMethod "ParameterFile" and "ResourceFile":
+    FileName = character()
+){
+    
+    
+    # Return immediately if UseProcessData = TRUE:
+    if(UseProcessData) {
+        return(processData)
+    }
+    
+    # Get the DefinitionMethod:
+    DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
+    
+    # Define the transec parameters as common parameters for the strata given by StratumNames:
+    if(DefinitionMethod == "Parameter") {
+        
+        # Subset the strata:
+        if(length(StratumNames)) {
+            validStratumNames <- getStratumNames(StratumPolygon)
+            if(!any(StratumNames %in% validStratumNames)) {
+                stop("StratumNames can only contain valid stratum names. Possible names are: ", paste(validStratumNames, collapse = ", "))
+            }
+            
+            StratumPolygon <- subsetStratumPolygon(StratumPolygon, StratumNames) 
+        }
+        numberOfStrata <- nrow(StratumPolygon)
+        # Re-extract the StratumNames from the possibly subsetted StratumPolygon:
+        StratumNames <- getStratumNames(StratumPolygon)
+        
+        
+        # Get the TransectType and Bearing:
+        Bearing <- RstoxData::match_arg_informative(Bearing)
+        TransectType <- RstoxData::match_arg_informative(TransectType)
+        
+        # Currently StoX requires seed to be set. This may change in a future release, where empty seed could be accepted:
+        if(!length(Seed) || is.na(Seed)) {
+            stop("Seed must be given!")
+        }
+        
+        # Get the number of strata and repeat all parameters if of length 1:
+        if(numberOfStrata > 1) {
+            if(length(TransectType) == 1) TransectType <- rep(TransectType, numberOfStrata)
+            if(length(Bearing) == 1) Bearing <- rep(Bearing, numberOfStrata)
+            if(length(BearingAngle) == 1) BearingAngle <- rep(BearingAngle, numberOfStrata)
+            if(length(Retour) == 1) Retour <- rep(Retour, numberOfStrata)
+            if(length(SurveyTime) == 1) SurveyTime <- rep(SurveyTime / numberOfStrata, numberOfStrata)
+            if(length(SurveyDistance) == 1) SurveyDistance <- rep(SurveyDistance / numberOfStrata, numberOfStrata)
+            if(length(SurveySpeed) == 1) SurveySpeed <- rep(SurveySpeed, numberOfStrata)
+            if(length(Seed) == 1) Seed <- getSeedVector(Seed, numberOfStrata)
+            #if(length(Margin) == 1) Margin <- rep(Margin, numberOfStrata)
+        }
+        
+        # Compose the parameter table:
+        ParameterList <- list(
+            StratumName = StratumNames, 
+            TransectType = TransectType,
+            Bearing = Bearing,
+            BearingAngle = BearingAngle,
+            Retour = Retour,
+            SurveyTime = SurveyTime,
+            SurveyDistance = SurveyDistance,
+            SurveySpeed = SurveySpeed, 
+            Seed = Seed
+            #Margin = Margin
+        )
+        ParameterTable <- data.table::as.data.table(ParameterList[lengths(ParameterList) > 0])
+        
+        
+    }
+    else if(DefinitionMethod == "ResourceFile") {
+        
+        # Read the parameter file:
+        ParameterTable <- data.table::fread(FileName)
+        
+    }
+    
+    # Format the output:
+    formatOutput(ParameterTable, dataType = "TransectParameter", keep.all = TRUE)
+    
+    return(ParameterTable[])
+}
+
+
+
+
+#' Define transect design
+#'
+#' @inheritParams general_arguments
+#' @inheritParams ProcessData
+#' @param TransectParameterDefinition Character: A string naming the method to use for defining the TransectParameter, one of \code{FunctionParameter} to define the TransectParameter on the fly in this function, or \code{FunctionInput} to import TransectParameter process data generated using the function \code{DefineTransectParameter}.
+#' @param TransectParameterDefinitionMethod Character: A string naming the TransectParameter definition method to use, one of the two options "Parameter", for specifying common parameter for all strata given by \code{StratumNames}, or "ParameterTable", for specifying individual parameters for each stratum in the table \code{ParameterTable}. See \code{\link{DefineTransectParameter}} for details.
+#' @param StratumNames  Character: The names of the strata to include in the transect design. Defaults to all strata.
+#' @param TransectType Character: The name of the type of survey design to create, one of "Parallel", "ZigZagEqualSpacing" and "ZigZagRectangularEnclosure" (see details).
+#' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
+#' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
+#' @param Retour  Logical: If TRUE the transect design will be doubled by a retour.
+#' @param SurveyTime  Numeric: The time to spend in the stratum including transport between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
+#' 
+#' @param SurveyDistance Numeric: The distance to travel in the stratum including transport between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
+#' @param SurveySpeed Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.
+#' @param Seed Numeric: The seed to use when drawing the random starting point. 
+#' @param ParameterTable A table specifying the parameters for each stratum to create transect design for. See the Details for a list of required columns.
+#' @param EqualEffort  Character: A string naming the method to use. See Details for options.
+#' @param OrderAllToursFirst  Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).
+#' @param Margin Numeric: The margin to use when iterating to fit the transect design to the desired survey distance (including transport between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.
 #' 
 #' @details 
-#' The \code{DefineSurveyPlan} function generates the survey plan (transect lines) in a Cartesian coordinate system, and transforms the positions to the geographical coordinate system (longitude, latitude) using the azimuthal equal distance projection, which ensures that distances are preserved in the transformation. 
+#' The \code{TransectDesign} function generates a transect design in a Cartesian coordinate system, and transforms the positions to the geographical coordinate system (longitude, latitude) using the azimuthal equal distance projection, which ensures that distances are preserved in the transformation.
 #' 
-#' The following types are implemented throught \code{DefinitionMethod}:
+#' If the \code{ParameterTable} is given the table must contain the following columns:
 #' \describe{
-#'	\item{"Parallel"}{"Parallel transects"}
-#'	\item{"ZigZagEqualSpacing"}{"Equal space zigzag sampler, Strindberg and Buckland (2004). End transects are generated different from Strindberg and Buckland (2004), by mirroring the last transect around the line perpendicular to the survey direction passing through the last intersection point between the stratum border and the parallel lines used to generate the transects."}
-#'	\item{"ZigZagRectangularEnclosure"}{"Rectangular enclosure zigzag sampler, Harbitz (2019)"}
+#'	\item{"StratumName"}{The name of the stratum, which will be matched against the names of the strata in the \code{StratumPolygon}}
+#'	\item{"TransectType"}{See the argument \code{TransectType}}
+#'	\item{"Bearing"}{See the argument \code{Bearing}}
+#'	\item{"BearingAngle"}{If given, this overrides \code{Bearing}. See the argument \code{BearingAngle}}
+#'	\item{"Retour"}{See the argument \code{Retour}}
+#'	\item{"SurveyTime"}{See the argument \code{SurveyTime}}
+#'	\item{"SurveyDistance"}{Overrides the \code{SurveyTime}. See the argument \code{SurveyDistance}}
+#'	\item{"SurveySpeed"}{See the argument \code{SurveySpeed}}
+#'	\item{"Seed"}{See the argument \code{Seed}}
+#' }
+#' 
+#' The following types are implemented through \code{TransectType}:
+#' \describe{
+#'	\item{"Parallel"}{Parallel transects}
+#'	\item{"ZigZagEqualSpacing"}{Equal space zigzag sampler, Strindberg and Buckland (2004). End transects are generated different from Strindberg and Buckland (2004), by mirroring the last transect around the line perpendicular to the survey direction passing through the last intersection point between the stratum border and the parallel lines used to generate the transects.}
+#'	\item{"ZigZagRectangularEnclosure"}{Rectangular enclosure zigzag sampler, Harbitz (2019)}
 #' }
 #' 
 #' @references 
@@ -33,7 +222,7 @@
 #' Harbitz, A. (2019). A zigzag survey design for continuous transect sampling with guaranteed equal coverage probability. Fisheries Research, 213, 151-159.
 #' 
 #' @return
-#' An object of StoX data type \code{\link{SurveyPlan}}.
+#' An object of StoX data type \code{\link{TransectDesignData}}.
 #'
 #' @examples
 #' library(ggplot2)
@@ -42,14 +231,16 @@
 #'   "testresources", 
 #'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
 #'  )
-#' stratumPolygon<- DefineStratumPolygon(
+#' stratumPolygon <- DefineStratumPolygon(
 #'   DefinitionMethod = "ResourceFile", 
 #'   FileName = stratumFile
 #' )
 #' 
 #' # Harbitz zigzag survey design along each stratum:
-#' surveyPlanZZ_Along <- DefineSurveyPlan(
-#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' transectDesignZZ_Along <- TransectDesign(
+#'  TransectParameterDefinition = "FunctionParameter", 
+#'  TransectParameterDefinitionMethod = "Parameter", 
+#' 	TransectType = "ZigZagRectangularEnclosure", 
 #' 	StratumPolygon = stratumPolygon, 
 #' 	SurveyTime = 200, 
 #' 	SurveySpeed = 10, 
@@ -61,13 +252,15 @@
 #' ggplot() +
 #'   geom_sf(data = stratumPolygon, aes(fill = StratumName), color = 'blue') +
 #'   geom_segment(
-#'     data = surveyPlanZZ_Along, 
+#'     data = transectDesignZZ_Along, 
 #'     aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
 #'   )
 #' 
 #' # Harbitz zigzag survey design across each stratum:
-#' surveyPlanZZ_Across<- DefineSurveyPlan(
-#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' transectDesignZZ_Across <- TransectDesign(
+#'  TransectParameterDefinition = "FunctionParameter", 
+#'  TransectParameterDefinitionMethod = "Parameter", 
+#' 	TransectType = "ZigZagRectangularEnclosure", 
 #' 	StratumPolygon = stratumPolygon, 
 #' 	SurveyTime = 200, 
 #' 	SurveySpeed = 10, 
@@ -78,13 +271,15 @@
 #' ggplot() +
 #'   geom_sf(data = stratumPolygon, aes(fill = StratumName), color = 'blue') +
 #'   geom_segment(
-#'     data = surveyPlanZZ_Across, 
+#'     data = transectDesignZZ_Across, 
 #'     aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
 #'   )
 #' 
 #' # Parallel survey design across each stratum:
-#' surveyPlanParallel_Across<- DefineSurveyPlan(
-#' 	DefinitionMethod = "Parallel", 
+#' transectDesignParallel_Across <- TransectDesign(
+#'  TransectParameterDefinition = "FunctionParameter", 
+#'  TransectParameterDefinitionMethod = "Parameter", 
+#' 	TransectType = "Parallel", 
 #' 	StratumPolygon = stratumPolygon, 
 #' 	SurveyTime = 200, 
 #' 	SurveySpeed = 10, 
@@ -95,121 +290,207 @@
 #' ggplot() +
 #'   geom_sf(data = stratumPolygon, aes(fill = StratumName), color = 'blue') +
 #'   geom_segment(
-#'     data = surveyPlanParallel_Across, 
+#'     data = transectDesignParallel_Across, 
 #'     aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
 #'   )
 #'
 #' @export
 #' 
-DefineSurveyPlan <- function(
-    processData, UseProcessData = FALSE, 
+TransectDesign <- function(
     StratumPolygon, 
     
-    DefinitionMethod = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing", "ResourceFile"), 
-    FileName = character(), 
+    # Use a Transect process data or define parameters on the fly:
+    TransectParameterDefinition = c("FunctionParameter", "FunctionInput"), 
     
+    # If defining parameters on the fly, specify the same parameters for all strata or a table of parameters for each stratum:
+    TransectParameterDefinitionMethod = c("Parameter", "ParameterTable"), 
+    
+    # Arguments specific for DefinitionMethod "Parameter":
     StratumNames = character(), 
-    
+    TransectType = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing"), 
     Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), 
     BearingAngle = numeric(), 
     Retour = FALSE, 
     SurveyTime = numeric(), 
     SurveyDistance = numeric(),
     SurveySpeed = numeric(), 
+    Seed = numeric(), 
+    
+    # Arguments specific for DefinitionMethod "ParameterTable":
+    ParameterTable = data.table::data.table(),
+    
+    # The Transect process data:
+    TransectParameter, 
+    
+    # General arguments irrespective of DefinitionMethod:
     EqualEffort = TRUE, 
     OrderAllToursFirst = FALSE, 
-    # , "AlongAll", "AcrossAll", "AlongAllReversed", "AcrossAllReversed"
-    Seed = numeric(), 
     Margin = 0.1
 ){
-    # Hard code the nunber of points to use when finding the bearing:
-    NumberOfPoints = 1e4
     
-    # Return immediately if UseProcessData = TRUE:
-    if(UseProcessData) {
-        return(processData)
+    # Get the TransectDefinition and TransectDefinitionMethod:
+    TransectParameterDefinition <- RstoxData::match_arg_informative(TransectParameterDefinition)
+    TransectParameterDefinitionMethod <- RstoxData::match_arg_informative(TransectParameterDefinitionMethod)
+    
+    # Use the input Transect if TransectDefinition == "FunctionInput":
+    if(TransectParameterDefinition == "FunctionParameter") {
+        TransectParameter <- DefineTransectParameter(
+            
+            UseProcessData = FALSE, 
+            DefinitionMethod = TransectParameterDefinitionMethod, 
+            
+            StratumPolygon = StratumPolygon, 
+            
+            # Arguments specific for DefinitionMethod "Parameter":
+            StratumNames = StratumNames, 
+            TransectType = TransectType, 
+            Bearing = Bearing, 
+            BearingAngle = BearingAngle, 
+            Retour = Retour, 
+            SurveyTime = SurveyTime, 
+            SurveyDistance = SurveyDistance,
+            SurveySpeed = SurveySpeed, 
+            Seed = Seed, 
+            # Arguments specific for DefinitionMethod "ParameterTable":
+            ParameterTable = ParameterTable
+            
+        )
     }
     
-    DefinitionMethod <- match.arg(DefinitionMethod)
-    
-    if(DefinitionMethod == "ResourceFile") {
-        if(!length(FileName) || !file.exists(FileName)) {
-            stop("FileName must be the path to an existing file.")
-        }
-        
-        SurveyPlan <- data.table::fread(FileName)
-        
-        data.table::setnames(SurveyPlan, names(SurveyPlan), tools::toTitleCase(names(SurveyPlan)))
-        
-        if(!all(c("Stratum", "LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd") %in% names(SurveyPlan))) {
-            stop("The file ", FileName, " does not have column names \"Stratum\", \"LongitudeStart\", \"LatitudeStart\", \"LongitudeEnd\" and \"LatitudeEnd\" (present columns are ", paste(names(SurveyPlan), collapse = ", "), ").")
-        }
-        
-        return(SurveyPlan)
-    }
     
     
-    # Subset the strata:
-    if(length(StratumNames)) {
-        validStratumNames <- getStratumNames(StratumPolygon)
-        if(!any(StratumNames %in% validStratumNames)) {
-            stop("StratumNames can only contain valid stratum names. Possible names are: ", paste(validStratumNames, collapse = ", "))
-        }
-        
-        StratumPolygon <- subsetStratumPolygon(StratumPolygon, StratumNames) 
-    }
     
-    # Get the number of strata and the names:
-    numberOfStrata <- nrow(StratumPolygon)
+    
+    
+    # Create the transect design from table of parameters:
+    TransectDesign <- getTransectDesignFromTable(
+        TransectParameter, 
+        StratumPolygon = StratumPolygon, 
+        EqualEffort = EqualEffort, 
+        OrderAllToursFirst = OrderAllToursFirst, 
+        Margin = Margin
+    )
+    
+    
+    
+    formatOutput(TransectDesign, dataType = "TransectDesign", keep.all = FALSE)
+    
+    return(TransectDesign[])
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Function to create a transect design from a table of parameters:
+getTransectDesignFromTable <- function(
+        patameterTable, 
+        StratumPolygon, 
+        EqualEffort = FALSE, 
+        OrderAllToursFirst = FALSE, 
+        Margin = 0.1, 
+        NumberOfPoints = 1e4
+) {
+    
+    # Subset the StratumPolygon by the stratum names given by the patameterTable:
     stratumNames <- getStratumNames(StratumPolygon)
+    if(!any(patameterTable$StratumName %in% stratumNames)) {
+        stop("StoX: The column StratumName does not contain any of the stratum names of the StratumPolygon.")
+    }
+    if(!all(patameterTable$StratumName %in% stratumNames)){
+        warning("StoX: The following stratum names given by the column StratumName do not exist in the StratumPolygon.: ", paste(setdiff(stratumNames, patameterTable$StratumName), collapse = ", "), ".")
+        patameterTable <- subset(patameterTable, StratumName %in% stratumNames)
+    }
+    
+    # Require seed:
+    if(isEmpty(patameterTable$Seed)) {
+        stop("StoX: Seed must be given as an integer.")
+    }
+    
     # Get the stratum areas:
     stratumArea <- StratumArea(StratumPolygon)
     
-    # Currently StoX requires seed to be set. This may change in a future relese, where empty seed could be accepted:
-    if(!length(Seed)) {
-        stop("Seed must be given!")
-    }
-    
-    Bearing <- match.arg(Bearing)
-    
-    # Get the number of strata and repeat all parameters if of length 1:
-    if(numberOfStrata > 1) {
-        if(length(DefinitionMethod) == 1) DefinitionMethod <- rep(DefinitionMethod, numberOfStrata)
-        if(length(Bearing) == 1) Bearing <- rep(Bearing, numberOfStrata)
-        if(length(BearingAngle) == 1) BearingAngle <- rep(BearingAngle, numberOfStrata)
-        if(length(Retour) == 1) Retour <- rep(Retour, numberOfStrata)
-        if(length(SurveyTime) == 1) SurveyTime <- rep(SurveyTime / numberOfStrata, numberOfStrata)
-        if(length(SurveyDistance) == 1) SurveyDistance <- rep(SurveyDistance / numberOfStrata, numberOfStrata)
-        if(length(SurveySpeed) == 1) SurveySpeed <- rep(SurveySpeed, numberOfStrata)
-        if(length(Seed) == 1) Seed <- getSeedVector(Seed, numberOfStrata)
-        if(length(Margin) == 1) Margin <- rep(Margin, numberOfStrata)
-    }
-    
-    # Repeat the angle if given:
-    if(length(Bearing) && length(BearingAngle) && all(!is.na(BearingAngle))) {
-        warning("StoX: When both Bearing and BearingAngle are given, the Bearing is ignored.")
-    }
-    
     
     # Get the survey distance from time:
-    if(!length(SurveyDistance)) {
-        if(length(SurveyTime) && length(SurveySpeed)) {
-            SurveyDistance <- SurveyTime * SurveySpeed
+    if(isEmpty(patameterTable$SurveyDistance)) {
+        if(!isEmpty(patameterTable$SurveyTime) && !isEmpty(patameterTable$SurveySpeed)) {
+            patameterTable$SurveyDistance <- patameterTable$SurveyTime * patameterTable$SurveySpeed
         }
         else {
-            stop("If SurveyDistance is not given, both of SurveyTime and SurveySpeed must be given!")
+            stop("StoX: If SurveyDistance is not given, both of SurveyTime and SurveySpeed must be given!")
         }
     }
+    # Override the distances if EqualEffort is TRUE
     if(EqualEffort){
-        thisStratumArea <- stratumArea[stratumNames, Area, on = "Stratum"]
-        SurveyDistance <- sum(SurveyDistance) * thisStratumArea / sum(thisStratumArea)
+        thisStratumArea <- stratumArea[patameterTable$StratumName, Area, on = "Stratum"]
+        patameterTable$SurveyDistance <- sum(patameterTable$SurveyDistance) * thisStratumArea / sum(thisStratumArea)
+    }
+    
+    # Add the speed (as NA if not given):
+    if(!length(patameterTable$SurveySpeed)) {
+        patameterTable$SurveySpeed <- NA_real_
     }
     
     
-    
-    # 1. StratumPolygon -> StratumPolygonXY (project to cartesian coordinates which are needed to plan the transects)
-    #   - Get centroid and use that to get projection string
-    #   - Project
     # Get the centroid used when transforming to Cartesian coordinates:
     turn_off_s2(
         commonCentroid <- getCentroid(StratumPolygon, iterativeCentroidCalculation = FALSE) , 
@@ -238,50 +519,75 @@ DefineSurveyPlan <- function(
     
     
     
+    # Create the transect design for each stratum:
+    numberOfStrata <- nrow(patameterTable)
+    TransectDesignList <- vector("list", numberOfStrata)
     
-    
-    
-    
-    SurveyPlanList <- vector("list", numberOfStrata)
+    # Loop through the rows of the patameterTable:
     for(ind in seq_len(numberOfStrata)) {
+        
+        # Subset the StratumPolygon:
+        atThisStratumName <- which(patameterTable$StratumName[ind] == stratumNames)
+        thisStratumPolygon <- StratumPolygon[ind, ]
+        
         # Define a temporary table of x and y:
-        SurveyPlanList[[ind]] <- transectsOneStratum(
-            StratumPolygonOneStratum = StratumPolygon[ind, ], 
-            stratumName = stratumNames[ind], 
-            stratumArea = stratumArea[ind], 
+        TransectDesignList[[ind]] <- transectsOneStratum(
+            # Parameters from the StratumPolygon, which are references using the atThisStratumName:
+            StratumPolygonOneStratum = StratumPolygon[atThisStratumName, ], 
+            stratumName = stratumNames[atThisStratumName], 
+            stratumArea = stratumArea[atThisStratumName], 
+            # General parameters:
             aeqd.CRS = aeqd.CRS, 
             longlat.CRS = longlat.CRS, 
-            DefinitionMethod = DefinitionMethod[ind], 
-            Bearing = Bearing[ind], 
-            BearingAngle = BearingAngle[ind], 
-            Retour = Retour[ind], 
-            SurveyDistance = SurveyDistance[ind], 
-            Seed = Seed[ind], 
-            Margin = Margin[ind], 
+            # Parameters from the patameterTable:
+            TransectType = patameterTable$TransectType[ind], 
+            Bearing = patameterTable$Bearing[ind], 
+            BearingAngle = patameterTable$BearingAngle[ind], 
+            Retour = patameterTable$Retour[ind], 
+            SurveyTime = patameterTable$SurveyTime[ind], 
+            SurveyDistance = patameterTable$SurveyDistance[ind], 
+            SurveySpeed = patameterTable$SurveySpeed[ind], 
+            Seed = patameterTable$Seed[ind], 
+            #Margin = patameterTable$Margin[ind], 
+            Margin = Margin, 
             N = NumberOfPoints
         )
     }
-    names(SurveyPlanList) <- stratumNames
+    
+    names(TransectDesignList) <- patameterTable$StratumName
     
     
     # Convert to start and end position (latitude and longitude):
-    SurveyPlan <- lapply(SurveyPlanList, function(x) lapply(x, XY2startEnd))
-    
+    TransectDesign <- lapply(TransectDesignList, function(x) lapply(x, XY2startEnd))
     
     
     # Rbind the segments per stratum:
-    SurveyPlan <- lapply(SurveyPlan, data.table::rbindlist, idcol = "Transect")
+    TransectDesign <- lapply(TransectDesign, data.table::rbindlist, idcol = "Transect")
     # Add input survey speed:
-    SurveyPlan <- mapply(cbind, SurveyPlan, lapply(SurveySpeed, function(x) data.table::setnames(data.table::data.table(x), "Speed")), SIMPLIFY = FALSE)
+    TransectDesign <- mapply(cbind, TransectDesign, lapply(patameterTable$SurveySpeed, function(x) data.table::setnames(data.table::data.table(x), "Speed")), SIMPLIFY = FALSE)
     # Rbind strata:
-    SurveyPlan <- data.table::rbindlist(SurveyPlan, idcol = "Stratum")
+    TransectDesign <- data.table::rbindlist(TransectDesign, idcol = "Stratum")
     # Insert a sequence of segment indices:
-    #SurveyPlan[, Segment := paste("S", factor(paste(Stratum, sprintf("%06d", Segment))))]
+    #TransectDesign[, Segment := paste("S", factor(paste(Stratum, sprintf("%06d", Segment))))]
     
-    SurveyPlan <- formatOutput(SurveyPlan, dataType = "SurveyPlan", keep.all = FALSE)
+    if(OrderAllToursFirst) {
+        TransectDesign <- rbind(
+            subset(TransectDesign, Direction == "Tour"), 
+            subset(TransectDesign, Direction == "Retour")[rev(seq_len(nrow(TransectDesign))), ]
+        )
+    }
     
-    return(SurveyPlan[])
+    return(TransectDesign)
 }
+
+
+
+
+
+isEmpty <- function(x) {
+    length(x) == 0 || any(is.na(x))
+}
+
 
 
 XY2startEnd <- function(x) {
@@ -331,7 +637,7 @@ XY2startEnd <- function(x) {
 getBearingOneStratum <- function(StratumPolygonOneStratumXY, Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), N = 1e3) {
     
     # Get the bearing as either "Along", "Across", "AlongReversed" or "AcrossReversed":
-    Bearing <- match.arg(Bearing)
+    Bearing <- RstoxData::match_arg_informative(Bearing)
     
     # Extract the coordinates:
     xy <- subset(data.table::as.data.table(sf::st_coordinates(StratumPolygonOneStratumXY)), select = c("X", "Y"))
@@ -455,13 +761,13 @@ getTransectsOneDirection <- function(
         corners, 
         StratumPolygonOneStratumXY, 
         Seed = 0, 
-        DefinitionMethod = "Parallel", 
+        TransectType = "Parallel", 
         Retour = FALSE
 ){
     
     # If we are on a retour, reverse the order of the grid points:
     # The downRandom is TRUE for even and FALSE for odd values of Seed but only for parallel:
-    if(tolower(DefinitionMethod) != "parallel" ){
+    if(tolower(TransectType) != "parallel" ){
         downRandom <- FALSE
     }
     else {
@@ -472,7 +778,7 @@ getTransectsOneDirection <- function(
     }
     
     # For parallel transects we need to shift by the halfTransectSpacing on the retour:
-    if(tolower(DefinitionMethod) == "parallel" && Retour){
+    if(tolower(TransectType) == "parallel" && Retour){
         halfTransectSpacing <- diff(xGrid[1:2]) / 2
         xGrid <- xGrid + halfTransectSpacing
     }
@@ -489,7 +795,7 @@ getTransectsOneDirection <- function(
     gridList <- lapply(gridList, as.matrix)
     
     # For Harbitz zigzag transects with equal coverage, convert the grid to zigzag lines, by selecting every other point:
-    if(tolower(DefinitionMethod) == tolower("ZigZagRectangularEnclosure")){
+    if(tolower(TransectType) == tolower("ZigZagRectangularEnclosure")){
         # Apply the ordering of the grid prior to linking consecutive high-high and low-low points:
         #gridList <- linkClosestByDistance(gridList, down = downRandom)
         gridList <- alternateTransectDirections(gridList, down = downRandom)
@@ -513,16 +819,11 @@ getTransectsOneDirection <- function(
     
     
     # For ZigZagEqualSpacing transects, set the end point of each transect to the start point of the next:
-    if(tolower(DefinitionMethod) == tolower("ZigZagEqualSpacing")){
+    if(tolower(TransectType) == tolower("ZigZagEqualSpacing")){
         
         if(length(intersectsCoordsList) == 1) {
-            stop("Isufficient effort to produce one zig zag transect in the stratum ", StratumPolygonOneStratumXY$StratumName, ". Please increase effort or choose a different DefinitionMethod (e.g. \"Parallel\").")
+            stop("Insufficient effort to produce one zig zag transect in the stratum ", StratumPolygonOneStratumXY$StratumName, ". Please increase effort or choose a different TransectType (e.g. \"Parallel\").")
         }
-        
-        ### # The ZigZagEqualSpacing method requires at least 2 grid lines to intersect with the polygon:
-        ### if(length(intersectsCoordsList) < 2) {
-        ###     stop("The DefinitionMethod \"ZigZagEqualSpacing\" requires at least two grid lines intersecting with the polygon. Increase the effort or choose an different DefinitionMethod.")
-        ### }
         
         # Convert to zigzag by selecting the last point in each transect, requiring that the transects are in alternate order, as obtained by alternateTransectDirections() above:
         intersectsCoordsListZigZag <- parallel2zigzag(intersectsCoordsList)
@@ -557,13 +858,13 @@ getTransectsOneDirection <- function(
         intersectsCoordsList <- rev(intersectsCoordsList)
         
         # 
-        if(! DefinitionMethod %in% c("ZigZagEqualSpacing", "ZigZagRectangularEnclosure")){
+        if(! TransectType %in% c("ZigZagEqualSpacing", "ZigZagRectangularEnclosure")){
             intersectsCoordsList <- lapply(intersectsCoordsList, function(x) x[seq(nrow(x), 1), , drop = FALSE])
         }
     }
     
-    # Add a column denoting tour or retour:
-    intersectsCoordsList <- lapply(intersectsCoordsList, cbind, Retour = Retour)
+    # Add a column denoting tour or retour. This must be numeric since we need a numeric matrix as input to sf::st_linestring later:
+    intersectsCoordsList <- lapply(intersectsCoordsList, cbind, DirectionNumeric = as.numeric(Retour))
     
     
     return(intersectsCoordsList)
@@ -780,7 +1081,7 @@ getTransectsByArea <- function(
     startPositionFactor, 
     corners, 
     StratumPolygonOneStratumXY, 
-    DefinitionMethod = "Parallel", 
+    TransectType = "Parallel", 
     BearingAngle = 0, 
     Seed = 0, 
     Retour = FALSE
@@ -806,7 +1107,7 @@ getTransectsByArea <- function(
         corners = corners, 
         StratumPolygonOneStratumXY = StratumPolygonOneStratumXY, 
         Seed = Seed, 
-        DefinitionMethod = DefinitionMethod, 
+        TransectType = TransectType, 
         Retour = FALSE
     )
     if(Retour){
@@ -817,7 +1118,7 @@ getTransectsByArea <- function(
                 corners = corners, 
                 StratumPolygonOneStratumXY = StratumPolygonOneStratumXY, 
                 Seed = Seed, 
-                DefinitionMethod = DefinitionMethod, 
+                TransectType = TransectType, 
                 Retour = TRUE
             )
         )
@@ -839,20 +1140,27 @@ transectsOneStratum <- function(
         stratumArea, 
         aeqd.CRS, 
         longlat.CRS, 
-        DefinitionMethod = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing"), 
+        TransectType = c("Parallel", "ZigZagRectangularEnclosure", "ZigZagEqualSpacing"), 
         Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), 
         BearingAngle = numeric(), 
         Retour = FALSE, 
+        SurveyTime = numeric(),
         SurveyDistance = numeric(),
+        SurveySpeed = numeric(),
         Seed = numeric(), 
         Margin = 0, 
         N = 1e3
 ){
     
+    # Repeat the angle if given:
+    if(length(Bearing) && length(BearingAngle) && !is.na(BearingAngle)) {
+        warning("StoX: When both Bearing and BearingAngle are given, the Bearing is ignored.")
+    }
+    
     # Transform to Cartesian coordinates:
     StratumPolygonOneStratumXY <- sf::st_transform(StratumPolygonOneStratum, aeqd.CRS)
     
-    # 2. Get the bearing angle:
+    # 2. Get the bearing angle from Bearing, if given and BearingAngle is not already given:
     if(!length(BearingAngle) || is.na(BearingAngle)) {
         BearingAngle <- getBearingOneStratum(
             StratumPolygonOneStratumXY = StratumPolygonOneStratumXY, 
@@ -894,7 +1202,7 @@ transectsOneStratum <- function(
     
     # The is the distance that is available for the design, apart from the actual travel distance if crossing the stratum along the x-axis:
     freeSurveyDistance <- SurveyDistance - lengthOfStratum
-    message("StoX: SurveyPlan for Stratum ", stratumName, "...")
+    message("StoX: TransectDesign for Stratum ", stratumName, "...")
     
     
     # Get the random seed point for the transects:
@@ -907,7 +1215,7 @@ transectsOneStratum <- function(
         startPositionFactor = startPositionFactor, 
         corners = corners, 
         StratumPolygonOneStratumXY = StratumPolygonOneStratumXY, 
-        DefinitionMethod = DefinitionMethod, 
+        TransectType = TransectType, 
         BearingAngle = BearingAngle, 
         Seed = Seed, 
         Retour = Retour
@@ -946,7 +1254,7 @@ transectsOneStratum <- function(
                 startPositionFactor = startPositionFactor, 
                 corners = corners, 
                 StratumPolygonOneStratumXY = StratumPolygonOneStratumXY, 
-                DefinitionMethod = DefinitionMethod, 
+                TransectType = TransectType, 
                 BearingAngle = BearingAngle, 
                 Seed = Seed, 
                 Retour = Retour
@@ -989,7 +1297,6 @@ transectsOneStratum <- function(
     }
     
     
-    
     # Get x,y coordinates of the transects:
     # Create a collection of linestrings:
     lines = lapply(intersectsCoordsList, sf::st_linestring)
@@ -1014,12 +1321,7 @@ transectsOneStratum <- function(
     lines <- lapply(lines, subset, select = c("X", "Y"))
     
     # Add the Retour:
-    lines <- mapply(cbind, lines, Retour = lapply(intersectsCoordsList, "[", , "Retour"), SIMPLIFY = FALSE)
-    
-    # Remove duplicates. This may be risky, but duplicates points are confusing:
-    #print(lines)
-    #lines <- lapply(lines, unique)
-    #print(lines)
+    lines <- mapply(cbind, lines, Direction = lapply(intersectsCoordsList, from01ToTourRetour), SIMPLIFY = FALSE)
     
     # Add transect IDs as names of the list of lines:
     numberOfTransects <- length(lines)
@@ -1037,6 +1339,12 @@ transectsOneStratum <- function(
 ############################################################
 ############################################################
 
+
+# Small function to convert from 0/1 to "Tour"/"Retour":
+# x is a numeric matrix:
+from01ToTourRetour <- function(x) {
+    ifelse(x[, "DirectionNumeric"] == 0, "Tour", "Retour")
+}
 
 
 getTotalSailedDist <- function(list, includeTransport = TRUE) {
@@ -1106,7 +1414,7 @@ addTransportToSegments <- function(
     
     # Create transports:
     transports <- lapply(seq_len(nrow(segments) - 1), function(ind) cbind(segments[ind, ..endNames], segments[ind + 1, ..startNames]))
-    # Add the a final dummy transport from the last end point to itself, useful if we want to extract only start positions (used in WriteSurveyPlan()):
+    # Add the a final dummy transport from the last end point to itself, useful if we want to extract only start positions (used in WriteTransectDesign()):
     if(addLast0Transport) {
         lastEndPoint <- segments[nrow(segments), ..endNames]
         transports[[length(transports) + 1]] <- structure(cbind(lastEndPoint, lastEndPoint), names = c(endNames, startNames))
@@ -1120,7 +1428,7 @@ addTransportToSegments <- function(
     }
     data.table::setcolorder(transports, colnames_segments)
     
-    # Add the transports to a table of positions
+    # Add the transports to a table of positions:
     output <- list(segments, transports)
     names(output) <- c("Segment", "Transport")
     output <- data.table::rbindlist(output, idcol = "SegmentType")
@@ -1136,6 +1444,7 @@ addTransportToSegments <- function(
         #output[seq(1, nrow(output), 2), ] <- segments
         #output[seq(2, nrow(output), 2), ] <- transports
     }
+    
     
     return(output)
 }
@@ -1190,7 +1499,7 @@ sampleStartPositionFactor <- function(seed) {
 
 
 
-#' Report a survey plan with additional information
+#' Report a transect design with additional information
 #'
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
@@ -1206,12 +1515,12 @@ sampleStartPositionFactor <- function(seed) {
 #'   DefinitionMethod = "ResourceFile", 
 #'   FileName = stratumFile
 #' )
-#' # Get the area of the strata for use in ReportSurveyPlan():
+#' # Get the area of the strata for use in ReportTransectDesign():
 #' stratumAreaData <- StratumArea(stratumPolygon)
 #' 
 #' # Harbitz zigzag survey design along each stratum:
-#' surveyPlanZZ_Along <- DefineSurveyPlan(
-#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' transectDesignZZ_Along <- TransectDesign(
+#' 	TransectType = "ZigZagRectangularEnclosure", 
 #' 	StratumPolygon = stratumPolygon, 
 #' 	SurveyTime = 200, 
 #' 	SurveySpeed = 10, 
@@ -1219,50 +1528,55 @@ sampleStartPositionFactor <- function(seed) {
 #' 	Bearing = "Along"
 #' )
 #' 
-#' # Report the SurveyPlan:
-#' ReportSurveyPlan(surveyPlanZZ_Along, stratumAreaData)
+#' # Report the TransectDesign:
+#' ReportTransectDesign(transectDesignZZ_Along, stratumAreaData)
 #' 
 #' @return
-#' An object of StoX data type \code{\link{ReportSurveyPlanData}}.
+#' An object of StoX data type \code{\link{ReportTransectDesignData}}.
 #' 
 #' @export
 #' 
-ReportSurveyPlan <- function(
-    SurveyPlan, 
+ReportTransectDesign <- function(
+    TransectDesignData, 
     StratumAreaData
 ){
-    if(!length(SurveyPlan)) {
-        stop("The input SurveyPlan must be given")
+    if(!length(TransectDesignData)) {
+        stop("The input TransectDesignData must be given")
     }
     if(!length(StratumAreaData)) {
         stop("The input StratumAreaData must be given")
     }
     
-    # Create a list of the tables Segment and Stratum:
-    Segment <- data.table::copy(SurveyPlan)
-    SegmentWithTransport <- addTransportToSegments(Segment)
+    # Create a list of the tables Transect and Stratum:
+    Transect <- addTransportToSegments(TransectDesignData)
     
     # Add distances
-    Segment[, Distance := distanceStartToEnd(.SD)]
-    SegmentWithTransport[, Distance := distanceStartToEnd(.SD)]
+    Transect[, Distance := distanceStartToEnd(.SD)]
+    # Add durations
+    Transect[, Duration := Distance / Speed]
     
+    # Remove extremely short transports, 1e-3 nautical miles, 1.8 m:
+    margin <- 1e-3
+    Transect <- subset(Transect, ! (SegmentType == "Transport" & Distance <= margin))
     
-    Stratum <- SegmentWithTransport[, .(
-        DistanceSegment = sum(Distance * as.numeric(SegmentType == "Segment")), 
+    Stratum <- Transect[, .(
+        DistanceTransect = sum(Distance * as.numeric(SegmentType == "Transect")), 
         DistanceTransport = sum(Distance * as.numeric(SegmentType == "Transport")), 
         Distance = sum(Distance), 
         Speed = Speed[1]), 
         by = "Stratum"
     ]
     Stratum <- merge(Stratum, StratumAreaData, all.x = TRUE)
-    Stratum[, Coverage := DistanceSegment / sqrt(Area)]
-    Stratum[, Time := Distance / Speed]
+    Stratum[, Coverage := DistanceTransect / sqrt(Area)]
+    Stratum[, Duration := Distance / Speed]
     
+    # Create an output with three tables, one for the transects WITHOUT transport, one for the transects WITH transport, and one for the stratum, which is based on the transects WITH transport:
     output <- list(
-        Segment = Segment, 
-        SegmentWithTransport = SegmentWithTransport, 
+        Transect = Transect, 
         Stratum = Stratum
     )
+    
+    # Should we use formatOutput here???
     
     return(output)
 }
@@ -1301,10 +1615,13 @@ distanceStartToEnd <- function(segment) {
 
 
 
-#' Write a survey plan to a GPX file.
+#' Write a transect design to GPX file(s).
 #'
-#' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' @inheritParams general_file_plot_arguments
+#' @param Format The format of the output files. Currently the only option is "GPX", which prodices files that can be read by the Olex software.
+#' @param TrackGroupingVariables Character: A vector of one or more variables to group the tracks by in the file(s). Possible values are "Stratum", "Direction" and "Transect".
+#' @param FileGroupingVariables Character: A vector of one or more variables to group the files by. Possible values are "Stratum" and "Direction". One file is written for each combination of the \code{FileGroupingVariables}. 
 #' 
 #' @examples
 #' 
@@ -1320,8 +1637,8 @@ distanceStartToEnd <- function(segment) {
 #' )
 #' 
 #' # Harbitz zigzag survey design along each stratum:
-#' surveyPlanZZ_Along <- DefineSurveyPlan(
-#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' transectDesignZZ_Along <- TransectDesign(
+#' 	TransectType = "ZigZagRectangularEnclosure", 
 #' 	StratumPolygon = stratumPolygon, 
 #' 	SurveyTime = 200, 
 #' 	SurveySpeed = 10, 
@@ -1329,12 +1646,13 @@ distanceStartToEnd <- function(segment) {
 #' 	Bearing = "Along"
 #' )
 #' 
-#' # Convert the survey plan to an sf object and write this as a gpx file 
+#' # Convert the transect design to an sf object and write this as a gpx file 
 #' # (this is done automatically by RstoxFramework in StoX):
-#' gpxData <- WriteSurveyPlan(surveyPlanZZ_Along)
+#' gpxData <- WriteTransectDesign(transectDesignZZ_Along)
 #' filePath <- tempfile(fileext = ".gpx")
+#' layers <- c("geometry", "track_name", "track_fid", "track_seg_id", "track_seg_point_id")
 #' st_write(
-#'      gpxData,
+#'      subset(gpxData, select = layers),
 #'      dsn = filePath,
 #'      layer = "track_points",
 #'      driver = "GPX"
@@ -1345,24 +1663,37 @@ distanceStartToEnd <- function(segment) {
 #'  identical(gpxData, gpxData_backin)
 #' 
 #' @return
-#' An object of StoX data type \code{\link{WriteSurveyPlanData}}.
+#' An object of StoX data type \code{\link{WriteTransectDesignData}}.
 #' 
 #' @export
 #' 
-WriteSurveyPlan <- function(
-    SurveyPlan, 
-    Format = c("GPX", "Ruter")#, 
+WriteTransectDesign <- function(
+    TransectDesignData, 
+    Format = c("GPX"), 
+    TrackGroupingVariables = character(), 
+    FileGroupingVariables = character()
+    #, 
     #SplitByStratum or stratum and tourRetour??????
 ){
+    
+    if(!length(TransectDesignData)) {
+        stop("The TransectDesignData is empty.")
+    }
+    
+    
+    # The FileGroupingVariables must be a subset of the TrackGroupingVariables:
+    if(length(FileGroupingVariables) && !all(FileGroupingVariables %in% TrackGroupingVariables)) {
+        stop("The FileGroupingVariables must be identical or a subset of the TrackGroupingVariables")
+    }
     
     Format <- RstoxData::match_arg_informative(Format)
     
     # Create a list of the tables Segment and Stratum:
-    SegmentWithTransport <- addTransportToSegments(SurveyPlan, addLast0Transport = TRUE)
+    SegmentWithTransport <- addTransportToSegments(TransectDesignData, addLast0Transport = TRUE)
     
     if(Format == "GPX") {
         output <- sf::st_as_sf(
-            subset(SegmentWithTransport, select = c("LongitudeStart", "LatitudeStart")), 
+            subset(SegmentWithTransport, select = c("Stratum", "Direction", "LongitudeStart", "LatitudeStart")), 
             coords = c("LongitudeStart", "LatitudeStart")
         )
         
@@ -1373,15 +1704,47 @@ WriteSurveyPlan <- function(
         
         output$track_name <- SegmentWithTransport$Stratum
         
+        
         # The driver translates to integers starting from 0, so we do this here explicitely to avoid confusion:
         output$track_fid <- as.integer(factor(SegmentWithTransport$Stratum)) - 1L
-        output$track_seg_id <- as.integer(sub(".*_", "", SegmentWithTransport$Transect)) - 1L
+        
+        # The track id is controlled by the GroupingVariables:
+        if(length(TrackGroupingVariables)) {
+            #trackID <- SegmentWithTransport[, do.call(paste, lapply(as.list(TrackGroupingVariables), function(x)  eval(get(x))), sep = "_")]
+            
+            trackID <- do.call(paste, c(SegmentWithTransport[, ..TrackGroupingVariables], list(sep = "_")))
+        }
+        # If the TrackGroupingVariables is not given, create one single route for the entire stratum:
+        else {
+            trackID <- 1L
+        }
+        
+        
+        #output$track_seg_id <- as.integer(sub(".*_", "", SegmentWithTransport$Transect)) - 1L
+        output$track_seg_id <- match(trackID, unique(trackID)) - 1L
         #output$track_seg_point_id <- as.integer(sub(".*_", "", SegmentWithTransport$Segment)) - 1L
-        output$track_seg_point_id <- unlist(by(output, paste(output$track_fid, output$track_seg_id), FUN = function(x) seq_len(nrow(x)))) - 1L
+        output$track_seg_point_id <- unlist(
+            by(
+                output, 
+                paste(output$track_fid, output$track_seg_id), 
+                FUN = function(x) seq_len(nrow(x))
+            )) - 1L
+        
+        
+        # Split into a list of simple features, which will be written as individual files by RstoxFramework:
+        if(length(FileGroupingVariables)) {
+            # Define the file IDs as a concatenation of the columns specified by FileGroupingVariables:
+            fileID <-  do.call(paste, c(SegmentWithTransport[, ..FileGroupingVariables], list(sep = "_")))
+            # Split the sf object:
+            output <- split(output, f = fileID)
+            # Add names which will be used as file names:
+            names(output) <- unique(fileID)
+        }
     }
     else if(Format == "Ruter") {
         
-        warning("StoX: Using Format = \"Ruter\" is experimental.")
+        
+        warning("StoX: Exporting files in the Ruter format is experimental. The file extension may need to be changed to use these files in Olex.")
         
         symbol <- "Brunsirkel"
         
@@ -1389,14 +1752,53 @@ WriteSurveyPlan <- function(
         SegmentWithTransport[, LongitudeStart := LongitudeStart * 60]
         SegmentWithTransport[, LatitudeStart := LatitudeStart * 60]
         
-        # Create individual points:
-        output <- SegmentWithTransport[, .(Ruter = paste(LatitudeStart, LongitudeStart, 0, symbol, collapse = "\n")), by = "Stratum"]
         
-        # Add one blank line between strata:
-        output <- unlist(lapply(output$Ruter, function(x) c("Rute uten navn", x, "")))
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        # The track id is controled by the GroupingVariables:
+        if(length(TrackGroupingVariables)) {
+            trackID <- do.call(paste, c(SegmentWithTransport[, ..TrackGroupingVariables], list(sep = "_")))
+        }
+        # If the TrackGroupingVariables is not given, create one single route for the entire stratum:
+        else {
+            trackID <- "Rute uten navn"
+        }
+        
+        # Split into a list of simple features, which will be written as individual files by RstoxFramework:
+        if(length(FileGroupingVariables)) {
+            # Define the file IDs as a concatenation of the columns specified by FileGroupingVariables:
+            fileID <-  do.call(paste, c(SegmentWithTransport[, ..FileGroupingVariables], list(sep = "_")))
+        }
+        else {
+            # Set the class, which will be used in RstoxFramework when writing the output file:
+            fileID <- "Ruter"
+        }
+        
+        # Create a vector of lines in the Ruter format:
+        output <- SegmentWithTransport[, paste(LatitudeStart, LongitudeStart, 0, symbol)]
+        
+        # Add track names with a line space before each name:
+        atNonDup <- which(!duplicated(trackID))
+        output[atNonDup] <- paste("", unique(trackID), output[atNonDup], sep = "\n")
+        
+        # Split by fileID and name the list elements by the file names:
+        output <- split(output, f = fileID)
+        
+        # Split by line space to get one vector element per line:
+        output <- lapply(output, function(x) unlist(strsplit(x, "\n")))
+        
+        # Remove the black line at the start of each file:
+        output <- lapply(output, function(x) if(nchar(x[1]) == 0) x[-1] else x)
         
         # Set the class, which will be used in RstoxFramework when writing the output file:
-        class(output) <- "Ruter"
+        lapply(output, `class<-`, value = "Ruter")
     }
     
     return(output)
@@ -1421,9 +1823,9 @@ WriteSurveyPlan <- function(
 
 
 ############################
-#' Plot a survey plan.
+#' Plot a transect design.
 #'
-#' @inheritParams ProcessData
+#' @inheritParams ModelData
 #' @inheritParams PlotAcousticTrawlSurvey
 #' @inheritParams general_plot_arguments
 #' @inheritParams general_file_plot_arguments
@@ -1444,8 +1846,8 @@ WriteSurveyPlan <- function(
 #' )
 #' 
 #' # Harbitz zigzag survey design along each stratum:
-#' surveyPlanZZ_Along <- DefineSurveyPlan(
-#' 	DefinitionMethod = "ZigZagRectangularEnclosure", 
+#' transectDesignZZ_Along <- TransectDesign(
+#' 	TransectType = "ZigZagRectangularEnclosure", 
 #' 	StratumPolygon = stratumPolygon, 
 #' 	SurveyTime = 200, 
 #' 	SurveySpeed = 10, 
@@ -1453,15 +1855,19 @@ WriteSurveyPlan <- function(
 #' 	Bearing = "Along"
 #' )
 #' 
-#' WriteSurveyPlan(surveyPlanZZ_Along)
+#' PlotTransectDesign(
+#'   transectDesignZZ_Along, 
+#'   ShowStratumPolygon = TRUE, 
+#'   StratumPolygon = stratumPolygon
+#' )
 #' 
 #' @return
-#' An object of StoX data type \code{\link{WriteSurveyPlanData}}.
+#' An object of StoX data type \code{\link{WriteTransectDesignData}}.
 #' 
 #' @export
 #' 
-PlotSurveyPlan <- function(
-    SurveyPlan,
+PlotTransectDesign <- function(
+    TransectDesignData,
     
     # Options for the track line and points:
     UseDefaultTrackSettings = TRUE, 
@@ -1522,9 +1928,14 @@ PlotSurveyPlan <- function(
     if(!missing(StratumPolygon)) {
         ShowStratumPolygon <- TRUE
     }
+    else {
+        if(ShowStratumPolygon) {
+            stop("StoX: StratumPolygon must be given.")
+        }
+    }
     
     # Set the default of the StoX function. These are defaults defined in the stoxFunctionAttributes.
-    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotSurveyPlan", stoxFunctionAttributes = stoxFunctionAttributes)
+    plotArguments <- setDefaultsInStoxFunction(plotArguments, StoxFunctionName = "PlotTransectDesign", stoxFunctionAttributes = stoxFunctionAttributes)
 
     
     # Split axis titles into x and y:
@@ -1535,9 +1946,9 @@ PlotSurveyPlan <- function(
         plotArguments, 
         list(
             # Add Stratum as a grouping variable:
-            trackLinesBy <- "Stratum", 
+            trackLinesBy = "Stratum", 
             # Solid line for tour and dashed for retour:
-            linetype.track <- "Retour", 
+            linetype.track = "Direction", 
             lon_name = "LongitudeStart", 
             lat_name = "LatitudeStart", 
             lon_name_end = "LongitudeEnd", 
@@ -1546,9 +1957,9 @@ PlotSurveyPlan <- function(
         )
     )
     
-    # Special care to add the positions, as we need Retour to be factor when plotting:
-    SurveyPlan$Retour <- as.factor(SurveyPlan$Retour)
-    plotArguments$x <- SurveyPlan
+    # Special care to add the positions, as we need Direction to be factor when plotting:
+    TransectDesignData$Direction <- as.factor(TransectDesignData$Direction)
+    plotArguments$x <- TransectDesignData
     
     
     # Define the translation from the inputs to this function to the inputs to plot_lon_lat:
@@ -1587,17 +1998,8 @@ PlotSurveyPlan <- function(
     
     
     
-    # Create a table with Longitude, Latitude and Stratum to plot:
-    #plotArguments$x <- data.table::data.table(
-    #    Longitude = c(t(subset(SurveyPlan, select = c("LongitudeStart", "LongitudeEnd")))), 
-    #    Latitude = c(t(subset(SurveyPlan, select = c("LatitudeStart", "LatitudeEnd")))), 
-    #    Stratum = c(t(subset(SurveyPlan, select = c("Stratum", "Stratum")))), 
-    #    Type = rep(c("Transect", "Transport"), length.out = 2 * nrow(SurveyPlan)), 
-    #    Retour = as.factor(rep(SurveyPlan$Retour, each = 2))
-    #)
     
-    
-    # Add StratumPolygon:
+    # Set empty StratumPolygon if it should not be shown:
     if(!ShowStratumPolygon) {
         plotArguments$StratumPolygon <- NULL
     }
@@ -1610,51 +2012,10 @@ PlotSurveyPlan <- function(
     )
     
     
-    
-    
-    
+
     output <- do.call(plot_lon_lat, plotArguments)
     
     
-    
-    ### # Plot the stratumPolygon with the segments
-    ### output <- ggplot2::ggplot() +
-    ###     ggplot2::geom_sf(data = StratumPolygon, ggplot2::aes(fill = StratumName), color = 'blue') +
-    ###     ggplot2::geom_segment(
-    ###         data = SurveyPlan, 
-    ###         ggplot2::aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
-    ###     )
-    ### 
-    ### 
-    ### lonlat <- SurveyPlan[, .(Longitude = c(LongitudeStart, LongitudeEnd), Latitude = c(LatitudeStart, LatitudeEnd))]
-    ### 
-    ### output <- zoom_lon_lat(
-    ###     x = lonlat, 
-    ###     lon = "Longitude", 
-    ###     lat = "Latitude", 
-    ###     xmin = LongitudeMin, 
-    ###     xmax = LongitudeMax, 
-    ###     ymin = LatitudeMin, 
-    ###     ymax = LatitudeMax, 
-    ###     zoom = Zoom, 
-    ###     zoomCenter = c(LongitudeCenter, LatitudeCenter)
-    ### ) + 
-    ### ggplot2::xlab("Longitude") + 
-    ### ggplot2::ylab("Latitude") + 
-    ### ggplot2::ggtitle(Title)
-    
-    
-    #output <- output + ggplot2::theme(
-    #    axis.title.x = ggplot2::element_text(size = if(length(lll$axis.title.size.x)) lll$axis.title.size.x else 10), 
-    #    axis.title.y = ggplot2::element_text(size = if(length(lll$axis.title.size.y)) lll$axis.title.size.y else 10), 
-    #    axis.text.x = ggplot2::element_text(size = if(length(lll$axis.text.size.x)) lll$axis.text.size.x else 10), 
-    #    axis.text.y = ggplot2::element_text(size = if(length(lll$axis.text.size.y)) lll$axis.text.size.y else 10), 
-    #    legend.text = ggplot2::element_text(size = if(length(lll$legend.text.size)) lll$legend.text.size else 10), 
-    #    legend.title = ggplot2::element_text(size = if(length(lll$legend.title.size)) lll$legend.title.size else 10),
-    #    panel.background = ggplot2::element_rect(fill = color.ocean, color = "grey80"),
-    #    panel.grid.major = ggplot2::element_line(color = color.grid), 
-    #    panel.grid.minor = ggplot2::element_line(color = color.grid)
-    #)
     
     output <- setPlotAttributes(
         plotObject = output, 

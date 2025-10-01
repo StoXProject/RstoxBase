@@ -7,5 +7,5 @@
 The AssignmentLengthDistributionData model data is a table of averaged length distribution for each combination of Stratum (acoustic)PSU and (acoustic)Layer.
 }
 \seealso{
-This data type is produced by \code{\link{AssignmentLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{AssignmentLengthDistribution}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 }

@@ -350,6 +350,10 @@ initiateRstoxBase <- function(){
             ), 
             VariableNames = list()
         ), 
+        TransectDesign = list(
+            horizontalResolution = c("Stratum", "Transect", "Segment"), 
+            other = c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd", "Speed", "Direction", "Distance")
+        ), 
         BioticAssignment = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = "Layer", 
@@ -374,11 +378,10 @@ initiateRstoxBase <- function(){
             ), 
             PSUByTime = PSUByTime
         ), 
-        SurveyPlan = list(
-            horizontalResolution = c("Stratum", "Transect", "Segment"), 
-            other = c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd", "Speed", "Retour")
-        )#, 
-        #, 
+        TransectParameter = list(
+            other = c("StratumName", "TransectType", "Bearing", "BearingAngle", "Retour", "SurveyTime", "SurveyDistance", "SurveySpeed", "Seed")
+        )
+        
         #AcousticPSUByTime = list(
         #    horizontalResolution = c("Stratum", "PSU"), 
         #    categoryVariable = "Cruise", 
@@ -939,9 +942,9 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 
 
 
-#' Function to format the output of a function returning StoX data (ModelData or ProcessData).
+#' Function to format the output (by reference) of a function returning StoX data (ModelData or ProcessData).
 #' 
-#' The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables.
+#' The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables. The input is modified by reference using data.table.
 #' 
 #' @param data A table or list of tables to return from the StoX function.
 #' @param dataType The data type to format against.

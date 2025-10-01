@@ -811,8 +811,8 @@ RelativeLengthDistribution <- function(LengthDistributionData) {
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineBioticLayer}.
-#' @param LayerDefinitionMethod See \code{\link{DefineBioticLayer}}
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, or \code{FunctionInput} to import Layer process data generated using the function \code{DefineBioticLayer}.
+#' @param LayerDefinitionMethod See the argument \code{DefinitionMethod} in \code{\link{DefineBioticLayer}}.
 #' @inheritParams DefineBioticLayer
 #' 
 #' @return
@@ -855,14 +855,14 @@ SumLengthDistribution <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams ProcessData
-#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data from a previously run process using the function \code{DefineBioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.
-#' @param LayerDefinitionMethod See \code{\link{DefineBioticLayer}}
+#' @param LayerDefinition The method to use for defining the Layers, one of \code{FunctionParameter} to define the Layers on the fly in this function, \code{FunctionInput} to import Layer process data generated using the function \code{DefineBioticLayer}, or \code{PreDefined} whihc requires \code{SumLengthDistributionData} as input.
+#' @param LayerDefinitionMethod See the argument \code{DefinitionMethod} in \code{\link{DefineBioticLayer}}.
 #' @inheritParams DefineBioticLayer
 #' @param SurveyDefinition The method to use for defining the Survey, one of \code{FunctionParameter} to define the Survey on the fly in this function, or \code{FunctionInput} to import Survey process data from a previously run process by the input \code{Survey}.
 #' @param SurveyDefinitionMethod See \code{\link{DefineSurvey}}
 #' @inheritParams DefineSurvey
 #' @param PSUDefinition The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{BioticPSU}.
-#' @param PSUDefinitionMethod See \code{\link{DefineBioticPSU}}
+#' @param PSUDefinitionMethod Character: A string naming the automatic PSU definition method to use. Currently only the option "StationToPSU" is supported, which sets each Station as a PSU. See \code{\link{DefineBioticPSU}} for details.
 #' @inheritParams DefineBioticPSU
 #' 
 #' Note that the length distributions of a PSU are averaged with no effective weighting, since the weights are all 1 in the input \code{\link{LengthDistributionData}} or \code{\link{SumLengthDistributionData}}. The weights are summed in the output and will be effective in \code{\link{MeanDensiy}}.
@@ -890,7 +890,7 @@ MeanLengthDistribution <- function(
     # Parameters of the mean part:
     # PSU: 
     PSUDefinition = c("FunctionParameter", "FunctionInput"), 
-    PSUDefinitionMethod = c("StationToPSU", "None"), 
+    PSUDefinitionMethod = c("StationToPSU"), 
     StratumPolygon = NULL, 
     BioticPSU = NULL
 ) {

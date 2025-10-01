@@ -7,5 +7,5 @@
 The ReportDensityData model data is a report of the \code{\link{DensityData}}.
 }
 \seealso{
-This data type is produced by \code{\link{ReportDensity}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}
+This data type is produced by \code{\link{ReportDensity}}. See \code{\link{DataTypes}} for a list of all data types produced by \code{\link{RstoxBase}}.
 }

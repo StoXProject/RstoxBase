@@ -7,7 +7,7 @@
 AddPSUToPreySpeciesCategoryCatch(
   PreySpeciesCategoryCatchData,
   PSUDefinition = c("FunctionParameter", "FunctionInput"),
-  PSUDefinitionMethod = c("StationToPSU", "None"),
+  PSUDefinitionMethod = c("StationToPSU"),
   BioticPSU = NULL,
   SurveyDefinition = c("FunctionParameter", "FunctionInput"),
   SurveyDefinitionMethod = c("AllStrata", "Table"),
@@ -21,7 +21,7 @@ AddPSUToPreySpeciesCategoryCatch(
 
 \item{PSUDefinition}{The method to use for defining the PSUs, one of \code{FunctionParameter} to define the PSUs on the fly in this function, or \code{FunctionInput} to import PSU process data from a previously run process by \code{BioticPSU}.}
 
-\item{PSUDefinitionMethod}{See \code{\link{DefineBioticPSU}}}
+\item{PSUDefinitionMethod}{Character: A string naming the automatic PSU definition method to use. Currently only the option "StationToPSU" is supported, which sets each Station as a PSU. See \code{\link{DefineBioticPSU}} for details.}
 
 \item{BioticPSU}{The \code{\link{BioticPSU}} process data.}
 
