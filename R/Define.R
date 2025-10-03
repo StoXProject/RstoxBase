@@ -786,7 +786,21 @@ getPSUStartStopDateTimeByPSU <- function(PSU, SSU_PSU_ByPSU, StationTable) {
     if(any(is.na(atSSUInStoxData))) {
         warning("StoX: The StoxData must be the same data that were used to generate the PSUProcessData. (Number of EDSUs not found in the StoxData: ", sum(is.na(atSSUInStoxData)), ". These are the following: ", paste(sort(thisSSU_PSU$SSU)[is.na(atSSUInStoxData)], collapse = ", "), ".")
         
-        atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
+        if(all(is.na(atSSUInStoxData))) {
+            
+            # Return a one row table with NAs in all columns except the PSU:
+            PSUStartStopDateTime <- data.table::data.table(
+                PSU = PSU, 
+                Cruise = NA_character_, 
+                StartDateTime = NA, 
+                StopDateTime = NA
+            )
+            
+            return(PSUStartStopDateTime)
+        }
+        else {
+            atSSUInStoxData <- atSSUInStoxData[!is.na(atSSUInStoxData)]
+        }
     }
     
     # Split the matches by Cruise in order to get time sequences for each Cruise (includes platform for NMD data?????):
