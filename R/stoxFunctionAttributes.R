@@ -50,6 +50,13 @@ default_survey_track_plot_arguments <- list(
     TrackLineWidth = 1
 )
 
+default_stations_plot_arguments <- list(
+    # Options for the colors:
+    StationPointColor = "black",
+    StationPointSize = 2, 
+    StationPointShape = 0
+)
+
 default_stratum_plot_arguments <- list(
     StratumPolygonColor = "hue",
     StratumPolygonBorderColor = "blue", 
@@ -241,6 +248,8 @@ stoxFunctionAttributes <- list(
             Margin = 0.1
         )
     ), 
+    
+    
     DefineTransectParameter = list(
         functionType = "processData", 
         functionCategory = "baseline", 
@@ -300,6 +309,14 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
+    
+    StationsAlongTransectDesign = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "StationsAlongTransectDesignData"
+    ), 
+    
+    
     ReportTransectDesign = list(
         functionType = "modelData", 
         functionCategory = "report", 
@@ -338,10 +355,10 @@ stoxFunctionAttributes <- list(
             ), 
             
             # Options for the stratum polygons:
-            StratumPolygon = list(
+            UseDefaultStratumPolygonSettings = list(
                 ShowStratumPolygon = TRUE
             ),
-            UseDefaultStratumPolygonSettings = list(
+            StratumPolygon = list(
                 ShowStratumPolygon = TRUE
             ),
             StratumPolygonColor = list(
@@ -376,6 +393,26 @@ stoxFunctionAttributes <- list(
             GridColor = list(
                 ShowMap = TRUE, 
                 UseDefaultMapSettings = FALSE
+            ),
+            
+            # Options for the stations:
+            UseDefaultStationSettings = list(
+                ShowStations = TRUE
+            ),
+            StationsAlongTransectDesignData = list(
+                ShowStations = TRUE
+            ),
+            StationPointColor = list(
+                ShowStations = TRUE, 
+                UseDefaultStationSettings = FALSE
+            ),
+            StationPointSize = list(
+                ShowStations = TRUE, 
+                UseDefaultStationSettings = FALSE
+            ),
+            StationPointShape = list(
+                ShowStations = TRUE, 
+                UseDefaultStationSettings = FALSE
             ),
             
             # Options for zoom and limits:
@@ -437,6 +474,7 @@ stoxFunctionAttributes <- list(
             default_general_file_plot_arguments, 
             default_general_map_plot_arguments, 
             default_survey_track_plot_arguments, 
+            default_stations_plot_arguments, 
             default_stratum_plot_arguments, 
             default_general_map_aspect_plot_arguments
         )

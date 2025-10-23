@@ -1,4 +1,9 @@
-# RstoxBase v2.2.0-9003  (2025-10-01)
+# RstoxBase v2.2.0-9004  (2025-10-23)
+* Added the function StationsAlongTransectDesign() for drawing equally spaced stations along a transect design.
+* Added the argument StationsAlongTransectDesignData for plotting stations in PlotTransectDesign().
+
+
+# RstoxBase v2.2.0-9004  (2025-10-01)
 * Renamed DefineSurveyPlan() to TransectDesign(), PlotSurveyPlan() to PlotTransectDesign(), ReportSurveyPlan() to ReportTransectDesign() and WriteSurveyPlan() to WriteTransectDesign(), and introduced the process data function DefineTransectParameter() for use in TransectDesign().
 * Added option of reading a file with PSUByTime in DefineAcousticPSU().
 * Added a check when UseProcessData = TRUE in DefineAcousticPSU() for whether recalculated PSUByTime differs from the existing in processData. If differing, a message is shown to the user that the process can be re-run with DefinitionMethod "Manual" in order to update the PSUByTime.

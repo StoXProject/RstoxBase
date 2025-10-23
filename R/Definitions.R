@@ -354,6 +354,10 @@ initiateRstoxBase <- function(){
             horizontalResolution = c("Stratum", "Transect", "Segment"), 
             other = c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd", "Speed", "Direction", "Distance")
         ), 
+        StationsAlongTransectDesign = list(
+            horizontalResolution = c("Stratum", "Station"), 
+            other = c("Longitude", "Latitude")
+        ), 
         BioticAssignment = list(
             horizontalResolution = c("Stratum", "PSU"), 
             verticalResolution = "Layer", 
@@ -869,6 +873,7 @@ initiateRstoxBase <- function(){
     default_general_map_plot_arguments = default_general_map_plot_arguments
     default_NASC_track_plot_arguments = default_NASC_track_plot_arguments
     default_survey_track_plot_arguments = default_survey_track_plot_arguments
+    default_stations_plot_arguments = default_stations_plot_arguments
     default_stratum_plot_arguments = default_stratum_plot_arguments
     default_general_map_aspect_plot_arguments = default_general_map_aspect_plot_arguments
     default_AcousticPSU_plot_arguments = default_AcousticPSU_plot_arguments
@@ -881,6 +886,7 @@ initiateRstoxBase <- function(){
         default_general_map_plot_arguments = default_general_map_plot_arguments, 
         default_NASC_track_plot_arguments = default_NASC_track_plot_arguments, 
         default_survey_track_plot_arguments = default_survey_track_plot_arguments, 
+        default_stations_plot_arguments = default_stations_plot_arguments, 
         default_stratum_plot_arguments = default_stratum_plot_arguments, 
         default_general_map_aspect_plot_arguments = default_general_map_aspect_plot_arguments, 
         default_AcousticPSU_plot_arguments = default_AcousticPSU_plot_arguments

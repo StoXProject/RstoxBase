@@ -131,7 +131,8 @@ NULL
 #' 
 #' @param UseDefaultMapSettings Logical: If TRUE (default) use the default settings of the map, specifically LandColor, BorderColor, OceanColor and GridColor. Setting this to FALSE will show all map options of the plotting function in the StoX GUI.
 #' @param UseDefaultPointSettings Logical: If TRUE (default) use the default point settings of the plot, specifically PointColor, MaxPointSize and MinPointSize. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.
-#' @param UseDefaultTrackSettings Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.
+#' @param UseDefaultTrackSettings Logical: If TRUE (default) use the default track settings of the plotting function. Setting this to FALSE will show all track options of the plotting function in the StoX GUI.
+#' @param UseDefaultStationSettings Logical: If TRUE (default) use the default station settings of the plotting function. Setting this to FALSE will show all station options of the plotting function in the StoX GUI.
 #' @param UseDefaultAspectSettings Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.
 #' @param UseDefaultLabelSettings Logical: If TRUE (default) use the default text settings of the plot, specifically Title, AxisTitleSize, AxisTickSize, LegendTitleSize and LegendTextSize. Setting this to FALSE will show all text options of the plotting function in the StoX GUI.
 #' @param UseDefaultFileSettings Logical: If TRUE (default) use the default file settings of the output file of the plot, specifically Format, Width, Height and DotsPerInch. Setting this to FALSE will show all file options of the plotting function in the StoX GUI.
@@ -194,6 +195,20 @@ NULL
 
 ##################################################
 ##################################################
+#' General station plotting parameters of RstoxBase
+#' 
+#' @param ShowStations Logical: If TRUE include stations (along transects) in the plot.
+#' @param StationPointColor Character: The color to use for the station points, defaulted to "black".
+#' @param StationPointSize Numeric: The size of the station points.
+#' @param StationPointShape The shape of the station points, as defined for the argument \code{pch} in \code{\link{points}}.
+#' 
+#' @name general_station_plot_arguments
+#' 
+NULL
+
+
+##################################################
+##################################################
 #' General stratum plotting parameters of RstoxBase
 #' 
 #' @param ShowStratumPolygon Logical: If TRUE include the stratumPolygon. in the plot.
@@ -246,6 +261,7 @@ NULL
 #' 
 #' @param StratumAreaData The \code{\link{StratumAreaData}} data.
 #' @param TransectDesignData The \code{\link{TransectDesignData}} data.
+#' @param StationsAlongTransectDesignData The \code{\link{StationsAlongTransectDesignData}} data.
 #' @param ReportTransectDesignData The \code{\link{ReportTransectDesignData}} data.
 #' @param WriteTransectDesignData The \code{\link{WriteTransectDesignData}} data.
 #' @param PlotTransectDesignData The \code{\link{PlotTransectDesignData}} data.
@@ -552,7 +568,7 @@ NULL
 ##################################################
 #' Transect design
 #' 
-#' The TransectDesignData model data is a table of the columns Stratum (character), Transect (character), Segment (character), LongitudeStart (decimal degrees), LatitudeStart (decimal degrees), LongitudeEnd (decimal degrees), LatitudeEnd (decimal degrees), Distance (nautical mile), Direction (character) and Speed (knots), where each row represents one segment of a transect design. The segments do not need to be connected, so there may be transport between the segments. Use \code{\link{ReportTransectDesign}} to add rows with transport between segments.
+#' The TransectDesignData model data is a table of the columns Stratum (character), Transect (character), Segment (character), LongitudeStart (decimal degrees), LatitudeStart (decimal degrees), LongitudeEnd (decimal degrees), LatitudeEnd (decimal degrees), Distance (nautical mile), Direction (character) and Speed (knots), where each row represents one segment of a transect design. The segments do not need to be connected, so there may be transit between the segments. Use \code{\link{ReportTransectDesign}} to add rows with transit between segments.
 #' 
 #' @seealso This data type is produced by \code{\link{TransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 #' 
@@ -563,15 +579,28 @@ NULL
 
 ##################################################
 ##################################################
+#' Stations along transect design
+#' 
+#' The StationsAlongTransectDesignData model data is a table of the columns Stratum (character), Station (character), Longitude (decimal degrees) and Latitude (decimal degrees), where each row gives the position of a station along the transect design along which the stations were positioned and separated by a constant distance.
+#' 
+#' @seealso This data type is produced by \code{\link{StationsAlongTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
+#' 
+#' @name StationsAlongTransectDesignData
+#' 
+NULL
+
+
+##################################################
+##################################################
 #' Report transect design
 #' 
-#' The ReportTransectDesignData model data is a list of three tables Segment, SegmentWithTransport and Stratum. 
+#' The ReportTransectDesignData model data is a list of three tables Segment, SegmentWithTransit and Stratum. 
 #' 
 #' The table Segment stores the segments from the input TransectDesignData and contains the columns Stratum (character), Segment (character), LongitudeStart (decimal degrees), LatitudeStart (decimal degrees), LongitudeEnd (decimal degrees), LatitudeEnd (decimal degrees), Speed (knots) and Distance (nautical mile), 
 #' 
-#' The table SegmentWithTransport contains the segments from the table Segment but adds the transport between each segment. This table contains the additional column SegmentType with values "Segment" and "Transport".
+#' The table SegmentWithTransit contains the segments from the table Segment but adds the transit between each segment. This table contains the additional column SegmentType with values "Segment" and "Transit".
 #' 
-#' The table Stratum stores one row per stratum with the columns Stratum (character), DistanceSegment (nautical mile), DistanceTransport (nautical mile), Distance (nautical mile), Speed (knots), Area (square nautical mile) and Coverage (DistanceSegment / square root of Area).
+#' The table Stratum stores one row per stratum with the columns Stratum (character), DistanceSegment (nautical mile), DistanceTransit (nautical mile), Distance (nautical mile), Speed (knots), Area (square nautical mile) and Coverage (DistanceSegment / square root of Area).
 #' 
 #' @seealso This data type is produced by \code{\link{ReportTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 #' 

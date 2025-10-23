@@ -12,8 +12,8 @@
 #' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
 #' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
 #' @param Retour  Logical: If TRUE the transect design will be doubled by a retour.
-#' @param SurveyTime  Numeric: The time to spend in the stratum including transport between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
-#' @param SurveyDistance Numeric: The distance to travel in the stratum including transport between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
+#' @param SurveyTime  Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
+#' @param SurveyDistance Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
 #' @param SurveySpeed Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.
 #' @param Seed Numeric: The seed to use when drawing the random starting point. 
 #' @param ParameterTable A table specifying the parameters for each stratum to create transect design for. See the Details for a list of required columns.
@@ -183,15 +183,15 @@ DefineTransectParameter <- function(
 #' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
 #' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
 #' @param Retour  Logical: If TRUE the transect design will be doubled by a retour.
-#' @param SurveyTime  Numeric: The time to spend in the stratum including transport between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
+#' @param SurveyTime  Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
 #' 
-#' @param SurveyDistance Numeric: The distance to travel in the stratum including transport between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
+#' @param SurveyDistance Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
 #' @param SurveySpeed Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.
 #' @param Seed Numeric: The seed to use when drawing the random starting point. 
 #' @param ParameterTable A table specifying the parameters for each stratum to create transect design for. See the Details for a list of required columns.
 #' @param EqualEffort  Character: A string naming the method to use. See Details for options.
 #' @param OrderAllToursFirst  Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).
-#' @param Margin Numeric: The margin to use when iterating to fit the transect design to the desired survey distance (including transport between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.
+#' @param Margin Numeric: The margin to use when iterating to fit the transect design to the desired survey distance (including transit between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.
 #' 
 #' @details 
 #' The \code{TransectDesign} function generates a transect design in a Cartesian coordinate system, and transforms the positions to the geographical coordinate system (longitude, latitude) using the azimuthal equal distance projection, which ensures that distances are preserved in the transformation.
@@ -604,7 +604,8 @@ XY2startEnd <- function(x) {
     
     # Add segment names:
     numberOfSegments <- nrow(out)
-    out$Segment <- paste0("Segment_", sprintf(paste0("%0", nchar(numberOfSegments), "d"), seq_len(numberOfSegments)))
+    out$Segment <- getElementID("Segment", numberOfSegments)
+    #paste0("Segment_", sprintf(paste0("%0", nchar(numberOfSegments), "d"), seq_len(numberOfSegments)))
     
     # Add the otherCols
     out <- cbind(out, otherCols)
@@ -668,7 +669,7 @@ populatePath <- function(xy, N = 100, dt = NULL){
     # Get traveled distance, which we interpret as time (for constant speed):
     diffXY <- xy[, lapply(.SD, diff)]
     difft <- diffXY[, sqrt(X^2 + Y^2)]
-    # Get the cummulative time:
+    # Get the cumulative time:
     cumtime <- c(0, cumsum(difft))
     # Get the increment in time:
     if(length(dt)==0){
@@ -1229,7 +1230,7 @@ transectsOneStratum <- function(
         
         # Set the totalSailedDist, margin to use, and the last value for 'rest' and 'freeSurveyDistance':
         #totalSailedDist <- 0
-        totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransport = TRUE)
+        totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransit = TRUE)
         
         
         Margin_SurveyDistance <- SurveyDistance * Margin
@@ -1265,7 +1266,7 @@ transectsOneStratum <- function(
             # Here we need the totalSailedDist:
             
             
-            totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransport = TRUE)
+            totalSailedDist <- getTotalSailedDist(intersectsCoordsList, includeTransit = TRUE)
             rest <- SurveyDistance - totalSailedDist
             
             
@@ -1325,7 +1326,12 @@ transectsOneStratum <- function(
     
     # Add transect IDs as names of the list of lines:
     numberOfTransects <- length(lines)
-    names(lines) <- paste0("Transect_", sprintf(paste0("%0", nchar(numberOfTransects), "d"), seq_len(numberOfTransects)))
+    names(lines) <- getElementID("Transect", numberOfTransects)
+    #paste0(
+    #    "Transect", 
+    #    sprintf(paste0("%0", nchar(numberOfTransects), "d"), seq_len(numberOfTransects)), 
+    #    sep = "_"
+    #)
     
     
     
@@ -1347,7 +1353,7 @@ from01ToTourRetour <- function(x) {
 }
 
 
-getTotalSailedDist <- function(list, includeTransport = TRUE) {
+getTotalSailedDist <- function(list, includeTransit = TRUE) {
     
     # We require even number of rows (accepting 1 row):
     nrows <- sapply(list, nrow)
@@ -1356,9 +1362,9 @@ getTotalSailedDist <- function(list, includeTransport = TRUE) {
         stop("All elements of the list must have even number of rows.")
     }
     
-    # Add all transport segments to the end of the list of segments, by extracting the last node of one segment and the first of the next (in total n - 1 transports, where n is the number of segments (elements in 'list')):
-    if(includeTransport) {
-        list <- addTransportToList(list)
+    # Add all transit segments to the end of the list of segments, by extracting the last node of one segment and the first of the next (in total n - 1 transits, where n is the number of segments (elements in 'list')):
+    if(includeTransit) {
+        list <- addTransitToList(list)
     }
     
     
@@ -1391,20 +1397,20 @@ nodes2segments <- function(x) {
 
 
 
-addTransportToList <- function(list) {
-    transportList <- lapply(seq_len(length(list) - 1), function(ind) rbind(utils::tail(list[[ind]], 1), utils::head(list[[ind + 1]], 1)))
-    list <- c(list, transportList)
+addTransitToList <- function(list) {
+    transitList <- lapply(seq_len(length(list) - 1), function(ind) rbind(utils::tail(list[[ind]], 1), utils::head(list[[ind + 1]], 1)))
+    list <- c(list, transitList)
     return(list)
 }
 
 
 
-addTransportToSegments <- function(
+addTransitToSegments <- function(
     segments, 
     startNames = c("LongitudeStart", "LatitudeStart"), 
     endNames = c("LongitudeEnd", "LatitudeEnd"), 
     ordered = TRUE, 
-    addLast0Transport = FALSE
+    addLast0Transit = FALSE
 ) {
     
     # Store the column order:
@@ -1412,45 +1418,46 @@ addTransportToSegments <- function(
     otherNames <- setdiff(colnames_segments, c(startNames, endNames))
     
     
-    # Create transports:
-    transports <- lapply(seq_len(nrow(segments) - 1), function(ind) cbind(segments[ind, ..endNames], segments[ind + 1, ..startNames]))
-    # Add the a final dummy transport from the last end point to itself, useful if we want to extract only start positions (used in WriteTransectDesign()):
-    if(addLast0Transport) {
+    # Create transits:
+    transits <- lapply(seq_len(nrow(segments) - 1), function(ind) cbind(segments[ind, ..endNames], segments[ind + 1, ..startNames]))
+    # Add the a final dummy transit from the last end point to itself, useful if we want to extract only start positions (used in WriteTransectDesign()):
+    if(addLast0Transit) {
         lastEndPoint <- segments[nrow(segments), ..endNames]
-        transports[[length(transports) + 1]] <- structure(cbind(lastEndPoint, lastEndPoint), names = c(endNames, startNames))
+        transits[[length(transits) + 1]] <- structure(cbind(lastEndPoint, lastEndPoint), names = c(endNames, startNames))
     }
     
-    transports <- data.table::rbindlist(transports)
-    data.table::setnames(transports, c(startNames, endNames))
+    transits <- data.table::rbindlist(transits)
+    data.table::setnames(transits, c(startNames, endNames))
     # Add the other column, where if different between segments (the Segment column) the two values are pasted:
     for(name in otherNames) {
-        transports <- addTransportOtherColumn(transports, segments, name, addLast0Transport = addLast0Transport)
+        transits <- addTransitOtherColumn(transits, segments, name, addLast0Transit = addLast0Transit)
     }
-    data.table::setcolorder(transports, colnames_segments)
+    data.table::setcolorder(transits, colnames_segments)
     
-    # Add the transports to a table of positions:
-    output <- list(segments, transports)
-    names(output) <- c("Segment", "Transport")
+    # Add the transits to a table of positions:
+    output <- list(segments, transits)
+    
+    names(output) <- c("Segment", "Transit")
     output <- data.table::rbindlist(output, idcol = "SegmentType")
     data.table::setcolorder(output, c(setdiff(names(output), "SegmentType"), "SegmentType"))
     
     # Reorder the rows:
     if(ordered) {
         newOrder <- rep(seq_len(nrow(segments)), each = 2) + rep(c(0, nrow(segments)), nrow(segments))
-        if(!addLast0Transport) {
+        if(!addLast0Transit) {
             newOrder <- head(newOrder, -1)
         }
         output <- output[newOrder, ]
         #output[seq(1, nrow(output), 2), ] <- segments
-        #output[seq(2, nrow(output), 2), ] <- transports
+        #output[seq(2, nrow(output), 2), ] <- transits
     }
     
     
     return(output)
 }
 
-addTransportOtherColumn <- function(transports, segments, name, sep = " - ", addLast0Transport = FALSE) {
-    if(addLast0Transport) {
+addTransitOtherColumn <- function(transits, segments, name, sep = " - ", addLast0Transit = FALSE) {
+    if(addLast0Transit) {
         first <- segments[[name]]
     }
     else {
@@ -1459,18 +1466,18 @@ addTransportOtherColumn <- function(transports, segments, name, sep = " - ", add
     
     #last <- utils::tail(segments[[name]], -1)
     #if(any(first == last)) {
-    #    transports[[name]] <- first
+    #    transits[[name]] <- first
     #}
     #else {
-    #    transports[[name]] <-paste(
+    #    transits[[name]] <-paste(
     #        first, 
     #        last, 
     #        sep = sep
     #    )
     #}
-    transports[[name]] <- first
+    transits[[name]] <- first
     
-    return(transports)
+    return(transits)
 }
 
 
@@ -1483,6 +1490,184 @@ sampleStartPositionFactor <- function(seed) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+#' Generate stations along a transect design
+#'
+#' @inheritParams general_arguments
+#' @inheritParams ModelData
+#' @param Distance Numeric: The distance in nautical miles between the stations along the transect design.
+#' @param Seed Numeric: The seed to use when drawing the random starting point. 
+#' 
+#' @details 
+#' The \code{Seed} is used to generate one seed per Stratum which are then used to generate the random starting point of each Stratum. From the starting point the function \code{\link[sf]{st_line_sample}} is used to sample points along the transect design in each Stratum separated by \code{Distance} nautical miles (ignoring transit between transects).
+#' 
+#' 
+#' @return
+#' An object of StoX data type \code{\link{TransectDesignData}}.
+#'
+#' @examples
+#' library(ggplot2)
+#' 
+#' stratumFile <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+#'  )
+#' stratumPolygon <- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile
+#' )
+#' 
+#' # Harbitz zigzag survey design along each stratum:
+#' transectDesignZZ_Along <- TransectDesign(
+#'  TransectParameterDefinition = "FunctionParameter", 
+#'  TransectParameterDefinitionMethod = "Parameter", 
+#' 	TransectType = "ZigZagRectangularEnclosure", 
+#' 	StratumPolygon = stratumPolygon, 
+#' 	SurveyTime = 200, 
+#' 	SurveySpeed = 10, 
+#' 	Seed = 1, 
+#' 	Bearing = "Along"
+#' )
+#' 
+#' stations <- StationsAlongTransectDesign(
+#'   transectDesignZZ_Along, 
+#'   Distance = 30, 
+#'   Seed = 1
+#' )
+#' 
+#' # Plot the stratumPolygon with the segments
+#' ggplot() +
+#'   geom_sf(data = stratumPolygon, aes(fill = StratumName), color = 'blue') +
+#'   geom_segment(
+#'     data = transectDesignZZ_Along, 
+#'     aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
+#'   )
+#' 
+#'
+#' @export
+#' 
+StationsAlongTransectDesign <- function(
+    TransectDesignData, 
+    Distance = numeric(), 
+    Seed = numeric()
+){
+   
+    # Get the unique stratum names:
+    stratumNames <- unique(TransectDesignData$Stratum)
+    
+    seedVector <- getSeedVector(size = length(stratumNames), seed = Seed)
+    
+    
+    output <- mapply(
+        getStationsAlongTransectDesignOneStratum, 
+        stratumName = stratumNames, 
+        Seed = seedVector, 
+        MoreArgs = list(
+            TransectDesignData = TransectDesignData, 
+            Distance = Distance
+        ), 
+        SIMPLIFY = FALSE
+    )
+    
+    output <- data.table::rbindlist(output, idcol = "Stratum")
+        
+    formatOutput(output, dataType = "StationsAlongTransectDesign", keep.all = FALSE)
+    
+    return(output)
+}
+
+
+
+
+getStationsAlongTransectDesignOneStratum <- function(stratumName, TransectDesignData, Seed, Distance) {
+    
+    # Select only the specified stratum:
+    thisTransectDesignData <- subset(TransectDesignData, Stratum == stratumName)
+    
+    
+    # Create a list of collections of line strings, one line string for each transect:
+    #transectNames <- unique(thisTransectDesignData$Transect)
+    linesStrings <- points2LineStringCollectionOne(thisTransectDesignData)
+    
+    # Add distances
+    thisTransectDesignData[, Distance := distanceStartToEnd(.SD)]
+    thisTransectDesignData[, CumulativeDistance := cumsum(Distance)]
+    
+    # Set the seed and draw the starting point:
+    set.seed(Seed)
+    start <- Distance * runif(1)
+    
+    # Get the total distance and calculate cumulative distances at which to place stations:
+    totalDistance <- utils::tail(thisTransectDesignData$CumulativeDistance, 1)
+    cumulativeSamplingDistance <- start + seq(0, (totalDistance - start), by = Distance)
+    
+    # Find the transect of each station:
+    atTransect <- findInterval(cumulativeSamplingDistance, c(0, thisTransectDesignData$CumulativeDistance))
+    # And convert the cumulativeSamplingDistance to normalized distances relative to the starting point of each transect:
+    relativeCumulativeSamplingDistance <- cumulativeSamplingDistance - c(0, thisTransectDesignData$CumulativeDistance)[atTransect]
+    relativeCumulativeSamplingDistanceNormalized <- relativeCumulativeSamplingDistance / thisTransectDesignData$Distance[atTransect]
+    
+    # Split into a list with one element per transec, named by the transect indices:
+    #relativeCumulativeSamplingDistanceNormalizedList <- split(relativeCumulativeSamplingDistanceNormalized, atTransect)
+    
+    # Get the stations:
+    output <- mapply(sf::st_line_sample, linesStrings[atTransect], sample = relativeCumulativeSamplingDistanceNormalized, SIMPLIFY = FALSE)
+    
+    # Get the coordinates in a data table:
+    output <- lapply(output, sf::st_coordinates)
+    output <- lapply(output, data.table::as.data.table)
+    output <- data.table::rbindlist(output)
+    
+    output <- data.table::data.table(
+        #Transect = transectNames[atTransect], 
+        Station = getElementID("Station", nrow(output)), 
+        Longitude = output$X, 
+        Latitude = output$Y
+    )
+    
+    return(output)
+}
+
+# Function that converts points represented as geographical positions (LongitudeStart, LatitudeStart, LongitudeEnd, LatitudeEnd) in a table to a collection of individual line strings.
+points2LineStringCollectionOne <- function(x) {
+    sf::st_sfc(lapply(seq_len(nrow(x)), function(ind) points2LineStringOne(x[ind, ])), crs = 4326)
+}
+points2LineStringOne <- function(x) {
+    sf::st_linestring(
+        rbind(
+            c(x$LongitudeStart, x$LatitudeStart), 
+            c(x$LongitudeEnd, x$LatitudeEnd)
+        )
+    )
+}
+
+
+
+
+
+
+
+
+
+
+getElementID <- function(prefix, n, sep = "_") {
+    paste(
+        prefix, 
+        sprintf(paste0("%0", nchar(n), "d"), seq_len(n)), 
+        sep = sep
+    )
+}
 
 
 
@@ -1548,20 +1733,21 @@ ReportTransectDesign <- function(
     }
     
     # Create a list of the tables Transect and Stratum:
-    Transect <- addTransportToSegments(TransectDesignData)
+    # First the Transect:
+    Transect <- addTransitToSegments(TransectDesignData)
     
     # Add distances
     Transect[, Distance := distanceStartToEnd(.SD)]
     # Add durations
     Transect[, Duration := Distance / Speed]
     
-    # Remove extremely short transports, 1e-3 nautical miles, 1.8 m:
+    # Remove extremely short transits, 1e-3 nautical miles, 1.8 m:
     margin <- 1e-3
-    Transect <- subset(Transect, ! (SegmentType == "Transport" & Distance <= margin))
+    Transect <- subset(Transect, ! (SegmentType == "Transit" & Distance <= margin))
     
     Stratum <- Transect[, .(
         DistanceTransect = sum(Distance * as.numeric(SegmentType == "Transect")), 
-        DistanceTransport = sum(Distance * as.numeric(SegmentType == "Transport")), 
+        DistanceTransit = sum(Distance * as.numeric(SegmentType == "Transit")), 
         Distance = sum(Distance), 
         Speed = Speed[1]), 
         by = "Stratum"
@@ -1570,7 +1756,7 @@ ReportTransectDesign <- function(
     Stratum[, Coverage := DistanceTransect / sqrt(Area)]
     Stratum[, Duration := Distance / Speed]
     
-    # Create an output with three tables, one for the transects WITHOUT transport, one for the transects WITH transport, and one for the stratum, which is based on the transects WITH transport:
+    # Create an output with three tables, one for the transects WITHOUT transit, one for the transects WITH transit, and one for the stratum, which is based on the transects WITH transit:
     output <- list(
         Transect = Transect, 
         Stratum = Stratum
@@ -1689,30 +1875,30 @@ WriteTransectDesign <- function(
     Format <- RstoxData::match_arg_informative(Format)
     
     # Create a list of the tables Segment and Stratum:
-    SegmentWithTransport <- addTransportToSegments(TransectDesignData, addLast0Transport = TRUE)
+    SegmentWithTransit <- addTransitToSegments(TransectDesignData, addLast0Transit = TRUE)
     
     if(Format == "GPX") {
         output <- sf::st_as_sf(
-            subset(SegmentWithTransport, select = c("Stratum", "Direction", "LongitudeStart", "LatitudeStart")), 
+            subset(SegmentWithTransit, select = c("Stratum", "Direction", "LongitudeStart", "LatitudeStart")), 
             coords = c("LongitudeStart", "LatitudeStart")
         )
         
         # Add tracks, segments and waypoints:
-        #output$track_fid <- SegmentWithTransport$Stratum
-        #output$track_seg_id <- SegmentWithTransport$Transect
-        #output$track_seg_point_id <- SegmentWithTransport$Segment
+        #output$track_fid <- SegmentWithTransit$Stratum
+        #output$track_seg_id <- SegmentWithTransit$Transect
+        #output$track_seg_point_id <- SegmentWithTransit$Segment
         
-        output$track_name <- SegmentWithTransport$Stratum
+        output$track_name <- SegmentWithTransit$Stratum
         
         
         # The driver translates to integers starting from 0, so we do this here explicitely to avoid confusion:
-        output$track_fid <- as.integer(factor(SegmentWithTransport$Stratum)) - 1L
+        output$track_fid <- as.integer(factor(SegmentWithTransit$Stratum)) - 1L
         
         # The track id is controlled by the GroupingVariables:
         if(length(TrackGroupingVariables)) {
-            #trackID <- SegmentWithTransport[, do.call(paste, lapply(as.list(TrackGroupingVariables), function(x)  eval(get(x))), sep = "_")]
+            #trackID <- SegmentWithTransit[, do.call(paste, lapply(as.list(TrackGroupingVariables), function(x)  eval(get(x))), sep = "_")]
             
-            trackID <- do.call(paste, c(SegmentWithTransport[, ..TrackGroupingVariables], list(sep = "_")))
+            trackID <- do.call(paste, c(SegmentWithTransit[, ..TrackGroupingVariables], list(sep = "_")))
         }
         # If the TrackGroupingVariables is not given, create one single route for the entire stratum:
         else {
@@ -1720,9 +1906,9 @@ WriteTransectDesign <- function(
         }
         
         
-        #output$track_seg_id <- as.integer(sub(".*_", "", SegmentWithTransport$Transect)) - 1L
+        #output$track_seg_id <- as.integer(sub(".*_", "", SegmentWithTransit$Transect)) - 1L
         output$track_seg_id <- match(trackID, unique(trackID)) - 1L
-        #output$track_seg_point_id <- as.integer(sub(".*_", "", SegmentWithTransport$Segment)) - 1L
+        #output$track_seg_point_id <- as.integer(sub(".*_", "", SegmentWithTransit$Segment)) - 1L
         output$track_seg_point_id <- unlist(
             by(
                 output, 
@@ -1734,7 +1920,7 @@ WriteTransectDesign <- function(
         # Split into a list of simple features, which will be written as individual files by RstoxFramework:
         if(length(FileGroupingVariables)) {
             # Define the file IDs as a concatenation of the columns specified by FileGroupingVariables:
-            fileID <-  do.call(paste, c(SegmentWithTransport[, ..FileGroupingVariables], list(sep = "_")))
+            fileID <-  do.call(paste, c(SegmentWithTransit[, ..FileGroupingVariables], list(sep = "_")))
             # Split the sf object:
             output <- split(output, f = fileID)
             # Add names which will be used as file names:
@@ -1749,8 +1935,8 @@ WriteTransectDesign <- function(
         symbol <- "Brunsirkel"
         
         # Convert the positions to arc-minutes
-        SegmentWithTransport[, LongitudeStart := LongitudeStart * 60]
-        SegmentWithTransport[, LatitudeStart := LatitudeStart * 60]
+        SegmentWithTransit[, LongitudeStart := LongitudeStart * 60]
+        SegmentWithTransit[, LatitudeStart := LatitudeStart * 60]
         
         
         
@@ -1764,7 +1950,7 @@ WriteTransectDesign <- function(
         
         # The track id is controled by the GroupingVariables:
         if(length(TrackGroupingVariables)) {
-            trackID <- do.call(paste, c(SegmentWithTransport[, ..TrackGroupingVariables], list(sep = "_")))
+            trackID <- do.call(paste, c(SegmentWithTransit[, ..TrackGroupingVariables], list(sep = "_")))
         }
         # If the TrackGroupingVariables is not given, create one single route for the entire stratum:
         else {
@@ -1774,7 +1960,7 @@ WriteTransectDesign <- function(
         # Split into a list of simple features, which will be written as individual files by RstoxFramework:
         if(length(FileGroupingVariables)) {
             # Define the file IDs as a concatenation of the columns specified by FileGroupingVariables:
-            fileID <-  do.call(paste, c(SegmentWithTransport[, ..FileGroupingVariables], list(sep = "_")))
+            fileID <-  do.call(paste, c(SegmentWithTransit[, ..FileGroupingVariables], list(sep = "_")))
         }
         else {
             # Set the class, which will be used in RstoxFramework when writing the output file:
@@ -1782,7 +1968,7 @@ WriteTransectDesign <- function(
         }
         
         # Create a vector of lines in the Ruter format:
-        output <- SegmentWithTransport[, paste(LatitudeStart, LongitudeStart, 0, symbol)]
+        output <- SegmentWithTransit[, paste(LatitudeStart, LongitudeStart, 0, symbol)]
         
         # Add track names with a line space before each name:
         atNonDup <- which(!duplicated(trackID))
@@ -1831,6 +2017,7 @@ WriteTransectDesign <- function(
 #' @inheritParams general_file_plot_arguments
 #' @inheritParams general_map_plot_arguments
 #' @inheritParams general_track_plot_arguments
+#' @inheritParams general_station_plot_arguments
 #' @inheritParams general_stratum_plot_arguments
 #' @inheritParams general_map_aspect_plot_arguments
 #' 
@@ -1894,6 +2081,14 @@ PlotTransectDesign <- function(
     OceanColor = character(), 
     GridColor = character(),
     
+    # Options for stations:
+    ShowStations = FALSE, 
+    UseDefaultStationSettings = TRUE, 
+    StationsAlongTransectDesignData, 
+    StationPointColor = character(), 
+    StationPointSize = numeric(), 
+    StationPointShape = numeric(), 
+    
     # Options for the zoom and limits:
     UseDefaultAspectSettings = TRUE, 
     Zoom = numeric(), 
@@ -1953,17 +2148,31 @@ PlotTransectDesign <- function(
             lat_name = "LatitudeStart", 
             lon_name_end = "LongitudeEnd", 
             lat_name_end = "LatitudeEnd", 
-            type = "sp"
+            lon_name_station = "Longitude", 
+            lat_name_station = "Latitude", 
+            trackType = "sp"
         )
     )
     
     # Special care to add the positions, as we need Direction to be factor when plotting:
     TransectDesignData$Direction <- as.factor(TransectDesignData$Direction)
-    plotArguments$x <- TransectDesignData
+    plotArguments$trackData <- TransectDesignData
+    if(!missing(TransectDesignData)) {
+        plotArguments$trackData <- TransectDesignData
+    }
+    if(!missing(StationsAlongTransectDesignData)) {
+        plotArguments$stationData <- StationsAlongTransectDesignData
+    }
+    # Remove the inputs from the plotArguments in order to avoid corrumpting the ...:
+    plotArguments$TransectDesignData <- NULL
+    plotArguments$StationsAlongTransectDesignData <- NULL
     
     
     # Define the translation from the inputs to this function to the inputs to plot_lon_lat:
     translation <- c(
+        #trackData = "TransectDesignData", 
+        #stationData = "StationsAlongTransectDesignData", 
+        
         polygon = "StratumPolygon",
         showMap = "ShowMap",
         
@@ -1971,8 +2180,10 @@ PlotTransectDesign <- function(
         linewidth.polygon.border = "StratumPolygonBorderLineWidth", 
         
         size = "TrackPointSize", 
+        size.station.point = "StationPointSize", 
         
         color.track = "TrackColor", 
+        color.station.point = "StationPointColor", 
         color.scale = "TrackPointColor",  
         color.land = "LandColor", 
         color.border = "BorderColor", 
@@ -1982,6 +2193,7 @@ PlotTransectDesign <- function(
         color.polygon.border = "StratumPolygonBorderColor", 
         
         shape = "TrackPointShape",
+        shape.station.point = "StationPointShape", 
         # Do not set any alphas (transparency): alpha.point, alpha.track, alpha.polygon
         
         zoom = "Zoom", 
@@ -1996,9 +2208,6 @@ PlotTransectDesign <- function(
     plotArguments <- set_xlim_ylim_zoomCenter(plotArguments)
     
     
-    
-    
-    
     # Set empty StratumPolygon if it should not be shown:
     if(!ShowStratumPolygon) {
         plotArguments$StratumPolygon <- NULL
@@ -2011,8 +2220,7 @@ PlotTransectDesign <- function(
         new = names(translation)
     )
     
-    
-
+    # Run the plot:
     output <- do.call(plot_lon_lat, plotArguments)
     
     

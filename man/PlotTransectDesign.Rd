@@ -24,6 +24,12 @@ PlotTransectDesign(
   BorderColor = character(),
   OceanColor = character(),
   GridColor = character(),
+  ShowStations = FALSE,
+  UseDefaultStationSettings = TRUE,
+  StationsAlongTransectDesignData,
+  StationPointColor = character(),
+  StationPointSize = numeric(),
+  StationPointShape = numeric(),
   UseDefaultAspectSettings = TRUE,
   Zoom = numeric(),
   LongitudeMin = numeric(),
@@ -48,7 +54,7 @@ PlotTransectDesign(
 \arguments{
 \item{TransectDesignData}{The \code{\link{TransectDesignData}} data.}
 
-\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default track settings of the plotting function. Setting this to FALSE will show all track options of the plotting function in the StoX GUI.}
 
 \item{TrackColor}{Character: The color to use for the vessel track, defaulted to "black".}
 
@@ -83,6 +89,18 @@ PlotTransectDesign(
 \item{OceanColor}{Character: The color to use for the (ocean) background, defaulted to "white", as in the StoX GUI map.}
 
 \item{GridColor}{Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).}
+
+\item{ShowStations}{Logical: If TRUE include stations (along transects) in the plot.}
+
+\item{UseDefaultStationSettings}{Logical: If TRUE (default) use the default station settings of the plotting function. Setting this to FALSE will show all station options of the plotting function in the StoX GUI.}
+
+\item{StationsAlongTransectDesignData}{The \code{\link{StationsAlongTransectDesignData}} data.}
+
+\item{StationPointColor}{Character: The color to use for the station points, defaulted to "black".}
+
+\item{StationPointSize}{Numeric: The size of the station points.}
+
+\item{StationPointShape}{The shape of the station points, as defined for the argument \code{pch} in \code{\link{points}}.}
 
 \item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
 
