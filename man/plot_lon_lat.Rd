@@ -5,7 +5,8 @@
 \title{Plot a map, an optional (multi)polygon, and points and a track given by the first argument.}
 \usage{
 plot_lon_lat(
-  x,
+  trackData,
+  stationData = NULL,
   polygon,
   showMap = TRUE,
   trackLinesBy = NULL,
@@ -13,16 +14,20 @@ plot_lon_lat(
   lat_name = "lat",
   lon_name_end = NULL,
   lat_name_end = NULL,
-  type = c("pl", "lp", "ps", "sp", "p", "s", "l"),
+  lon_name_station = "lon",
+  lat_name_station = "lat",
+  trackType = c("pl", "lp", "ps", "sp", "p", "s", "l"),
   linetype.track = 1,
   linewidth.track = 1,
   linewidth.polygon.border = 0.5,
   size = 1,
   size.max = 10,
+  size.station.point = 2,
   strokeToPointFactor = 0.1,
   color.track.point = 1,
   color.track = 1,
   color.scale = combined.color(2),
+  color.station.point = 1,
   color.land = "grey50",
   color.border = "grey10",
   color.ocean = "grey90",
@@ -30,6 +35,7 @@ plot_lon_lat(
   color.polygon = "hue",
   color.polygon.border = "blue",
   shape = 16,
+  shape.station.point = 0,
   alpha.point = 1,
   alpha.track = 1,
   alpha.polygon = 1,
@@ -49,19 +55,23 @@ plot_lon_lat(
 )
 }
 \arguments{
-\item{x}{A data.table with data, including the longitude and latitude variables specified by the arguments \code{lon_name} and \code{lat_name}.}
+\item{trackData}{A data.table with track data, including the longitude and latitude variables specified by the arguments \code{lon_name} and \code{lat_name}.}
+
+\item{stationData}{A data.table with track data, including the longitude and latitude variables specified by the arguments \code{lon_name_station} and \code{lat_name_station}.}
 
 \item{polygon}{An sf object with multipolygons.}
 
 \item{showMap}{Logical: If TRUE show the map.}
 
-\item{trackLinesBy}{Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transport between strata is not shown.}
+\item{trackLinesBy}{Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transit between strata is not shown.}
 
-\item{lon_name, lat_name}{Character: The name of the longitude and latitude variable in the data \code{x}.}
+\item{lon_name, lat_name}{Character: The name of the longitude and latitude variable in the data \code{trackData}.}
 
-\item{lon_name_end, lat_name_end}{Character: The name of the end point of the longitude and latitude variable in the data \code{x}, used in the case that \code{type} contains "s" (segments).}
+\item{lon_name_end, lat_name_end}{Character: The name of the end point of the longitude and latitude variable in the data \code{trackData}, used in the case that \code{trackType} contains "s" (segments).}
 
-\item{type}{The type of plot. See Details.}
+\item{lon_name_station, lat_name_station}{Character: The name of the longitude and latitude variable in the data \code{stationData}.}
+
+\item{trackType}{The type of plot. See Details.}
 
 \item{linetype.track}{The line type as described in \code{\link[ggplot2]{aes_linetype_size_shape}}.}
 
@@ -73,6 +83,8 @@ plot_lon_lat(
 
 \item{size.max}{Numeric: The maximum size of the points (presumably ignored if \code{size} is numeric).}
 
+\item{size.station.point}{Numeric: The size of the station points.}
+
 \item{strokeToPointFactor}{Numeric: A value between 0 and 1 setting the width of the point symbols relative to their size.}
 
 \item{color.track.point}{Character: The color of the track points}
@@ -81,6 +93,8 @@ plot_lon_lat(
 
 \item{color.scale}{Character: The name of the function defining the color scale in case \code{color} names a variable in the data \code{x}.}
 
+\item{color.station.point}{Character: The color to use for the station points, defaulted to "black".}
+
 \item{color.land, color.border, color.ocean, color.grid}{Character: The colors to use for the land, the borders between countries, the ocean and the grid in the map.}
 
 \item{color.polygon}{The color to use for the polygons, given either as a single color equal for all strata or a color palette. The default, "hue", is the default color ggplot palette. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).}
@@ -88,6 +102,8 @@ plot_lon_lat(
 \item{color.polygon.border}{Character: The color of the borders between poygons.}
 
 \item{shape}{Numeric: The shape of the points as specified in \code{\link[graphics]{points}}. Could possibly also be a character.}
+
+\item{shape.station.point}{The shape of the station points, as defined for the argument \code{pch} in \code{\link{points}}.}
 
 \item{alpha.point, alpha.track, alpha.polygon}{Numeric: The alpha (transparency) values between 0 and 1 for the points, track lines and polygons.}
 
@@ -115,7 +131,7 @@ plot_lon_lat(
 Plot a map, an optional (multi)polygon, and points and a track given by the first argument.
 }
 \details{
-The \code{type} can have the following values:
+The \code{trackType} can have the following values:
  \describe{
    \item{pl}{Track lines on top of points}
    \item{lp}{Points on top of track lines}

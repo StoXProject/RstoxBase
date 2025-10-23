@@ -41,9 +41,9 @@ DefineTransectParameter(
 
 \item{Retour}{Logical: If TRUE the transect design will be doubled by a retour.}
 
-\item{SurveyTime}{Numeric: The time to spend in the stratum including transport between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.}
+\item{SurveyTime}{Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.}
 
-\item{SurveyDistance}{Numeric: The distance to travel in the stratum including transport between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.}
+\item{SurveyDistance}{Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.}
 
 \item{SurveySpeed}{Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.}
 

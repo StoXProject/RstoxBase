@@ -92,7 +92,7 @@ PlotAcousticTrawlSurvey(
 
 \item{AcousticPSULabelHjust, AcousticPSULabelVjust}{Numeric: The hjust and vjust of the AcousticPSU label for more detailed positioning in addition to the \code{AcousticPSULabelPosition}.}
 
-\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default track settings of the plotting function. Setting this to FALSE will show all track options of the plotting function in the StoX GUI.}
 
 \item{TrackColor}{Character: The color to use for the vessel track, defaulted to "black".}
 

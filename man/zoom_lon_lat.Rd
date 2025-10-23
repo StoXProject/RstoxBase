@@ -5,9 +5,14 @@
 \title{Apply zoom using ggplot2::coord_sf based on positions in the data and limiting parameters}
 \usage{
 zoom_lon_lat(
-  x,
+  trackData,
+  stationData = NULL,
   lon_name = "lon",
   lat_name = "lat",
+  lon_name_end = NULL,
+  lat_name_end = NULL,
+  lon_name_station = "lon",
+  lat_name_station = "lat",
   xmin = NA,
   xmax = NA,
   ymin = NA,
@@ -17,9 +22,15 @@ zoom_lon_lat(
 )
 }
 \arguments{
-\item{x}{A data.table with data, including the longitude and latitude variables specified by the arguments \code{lon_name} and \code{lat_name}.}
+\item{trackData}{A data.table with track data, including the longitude and latitude variables specified by the arguments \code{lon_name} and \code{lat_name}.}
 
-\item{lon_name, lat_name}{Character: The name of the longitude and latitude variable in the data \code{x}.}
+\item{stationData}{A data.table with track data, including the longitude and latitude variables specified by the arguments \code{lon_name_station} and \code{lat_name_station}.}
+
+\item{lon_name, lat_name}{Character: The name of the longitude and latitude variable in the data \code{trackData}.}
+
+\item{lon_name_end, lat_name_end}{Character: The name of the end point of the longitude and latitude variable in the data \code{trackData}, used in the case that \code{trackType} contains "s" (segments).}
+
+\item{lon_name_station, lat_name_station}{Character: The name of the longitude and latitude variable in the data \code{stationData}.}
 
 \item{xmin, xmax, ymin, ymax}{Numeric: The optional extremes of the plot, where x is longitude and y is latitude. Setting only xmin sets only the lower longitude limit, etc.}
 

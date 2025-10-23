@@ -155,14 +155,14 @@ PlotAcousticTrawlSurvey <- function(
             lon_name = "Longitude", 
             lat_name = "Latitude", 
             color.track.point = "NASC",
-            type = "lp", 
+            trackType = "lp", 
             size = "NASC"
         )
     )
     
     # Define the translation from the inputs to this function to the inputs to plot_lon_lat:
     translation <- c(
-        x = "SumNASCData", 
+        trackData = "SumNASCData", 
         polygon = "StratumPolygon", 
         showMap = "ShowMap",
         # Group by PSUs later if ShowOnlyAcousticPSU == TRUE.
@@ -210,9 +210,9 @@ PlotAcousticTrawlSurvey <- function(
     
     
     
-    # Discard the transports if ShowOnlyAcousticPSU:
+    # Discard the transits if ShowOnlyAcousticPSU:
     if(ShowOnlyAcousticPSU) {
-        # Merge in the PSUs and subset to remove the transport::
+        # Merge in the PSUs and subset to remove the transit:
         plotArguments$SumNASCData <- merge(plotArguments$SumNASCData, AcousticPSU$EDSU_PSU, by = "EDSU")
         plotArguments$SumNASCData <- subset(plotArguments$SumNASCData, !is.na(PSU))
         # Add the PSU as a grouping variable:
@@ -324,19 +324,34 @@ PlotAcousticTrawlSurvey <- function(
 
 
 splitAxisTitleSize <- function(plotArguments) {
+    # Do the split:
     plotArguments$axis.title.size.x <- plotArguments$AxisTitleSize
     plotArguments$axis.title.size.y <- plotArguments$AxisTitleSize
     plotArguments$axis.text.size.x <- plotArguments$AxisTickSize
     plotArguments$axis.text.size.y <- plotArguments$AxisTickSize
+    # Clear the inputs:
+    plotArguments$AxisTitleSize <- NULL
+    plotArguments$AxisTickSize <- NULL
+    
     return(plotArguments)
 }
 
 
 
 set_xlim_ylim_zoomCenter <- function(plotArguments) {
+    # Set the xlim, ylim and zoomCenter:
     plotArguments$xlim <- c(plotArguments$LongitudeMin, plotArguments$LongitudeMax)
     plotArguments$ylim <- c(plotArguments$LatitudeMin, plotArguments$LatitudeMax)
     plotArguments$zoomCenter <- c(plotArguments$LongitudeCenter, plotArguments$LatitudeCenter)
+    
+    # Clear the input:
+    plotArguments$LongitudeMin <- NULL
+    plotArguments$LongitudeMax <- NULL
+    plotArguments$LatitudeMin <- NULL
+    plotArguments$LatitudeMax <- NULL
+    plotArguments$LongitudeCenter <- NULL
+    plotArguments$LatitudeCenter <- NULL
+    
     return(plotArguments)
 }
 
@@ -368,22 +383,39 @@ setPlotAttributes <- function(plotObject, plotArguments) {
 #' 
 #' This function is applied by plot_lon_lat() to set the zoom based on 0 or more arguments and the actual data to be plotted. Providing no arguments returns the full extent of the data.
 #' 
-#' @param x A data.table with data, including the longitude and latitude variables specified by the arguments \code{lon_name} and \code{lat_name}.
-#' @param lon_name,lat_name Character: The name of the longitude and latitude variable in the data \code{x}.
+#' @param trackData A data.table with track data, including the longitude and latitude variables specified by the arguments \code{lon_name} and \code{lat_name}.
+#' @param stationData A data.table with track data, including the longitude and latitude variables specified by the arguments \code{lon_name_station} and \code{lat_name_station}.
+#' @param lon_name,lat_name Character: The name of the longitude and latitude variable in the data \code{trackData}.
+#' @param lon_name_end,lat_name_end Character: The name of the end point of the longitude and latitude variable in the data \code{trackData}, used in the case that \code{trackType} contains "s" (segments).
+#' @param lon_name_station,lat_name_station Character: The name of the longitude and latitude variable in the data \code{stationData}.
 #' @param xmin,xmax,ymin,ymax Numeric: The optional extremes of the plot, where x is longitude and y is latitude. Setting only xmin sets only the lower longitude limit, etc. 
 #' @param zoom Numeric: The zoom of the plot, where 1 is no zoom and 2 zooms out to double extent of the plot, etc. 
 #' @param zoomCenter Numeric: The center of the plot relative to the limits of the plot before zooming.
 #' 
 zoom_lon_lat <- function(
-    x, 
+    trackData, 
+    stationData = NULL, 
     lon_name = "lon", lat_name = "lat", 
+    lon_name_end = NULL, lat_name_end = NULL, 
+    lon_name_station = "lon", lat_name_station = "lat", 
     xmin = NA, xmax = NA, 
     ymin = NA, ymax = NA, 
     zoom = 1, zoomCenter = c(0.5, 0.5)
 ) {
     
     # Zooms first from the range of the values,:
-    temp <- zoom_data(x = unlist(subset(x, select = lon_name)), y = unlist(subset(x, select = lat_name)), zoom = zoom, zoomCenter = zoomCenter)
+    temp <- zoom_data(
+        x = c(
+            if(NROW(trackData)) unlist(subset(trackData, select = c(lon_name, lon_name_end))),
+            if(NROW(stationData)) unlist(subset(stationData, select = lon_name_station))
+        ), 
+        y = c(
+            if(NROW(trackData)) unlist(subset(trackData, select = c(lat_name, lat_name_end))),
+            if(NROW(stationData)) unlist(subset(stationData, select = lat_name_station))
+        ), 
+        zoom = zoom, 
+        zoomCenter = zoomCenter
+    )
     
     # If xmin is not present:
     if(isNotGiven(xmin)){
@@ -422,29 +454,29 @@ isNotGiven <- function(x) {
 }
 
 
-
-
 #' Plot a map, an optional (multi)polygon, and points and a track given by the first argument.
 #' 
 #' @inheritParams zoom_lon_lat
 #' @param polygon An sf object with multipolygons.
 #' @param showMap Logical: If TRUE show the map.
-#' @param trackLinesBy Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transport between strata is not shown.
-#' @param lon_name_end,lat_name_end Character: The name of the end point of the longitude and latitude variable in the data \code{x}, used in the case that \code{type} contains "s" (segments).
-#' @param type The type of plot. See Details.
+#' @param trackLinesBy Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transit between strata is not shown.
+#' @param trackType The type of plot. See Details.
 #' @param linetype.track The line type as described in \code{\link[ggplot2]{aes_linetype_size_shape}}.
 #' @param linewidth.track Numeric: The width of the track lines.
 #' @param linewidth.polygon.border Numeric: The width of the polygon borders.
 #' @param size Either a numeric value or the name of the variable to set the size by.
+#' @param size.station.point Numeric: The size of the station points.
 #' @param size.max Numeric: The maximum size of the points (presumably ignored if \code{size} is numeric).
 #' @param strokeToPointFactor Numeric: A value between 0 and 1 setting the width of the point symbols relative to their size.
 #' @param color.track.point Character: The color of the track points
 #' @param color.track Character: The color of the track lines.
 #' @param color.scale Character: The name of the function defining the color scale in case \code{color} names a variable in the data \code{x}.
+#' @param color.station.point Character: The color to use for the station points, defaulted to "black".
 #' @param color.land,color.border,color.ocean,color.grid Character: The colors to use for the land, the borders between countries, the ocean and the grid in the map.
 #' @param color.polygon The color to use for the polygons, given either as a single color equal for all strata or a color palette. The default, "hue", is the default color ggplot palette. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).
 #' @param color.polygon.border Character: The color of the borders between poygons.
 #' @param shape Numeric: The shape of the points as specified in \code{\link[graphics]{points}}. Could possibly also be a character.
+#' @param shape.station.point The shape of the station points, as defined for the argument \code{pch} in \code{\link{points}}.
 #' @param alpha.point,alpha.track,alpha.polygon Numeric: The alpha (transparency) values between 0 and 1 for the points, track lines and polygons.
 #' @param xlim,ylim The optional x and y limit of the plot. These are vectors of length 2. NA can be used to leave on of the values unset. The full extent of the data are used when these are not specified.
 #' @param main Character: The main title of the plot.
@@ -456,7 +488,7 @@ isNotGiven <- function(x) {
 #' @param ... Optional arguments, specifically axis.title.size.x, axis.title.size.y, axis.text.size.x,axis.text.size.y, legend.text.size and legend.title.size.
 #' 
 #' @details
-#' The \code{type} can have the following values:
+#' The \code{trackType} can have the following values:
 #'  \describe{
 #'    \item{pl}{Track lines on top of points}
 #'    \item{lp}{Points on top of track lines}
@@ -468,19 +500,22 @@ isNotGiven <- function(x) {
 #'  }
 #' 
 plot_lon_lat <- function(
-    x, 
+    trackData, 
+    stationData = NULL, 
     polygon, 
     showMap = TRUE, 
     trackLinesBy = NULL, 
-    lon_name = "lon", lat_name = "lat", lon_name_end = NULL, lat_name_end = NULL, 
-    type = c("pl", "lp", "ps", "sp", "p", "s", "l"), 
+    lon_name = "lon", lat_name = "lat", 
+    lon_name_end = NULL, lat_name_end = NULL, 
+    lon_name_station = "lon", lat_name_station = "lat", 
+    trackType = c("pl", "lp", "ps", "sp", "p", "s", "l"), 
     linetype.track = 1, 
     linewidth.track = 1, linewidth.polygon.border = 0.5, 
-    size = 1, size.max = 10, 
+    size = 1, size.max = 10, size.station.point = 2, 
     strokeToPointFactor = 0.1, 
     color.track.point = 1, 
-    color.track = 1, color.scale = combined.color(2), color.land = "grey50", color.border = "grey10", color.ocean = "grey90", color.grid = "white", color.polygon = "hue", color.polygon.border = "blue", 
-    shape = 16, 
+    color.track = 1, color.scale = combined.color(2), color.station.point = 1, color.land = "grey50", color.border = "grey10", color.ocean = "grey90", color.grid = "white", color.polygon = "hue", color.polygon.border = "blue", 
+    shape = 16, shape.station.point = 0, 
     alpha.point = 1, alpha.track = 1, alpha.polygon = 1, 
     zoom = 1, xlim = NA, ylim = NA, 
     zoomCenter = c(0.5, 0.5), 
@@ -490,8 +525,8 @@ plot_lon_lat <- function(
 )
 {
     
-    # Get the type:
-    type <- RstoxData::match_arg_informative(type)
+    # Get the trackType:
+    trackType <- RstoxData::match_arg_informative(trackType)
     
     # Get the optional arguments:
     lll <- list(...)
@@ -500,7 +535,8 @@ plot_lon_lat <- function(
     gmap <- ggplot2::map_data("world")
     
     # Initiate the plot:
-    p <- ggplot2::ggplot(data = x) 
+    #p <- ggplot2::ggplot(data = trackData) 
+    p <- ggplot2::ggplot() 
     
     # Plot the map:
     if(showMap) {
@@ -541,16 +577,21 @@ plot_lon_lat <- function(
     
     # Zoom the data:
     p <- p + zoom_lon_lat(
-            x = x, 
-            lon_name = c(lon_name, lon_name_end), 
-            lat_name = c(lat_name, lat_name_end), 
-            xmin = xlim[1], 
-            xmax = xlim[2], 
-            ymin = ylim[1], 
-            ymax = ylim[2], 
-            zoom = zoom, 
-            zoomCenter = zoomCenter
-        ) + 
+        trackData = trackData, 
+        stationData = stationData, 
+        lon_name = lon_name, 
+        lat_name = lat_name, 
+        lon_name_end = lon_name_end, 
+        lat_name_end = lat_name_end, 
+        lon_name_station = lon_name_station, 
+        lat_name_station = lat_name_station, 
+        xmin = xlim[1], 
+        xmax = xlim[2], 
+        ymin = ylim[1], 
+        ymax = ylim[2], 
+        zoom = zoom, 
+        zoomCenter = zoomCenter
+    ) + 
     # Add the labels:
     ggplot2::xlab(lon_name) + 
     ggplot2::ylab(lat_name) #+ 
@@ -558,9 +599,9 @@ plot_lon_lat <- function(
     
     
     # Plot the track:
-    if(grepl("l", type)) {
+    if(grepl("l", trackType)) {
         plotspec <- list(
-            data = x, 
+            data = trackData, 
             ggplot2::aes_string(
                 x = lon_name, 
                 y = lat_name, 
@@ -572,16 +613,16 @@ plot_lon_lat <- function(
             show.legend = FALSE
         )
         
-        path <- do.call(ggplot2::geom_path, plotspec)
+        track_plot <- do.call(ggplot2::geom_path, plotspec)
     }
-    else if(grepl("s", type)) {
+    else if(grepl("s", trackType)) {
         
         if(!length(lon_name_end) || !length(lat_name_end)) {
-            stop("When plotting segments ('s' in type) xend and yend must be given.")
+            stop("When plotting segments ('s' in trackType) xend and yend must be given.")
         }
         
         plotspec <- list(
-            data = x, 
+            data = trackData, 
             ggplot2::aes_string(
                 x = lon_name, 
                 y = lat_name, 
@@ -595,46 +636,48 @@ plot_lon_lat <- function(
             show.legend = FALSE
         )
         
-        path <- do.call(ggplot2::geom_segment, plotspec)
+        track_plot <- do.call(ggplot2::geom_segment, plotspec)
     }
+    # If we are not plotting the track, we set the track_plot to NULL, and then remove empty elements in the toPlot below (not sure that this is ideal coding...):
     else {
-        path <- NULL
+        track_plot <- NULL
     }
     
-    # Plot the points:
-    if(grepl("p", type)) {
+    # Plot the points on the track:
+    if(grepl("p", trackType)) {
         
         # If the data variable is a column in the data, but the user has specified a single color, use this color instead:
-        if(!isCategorical(x[[color.track.point]]) && length(color.scale) == 1 && !isColorScaleFunction(color.scale)) {
+        if(!isCategorical(trackData[[color.track.point]]) && length(color.scale) == 1 && !isColorScaleFunction(color.scale)) {
             color.track.point <- color.scale
         }
         
         plotspec <- list(
+            data = trackData, 
             alpha = alpha.point
         )
         
         # If segments AND points are plotted, we need to plot both start and end points:
-        if(grepl("s", type)) {
+        if(grepl("s", trackType)) {
             
             tempDataPoints <- data.table::data.table(
-                c(t(subset(x, select = c(lon_name, lon_name_end)))), 
-                c(t(subset(x, select = c(lat_name, lat_name_end))))
+                c(t(subset(trackData, select = c(lon_name, lon_name_end)))), 
+                c(t(subset(trackData, select = c(lat_name, lat_name_end))))
             )
             names(tempDataPoints) <- c(lon_name, lat_name)
             tempDataPoints <- cbind(
                 tempDataPoints, 
-                data.table::as.data.table(lapply(subset(x, select = ! names(x) %in% c(lon_name, lat_name)), function(y) rep(y, each = 2)))
+                data.table::as.data.table(lapply(subset(trackData, select = ! names(trackData) %in% c(lon_name, lat_name)), function(y) rep(y, each = 2)))
             )
             
             plotspec$data <- tempDataPoints
         }
         else {
-            plotspec$data <- x
+            plotspec$data <- trackData
         }
         
         
         
-        if(length(color.track.point) && color.track.point %in% names(x) && length(size) && size %in% names(x)) {
+        if(length(color.track.point) && color.track.point %in% names(trackData) && length(size) && size %in% names(trackData)) {
             # Fix the stroke to the strokeToPointFactor times the size.max (multiply by 1.5 since this seems to be needed in ggplot2:
             strokeWidth <- 1.5 * size.max * strokeToPointFactor
             mapping <- ggplot2::aes_string(
@@ -645,7 +688,7 @@ plot_lon_lat <- function(
                 stroke = strokeWidth
             )
         }
-        else if(length(color.track.point) && color.track.point %in% names(x)) {
+        else if(length(color.track.point) && color.track.point %in% names(trackData)) {
             mapping <- ggplot2::aes_string(
                 x = lon_name, 
                 y = lat_name, 
@@ -653,7 +696,7 @@ plot_lon_lat <- function(
             )
             plotspec$size <- size
         }
-        else if(length(size) && size %in% names(x)) {
+        else if(length(size) && size %in% names(trackData)) {
             # Fix the stroke to the strokeToPointFactor times the size.max (multiply by 1.5 since this seems to be needed in ggplot2:
             strokeWidth <- 1.5 * size.max * strokeToPointFactor
             mapping <- ggplot2::aes_string(
@@ -678,20 +721,55 @@ plot_lon_lat <- function(
         
         plotspec$shape <- shape
         
-        point <- do.call(ggplot2::geom_point, plotspec)
+        track_point_plot <- do.call(ggplot2::geom_point, plotspec)
     }
+    # If we are not plotting the track points, we set the track_point_plot to NULL, and then remove empty elements in the toPlot below:
     else {
-        point <- NULL
+        track_point_plot <- NULL
     }
     
-    if(startsWith(type, "l")) {
-        toPlot <- list(path, point)
+    
+    # Plot the stations:
+    if(NROW(stationData)) {
+        
+        # Define the aes:
+        mapping <- ggplot2::aes_string(
+            x = lon_name_station, 
+            y = lat_name_station
+        )
+        # Define the color and size outside of the aes, since these should be static for station points:
+        plotspec <- list(
+            data = stationData, 
+            mapping = mapping, 
+            color = color.station.point, 
+            size = size.station.point, 
+            shape = shape.station.point
+        )
+        
+        station_plot <- do.call(ggplot2::geom_point, plotspec)
+    }
+    # If we are not plotting the station points, we set the station_plot to NULL, and then remove empty elements in the toPlot below:
+    else {
+        station_plot <- NULL
+    }
+    
+    
+    
+    # Order the track_plot and track_point_plot:
+    if(startsWith(trackType, "l")) {
+        toPlot <- list(track_plot, track_point_plot)
     }
     else {
-        toPlot <- list(point, path)
+        toPlot <- list(track_point_plot, track_plot)
     }
+    
+    # Add the station_plot:
+    toPlot <- list(toPlot, station_plot)
+    
+    # Remove empty elements:
     toPlot <- toPlot[lengths(toPlot) > 0]
     
+    # Add the plots to the output:
     for(this in toPlot) {
         p <- p + this
     }
@@ -701,16 +779,16 @@ plot_lon_lat <- function(
     
     
     # Use scale_color_manual() for categorical variables and scale_color_gradientn() for numeric:
-    if(is.character(color.track.point) && isCategorical(x[[color.track.point]])) {
+    if(is.character(color.track.point) && isCategorical(trackData[[color.track.point]])) {
         if(length(color.scale)) {
-            numberOfLevelsInTheColorVariable <- length(unique(x[[color.track.point]]))
+            numberOfLevelsInTheColorVariable <- length(unique(trackData[[color.track.point]]))
             
             if(isColorScaleFunction(color.scale)) {
                 color.scale <- do.call(color.scale, list(numberOfLevelsInTheColorVariable))
             }
             else {
                 numberOfDescreteColors <- length(color.scale)
-                if(length(color.scale) != length(unique(x[[color.track.point]]))) {
+                if(length(color.scale) != length(unique(trackData[[color.track.point]]))) {
                     stop("The number of discrete colors (length of TrackPointColor = ", numberOfDescreteColors, ") must match the number of levels of the categorical variable determining the colors of the points (", color.track.point, " has ", numberOfLevelsInTheColorVariable, " levels).")
                 }
             }
