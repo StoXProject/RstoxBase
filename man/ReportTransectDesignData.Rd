@@ -4,14 +4,14 @@
 \alias{ReportTransectDesignData}
 \title{Report transect design}
 \description{
-The ReportTransectDesignData model data is a list of three tables Segment, SegmentWithTransport and Stratum.
+The ReportTransectDesignData model data is a list of three tables Segment, SegmentWithTransit and Stratum.
 }
 \details{
 The table Segment stores the segments from the input TransectDesignData and contains the columns Stratum (character), Segment (character), LongitudeStart (decimal degrees), LatitudeStart (decimal degrees), LongitudeEnd (decimal degrees), LatitudeEnd (decimal degrees), Speed (knots) and Distance (nautical mile), 
 
-The table SegmentWithTransport contains the segments from the table Segment but adds the transport between each segment. This table contains the additional column SegmentType with values "Segment" and "Transport".
+The table SegmentWithTransit contains the segments from the table Segment but adds the transit between each segment. This table contains the additional column SegmentType with values "Segment" and "Transit".
 
-The table Stratum stores one row per stratum with the columns Stratum (character), DistanceSegment (nautical mile), DistanceTransport (nautical mile), Distance (nautical mile), Speed (knots), Area (square nautical mile) and Coverage (DistanceSegment / square root of Area).
+The table Stratum stores one row per stratum with the columns Stratum (character), DistanceSegment (nautical mile), DistanceTransit (nautical mile), Distance (nautical mile), Speed (knots), Area (square nautical mile) and Coverage (DistanceSegment / square root of Area).
 }
 \seealso{
 This data type is produced by \code{\link{ReportTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
