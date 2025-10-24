@@ -8,7 +8,9 @@
 
 \item{UseDefaultPointSettings}{Logical: If TRUE (default) use the default point settings of the plot, specifically PointColor, MaxPointSize and MinPointSize. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
 
-\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.}
+\item{UseDefaultTrackSettings}{Logical: If TRUE (default) use the default track settings of the plotting function. Setting this to FALSE will show all track options of the plotting function in the StoX GUI.}
+
+\item{UseDefaultStationSettings}{Logical: If TRUE (default) use the default station settings of the plotting function. Setting this to FALSE will show all station options of the plotting function in the StoX GUI.}
 
 \item{UseDefaultAspectSettings}{Logical: If TRUE (default) use the default aspect settings of the plot, specifically Zoom, LongitudeMin, LongitudeMax, LatitudeMin, LatitudeMax, LongitudeCenter and LatitudeCenter. Setting this to FALSE will show all aspect options of the plotting function in the StoX GUI.}
 
