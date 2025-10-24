@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9005</span>
       </span>
     </div>
 
@@ -73,6 +73,12 @@
 <span>  BorderColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  OceanColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  GridColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ShowStations <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  UseDefaultStationSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">StationsAlongTransectDesignData</span>,</span>
+<span>  StationPointColor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  StationPointSize <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  StationPointShape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  UseDefaultAspectSettings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  Zoom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  LongitudeMin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -104,7 +110,7 @@
 
 
 <dt id="arg-usedefaulttracksettings">UseDefaultTrackSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaulttracksettings"></a></dt>
-<dd><p>Logical: If TRUE (default) use the default point size settings of the plotting function. Setting this to FALSE will show all point size options of the plotting function in the StoX GUI.</p></dd>
+<dd><p>Logical: If TRUE (default) use the default track settings of the plotting function. Setting this to FALSE will show all track options of the plotting function in the StoX GUI.</p></dd>
 
 
 <dt id="arg-trackcolor">TrackColor<a class="anchor" aria-label="anchor" href="#arg-trackcolor"></a></dt>
@@ -173,6 +179,30 @@
 
 <dt id="arg-gridcolor">GridColor<a class="anchor" aria-label="anchor" href="#arg-gridcolor"></a></dt>
 <dd><p>Character: The color to use for the longitude/latitude grid lines, defaulted to the color used for the longitude/latitude grid in the StoX GUI map (blue color, rgb(223, 242, 255, maxColorValue = 255).</p></dd>
+
+
+<dt id="arg-showstations">ShowStations<a class="anchor" aria-label="anchor" href="#arg-showstations"></a></dt>
+<dd><p>Logical: If TRUE include stations (along transects) in the plot.</p></dd>
+
+
+<dt id="arg-usedefaultstationsettings">UseDefaultStationSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultstationsettings"></a></dt>
+<dd><p>Logical: If TRUE (default) use the default station settings of the plotting function. Setting this to FALSE will show all station options of the plotting function in the StoX GUI.</p></dd>
+
+
+<dt id="arg-stationsalongtransectdesigndata">StationsAlongTransectDesignData<a class="anchor" aria-label="anchor" href="#arg-stationsalongtransectdesigndata"></a></dt>
+<dd><p>The <code><a href="StationsAlongTransectDesignData.html">StationsAlongTransectDesignData</a></code> data.</p></dd>
+
+
+<dt id="arg-stationpointcolor">StationPointColor<a class="anchor" aria-label="anchor" href="#arg-stationpointcolor"></a></dt>
+<dd><p>Character: The color to use for the station points, defaulted to "black".</p></dd>
+
+
+<dt id="arg-stationpointsize">StationPointSize<a class="anchor" aria-label="anchor" href="#arg-stationpointsize"></a></dt>
+<dd><p>Numeric: The size of the station points.</p></dd>
+
+
+<dt id="arg-stationpointshape">StationPointShape<a class="anchor" aria-label="anchor" href="#arg-stationpointshape"></a></dt>
+<dd><p>The shape of the station points, as defined for the argument <code>pch</code> in <code><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></code>.</p></dd>
 
 
 <dt id="arg-usedefaultaspectsettings">UseDefaultAspectSettings<a class="anchor" aria-label="anchor" href="#arg-usedefaultaspectsettings"></a></dt>

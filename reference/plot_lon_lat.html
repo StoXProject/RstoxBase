@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9005</span>
       </span>
     </div>
 
@@ -54,7 +54,8 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_lon_lat</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">trackData</span>,</span>
+<span>  stationData <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">polygon</span>,</span>
 <span>  showMap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  trackLinesBy <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -62,16 +63,20 @@
 <span>  lat_name <span class="op">=</span> <span class="st">"lat"</span>,</span>
 <span>  lon_name_end <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lat_name_end <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pl"</span>, <span class="st">"lp"</span>, <span class="st">"ps"</span>, <span class="st">"sp"</span>, <span class="st">"p"</span>, <span class="st">"s"</span>, <span class="st">"l"</span><span class="op">)</span>,</span>
+<span>  lon_name_station <span class="op">=</span> <span class="st">"lon"</span>,</span>
+<span>  lat_name_station <span class="op">=</span> <span class="st">"lat"</span>,</span>
+<span>  trackType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pl"</span>, <span class="st">"lp"</span>, <span class="st">"ps"</span>, <span class="st">"sp"</span>, <span class="st">"p"</span>, <span class="st">"s"</span>, <span class="st">"l"</span><span class="op">)</span>,</span>
 <span>  linetype.track <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  linewidth.track <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  linewidth.polygon.border <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  size <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  size.max <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  size.station.point <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  strokeToPointFactor <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  color.track.point <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  color.track <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  color.scale <span class="op">=</span> <span class="fu"><a href="combined.color.html">combined.color</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>,</span>
+<span>  color.station.point <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  color.land <span class="op">=</span> <span class="st">"grey50"</span>,</span>
 <span>  color.border <span class="op">=</span> <span class="st">"grey10"</span>,</span>
 <span>  color.ocean <span class="op">=</span> <span class="st">"grey90"</span>,</span>
@@ -79,6 +84,7 @@
 <span>  color.polygon <span class="op">=</span> <span class="st">"hue"</span>,</span>
 <span>  color.polygon.border <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>  shape <span class="op">=</span> <span class="fl">16</span>,</span>
+<span>  shape.station.point <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  alpha.point <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  alpha.track <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  alpha.polygon <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -102,8 +108,12 @@
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A data.table with data, including the longitude and latitude variables specified by the arguments <code>lon_name</code> and <code>lat_name</code>.</p></dd>
+<dl><dt id="arg-trackdata">trackData<a class="anchor" aria-label="anchor" href="#arg-trackdata"></a></dt>
+<dd><p>A data.table with track data, including the longitude and latitude variables specified by the arguments <code>lon_name</code> and <code>lat_name</code>.</p></dd>
+
+
+<dt id="arg-stationdata">stationData<a class="anchor" aria-label="anchor" href="#arg-stationdata"></a></dt>
+<dd><p>A data.table with track data, including the longitude and latitude variables specified by the arguments <code>lon_name_station</code> and <code>lat_name_station</code>.</p></dd>
 
 
 <dt id="arg-polygon">polygon<a class="anchor" aria-label="anchor" href="#arg-polygon"></a></dt>
@@ -115,18 +125,22 @@
 
 
 <dt id="arg-tracklinesby">trackLinesBy<a class="anchor" aria-label="anchor" href="#arg-tracklinesby"></a></dt>
-<dd><p>Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transport between strata is not shown.</p></dd>
+<dd><p>Character: A grouping variable for the track lines. Typically this could be Stratum for a plot of a TransectDesignData so that the transit between strata is not shown.</p></dd>
 
 
 <dt id="arg-lon-name-lat-name">lon_name, lat_name<a class="anchor" aria-label="anchor" href="#arg-lon-name-lat-name"></a></dt>
-<dd><p>Character: The name of the longitude and latitude variable in the data <code>x</code>.</p></dd>
+<dd><p>Character: The name of the longitude and latitude variable in the data <code>trackData</code>.</p></dd>
 
 
 <dt id="arg-lon-name-end-lat-name-end">lon_name_end, lat_name_end<a class="anchor" aria-label="anchor" href="#arg-lon-name-end-lat-name-end"></a></dt>
-<dd><p>Character: The name of the end point of the longitude and latitude variable in the data <code>x</code>, used in the case that <code>type</code> contains "s" (segments).</p></dd>
+<dd><p>Character: The name of the end point of the longitude and latitude variable in the data <code>trackData</code>, used in the case that <code>trackType</code> contains "s" (segments).</p></dd>
 
 
-<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
+<dt id="arg-lon-name-station-lat-name-station">lon_name_station, lat_name_station<a class="anchor" aria-label="anchor" href="#arg-lon-name-station-lat-name-station"></a></dt>
+<dd><p>Character: The name of the longitude and latitude variable in the data <code>stationData</code>.</p></dd>
+
+
+<dt id="arg-tracktype">trackType<a class="anchor" aria-label="anchor" href="#arg-tracktype"></a></dt>
 <dd><p>The type of plot. See Details.</p></dd>
 
 
@@ -150,6 +164,10 @@
 <dd><p>Numeric: The maximum size of the points (presumably ignored if <code>size</code> is numeric).</p></dd>
 
 
+<dt id="arg-size-station-point">size.station.point<a class="anchor" aria-label="anchor" href="#arg-size-station-point"></a></dt>
+<dd><p>Numeric: The size of the station points.</p></dd>
+
+
 <dt id="arg-stroketopointfactor">strokeToPointFactor<a class="anchor" aria-label="anchor" href="#arg-stroketopointfactor"></a></dt>
 <dd><p>Numeric: A value between 0 and 1 setting the width of the point symbols relative to their size.</p></dd>
 
@@ -166,6 +184,10 @@
 <dd><p>Character: The name of the function defining the color scale in case <code>color</code> names a variable in the data <code>x</code>.</p></dd>
 
 
+<dt id="arg-color-station-point">color.station.point<a class="anchor" aria-label="anchor" href="#arg-color-station-point"></a></dt>
+<dd><p>Character: The color to use for the station points, defaulted to "black".</p></dd>
+
+
 <dt id="arg-color-land-color-border-color-ocean-color-grid">color.land, color.border, color.ocean, color.grid<a class="anchor" aria-label="anchor" href="#arg-color-land-color-border-color-ocean-color-grid"></a></dt>
 <dd><p>Character: The colors to use for the land, the borders between countries, the ocean and the grid in the map.</p></dd>
 
@@ -180,6 +202,10 @@
 
 <dt id="arg-shape">shape<a class="anchor" aria-label="anchor" href="#arg-shape"></a></dt>
 <dd><p>Numeric: The shape of the points as specified in <code><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></code>. Could possibly also be a character.</p></dd>
+
+
+<dt id="arg-shape-station-point">shape.station.point<a class="anchor" aria-label="anchor" href="#arg-shape-station-point"></a></dt>
+<dd><p>The shape of the station points, as defined for the argument <code>pch</code> in <code><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></code>.</p></dd>
 
 
 <dt id="arg-alpha-point-alpha-track-alpha-polygon">alpha.point, alpha.track, alpha.polygon<a class="anchor" aria-label="anchor" href="#arg-alpha-point-alpha-track-alpha-polygon"></a></dt>
@@ -228,7 +254,7 @@
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>The <code>type</code> can have the following values:</p><dl><dt>pl</dt>
+    <p>The <code>trackType</code> can have the following values:</p><dl><dt>pl</dt>
 <dd><p>Track lines on top of points</p></dd>
 
    <dt>lp</dt>

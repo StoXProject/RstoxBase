@@ -91,6 +91,8 @@
 <url><loc>/reference/SplitMeanNASC.html</loc></url>
 <url><loc>/reference/SplitNASC.html</loc></url>
 <url><loc>/reference/Station.html</loc></url>
+<url><loc>/reference/StationsAlongTransectDesign.html</loc></url>
+<url><loc>/reference/StationsAlongTransectDesignData.html</loc></url>
 <url><loc>/reference/StoX_multipolygon_WKT.html</loc></url>
 <url><loc>/reference/StoxDataStartMiddleStopDateTime.html</loc></url>
 <url><loc>/reference/Stratum.html</loc></url>
@@ -135,6 +137,7 @@
 <url><loc>/reference/general_map_plot_arguments.html</loc></url>
 <url><loc>/reference/general_plot_arguments.html</loc></url>
 <url><loc>/reference/general_report_arguments.html</loc></url>
+<url><loc>/reference/general_station_plot_arguments.html</loc></url>
 <url><loc>/reference/general_stratum_plot_arguments.html</loc></url>
 <url><loc>/reference/general_track_plot_arguments.html</loc></url>
 <url><loc>/reference/getBaseUnit.html</loc></url>
