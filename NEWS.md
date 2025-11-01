@@ -1,4 +1,11 @@
 # RstoxBase v2.2.0-9004  (2025-10-23)
+* Added the function WriteStationsAlongTransectDesign() for reporting equally spaced stations along a transect design.
+* Moved the two function dataTable2sf_LINESTRING() and dataTable2sf_POINT() from RstoxFramework to RstoxBase for use in spatial operations.
+* Added the argument SurveyCoverage in DefineTransectParameter() and TransectDesign().
+* Added error message in DefineTransectParameter() and TransectDesign() if the user tries to use a vector for parameters TransectType, Bearing, BearingAngle, Retour, SurveyTime, SurveyDistanc, SurveySpeed, SurveyCoverag and Seed.
+
+
+# RstoxBase v2.2.0-9004  (2025-10-23)
 * Added the function StationsAlongTransectDesign() for drawing equally spaced stations along a transect design.
 * Added the argument StationsAlongTransectDesignData for plotting stations in PlotTransectDesign().
 
