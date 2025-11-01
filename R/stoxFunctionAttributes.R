@@ -189,7 +189,7 @@ stoxFunctionAttributes <- list(
         functionCategory = "baseline", 
         functionOutputDataType = "TransectDesignData",
         functionParameterFormat = list(
-            StratumNames = "stratumNames", 
+            StratumNames = "stratumNames_TransectDesign", 
             ParameterTable = "parameterTable_DefineTransectParameter"
         ), 
         functionArgumentHierarchy = list(
@@ -228,6 +228,10 @@ stoxFunctionAttributes <- list(
                 TransectParameterDefinition = "FunctionParameter", 
                 TransectParameterDefinitionMethod = "Parameter"
             ), 
+            SurveyCoverage = list(
+                TransectParameterDefinition = "FunctionParameter", 
+                TransectParameterDefinitionMethod = "Parameter"
+            ), 
             Seed = list(
                 TransectParameterDefinition = "FunctionParameter", 
                 TransectParameterDefinitionMethod = "Parameter"
@@ -256,7 +260,7 @@ stoxFunctionAttributes <- list(
         functionOutputDataType = "TransectParameter",
         functionParameterFormat = list(
             FileName = "filePath", 
-            StratumNames = "stratumNames", 
+            StratumNames = "stratumNames_TransectDesign", 
             ParameterTable = "parameterTable_DefineTransectParameter"
         ), 
         functionArgumentHierarchy = list(
@@ -299,6 +303,10 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "Parameter"
             ), 
+            SurveyCoverage = list(
+                UseProcessData = FALSE, 
+                DefinitionMethod = "Parameter"
+            ), 
             Seed = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "Parameter"
@@ -309,13 +317,6 @@ stoxFunctionAttributes <- list(
             )
         )
     ), 
-    
-    StationsAlongTransectDesign = list(
-        functionType = "modelData", 
-        functionCategory = "baseline", 
-        functionOutputDataType = "StationsAlongTransectDesignData"
-    ), 
-    
     
     ReportTransectDesign = list(
         functionType = "modelData", 
@@ -479,6 +480,39 @@ stoxFunctionAttributes <- list(
             default_general_map_aspect_plot_arguments
         )
     ), 
+    
+    StationsAlongTransectDesign = list(
+        functionType = "modelData", 
+        functionCategory = "baseline", 
+        functionOutputDataType = "StationsAlongTransectDesignData", 
+        functionParameterFormat = list(
+            StratumNames = "stratumNames_StationsAlongTransectDesign", 
+            ParameterTable = "parameterTable_StationsAlongTransectDesign"
+        ), 
+        functionArgumentHierarchy = list(
+            StratumNames = list(
+                DefinitionMethod = "Parameter"
+            ), 
+            Distance = list(
+                DefinitionMethod = "Parameter"
+            ), 
+            Seed = list(
+                DefinitionMethod = "Parameter"
+            ), 
+            ParameterTable = list(
+                DefinitionMethod = "ParameterTable"
+            )
+        )
+    ), 
+    
+    WriteStationsAlongTransectDesign = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "WriteStationsAlongTransectDesignData", 
+        functionParameterFormat = list(
+            FileGroupingVariables = "filegroupingVariables_WriteStationsAlongTransectDesign"
+        )
+    ),
     ##########
     
     
@@ -1211,86 +1245,7 @@ stoxFunctionAttributes <- list(
             PointColor = "pointColor"
         ),
         functionArgumentHierarchy = list(
-            # Options for the colors:
-            PointColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            TrackColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            LandColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            BorderColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            OceanColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            GridColor = list(
-                UseDefaultColorSettings = FALSE
-            ), 
-            # Options for the point sizes and shapes:
-            MaxPointSize = list(
-                UseDefaultPointSettings = FALSE
-            ), 
-            PointShape = list(
-                UseDefaultPointSettings = FALSE
-            ), 
-            TrackLineWidth = list(
-                UseDefaultPointSettings = FALSE
-            ), 
-            # Options for zoom and limits:
-            Zoom = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LongitudeMin = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LongitudeMax = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LatitudeMin = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LatitudeMax = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LongitudeCenter = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            LatitudeCenter = list(
-                UseDefaultAspectSettings = FALSE
-            ), 
-            # Options for the labels and other text:
-            Title = list(
-                UseDefaultLabelSettings = FALSE
-            ), 
-            AxisTitleSize = list(
-                UseDefaultLabelSettings = FALSE
-            ), 
-            AxisTickSize = list(
-                UseDefaultLabelSettings = FALSE
-            ), 
-            LegendTitleSize = list(
-                UseDefaultLabelSettings = FALSE
-            ), 
-            LegendTextSize = list(
-                UseDefaultLabelSettings = FALSE
-            ), 
-            # Options for the output file:
-            Format = list(
-                UseDefaultFileSettings = FALSE
-            ), 
-            Width = list(
-                UseDefaultFileSettings = FALSE
-            ), 
-            Height = list(
-                UseDefaultFileSettings = FALSE
-            ), 
-            DotsPerInch = list(
-                UseDefaultFileSettings = FALSE
-            ), 
+            
             # Layer: 
             NASCData = list(
                 # The LayerDefinition can be any of these:
@@ -1302,9 +1257,6 @@ stoxFunctionAttributes <- list(
             SumNASCData = list(
                 LayerDefinition = "PreDefined"
             ), 
-            AcousticLayer = list(
-                LayerDefinition = "FunctionInput"
-            ),
             LayerDefinitionMethod = list(
                 LayerDefinition = "FunctionParameter"
             ), 
@@ -1316,6 +1268,10 @@ stoxFunctionAttributes <- list(
                 LayerDefinition = "FunctionParameter", 
                 LayerDefinitionMethod = "Table"
             ), 
+            AcousticLayer = list(
+                LayerDefinition = "FunctionInput"
+            ),
+            
             # AcousticPSU:
             AcousticPSU = list(
                 ShowOnlyAcousticPSU = TRUE
@@ -1352,10 +1308,29 @@ stoxFunctionAttributes <- list(
                 ShowAcousticPSULabel = TRUE, 
                 UseDefaultAcousticPSULabelSettings = FALSE
             ), 
-            StratumPolygon = list(
+            
+            # Options for the track:
+            TrackColor = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            TrackLineWidth = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            TrackPointColor = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            TrackPointSize = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            TrackPointShape = list(
+                UseDefaultTrackSettings = FALSE
+            ), 
+            
+            # Options for the stratum polygons:
+            UseDefaultStratumPolygonSettings = list(
                 ShowStratumPolygon = TRUE
             ),
-            UseDefaultStratumPolygonSettings = list(
+            StratumPolygon = list(
                 ShowStratumPolygon = TRUE
             ),
             StratumPolygonColor = list(
@@ -1369,7 +1344,103 @@ stoxFunctionAttributes <- list(
             StratumPolygonBorderLineWidth = list(
                 ShowStratumPolygon = TRUE, 
                 UseDefaultStratumPolygonSettings = FALSE
+            ),
+            
+            # Options for the map:
+            UseDefaultMapSettings = list(
+                ShowMap = TRUE
+            ),
+            LandColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            BorderColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            OceanColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            GridColor = list(
+                ShowMap = TRUE, 
+                UseDefaultMapSettings = FALSE
+            ),
+            
+            # Options for the stations:
+            UseDefaultStationSettings = list(
+                ShowStations = TRUE
+            ),
+            StationsAlongTransectDesignData = list(
+                ShowStations = TRUE
+            ),
+            StationPointColor = list(
+                ShowStations = TRUE, 
+                UseDefaultStationSettings = FALSE
+            ),
+            StationPointSize = list(
+                ShowStations = TRUE, 
+                UseDefaultStationSettings = FALSE
+            ),
+            StationPointShape = list(
+                ShowStations = TRUE, 
+                UseDefaultStationSettings = FALSE
+            ),
+            
+            # Options for zoom and limits:
+            Zoom = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeMin = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeMax = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeMin = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeMax = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LongitudeCenter = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            LatitudeCenter = list(
+                UseDefaultAspectSettings = FALSE
+            ), 
+            
+            # Options for the labels and other text:
+            Title = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            AxisTitleSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            AxisTickSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            LegendTitleSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            LegendTextSize = list(
+                UseDefaultLabelSettings = FALSE
+            ), 
+            
+            # Options for the output file:
+            Format = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            Width = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            Height = list(
+                UseDefaultFileSettings = FALSE
+            ), 
+            DotsPerInch = list(
+                UseDefaultFileSettings = FALSE
             )
+            
         ), 
         functionParameterDefaults = c(
             default_general_plot_arguments, 
@@ -2616,13 +2687,23 @@ processPropertyFormats <- list(
         }
     ), 
     
-    stratumNames = list(
+    stratumNames_TransectDesign = list(
         class = "vector", 
-        title = "Select strata to define surtvey for", 
+        title = "Select strata to define survey for", 
         possibleValues = function(StratumPolygon) {
             StratumPolygon$Stratum
         }
     ), 
+    
+    
+    stratumNames_StationsAlongTransectDesign = list(
+        class = "vector", 
+        title = "Select strata in which to generate stations along transect design", 
+        possibleValues = function(TransectDesignData) {
+            unique(TransectDesignData$Stratum)
+        }
+    ), 
+    
     
     layerTable = list(
         class = "table", 
@@ -2743,6 +2824,12 @@ processPropertyFormats <- list(
         possibleValues = c("Stratum", "Direction", "Transect")
     ), 
     
+    filegroupingVariables_WriteStationsAlongTransectDesign = list(
+        class = "vector", 
+        title = "Select variables to group the waypoints by. Leaving this empty results on one single file", 
+        possibleValues = "Stratum"
+    ), 
+    
     parameterTable_DefineTransectParameter = list(
         class = "table", 
         title = "Define transect design parameters for each stratum", 
@@ -2755,6 +2842,7 @@ processPropertyFormats <- list(
             "SurveyTime", 
             "SurveyDistance",
             "SurveySpeed", 
+            "SurveyCoverage", 
             "Seed"
         ), 
         variableTypes = c(
@@ -2763,6 +2851,7 @@ processPropertyFormats <- list(
             "character", 
             "double", 
             "character", 
+            "double", 
             "double", 
             "double", 
             "double", 
@@ -2781,6 +2870,33 @@ processPropertyFormats <- list(
                 c("FALSE", "TRUE"), 
                 NULL, 
                 NULL, 
+                NULL, 
+                NULL, 
+                NULL
+            )
+        }
+    ), 
+    
+    parameterTable_StationsAlongTransectDesign = list(
+        class = "table", 
+        title = "Define parameters for stations along transect design for each stratum", 
+        columnNames = c(
+            "StratumName",
+            "Distance", 
+            "Seed"
+        ), 
+        variableTypes = c(
+            "character", 
+            "double", 
+            "integer"
+        ), 
+        possibleValues = function(TransectDesign) {
+            # Get the options of arguments of :
+            arguments <- formals("TransectDesign")
+            
+            # Must be an unnamed list:
+            list(
+                unique(TransectDesign$Stratum), 
                 NULL, 
                 NULL
             )

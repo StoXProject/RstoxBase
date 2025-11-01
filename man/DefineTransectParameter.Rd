@@ -17,6 +17,7 @@ DefineTransectParameter(
   SurveyTime = numeric(),
   SurveyDistance = numeric(),
   SurveySpeed = numeric(),
+  SurveyCoverage = numeric(),
   Seed = numeric(),
   ParameterTable = data.table::data.table(),
   FileName = character()
@@ -31,7 +32,7 @@ DefineTransectParameter(
 
 \item{StratumPolygon}{The \code{\link{StratumPolygon}} process data.}
 
-\item{StratumNames}{Character: The names of the strata to include in the transect design. Defaults to all strata.}
+\item{StratumNames}{Character: The names of the strata for which the parameters are valid. Defaults to all strata.}
 
 \item{TransectType}{Character: The name of the type of survey design to create, one of "Parallel", "ZigZagEqualSpacing" and "ZigZagRectangularEnclosure" (see details).}
 
@@ -46,6 +47,8 @@ DefineTransectParameter(
 \item{SurveyDistance}{Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.}
 
 \item{SurveySpeed}{Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.}
+
+\item{SurveyCoverage}{Numeric: The survey coverage, which when given and at least one of \code{SurveyTime} and \code{SurveySpeed} is not given will be used to calculate the \code{SurveyDistance} using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).}
 
 \item{Seed}{Numeric: The seed to use when drawing the random starting point.}
 
@@ -70,6 +73,7 @@ If the \code{ParameterTable} is given the table must contain the following colum
 \item{"SurveyTime"}{See the argument \code{SurveyTime}}
 \item{"SurveyDistance"}{Overrides the \code{SurveyTime}. See the argument \code{SurveyDistance}}
 \item{"SurveySpeed"}{See the argument \code{SurveySpeed}}
+\item{"SurveyCoverage"}{See the argument \code{SurveyCoverage}}
 \item{"Seed"}{See the argument \code{Seed}}
 }
 

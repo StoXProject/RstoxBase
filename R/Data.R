@@ -261,10 +261,11 @@ NULL
 #' 
 #' @param StratumAreaData The \code{\link{StratumAreaData}} data.
 #' @param TransectDesignData The \code{\link{TransectDesignData}} data.
-#' @param StationsAlongTransectDesignData The \code{\link{StationsAlongTransectDesignData}} data.
 #' @param ReportTransectDesignData The \code{\link{ReportTransectDesignData}} data.
 #' @param WriteTransectDesignData The \code{\link{WriteTransectDesignData}} data.
 #' @param PlotTransectDesignData The \code{\link{PlotTransectDesignData}} data.
+#' @param StationsAlongTransectDesignData The \code{\link{StationsAlongTransectDesignData}} data.
+#' @param WriteStationsAlongTransectDesignData The \code{\link{WriteStationsAlongTransectDesignData}} data.
 #' @param NASCData The \code{\link{NASCData}} data.
 #' @param SumNASCData The \code{\link{SumNASCData}} data.
 #' @param MeanNASCData The \code{\link{MeanNASCData}} data.
@@ -579,19 +580,6 @@ NULL
 
 ##################################################
 ##################################################
-#' Stations along transect design
-#' 
-#' The StationsAlongTransectDesignData model data is a table of the columns Stratum (character), Station (character), Longitude (decimal degrees) and Latitude (decimal degrees), where each row gives the position of a station along the transect design along which the stations were positioned and separated by a constant distance.
-#' 
-#' @seealso This data type is produced by \code{\link{StationsAlongTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
-#' 
-#' @name StationsAlongTransectDesignData
-#' 
-NULL
-
-
-##################################################
-##################################################
 #' Report transect design
 #' 
 #' The ReportTransectDesignData model data is a list of three tables Segment, SegmentWithTransit and Stratum. 
@@ -613,7 +601,7 @@ NULL
 ##################################################
 #' Transect design as GPX 
 #' 
-#' The WriteTransectDesignData model data is an sf object which can be written as GPX tracks (one segment with waypoints. 
+#' The WriteTransectDesignData model data is an sf object which can be written as GPX tracks. 
 #' 
 #' @seealso This data type is produced by \code{\link{WriteTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 #' 
@@ -633,6 +621,35 @@ NULL
 #' @name PlotTransectDesignData
 #' 
 NULL
+
+
+##################################################
+##################################################
+#' Stations along transect design
+#' 
+#' The StationsAlongTransectDesignData model data is a table of the columns Stratum (character), Station (character), Longitude (decimal degrees) and Latitude (decimal degrees), where each row gives the position of a station along the transect design along which the stations were positioned and separated by a constant distance.
+#' 
+#' @seealso This data type is produced by \code{\link{StationsAlongTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
+#' 
+#' @name StationsAlongTransectDesignData
+#' 
+NULL
+
+##################################################
+##################################################
+#' Stations along transect design as GPX 
+#' 
+#' The WriteStationsAlongTransectDesignData model data is an sf object which can be written as GPX waypoints. 
+#' 
+#' @seealso This data type is produced by \code{\link{WriteStationsAlongTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
+#' 
+#' @name WriteStationsAlongTransectDesignData
+#' 
+NULL
+
+
+
+
 
 
 ##################################################

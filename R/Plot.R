@@ -549,7 +549,7 @@ plot_lon_lat <- function(
             ), 
             fill = color.land, 
             color = color.border
-        ) 
+        )
     }
     
     # Add polygon:
@@ -621,14 +621,31 @@ plot_lon_lat <- function(
             stop("When plotting segments ('s' in trackType) xend and yend must be given.")
         }
         
+        
+        linestrings <- dataTable2sf_LINESTRING(
+            trackData, 
+            x1y1x2y2 = c(lon_name, lat_name, lon_name_end, lat_name_end), 
+            idCol = linetype.track, 
+            crs = 4326
+        )
+        
+        # Add points along the great circle and extract the coordinates, in order to force segments along the great circle in the plot:
+        linestrings_segmentized <- sf::st_segmentize(linestrings, units::set_units(10, km))
+        linestrings_segmentized_coordinates <- sf::st_coordinates(linestrings_segmentized)
+        linestrings_segmentized_coordinates <- cbind(
+            linestrings_segmentized_coordinates, 
+            linestrings_segmentized[[linetype.track]][linestrings_segmentized_coordinates[, "L1"]]
+        )
+        
+        
         plotspec <- list(
-            data = trackData, 
-            ggplot2::aes_string(
-                x = lon_name, 
-                y = lat_name, 
-                xend = lon_name_end, 
-                yend = lat_name_end, 
-                linetype = linetype.track
+            data = linestrings_segmentized_coordinates, 
+            ggplot2::aes(
+                x = X, 
+                y = Y, 
+                group = L1, 
+                #linetype = eval(linetype.track)
+                linetype = .data[[linetype.track]]
             ), 
             color = color.track, 
             linewidth = linewidth.track, 
@@ -636,7 +653,46 @@ plot_lon_lat <- function(
             show.legend = FALSE
         )
         
-        track_plot <- do.call(ggplot2::geom_segment, plotspec)
+        track_plot <- do.call(ggplot2::geom_path, plotspec)
+        
+        
+        
+        
+        
+        
+        ### #plotspec <- list(
+        ### #    data = linestrings, 
+        ### #    ggplot2::aes(
+        ### #        linetype = eval(linetype.track)
+        ### #    ), 
+        ### #    color = color.track, 
+        ### #    linewidth = linewidth.track, 
+        ### #    alpha = alpha.track, 
+        ### #    show.legend = FALSE
+        ### #)
+        ### 
+        ### 
+        ### plotspec <- list(
+        ###     data = trackData, 
+        ###     ggplot2::aes_string(
+        ###         x = lon_name, 
+        ###         y = lat_name, 
+        ###         xend = lon_name_end, 
+        ###         yend = lat_name_end, 
+        ###         group = L1, 
+        ###         linetype = linetype.track
+        ###     ), 
+        ###     color = color.track, 
+        ###     linewidth = linewidth.track, 
+        ###     alpha = alpha.track, 
+        ###     show.legend = FALSE
+        ### )
+        ### 
+        ### #track_plot <- do.call(ggplot2::geom_segment, plotspec)
+        ### track_plot <- do.call(ggplot2::geom_sf, plotspec)
+        
+        
+        
     }
     # If we are not plotting the track, we set the track_plot to NULL, and then remove empty elements in the toPlot below (not sure that this is ideal coding...):
     else {

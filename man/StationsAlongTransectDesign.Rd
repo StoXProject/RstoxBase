@@ -6,25 +6,34 @@
 \usage{
 StationsAlongTransectDesign(
   TransectDesignData,
+  DefinitionMethod = c("Parameter", "ParameterTable"),
+  StratumNames = character(),
   Distance = numeric(),
-  Seed = numeric()
+  Seed = numeric(),
+  ParameterTable = data.table::data.table()
 )
 }
 \arguments{
 \item{TransectDesignData}{The \code{\link{TransectDesignData}} data.}
 
+\item{DefinitionMethod}{Character: A string naming the method to use, one of "Parameter", for specifying common parameters for all strata given by \code{StratumNames}, or "ParameterTable", for specifying individual parameters for each stratum in the table \code{ParameterTable}.}
+
+\item{StratumNames}{Character: The names of the strata for which the parameters are valid. Defaults to all strata.}
+
 \item{Distance}{Numeric: The distance in nautical miles between the stations along the transect design.}
 
 \item{Seed}{Numeric: The seed to use when drawing the random starting point.}
+
+\item{ParameterTable}{A table specifying the parameters \code{Distance} and \code{Seed} for each stratum.}
 }
 \value{
-An object of StoX data type \code{\link{TransectDesignData}}.
+An object of StoX data type \code{\link{StationsAlongTransectDesignData}}.
 }
 \description{
 Generate stations along a transect design
 }
 \details{
-The \code{Seed} is used to generate one seed per Stratum which are then used to generate the random starting point of each Stratum. From the starting point the function \code{\link[sf]{st_line_sample}} is used to sample points along the transect design in each Stratum separated by \code{Distance} nautical miles (ignoring transit between transects).
+The \code{Seed} is used to generate one seed per Stratum which are then used to generate the random starting point of each Stratum. From the starting point the function \code{\link[sf]{st_line_sample}} is used to sample points along the transect design in cartesian coordinates in each Stratum separated by \code{Distance} nautical miles (ignoring transit between transects).
 }
 \examples{
 library(ggplot2)
@@ -56,13 +65,12 @@ stations <- StationsAlongTransectDesign(
   Seed = 1
 )
 
-# Plot the stratumPolygon with the segments
-ggplot() +
-  geom_sf(data = stratumPolygon, aes(fill = StratumName), color = 'blue') +
-  geom_segment(
-    data = transectDesignZZ_Along, 
-    aes(x = LongitudeStart, y = LatitudeStart, xend = LongitudeEnd, yend = LatitudeEnd)
-  )
-
+PlotTransectDesign(
+  transectDesignZZ_Along, 
+  ShowStratumPolygon = TRUE, 
+  StratumPolygon = stratumPolygon, 
+  StationsAlongTransectDesignData = stations, 
+  StationPointColor = "red"
+)
 
 }
