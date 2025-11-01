@@ -1129,3 +1129,48 @@ dataTable2sf_POINT <- function(x, coords = c("Longitude", "Latitude"), idCol = N
 
 
 
+#' Change precision of an sf object
+#' 
+#' @param x An sf object.
+#' @param digits The number of digits of the output.
+#' 
+#' @export
+#'
+setPrecisionToSF <- function(x, digits) {
+    
+    precision <- 10^digits
+    
+    # Write the data to a file to utilize the function sf::st_set_precision:
+    outdata <- sf::st_set_precision(x, precision = precision)
+    tmpDir <- file.path(tempdir(), "shapefile")
+    dir.create(tmpDir)
+    tmpFile <- file.path(tmpDir, "nc.shp")
+    
+    # Keep the stratum names and crs: 
+    stratumNames <- outdata$StratumName
+    crs <- sf::st_crs(outdata)
+    
+    # Write the multipolygons to a temporary file (suppress the name abbreviation warning "Field names abbreviated for ESRI Shapefile driver"):
+    suppressWarnings(sf::st_write(outdata, tmpFile, quiet = TRUE))
+    x <- sf::st_read(tmpFile, quiet = TRUE)
+    
+    # Add the stratum names and crs again: 
+    x <- x[, NULL]
+    x$StratumName <- stratumNames
+    # Suppress "replacing crs does not reproject data; use st_transform for that":
+    suppressWarnings(sf::st_crs(x) <- crs)
+    # sf::st_read may read as POLYGON. We want MULTIPOLYGON always:
+    x <- sf::st_cast(x, "MULTIPOLYGON")
+    
+    # Place geometry last, as this seems to be the default in sf, e.g. in st_cast:
+    newOrder <- c(setdiff(names(x), "geometry"), "geometry")
+    x <- x[, newOrder]
+    
+    # delete the shape files:
+    unlink(tmpDir, recursive = TRUE)
+    
+    return(x)
+}
+
+
+

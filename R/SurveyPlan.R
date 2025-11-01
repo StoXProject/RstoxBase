@@ -784,7 +784,6 @@ getTransectsOneDirection <- function(
         TransectType = "Parallel", 
         Retour = FALSE
 ){
-    
     # If we are on a retour, reverse the order of the grid points:
     # The downRandom is TRUE for even and FALSE for odd values of Seed but only for parallel:
     if(tolower(TransectType) != "parallel" ){
@@ -905,7 +904,17 @@ getSegmentsFromLinesAndPolygon <- function(list, pol, downRandom, digits = 5) {
     
     # Split the lines by the multipolygons:
     #linesSplit <- lwgeom::st_split(lines, pol)
+    #linesSplit <- sf::st_intersection(lines, pol)
+    # Turn off s2 here. Introduced in R 4.5.2 on macOS latest (2025-11-01):
+    #turn_off_s2(
+    #    linesSplit <- sf::st_intersection(lines, pol), 
+    #    msg = FALSE
+    #)
+    
+    # To aviod potential problems with non-closed multipolygons, set precision to 12 digits:
+    pol <- setPrecisionToSF(pol, digits = 12)
     linesSplit <- sf::st_intersection(lines, pol)
+    
     
     # Get the coordinates:
     linesSplitList <- lapply(linesSplit, sf::st_coordinates)
@@ -1223,7 +1232,6 @@ transectsOneStratum <- function(
     # The is the distance that is available for the design, apart from the actual travel distance if crossing the stratum along the x-axis:
     freeSurveyDistance <- SurveyDistance - lengthOfStratum
     message("StoX: TransectDesign for Stratum ", stratumName, "...")
-    
     
     # Get the random seed point for the transects:
     startPositionFactor <- sampleStartPositionFactor(Seed)

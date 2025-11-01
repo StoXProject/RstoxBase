@@ -3,6 +3,8 @@
 * Moved the two function dataTable2sf_LINESTRING() and dataTable2sf_POINT() from RstoxFramework to RstoxBase for use in spatial operations.
 * Added the argument SurveyCoverage in DefineTransectParameter() and TransectDesign().
 * Added error message in DefineTransectParameter() and TransectDesign() if the user tries to use a vector for parameters TransectType, Bearing, BearingAngle, Retour, SurveyTime, SurveyDistanc, SurveySpeed, SurveyCoverag and Seed.
+* Added rounding of the StratumPolygon to 12 digits in TransectDesign() to avoid the error "IllegalArgumentException: Points of LinearRing do not form a closed linestring" that appeared on macOS arm64 on R v4.5.2.
+* Added the function setPrecisionToSF(), which is also used by RstoxFramework.
 
 
 # RstoxBase v2.2.0-9004  (2025-10-23)
