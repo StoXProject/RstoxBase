@@ -2200,6 +2200,8 @@ StationsAlongTransectDesign <- function(
     DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
     
     
+    # Get the unique stratum names:
+    allStratumNames <- unique(TransectDesignData$Stratum)
     
     # Get the Seed and Distane form the ParameterTable if present:
     if(NROW(ParameterTable)) {
@@ -2208,9 +2210,6 @@ StationsAlongTransectDesign <- function(
         StratumNames <- allStratumNames
     }
     else {
-        # Get the unique stratum names:
-        allStratumNames <- unique(TransectDesignData$Stratum)
-        
         if(!length(StratumNames)) {
             StratumNames <- allStratumNames
         }
