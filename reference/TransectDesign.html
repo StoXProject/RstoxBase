@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9006</span>
       </span>
     </div>
 
@@ -65,6 +65,7 @@
 <span>  SurveyTime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  SurveyDistance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  SurveySpeed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  SurveyCoverage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  Seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ParameterTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">TransectParameter</span>,</span>
@@ -122,6 +123,10 @@
 <dd><p>Numeric: The speed of the vessel, needed if effort is specified by <code>SurveyTime</code>.</p></dd>
 
 
+<dt id="arg-surveycoverage">SurveyCoverage<a class="anchor" aria-label="anchor" href="#arg-surveycoverage"></a></dt>
+<dd><p>Numeric: The survey coverage, which when given and at least one of <code>SurveyTime</code> and <code>SurveySpeed</code> is not given will be used to calculate the <code>SurveyDistance</code> using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).</p></dd>
+
+
 <dt id="arg-seed">Seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>Numeric: The seed to use when drawing the random starting point.</p></dd>
 
@@ -176,6 +181,9 @@
 
 <dt>"SurveySpeed"</dt>
 <dd><p>See the argument <code>SurveySpeed</code></p></dd>
+
+<dt>"SurveyCoverage"</dt>
+<dd><p>See the argument <code>SurveyCoverage</code></p></dd>
 
 <dt>"Seed"</dt>
 <dd><p>See the argument <code>Seed</code></p></dd>

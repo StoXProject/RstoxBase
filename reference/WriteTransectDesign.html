@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9006</span>
       </span>
     </div>
 
@@ -90,7 +90,6 @@
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">stratumFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="st">"testresources"</span>, </span></span>
@@ -152,17 +151,17 @@
 <span class="r-in"><span> <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> writing: substituting ENGCRS["Undefined Cartesian SRS with unknown unit"] for missing CRS</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Writing layer `track_points' to data source </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `/var/folders/q0/wmf37v850txck86cpnvwm_zw0000gn/T//RtmpUDEa3q/file3ee55d06c880.gpx' using driver `GPX'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `/var/folders/xc/cl1fyykn2pj4ryhdw6r1mqtc0000gn/T//Rtmp7tJVb5/fileb139f71c800.gpx' using driver `GPX'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Writing 354 features with 4 fields and geometry type Point.</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span> <span class="co"># Read the data back in:</span></span></span>
 <span class="r-in"><span> <span class="va">gpxData_backin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">st_read</a></span><span class="op">(</span><span class="va">filePath</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Multiple layers are present in data source /private/var/folders/q0/wmf37v850txck86cpnvwm_zw0000gn/T/RtmpUDEa3q/file3ee55d06c880.gpx, reading layer `waypoints'.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Multiple layers are present in data source /private/var/folders/xc/cl1fyykn2pj4ryhdw6r1mqtc0000gn/T/Rtmp7tJVb5/fileb139f71c800.gpx, reading layer `waypoints'.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Use `st_layers' to list all layer names and their type in a data source.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Set the `layer' argument in `st_read' to read a particular layer.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>automatically selected the first layer in a data source containing more than one.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reading layer `waypoints' from data source </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   `/private/var/folders/q0/wmf37v850txck86cpnvwm_zw0000gn/T/RtmpUDEa3q/file3ee55d06c880.gpx' </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   `/private/var/folders/xc/cl1fyykn2pj4ryhdw6r1mqtc0000gn/T/Rtmp7tJVb5/fileb139f71c800.gpx' </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   using driver `GPX'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 0 features and 23 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: NA ymin: NA xmax: NA ymax: NA</span>

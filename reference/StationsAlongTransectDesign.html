@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9006</span>
       </span>
     </div>
 
@@ -55,8 +55,11 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">StationsAlongTransectDesign</span><span class="op">(</span></span>
 <span>  <span class="va">TransectDesignData</span>,</span>
+<span>  DefinitionMethod <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Parameter"</span>, <span class="st">"ParameterTable"</span><span class="op">)</span>,</span>
+<span>  StratumNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  Distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  Seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  Seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ParameterTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -68,6 +71,14 @@
 <dd><p>The <code><a href="TransectDesignData.html">TransectDesignData</a></code> data.</p></dd>
 
 
+<dt id="arg-definitionmethod">DefinitionMethod<a class="anchor" aria-label="anchor" href="#arg-definitionmethod"></a></dt>
+<dd><p>Character: A string naming the method to use, one of "Parameter", for specifying common parameters for all strata given by <code>StratumNames</code>, or "ParameterTable", for specifying individual parameters for each stratum in the table <code>ParameterTable</code>.</p></dd>
+
+
+<dt id="arg-stratumnames">StratumNames<a class="anchor" aria-label="anchor" href="#arg-stratumnames"></a></dt>
+<dd><p>Character: The names of the strata for which the parameters are valid. Defaults to all strata.</p></dd>
+
+
 <dt id="arg-distance">Distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
 <dd><p>Numeric: The distance in nautical miles between the stations along the transect design.</p></dd>
 
@@ -75,14 +86,18 @@
 <dt id="arg-seed">Seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
 <dd><p>Numeric: The seed to use when drawing the random starting point.</p></dd>
 
+
+<dt id="arg-parametertable">ParameterTable<a class="anchor" aria-label="anchor" href="#arg-parametertable"></a></dt>
+<dd><p>A table specifying the parameters <code>Distance</code> and <code>Seed</code> for each stratum.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of StoX data type <code><a href="TransectDesignData.html">TransectDesignData</a></code>.</p>
+    <p>An object of StoX data type <code><a href="StationsAlongTransectDesignData.html">StationsAlongTransectDesignData</a></code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>The <code>Seed</code> is used to generate one seed per Stratum which are then used to generate the random starting point of each Stratum. From the starting point the function <code><a href="https://r-spatial.github.io/sf/reference/st_line_sample.html" class="external-link">st_line_sample</a></code> is used to sample points along the transect design in each Stratum separated by <code>Distance</code> nautical miles (ignoring transit between transects).</p>
+    <p>The <code>Seed</code> is used to generate one seed per Stratum which are then used to generate the random starting point of each Stratum. From the starting point the function <code><a href="https://r-spatial.github.io/sf/reference/st_line_sample.html" class="external-link">st_line_sample</a></code> is used to sample points along the transect design in cartesian coordinates in each Stratum separated by <code>Distance</code> nautical miles (ignoring transit between transects).</p>
     </div>
 
     <div id="ref-examples">
@@ -144,15 +159,14 @@
 <span class="r-in"><span>  Seed <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Plot the stratumPolygon with the segments</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">stratumPolygon</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">StratumName</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">'blue'</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    data <span class="op">=</span> <span class="va">transectDesignZZ_Along</span>, </span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">LongitudeStart</span>, y <span class="op">=</span> <span class="va">LatitudeStart</span>, xend <span class="op">=</span> <span class="va">LongitudeEnd</span>, yend <span class="op">=</span> <span class="va">LatitudeEnd</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="PlotTransectDesign.html">PlotTransectDesign</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">transectDesignZZ_Along</span>, </span></span>
+<span class="r-in"><span>  ShowStratumPolygon <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
+<span class="r-in"><span>  StratumPolygon <span class="op">=</span> <span class="va">stratumPolygon</span>, </span></span>
+<span class="r-in"><span>  StationsAlongTransectDesignData <span class="op">=</span> <span class="va">stations</span>, </span></span>
+<span class="r-in"><span>  StationPointColor <span class="op">=</span> <span class="st">"red"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="StationsAlongTransectDesign-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -112,10 +112,13 @@
 <url><loc>/reference/TransectDesign.html</loc></url>
 <url><loc>/reference/TransectDesignData.html</loc></url>
 <url><loc>/reference/TransectParameter.html</loc></url>
+<url><loc>/reference/WriteStationsAlongTransectDesign.html</loc></url>
+<url><loc>/reference/WriteStationsAlongTransectDesignData.html</loc></url>
 <url><loc>/reference/WriteStratumPolygon.html</loc></url>
 <url><loc>/reference/WriteStratumPolygonData.html</loc></url>
 <url><loc>/reference/WriteTransectDesign.html</loc></url>
 <url><loc>/reference/WriteTransectDesignData.html</loc></url>
+<url><loc>/reference/addCentroidToProjection.html</loc></url>
 <url><loc>/reference/aggregateBaselineDataOneTable.html</loc></url>
 <url><loc>/reference/aggregateBaselineDataOneTableSingleFunction.html</loc></url>
 <url><loc>/reference/allEqual.html</loc></url>
@@ -123,6 +126,8 @@
 <url><loc>/reference/backwardCompatibility_RstoxBase.html</loc></url>
 <url><loc>/reference/combined.color.html</loc></url>
 <url><loc>/reference/cv.html</loc></url>
+<url><loc>/reference/dataTable2sf_LINESTRING.html</loc></url>
+<url><loc>/reference/dataTable2sf_POINT.html</loc></url>
 <url><loc>/reference/factorNAfirst.html</loc></url>
 <url><loc>/reference/filterTable.html</loc></url>
 <url><loc>/reference/formatOutput.html</loc></url>
@@ -169,6 +174,7 @@
 <url><loc>/reference/setBaseUnit.html</loc></url>
 <url><loc>/reference/setDefaultsInStoxFunction.html</loc></url>
 <url><loc>/reference/setPlotAttributes.html</loc></url>
+<url><loc>/reference/setPrecisionToSF.html</loc></url>
 <url><loc>/reference/setUnitRstoxBase.html</loc></url>
 <url><loc>/reference/stoxFunctionAttributes.html</loc></url>
 <url><loc>/reference/summaryStox.html</loc></url>
