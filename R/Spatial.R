@@ -818,13 +818,12 @@ polygonArea_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
     centroid <- getCentroid(stratumPolygon, iterativeCentroidCalculation = !useLonLatCentroid)
     
     #centroid <- rgeos::gCentroid(stratumPolygon)@coords
-    laea.CRS <- paste0(
-        "+proj=laea +lat_0=", 
-        centroid[2], 
-        " +lon_0=", 
-        centroid[1], 
-        " +x_0=0 +y_0=0 +ellps=WGS84 +units=kmi +no_defs"
+    laea.CRS <- addCentroidToProjection(
+        getRstoxBaseDefinitions("proj4string_laea"), 
+        centroid = centroid, 
+        additionalFields = " +x_0=0 +y_0=0 +units=kmi"
     )
+    
     stratumPolygon <- sf::st_transform(stratumPolygon, laea.CRS)
     
     ## Convert from sf to spatial and calculate area:
@@ -847,6 +846,27 @@ polygonArea_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
 }
 
 
+#' Add centroid and possibly other fields to an existing proj4String:
+#' 
+#' @param proj4String A proj4 string.
+#' @param centroid Either a vector of longitude and latitude value, or a named list of this information. 
+#' @param lon_name,lat_name Character: The names of the longitude and latitude fields in \code{centroid} if given as a list.
+#' @param additionalFields Character: Optional extra proj4 fields in a single string.
+#' 
+addCentroidToProjection <- function(proj4String, centroid, lon_name = "lon", lat_name = "lat", additionalFields = NULL) {
+    if(!is.list(centroid)) {
+        centroid <- structure(as.list(centroid), names = c(lon_name, lat_name))
+    }
+    paste0(
+        proj4String, 
+        " +lat_0=", 
+        centroid[[lat_name]], 
+        " +lon_0=", 
+        centroid[[lon_name]], 
+        additionalFields
+    )
+}
+
 
 
 # Get the true centroid of a polygon, as calculated in x,y after projecting with aeqd (as default) to using the centroid in longitude,latitude as origin, transfoming the x,y centroid to longitude,latitude, and repeating the procecss until the centroid in longitude,latitude no longer change.
@@ -854,8 +874,8 @@ getCentroid <- function(stratumPolygon, par = list(), tol = 1e-9, msg = FALSE, i
     
     # Calculate the centroid iteratively in Cartesian coordinates using the continuously updated geographical centroid as projection origin:
     if(iterativeCentroidCalculation) {
-        # Set default projection:
-        sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
+        # Set default projection. Not great, but we suppress the warning "st_crs<- : replacing crs does not reproject data; use st_transform for that ":
+        suppressWarnings(sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat"))
         
         # Get the centroid for longitude/latitude, which is not correct, but may not be too far away:
         suppressWarnings(centroidLongLat <- sf::st_coordinates(sf::st_centroid(sf::st_combine(stratumPolygon))))
@@ -1043,5 +1063,114 @@ proj4string2proj4list <- function(proj4string) {
     names(parSplit) <- parSplitNames
     return(parSplit)
 }
+
+
+#' Convert a data table to individual LINESTRINGs
+#' 
+#' @param x A a data.table or data.frame.
+#' @param x1y1x2y2 Character: A vector of the names of start x, and end x, start y and end y coordinates.
+#' @param idCol Character: A vector of the names of columns to use as ID columns in the returned sf object.
+#' @inheritParams sf::st_sfc
+#' 
+#' @export
+#'
+dataTable2sf_LINESTRING <- function(
+    x, 
+    x1y1x2y2 = c("startLongitude", "startLatitude", "endLongitude", "endLatitude"), 
+    idCol = NULL, 
+    crs = NULL
+) {
+    
+    # Create a geometry column:
+    linestrings  <- data.frame(geometry = sf::st_sfc(sapply(seq_len(nrow(x)), function(i) create_segment(x[i, ..x1y1x2y2]), simplify = FALSE)))
+    
+    # Add info:
+    if(length(idCol) && idCol %in% names(x)) {
+        linestrings[[idCol]] <- x[, ..idCol]
+    } 
+    
+    # Convert to proper sf data frame:
+    linestrings <-  sf::st_sf(linestrings)
+    
+    # Set projection:
+    sf::st_crs(linestrings) <- if(length(crs)) crs else RstoxBase::getRstoxBaseDefinitions("proj4string_longlat")
+    
+    return(linestrings)                   
+}
+
+# Simple function to create a segment:
+create_segment <- function(r) {
+    sf::st_linestring(t(matrix(unlist(r), 2, 2)))
+}
+
+
+#' Convert a data table to individual POINTs
+#' 
+#' @param x A a data.table or data.frame.
+#' @param coords Character: A vector of the names of x and y coordinates.
+#' @param idCol Character: A vector of the names of columns to use as ID columns in the returned sf object.
+#' @inheritParams sf::st_sfc
+#' 
+#' @export
+#'
+dataTable2sf_POINT <- function(x, coords = c("Longitude", "Latitude"), idCol = NULL, crs = NULL) {
+    
+    # Keep only the idCol and the coords:
+    pos <- subset(x, select = c(idCol, coords))
+    
+    # Convert to POINT sf object:
+    points <- sf::st_as_sf(pos, coords = coords)
+    # Set projection:
+    sf::st_crs(points) <- if(length(crs)) crs else RstoxBase::getRstoxBaseDefinitions("proj4string_longlat")
+    
+    return(points)
+}
+
+
+
+
+#' Change precision of an sf object
+#' 
+#' @param x An sf object.
+#' @param digits The number of digits of the output.
+#' 
+#' @export
+#'
+setPrecisionToSF <- function(x, digits) {
+    
+    precision <- 10^digits
+    
+    # Write the data to a file to utilize the function sf::st_set_precision:
+    outdata <- sf::st_set_precision(x, precision = precision)
+    tmpDir <- file.path(tempdir(), "shapefile")
+    dir.create(tmpDir)
+    tmpFile <- file.path(tmpDir, "nc.shp")
+    
+    # Keep the stratum names and crs: 
+    stratumNames <- outdata$StratumName
+    crs <- sf::st_crs(outdata)
+    
+    # Write the multipolygons to a temporary file (suppress the name abbreviation warning "Field names abbreviated for ESRI Shapefile driver"):
+    suppressWarnings(sf::st_write(outdata, tmpFile, quiet = TRUE))
+    x <- sf::st_read(tmpFile, quiet = TRUE)
+    
+    # Add the stratum names and crs again: 
+    x <- x[, NULL]
+    x$StratumName <- stratumNames
+    # Suppress "replacing crs does not reproject data; use st_transform for that":
+    suppressWarnings(sf::st_crs(x) <- crs)
+    # sf::st_read may read as POLYGON. We want MULTIPOLYGON always:
+    x <- sf::st_cast(x, "MULTIPOLYGON")
+    
+    # Place geometry last, as this seems to be the default in sf, e.g. in st_cast:
+    newOrder <- c(setdiff(names(x), "geometry"), "geometry")
+    x <- x[, newOrder]
+    
+    # delete the shape files:
+    unlink(tmpDir, recursive = TRUE)
+    
+    return(x)
+}
+
 
 
