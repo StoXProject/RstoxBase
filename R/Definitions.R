@@ -383,7 +383,7 @@ initiateRstoxBase <- function(){
             PSUByTime = PSUByTime
         ), 
         TransectParameter = list(
-            other = c("StratumName", "TransectType", "Bearing", "BearingAngle", "Retour", "SurveyTime", "SurveyDistance", "SurveySpeed", "Seed")
+            other = c("StratumName", "TransectType", "Bearing", "BearingAngle", "Retour", "SurveyTime", "SurveyDistance", "SurveySpeed", "SurveyCoverage", "Seed")
         )
         
         #AcousticPSUByTime = list(
@@ -491,7 +491,9 @@ initiateRstoxBase <- function(){
     
     #proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
     proj4string_longlat <- "+proj=longlat +no_defs +ellps=WGS84 +towgs84=0,0,0"
-    #proj4string_aeqd <- "+proj=aeqd +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    # The Azimuthal equidistant projection, used for distance calculations:
+    proj4string_aeqd <- "+proj=aeqd +no_defs +ellps=WGS84 +towgs84=0,0,0"
+    # The Lambert Azimuthal Equal-Area projection, used for area calculations:
     proj4string_laea <- "+proj=laea +no_defs +ellps=WGS84 +towgs84=0,0,0"
     
     # Define an empty SpatialPolygonsDataFrame, with no projection, as it is not possible to assign projection to an empty SpatialPolygonsDataFrame:

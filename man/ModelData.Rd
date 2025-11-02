@@ -8,13 +8,15 @@
 
 \item{TransectDesignData}{The \code{\link{TransectDesignData}} data.}
 
-\item{StationsAlongTransectDesignData}{The \code{\link{StationsAlongTransectDesignData}} data.}
-
 \item{ReportTransectDesignData}{The \code{\link{ReportTransectDesignData}} data.}
 
 \item{WriteTransectDesignData}{The \code{\link{WriteTransectDesignData}} data.}
 
 \item{PlotTransectDesignData}{The \code{\link{PlotTransectDesignData}} data.}
+
+\item{StationsAlongTransectDesignData}{The \code{\link{StationsAlongTransectDesignData}} data.}
+
+\item{WriteStationsAlongTransectDesignData}{The \code{\link{WriteStationsAlongTransectDesignData}} data.}
 
 \item{NASCData}{The \code{\link{NASCData}} data.}
 

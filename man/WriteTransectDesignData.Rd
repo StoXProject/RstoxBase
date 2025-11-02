@@ -4,7 +4,7 @@
 \alias{WriteTransectDesignData}
 \title{Transect design as GPX}
 \description{
-The WriteTransectDesignData model data is an sf object which can be written as GPX tracks (one segment with waypoints.
+The WriteTransectDesignData model data is an sf object which can be written as GPX tracks.
 }
 \seealso{
 This data type is produced by \code{\link{WriteTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
