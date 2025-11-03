@@ -2863,7 +2863,7 @@ processPropertyFormats <- list(
             
             # Must be an unnamed list:
             list(
-                getStratumNames(StratumPolygon), 
+                if(missing(StratumPolygon)) {warning("StoX: The StratumPolygon process has not been run. No StratumName possible values available."); NULL} else getStratumNames(StratumPolygon), 
                 eval(arguments$TransectType), 
                 eval(arguments$Bearing), 
                 NULL, 
@@ -2890,13 +2890,10 @@ processPropertyFormats <- list(
             "double", 
             "integer"
         ), 
-        possibleValues = function(TransectDesign) {
-            # Get the options of arguments of :
-            arguments <- formals("TransectDesign")
-            
+        possibleValues = function(TransectDesignData) {
             # Must be an unnamed list:
             list(
-                unique(TransectDesign$Stratum), 
+                if(missing(TransectDesignData)) {warning("StoX: The TransectDesign process has not been run. No StratumName possible values available."); NULL} else unique(TransectDesignData$Stratum), 
                 NULL, 
                 NULL
             )
