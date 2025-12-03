@@ -173,6 +173,7 @@
 				    "SurveyTime": { "type": [ "number", "null" ] }, 
 				    "SurveyDistance": { "type": [ "number", "null" ] }, 
 				    "SurveySpeed": { "type": [ "number", "null" ] }, 
+				    "SurveyCoverage": { "type": [ "number", "null" ] }, 
 				    "Seed": { "type": [ "number", "null" ] }
 				},
 				"required": [

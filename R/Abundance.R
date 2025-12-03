@@ -209,14 +209,14 @@ SuperIndividuals <- function(
     # Merge the QuantityData into the SuperIndividualsData, by the resolution and category variables of the QuantityData and the TempLengthGroupUsedInSuperIndividuals introduced in addLengthGroups().
     # Stratum/Layer/SpeciesCategory/TempLengthGroupUsedInSuperIndividuals
     mergeBy <- c(
-        getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
+        getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = c("horizontalResolution", "verticalResolution", "categoryVariable"), unlist = TRUE), 
         "TempLengthGroupUsedInSuperIndividuals" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
     # Get the variables to add from the QuantityData, which are the Abundance, the surveyDefinition, the vertical dimension, and the acoustic grouping variables:
     # Abundance/Survey/MinLayerDepth/MaxLayerDepth/Beam/Frequency
     variablesToGetFromQuantityData <- c(
         "Abundance", 
-        getDataTypeDefinition(dataType = "QuantityData", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables_acoustic"), unlist = TRUE)
+        getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = c("surveyDefinition", "verticalLayerDimension", "groupingVariables_acoustic"), unlist = TRUE)
     )
     # Add the mergeBy since these are needed in the merging:
     variablesToGetFromQuantityData <- unique(c(variablesToGetFromQuantityData, mergeBy))
@@ -240,7 +240,7 @@ SuperIndividuals <- function(
     
     # Append an individualNumber to the SuperIndividualsData, representing the number of individuals in each category given by 'by':
     distributeQuantityBy <- c(
-        getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
+        getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE), 
         "TempLengthGroupUsedInSuperIndividuals" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
     )
     # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
@@ -288,7 +288,7 @@ SuperIndividuals <- function(
         # Sum in each length group (in case lengths are grouped coarser than the original groups):
         haulGrouping <- c(
             "Haul", 
-            getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
+            getDataTypeDefinition(dataType = "SuperIndividualsData", subTable = "Data", elements = "categoryVariable", unlist = TRUE), 
             "TempLengthGroupUsedInSuperIndividuals"
         )
         # Add the haul density as the WeightedNumber to the SuperIndividualsData (requiring Normalized LengthDistributionType):
@@ -329,10 +329,10 @@ SuperIndividuals <- function(
         # Count the length measured individuals of each Haul, species, beam and length group:
         #SuperIndividualsData[, individualNumber := .N, by = haulGrouping] # This was an error, since it did not take different beams into account.
         countGrouping <- c(
-            getDataTypeDefinition(dataType = "QuantityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
+            getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE), 
             "Haul", 
-            getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
-            getDataTypeDefinition(dataType = "QuantityData", elements = "groupingVariables_acoustic", unlist = TRUE), 
+            getDataTypeDefinition(dataType = "SuperIndividualsData", subTable = "Data", elements = "categoryVariable", unlist = TRUE), 
+            getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = "groupingVariables_acoustic", unlist = TRUE), 
             "TempLengthGroupUsedInSuperIndividuals" # Here we use the temporary LengthGroup variable instead of the groupingVariables_biotic.
         )
         # Keep only the variables present in the QuantityData, as QuantityData is a flexible datatype which may or may not contain Beam and Frequency (i.e., the groupingVariables_acoustic):
@@ -444,7 +444,7 @@ addLengthGroupOneSpecies <- function(
 ) {
     
     # Get the indices at the given species in 'data' and 'master':
-    speciesVar <- getDataTypeDefinition(dataType = "QuantityData", elements = "categoryVariable", unlist = TRUE)
+    speciesVar <- getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = "categoryVariable", unlist = TRUE)
     atSpeciesInData <- which(data[[speciesVar]] %in% species)
     atSpeciesInMaster <- which(master[[speciesVar]] %in% species)
     
@@ -561,7 +561,7 @@ addLengthGroup <- function(
 ) {
     
     # Run a for loop through the common species:
-    speciesVar <- getDataTypeDefinition(dataType = "QuantityData", elements = "categoryVariable", unlist = TRUE)
+    speciesVar <- getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = "categoryVariable", unlist = TRUE)
     speciesInData <- unique(data[[speciesVar]])
     speciesInMaster <- unique(master[[speciesVar]])
     
@@ -1151,7 +1151,7 @@ AddHaulDensityToSuperIndividuals <- function(
     # Sum in each length group (in case lengths are grouped coarser than the original groups):
     haulGrouping <- c(
         "Haul", 
-        getDataTypeDefinition(dataType = "SuperIndividualsData", elements = "categoryVariable", unlist = TRUE), 
+        getDataTypeDefinition(dataType = "SuperIndividualsData", subTable = "Data", elements = "categoryVariable", unlist = TRUE), 
         "TempLengthGroupUsedInSuperIndividuals"
     )
     # Add the haul density as the WeightedNumber to the SuperIndividualsData (requiring Normalized LengthDistributionType):

@@ -273,7 +273,7 @@ SplitMeanNASC <- function(
     MeanNASCDataToSplit[, AcousticCategory := SplitAcousticCategory][, SplitAcousticCategory := NULL]
     
     # Define the resolution on which to distribute the NASC:
-    resolution <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
+    resolution <- getDataTypeDefinition(dataType = "DensityData", subTable = "Data", elements = c("horizontalResolution", "verticalResolution"), unlist = TRUE)
     # Split the NASC by the AssignmentLengthDistributionData:
     MeanNASCDataSplit <- DistributeNASC(
         MeanNASCData = MeanNASCDataToSplit, 
@@ -375,7 +375,7 @@ SplitNASC <- function(
     MeanNASCDataNotSplit <- subset(MeanNASCData, !rowToBeSplit)
     
     # Define the resolution on which to distribute the NASC. This is not including AcousticCategory, so that DistributeNASC() distributes among all acoustic categories as the NASC is repeated to all acoustic categories in splitOneAcousticCategory():
-    resolution <- getDataTypeDefinition(dataType = "NASCData", elements = c("horizontalResolution", "verticalResolution", "groupingVariables"), unlist = TRUE) # "EDSU", "Channel", "Beam", "Frequency"
+    resolution <- getDataTypeDefinition(dataType = "NASCData", subTable = "Data", elements = c("horizontalResolution", "verticalResolution", "groupingVariables"), unlist = TRUE) # "EDSU", "Channel", "Beam", "Frequency"
     
     # Split the NASC by the AssignmentLengthDistributionData, but first remove the column Layer from AssignmentLengthDistributionData so that the fake layers which are copied from channels are not matched with the Layer from the assignment, which we   require to be WaterColumn in the current version:
     if(!all(AssignmentLengthDistributionData$Layer == "WaterColumn")) {

@@ -6,7 +6,7 @@
 \usage{
 getDataTypeDefinition(
   dataType,
-  subTable = "Data",
+  subTable = NULL,
   elements = NULL,
   unlist = FALSE
 )
@@ -14,7 +14,7 @@ getDataTypeDefinition(
 \arguments{
 \item{dataType}{The name of the data type to get definitions from, or a logical function of one input DataType.}
 
-\item{subTable}{The sub table to extract, if any. Defaulted to "Data" to return the most relevant part of the data type definition.}
+\item{subTable}{The sub table to extract, if any. Default is to extract all potential sub tables.}
 
 \item{elements}{A vector of specific elements to extract from the definition.}
 
