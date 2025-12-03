@@ -1,4 +1,12 @@
-# RstoxBase v2.2.0-9004  (2025-10-23)
+# RstoxBase v2.2.0-9008  (2025-11-12)
+* Added names to stations in output from WriteStationsAlongTransectDesign() in the form Station_01, Station_02, etc.
+* Added support for reading a table in from file in DefineSurvey() (not only form a project.xml/project.json).
+* Refactored getDataTypeDefinition() to data = NULL, which implies to extract all potential sub tables.
+* Improved the warnings when RemoveMissingValues is TRUE, which is now only triggered if there are missing values for any of the GroupingVariables.
+* Added the option AddTransectEndPoints for adding transect end points in StationsAlongTransectDesign().
+
+
+# RstoxBase v2.2.0-9007  (2025-10-23)
 * Added the function WriteStationsAlongTransectDesign() for reporting equally spaced stations along a transect design.
 * Moved the two function dataTable2sf_LINESTRING() and dataTable2sf_POINT() from RstoxFramework to RstoxBase for use in spatial operations.
 * Added the argument SurveyCoverage in DefineTransectParameter() and TransectDesign().
@@ -7,7 +15,7 @@
 * Added the function setPrecisionToSF(), which is also used by RstoxFramework.
 
 
-# RstoxBase v2.2.0-9004  (2025-10-23)
+# RstoxBase v2.2.0-9006  (2025-10-23)
 * Added the function StationsAlongTransectDesign() for drawing equally spaced stations along a transect design.
 * Added the argument StationsAlongTransectDesignData for plotting stations in PlotTransectDesign().
 

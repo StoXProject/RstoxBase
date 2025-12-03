@@ -97,7 +97,7 @@ AcousticDensity <- function(
     #)
     
     
-    sumBy <- getDataTypeDefinition(dataType = "DensityData", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE)
+    sumBy <- getDataTypeDefinition(dataType = "DensityData", subTable = "Data", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables_acoustic"), unlist = TRUE)
     # Split the NASC by the AssignmentLengthDistributionData:
     LengthDistributedMeanNASCData <- DistributeNASC(
         MeanNASCData = MeanNASCData$Data, 
@@ -245,7 +245,7 @@ DistributeNASC <- function(
     ##### Exception 1: 
     # Find PSUs with both missing and non-missing WeightedNumber, indicating that there are species present in the MeanNASCData that have a length distribution in the AssignmentLengthDistributionData, and at the same time there are species in the MeanNASCData that are not present in the AssignmentLengthDistributionData. The WeightedNumber for the latter species should be 0 and not NA (the merge fills with NA) This is done at the end of the function:
     # AssignmentLengthDistributionData does not contain Layer yet, as it is not supported to define different assignment per Layer, so we use only the horizontal resolution here:
-    horizontalResolution <- getDataTypeDefinition("MeanNASCData", elements = c("horizontalResolution"), unlist = TRUE)
+    horizontalResolution <- getDataTypeDefinition("MeanNASCData", subTable = "Data", elements = c("horizontalResolution"), unlist = TRUE)
     # The is.na(WeightedNumber) finds rows with NA WeightedNumber
     # The any(!is.na(WeightedNumber)) requires also that there are any non missing WeightedNumber in the PSU
     MeanNASCData[, missingSpecies := is.na(WeightedNumber) & any(!is.na(WeightedNumber)), by = horizontalResolution]
@@ -295,7 +295,7 @@ DistributeNASC <- function(
             warning("StoX: SEVERE WARNING: There are positive NASC values with no assignment length distribution! \n If this warning occurs in Baseline, it can lead to missing (NA) acoustic density! Please make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this (e.g. using FilterSttoxBiotic with FilterUpwards to remove Hauls without the target species). \nIf this warning occurs in a Bootstrap process, it implies that there are AcousticPSUs where none of the assigned hauls were resampled in one or more bootstrap replicates. This causes missing values in the AcousticDensityData, QuantityData and SuperIndividualsData, with the result that the only way to get non-missing values in ReportBootstrap is to use RemoveMissingValues = TRUE, which directly leads to under-estimation!!!! This can occur if ResampleBioticAssignmentByStratum is used in the BootstrapMethodTable when there are Hauls assigned differently for the different AcousticPSUs in a Stratum (e.g., using DefinitionMethod = \"Radius\"). In this case it is adviced to use ResampleBioticAssignmentByPSU instead, which resamples only the Hauls assigned to each individual AccousticPSU.")
         }
         else if(distributionType == "SplitNASC") {
-            resolution <- getDataTypeDefinition(dataType = "DensityData", elements = "horizontalResolution", unlist = TRUE)
+            resolution <- getDataTypeDefinition(dataType = "DensityData", subTable = "Data", elements = "horizontalResolution", unlist = TRUE)
             unassignedStratumPSUs <- unique(subset(MeanNASCData, PSU %in% unassignedPSUs, select = c("Stratum", "PSU")))
             unassignedStratumPSUs <- unassignedStratumPSUs[, Reduce(function(...) paste(..., sep = ", "), .SD), .SDcols = resolution]
             warning("StoX: There are positive NASC values with no assignment length distribution!. This can lead to un-split acoustic categories in SplitNASC(). Please make sure that biotic hauls containing the relevant species are assigned to all acoustic PSUs to avoid this. \nMissing length distribution was found for the following PSUs:\n", RstoxData::printErrorIDs(unassignedStratumPSUs))
@@ -438,7 +438,7 @@ getTargetStrength <- function(Data, AcousticTargetStrengthModel) {
     }
     else if(grepl("LengthAndDepthDependent", AcousticTargetStrengthModel, ignore.case = TRUE)) {
         # Add the the depth:
-        verticalLayerDimension <- getDataTypeDefinition(dataType = "MeanNASCData", elements = "verticalLayerDimension", unlist = TRUE)
+        verticalLayerDimension <- getDataTypeDefinition(dataType = "MeanNASCData", subTable = "Data", elements = "verticalLayerDimension", unlist = TRUE)
         Data[, Depth := rowMeans(.SD), .SDcols = verticalLayerDimension]
         
         # Apply the LengthAndDepthDependent equation: 
@@ -533,8 +533,8 @@ SweptAreaDensity <- function(
     }
     
     # Get the types:
-    typeVariableName <- getDataTypeDefinition(dataType = InputDataType, elements = "type", unlist = TRUE)
-    weightingVariableName <-getDataTypeDefinition(dataType = InputDataType, elements = "weighting", unlist = TRUE)
+    typeVariableName <- getDataTypeDefinition(dataType = InputDataType, subTable = "Data", elements = "type", unlist = TRUE)
+    weightingVariableName <-getDataTypeDefinition(dataType = InputDataType, subTable = "Data", elements = "weighting", unlist = TRUE)
     
     # Require normalized type:
     if(!endsWith(firstNonNA(Data[[typeVariableName]]), "Normalized")) {
@@ -557,7 +557,7 @@ SweptAreaDensity <- function(
     Data[, DensityType := ..DensityType]
     
     # Get the data variable depending on the SweptAreaDensityMethod and the DensityType:
-    dataVariables <- getDataTypeDefinition(dataType = InputDataType, elements = "data", unlist = TRUE)
+    dataVariables <- getDataTypeDefinition(dataType = InputDataType, subTable = "Data", elements = "data", unlist = TRUE)
     if(SweptAreaDensityMethod == "LengthDistributed") {
         dataVariable <- dataVariables
     }

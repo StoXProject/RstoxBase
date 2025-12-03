@@ -111,7 +111,7 @@ DefinePSU <- function(
                     )
                     
                     # Check whether all required columns are present:
-                    requiredPSUByTimeColumns <- c("Stratum", "PSU", "Cruise", "StartDateTime", "StopDateTime")
+                    requiredPSUByTimeColumns <- getDataTypeDefinition(dataType = "AcousticPSU", subTable = "PSUByTime", unlist = TRUE)
                     if(all(requiredPSUByTimeColumns %in% names(PSUByTimeFromFile))) {
                         AcousticPSU <- getPSUProcessDataFromPSUByTime(
                             PSUByTimeFromFile, 
@@ -122,7 +122,7 @@ DefinePSU <- function(
                         AcousticPSU <- renameSSULabelInPSUProcessData(AcousticPSU, PSUType = PSUType, reverse = FALSE)
                     }
                     else {
-                        stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml, or a file with a PSUByTime table containing the columns \"Stratum\", \"PSU\", \"Cruise\", \"StartDateTime\", \"StopDateTime\".")
+                        stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml, or a file with a PSUByTime table containing the columns ", paste(requiredPSUByTimeColumns, collapse = ", "), ".")
                     }
                }
                 
@@ -2636,8 +2636,23 @@ DefineSurvey <- function(
             indcludedInTotal <- StratumPolygon$includeintotal %in% TRUE
             SurveyTable[indcludedInTotal, Survey := "Survey"]
         }
+        #else {
+        #    stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+        #}
         else {
-            stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml")
+            # Read the file as a table:
+            SurveyTable <- tryCatch(
+                data.table::fread(FileName), 
+                error = function(err) {
+                    stop("StoX: Error in data.table::fread: ", err)
+                }
+            )
+            
+            # Check whether all required columns are present:
+            requiredPSUByTimeColumns <- getDataTypeDefinition(dataType = "Survey", unlist = TRUE)
+            if(!all(requiredPSUByTimeColumns %in% names(SurveyTable))) {
+                stop("StoX: Invalid file. Must be a StoX project description file with file name project.json or project.xml, or a file with a Survey definition table containing the columns ", paste(requiredPSUByTimeColumns, collapse = ", "), ".")
+            }
         }
     }
     else {
@@ -2665,6 +2680,9 @@ getSurveyTable <- function(
     
     # Define one single survey:
     if(DefinitionMethod == "AllStrata") {
+        if(!length(stratumNames)) {
+            stop("stratumNames is of length 0. Perhaps none of the stations are inside and stratum?")
+        }
         SurveyTable <- data.table::data.table(
             Stratum = stratumNames, 
             Survey = "Survey"

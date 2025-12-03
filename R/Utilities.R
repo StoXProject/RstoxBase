@@ -493,15 +493,15 @@ applySumToData <- function(data, dataType) {
     
     # Sum of the data variable for each horizontalResolution, categoryVariable and groupingVariables:
     dataVariable <- getDataTypeDefinition(dataType, elements = "data", unlist = TRUE)
-    sumBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
+    sumBy <- getDataTypeDefinition(targetDataType, subTable = "Data", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
     for(var in dataVariable) {
         data[, c(var) := sum(x = get(var)), by = sumBy]
     }
     
     
     # Add the weighting variable, identical to the input weighing variable. The weighting is only used when averaging:
-    weightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
-    targetWeightingVariable <- getDataTypeDefinition(targetDataType, elements = "weighting", unlist = TRUE)
+    weightingVariable <- getDataTypeDefinition(dataType, subTable = "Data", elements = "weighting", unlist = TRUE)
+    targetWeightingVariable <- getDataTypeDefinition(targetDataType, subTable = "Data", elements = "weighting", unlist = TRUE)
     data[, c(targetWeightingVariable) := get(weightingVariable)]
     
     # Remove duplicated rows:
@@ -530,9 +530,9 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     # Extract the 'by' element:
     
     # Weighted average of the data variable over the grouping variables, weighted by the weighting variable:
-    dataVariable <- getDataTypeDefinition(dataType, elements = "data", unlist = TRUE)
-    weightingVariable <- getDataTypeDefinition(dataType, elements = "weighting", unlist = TRUE)
-    targetWeightingVariable <- getDataTypeDefinition(targetDataType, elements = "weighting", unlist = TRUE)
+    dataVariable <- getDataTypeDefinition(dataType, subTable = "Data", elements = "data", unlist = TRUE)
+    weightingVariable <- getDataTypeDefinition(dataType, subTable = "Data", elements = "weighting", unlist = TRUE)
+    targetWeightingVariable <- getDataTypeDefinition(targetDataType, subTable = "Data", elements = "weighting", unlist = TRUE)
     
     
     #targetWeightingVariable <- aggregationVariables$weightingVariable
@@ -541,11 +541,11 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     
     #### Step 1: Sum the weights: ####
     # Extract the horizontal resolution of the input and output data type, and weighting variable:
-    horizontalResolution <- getDataTypeDefinition(dataType, elements = c("horizontalResolution"), unlist = TRUE)
+    horizontalResolution <- getDataTypeDefinition(dataType, subTable = "Data", elements = c("horizontalResolution"), unlist = TRUE)
     targetHorizontalResolution <- c(
-        getDataTypeDefinition(targetDataType, elements = c("horizontalResolution"), unlist = TRUE), 
+        getDataTypeDefinition(targetDataType, subTable = "Data", elements = c("horizontalResolution"), unlist = TRUE), 
         # Add the Beam for NASCData and DensiyData. This is not exactly a horizontal resolution, so the name is somewhat confusing:
-        getDataTypeDefinition(targetDataType, elements = "obserationVariable", unlist = TRUE)
+        getDataTypeDefinition(targetDataType, subTable = "Data", elements = "obserationVariable", unlist = TRUE)
     )
     # Omit in case the obserationVariable is NULL or not given:
     targetHorizontalResolution <- intersect(targetHorizontalResolution, names(data))
@@ -595,7 +595,7 @@ applyMeanToData <- function(data, dataType, targetResolution = "PSU") {
     
     #### Step 2: Sum the data and divide by the summed weights: ####
     # Finally weighted sum the data, and divide by the summed weights (the last step is the crusial part):
-    meanBy <- getDataTypeDefinition(targetDataType, elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
+    meanBy <- getDataTypeDefinition(targetDataType, subTable = "Data", elements = c("horizontalResolution", "verticalResolution", "categoryVariable", "groupingVariables"), unlist = TRUE)
     # Beam is not present for LengthDistributionData:
     meanBy <- intersect(meanBy, names(data))
     
