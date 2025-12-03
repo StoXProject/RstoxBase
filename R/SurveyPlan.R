@@ -2141,6 +2141,7 @@ PlotTransectDesign <- function(
 #' @param Distance Numeric: The distance in nautical miles between the stations along the transect design.
 #' @param Seed Numeric: The seed to use when drawing the random starting point. 
 #' @param ParameterTable A table specifying the parameters \code{Distance} and \code{Seed} for each stratum.
+#' @param AddTransectEndPoints Logical: If TRUE add the start and end points of the transects given in \code{TransectDesignData}.
 #' 
 #' @details 
 #' The \code{Seed} is used to generate one seed per Stratum which are then used to generate the random starting point of each Stratum. From the starting point the function \code{\link[sf]{st_line_sample}} is used to sample points along the transect design in cartesian coordinates in each Stratum separated by \code{Distance} nautical miles (ignoring transit between transects).
@@ -2194,7 +2195,8 @@ StationsAlongTransectDesign <- function(
     StratumNames = character(), 
     Distance = numeric(), 
     Seed = numeric(), 
-    ParameterTable = data.table::data.table()
+    ParameterTable = data.table::data.table(), 
+    AddTransectEndPoints = FALSE
 ){
     # Get the 
     DefinitionMethod <- RstoxData::match_arg_informative(DefinitionMethod)
@@ -2230,7 +2232,8 @@ StationsAlongTransectDesign <- function(
         Seed = Seed, 
         Distance = Distance, 
         MoreArgs = list(
-            TransectDesignData = TransectDesignData
+            TransectDesignData = TransectDesignData, 
+            AddTransectEndPoints = AddTransectEndPoints
         ), 
         SIMPLIFY = FALSE
     )
@@ -2238,7 +2241,7 @@ StationsAlongTransectDesign <- function(
     # Rbind into one table:
     output <- data.table::rbindlist(output, idcol = "Stratum")
     
-    formatOutput(output, dataType = "StationsAlongTransectDesign", keep.all = FALSE)
+    formatOutput(output, dataType = "StationsAlongTransectDesign", keep.all = FALSE, orderRows = FALSE)
     
     return(output)
 }
@@ -2246,26 +2249,26 @@ StationsAlongTransectDesign <- function(
 
 
 
-getStationsAlongTransectDesignOneStratum <- function(stratumName, TransectDesignData, Seed, Distance) {
+getStationsAlongTransectDesignOneStratum <- function(stratumName, TransectDesignData, Seed, Distance, AddTransectEndPoints) {
     
     # Select only the specified stratum:
-    thisTransectDesignData <- subset(TransectDesignData, Stratum == stratumName)
+    transectDesignDataOneStratum <- subset(TransectDesignData, Stratum == stratumName)
     
     
     # Create a list of collections of line strings, one line string for each transect:
-    #transectNames <- unique(thisTransectDesignData$Transect)
-    linesStrings <- points2LineStringCollectionOne(thisTransectDesignData)
+    #transectNames <- unique(transectDesignDataOneStratum$Transect)
+    linesStrings <- points2LineStringCollectionOne(transectDesignDataOneStratum)
     
     # Add distances
-    thisTransectDesignData[, Distance := distanceStartToEnd(.SD)]
-    thisTransectDesignData[, CumulativeDistance := cumsum(Distance)]
+    transectDesignDataOneStratum[, Distance := distanceStartToEnd(.SD)]
+    transectDesignDataOneStratum[, CumulativeDistance := cumsum(Distance)]
     
     # Set the seed and draw the starting point:
     set.seed(Seed)
     start <- Distance * runif(1)
     
     # Get the total distance and calculate cumulative distances at which to place stations:
-    totalDistance <- utils::tail(thisTransectDesignData$CumulativeDistance, 1)
+    totalDistance <- utils::tail(transectDesignDataOneStratum$CumulativeDistance, 1)
     
     if(totalDistance < start) {
         stop("The Distance is too large for the stratum.")
@@ -2273,10 +2276,10 @@ getStationsAlongTransectDesignOneStratum <- function(stratumName, TransectDesign
     cumulativeSamplingDistance <- start + seq(0, (totalDistance - start), by = Distance)
     
     # Find the transect of each station:
-    atTransect <- findInterval(cumulativeSamplingDistance, c(0, thisTransectDesignData$CumulativeDistance))
+    atTransect <- findInterval(cumulativeSamplingDistance, c(0, transectDesignDataOneStratum$CumulativeDistance))
     # And convert the cumulativeSamplingDistance to normalized distances relative to the starting point of each transect:
-    relativeCumulativeSamplingDistance <- cumulativeSamplingDistance - c(0, thisTransectDesignData$CumulativeDistance)[atTransect]
-    relativeCumulativeSamplingDistanceNormalized <- relativeCumulativeSamplingDistance / thisTransectDesignData$Distance[atTransect]
+    relativeCumulativeSamplingDistance <- cumulativeSamplingDistance - c(0, transectDesignDataOneStratum$CumulativeDistance)[atTransect]
+    relativeCumulativeSamplingDistanceNormalized <- relativeCumulativeSamplingDistance / transectDesignDataOneStratum$Distance[atTransect]
     
     # Split into a list with one element per transec, named by the transect indices:
     #relativeCumulativeSamplingDistanceNormalizedList <- split(relativeCumulativeSamplingDistanceNormalized, atTransect)
@@ -2301,6 +2304,8 @@ getStationsAlongTransectDesignOneStratum <- function(stratumName, TransectDesign
     # Get the coordinates in a data table:
     output <- lapply(output, sf::st_coordinates)
     output <- lapply(output, data.table::as.data.table)
+    
+    # Rbind to one table:
     output <- data.table::rbindlist(output)
     
     output <- data.table::data.table(
@@ -2309,6 +2314,40 @@ getStationsAlongTransectDesignOneStratum <- function(stratumName, TransectDesign
         Longitude = output$X, 
         Latitude = output$Y
     )
+    
+    uniqueTransectIDs <- unique(atTransect)
+    numberOfTransects <- length(uniqueTransectIDs)
+    
+    # Add the transect start and end points for each transect:
+    if(AddTransectEndPoints) {
+        
+        # Extract the start and end points of the transects:
+        transectStart <- transectDesignDataOneStratum[, .(Longitude = utils::head(LongitudeStart, 1), Latitude = utils::head(LatitudeStart, 1)), by = Transect ]
+        transectEnd <- transectDesignDataOneStratum[, .(Longitude = utils::tail(LongitudeEnd, 1), Latitude = utils::tail(LatitudeEnd, 1)), by = Transect ]
+        
+        # Rename the Transect column to Station (since we are about to represent the transect start and end points as stations in the output), and add "_start" and "_end":
+        transectStart[, Station := paste(Transect, "Start", sep = "_")]
+        transectEnd[, Station := paste(Transect, "End", sep = "_")]
+        transectStart[, Transect := NULL]
+        transectEnd[, Transect := NULL]
+        
+        # Create a list of stations, one element per transect, possibly empty:
+        stations <- vector("list", numberOfTransects)
+        stations[uniqueTransectIDs] <- split(output, atTransect)
+        
+        # Rbind the start and end of the transects:
+        output <- mapply(
+            rbind, 
+            split(transectStart, seq_len(nrow(transectStart))), 
+            stations, 
+            split(transectEnd, seq_len(nrow(transectEnd))), 
+            SIMPLIFY = FALSE
+        )
+        
+        # Rbind to one table again:
+        output <- data.table::rbindlist(output)
+    }
+    
     
     return(output)
 }
@@ -2334,7 +2373,6 @@ sampleLinesInXY <- function(x, centroid, index, sample, iterativeCentroidCalcula
             )
         # Transform back to geographic coordinates:
         output[[ind]] <- sf::st_transform(output[[ind]], proj4_longlat)
-        
     }
     
     return(output)
@@ -2421,6 +2459,10 @@ WriteStationsAlongTransectDesign <- function(
             subset(StationsAlongTransectDesignData, select = c("Stratum", "Longitude", "Latitude")), 
             coords = c("Longitude", "Latitude")
         )
+        # Add names of the points, as sequential numbers:
+        #output$name <- getElementID("Station", nrow(output))
+        output$name <- StationsAlongTransectDesignData$Station
+        
     }
     else if(Format == "Ruter") {
         

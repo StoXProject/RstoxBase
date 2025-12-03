@@ -10,7 +10,8 @@ StationsAlongTransectDesign(
   StratumNames = character(),
   Distance = numeric(),
   Seed = numeric(),
-  ParameterTable = data.table::data.table()
+  ParameterTable = data.table::data.table(),
+  AddTransectEndPoints = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ StationsAlongTransectDesign(
 \item{Seed}{Numeric: The seed to use when drawing the random starting point.}
 
 \item{ParameterTable}{A table specifying the parameters \code{Distance} and \code{Seed} for each stratum.}
+
+\item{AddTransectEndPoints}{Logical: If TRUE add the start and end points of the transects given in \code{TransectDesignData}.}
 }
 \value{
 An object of StoX data type \code{\link{StationsAlongTransectDesignData}}.
