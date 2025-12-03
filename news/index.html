@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9008</span>
       </span>
     </div>
 
@@ -48,7 +48,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.2.0-9004" id="rstoxbase-v220-9004-2025-10-23">RstoxBase v2.2.0-9004 (2025-10-23)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9004-2025-10-23"></a></h2>
+<h2 class="page-header" data-toc-text="2.2.0-9008" id="rstoxbase-v220-9008-2025-11-12">RstoxBase v2.2.0-9008 (2025-11-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9008-2025-11-12"></a></h2>
+<ul><li>Added names to stations in output from WriteStationsAlongTransectDesign() in the form Station_01, Station_02, etc.</li>
+<li>Added support for reading a table in from file in DefineSurvey() (not only form a project.xml/project.json).</li>
+<li>Refactored getDataTypeDefinition() to data = NULL, which implies to extract all potential sub tables.</li>
+<li>Improved the warnings when RemoveMissingValues is TRUE, which is now only triggered if there are missing values for any of the GroupingVariables.</li>
+<li>Added the option AddTransectEndPoints for adding transect end points in StationsAlongTransectDesign().</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.0-9007" id="rstoxbase-v220-9007-2025-10-23">RstoxBase v2.2.0-9007 (2025-10-23)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9007-2025-10-23"></a></h2>
 <ul><li>Added the function WriteStationsAlongTransectDesign() for reporting equally spaced stations along a transect design.</li>
 <li>Moved the two function dataTable2sf_LINESTRING() and dataTable2sf_POINT() from RstoxFramework to RstoxBase for use in spatial operations.</li>
 <li>Added the argument SurveyCoverage in DefineTransectParameter() and TransectDesign().</li>
@@ -57,7 +65,7 @@
 <li>Added the function setPrecisionToSF(), which is also used by RstoxFramework.</li>
 </ul></div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.2.0-9004" id="rstoxbase-v220-9004-2025-10-23-1">RstoxBase v2.2.0-9004 (2025-10-23)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9004-2025-10-23-1"></a></h2>
+<h2 class="page-header" data-toc-text="2.2.0-9006" id="rstoxbase-v220-9006-2025-10-23">RstoxBase v2.2.0-9006 (2025-10-23)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9006-2025-10-23"></a></h2>
 <ul><li>Added the function StationsAlongTransectDesign() for drawing equally spaced stations along a transect design.</li>
 <li>Added the argument StationsAlongTransectDesignData for plotting stations in PlotTransectDesign().</li>
 </ul></div>
@@ -646,7 +654,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
