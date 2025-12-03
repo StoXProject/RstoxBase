@@ -437,7 +437,7 @@ GearDependentCatchCompensation <- function(
     
     
     # Sweep width compensation cannot be performed on already sweep width compensated LengthDistributionData:
-    typeVariableName <-getDataTypeDefinition(dataType = InputDataType, elements = "type", unlist = TRUE)
+    typeVariableName <- getDataTypeDefinition(dataType = InputDataType, elements = "type", unlist = TRUE)
     if(startsWith(firstNonNA(dataCopy[[typeVariableName]]), "SweepWidthCompensated")) {
         stop("The ", InputDataType, " are already sweep width compensated (", typeVariableName , " starting with \"SweepWidthCompensated\")")
     }

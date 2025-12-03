@@ -350,6 +350,9 @@ initiateRstoxBase <- function(){
             ), 
             VariableNames = list()
         ), 
+        Survey = list(
+            horizontalResolution = c("Survey", "Stratum")
+        ), 
         TransectDesign = list(
             horizontalResolution = c("Stratum", "Transect", "Segment"), 
             other = c("LongitudeStart", "LatitudeStart", "LongitudeEnd", "LatitudeEnd", "Speed", "Direction", "Distance")
@@ -864,8 +867,23 @@ initiateRstoxBase <- function(){
     
     # Warning when using RemoveMissingValues:
     #RemoveMissingValuesWarning <- "StoX: Using RemoveMissingValues = TRUE implies the risk of under-estimation. E.g., if RemoveMissingValues = TRUE and a super-individual lacks IndividualRoundWeight, Biomass will be NA, and the portion of Abundance distributed to that super-individual will be excluded when summing Biomass (but included when summing Abundance). It is advised to always run with RemoveMissingValues = FALSE first, and make a thorough investigation to identify the source of any missing values. The function ImputeSuperIndividuals can be used to impute the missing information from other super-individuals."
-    RemoveMissingValuesWarning <- function(TargetVariable) {
-        paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values. Use RemoveMissingValues = TRUE with extreme caution!!! Instead, GroupingVariables can be used to isolate missing values in the TargetVariable. E.g., using SpeciesCategory and Survey often suffices to isolate missing values to missing SpeciesCategory and missing Survey. In addition, the Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals.")
+    RemoveMissingValuesWarning <- function(RemoveMissingValues, data, TargetVariable, GroupingVariables) {
+        # If the RemoveMissingValues is set to TRUE, while there are missing values for the TargetVariable where all of GroupingVariables are non-missing, issue the warning:
+        hasMissingTargetVariable <- data[, is.na(get(TargetVariable))]
+        hasAllNonMissingGroupingVariables <- data[, stats::complete.cases(.SD), .SDcols = GroupingVariables]
+        badRows <- hasMissingTargetVariable & hasAllNonMissingGroupingVariables
+        
+        standardGroupingVariables <- all(c("Survey", "SpeciesCategory") %in% GroupingVariables)
+        
+        
+        if(isTRUE(RemoveMissingValues) && any(badRows)) {
+            if(standardGroupingVariables) {
+                warning(paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values for non-missing GroupingVariables (", paste(GroupingVariables, collapse = ", "), ") . Use RemoveMissingValues = TRUE with extreme caution!!! Preferrably look for errors in the data. One possibility is to include more variables in GroupingVariables. In addition, the Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals."))
+            }
+            else {
+                warning(paste0("StoX: The TargetVariable (", TargetVariable, ") has missing values for non-missing GroupingVariables (", paste(GroupingVariables, collapse = ", "), ") . Use RemoveMissingValues = TRUE with extreme caution!!! GroupingVariables can be used to isolate missing values in the TargetVariable. E.g., using Survey and SpeciesCategory often suffices to isolate missing values to missing Survey and missing SpeciesCategory. In addition, the Baseline function ImputeSuperIndividuals can be used to fill in missing information from other super-individuals."))
+            }
+        }
     }
     
     
@@ -961,14 +979,16 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 #' @param primaryColumnOrder Character: A vector of names of columns that should be placed first regardless of the definition of columns specified in the dataTypeDefinition.
 #' @param secondaryColumnOrder,secondaryRowOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to prioritize when ordering columns and rows, respectively.
 #' @param removeStoXKeys Logical: If TRUE remove the key columns, which are those ending with "Key".
+#' @param orderColumns Logical: If TRUE (the default) order the columns by the first the \code{primaryColumnOrder}, then the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the \code{secondaryColumnOrder}
+#' @param orderRows Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the values of the variables specified by \code{secondaryRowOrder}.
 #' 
 #' @export
 #' 
-formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE) {
+formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE, orderColumns = TRUE, orderRows = TRUE) {
     
     # If data is only one table:
     if(data.table::is.data.table(data)) {
-        dataTypeDefinition <- getDataTypeDefinition(dataType, unlist = TRUE)
+        dataTypeDefinition <- getDataTypeDefinition(dataType, subTable = "Data", unlist = TRUE)
         formatOutputOneTable(
             table = data, 
             tableDefinition = dataTypeDefinition, 
@@ -977,7 +997,9 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
             primaryColumnOrder = primaryColumnOrder, 
             secondaryColumnOrder = secondaryColumnOrder, 
             secondaryRowOrder = secondaryRowOrder, 
-            removeStoXKeys = removeStoXKeys
+            removeStoXKeys = removeStoXKeys, 
+            orderColumns = orderColumns, 
+            orderRows = orderRows
         ) 
     }
     # ... or a list of tables:
@@ -1000,7 +1022,7 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
 }
 
 
-formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE) {
+formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE, orderColumns = TRUE, orderRows = TRUE) {
     
     # Get the column order:
     columnOrder <- unique(
@@ -1056,11 +1078,15 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
     
     
     # Order the columns:
-    data.table::setcolorder(table, intersect(unique(c(primaryColumnOrder, columnOrder)), names(table)))
+    if(orderColumns) {
+        data.table::setcolorder(table, intersect(unique(c(primaryColumnOrder, columnOrder)), names(table)))
+    }
     
     # Order the rows:
     #data.table::setorder(table, na.last = TRUE)
-    RstoxData::setorderv_numeric(table, by = rowOrder, split = c("-", "/"))
+    if(orderRows) {
+        RstoxData::setorderv_numeric(table, by = rowOrder, split = c("-", "/"))
+    }
     
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
     data.table::setkey(table, NULL)
@@ -1111,6 +1137,7 @@ getAllAggregationVariables <- function(dataType, exclude.groupingVariables = FAL
     # Get the definitions:
     aggregateBy <- getDataTypeDefinition(
         dataType = dataType, 
+        subTable = "Data", 
         elements = aggregationElements, 
         unlist = TRUE
     )
@@ -1127,6 +1154,7 @@ getResolutionVariables <- function(dataType = NULL, dimension = c("horizontal", 
     resolution <- unique(
         getDataTypeDefinition(
             dataType = dataType, 
+            subTable = "Data", 
             elements = resolutionElements, 
             unlist = TRUE
         )
@@ -1162,13 +1190,13 @@ getAllResolutionVariables <- function(dataType, dimension = NULL, other = FALSE)
 #' Get data type definitions
 #' 
 #' @param dataType The name of the data type to get definitions from, or a logical function of one input DataType.
-#' @param subTable The sub table to extract, if any. Defaulted to "Data" to return the most relevant part of the data type definition.
+#' @param subTable The sub table to extract, if any. Default is to extract all potential sub tables.
 #' @param elements A vector of specific elements to extract from the definition.
 #' @param unlist Logical: If TRUE unlist the list of column names.
 #' 
 #' @export
 #'
-getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, unlist = FALSE) {
+getDataTypeDefinition <- function(dataType, subTable = NULL, elements = NULL, unlist = FALSE) {
     
     # Get the requested type:
     dataTypeDefinition <- getRstoxBaseDefinitions("dataTypeDefinition")
@@ -1193,14 +1221,17 @@ getDataTypeDefinition <- function(dataType, subTable = "Data", elements = NULL, 
     #    thisDataTypeDefinition <- thisDataTypeDefinition[[dataType]]
     #}
     
-    if(is.list(thisDataTypeDefinition) && is.list(thisDataTypeDefinition[[1]])) {
-        if(subTable %in% names(thisDataTypeDefinition)) {
-            thisDataTypeDefinition <- thisDataTypeDefinition[[subTable]]
-        }
-        else {
-            stop("The dataType ", dataType, " may be non-existing, or the subTable may not be present for the given dataType")
+    if(length(subTable)) {
+        if(is.list(thisDataTypeDefinition) && is.list(thisDataTypeDefinition[[1]])) {
+            if(subTable %in% names(thisDataTypeDefinition)) {
+                thisDataTypeDefinition <- thisDataTypeDefinition[[subTable]]
+            }
+            else {
+                stop("The dataType ", dataType, " may be non-existing, or the subTable may not be present for the given dataType")
+            }
         }
     }
+    
     
     # Select the elements to return:
     if(length(elements)) {

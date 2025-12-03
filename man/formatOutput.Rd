@@ -12,7 +12,9 @@ formatOutput(
   primaryColumnOrder = NULL,
   secondaryColumnOrder = NULL,
   secondaryRowOrder = NULL,
-  removeStoXKeys = FALSE
+  removeStoXKeys = FALSE,
+  orderColumns = TRUE,
+  orderRows = TRUE
 )
 }
 \arguments{
@@ -29,6 +31,10 @@ formatOutput(
 \item{secondaryColumnOrder, secondaryRowOrder}{A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to prioritize when ordering columns and rows, respectively.}
 
 \item{removeStoXKeys}{Logical: If TRUE remove the key columns, which are those ending with "Key".}
+
+\item{orderColumns}{Logical: If TRUE (the default) order the columns by the first the \code{primaryColumnOrder}, then the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the \code{secondaryColumnOrder}}
+
+\item{orderRows}{Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the values of the variables specified by \code{secondaryRowOrder}.}
 }
 \description{
 The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables. The input is modified by reference using data.table.

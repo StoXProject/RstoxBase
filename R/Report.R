@@ -38,9 +38,13 @@ ReportSuperIndividuals <- function(
     ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
     
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(SuperIndividualsData[[TargetVariable]]))) {
-        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
-    }
+    getRstoxBaseDefinitions("RemoveMissingValuesWarning")(
+        RemoveMissingValues = RemoveMissingValues, 
+        data = SuperIndividualsData, 
+        TargetVariable = TargetVariable, 
+        GroupingVariables = GroupingVariables
+    )
+
     
     SuperIndividualsData[[TargetVariable]] <- setUnitRstoxBase(
         SuperIndividualsData[[TargetVariable]], 
@@ -112,9 +116,13 @@ ReportDensity <- function(
     ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
     
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(DensityData$Data[[TargetVariable]]))) {
-        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
-    }
+    getRstoxBaseDefinitions("RemoveMissingValuesWarning")(
+        RemoveMissingValues = RemoveMissingValues, 
+        data = DensityData$Data, 
+        TargetVariable = TargetVariable, 
+        GroupingVariables = GroupingVariables
+    )
+
     
     DensityData$Data[[TargetVariable]] <- setUnitRstoxBase(
         DensityData$Data[[TargetVariable]], 
@@ -179,9 +187,13 @@ ReportQuantity <- function(
 ) 
 {
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(QuantityData$Data[[TargetVariable]]))) {
-        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
-    }
+    getRstoxBaseDefinitions("RemoveMissingValuesWarning")(
+        RemoveMissingValues = RemoveMissingValues, 
+        data = QuantityData$Data, 
+        TargetVariable = TargetVariable, 
+        GroupingVariables = GroupingVariables
+    )
+
     
     # Get the ReportFunction:
     ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
@@ -664,7 +676,7 @@ ReportSpeciesCategoryCatch <- function(
     TargetVariable <- RstoxData::match_arg_informative(TargetVariable)
     
     # Warning if there are species categories which are empty string:
-    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", elements = "categoryVariable", unlist = TRUE)
+    categoryVariable <- getDataTypeDefinition(dataType = "DensityData", subTable = "Data", elements = "categoryVariable", unlist = TRUE)
     emptyString <- SpeciesCategoryCatchData[, nchar(get(categoryVariable))] == 0
     if(any(emptyString, na.rm = TRUE)) {
         warning("StoX: There are empty strings for the ", categoryVariable, ". These will be included in the column V1 in the SpeciesCategoryCatch table.")
@@ -842,9 +854,13 @@ ReportPreySpeciesCategoryCatch <- function(
     # Export this function when prey is official
     
     # Issue a warning if RemoveMissingValues = TRUE:
-    if(isTRUE(RemoveMissingValues) && any(is.na(PreySpeciesCategoryCatchData[[TargetVariable]]))) {
-        warning(getRstoxBaseDefinitions("RemoveMissingValuesWarning")(TargetVariable))
-    }
+    getRstoxBaseDefinitions("RemoveMissingValuesWarning")(
+        RemoveMissingValues = RemoveMissingValues, 
+        data = PreySpeciesCategoryCatchData, 
+        TargetVariable = TargetVariable, 
+        GroupingVariables = GroupingVariables
+    )
+
     
     PreySpeciesCategoryCatchData[[TargetVariable]] <- setUnitRstoxBase(
         PreySpeciesCategoryCatchData[[TargetVariable]], 
