@@ -7,6 +7,7 @@
 getBaseUnit(
   dataType,
   variableName,
+  variableType = NULL,
   element = c("unit", "quantity"),
   list.out = FALSE
 )
@@ -15,6 +16,8 @@ getBaseUnit(
 \item{dataType}{The name of a StoX \code{\link{DataTypes}}.}
 
 \item{variableName}{The variable name to get base units from.}
+
+\item{variableType}{For variables with more than one interpretation, such as Density, which is dependent on the DensityType. The type is given in the getRstoxBaseDefinitions("dataTypeUnits").}
 
 \item{element}{The element to get, one of "unit" and "quantity".}
 

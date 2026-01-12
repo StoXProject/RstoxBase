@@ -4,7 +4,7 @@
 \alias{setBaseUnit}
 \title{Set base unit to a variable of the StoX dataType}
 \usage{
-setBaseUnit(x, dataType, variableName)
+setBaseUnit(x, dataType, variableName, variableType = NULL)
 }
 \arguments{
 \item{x}{The object to set base units to.}
@@ -12,6 +12,8 @@ setBaseUnit(x, dataType, variableName)
 \item{dataType}{The name of a StoX \code{\link{DataTypes}}.}
 
 \item{variableName}{The variable name to get base units from.}
+
+\item{variableType}{For variables with more than one interpretation, such as Density, which is dependent on the DensityType. The type is given in the getRstoxBaseDefinitions("dataTypeUnits").}
 }
 \description{
 Set base unit to a variable of the StoX dataType
