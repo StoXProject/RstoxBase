@@ -1,7 +1,8 @@
 # Get all datatype units:
 dataTypeUnits_all <- rbind(
     RstoxData::getRstoxDataDefinitions("dataTypeUnits"), 
-    RstoxBase::getRstoxBaseDefinitions("dataTypeUnits")
+    RstoxBase::getRstoxBaseDefinitions("dataTypeUnits"), 
+    fill=TRUE
 )
 
 # Check whether any equal variable names have different units:
@@ -12,6 +13,11 @@ differingUnit <- sapply(dataTypeUnits_all_splitted, function(x) NROW(unique(subs
 differing <- dataTypeUnits_all_splitted[differingUnit]
 # Allow for Biomass to be defined in units og g in SuperIndividualsData and kg in Quantity when the input MeanDensityData originates from SweptAreaDensity with SweptAreaDensityMethod = "TotalCatch":
 differing <- subset(differing, ! names(differing) %in% c("Biomass"))
+
+# Allow for Density to be defined in differently depending on the variableType:
+differing <- subset(differing, ! names(differing) %in% c("Density"))
+
+
 if(length(differing)) {
     differing <- data.table::rbindlist(differing)
     differing <- do.call(paste, c(differing, list(sep = ",")))

@@ -87,7 +87,7 @@ ReportSuperIndividuals <- function(
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
-#' @param DensityUnit The unit to use for the \code{Density}. Run the following in R for possible units: subset(RstoxData::StoxUnits, quantity == "area_number_density", select = "shortname").
+#' @param DensityUnit The unit to use for the column \code{Density}. Run the following in R for possible units: \code{subset(RstoxData::StoxUnits, quantity == "area_number_density", select = "shortname")}.
 #' 
 #' @return
 #' A \code{\link{ReportDensityData}} object.
@@ -128,6 +128,7 @@ ReportDensity <- function(
         DensityData$Data[[TargetVariable]], 
         dataType =  "DensityData", 
         variableName = TargetVariable, 
+        variableType = getDensityType(DensityData), 
         unit = DensityUnit
     )
     
@@ -155,6 +156,8 @@ ReportDensity <- function(
     
     return(output)
 }
+
+
 
 
 ##################################################

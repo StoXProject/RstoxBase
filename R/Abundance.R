@@ -693,6 +693,11 @@ ImputeSuperIndividuals <- function(
         # Initiate the output:
         ImputeSuperIndividualsData <- data.table::copy(SuperIndividualsData)
         
+        # Reset the ReplaceLevel and ReplaceStratumLayerIndividual to all NA, as we do not impute from individuals in different levels:
+        ImputeSuperIndividualsData[, ReplaceLevel := NA_character_]
+        ImputeSuperIndividualsData[, ReplaceStratumLayerIndividual := NA_character_]
+        
+        # Loop through the rows of the Regression and apply the regression parameters of that row:
         for(rowInd in seq_len(NROW(Regression$RegressionTable))) {
             thisRegression <- Regression
             thisRegression$RegressionTable <- Regression$RegressionTable[rowInd, ]
@@ -862,6 +867,7 @@ ImputeDataByRandomSampling_nonDuplicatedStratumLayerIndividual <- function(
     dataCopy[, ReplaceStratumLayerIndividual := StratumLayerIndividual[match(ReplaceStratumLayerIndividualIndex, StratumLayerIndividualIndex)]]
     
     # Add a column ImputationMethod:
+    dataCopy[, ImputationMethod := NA_character_]
     dataCopy[!is.na(ReplaceStratumLayerIndividual), ImputationMethod := "RandomSampling"]
     
     # Delete the StratumLayerIndividualIndex and ReplaceStratumLayerIndividualIndex:
@@ -1057,6 +1063,7 @@ ImputeDataByRegressionOneRow <- function(
     dataCopy[atImpute, eval(DependentVariable) := regressionFunction(get(eval(IndependentVariable)), .SD), .SDcols = modelParameters]
     
     # Add a column ImputationMethod:
+    dataCopy[, ImputationMethod := NA_character_]
     dataCopy[atImpute, ImputationMethod := "Regression"]
     
     # Remove columns:

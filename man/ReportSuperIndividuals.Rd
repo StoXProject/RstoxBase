@@ -24,7 +24,7 @@ ReportSuperIndividuals(
 
 \item{TargetVariable}{The variable to report.}
 
-\item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}. See RstoxData::StoxUnits for possible units (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).}
+\item{TargetVariableUnit}{The unit to use for the \code{TargetVariable}. Run the following in R to see possible units: \code{RstoxData::StoxUnits} (look for the appropriate quantity, e.g. "length" for IndividualTotalLength, and use the shortname in the \code{TargetVariableUnit}).}
 
 \item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
 
