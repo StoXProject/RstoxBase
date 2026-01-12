@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0-9009</span>
       </span>
     </div>
 
@@ -47,6 +47,11 @@
       <small>Source: <a href="https://github.com/StoXProject/RstoxBase/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.0-9009" id="rstoxbase-v220-9009-2026-01-12">RstoxBase v2.2.0-9009 (2026-01-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9009-2026-01-12"></a></h2>
+<ul><li>Fixed bug in the drop down list of DensityUnit in ReportDensity(), where only the area number density units were shown even when DensityType was “AreaWeightDensity” (by introducing the column variableType in dataTypeUnits).</li>
+<li>Fixed bug where ReplaceLevel and ReplaceStratumLayerIndividual were not reset in ImputeSuperIndividuals, so that values from a previous such process remained in the output.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.2.0-9008" id="rstoxbase-v220-9008-2025-11-12">RstoxBase v2.2.0-9008 (2025-11-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9008-2025-11-12"></a></h2>
 <ul><li>Added names to stations in output from WriteStationsAlongTransectDesign() in the form Station_01, Station_02, etc.</li>
