@@ -1626,11 +1626,12 @@ renameListByNames <- function(list, old, new) {
 #' 
 #' @param dataType The name of a StoX \code{\link{DataTypes}}.
 #' @param variableName The variable name to get base units from.
+#' @param variableType For variables with more than one interpretation, such as Density, which is dependent on the DensityType. The type is given in the getRstoxBaseDefinitions("dataTypeUnits").
 #' @param element The element to get, one of "unit" and "quantity".
 #' @param list.out Logical: If TRUE return both elements in a list.
 #' @export
 #' 
-getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"), list.out = FALSE) {
+getBaseUnit <- function(dataType, variableName, variableType = NULL, element = c("unit", "quantity"), list.out = FALSE) {
     
     emptyOutput <- output <- list(
         unit = NA, 
@@ -1649,6 +1650,21 @@ getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"),
     this_dataType <- dataType
     this_variableName <- variableName
     output <- subset(dataTypeUnits, dataType == this_dataType & variableName == this_variableName)
+    
+    # subset to the variableType if there are more than one variable type:
+    if(NROW(output) > 1) {
+        if(length(variableType)) {
+            # Awkward renaming to be able to subset the data.table:
+            thisvariableType <- variableType
+            output <- subset(output, variableType == thisvariableType)
+        }
+        else {
+            warning("StoX: The dataType ", dataType, " and variableName ", variableName, " has multiple defined units. Please provide the input data where the variable type is specified (e.g. DensityType).")
+            output <- emptyOutput
+        }
+    }
+    
+        
     if(!length(output)) {
         return(emptyOutput)
     }
@@ -1665,8 +1681,8 @@ getBaseUnit <- function(dataType, variableName, element = c("unit", "quantity"),
 #' 
 #' @inheritParams getBaseUnit
 #' 
-hasBaseUnit <- function(dataType, variableName) {
-    baseUnit <- getBaseUnit(dataType = dataType, variableName = variableName, list.out = TRUE)
+hasBaseUnit <- function(dataType, variableName, variableType = NULL) {
+    baseUnit <- getBaseUnit(dataType = dataType, variableName = variableName, variableType = variableType, list.out = TRUE)
     
     if(NROW(baseUnit)) {
         !is.na(baseUnit$unit) && !is.na(baseUnit$quantity)
@@ -1681,9 +1697,9 @@ hasBaseUnit <- function(dataType, variableName) {
 #' @param x The object to set base units to.
 #' @inheritParams getBaseUnit
 #' 
-setBaseUnit <- function(x, dataType, variableName) {
+setBaseUnit <- function(x, dataType, variableName, variableType = NULL) {
     if(!RstoxData::hasUnit(x, property = "shortname")) {
-        baseUnit <- getBaseUnit(dataType = dataType, variableName = variableName, list.out = TRUE)
+        baseUnit <- getBaseUnit(dataType = dataType, variableName = variableName, variableType = variableType, list.out = TRUE)
         id <- RstoxData::findUnit(quantity = baseUnit$quantity, shortname = baseUnit$unit)
         x <- setUnit(x, id)
     }
@@ -1697,17 +1713,17 @@ setBaseUnit <- function(x, dataType, variableName) {
 #' @param unit The unit to set to the variable of the StoX Data
 #' @export
 #' 
-setUnitRstoxBase <- function(x, dataType, variableName, unit = NULL) {
+setUnitRstoxBase <- function(x, dataType, variableName, variableType = NULL, unit = NULL) {
     
     if(length(unit) && nchar(unit)) {
-        this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName)
+        this_hasBaseUnit <- hasBaseUnit(dataType = dataType, variableName = variableName, variableType = variableType)
         
         if(this_hasBaseUnit) {
             # Set the base unit if the object does not have a unit:
-            x <- setBaseUnit(x, dataType, variableName)
+            x <- setBaseUnit(x, dataType = dataType, variableName = variableName, variableType = variableType)
             
             # Get the quantity:
-            quantity <- getBaseUnit(dataType = dataType, variableName = variableName, element = "quantity")
+            quantity <- getBaseUnit(dataType = dataType, variableName = variableName, variableType = variableType, element = "quantity")
             id <- RstoxData::findUnit(quantity = quantity, shortname = unit)
             x <- setUnit(x, id)
         }

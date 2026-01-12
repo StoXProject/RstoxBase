@@ -4,12 +4,14 @@
 \alias{hasBaseUnit}
 \title{Does the variable of the StoX dataType have a base unit?}
 \usage{
-hasBaseUnit(dataType, variableName)
+hasBaseUnit(dataType, variableName, variableType = NULL)
 }
 \arguments{
 \item{dataType}{The name of a StoX \code{\link{DataTypes}}.}
 
 \item{variableName}{The variable name to get base units from.}
+
+\item{variableType}{For variables with more than one interpretation, such as Density, which is dependent on the DensityType. The type is given in the getRstoxBaseDefinitions("dataTypeUnits").}
 }
 \description{
 Does the variable of the StoX dataType have a base unit?

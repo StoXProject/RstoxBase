@@ -52,7 +52,7 @@ DefinePSU <- function(
             )
         }
         else {
-            stop("One of MergedStoxDataStationLevel and StoxData must be given")
+            stop("One of MergedStoxDataStationLevel and StoxData must be given in order to check the validity of the PSUs.")
         }
     }
     

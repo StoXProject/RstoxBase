@@ -408,8 +408,10 @@ initiateRstoxBase <- function(){
     #### Data type units: ####
     dataTypeUnits <- list(
         # (Mean)DensityData
-        list(dataType = "DensityData", variableName = "Density", quantity = "area_number_density", unit = "individuals/nmi^2"), 
-        list(dataType = "MeanDensityData", variableName = "Density", quantity = "area_number_density", unit = "individuals/nmi^2"), 
+        list(dataType = "DensityData", variableName = "Density", variableType = "number", quantity = "area_number_density", unit = "individuals/nmi^2"), 
+        list(dataType = "DensityData", variableName = "Density", variableType = "weight", quantity = "area_weight_density", unit = "kg/nmi^2"), 
+        list(dataType = "MeanDensityData", variableName = "Density", variableType = "number", quantity = "area_number_density", unit = "individuals/nmi^2"), 
+        list(dataType = "MeanDensityData", variableName = "Density", variableType = "weight", quantity = "area_weight_density", unit = "kg/nmi^2"), 
         # QuantityData
         list(dataType = "QuantityData", variableName = "Abundance", quantity = "cardinality", unit = "individuals"), 
         list(dataType = "QuantityData", variableName = "Biomass", quantity = "mass", unit = "kg"),
@@ -440,7 +442,7 @@ initiateRstoxBase <- function(){
         list(dataType = "SuperIndividualsData", variableName = "HorizontalNetOpening", quantity = "lengthlength", unit = "m"), 
         list(dataType = "SuperIndividualsData", variableName = "TrawlDoorSpread", quantity = "length", unit = "m")
     )
-    dataTypeUnits <- data.table::rbindlist(dataTypeUnits)
+    dataTypeUnits <- data.table::rbindlist(dataTypeUnits, fill = TRUE)
 
     
     #### Resolution: ####

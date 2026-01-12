@@ -84,6 +84,10 @@ default_AcousticPSU_plot_arguments <- list(
     AcousticPSULabelVjust = 0.5
 )
 
+# Get the type of density, as we use DensityType to specify whether the density is number of weight density:
+getDensityType <- function(DensityData) {
+    ifelse(DensityData$Data$DensityType[1] == "AreaWeightDensity", "weight", "number")
+}
 
 
 
@@ -581,6 +585,7 @@ stoxFunctionAttributes <- list(
             FileName = "filePath"
         ), 
         functionArgumentHierarchy = list(
+            # Note that StoxBioticData must be given in order to check the validity of the PSUs, and is as such not specified here:
             DefinitionMethod = list(
                 UseProcessData = FALSE
             ), 
@@ -2579,9 +2584,10 @@ processPropertyFormats <- list(
     densityUnit = list(
         class = "single", 
         title = "Select unit for the Density", 
-        possibleValues = function(...) {
+        possibleValues = function(DensityData) {
             dataType <- "DensityData"
-            quantity <- getBaseUnit(dataType = dataType, variableName = "Density", element = "quantity")
+            variableType <- getDensityType(DensityData)
+            quantity <- getBaseUnit(dataType = dataType, variableName = "Density", variableType = variableType, element = "quantity")
             if(!length(quantity) || is.na(quantity)) {
                 warning("StoX: No units defined for the variable Density of datatype ", dataType)
                 list()

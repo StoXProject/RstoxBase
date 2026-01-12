@@ -21,7 +21,7 @@ ReportDensity(
 \arguments{
 \item{DensityData}{The \code{\link{DensityData}} data.}
 
-\item{DensityUnit}{The unit to use for the \code{Density}. Run the following in R for possible units: subset(RstoxData::StoxUnits, quantity == "area_number_density", select = "shortname").}
+\item{DensityUnit}{The unit to use for the column \code{Density}. Run the following in R for possible units: \code{subset(RstoxData::StoxUnits, quantity == "area_number_density", select = "shortname")}.}
 
 \item{ReportFunction}{The name of a function to report the Baseline process output by. This must be a function returning a single value. See \code{\link{ReportFunctions}} for implemented funcitons.}
 
