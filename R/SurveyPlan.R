@@ -201,7 +201,6 @@ DefineTransectParameter <- function(
 #' @param SurveyCoverage Numeric: The survey coverage, which when given and at least one of \code{SurveyTime} and \code{SurveySpeed} is not given will be used to calculate the \code{SurveyDistance} using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).
 #' @param Seed Numeric: The seed to use when drawing the random starting point. 
 #' @param ParameterTable A table specifying the parameters for each stratum to create transect design for. See the Details for a list of required columns.
-#' @param EqualEffort  Character: A string naming the method to use. See Details for options.
 #' @param OrderAllToursFirst  Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).
 #' @param Margin Numeric: The margin to use when iterating to fit the transect design to the desired survey distance (including transit between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.
 #' 
@@ -337,10 +336,13 @@ TransectDesign <- function(
     TransectParameter, 
     
     # General arguments irrespective of DefinitionMethod:
-    EqualEffort = TRUE, 
+    #EqualEffort = TRUE, 
     OrderAllToursFirst = FALSE, 
     Margin = 0.1
 ){
+    
+    #' @param EqualEffort Logical: If TRUE 
+    
     
     # Get the TransectDefinition and TransectDefinitionMethod:
     TransectParameterDefinition <- RstoxData::match_arg_informative(TransectParameterDefinition)
@@ -381,7 +383,7 @@ TransectDesign <- function(
     TransectDesign <- getTransectDesignFromTable(
         TransectParameter, 
         StratumPolygon = StratumPolygon, 
-        EqualEffort = EqualEffort, 
+        #EqualEffort = EqualEffort, 
         OrderAllToursFirst = OrderAllToursFirst, 
         Margin = Margin
     )
@@ -458,55 +460,55 @@ TransectDesign <- function(
 
 # Function to create a transect design from a table of parameters:
 getTransectDesignFromTable <- function(
-        patameterTable, 
+        parameterTable, 
         StratumPolygon, 
-        EqualEffort = FALSE, 
+        #EqualEffort = FALSE, 
         OrderAllToursFirst = FALSE, 
         Margin = 0.1, 
         NumberOfPoints = 1e4
 ) {
     
-    # Subset the StratumPolygon by the stratum names given by the patameterTable:
+    # Subset the StratumPolygon by the stratum names given by the parameterTable:
     stratumNames <- getStratumNames(StratumPolygon)
-    if(!any(patameterTable$StratumName %in% stratumNames)) {
+    if(!any(parameterTable$StratumName %in% stratumNames)) {
         stop("StoX: The column StratumName does not contain any of the stratum names of the StratumPolygon.")
     }
-    if(!all(patameterTable$StratumName %in% stratumNames)){
-        warning("StoX: The following stratum names given by the column StratumName do not exist in the StratumPolygon.: ", paste(setdiff(stratumNames, patameterTable$StratumName), collapse = ", "), ".")
-        patameterTable <- subset(patameterTable, StratumName %in% stratumNames)
+    if(!all(parameterTable$StratumName %in% stratumNames)){
+        warning("StoX: The following stratum names given by the column StratumName do not exist in the StratumPolygon.: ", paste(setdiff(stratumNames, parameterTable$StratumName), collapse = ", "), ".")
+        parameterTable <- subset(parameterTable, StratumName %in% stratumNames)
     }
     
     # Require seed:
-    if(isEmpty(patameterTable$Seed)) {
+    if(isEmpty(parameterTable$Seed)) {
         stop("StoX: Seed must be given as an integer.")
     }
     
     # Get the stratum areas:
     stratumArea <- StratumArea(StratumPolygon)
-    # Merge the stratumArea into the patameterTable:
-    patameterTable <- merge(patameterTable, stratumArea, by.x = "StratumName", by.y = "Stratum")
+    # Merge the stratumArea into the parameterTable:
+    parameterTable <- merge(parameterTable, stratumArea, by.x = "StratumName", by.y = "Stratum")
     
     # Get the survey distance from time:
-    if(isEmpty(patameterTable$SurveyDistance)) {
-        if(!isEmpty(patameterTable$SurveyTime) && !isEmpty(patameterTable$SurveySpeed)) {
-            patameterTable$SurveyDistance <- patameterTable$SurveyTime * patameterTable$SurveySpeed
+    if(isEmpty(parameterTable$SurveyDistance)) {
+        if(!isEmpty(parameterTable$SurveyTime) && !isEmpty(parameterTable$SurveySpeed)) {
+            parameterTable$SurveyDistance <- parameterTable$SurveyTime * parameterTable$SurveySpeed
         }
-        else if(!isEmpty(patameterTable$SurveyCoverage)) {
-            patameterTable$SurveyDistance <- patameterTable$SurveyCoverage * sqrt(patameterTable$Area)
+        else if(!isEmpty(parameterTable$SurveyCoverage)) {
+            parameterTable$SurveyDistance <- parameterTable$SurveyCoverage * sqrt(parameterTable$Area)
         }
         else {
             stop("StoX: If SurveyDistance is not given, both of SurveyTime and SurveySpeed must be given!")
         }
     }
     # Override the distances if EqualEffort is TRUE
-    if(EqualEffort){
-        thisStratumArea <- stratumArea[patameterTable$StratumName, Area, on = "Stratum"]
-        patameterTable$SurveyDistance <- sum(patameterTable$SurveyDistance) * thisStratumArea / sum(thisStratumArea)
-    }
+    #if(EqualEffort){
+    #    thisStratumArea <- stratumArea[parameterTable$StratumName, Area, on = "Stratum"]
+    #    parameterTable$SurveyDistance <- sum(parameterTable$SurveyDistance) * thisStratumArea / sum(thisStratumArea)
+    #}
     
     # Add the speed (as NA if not given):
-    if(!length(patameterTable$SurveySpeed)) {
-        patameterTable$SurveySpeed <- NA_real_
+    if(!length(parameterTable$SurveySpeed)) {
+        parameterTable$SurveySpeed <- NA_real_
     }
     
     
@@ -539,14 +541,14 @@ getTransectDesignFromTable <- function(
     
     
     # Create the transect design for each stratum:
-    numberOfStrata <- nrow(patameterTable)
+    numberOfStrata <- nrow(parameterTable)
     TransectDesignList <- vector("list", numberOfStrata)
     
-    # Loop through the rows of the patameterTable:
+    # Loop through the rows of the parameterTable:
     for(ind in seq_len(numberOfStrata)) {
         
         # Subset the StratumPolygon:
-        atThisStratumName <- which(patameterTable$StratumName[ind] == stratumNames)
+        atThisStratumName <- which(parameterTable$StratumName[ind] == stratumNames)
         thisStratumPolygon <- StratumPolygon[ind, ]
         
         # Define a temporary table of x and y:
@@ -558,22 +560,22 @@ getTransectDesignFromTable <- function(
             # General parameters:
             aeqd.CRS = aeqd.CRS, 
             longlat.CRS = longlat.CRS, 
-            # Parameters from the patameterTable:
-            TransectType = patameterTable$TransectType[ind], 
-            Bearing = patameterTable$Bearing[ind], 
-            BearingAngle = patameterTable$BearingAngle[ind], 
-            Retour = patameterTable$Retour[ind], 
-            SurveyTime = patameterTable$SurveyTime[ind], 
-            SurveyDistance = patameterTable$SurveyDistance[ind], 
-            SurveySpeed = patameterTable$SurveySpeed[ind], 
-            Seed = patameterTable$Seed[ind], 
-            #Margin = patameterTable$Margin[ind], 
+            # Parameters from the parameterTable:
+            TransectType = parameterTable$TransectType[ind], 
+            Bearing = parameterTable$Bearing[ind], 
+            BearingAngle = parameterTable$BearingAngle[ind], 
+            Retour = parameterTable$Retour[ind], 
+            SurveyTime = parameterTable$SurveyTime[ind], 
+            SurveyDistance = parameterTable$SurveyDistance[ind], 
+            SurveySpeed = parameterTable$SurveySpeed[ind], 
+            Seed = parameterTable$Seed[ind], 
+            #Margin = parameterTable$Margin[ind], 
             Margin = Margin, 
             N = NumberOfPoints
         )
     }
     
-    names(TransectDesignList) <- patameterTable$StratumName
+    names(TransectDesignList) <- parameterTable$StratumName
     
     
     # Convert to start and end position (latitude and longitude):
@@ -583,7 +585,7 @@ getTransectDesignFromTable <- function(
     # Rbind the segments per stratum:
     TransectDesign <- lapply(TransectDesign, data.table::rbindlist, idcol = "Transect")
     # Add input survey speed:
-    TransectDesign <- mapply(cbind, TransectDesign, lapply(patameterTable$SurveySpeed, function(x) data.table::setnames(data.table::data.table(x), "Speed")), SIMPLIFY = FALSE)
+    TransectDesign <- mapply(cbind, TransectDesign, lapply(parameterTable$SurveySpeed, function(x) data.table::setnames(data.table::data.table(x), "Speed")), SIMPLIFY = FALSE)
     # Rbind strata:
     TransectDesign <- data.table::rbindlist(TransectDesign, idcol = "Stratum")
     # Insert a sequence of segment indices:
@@ -1464,7 +1466,7 @@ addTransitToSegments <- function(
     # Add the transits to a table of positions:
     output <- list(segments, transits)
     
-    names(output) <- c("Segment", "Transit")
+    names(output) <- c("Transect", "Transit")
     output <- data.table::rbindlist(output, idcol = "SegmentType")
     data.table::setcolorder(output, c(setdiff(names(output), "SegmentType"), "SegmentType"))
     

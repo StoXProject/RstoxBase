@@ -244,10 +244,10 @@ stoxFunctionAttributes <- list(
                 TransectParameterDefinition = "FunctionParameter", 
                 TransectParameterDefinitionMethod = "ParameterTable"
             ), 
-            EqualEffort = list(
-                TransectParameterDefinition = "FunctionParameter", 
-                TransectParameterDefinitionMethod = c("Parameter")
-            ), 
+            #EqualEffort = list(
+            #    TransectParameterDefinition = "FunctionParameter", 
+            #    TransectParameterDefinitionMethod = c("Parameter")
+            #), 
             TransectParameter = list(
                 TransectParameterDefinition = "FunctionInput"
             )

@@ -1,6 +1,8 @@
 # RstoxBase v2.2.0-9009  (2026-01-12)
 * Fixed bug in the drop down list of DensityUnit in ReportDensity(), where only the area number density units were shown even when DensityType was "AreaWeightDensity" (by introducing the column variableType in dataTypeUnits).
 * Fixed bug where ReplaceLevel and ReplaceStratumLayerIndividual were not reset in ImputeSuperIndividuals, so that values from a previous such process remained in the output.
+* Removed the argument EqualEffort from TransectDesign(), as this is better accomplished using a common Coverage for all Strata.
+* Fixed bug where Coverage was not calculated.
 
 # RstoxBase v2.2.0-9008  (2025-11-12)
 * Added names to stations in output from WriteStationsAlongTransectDesign() in the form Station_01, Station_02, etc.
