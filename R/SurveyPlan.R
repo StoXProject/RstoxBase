@@ -341,9 +341,6 @@ TransectDesign <- function(
     Margin = 0.1
 ){
     
-    #' @param EqualEffort Logical: If TRUE 
-    
-    
     # Get the TransectDefinition and TransectDefinitionMethod:
     TransectParameterDefinition <- RstoxData::match_arg_informative(TransectParameterDefinition)
     TransectParameterDefinitionMethod <- RstoxData::match_arg_informative(TransectParameterDefinitionMethod)

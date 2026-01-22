@@ -58,8 +58,6 @@ TransectDesign(
 \item{OrderAllToursFirst}{Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).}
 
 \item{Margin}{Numeric: The margin to use when iterating to fit the transect design to the desired survey distance (including transit between segments). The function iterates until the survey distance is within \code{Margin} of the desired survey distance, and jumps out of the iteration after 100 tries or if not converging.}
-
-\item{EqualEffort}{Logical: If TRUE}
 }
 \value{
 An object of StoX data type \code{\link{TransectDesignData}}.
