@@ -336,7 +336,6 @@ TransectDesign <- function(
     TransectParameter, 
     
     # General arguments irrespective of DefinitionMethod:
-    #EqualEffort = TRUE, 
     OrderAllToursFirst = FALSE, 
     Margin = 0.1
 ){
@@ -380,7 +379,6 @@ TransectDesign <- function(
     TransectDesign <- getTransectDesignFromTable(
         TransectParameter, 
         StratumPolygon = StratumPolygon, 
-        #EqualEffort = EqualEffort, 
         OrderAllToursFirst = OrderAllToursFirst, 
         Margin = Margin
     )
@@ -459,7 +457,6 @@ TransectDesign <- function(
 getTransectDesignFromTable <- function(
         parameterTable, 
         StratumPolygon, 
-        #EqualEffort = FALSE, 
         OrderAllToursFirst = FALSE, 
         Margin = 0.1, 
         NumberOfPoints = 1e4
@@ -498,11 +495,6 @@ getTransectDesignFromTable <- function(
             stop("StoX: If SurveyDistance is not given, both of SurveyTime and SurveySpeed must be given!")
         }
     }
-    # Override the distances if EqualEffort is TRUE
-    #if(EqualEffort){
-    #    thisStratumArea <- stratumArea[parameterTable$StratumName, Area, on = "Stratum"]
-    #    parameterTable$SurveyDistance <- sum(parameterTable$SurveyDistance) * thisStratumArea / sum(thisStratumArea)
-    #}
     
     # Add the speed (as NA if not given):
     if(!length(parameterTable$SurveySpeed)) {
