@@ -110,7 +110,7 @@ PlotAcousticTrawlSurvey(
 
 \item{UseDefaultStratumPolygonSettings}{Logical: If TRUE (default) use the default settings for plotting the StratumPolygon. Setting this to FALSE will show all Stratum plotting options of the plotting function in the StoX GUI.}
 
-\item{StratumPolygonColor}{Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).}
+\item{StratumPolygonColor}{Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible). A color blind firendly palette is "viridis".}
 
 \item{StratumPolygonBorderColor}{Character: The single color to use for the polygon borders.}
 

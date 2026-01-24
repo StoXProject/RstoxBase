@@ -38,7 +38,7 @@ DefineTransectParameter(
 
 \item{Bearing}{Character: A string indicating the survey bearing (direction) of each . See Details for options.}
 
-\item{BearingAngle}{Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.}
+\item{BearingAngle}{Numeric: The angle of the survey bearing (direction) counter clockwise from north in degrees. If given, \code{BearingAngle} overrides \code{Bearing}.}
 
 \item{Retour}{Logical: If TRUE the transect design will be doubled by a retour.}
 
