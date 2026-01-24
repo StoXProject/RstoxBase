@@ -16,6 +16,8 @@
 
 \item{StationsAlongTransectDesignData}{The \code{\link{StationsAlongTransectDesignData}} data.}
 
+\item{ReportStationsAlongTransectDesignData}{The \code{\link{ReportStationsAlongTransectDesignData}} data.}
+
 \item{WriteStationsAlongTransectDesignData}{The \code{\link{WriteStationsAlongTransectDesignData}} data.}
 
 \item{NASCData}{The \code{\link{NASCData}} data.}

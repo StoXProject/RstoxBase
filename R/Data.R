@@ -212,7 +212,7 @@ NULL
 #' General stratum plotting parameters of RstoxBase
 #' 
 #' @param ShowStratumPolygon Logical: If TRUE include the stratumPolygon. in the plot.
-#' @param StratumPolygonColor Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible).
+#' @param StratumPolygonColor Character: The color palette to use for the strata. The default ("hue") is the default HUE color used by ggplot2. See the \code{Palettes} section in \code{\link[ggplot2]{scale_fill_brewer}} for a list of options (both Diverging, Qualitative and Sequential color palettes are possible). A color blind firendly palette is "viridis".
 #' @param StratumPolygonBorderColor Character: The single color to use for the polygon borders.
 #' @param StratumPolygonBorderLineWidth Numeric: The line width of the polygon borders.
 #' 
@@ -265,6 +265,7 @@ NULL
 #' @param WriteTransectDesignData The \code{\link{WriteTransectDesignData}} data.
 #' @param PlotTransectDesignData The \code{\link{PlotTransectDesignData}} data.
 #' @param StationsAlongTransectDesignData The \code{\link{StationsAlongTransectDesignData}} data.
+#' @param ReportStationsAlongTransectDesignData The \code{\link{ReportStationsAlongTransectDesignData}} data.
 #' @param WriteStationsAlongTransectDesignData The \code{\link{WriteStationsAlongTransectDesignData}} data.
 #' @param NASCData The \code{\link{NASCData}} data.
 #' @param SumNASCData The \code{\link{SumNASCData}} data.
@@ -632,6 +633,18 @@ NULL
 #' @seealso This data type is produced by \code{\link{StationsAlongTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
 #' 
 #' @name StationsAlongTransectDesignData
+#' 
+NULL
+
+##################################################
+##################################################
+#' Report stations along transect design
+#' 
+#' The ReportStationsAlongTransectDesignData model data is a table with the columns Stratum, giving the Stratum name, and NumberOfStationssegments, giving the number of stations in each Stratum, contained in the \code{\link{StationsAlongTransectDesignData}}.
+#' 
+#' @seealso This data type is produced by \code{\link{ReportStationsAlongTransectDesign}}. See \code{\link{DataTypes}} for a list of all StoX data types produced by \code{\link{RstoxBase}}.
+#' 
+#' @name ReportStationsAlongTransectDesignData
 #' 
 NULL
 

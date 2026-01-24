@@ -731,8 +731,7 @@ plot_lon_lat <- function(
             plotspec$data <- trackData
         }
         
-        
-        
+        # If the color.track.point and size are given as the name of a column in the data, plot color and size as a function of these columns:
         if(length(color.track.point) && color.track.point %in% names(trackData) && length(size) && size %in% names(trackData)) {
             # Fix the stroke to the strokeToPointFactor times the size.max (multiply by 1.5 since this seems to be needed in ggplot2:
             strokeWidth <- 1.5 * size.max * strokeToPointFactor
@@ -744,6 +743,7 @@ plot_lon_lat <- function(
                 stroke = strokeWidth
             )
         }
+        # If only the color.track.point is given as the name of a column in the data, plot color as a function of this column, whereas size is assumed to be a numeric:
         else if(length(color.track.point) && color.track.point %in% names(trackData)) {
             mapping <- ggplot2::aes_string(
                 x = lon_name, 
@@ -752,6 +752,7 @@ plot_lon_lat <- function(
             )
             plotspec$size <- size
         }
+        # If only the size is given as the name of a column in the data, plot size as a function of this column, whereas color.track.point is assumed to be a valid color:
         else if(length(size) && size %in% names(trackData)) {
             # Fix the stroke to the strokeToPointFactor times the size.max (multiply by 1.5 since this seems to be needed in ggplot2:
             strokeWidth <- 1.5 * size.max * strokeToPointFactor
@@ -764,6 +765,7 @@ plot_lon_lat <- function(
             
             plotspec$color <- color.track.point
         }
+        # Otherwise, use the size as a numeric and color.track.point as a valid color:
         else {
             mapping <- ggplot2::aes_string(
                 x = lon_name, 
