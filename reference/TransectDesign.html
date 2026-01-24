@@ -62,14 +62,13 @@
 <span>  Bearing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Along"</span>, <span class="st">"Across"</span>, <span class="st">"AlongReversed"</span>, <span class="st">"AcrossReversed"</span><span class="op">)</span>,</span>
 <span>  BearingAngle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  Retour <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  SurveyTime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  SurveyDistance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  SurveyTime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  SurveySpeed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  SurveyCoverage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  Seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ParameterTable <span class="op">=</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">TransectParameter</span>,</span>
-<span>  EqualEffort <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  OrderAllToursFirst <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  Margin <span class="op">=</span> <span class="fl">0.1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -111,12 +110,12 @@
 <dd><p>Logical: If TRUE the transect design will be doubled by a retour.</p></dd>
 
 
-<dt id="arg-surveytime">SurveyTime<a class="anchor" aria-label="anchor" href="#arg-surveytime"></a></dt>
-<dd><p>Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the <code>SurveyTime</code> requires the <code>SurveySpeed</code> to be given as well. Note that the resulting accumulated time may not be exactly equal to <code>SurveyTime</code>.</p></dd>
-
-
 <dt id="arg-surveydistance">SurveyDistance<a class="anchor" aria-label="anchor" href="#arg-surveydistance"></a></dt>
 <dd><p>Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The <code>SurveyDistance</code> has precedence over <code>SurveyTime</code>. Note that the resulting accumulated distance may not be exactly equal to <code>SurveyDistance</code>.</p></dd>
+
+
+<dt id="arg-surveytime">SurveyTime<a class="anchor" aria-label="anchor" href="#arg-surveytime"></a></dt>
+<dd><p>(Optional, only used if <code>SurveyDistance</code> is not given) Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the <code>SurveyTime</code> requires the <code>SurveySpeed</code> to be given as well. Note that the resulting accumulated time may not be exactly equal to <code>SurveyTime</code>.</p></dd>
 
 
 <dt id="arg-surveyspeed">SurveySpeed<a class="anchor" aria-label="anchor" href="#arg-surveyspeed"></a></dt>
@@ -124,7 +123,7 @@
 
 
 <dt id="arg-surveycoverage">SurveyCoverage<a class="anchor" aria-label="anchor" href="#arg-surveycoverage"></a></dt>
-<dd><p>Numeric: The survey coverage, which when given and at least one of <code>SurveyTime</code> and <code>SurveySpeed</code> is not given will be used to calculate the <code>SurveyDistance</code> using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).</p></dd>
+<dd><p>(Optional, only used if both <code>SurveyDistance</code> and <code>SurveyTime</code> are not given) Numeric: The survey coverage, which when given and at least one of <code>SurveyTime</code> and <code>SurveySpeed</code> is not given will be used to calculate the <code>SurveyDistance</code> using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).</p></dd>
 
 
 <dt id="arg-seed">Seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -137,10 +136,6 @@
 
 <dt id="arg-transectparameter">TransectParameter<a class="anchor" aria-label="anchor" href="#arg-transectparameter"></a></dt>
 <dd><p>The <code><a href="TransectParameter.html">TransectParameter</a></code> process data.</p></dd>
-
-
-<dt id="arg-equaleffort">EqualEffort<a class="anchor" aria-label="anchor" href="#arg-equaleffort"></a></dt>
-<dd><p>Character: A string naming the method to use. See Details for options.</p></dd>
 
 
 <dt id="arg-orderalltoursfirst">OrderAllToursFirst<a class="anchor" aria-label="anchor" href="#arg-orderalltoursfirst"></a></dt>
@@ -173,14 +168,14 @@
 <dt>"Retour"</dt>
 <dd><p>See the argument <code>Retour</code></p></dd>
 
+<dt>"SurveyDistance"</dt>
+<dd><p>Overrides <code>SurveyTime</code> and <code>SurveyCoverage</code>. See the argument <code>SurveyDistance</code></p></dd>
+
 <dt>"SurveyTime"</dt>
 <dd><p>See the argument <code>SurveyTime</code></p></dd>
 
-<dt>"SurveyDistance"</dt>
-<dd><p>Overrides the <code>SurveyTime</code>. See the argument <code>SurveyDistance</code></p></dd>
-
 <dt>"SurveySpeed"</dt>
-<dd><p>See the argument <code>SurveySpeed</code></p></dd>
+<dd><p>Overrides <code>SurveyCoverage</code>. See the argument <code>SurveySpeed</code></p></dd>
 
 <dt>"SurveyCoverage"</dt>
 <dd><p>See the argument <code>SurveyCoverage</code></p></dd>
@@ -234,22 +229,18 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Engelsk_Klondyke_2020...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_East_2016...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_North_2020...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_West_2018...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Nordgyden...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Ostbanken_2020...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Outer_Shoal_2020_1...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum VestbankenSouthEast...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum VestbankenSouthWest...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Vestbanken_North_2020...</span>
@@ -284,12 +275,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_East_2016...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_North_2020...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_West_2018...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Nordgyden...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Ostbanken_2020...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Outer_Shoal_2020_1...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum VestbankenSouthEast...</span>
@@ -320,12 +306,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Engelsk_Klondyke_2020...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_East_2016...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_North_2020...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Inner_Shoal_West_2018...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Nordgyden...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: numIter: 2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Ostbanken_2020...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum Outer_Shoal_2020_1...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> StoX: TransectDesign for Stratum VestbankenSouthEast...</span>

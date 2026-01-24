@@ -49,8 +49,13 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.2.0-9009" id="rstoxbase-v220-9009-2026-01-12">RstoxBase v2.2.0-9009 (2026-01-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9009-2026-01-12"></a></h2>
-<ul><li>Fixed bug in the drop down list of DensityUnit in ReportDensity(), where only the area number density units were shown even when DensityType was “AreaWeightDensity” (by introducing the column variableType in dataTypeUnits).</li>
+<ul><li>Added the new function ReportStationsAlongTransectDesign().</li>
+<li>Fixed bug in PlotTransectDesign() where TrackPointColor did not work.</li>
+<li>Re-organized arguments of TransectDesign() to have SurveyDistance before SurveyTime, since SurveyDistance has precedence over SurveyTime.</li>
+<li>Fixed bug in the drop down list of DensityUnit in ReportDensity(), where only the area number density units were shown even when DensityType was “AreaWeightDensity” (by introducing the column variableType in dataTypeUnits).</li>
 <li>Fixed bug where ReplaceLevel and ReplaceStratumLayerIndividual were not reset in ImputeSuperIndividuals, so that values from a previous such process remained in the output.</li>
+<li>Removed the argument EqualEffort from TransectDesign(), as this is better accomplished using a common Coverage for all Strata.</li>
+<li>Fixed bug where Coverage was not calculated.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.2.0-9008" id="rstoxbase-v220-9008-2025-11-12">RstoxBase v2.2.0-9008 (2025-11-12)<a class="anchor" aria-label="anchor" href="#rstoxbase-v220-9008-2025-11-12"></a></h2>
