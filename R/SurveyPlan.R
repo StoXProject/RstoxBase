@@ -10,7 +10,7 @@
 #' @param StratumNames  Character: The names of the strata for which the parameters are valid. Defaults to all strata.
 #' @param TransectType Character: The name of the type of survey design to create, one of "Parallel", "ZigZagEqualSpacing" and "ZigZagRectangularEnclosure" (see details).
 #' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
-#' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
+#' @param BearingAngle  Numeric: The angle of the survey bearing (direction) counter clockwise from north in degrees. If given, \code{BearingAngle} overrides \code{Bearing}.
 #' @param Retour  Logical: If TRUE the transect design will be doubled by a retour.
 #' @param SurveyTime  Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
 #' @param SurveyDistance Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
@@ -194,11 +194,11 @@ DefineTransectParameter <- function(
 #' @param Bearing  Character: A string indicating the survey bearing (direction) of each . See Details for options.
 #' @param BearingAngle  Numeric: In the case that \code{Bearing = "Angle"}, \code{BearingAngle} gives the angle of the survey bearing (direction) counter clockwise from north in degrees.
 #' @param Retour  Logical: If TRUE the transect design will be doubled by a retour.
-#' @param SurveyTime  Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
-#' 
 #' @param SurveyDistance Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.
+#' @param SurveyTime (Optional, only used if \code{SurveyDistance} is not given) Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.
+#' 
 #' @param SurveySpeed Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.
-#' @param SurveyCoverage Numeric: The survey coverage, which when given and at least one of \code{SurveyTime} and \code{SurveySpeed} is not given will be used to calculate the \code{SurveyDistance} using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).
+#' @param SurveyCoverage  (Optional, only used if both \code{SurveyDistance} and \code{SurveyTime} are not given) Numeric: The survey coverage, which when given and at least one of \code{SurveyTime} and \code{SurveySpeed} is not given will be used to calculate the \code{SurveyDistance} using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).
 #' @param Seed Numeric: The seed to use when drawing the random starting point. 
 #' @param ParameterTable A table specifying the parameters for each stratum to create transect design for. See the Details for a list of required columns.
 #' @param OrderAllToursFirst  Logical: If TRUE order all tours first and all retours last, which can be useful for multiple Strata in the same survey direction (e.g. a row of strata along a coast line).
@@ -214,9 +214,9 @@ DefineTransectParameter <- function(
 #'	\item{"Bearing"}{See the argument \code{Bearing}}
 #'	\item{"BearingAngle"}{If given, this overrides \code{Bearing}. See the argument \code{BearingAngle}}
 #'	\item{"Retour"}{See the argument \code{Retour}}
+#'	\item{"SurveyDistance"}{Overrides \code{SurveyTime} and \code{SurveyCoverage}. See the argument \code{SurveyDistance}}
 #'	\item{"SurveyTime"}{See the argument \code{SurveyTime}}
-#'	\item{"SurveyDistance"}{Overrides the \code{SurveyTime}. See the argument \code{SurveyDistance}}
-#'	\item{"SurveySpeed"}{See the argument \code{SurveySpeed}}
+#'	\item{"SurveySpeed"}{Overrides \code{SurveyCoverage}. See the argument \code{SurveySpeed}}
 #'	\item{"SurveyCoverage"}{See the argument \code{SurveyCoverage}}
 #'	\item{"Seed"}{See the argument \code{Seed}}
 #' }
@@ -323,8 +323,8 @@ TransectDesign <- function(
     Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"), 
     BearingAngle = numeric(), 
     Retour = FALSE, 
-    SurveyTime = numeric(), 
     SurveyDistance = numeric(),
+    SurveyTime = numeric(), 
     SurveySpeed = numeric(), 
     SurveyCoverage = numeric(), 
     Seed = numeric(), 
@@ -485,8 +485,9 @@ getTransectDesignFromTable <- function(
     # Merge the stratumArea into the parameterTable:
     parameterTable <- merge(parameterTable, stratumArea, by.x = "StratumName", by.y = "Stratum")
     
-    # Get the survey distance from time:
+    # Get the survey distance from time. The heirarchy here is that SurveyDistance overrides SurveyTime overrides SurveyCoverage:
     if(isEmpty(parameterTable$SurveyDistance)) {
+        # If BOTH time and speed is given, calculate the distance. :
         if(!isEmpty(parameterTable$SurveyTime) && !isEmpty(parameterTable$SurveySpeed)) {
             parameterTable$SurveyDistance <- parameterTable$SurveyTime * parameterTable$SurveySpeed
         }
@@ -2066,7 +2067,7 @@ PlotTransectDesign <- function(
         
         color.track = "TrackColor", 
         color.station.point = "StationPointColor", 
-        color.scale = "TrackPointColor",  
+        color.track.point = "TrackPointColor",  
         color.land = "LandColor", 
         color.border = "BorderColor", 
         color.ocean = "OceanColor", 
@@ -2395,7 +2396,66 @@ sampleLinesInXY <- function(x, centroid, index, sample, iterativeCentroidCalcula
 
 
 
-#' Write a transect design to GPX file(s).
+#' Report summary of stations along transect design 
+#'
+#' @inheritParams ModelData
+#' 
+#' @examples
+#' 
+#' library(ggplot2)
+#' 
+#' stratumFile <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+#'  )
+#' stratumPolygon <- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile
+#' )
+#' 
+#' # Harbitz zigzag survey design along each stratum:
+#' transectDesignZZ_Along <- TransectDesign(
+#'  TransectParameterDefinition = "FunctionParameter", 
+#'  TransectParameterDefinitionMethod = "Parameter", 
+#' 	TransectType = "ZigZagRectangularEnclosure", 
+#' 	StratumPolygon = stratumPolygon, 
+#' 	SurveyTime = 200, 
+#' 	SurveySpeed = 10, 
+#' 	Seed = 1, 
+#' 	Bearing = "Along"
+#' )
+#' 
+#' stations <- StationsAlongTransectDesign(
+#'   transectDesignZZ_Along, 
+#'   Distance = 30, 
+#'   Seed = 1
+#' )
+#' 
+#' # Report the TransectDesign:
+#' ReportStationsAlongTransectDesign(stations)
+#' 
+#' @return
+#' An object of StoX data type \code{\link{ReportStationsAlongTransectDesignData}}.
+#' 
+#' @export
+#' 
+ReportStationsAlongTransectDesign <- function(
+    StationsAlongTransectDesignData
+){
+    if(!length(StationsAlongTransectDesignData)) {
+        stop("The input StationsAlongTransectDesignData must be given")
+    }
+    
+    output <- StationsAlongTransectDesignData[, .(NumberOfStations = .N), by = "Stratum"]
+    
+    return(output)
+}
+
+
+
+
+
+#' Write stations along transect design to GPX file(s).
 #'
 #' @inheritParams ModelData
 #' @inheritParams general_file_plot_arguments

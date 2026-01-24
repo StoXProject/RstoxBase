@@ -295,11 +295,11 @@ stoxFunctionAttributes <- list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "Parameter"
             ), 
-            SurveyTime = list(
+            SurveyDistance = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "Parameter"
             ), 
-            SurveyDistance = list(
+            SurveyTime = list(
                 UseProcessData = FALSE, 
                 DefinitionMethod = "Parameter"
             ), 
@@ -507,6 +507,12 @@ stoxFunctionAttributes <- list(
                 DefinitionMethod = "ParameterTable"
             )
         )
+    ), 
+    
+    ReportStationsAlongTransectDesign = list(
+        functionType = "modelData", 
+        functionCategory = "report", 
+        functionOutputDataType = "ReportStationsAlongTransectDesignData"
     ), 
     
     WriteStationsAlongTransectDesign = list(
@@ -2845,8 +2851,8 @@ processPropertyFormats <- list(
             "Bearing",
             "BearingAngle", 
             "Retour",
-            "SurveyTime", 
             "SurveyDistance",
+            "SurveyTime", 
             "SurveySpeed", 
             "SurveyCoverage", 
             "Seed"

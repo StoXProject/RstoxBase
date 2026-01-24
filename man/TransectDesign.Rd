@@ -13,8 +13,8 @@ TransectDesign(
   Bearing = c("Along", "Across", "AlongReversed", "AcrossReversed"),
   BearingAngle = numeric(),
   Retour = FALSE,
-  SurveyTime = numeric(),
   SurveyDistance = numeric(),
+  SurveyTime = numeric(),
   SurveySpeed = numeric(),
   SurveyCoverage = numeric(),
   Seed = numeric(),
@@ -41,13 +41,13 @@ TransectDesign(
 
 \item{Retour}{Logical: If TRUE the transect design will be doubled by a retour.}
 
-\item{SurveyTime}{Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.}
-
 \item{SurveyDistance}{Numeric: The distance to travel in the stratum including transit between segments, given in nautical miles. The \code{SurveyDistance} has precedence over \code{SurveyTime}. Note that the resulting accumulated distance may not be exactly equal to \code{SurveyDistance}.}
+
+\item{SurveyTime}{(Optional, only used if \code{SurveyDistance} is not given) Numeric: The time to spend in the stratum including transit between segments, given in hours. Specifying the \code{SurveyTime} requires the \code{SurveySpeed} to be given as well. Note that the resulting accumulated time may not be exactly equal to \code{SurveyTime}.}
 
 \item{SurveySpeed}{Numeric: The speed of the vessel, needed if effort is specified by \code{SurveyTime}.}
 
-\item{SurveyCoverage}{Numeric: The survey coverage, which when given and at least one of \code{SurveyTime} and \code{SurveySpeed} is not given will be used to calculate the \code{SurveyDistance} using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).}
+\item{SurveyCoverage}{(Optional, only used if both \code{SurveyDistance} and \code{SurveyTime} are not given) Numeric: The survey coverage, which when given and at least one of \code{SurveyTime} and \code{SurveySpeed} is not given will be used to calculate the \code{SurveyDistance} using the definition SurveyCoverage = SurveyDistance / sqrt(area of the stratum).}
 
 \item{Seed}{Numeric: The seed to use when drawing the random starting point.}
 
@@ -75,9 +75,9 @@ If the \code{ParameterTable} is given the table must contain the following colum
 \item{"Bearing"}{See the argument \code{Bearing}}
 \item{"BearingAngle"}{If given, this overrides \code{Bearing}. See the argument \code{BearingAngle}}
 \item{"Retour"}{See the argument \code{Retour}}
+\item{"SurveyDistance"}{Overrides \code{SurveyTime} and \code{SurveyCoverage}. See the argument \code{SurveyDistance}}
 \item{"SurveyTime"}{See the argument \code{SurveyTime}}
-\item{"SurveyDistance"}{Overrides the \code{SurveyTime}. See the argument \code{SurveyDistance}}
-\item{"SurveySpeed"}{See the argument \code{SurveySpeed}}
+\item{"SurveySpeed"}{Overrides \code{SurveyCoverage}. See the argument \code{SurveySpeed}}
 \item{"SurveyCoverage"}{See the argument \code{SurveyCoverage}}
 \item{"Seed"}{See the argument \code{Seed}}
 }

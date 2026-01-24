@@ -2,7 +2,7 @@
 % Please edit documentation in R/SurveyPlan.R
 \name{WriteStationsAlongTransectDesign}
 \alias{WriteStationsAlongTransectDesign}
-\title{Write a transect design to GPX file(s).}
+\title{Write stations along transect design to GPX file(s).}
 \usage{
 WriteStationsAlongTransectDesign(
   StationsAlongTransectDesignData,
@@ -18,7 +18,7 @@ WriteStationsAlongTransectDesign(
 An object of StoX data type \code{\link{WriteStationsAlongTransectDesignData}}.
 }
 \description{
-Write a transect design to GPX file(s).
+Write stations along transect design to GPX file(s).
 }
 \examples{
 
