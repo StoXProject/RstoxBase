@@ -1,4 +1,16 @@
-# RstoxBase v2.2.0-9009  (2026-01-12)
+# RstoxBase v2.2.0  (2026-02-04)
+* Fixed bug in RegroupLengthDistribution(), where values of IndividualTotalLength were shifted down one length interval. This problem is most apparent when the function argument LengthInterval is the same as the LengthResolution in the input LengthDistributionData. When using the GUI or RstoxFramework::runModel() and similar functions, the precision is rounded to 12 digits, which elliminates this problem for LengthResolution 1 and 0.5 cm. The following table shows the number of lengths between 0 and 1 m that are shifted down when RegroupLengthDistribution() is applied with LengthInterval equal to LengthResolution:
+| LengthResolution | Fraction of values shifted down | Mean downwards shift in cm |
+|----------|----------|----------|
+| 0.1 mm | 357 / 1000 = 0.357 | 0.0357 |
+| 0.5 mm | 7 / 200 = 0.035 | 0.0175 |
+| 1 cm | 3 / 100 = 0.03 | 0.03 |
+
+For ICESBiotic data the problem will only occur for StoX projects where data are in 1 mm resolution AND the LengthInterval in RegroupLengthDistribution is 0.1 cm. For Norwegian data the problem is potentially wider as supported length resolutions include 0.1 mm and 0.5 mm as well as 1 mm, 0.5 cm and 1 cm.
+* Fixed an issue where exact matching of IndividualTotalLength and LengthResolution did not work in addLengthGroupOneSpecies(), so that the interval matching did all the work. 
+ 
+
+# RstoxBase v2.2.0-9009  (2026-02-02)
 * Added the new function ReportStationsAlongTransectDesign().
 * Fixed bug in PlotTransectDesign() where TrackPointColor did not work.
 * Re-organized arguments of TransectDesign() to have SurveyDistance before SurveyTime, since SurveyDistance has precedence over SurveyTime.
