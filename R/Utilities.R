@@ -1799,3 +1799,20 @@ convertToNumericIfPossible <- function(x) {
 
 
 
+
+#' A robust version of findInterval where the inputs are rounded off first to avoid floaring point issues
+#' 
+#' @inheritParams base::findInterval
+#' @param digits Integer: The number of digits to round \code{x} and \code{vec} to before applying \code{\link{findInterval}}.
+#' @param ... Passed to \code{\link{findInterval}}.
+#' 
+findInterval_AfterRound <- function(x, vec, digits = 10, ...) {
+    findInterval(
+        round(x, digits = digits), 
+        round(vec, digits = digits), 
+        ...
+    )
+}
+
+
+
