@@ -467,7 +467,7 @@ addLengthGroupOneSpecies <- function(
     
     # (1) Match the length groups exactly:
     data[atSpeciesInData, TempLengthGroupUsedInSuperIndividuals := match(
-        paste(..lengthVar, ..resolutionVar), 
+        paste(eval(get(lengthVar)), eval(get(resolutionVar))), 
         eval(
             paste(
                 uniqueLengthGroups[[lengthVar]], 
@@ -559,7 +559,7 @@ addLengthGroup <- function(
     lengthGroupVar = "TempLengthGroupUsedInSuperIndividuals",
     warn = TRUE
 ) {
-    
+
     # Run a for loop through the common species:
     speciesVar <- getDataTypeDefinition(dataType = "QuantityData", subTable = "Data", elements = "categoryVariable", unlist = TRUE)
     speciesInData <- unique(data[[speciesVar]])
