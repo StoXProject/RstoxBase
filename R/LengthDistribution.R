@@ -328,7 +328,7 @@ RegroupLengthData <- function(
     lengthInterval <- getLengthInterval(LengthData, lengthInterval = lengthInterval)
     
     # Temporary add the index of the length intervals:
-    LengthData[, intervalIndex := findInterval(IndividualTotalLength, ..lengthInterval)]
+    LengthData[, intervalIndex := findInterval_AfterRound(IndividualTotalLength, ..lengthInterval, digits = 10)]
     
     # Get the interval widths, and count the number of hits in each interval:
     lengthIntervalWidths <- diff(lengthInterval)
