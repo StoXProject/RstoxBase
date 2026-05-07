@@ -32,7 +32,7 @@ aggregateBaselineDataOneTable(
 
 \item{na.rm}{Used in the function specified by \code{ReportFunction}.}
 
-\item{padWithZerosOn}{Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}.}
+\item{padWithZerosOn}{Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for reporting abundance variables (abundance, biomass, density) from bootstrapping, where a length group which is not present in a bootstrap run should be considered as zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}.}
 
 \item{Specification}{A named list of specification parameters used in the \code{ReportFunction}.}
 

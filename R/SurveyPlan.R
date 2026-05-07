@@ -1634,7 +1634,7 @@ ReportTransectDesign <- function(
         DistanceTransit = sum(Distance * as.numeric(SegmentType == "Transit")), 
         Distance = sum(Distance), 
         Speed = Speed[1]), 
-        by = "Stratum"
+        by = c("Stratum", "Direction")
     ]
     Stratum <- merge(Stratum, StratumAreaData, all.x = TRUE)
     Stratum[, Coverage := DistanceTransect / sqrt(Area)]

@@ -31,7 +31,7 @@ DefinePSU(
 
 \item{DefinitionMethod}{A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.}
 
-\item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read. Must include file extension.}
+\item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Accepts both project.xml from the old StoX 2.7, project.json from the new StoX >= 3.0.0, or a table that could be read by \code{\link[data.table]{fread}} containing the columns "Stratum", "PSU", "Cruise", "StartDateTime" and "StopDateTime". Must include file extension.}
 
 \item{PSUType}{Character: A string naming the type of model, either "Acoustic" or "Biotic"}
 

@@ -494,23 +494,13 @@ initiateRstoxBase <- function(){
     #}
     #dataTypeRequiredVariables <- lapply(dataTypeDefinition, getRequiredVariables)
     
-    #proj4string <- sp::CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
     proj4string_longlat <- "+proj=longlat +no_defs +ellps=WGS84 +towgs84=0,0,0"
     # The Azimuthal equidistant projection, used for distance calculations:
     proj4string_aeqd <- "+proj=aeqd +no_defs +ellps=WGS84 +towgs84=0,0,0"
     # The Lambert Azimuthal Equal-Area projection, used for area calculations:
     proj4string_laea <- "+proj=laea +no_defs +ellps=WGS84 +towgs84=0,0,0"
     
-    # Define an empty SpatialPolygonsDataFrame, with no projection, as it is not possible to assign projection to an empty SpatialPolygonsDataFrame:
-    
-    # Removing sp altogether:
-    # # Should we use new("SpatialPolygonsDataFrame") instead???????????????
-    # emptyStratumPolygon <- sp::SpatialPolygonsDataFrame(
-    #     sp::SpatialPolygons(list()), 
-    #     data = data.frame()
-    # )
-    # # This failed due to the above note:
-    # #suppressWarnings(sp::proj4string(emptyStratumPolygon) <- proj4string)
+    # Define an empty StratumPolygon:
     emptyStratumPolygon <- sf::st_sf(sf::st_sfc())
     suppressWarnings(sf::st_crs(emptyStratumPolygon) <- proj4string_longlat)
     
@@ -739,6 +729,21 @@ initiateRstoxBase <- function(){
             "sum", 
             "number", 
             "sum"
+        ), 
+        functionClass = c(
+            "summary", 
+            "aggregation", 
+            "average", 
+            "average", 
+            "orderStatistics", 
+            "orderStatistics", 
+            "orderStatistics", 
+            "precision", 
+            "precision", 
+            "precision", 
+            "aggregation", 
+            "aggregation", 
+            "aggregation"
         ), 
         packageName = c(
             "RstoxBase", # "summaryStox"
