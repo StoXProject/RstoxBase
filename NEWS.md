@@ -1,3 +1,7 @@
+# RstoxBase v2.2.1-9001  (2026-02-04)
+* Added the column Direction in the Stratum table of the output from ReportTransectDesign(), so that tour and retour will be in separate rows.
+
+
 # RstoxBase v2.2.0  (2026-02-04)
 * Fixed bug in RegroupLengthDistribution(), where values of IndividualTotalLength were shifted down one length interval. This problem is most apparent when the function argument LengthInterval is the same as the LengthResolution in the input LengthDistributionData. When using the GUI or RstoxFramework::runModel() and similar functions, the precision is rounded to 12 digits, which elliminates this problem for LengthResolution 1 and 0.5 cm. The following table shows the number of lengths between 0 and 1 m that are shifted down when RegroupLengthDistribution() is applied with LengthInterval equal to LengthResolution:
 | LengthResolution | Fraction of values shifted down | Mean downwards shift in cm |

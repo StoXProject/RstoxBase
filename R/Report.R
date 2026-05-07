@@ -52,7 +52,8 @@ ReportSuperIndividuals <- function(
         variableName = TargetVariable, 
         unit = TargetVariableUnit
     )
-    
+        
+     
     output <- aggregateBaselineDataOneTable(
         stoxData = SuperIndividualsData, 
         TargetVariable = TargetVariable, 
@@ -83,7 +84,7 @@ ReportSuperIndividuals <- function(
 ##################################################
 #' Report DensityData
 #' 
-#' Reports the sum, mean or other functions on a variable of the \code{\link{DensityData}}.
+#' Apply a \code{ReportFunction} on the Density variable of the \code{\link{DensityData}}. 
 #' 
 #' @inheritParams ModelData
 #' @inheritParams general_report_arguments
@@ -109,6 +110,9 @@ ReportDensity <- function(
     FractionOverVariable = character()
 ) 
 {
+    
+    #warning("StoX: The function ReportDensity is deprecated. To average density over PSUs use MeanDensity and ReportMeanDensity instead. ReportDensity will be removed in StoX 5.0.0.")
+    
     # Only Density is relevant here:
     TargetVariable <- "Density"
     
@@ -123,7 +127,7 @@ ReportDensity <- function(
         GroupingVariables = GroupingVariables
     )
 
-    
+    # Set units:
     DensityData$Data[[TargetVariable]] <- setUnitRstoxBase(
         DensityData$Data[[TargetVariable]], 
         dataType =  "DensityData", 
@@ -132,6 +136,8 @@ ReportDensity <- function(
         unit = DensityUnit
     )
     
+    
+    # Do the aggregation:
     output <- aggregateBaselineDataOneTable(
         stoxData = DensityData$Data, 
         TargetVariable = TargetVariable, 
@@ -157,6 +163,87 @@ ReportDensity <- function(
     return(output)
 }
 
+
+
+
+# ##################################################
+# ##################################################
+# #' Report MeanDensityData
+# #' 
+# #' Apply a \code{ReportFunction} on the Density variable of the \code{\link{MeanDensityData}}.
+# #' 
+# #' @inheritParams ModelData
+# #' @inheritParams general_report_arguments
+# #' @param DensityUnit The unit to use for the column \code{Density}. Run the following in R for possible units: \code{subset(RstoxData::StoxUnits, quantity == # "area_number_density", select = "shortname")}.
+# #' 
+# #' @return
+# #' A \code{\link{ReportMeanDensityData}} object.
+# #' 
+# ReportMeanDensity <- function(
+#     MeanDensityData, 
+#     DensityUnit = character(), 
+#     #TargetVariable = character(), 
+#     ReportFunction = getReportFunctions(use = "Baseline"), 
+#     GroupingVariables = character(), 
+#     InformationVariables = character(), 
+#     Filter = character(), 
+#     RemoveMissingValues = FALSE, 
+#     WeightingVariable = character(), 
+#     ConditionOperator = character(), 
+#     ConditionValue = character(), 
+#     FractionOverVariable = character()
+# ) 
+# {
+#     
+#     # Only Density is relevant here:
+#     TargetVariable <- "Density"
+#     
+#     # Get the ReportFunction:
+#     ReportFunction <- RstoxData::match_arg_informative(ReportFunction)
+#     
+#     # Issue a warning if RemoveMissingValues = TRUE:
+#     getRstoxBaseDefinitions("RemoveMissingValuesWarning")(
+#         RemoveMissingValues = RemoveMissingValues, 
+#         data = MeanDensityData$Data, 
+#         TargetVariable = TargetVariable, 
+#         GroupingVariables = GroupingVariables
+#     )
+#     
+#     # Set units:
+#     MeanDensityData$Data[[TargetVariable]] <- setUnitRstoxBase(
+#         MeanDensityData$Data[[TargetVariable]], 
+#         dataType =  "MeanDensityData", 
+#         variableName = TargetVariable, 
+#         variableType = getDensityType(MeanDensityData), 
+#         unit = DensityUnit
+#     )
+#     
+#     
+#     # Do the aggregation:
+#     output <- aggregateBaselineDataOneTable(
+#         stoxData = MeanDensityData$Data, 
+#         TargetVariable = TargetVariable, 
+#         ReportFunction = ReportFunction, 
+#         GroupingVariables = GroupingVariables, 
+#         InformationVariables = InformationVariables, 
+#         na.rm = RemoveMissingValues, 
+#         Specification = list(
+#             WeightingVariable = WeightingVariable,
+#             ConditionOperator = ConditionOperator, 
+#             ConditionValue = ConditionValue, 
+#             FractionOverVariable = FractionOverVariable
+#         )
+#     )
+#     
+#     if(RstoxData::hasUnit(MeanDensityData$Data[[TargetVariable]], property = "shortname")) {
+#         unit <- RstoxData::getUnit(MeanDensityData$Data[[TargetVariable]], property = "shortname")
+#         output <- cbind(output, Unit = unit)
+#     }
+#     
+#     output <- filterTable(output, filter = Filter)
+#     
+#     return(output)
+# }
 
 
 
@@ -208,6 +295,7 @@ ReportQuantity <- function(
         unit = TargetVariableUnit
     )
     
+    
     output <- aggregateBaselineDataOneTable(
         stoxData = QuantityData$Data, 
         TargetVariable = TargetVariable, 
@@ -241,7 +329,7 @@ ReportQuantity <- function(
 #' @param subTable The name of the sub table to aggregate on, if \code{stoxData} is a list of tables.
 #' @inheritParams general_report_arguments
 #' @param na.rm Used in the function specified by \code{ReportFunction}.
-#' @param padWithZerosOn Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}. 
+#' @param padWithZerosOn Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for reporting abundance variables (abundance, biomass, density) from bootstrapping, where a length group which is not present in a bootstrap run should be considered as zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the \code{GroupingVariables}.
 #' @param Specification A named list of specification parameters used in the \code{ReportFunction}.
 #' @param uniqueGroupingVariablesToKeep A data.table holding unique combinations to extract from the data, used by RstoxFramework::ReportBootstrap() to discard combinations of the grouping variables what do not exist in the data. Such combinations are introduced with the CJ operation when padWithZerosOn is given.
 #'
@@ -392,9 +480,13 @@ aggregateBaselineDataOneTableSingleFunction <- function(
             stoxData <- stoxData[[tableName]]
             # Free the memory of the large object:
             #gc()
-            
         }
     }
+    
+    # Keep the original unique GroupingVariables, InformationVariables, to add after the CJ-ing, so that this process is not corrupted by any NAs introduced when CJ-ing:
+    #stoxData0 <- data.table::copy(stoxData) #  This made a copy and took up too much memory
+    toSelect <- intersect(names(stoxData), unlist(c(GroupingVariables, InformationVariables)))
+    toAdd <- unique(subset(stoxData, select = toSelect))
     
     
     # Add a CJ operation here like in StoX 2.7 (function reportQuantityAtLevel). This needs an option, so that it is only used across bootstrap iterations:
@@ -420,32 +512,39 @@ aggregateBaselineDataOneTableSingleFunction <- function(
         arePresent <- grid[stoxData[, ..paddingVariables], on = paddingVariables]$index_
         areNA <- arePresent[is.na(stoxData[[TargetVariable]])]
         
-        # This temporarily doubles the memory, as stoxData is modified:
+        # Expand the paddingVariables and TargetVariable and variables specified in the Specification to a complete grid on the paddingVariables:
+        dataVariables <- c(TargetVariable, Specification$WeightingVariable, Specification$FractionOverVariable, InformationVariables)
+        stoxData <- subset(stoxData, select = c(paddingVariables, dataVariables))
         stoxData <- stoxData[grid[, ..paddingVariables], on = paddingVariables]
-        # Free the memory of the large object:
-        #gc()
         
-        # Convert the NAs to 0 for the abundance and biomass columns:
-        possibleAbudanceVariables <- setdiff(names(stoxData), paddingVariables)
-        # Convert NA to 0 only for Biomass or Abundance:
-        abudanceVariableKeys <- getRstoxBaseDefinitions("dataVariables")
-            
-        isAbudanceVariable <- rowSums(outer(possibleAbudanceVariables, abudanceVariableKeys, startsWith)) > 0
-        abudanceVariables <- possibleAbudanceVariables[isAbudanceVariable]
-        
-        if(length(abudanceVariables)) {
+        # If the TargetVariable is an abundance variable, replace NAs by 0 to take these into account:
+        if(isAbundanceVariable(TargetVariable)) {
             # Set all NA to 0, both those from the original stoxData and those introduced by the grid:
-            replaceNAByReference(stoxData, cols = abudanceVariables, replacement = list(numeric = 0, integer = 0L))
+            replaceNAByReference(stoxData, cols = TargetVariable, replacement = list(numeric = 0, integer = 0L))
             # Restore the NAs from the original stoxData:
-            stoxData[areNA, eval(TargetVariable) := NA]
+            stoxData[areNA, eval(TargetVariable) := NA]    
         }
+        
+        
+        
+        
+        ### # Convert the NAs to 0 for the abundance and biomass columns:
+        ### possibledataVariables <- setdiff(names(stoxData), paddingVariables)
+        ### # Convert NA to 0 only for Biomass or Abundance:
+        ### dataVariableKeys <- getRstoxBaseDefinitions("dataVariables")
+        ###     
+        ### isDataVariable <- rowSums(outer(possibledataVariables, dataVariableKeys, startsWith)) > 0
+        ### dataVariables <- possibledataVariables[isDataVariable]
+        ### 
+        ### if(length(dataVariables)) {
+        ###     # Set all NA to 0, both those from the original stoxData and those introduced by the grid:
+        ###     replaceNAByReference(stoxData, cols = dataVariables, replacement = list(numeric = 0, integer = 0L))
+        ###     # Restore the NAs from the original stoxData:
+        ###     stoxData[areNA, eval(TargetVariable) := NA]
+        ### }
     }
     
     
-    
-    # Keep the original unique GroupingVariables, InformationVariables, to add after the CJ-ing, so that this process is not corrupted by any NAs introduced when CJ-ing:
-    #stoxData0 <- data.table::copy(stoxData) #  This made a copy and took up too much memory
-    toAdd <- unique(stoxData[, c(GroupingVariables, InformationVariables), with = FALSE])
     
     # Function to build an expression stringg for use in data.table:
     fun2funString <- function(
@@ -628,6 +727,37 @@ hasSpecificationParameter <- function(x) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
     reportFunctions$specified[reportFunctions$functionName == x]
 }
+
+
+
+
+
+# For potential use when we introduce the MeanOver argument to reporting functions:
+isAveragingFunction <- function(x) {
+    x %in% averagingFunctions()
+}
+averagingFunctions <- function() {
+    reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
+    reportFunctions$functionName[reportFunctions$functionClass %in% c(
+        "summary", 
+        "average", 
+        "precision"
+    )
+    ]
+}
+
+
+isAbundanceVariable <- function(x, strict = FALSE) {
+    abudanceVariableKeys <- getRstoxBaseDefinitions("dataVariables")
+    if(strict) {
+        x %in% abudanceVariableKeys
+    }
+    else {
+        rowSums(outer(x, abudanceVariableKeys, startsWith)) > 0
+    }
+    
+}
+
 
 getReportFunctionAlias <- function(x) {
     reportFunctions <- getRstoxBaseDefinitions("reportFunctions")
