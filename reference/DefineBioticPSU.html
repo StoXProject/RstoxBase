@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1-9001</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
 
 
 <dt id="arg-filename">FileName<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
-<dd><p>The path to a resource file from which to read PSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read. Must include file extension.</p></dd>
+<dd><p>The path to a resource file from which to read PSUs, in the case that <code>DefinitionMethod</code> is "ResourceFile". Accepts both project.xml from the old StoX 2.7, project.json from the new StoX &gt;= 3.0.0, or a table that could be read by <code><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></code> containing the columns "Stratum", "PSU", "Cruise", "StartDateTime" and "StopDateTime". Must include file extension.</p></dd>
 
 </dl></div>
     <div id="value">

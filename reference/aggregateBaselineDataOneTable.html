@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1-9001</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
 
 
 <dt id="arg-padwithzeroson">padWithZerosOn<a class="anchor" aria-label="anchor" href="#arg-padwithzeroson"></a></dt>
-<dd><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for bootstrapping, where a fish length missing in a bootstrap run should be considered as samples with zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></dd>
+<dd><p>Character vector giving the variables for which missing values should be padded with zeros. This is used particularly for reporting abundance variables (abundance, biomass, density) from bootstrapping, where a length group which is not present in a bootstrap run should be considered as zero individuals, and not missing, so that summary statistics end up taking all bootstrap replicates into account (if not a mean would be overestimated). When padWithZerosOn has positive length, padding with zeros is applied to this variable and to the <code>GroupingVariables</code>.</p></dd>
 
 
 <dt id="arg-specification">Specification<a class="anchor" aria-label="anchor" href="#arg-specification"></a></dt>
