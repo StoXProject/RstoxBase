@@ -14,7 +14,7 @@ summaryStox(x, percentages = c(5, 50, 95), na.rm = FALSE)
 
 \item{percentages}{The percentages to get percentiles for, equivalent to 100 * probs in \code{\link[stats]{quantile}}.}
 
-\item{na.rm}{logical; if true, any \code{\link{NA}} and \code{NaN}'s
+\item{na.rm}{logical; if true, any \code{\link{NA}} and \code{NaN} values
     are removed from \code{x} before the quantiles are computed.}
 }
 \description{

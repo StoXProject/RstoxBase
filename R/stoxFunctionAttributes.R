@@ -1833,6 +1833,39 @@ stoxFunctionAttributes <- list(
         )
     ), 
     
+    #ReportMeanDensity = list(
+    #    functionType = "modelData", 
+    #    functionCategory = "report", 
+    #    functionOutputDataType = "ReportMeanDensityData", 
+    #    # This is an example of using an expression to determine when to show a parameter:
+    #    functionParameterFormat = list(
+    #        GroupingVariables = "groupingVariables_ReportMeanDensity", 
+    #        InformationVariables = "informationVariables_ReportMeanDensity", 
+    #        DensityUnit = "meanDensityUnit", 
+    #        WeightingVariable = "weightingVariable_ReportMeanDensity", 
+    #        FractionOverVariable = "fractionOverVariable", 
+    #        ConditionOperator = "conditionOperator"
+    #    ), 
+    #    functionArgumentHierarchy = expression(
+    #        c(
+    #            getFunctionArgumentHierarchyForSpcificationParameters(
+    #                use = "Baseline", 
+    #                functionName = "ReportFunction"
+    #            ), 
+    #            list(
+    #                DensityUnit = list(
+    #                    ReportFunction = function(functionArguments) {
+    #                        !startsWith(functionArguments$ReportFunction, "fractionOf")
+    #                    }
+    #                )
+    #            )
+    #        )
+    #    ), 
+    #    functionParameterDefaults = list(
+    #        GroupingVariables = c("Survey", "SpeciesCategory")
+    #    )
+    #), 
+    
     ReportSpeciesCategoryCatch = list(
         functionType = "modelData", 
         functionCategory = "report", 
@@ -2615,6 +2648,57 @@ processPropertyFormats <- list(
         }, 
         variableTypes = "character"
     ), 
+    
+    
+    
+    # # ReportMeanDensity: 
+    # groupingVariables_ReportMeanDensity = list(
+    #     class = "vector", 
+    #     title = "One or more variables to group by when reporting MeanDensityData", 
+    #     possibleValues = function(MeanDensityData) {
+    #         sort(names(MeanDensityData$Data))
+    #     }, 
+    #     variableTypes = "character"
+    # ), 
+    # informationVariables_ReportMeanDensity = list(
+    #     class = "vector", 
+    #     title = "One or more columns to inlcude as information in ReportMeanDensityData", 
+    #     possibleValues = function(MeanDensityData, GroupingVariables) {
+    #         sort(setdiff(names(MeanDensityData$Data), GroupingVariables))
+    #     }, 
+    #     variableTypes = "character"
+    # ), 
+    # meanDensityUnit = list(
+    #     class = "single", 
+    #     title = "Select unit for the Density", 
+    #     possibleValues = function(MeanDensityData) {
+    #         dataType <- "MeanDensityData"
+    #         variableType <- getDensityType(MeanDensityData)
+    #         quantity <- getBaseUnit(dataType = dataType, variableName = "Density", variableType = variableType, element = "quantity")
+    #         if(!length(quantity) || is.na(quantity)) {
+    #             warning("StoX: No units defined for the variable Density of datatype ", dataType)
+    #             list()
+    #         }
+    #         else {
+    #             RstoxData::getUnitOptions(quantity)
+    #         }
+    #     }
+    # ), 
+    # weightingVariable_ReportMeanDensity = list(
+    #     class = "single", 
+    #     title = "Select weighting variable", 
+    #     possibleValues = function(MeanDensityData, GroupingVariables, InformationVariables) {
+    #         # Keep only the numeric:
+    #         possibleVariables <- names(MeanDensityData$Data)[sapply(MeanDensityData$Data, inherits, c("numeric", "integer"))]
+    #         
+    #         # Get the columns not used as TargetVariable, GroupingVariables or  InformationVariables:
+    #         possibleVariables <- 
+    #             sort(setdiff(possibleVariables, c(GroupingVariables, InformationVariables)))
+    #         
+    #         return(possibleVariables)
+    #     }, 
+    #     variableTypes = "character"
+    # ), 
     
     
     

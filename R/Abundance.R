@@ -1106,7 +1106,7 @@ addHalfResolution <- function(data, variable, resolutionVariable, reverse = FALS
 ##################################################
 #' Add haul density to SuperIndividualsData
 #' 
-#' This function calculates the swept-area density of each Haul given in the input SuperIndividualsData.
+#' This function calculates the swept-area density by IndividualTotalLength of each Haul given in the input SuperIndividualsData, and adds this as a new column named "HaulDensity". The HaulDensity variable is only intended for use as an explanatory variable and cannot be averaged or summed.
 #' 
 #' @inheritParams ModelData
 #' @inheritParams SweptAreaDensity
