@@ -9,7 +9,7 @@
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param MergedStoxDataStationLevel The merged StoxData at the station level. Used in \code{meanRawResolutionData}.
 #' @param DefinitionMethod A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
-#' @param FileName The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Currently, only a project.xml file from StoX 2.7 can be read. Must include file extension.
+#' @param FileName The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Accepts both project.xml from the old StoX 2.7, project.json from the new StoX >= 3.0.0, or a table that could be read by \code{\link[data.table]{fread}} containing the columns "Stratum", "PSU", "Cruise", "StartDateTime" and "StopDateTime". Must include file extension. 
 #' @param SavePSUByTime Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.
 #' @param PSUProcessData Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.
 #' 
@@ -453,8 +453,7 @@ getStratumOfSSUs_SF <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPoly
     # Get the SSU positions and convert to spatialpoints:
     pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSU_PSU$SSU, c(SSULabel, "Longitude", "Latitude"), with = FALSE]
     
-    # Changed on 2021-09-10 to use getStratumNames():
-    #StratumNames <- getStratumNames(sp::over(SpatialPSUs, StratumPolygon), check.unique = FALSE)
+    # Find the names of the strata:
     turn_off_s2(
         StratumNames <- locateInStratum(pos, StratumPolygon, SSULabel = SSULabel), 
         msg = FALSE
@@ -468,29 +467,6 @@ getStratumOfSSUs_SF <- function(SSU_PSU, MergedStoxDataStationLevel, StratumPoly
     return(Stratum_PSU)
 }
 
-#getStratumOfPSU <- function(thisPSU, SSU_PSU, MergedStoxDataStationLevel, StratumPolygon, SSULabel, StationLevel) {
-#    
-#    # Get the MergedStoxDataStationLevel of the specified PSU:
-#    SSUs <- SSU_PSU[PSU == thisPSU, SSU]
-#    pos <- MergedStoxDataStationLevel[get(SSULabel) %in% SSUs, c("Longitude", "Latitude")]
-#    SpatialPSUs <- sp::SpatialPoints(pos)
-#    # Det the default projection to the points:
-#    sp::proj4string(SpatialPSUs) <- getRstoxBaseDefinitions("proj4string")
-#    
-#    # Find the stratum of each PSU:
-#    StratumNames <- sp::over(SpatialPSUs, StratumPolygon)
-#    # Select the most frequent:
-#    MostFrequentStratumName <- names(which.max(table(StratumNames)))
-#    
-#    # Create the Stratum_PSU data.table:
-#    Stratum_PSU <- data.table::data.table(
-#        #Stratum = NonEmptyStrata, 
-#        Stratum = if(length(MostFrequentStratumName)) MostFrequentStratumName else NA, 
-#        PSU = thisPSU
-#    )
-#    
-#    return(Stratum_PSU)
-#}
 
 # Function to remove PSUs with missing Stratum:
 removePSUsWithMissingStratum <- function(PSUProcessData, SSULabel) {

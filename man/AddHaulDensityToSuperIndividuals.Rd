@@ -21,7 +21,7 @@ AddHaulDensityToSuperIndividuals(
 \item{SweepWidth}{The constant sweep width in meters.}
 }
 \description{
-This function calculates the swept-area density of each Haul given in the input SuperIndividualsData.
+This function calculates the swept-area density by IndividualTotalLength of each Haul given in the input SuperIndividualsData, and adds this as a new column named "HaulDensity". The HaulDensity variable is only intended for use as an explanatory variable and cannot be averaged or summed.
 }
 \details{
 The density is calculated either by multiplying by a constant sweep width, or by using LengthDistributionData which are sweep width compensated.

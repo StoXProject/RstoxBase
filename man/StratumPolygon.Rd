@@ -4,7 +4,7 @@
 \alias{StratumPolygon}
 \title{StoX data type StratumPolygon}
 \description{
-The StratumPolygon data type contains the polygons defining the strata of a survey, stored as an object of type \code{\link[sp]{SpatialPolygons}}.
+The StratumPolygon data type contains the polygons defining the strata of a survey, stored as an sf data.frame with at least two columns: one column named "geometry" giving the multipolygons, and one column naming the multipolygons.
 }
 \details{
 The polygons are stored as gsojson in the project.json file and in output text files.

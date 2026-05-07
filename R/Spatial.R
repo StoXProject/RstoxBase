@@ -114,6 +114,42 @@ readStoxMultipolygonWKTFromFile <- function(FilePath) {
 #' 
 #' @seealso \code{\link{StratumArea}} for calculating the area of the strata.
 #' 
+#' @examples
+#' stratumFile_wkt <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+#'  )
+#' stratumPolygon_wkt <- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile_wkt
+#' )
+#' 
+#' stratumFile_geojson <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage.geojson", package = "RstoxBase"
+#'  )
+#' stratumPolygon_geojson <- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile_geojson, 
+#'   StratumNameLabel = "StratumName"
+#' )
+#' 
+#' stratumFile_shape <- system.file(
+#'   "testresources", 
+#'   "strata_sandeel_2020_firstCoverage", package = "RstoxBase"
+#'  )
+#' stratumPolygon_shape <- DefineStratumPolygon(
+#'   DefinitionMethod = "ResourceFile", 
+#'   FileName = stratumFile_shape, 
+#'   StratumNameLabel = "StratumNam"
+#' )
+#' 
+#' plot(stratumPolygon_wkt)
+#' 
+#' # All three files have the same polygons:
+#' all.equal(sf::st_coordinates(stratumPolygon_wkt), sf::st_coordinates(stratumPolygon_geojson))
+#' all.equal(sf::st_coordinates(stratumPolygon_wkt), sf::st_coordinates(stratumPolygon_shape))
+#' 
 #' @export
 #'
 DefineStratumPolygon <- function(
@@ -290,11 +326,6 @@ simplifyStratumPolygon <- function(
         stop("SimplificationFactor must be between 0 and 1.")
     }
     
-    # Not needed as we no longer use sp:
-    ## Transform to sf:
-    #sfStratumPolygon <- sf::st_as_sf(StratumPolygon)
-    
-    
     # Iterate to find the object size SimplificationFactor as a fraction of the original utils::object.size:
     originalSize <- utils::object.size(StratumPolygon)
     size <- originalSize
@@ -394,55 +425,46 @@ simplifyStratumPolygon <- function(
 
 
 
-#' Extract or add stratum names from a SpatialPolygonsDataFrame
+#' Get or add stratum names from a SpatialPolygonsDataFrame
 #' 
-#' The stratum names must be stored as the column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
-#' 
-#' @param stratum A \code{\link[sp]{SpatialPolygonsDataFrame}} with a column StratumName of the data of the \code{\link[sp]{SpatialPolygonsDataFrame}} \code{stratum}.
+#' @param stratumPolygon A \code{\link{StratumPolygon}}.
 #' @param StratumNameLabel The name of the attribute representing the stratum names in the GeoJSON file or shapefile. When reading WKT or txt files the StratumNameLabel is ignored, as those formats does not support column names.
 #' @param check.unique Logical: If TRUE, an error is given if stratum names are not unique.
-#' @param accept.wrong.name.if.only.one Logical: If TRUE, interpret stratum names if only one column in the SpatialPolygonsDataFrame.
+#' @param accept.wrong.name.if.only.one Logical: If TRUE, interpret stratum names if only one column in the \code{StratumPolygon}.
 #' 
 #' @export
 #' 
-getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
+getStratumNames <- function(stratumPolygon, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
     
     
-    #if("SpatialPolygonsDataFrame" %in% class(stratum) || is.data.frame(stratum)) {
-        
-        # No names for empty polygons:
-        if(!length(stratum) || !nrow(stratum)) {
-            return(character())
-        }
-        
-        # Look for the strings given by StratumNameLabel in the names of the SpatialPolygonsDataFrame stratum:
-        StratumNameLabel <- intersect(StratumNameLabel, names(stratum))
-        if(!length(StratumNameLabel)) {
-            # If there is only one column, accept this as stratum names if accept.wrong.name.if.only.one, regardless of StratumNameLabel:
-            if(accept.wrong.name.if.only.one && ncol(stratum) == 1) {
-                StratumNameLabel <- names(stratum)
-            }
-            else {
-                stop("StratumNameLabel must be the name of one of the attributes of the GeoJSON/shapefile. Use one of the following attributes: ", paste(names(stratum), collapse = ", "), ".")
-            }
+    # No names for empty polygons:
+    if(!length(stratumPolygon) || !nrow(stratumPolygon)) {
+        return(character())
+    }
+    
+    # Look for the strings given by StratumNameLabel in the names of the stratumPolygon:
+    StratumNameLabel <- intersect(StratumNameLabel, names(stratumPolygon))
+    if(!length(StratumNameLabel)) {
+        # If there is only one column, accept this as stratum names if accept.wrong.name.if.only.one, regardless of StratumNameLabel:
+        if(accept.wrong.name.if.only.one && ncol(stratumPolygon) == 1) {
+            StratumNameLabel <- names(stratumPolygon)
         }
         else {
-            StratumNameLabel <- StratumNameLabel[1]
+            stop("StratumNameLabel must be the name of one of the attributes of the GeoJSON/shapefile. Use one of the following attributes: ", paste(names(stratumPolygon), collapse = ", "), ".")
         }
+    }
+    else {
+        StratumNameLabel <- StratumNameLabel[1]
+    }
+    
+    # Get the stratum names:
+    stratumNames <- as.character(stratumPolygon[[StratumNameLabel]])
+    
+    # Test uniqueness:
+    if(check.unique  && !identical(stratumNames, unique(stratumNames))) {
+        stop("Stratum names must be unique.")
+    }
         
-        # Get the stratum names:
-        stratumNames <- as.character(stratum[[StratumNameLabel]])
-        
-        # Test uniqueness:
-        if(check.unique  && !identical(stratumNames, unique(stratumNames))) {
-            stop("Stratum names must be unique.")
-        }
-        
-        #sapply(methods::slot(stratum, "polygons"), function(x) methods::slot(x, "ID"))
-    #}
-    #else {
-    #    stop("Stratum polygon must be of class SpatialPolygonsDataFrame")
-    #}
     
     return(stratumNames)
 }
@@ -450,34 +472,34 @@ getStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygo
 #' @rdname getStratumNames
 #' @export
 #' 
-addStratumNames <- function(stratum, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
+addStratumNames <- function(stratumPolygon, StratumNameLabel = c("StratumName", "polygonName"), check.unique = TRUE, accept.wrong.name.if.only.one = FALSE) {
     
-    if(!NROW(stratum)) {
-        return(stratum)
+    if(!NROW(stratumPolygon)) {
+        return(stratumPolygon)
     }
     
     stratumNames <- getStratumNames(
-        stratum, 
+        stratumPolygon, 
         StratumNameLabel = StratumNameLabel, 
         check.unique = check.unique, 
         accept.wrong.name.if.only.one = accept.wrong.name.if.only.one
     )
     
-    row.names(stratum) <- stratumNames
+    row.names(stratumPolygon) <- stratumNames
     # This ensures that stratum polygons stored in the project.json with different StratumNameLabel than those definend in the parameter declaration will be stored properly on save:
-    if(accept.wrong.name.if.only.one && NCOL(stratum) == 1) {
-        names(stratum) <- "StratumName"
+    if(accept.wrong.name.if.only.one && NCOL(stratumPolygon) == 1) {
+        names(stratumPolygon) <- "StratumName"
     }
     
     # Delete the columns (except the geometry column which sticks)  and then add the "StratumName" column holding the stratum names:
-    stratum <- stratum[, NULL]
-    stratum$StratumName <- stratumNames
+    stratumPolygon <- stratumPolygon[, NULL]
+    stratumPolygon$StratumName <- stratumNames
     # Place geometry last, as this seems to be the default in sf, e.g. in st_cast:
-    newOrder <- c(setdiff(names(stratum), "geometry"), "geometry")
-    stratum <- stratum[, newOrder]
+    newOrder <- c(setdiff(names(stratumPolygon), "geometry"), "geometry")
+    stratumPolygon <- stratumPolygon[, newOrder]
     
     
-    return(stratum)
+    return(stratumPolygon)
 }
 
 
@@ -627,38 +649,6 @@ turn_off_s2_keep_msg <- function(expr) {
 }
 
 
-
-#DataTable <- readStoxMultipolygonWKTFromFile("~/../workspace/stox/reference/stratum/kolmule.txt")
-#
-#s <- DT2SpatialPolygons(DataTable)
-#
-#ss <- stoxMultipolygonWKT2SpatialPolygons("~/../workspace/stox/reference/stratum/kolmule.txt")
-#
-#identical(s, ss)
-
-
-
-
-# This shows that the sp package subtracts holes from holes:
-# Sr1 = Polygon(cbind(c(2,4,4,1,2),c(2,3,5,4,2)))
-# Sr2 = Polygon(cbind(c(5,4,2,5),c(2,3,2,2)))
-# Sr3 = Polygon(cbind(c(4,4,5,10,4),c(5,3,2,5,5)))
-# Sr4 = Polygon(cbind(c(5,6,6,5,5),c(4,4,3,3,4)), hole = TRUE)
-# Sr5 = Polygon(cbind(c(5.3,6,6,5.3,5.3),c(4,4,3,3,4)), hole = TRUE)
-# Srs1 = Polygons(list(Sr1), "s1")
-
-# Srs2 = Polygons(list(Sr2), "s2")
-# Srs3 = Polygons(list(Sr3, Sr4, Sr5), "s3/4/5")
-# SpP = SpatialPolygons(list(Srs1,Srs2,Srs3), 1:3)
-# plot(SpP, col = 1:3, pbg="white")
-
-
-
-
-#lat <- c(60, 65, 0.7267265, 0.7233676, 0.7232196, 0.7225059)
-#lon <- c(-1.512977, -1.504216, -1.499622, -1.487970, -1.443160, -1.434848)
-#xym <- cbind(lon, lat)
-
 # deg to rad function converts deg to rad
 deg2rad <- function(deg) {
     deg * pi / 180
@@ -776,43 +766,9 @@ polygonArea_simple <- function(stratumPolygon) {
 
 polygonArea_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
     
-    # No need for this anymore, as we have stoped using sp:
-    # Get the sf object, as we strive to use sf instead of sp:
-    #stratumPolygonSF <- sf::st_as_sf(stratumPolygon)
-    #sf::st_crs(stratumPolygonSF) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
-    
     # Set default projection:
     sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
     
-    # Removed this on 2021.02.01, as we rather should ensure that the projection is added in the stratumPolygon:
-    #stratumPolygon1 <- sf::st_transform(ss, sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
-    
-    
-    # Define projection:
-            #sp::proj4string(stratumPolygon) <- sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
-    
-    # Define the proj4 definition of Lambert Azimuthal Equal Area (laea) CRS with origo in wkt center:
-    # Units: international nautical miles:
-            #laea.CRS <- sp::CRS(
-            #    paste0(
-            #        "+proj=laea +lat_0=", 
-            #        stratumPolygon@polygons[[1]]@labpt[2], 
-            #        " +lon_0=", 
-            #        stratumPolygon@polygons[[1]]@labpt[1], 
-            #        " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
-            #    )
-            #)
-    
-    # New as of 2021-02-04 (RstoxBase 1.2.48): Calculate the polygon centroids using rgeos::gCentroid, as the labpt is pre-calculated and can in principle be modified:
-    #laea.CRS <- paste0(
-    #    "+proj=laea +lat_0=", 
-    #    stratumPolygon@polygons[[1]]@labpt[2], 
-    #    " +lon_0=", 
-    #    stratumPolygon@polygons[[1]]@labpt[1], 
-    #    " +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=kmi +no_defs"
-    #)
-    
-    # Re-project for equal area projection, using the centroid of the multipolygon:
     
     # rgeos is retiring, so we use sf instead to get the centroid:
     centroid <- getCentroid(stratumPolygon, iterativeCentroidCalculation = !useLonLatCentroid)
@@ -826,16 +782,8 @@ polygonArea_accurate <- function(stratumPolygon, useLonLatCentroid = TRUE) {
     
     stratumPolygon <- sf::st_transform(stratumPolygon, laea.CRS)
     
-    ## Convert from sf to spatial and calculate area:
-    #stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
-    #area <- rgeos::gArea(stratumPolygon, byid = TRUE)
-    
     # Use sf to calculate the area, temporarily switching off s2:
     area <- sf::st_area(stratumPolygon)
-    
-    # No longer needed, as we only use sf:
-    # Convert back from sf to sp:
-    #stratumPolygon <- sf::as_Spatial(stratumPolygonSF)
     
     # Output the stratum names and areas:
     output <- data.table::data.table(
@@ -934,8 +882,6 @@ getCentroidOne <- function(polygon, centroidLongLat, par = list()) {
 # Function to get the stratum of each PSU, taken as the most frequent Stratum in which the PSU is loacted geographically:
 locateInStratum <- function(points, stratumPolygon, SSULabel, locationProjection = c("lonlat", "leae"), iterativeCentroidCalculation = FALSE, coords = c("Longitude", "Latitude")) {
     
-    # We use sp::over(), as it is reported to be faster than sp::point.in.polygon() for complicated polygons, and also handles multipolygons better (https://stackoverflow.com/questions/32644301/r-point-in-polygon-speed-slow). Also, there does not seem to be stong enough reasons for using sf::st_intersects() (https://gis.stackexchange.com/questions/282750/identify-polygon-containing-point-with-r-sf-package).
-    
     # Get the label and names of the points for use in the warnings:
     pointNames <- points[[SSULabel]]
     
@@ -945,9 +891,6 @@ locateInStratum <- function(points, stratumPolygon, SSULabel, locationProjection
         coords = coords, 
         crs = getRstoxBaseDefinitions("proj4string_longlat")
     )
-    
-    # No longer needed, as all stratumPolygon are sf:
-    #stratumPolygon <- sf::st_as_sf(stratumPolygon)
     
     # Make sure the stratumPolygon has the same projection. We do this since stratumPolygon is an input and could potentially have a different projection, althoug the should not be the case:
     sf::st_crs(stratumPolygon) <- getRstoxBaseDefinitions("proj4string_longlat")
@@ -967,8 +910,6 @@ locateInStratum <- function(points, stratumPolygon, SSULabel, locationProjection
     }
     
     # Locate in the strata:
-    #stratumNames <- getStratumNames(sp::over(points, stratumPolygon), check.unique = FALSE)
-    
     hits <- sf::st_intersects(points, stratumPolygon)
     
     

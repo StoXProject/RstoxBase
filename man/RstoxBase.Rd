@@ -24,6 +24,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Arne Johannes Holmin \email{arnejh@hi.no}
   \item Ibrahim Umar
   \item Sindre Vatnehol
   \item Edvin Fuglebakk

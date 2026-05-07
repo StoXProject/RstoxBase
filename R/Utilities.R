@@ -973,7 +973,11 @@ replaceNAByReference <- function(DT, cols = NULL, replacement = list(numeric = 0
             replacement <- structure(list(replacement), names = RstoxData::firstClass(replacement))
         }
         for (j in cols) {
-            data.table::set(DT, which(is.na(DT[[j]]) & class(DT[[j]]) %in% names(replacement)), j, replacement[[RstoxData::firstClass(DT[[j]])]])
+            # Only replace if the class of the current column is present in the replacement:
+            thisReplacement <- replacement[[RstoxData::firstClass(DT[[j]])]]
+            if(length(thisReplacement)) {
+                data.table::set(DT, which(is.na(DT[[j]]) & class(DT[[j]]) %in% names(replacement)), j, replacement[[RstoxData::firstClass(DT[[j]])]])
+            }
         }
     }
 }

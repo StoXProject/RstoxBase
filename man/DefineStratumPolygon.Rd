@@ -40,6 +40,43 @@ The parameter \code{UseProcessData} is always set to TRUE when running a process
 
 Polygons are expected to have the the following projection: getRstoxBaseDefinitions("proj4string_longlat")
 }
+\examples{
+stratumFile_wkt <- system.file(
+  "testresources", 
+  "strata_sandeel_2020_firstCoverage.wkt", package = "RstoxBase"
+ )
+stratumPolygon_wkt <- DefineStratumPolygon(
+  DefinitionMethod = "ResourceFile", 
+  FileName = stratumFile_wkt
+)
+
+stratumFile_geojson <- system.file(
+  "testresources", 
+  "strata_sandeel_2020_firstCoverage.geojson", package = "RstoxBase"
+ )
+stratumPolygon_geojson <- DefineStratumPolygon(
+  DefinitionMethod = "ResourceFile", 
+  FileName = stratumFile_geojson, 
+  StratumNameLabel = "StratumName"
+)
+
+stratumFile_shape <- system.file(
+  "testresources", 
+  "strata_sandeel_2020_firstCoverage", package = "RstoxBase"
+ )
+stratumPolygon_shape <- DefineStratumPolygon(
+  DefinitionMethod = "ResourceFile", 
+  FileName = stratumFile_shape, 
+  StratumNameLabel = "StratumNam"
+)
+
+plot(stratumPolygon_wkt)
+
+# All three files have the same polygons:
+all.equal(sf::st_coordinates(stratumPolygon_wkt), sf::st_coordinates(stratumPolygon_geojson))
+all.equal(sf::st_coordinates(stratumPolygon_wkt), sf::st_coordinates(stratumPolygon_shape))
+
+}
 \references{
 Additonal information on GeoJSON and shapefiles specification can be found here:
 \url{https://geojson.org/}
