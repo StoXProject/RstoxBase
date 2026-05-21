@@ -9,7 +9,7 @@
 #' @param StoxData Either \code{\link[RstoxData]{StoxBioticData}} or \code{\link[RstoxData]{StoxAcousticData}} data.
 #' @param MergedStoxDataStationLevel The merged StoxData at the station level. Used in \code{meanRawResolutionData}.
 #' @param DefinitionMethod A string naming the method to use, see \code{\link{DefineBioticPSU}} and \code{\link{DefineAcousticPSU}}.
-#' @param FileName The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Accepts both project.xml from the old StoX 2.7, project.json from the new StoX >= 3.0.0, or a table that could be read by \code{\link[data.table]{fread}} containing the columns "Stratum", "PSU", "Cruise", "StartDateTime" and "StopDateTime". Must include file extension. 
+#' @param FileName The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Accepts both project.xml from the old StoX 2.7, project.json from the new StoX >= 3.0.0, both cases in which the Stratum_PSU and EDSU_PSU tables are read, or a table that could be read by \code{\link[data.table]{fread}} containing a PSUByTime table with the columns "Stratum", "PSU", "Cruise", "StartDateTime" and "StopDateTime". Must include file extension. 
 #' @param SavePSUByTime Logical: If TRUE save the start and end times of sequences of EDSUs or Stations for each PSU.
 #' @param PSUProcessData Previously generated PSU process data, one of \code{\link{AcousticPSU}} or \code{\link{BioticPSU}}.
 #' 
@@ -104,7 +104,7 @@ DefinePSU <- function(
                 else {
                     # Read the file as a table:
                     PSUByTimeFromFile <- tryCatch(
-                        data.table::fread(FileName), 
+                        data.table::fread(FileName, colClasses = "character"), 
                         error = function(err) {
                             stop("StoX: Error in data.table::fread: ", err)
                         }
