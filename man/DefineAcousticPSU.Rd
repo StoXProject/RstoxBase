@@ -26,7 +26,7 @@ DefineAcousticPSU(
 
 \item{DefinitionMethod}{Character: A string naming the method to use, one of "Manual" for manual tagging of EDUSs to PSUs (passes the process data through the function unchanged); "EDSUToPSU", which sets each EDSU as a PSU; "DeleteAllPSUs" to delete all PSUs; "PreDefined" to read from a previous process; and "ResourceFile" to read from either a project.xml file from StoX <= 2.7, a project.json file from StoX >=3.0.0, or a file containing a PSUByTime table.}
 
-\item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Accepts both project.xml from the old StoX 2.7, project.json from the new StoX >= 3.0.0, or a table that could be read by \code{\link[data.table]{fread}} containing the columns "Stratum", "PSU", "Cruise", "StartDateTime" and "StopDateTime". Must include file extension.}
+\item{FileName}{The path to a resource file from which to read PSUs, in the case that \code{DefinitionMethod} is "ResourceFile". Accepts both project.xml from the old StoX 2.7, project.json from the new StoX >= 3.0.0, both cases in which the Stratum_PSU and EDSU_PSU tables are read, or a table that could be read by \code{\link[data.table]{fread}} containing a PSUByTime table with the columns "Stratum", "PSU", "Cruise", "StartDateTime" and "StopDateTime". Must include file extension.}
 
 \item{AcousticPSU}{The \code{\link{AcousticPSU}} process data.}
 }

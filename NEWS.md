@@ -1,3 +1,7 @@
+# RstoxBase v2.2.1-9002  (2026-05-21)
+* Fixed bug where reading a PSUByTime.txt file with DefineAcousticPSU() (using DefinitionMethod = "ResourceFile") failed when e.g. Stratum was interpretable as numeric/integer. Now all columns are read as character.
+
+
 # RstoxBase v2.2.1-9001  (2026-02-04)
 * Added the column Direction in the Stratum table of the output from ReportTransectDesign(), so that tour and retour will be in separate rows.
 
