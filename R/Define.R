@@ -104,7 +104,13 @@ DefinePSU <- function(
                 else {
                     # Read the file as a table:
                     PSUByTimeFromFile <- tryCatch(
-                        data.table::fread(FileName, colClasses = "character"), 
+                        data.table::fread(
+                            FileName, 
+                            colClasses = list(
+                                character = c("Stratum", "PSU", "Cruise"), 
+                                POSIXct = c("StartDateTime", "StopDateTime")
+                            )
+                        ), 
                         error = function(err) {
                             stop("StoX: Error in data.table::fread: ", err)
                         }
