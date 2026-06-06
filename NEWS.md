@@ -1,5 +1,9 @@
-# RstoxBase v2.2.1-9002  (2026-05-21)
-* Fixed bug where reading a PSUByTime.txt file with DefineAcousticPSU() (using DefinitionMethod = "ResourceFile") failed when e.g. Stratum was interpretable as numeric/integer. Now all columns are read as character.
+# RstoxBase v2.2.1-9004  (2026-06-06)
+* Fixed bug in DefineAcousticPSU claiming that "The table PSUByTime does not match the PSUs." which was caused by different column order.
+
+
+# RstoxBase v2.2.1-9003  (2026-05-21)
+* Fixed bug where reading a PSUByTime.txt file with DefineAcousticPSU() (using DefinitionMethod = "ResourceFile") failed when e.g. Stratum was interpretable as numeric/integer. Now columns are read as character and time.
 
 
 # RstoxBase v2.2.1-9001  (2026-02-04)

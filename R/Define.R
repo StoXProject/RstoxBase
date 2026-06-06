@@ -366,6 +366,8 @@ DefinePSU <- function(
                 PSUType = PSUType
             )
             # Compare to existing:
+            # Make sure the column order is equal:
+            data.table::setcolorder(newPSUByTime, names(processData$PSUByTime))
             differs <- !isTRUE(all.equal(processData$PSUByTime, newPSUByTime))
             if(differs) {
                 message("StoX: The table PSUByTime does not match the PSUs. If you plan to use this process as input to another PSU process using the DefinitionMethod \"PreDefined\", please re-run the process with DefinitionMethod \"Manual\" to produce the PSUByTime table.")
