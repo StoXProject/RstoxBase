@@ -1,3 +1,7 @@
+# RstoxBase v2.2.1-9005  (2026-06-13)
+* Added support in DefineStratumPolygon() for specifying a folder holding shape files, and not only the file with extension "shp". 
+
+
 # RstoxBase v2.2.1-9004  (2026-06-06)
 * Fixed bug in DefineAcousticPSU claiming that "The table PSUByTime does not match the PSUs." which was caused by different column order.
 
