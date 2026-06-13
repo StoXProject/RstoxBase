@@ -209,11 +209,20 @@ DefineStratumPolygon <- function(
 
 readStratumPolygonFromFile <- function(FileName, StratumNameLabel = character()) {
     
-    if(length(unlist(strsplit(FileName, "\\."))) < 2) {
+    # Accept a folder with shape files:
+    if(file.info(FileName)$isdir) {
+        FileName <- list.files(FileName, full.names = TRUE, pattern = ".shp")
+        if(!length(FileName)) {
+            stop("Specifying a StratumPolygon file as a directory requires shape files in that directory (no file with extension .shp found).")
+        }
+    }
+    
+    # Require file extension
+    if(length(unlist(strsplit(basename(FileName), "\\."))) < 2) {
         stop("FileName must include file extension.")
     }
     else {
-        fileParts <- unlist(strsplit(FileName, "\\."))
+        fileParts <- unlist(strsplit(basename(FileName), "\\."))
         FileExt <- utils::tail(fileParts, 1)
     }
     
