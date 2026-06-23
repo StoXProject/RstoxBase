@@ -14,7 +14,8 @@ formatOutput(
   secondaryRowOrder = NULL,
   removeStoXKeys = FALSE,
   orderColumns = TRUE,
-  orderRows = TRUE
+  orderRows = TRUE,
+  colsToSplit = NA
 )
 }
 \arguments{
@@ -34,7 +35,9 @@ formatOutput(
 
 \item{orderColumns}{Logical: If TRUE (the default) order the columns by the first the \code{primaryColumnOrder}, then the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the \code{secondaryColumnOrder}}
 
-\item{orderRows}{Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the values of the variables specified by \code{secondaryRowOrder}.}
+\item{orderRows}{Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the values of the variables specified by \code{secondaryRowOrder}. The \code{orderRows} can be given as a vector or list of logicals, named by the different tables of the \code{Data}, if one wishes to order one but not the other, e.g is the Resolution table is passed unchanged from the input to the output (used e.g. in \code{\link{MeanDensity}}).}
+
+\item{colsToSplit}{Character: Either a vector of names of the columns to apply splitting on using \code{\link[RstoxData]{setorderv_numeric}}, or NA (the default) to spply splitting on the columns defined by the elements "surveyDefinition", "horizontalResolution", "verticalResolution" and "obserationVariable" as returned from \code{\link{getDataTypeDefinition}} of the \code{dataType}.}
 }
 \description{
 The function removes duplicated columns, orders the columns as per the order defined by \code{\link{getDataTypeDefinition}}, optionally removed undefined columns, orders the rows, and finally deletes any data.table keys from the output tables. The input is modified by reference using data.table.

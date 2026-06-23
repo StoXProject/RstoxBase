@@ -987,15 +987,16 @@ getRstoxBaseDefinitions <- function(name = NULL, ...) {
 #' @param secondaryColumnOrder,secondaryRowOrder A vector of column names specifying order of column not defined by \code{\link{getDataTypeDefinition}} used to prioritize when ordering columns and rows, respectively.
 #' @param removeStoXKeys Logical: If TRUE remove the key columns, which are those ending with "Key".
 #' @param orderColumns Logical: If TRUE (the default) order the columns by the first the \code{primaryColumnOrder}, then the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the \code{secondaryColumnOrder}
-#' @param orderRows Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the values of the variables specified by \code{secondaryRowOrder}.
+#' @param orderRows Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by \code{\link{getDataTypeDefinition}}), then by the values of the variables specified by \code{secondaryRowOrder}. The \code{orderRows} can be given as a vector or list of logicals, named by the different tables of the \code{Data}, if one wishes to order one but not the other, e.g is the Resolution table is passed unchanged from the input to the output (used e.g. in \code{\link{MeanDensity}}).
+#' @param colsToSplit Character: Either a vector of names of the columns to apply splitting on using \code{\link[RstoxData]{setorderv_numeric}}, or NA (the default) to spply splitting on the columns defined by the elements "surveyDefinition", "horizontalResolution", "verticalResolution" and "obserationVariable" as returned from \code{\link{getDataTypeDefinition}} of the \code{dataType}.
 #' 
 #' @export
 #' 
-formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE, orderColumns = TRUE, orderRows = TRUE) {
+formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE, orderColumns = TRUE, orderRows = TRUE, colsToSplit = NA) {
     
     # If data is only one table:
     if(data.table::is.data.table(data)) {
-        dataTypeDefinition <- getDataTypeDefinition(dataType, subTable = "Data", unlist = TRUE)
+        dataTypeDefinition <- getDataTypeDefinition(dataType, subTable = "Data", unlist = FALSE)
         formatOutputOneTable(
             table = data, 
             tableDefinition = dataTypeDefinition, 
@@ -1006,16 +1007,30 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
             secondaryRowOrder = secondaryRowOrder, 
             removeStoXKeys = removeStoXKeys, 
             orderColumns = orderColumns, 
-            orderRows = orderRows
+            orderRows = orderRows, 
+            colsToSplit = colsToSplit
         ) 
     }
     # ... or a list of tables:
     else if(is.list(data) && data.table::is.data.table(data[[1]])) {
-        dataTypeDefinition <- lapply(names(data), function(tableName) getDataTypeDefinition(dataType, subTable = tableName, unlist = TRUE))
+        
+        # Order the colsToSplit if it has names:
+        if( length(orderRows) == length(data)  &&  all(names(orderRows) %in% names(data)) ) {
+            orderRows <- orderRows[names(data)]
+        }
+        # Order the colsToSplit if it has names:
+        if( length(colsToSplit) == length(data)  &&  all(names(colsToSplit) %in% names(data)) ) {
+            colsToSplit <- colsToSplit[names(data)]
+        }
+ 
+        
+        dataTypeDefinition <- lapply(names(data), function(tableName) getDataTypeDefinition(dataType, subTable = tableName, unlist = FALSE))
         mapply(
             formatOutputOneTable, 
             table = data, 
             tableDefinition = dataTypeDefinition, 
+            orderRows = orderRows, 
+            colsToSplit = colsToSplit, 
             MoreArgs = list(
                 keep.all = keep.all, 
                 allow.missing = allow.missing, 
@@ -1029,18 +1044,18 @@ formatOutput <- function(data, dataType, keep.all = TRUE, allow.missing = FALSE,
 }
 
 
-formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE, orderColumns = TRUE, orderRows = TRUE) {
+formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.missing = FALSE, primaryColumnOrder = NULL, secondaryColumnOrder = NULL, secondaryRowOrder = NULL, removeStoXKeys = FALSE, orderColumns = TRUE, orderRows = TRUE, colsToSplit = NA) {
     
     # Get the column order:
     columnOrder <- unique(
         c(
-            tableDefinition, 
+            unlist(tableDefinition), 
             secondaryColumnOrder
         )
     )
     rowOrder <- unique(
         c(
-            tableDefinition, 
+            unlist(tableDefinition), 
             secondaryRowOrder
         )
     )
@@ -1092,11 +1107,26 @@ formatOutputOneTable <- function(table, tableDefinition, keep.all = TRUE, allow.
     # Order the rows:
     #data.table::setorder(table, na.last = TRUE)
     if(orderRows) {
-        RstoxData::setorderv_numeric(table, by = rowOrder, split = c("-", "/"))
+        # If colsToSplit is NA, use the default, which is "surveyDefinition", "horizontalResolution", "verticalResolution" and "obserationVariable", except "EDSU", since this only has strings and formatted time:
+        if(identical(colsToSplit, NA)) {
+            colsToSplitVars <- c(
+                "surveyDefinition",
+                "horizontalResolution",
+                "verticalResolution",
+                "obserationVariable"
+            )
+            colsToSplit <- unlist(tableDefinition[colsToSplitVars])
+            # Add ReplaceIndividual:
+            colsToSplit <- c(colsToSplit, "ReplaceIndividual")
+            # Remove EDSU, ince this only has strings and formatted time:
+            colsToSplit <- setdiff(colsToSplit, "EDSU")
+        }
+        RstoxData::setorderv_numeric(table, by = rowOrder, split = c("-", "/"), colsToSplit = colsToSplit)
     }
     
     # Delete any keys, as we use the argument 'by' for all merging and aggregation:
     data.table::setkey(table, NULL)
+    
 }
 
 

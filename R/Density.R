@@ -120,7 +120,7 @@ AcousticDensity <- function(
     # Add the Resolution table:
     DensityData <- list(
         Data = DensityData, 
-        Resolution = MeanNASCData$Resolution
+        Resolution = data.table::copy(MeanNASCData$Resolution)
     )
     
     
@@ -702,7 +702,8 @@ MeanDensity <- function(
     
     # Format the output:
     # Use keep.all = FALSE, as the difference between acoustic and swept area density is sorted out in the DensityData:
-    formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE)
+    # We order the Data table but not the Resolution table:
+    formatOutput(MeanDensityData, dataType = "MeanDensityData", keep.all = FALSE, allow.missing = TRUE, orderRows = c(Data = TRUE, Resolution = FALSE))
     
     return(MeanDensityData)
 }
