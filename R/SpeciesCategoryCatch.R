@@ -61,6 +61,7 @@ SpeciesCategoryCatch <- function(
     # 2024-08-20: We keep all possible variables from StoxBiotic here excluding the keys:
     formatOutput(SpeciesCategoryCatchData, dataType = "SpeciesCategoryCatchData", keep.all = TRUE, removeStoXKeys = TRUE)
     
+    
     return (SpeciesCategoryCatchData)
 }
 
