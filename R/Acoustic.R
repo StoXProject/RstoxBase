@@ -48,6 +48,7 @@ NASC <- function(
     # Format the output:
     formatOutput(NASCData, dataType = "NASCData", keep.all = FALSE)
     
+    
     return(NASCData)
 }
 
@@ -172,6 +173,7 @@ MeanNASC <- function(
             AcousticLayer = AcousticLayer
         )
     }
+    
     
     SurveyDefinition <- RstoxData::match_arg_informative(SurveyDefinition)
     PSUDefinition <- RstoxData::match_arg_informative(PSUDefinition)
