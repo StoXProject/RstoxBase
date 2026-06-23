@@ -33,6 +33,7 @@ Quantity <- function(
     # Added all.x for StoX 3.2.0, as the default all = FALSE drops strata not present in StratumAreaData (particularly NA stratum):
     QuantityData$Data <- merge(QuantityData$Data, StratumAreaData, by ="Stratum", all.x = TRUE)
     
+    
     # Multiply the area and the density:
     if(MeanDensityData$Data$DensityType[1] == "AreaNumberDensity") {
         QuantityData$Data[, Abundance := Area * Density]
@@ -43,10 +44,13 @@ Quantity <- function(
         QuantityData$Data[, Biomass := Area * Density]
     }
     
+    
+    
     # Format the output:
     # Changed added on 2020-10-16, where the datatypes DensityData and QuantityData are now considered non-rigid:
     #formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE)
-    formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE, allow.missing = TRUE)
+    formatOutput(QuantityData, dataType = "QuantityData", keep.all = FALSE, allow.missing = TRUE, orderRows = c(Data = TRUE, Resolution = FALSE))
+    
     
     return(QuantityData)
 }

@@ -1,5 +1,9 @@
+# RstoxBase v2.2.1-9006  (2026-06-22)
+* Reduced processing time for the functions MeanNASC, AcousticDensity, MeanDensity and Abundance to approximately 30% for a StoX project with large acoustic data (regular survey with 10 m channels and 0.1 nautical mile log distance). This can lead to approximately 50 % reduction in Bootstrap time.
+
+
 # RstoxBase v2.2.1-9005  (2026-06-13)
-* Added support in DefineStratumPolygon() for specifying a folder holding shape files, and not only the file with extension "shp". 
+* Added support in DefineStratumPolygon() for specifying a folder holding shape files, and not only the shape file itself (file with extension "shp")
 
 
 # RstoxBase v2.2.1-9004  (2026-06-06)
