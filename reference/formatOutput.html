@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RstoxBase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1-9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.1-9006</span>
       </span>
     </div>
 
@@ -63,7 +63,8 @@
 <span>  secondaryRowOrder <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  removeStoXKeys <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  orderColumns <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  orderRows <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  orderRows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  colsToSplit <span class="op">=</span> <span class="cn">NA</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -104,7 +105,11 @@
 
 
 <dt id="arg-orderrows">orderRows<a class="anchor" aria-label="anchor" href="#arg-orderrows"></a></dt>
-<dd><p>Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by <code><a href="getDataTypeDefinition.html">getDataTypeDefinition</a></code>), then by the values of the variables specified by <code>secondaryRowOrder</code>.</p></dd>
+<dd><p>Logical: If TRUE (the default) order the rows first by the values in the variables defined for the StoX datatype (as returned by <code><a href="getDataTypeDefinition.html">getDataTypeDefinition</a></code>), then by the values of the variables specified by <code>secondaryRowOrder</code>. The <code>orderRows</code> can be given as a vector or list of logicals, named by the different tables of the <code>Data</code>, if one wishes to order one but not the other, e.g is the Resolution table is passed unchanged from the input to the output (used e.g. in <code><a href="MeanDensity.html">MeanDensity</a></code>).</p></dd>
+
+
+<dt id="arg-colstosplit">colsToSplit<a class="anchor" aria-label="anchor" href="#arg-colstosplit"></a></dt>
+<dd><p>Character: Either a vector of names of the columns to apply splitting on using <code><a href="https://rdrr.io/pkg/RstoxData/man/setorderv_numeric.html" class="external-link">setorderv_numeric</a></code>, or NA (the default) to spply splitting on the columns defined by the elements "surveyDefinition", "horizontalResolution", "verticalResolution" and "obserationVariable" as returned from <code><a href="getDataTypeDefinition.html">getDataTypeDefinition</a></code> of the <code>dataType</code>.</p></dd>
 
 </dl></div>
 
